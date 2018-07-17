@@ -125,10 +125,10 @@ public class Configs implements Iterable<ConfigValue> {
 
         // Check if all same configs are the same value.
         for (ConfigValue config : this.entries.values()) {
-            ConfigValue currentValue = thatConfigs.remove(config.name());
-            if (!currentValue.getValue().equals(config.getValue())) {
+            if (isNotEqualOrNotExist(thatConfigs, config)) {
                 return true;
             }
+            thatConfigs.remove(config.name());
         }
 
         // Checks if all remaining configuration are defaults.
@@ -138,6 +138,12 @@ public class Configs implements Iterable<ConfigValue> {
             }
         }
         return false;
+    }
+
+    private boolean isNotEqualOrNotExist(final Map<String, ConfigValue> configs,
+                                         final ConfigValue config) {
+        return !configs.containsKey(config.name()) ||
+               !configs.get(config.name()).equals(config);
     }
 
     /**

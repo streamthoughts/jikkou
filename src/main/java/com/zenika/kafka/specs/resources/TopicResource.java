@@ -16,15 +16,20 @@
  */
 package com.zenika.kafka.specs.resources;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- *
+ * A Kafka topic resource.
  */
 public class TopicResource implements ClusterResource, Serializable {
 
-    static final short INVALID_REPLICA = -1;
+    private static final Logger LOG = LoggerFactory.getLogger(TopicResource.class);
+
+    private static final short INVALID_REPLICA = -1;
 
     private String name;
 
@@ -81,10 +86,16 @@ public class TopicResource implements ClusterResource, Serializable {
         return name;
     }
 
+    /**
+     * @return the number of partitions for this topic.
+     */
     public int partitions() {
         return partitions;
     }
 
+    /**
+     * @return the replication factor for this topic.
+     */
     public short replicationFactor() {
         return replicationFactor;
     }
@@ -102,19 +113,35 @@ public class TopicResource implements ClusterResource, Serializable {
         return this;
     }
 
-    public boolean containsChanges(final TopicResource resource) {
+    /**
+     * Checks whether the specified resource has configuration differences with this.
+     *
+     * @param resource  the {@link TopicResource} to check.
+     * @return          <code>true</code> if {@literal resource} has config changes.
+     */
+    public boolean containsConfigsChanges(final TopicResource resource) {
 
         if (!this.name.equals(resource.name)) {
             throw new IllegalArgumentException(
                     "Can't check changes on resources with different names " + this.name + "<>" + resource.name);
         }
 
-        return this.partitions != resource.partitions
-                || this.replicationFactor != resource.replicationFactor
-                || this.configs.containsChanges(resource.configs);
+        if (this.partitions != resource.partitions ||
+            this.replicationFactor != resource.replicationFactor) {
+          LOG.warn("Topic partitions and/or replication-factor change is not supported!" +
+                  " You should consider altering topic through scripts 'kafka-topics' or 'kafka-configs'");
+        }
+
+        return this.configs.containsChanges(resource.configs);
 
     }
 
+    /**
+     * Removes all default configuration from the specified resource.
+     *
+     * @param resource  the resource from which to delete defaults.
+     * @return          a new {@link TopicResource} instance.
+     */
     public TopicResource dropDefaultConfigs(final TopicResource resource) {
         Configs withoutDefaultConfigs = this.configs.filters(resource.configs.defaultConfigs());
         return new TopicResource(this.name, this.partitions, this.replicationFactor, withoutDefaultConfigs);
@@ -154,6 +181,4 @@ public class TopicResource implements ClusterResource, Serializable {
                 ", configs=" + configs +
                 '}';
     }
-
-
 }

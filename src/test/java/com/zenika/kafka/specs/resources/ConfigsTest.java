@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.zenika.kafka.specs.resources;
 
 import org.apache.kafka.common.config.TopicConfig;
@@ -7,9 +23,6 @@ import org.junit.Test;
 
 public class ConfigsTest {
 
-    private static final String DELETE_CLEANUP_POLICY = "delete";
-    private static final String COMPACT_CLEANUP_POLICY = "compact";
-
     private Configs defaultTopicConfigs;
 
 
@@ -18,7 +31,7 @@ public class ConfigsTest {
         defaultTopicConfigs = new Configs();
         defaultTopicConfigs.add(new ConfigValue(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "1",  true));
         defaultTopicConfigs.add(new ConfigValue(TopicConfig.UNCLEAN_LEADER_ELECTION_ENABLE_CONFIG, "false",  true));
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_COMPACT, DELETE_CLEANUP_POLICY,  true));
+        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE,  true));
     }
 
     @Test
@@ -31,7 +44,7 @@ public class ConfigsTest {
     @Test
     public void shouldDetectNoChangesGivenOverrideConfigsWithNoChangesWhenComparingWithDefaultValues() {
         Configs configs = new Configs();
-        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_COMPACT, DELETE_CLEANUP_POLICY));
+        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
 
         boolean result = configs.containsChanges(defaultTopicConfigs);
         Assert.assertFalse(result);
@@ -40,18 +53,17 @@ public class ConfigsTest {
     @Test
     public void shouldDetectChangesGivenEmptyConfigsWhenComparingWithDefaultAndOverrideValues() {
         // override default value
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_COMPACT, COMPACT_CLEANUP_POLICY));
+        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
 
         Configs emptyConfigs = Configs.emptyConfigs();
         boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
         Assert.assertTrue(result);
     }
 
-
     @Test
     public void shouldDetectChangesGivenOverrideConfigsWhenComparingWithDefaultValues() {
         Configs configs = new Configs();
-        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_COMPACT, COMPACT_CLEANUP_POLICY));
+        configs.add(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "10000"));
 
         boolean result = configs.containsChanges(defaultTopicConfigs);
         Assert.assertTrue(result);
@@ -60,7 +72,7 @@ public class ConfigsTest {
     @Test
     public void shouldBeAbleToGetSubDefaultDefaultConfigs() {
         // override default value
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_COMPACT, COMPACT_CLEANUP_POLICY));
+        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
         Configs configs = defaultTopicConfigs.defaultConfigs();
 
         Assert.assertEquals(2, configs.size());
@@ -72,7 +84,7 @@ public class ConfigsTest {
     public void shouldFilterOnNonEqualsConfigs() {
         Configs configs = new Configs(defaultTopicConfigs.values());
         // override default config entry
-        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_COMPACT, COMPACT_CLEANUP_POLICY));
+        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
         // add a new config entry
         configs.add(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "10000"));
 
@@ -81,7 +93,7 @@ public class ConfigsTest {
 
         Assert.assertEquals(2, result.size());
         Assert.assertNotNull(configs.get(TopicConfig.MAX_MESSAGE_BYTES_CONFIG));
-        Assert.assertNotNull(configs.get(TopicConfig.CLEANUP_POLICY_COMPACT));
+        Assert.assertNotNull(configs.get(TopicConfig.CLEANUP_POLICY_CONFIG));
     }
 
 }

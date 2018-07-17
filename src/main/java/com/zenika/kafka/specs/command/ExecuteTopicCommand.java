@@ -72,7 +72,7 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
                 TopicResource clusterTopic = clusterTopics.remove(topic.name());
                 if (clusterTopic == null) {
                     created.add(topic);
-                } else if (topic.containsChanges(clusterTopic)) {
+                } else if (topic.containsConfigsChanges(clusterTopic)) {
 
                     altered.add(topic.dropDefaultConfigs(clusterTopic));
                 } else {
@@ -87,7 +87,7 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
             TopicsCommands lastCommand = null;
             if (options.isDeleteTopicsCommand()) {
-                lastCommand= TopicsCommands.DELETE;
+                lastCommand = TopicsCommands.DELETE;
                 results.addAll(
                         new DeleteTopicOperation()
                                 .execute(client, new ResourcesIterable<>(unknown), new ResourceOperationOptions(){})
@@ -95,18 +95,18 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
             }
 
             if (options.isCreateTopicsCommand()) {
-                lastCommand= TopicsCommands.CREATE;
+                lastCommand = TopicsCommands.CREATE;
                 results.addAll(new CreateTopicOperation()
                         .execute(client, new ResourcesIterable<>(created), new CreateTopicOperationOptions()));
             }
 
             if (options.isAlterTopicsCommand()) {
-                lastCommand= TopicsCommands.ALTER;
+                lastCommand = TopicsCommands.ALTER;
                 results.addAll(new AlterTopicOperation()
                         .execute(client, new ResourcesIterable<>(altered), new ResourceOperationOptions(){}));
             }
 
-            // lastCommand should never be null
+            // We should keep trace of unchanged topic for tool output - in theory the last command should never be null.
             final TopicsCommands command = lastCommand == null ? TopicsCommands.UNKNOWN : lastCommand;
             unchanged.forEach(topic -> results.add(OperationResult.unchanged(topic, command)));
 
