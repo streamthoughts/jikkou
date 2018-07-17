@@ -49,12 +49,15 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
     private AdminClient client;
 
+    private KafkaSpecsRunnerOptions options;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Collection<OperationResult<TopicResource>> execute(final KafkaSpecsRunnerOptions options, final AdminClient client) {
         this.client = client;
+        this.options = options;
         File specification = options.clusterSpecificationOpt();
         try {
             // Read input specification
@@ -88,34 +91,69 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
             TopicsCommands lastCommand = null;
             if (options.isDeleteTopicsCommand()) {
                 lastCommand = TopicsCommands.DELETE;
-                results.addAll(
-                        new DeleteTopicOperation()
-                                .execute(client, new ResourcesIterable<>(unknown), new ResourceOperationOptions(){})
-                );
+                results.addAll(executeDeleteTopics(unknown));
             }
 
             if (options.isCreateTopicsCommand()) {
                 lastCommand = TopicsCommands.CREATE;
-                results.addAll(new CreateTopicOperation()
-                        .execute(client, new ResourcesIterable<>(created), new CreateTopicOperationOptions()));
+                results.addAll(executeCreateTopics(created));
             }
 
             if (options.isAlterTopicsCommand()) {
                 lastCommand = TopicsCommands.ALTER;
-                results.addAll(new AlterTopicOperation()
-                        .execute(client, new ResourcesIterable<>(altered), new ResourceOperationOptions(){}));
+                results.addAll(executeAlterTopics(altered));
             }
 
             // We should keep trace of unchanged topic for tool output - in theory the last command should never be null.
             final TopicsCommands command = lastCommand == null ? TopicsCommands.UNKNOWN : lastCommand;
-            unchanged.forEach(topic -> results.add(OperationResult.unchanged(topic, command)));
+            if (options.isDryRun()) {
+                results.addAll(buildDryRunResult(unchanged, false, command));
 
-
+            } else {
+                results.addAll(unchanged.stream()
+                        .map(r -> OperationResult.unchanged(r, command))
+                        .collect(Collectors.toList()));
+            }
             return results;
 
         } catch (FileNotFoundException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Collection<OperationResult<TopicResource>> executeAlterTopics(final Collection<TopicResource> topics) {
+        if (options.isDryRun()) {
+            return buildDryRunResult(topics, true, TopicsCommands.ALTER);
+        }
+        return new AlterTopicOperation()
+                .execute(client, new ResourcesIterable<>(topics), new ResourceOperationOptions() {
+                });
+    }
+
+    private Collection<OperationResult<TopicResource>> executeCreateTopics(final Collection<TopicResource> topics) {
+        if (options.isDryRun()) {
+            return buildDryRunResult(topics, true, TopicsCommands.CREATE);
+        }
+
+        return new CreateTopicOperation()
+                .execute(client, new ResourcesIterable<>(topics), new CreateTopicOperationOptions());
+    }
+
+    private Collection<OperationResult<TopicResource>> executeDeleteTopics(final Collection<TopicResource> topics) {
+        if (options.isDryRun()) {
+            return buildDryRunResult(topics, true, TopicsCommands.DELETE);
+        }
+
+        return new DeleteTopicOperation()
+                .execute(client, new ResourcesIterable<>(topics), new ResourceOperationOptions() {});
+    }
+
+    private List<OperationResult<TopicResource>> buildDryRunResult(final Collection<TopicResource> resources,
+                                                                   final boolean changed,
+                                                                   final TopicsCommands command) {
+        return resources.stream()
+                .map(r -> OperationResult.dryRun(r, changed, command))
+                .collect(Collectors.toList());
     }
 
     private Collection<TopicResource> getClusterTopics(final KafkaSpecsRunnerOptions options) throws ExecutionException, InterruptedException {

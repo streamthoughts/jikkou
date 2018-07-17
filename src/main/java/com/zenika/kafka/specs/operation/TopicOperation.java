@@ -39,7 +39,9 @@ public abstract class TopicOperation<T extends ResourceOperationOptions> impleme
      * {@inheritDoc}
      */
     @Override
-    public Collection<OperationResult<TopicResource>> execute(AdminClient client, ResourcesIterable<TopicResource> resources, T options) {
+    public Collection<OperationResult<TopicResource>> execute(final AdminClient client,
+                                                              final ResourcesIterable<TopicResource> resources,
+                                                              final T options) {
 
         final Map<String, KafkaFuture<Void>> values = doExecute(client, resources, options);
 
@@ -65,24 +67,14 @@ public abstract class TopicOperation<T extends ResourceOperationOptions> impleme
                                                                 final ResourceOperationOptions options);
 
 
-    CompletableFuture<OperationResult<TopicResource>> makeCompletableFuture(final KafkaFuture<Void> future,
-                                                                            final TopicResource resource) {
+    private CompletableFuture<OperationResult<TopicResource>> makeCompletableFuture(final KafkaFuture<Void> future,
+                                                                                    final TopicResource resource) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 future.get();
-                return new OperationResult<>(true,
-                        resource,
-                        getCommand(),
-                        Time.SYSTEM.milliseconds(),
-                        false,
-                        null);
+                return OperationResult.changed(resource, getCommand());
             } catch (InterruptedException|ExecutionException e) {
-                return new OperationResult<>(true,
-                        resource,
-                        getCommand(),
-                        Time.SYSTEM.milliseconds(),
-                        true,
-                        null);
+                return OperationResult.failed(resource, getCommand(), e);
             }
         });
     }
