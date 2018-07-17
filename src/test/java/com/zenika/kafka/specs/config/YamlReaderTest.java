@@ -45,15 +45,15 @@ public class YamlReaderTest {
     private static final String THREE_TOPICS_SIMPLE_CONFIG = "topics:\n"+
             "  - name               : my-topic-p3\n"+
             "    partitions         : 3\n"+
-            "    replicationFactor  : 1\n"+
+            "    replication_factor  : 1\n"+
             "\n"+
             "  - name               : my-topic-p1\n"+
             "    partitions         : 1\n"+
-            "    replicationFactor  : 1\n"+
+            "    replication_factor  : 1\n"+
             "\n"+
             "  - name               : my-topic-p2\n"+
             "    partitions         : 2\n"+
-            "    replicationFactor  : 1\n"+
+            "    replication_factor  : 1\n"+
             "    configs: \n" +
             "       retention.ms  : '10000'";
 
