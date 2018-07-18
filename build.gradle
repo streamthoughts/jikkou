@@ -1,13 +1,16 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def junitVersion = '5.2.0'
-
 group 'kafka'
 version '0.1.0'
+
+mainClassName = "com.zenika.kafka.specs.KafkaSpecsRunner"
+
+def junitVersion = '5.2.0'
 
 repositories {
     mavenCentral()
@@ -15,7 +18,6 @@ repositories {
 }
 
 dependencies {
-
     test.useJUnitPlatform()
 
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
@@ -31,44 +33,29 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.zenika.kafka.specs.KafkaSpecsRunner'
+task copyLicense {
+    outputs.file new File("$buildDir/LICENSE")
+    outputs.file new File("$buildDir/README.md")
+    doLast {
+        copy {
+            from "LICENSE", "README.md"
+            into "$buildDir"
+        }
     }
-}
-
-task copyDependencies(type: Copy) {
-    from configurations.compile
-    into "$buildDir/prepare/${project.name}-${project.version}/libs"
-}
-
-task copyJar(type: Copy) {
-    from jar
-    into "$buildDir/prepare/${project.name}-${project.version}/libs"
-}
-
-task copyBins(type: Copy) {
-    from "bin/"
-    into "$buildDir/prepare/${project.name}-${project.version}/bin"
 }
 
 task copyConfig(type: Copy) {
     from "src/main/resources/logback.xml"
-    into "$buildDir/prepare/${project.name}-${project.version}/etc"
+    into "$buildDir/etc"
 }
 
-task copyReadme(type: Copy) {
-    from 'LICENSE'
-    from 'README.md'
-    into "$buildDir/prepare/${project.name}-${project.version}"
-}
-
-task distTar(type: Zip) {
-    dependsOn(clean,copyJar, copyDependencies, copyConfig, copyBins, copyReadme)
-    archiveName "dist-${project.name}-${project.version}.zip"
-    from "$buildDir/prepare"
-    //include '*/*'
-    destinationDir(file("${buildDir}/dist"))
+distributions {
+    main {
+        contents {
+            from(copyLicense)
+            from(copyConfig) { into "etc" }
+        }
+    }
 }
 
 test {
