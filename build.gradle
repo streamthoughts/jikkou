@@ -1,14 +1,17 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'application'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 group 'kafka'
 version '0.1.0'
 
+/* Plugin java */
+apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+/* Plugin application */
+apply plugin: 'application'
+apply plugin: 'maven'
+
 mainClassName = "com.zenika.kafka.specs.KafkaSpecsRunner"
+applicationDefaultJvmArgs = ['-Dlogback.configurationFile=file:LOGBACK_APP_HOME/etc/logback.xml']
 
 def junitVersion = '5.2.0'
 
@@ -48,6 +51,14 @@ task copyLicense {
 task copyConfig(type: Copy) {
     from "src/main/resources/logback.xml"
     into "$buildDir/etc"
+}
+
+
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('LOGBACK_APP_HOME', '\$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('LOGBACK_APP_HOME', '%~dp0..')
+    }
 }
 
 distributions {
