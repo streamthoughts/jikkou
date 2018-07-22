@@ -17,16 +17,16 @@
 package com.zenika.kafka.specs.resources;
 
 import org.apache.kafka.common.config.TopicConfig;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ConfigsTest {
 
     private Configs defaultTopicConfigs;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         defaultTopicConfigs = new Configs();
         defaultTopicConfigs.add(new ConfigValue(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "1",  true));
@@ -38,7 +38,7 @@ public class ConfigsTest {
     public void shouldDetectNoChangesGivenEmptyConfigsWhenComparingWithDefaultValues() {
         Configs emptyConfigs = Configs.emptyConfigs();
         boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class ConfigsTest {
         configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
 
         boolean result = configs.containsChanges(defaultTopicConfigs);
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ConfigsTest {
 
         Configs emptyConfigs = Configs.emptyConfigs();
         boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ConfigsTest {
         configs.add(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "10000"));
 
         boolean result = configs.containsChanges(defaultTopicConfigs);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -75,9 +75,9 @@ public class ConfigsTest {
         defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
         Configs configs = defaultTopicConfigs.defaultConfigs();
 
-        Assert.assertEquals(2, configs.size());
-        Assert.assertNotNull(configs.get(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG));
-        Assert.assertNotNull(configs.get(TopicConfig.UNCLEAN_LEADER_ELECTION_ENABLE_CONFIG));
+        Assertions.assertEquals(2, configs.size());
+        Assertions.assertNotNull(configs.get(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG));
+        Assertions.assertNotNull(configs.get(TopicConfig.UNCLEAN_LEADER_ELECTION_ENABLE_CONFIG));
     }
 
     @Test
@@ -88,12 +88,12 @@ public class ConfigsTest {
         // add a new config entry
         configs.add(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "10000"));
 
-        Assert.assertEquals(4, configs.size());
+        Assertions.assertEquals(4, configs.size());
         Configs result = configs.filters(defaultTopicConfigs);
 
-        Assert.assertEquals(2, result.size());
-        Assert.assertNotNull(configs.get(TopicConfig.MAX_MESSAGE_BYTES_CONFIG));
-        Assert.assertNotNull(configs.get(TopicConfig.CLEANUP_POLICY_CONFIG));
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertNotNull(configs.get(TopicConfig.MAX_MESSAGE_BYTES_CONFIG));
+        Assertions.assertNotNull(configs.get(TopicConfig.CLEANUP_POLICY_CONFIG));
     }
 
 }
