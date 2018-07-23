@@ -53,8 +53,9 @@ task copyConfig(type: Copy) {
     into "$buildDir/etc"
 }
 
-
 startScripts {
+    unixStartScriptGenerator.template = resources.text.fromFile("scripts/unixScriptTemplate.txt")
+    windowsStartScriptGenerator.template = resources.text.fromFile("scripts/windowsScriptTemplate.txt")
     doLast {
         unixScript.text = unixScript.text.replace('LOGBACK_APP_HOME', '\$APP_HOME')
         windowsScript.text = windowsScript.text.replace('LOGBACK_APP_HOME', '%~dp0..')
