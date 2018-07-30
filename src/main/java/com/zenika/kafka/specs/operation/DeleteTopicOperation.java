@@ -16,7 +16,8 @@
  */
 package com.zenika.kafka.specs.operation;
 
-import com.zenika.kafka.specs.command.TopicsCommands;
+import com.zenika.kafka.specs.Description;
+import com.zenika.kafka.specs.internal.DescriptionProvider;
 import com.zenika.kafka.specs.resources.ResourcesIterable;
 import com.zenika.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -37,12 +38,16 @@ public class DeleteTopicOperation extends TopicOperation<ResourceOperationOption
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteTopicOperation.class);
 
+    public static DescriptionProvider<TopicResource> DESCRIPTION = (resource -> {
+        return (Description.Delete) () -> String.format("Delete topic %s ", resource.name());
+    });
+
     /**
      * {@inheritDoc}
      */
     @Override
-    TopicsCommands getCommand() {
-        return TopicsCommands.DELETE;
+    Description getDescriptionFor(final TopicResource resource) {
+        return DESCRIPTION.getForResource(resource);
     }
 
     /**

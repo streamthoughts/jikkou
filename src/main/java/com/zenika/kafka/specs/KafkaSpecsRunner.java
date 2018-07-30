@@ -16,11 +16,18 @@
  */
 package com.zenika.kafka.specs;
 
+import com.zenika.kafka.specs.acl.AclRulesBuilder;
+import com.zenika.kafka.specs.acl.builder.LiteralAclRulesBuilder;
+import com.zenika.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
 import com.zenika.kafka.specs.command.ClusterCommand;
+import com.zenika.kafka.specs.command.ExecuteAclCommand;
 import com.zenika.kafka.specs.command.ExecuteTopicCommand;
-import com.zenika.kafka.specs.command.ExportTopicsCommand;
+import com.zenika.kafka.specs.command.ExportClusterSpecCommand;
 import com.zenika.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
+
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * The command line main class.
@@ -46,13 +53,27 @@ public class KafkaSpecsRunner {
 
             if (options.isExecuteCommand() ) {
                 CLIUtils.askToProceed();
-                ExecuteTopicCommand command = new ExecuteTopicCommand();
-                Printer.printAndExit(command.execute(options, client), options.verbose());
+
+                Collection<OperationResult> results = new LinkedList<>();
+
+                if (options.entityTypes().contains("topics")) {
+                    ExecuteTopicCommand command = new ExecuteTopicCommand(client);
+                    results.addAll(command.execute(options));
+                }
+
+                if (options.entityTypes().contains("acls")) {
+                    AclRulesBuilder builder = AclRulesBuilder.combines(
+                            new LiteralAclRulesBuilder(),
+                            new TopicMatchingAclRulesBuilder(client));
+                    ExecuteAclCommand command = new ExecuteAclCommand(client, builder);
+                    results.addAll(command.execute(options));
+                }
+                Printer.printAndExit(results, options.verbose());
             }
 
             if (options.isExportCommand()) {
-                ClusterCommand command = new ExportTopicsCommand();
-                command.execute(options, client);
+                ClusterCommand command = new ExportClusterSpecCommand(client);
+                command.execute(options);
             }
 
             if (options.isDiffCommand()|| options.isCleanAllCommand()) {

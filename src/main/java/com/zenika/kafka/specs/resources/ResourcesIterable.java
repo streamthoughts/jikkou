@@ -46,19 +46,4 @@ public class ResourcesIterable<T extends ClusterResource> implements ClusterReso
         return resources.iterator();
     }
 
-    /**
-     * @throws UnsupportedOperationException
-     */
-    @Override
-    public String name() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @throws UnsupportedOperationException
-     */
-    @Override
-    public Configs configs() {
-        throw new UnsupportedOperationException();
-    }
 }

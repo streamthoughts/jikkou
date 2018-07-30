@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zenika.kafka.specs.operation;
+package com.zenika.kafka.specs.acl;
 
-public class DescribeOperationOptions implements ResourceOperationOptions {
+import org.apache.kafka.common.acl.AclOperation;
+import org.junit.jupiter.api.Test;
 
-    private boolean describeDefaultConfigs;
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static DescribeOperationOptions withDescribeDefaultConfigs(final boolean describeDefaultConfigs) {
-        return new DescribeOperationOptions(describeDefaultConfigs);
+class AclOperationPolicyTest {
+
+
+    @Test
+    public void shouldBuildAclOperationPolicyFromString() {
+
+        AclOperationPolicy policy = AclOperationPolicy.fromString("READ:*");
+        assertEquals(AclOperation.READ, policy.operation());
+        assertEquals("*", policy.host());
     }
 
-    private DescribeOperationOptions(boolean describeDefaultConfigs) {
-        this.describeDefaultConfigs = describeDefaultConfigs;
-    }
-
-    public boolean describeDefaultConfigs() {
-        return describeDefaultConfigs;
-    }
 }

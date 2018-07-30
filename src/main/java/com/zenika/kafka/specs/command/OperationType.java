@@ -14,21 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zenika.kafka.specs.operation;
+package com.zenika.kafka.specs.command;
 
-public class DescribeOperationOptions implements ResourceOperationOptions {
 
-    private boolean describeDefaultConfigs;
+public enum OperationType {
 
-    public static DescribeOperationOptions withDescribeDefaultConfigs(final boolean describeDefaultConfigs) {
-        return new DescribeOperationOptions(describeDefaultConfigs);
-    }
+    CREATE, DELETE, ALTER, UNKNOWN
 
-    private DescribeOperationOptions(boolean describeDefaultConfigs) {
-        this.describeDefaultConfigs = describeDefaultConfigs;
-    }
-
-    public boolean describeDefaultConfigs() {
-        return describeDefaultConfigs;
-    }
 }

@@ -14,21 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zenika.kafka.specs.operation;
+package com.zenika.kafka.specs.reader;
 
-public class DescribeOperationOptions implements ResourceOperationOptions {
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-    private boolean describeDefaultConfigs;
+/**
+ * Default interface to read specification.
+ *
+ * @param <O>  the output type.
+ */
+public interface EntitySpecificationReader<O> {
 
-    public static DescribeOperationOptions withDescribeDefaultConfigs(final boolean describeDefaultConfigs) {
-        return new DescribeOperationOptions(describeDefaultConfigs);
+    default Set<O> read(final List<MapObjectReader> entities) {
+        return entities
+                .stream()
+                .map(this::to)
+                .collect(Collectors.toSet());
     }
 
-    private DescribeOperationOptions(boolean describeDefaultConfigs) {
-        this.describeDefaultConfigs = describeDefaultConfigs;
-    }
-
-    public boolean describeDefaultConfigs() {
-        return describeDefaultConfigs;
-    }
+    O to(final MapObjectReader entry);
 }

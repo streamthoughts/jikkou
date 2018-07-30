@@ -17,12 +17,20 @@
 package com.zenika.kafka.specs.internal;
 
 import com.zenika.kafka.specs.KafkaSpecsRunnerOptions;
+import com.zenika.kafka.specs.OperationResult;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.TopicListing;
+import org.apache.kafka.common.KafkaFuture;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static com.zenika.kafka.specs.internal.PropertiesUtils.parse;
 
@@ -55,5 +63,19 @@ public class AdminClientUtils {
             props.putAll(parse(opts.configPropsOpts()));
         }
         return props;
+    }
+
+
+    public static CompletableFuture<Collection<TopicListing>> listTopics(final AdminClient client) {
+        Objects.requireNonNull(client, "client cannot be null");
+
+        KafkaFuture<Collection<TopicListing>> listings = client.listTopics().listings();
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return listings.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

@@ -38,16 +38,19 @@ public class KafkaSpecsRunnerOptions {
     private static final String ExecuteCommandDoc       = "COMMAND: Align cluster resources with the specified specifications";
 
     private static final String AlterCommandArg         = "alter";
-    private static final String AlterCommandDoc         = "OPTION : Alter all existing topics that have configuration changed";
+    private static final String AlterCommandDoc         = "OPTION : Alter all existing entities that have configuration changed";
 
     private static final String CreateCommandArg        = "create";
-    private static final String CreateCommandDoc        = "OPTION : Create all topics that currently do not exist on remote cluster";
+    private static final String CreateCommandDoc        = "OPTION : Create all entities that currently do not exist on remote cluster";
 
     private static final String DeleteExecuteArg        = "delete";
-    private static final String DeleteExecuteDoc        = "OPTION : Delete all remote topics which are not described in specifications";
+    private static final String DeleteExecuteDoc        = "OPTION : Delete all remote entities which are not described in specifications";
 
     private static final String DryRunExecuteArg        = "dry-run";
     private static final String DryRunExecuteDoc        = "OPTION : Execute command in Dry-Run mode";
+
+    private static final String EntityTypeArg           = "entity-type";
+    private static final String EntityTypeDoc           = "OPTION : entity on which to execute command [topics|users]";
 
     private static final String TopicsExecuteArg        = "topics";
     private static final String TopicsExecuteDoc        = "OPTION : Only run command for this of topics (separated by ,)";
@@ -96,6 +99,8 @@ public class KafkaSpecsRunnerOptions {
 
     private final OptionSpec[] executeOpts;
 
+    private ArgumentAcceptingOptionSpec<String> entityTypes;
+
     /**
      * Creates a new {@link KafkaSpecsRunnerOptions} instance.
      *
@@ -118,6 +123,11 @@ public class KafkaSpecsRunnerOptions {
                 .withRequiredArg()
                 .describedAs("server(s) to use for bootstrapping")
                 .ofType(String.class);
+
+         entityTypes = parser.accepts(EntityTypeArg, EntityTypeDoc)
+                 .withRequiredArg()
+                 .ofType(String.class)
+                 .withValuesSeparatedBy(",");
 
         // commands
         OptionSpecBuilder executeSpecBuilder = parser.accepts(ExecuteCommandArg, ExecuteCommandDoc);
@@ -162,8 +172,13 @@ public class KafkaSpecsRunnerOptions {
         CLIUtils.checkRequiredArgs(parser, options, bootstrapServerOpt);
         if (isExecuteCommand()) {
             CLIUtils.checkRequiredArgs(parser, options, clusterSpecificationFileOpt);
+            CLIUtils.checkRequiredArgs(parser, options, entityTypes);
             CLIUtils.checkOnceRequiredArgs(parser, options, executeOpts);
         }
+    }
+
+    public Collection<String> entityTypes() {
+        return (options.has(entityTypes)) ? entityTypes.values(options) : Collections.emptyList();
     }
 
     public boolean hasSingleAction() {

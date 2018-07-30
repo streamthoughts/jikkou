@@ -16,9 +16,6 @@
  */
 package com.zenika.kafka.specs.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,8 +27,6 @@ import java.util.Properties;
 /**
  */
 public class PropertiesUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PropertiesUtils.class);
 
     public static Properties loadProps(final String path) throws IOException {
         return loadProps(path != null ? new File(path) : null);

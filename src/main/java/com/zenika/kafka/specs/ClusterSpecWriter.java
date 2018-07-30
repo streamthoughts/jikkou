@@ -18,7 +18,16 @@ package com.zenika.kafka.specs;
 
 import java.io.OutputStream;
 
+/**
+ * Default interface to write a cluster specification.
+ */
 public interface ClusterSpecWriter {
 
+    /**
+     * Writes the cluster specification into the specified output stream.
+     *
+     * @param spec  the cluster specification.
+     * @param os    the output stream.
+     */
     void write(final ClusterSpec spec, final OutputStream os);
 }

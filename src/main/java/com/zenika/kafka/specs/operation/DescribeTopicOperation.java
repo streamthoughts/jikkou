@@ -78,7 +78,7 @@ public class DescribeTopicOperation implements ClusterOperation<ResourcesIterabl
     private TopicResource newTopicResources(final TopicDescription desc, final Config config) {
         int rf = computeReplicationFactor(desc);
         Set<ConfigValue> configs = config.entries().stream()
-                .filter(entry -> !entry.isDefault() || options.dscribeDefaultConfigs())
+                .filter(entry -> !entry.isDefault() || options.describeDefaultConfigs())
                 .map(entry -> new ConfigValue(entry.name(), entry.value(), entry.isDefault()))
                 .collect(Collectors.toSet());
         return new TopicResource(desc.name(), desc.partitions().size(), (short) rf, new Configs(configs));

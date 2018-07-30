@@ -25,6 +25,6 @@ import org.apache.kafka.clients.admin.AdminClient;
  */
 public interface ClusterCommand<T> {
 
-    T execute(final KafkaSpecsRunnerOptions options, final AdminClient client);
+    T execute(final KafkaSpecsRunnerOptions options);
 
 }

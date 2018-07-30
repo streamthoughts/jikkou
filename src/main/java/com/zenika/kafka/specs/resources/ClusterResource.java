@@ -20,13 +20,7 @@ package com.zenika.kafka.specs.resources;
 /**
  * Default interface to represent a kafka configurable resource (i.e Topic).
  */
-public interface ClusterResource extends Named {
+public interface ClusterResource {
 
-    /**
-     * Returns the configuration for this resource.
-     *
-     * @return  a {@link Configs} instance.
-     */
-    Configs configs();
 
 }
