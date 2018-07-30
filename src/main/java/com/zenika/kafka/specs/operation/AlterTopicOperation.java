@@ -16,7 +16,8 @@
  */
 package com.zenika.kafka.specs.operation;
 
-import com.zenika.kafka.specs.command.TopicsCommands;
+import com.zenika.kafka.specs.Description;
+import com.zenika.kafka.specs.internal.DescriptionProvider;
 import com.zenika.kafka.specs.resources.ResourcesIterable;
 import com.zenika.kafka.specs.resources.TopicResource;
 import com.zenika.kafka.specs.internal.ConfigsBuilder;
@@ -35,7 +36,11 @@ import java.util.Map;
 /**
  * Default command to alter multiple topics.
  */
-public class AlterTopicOperation extends TopicOperation<ResourceOperationOptions>{
+public class AlterTopicOperation extends TopicOperation<ResourceOperationOptions> {
+
+    public static DescriptionProvider<TopicResource> DESCRIPTION = (resource -> {
+        return (Description.Alter) () -> String.format("Alter topic %s", resource.name());
+    });
 
     private static final Logger LOG = LoggerFactory.getLogger(AlterTopicOperation.class);
 
@@ -43,8 +48,8 @@ public class AlterTopicOperation extends TopicOperation<ResourceOperationOptions
      * {@inheritDoc}
      */
     @Override
-    TopicsCommands getCommand() {
-        return TopicsCommands.ALTER;
+    Description getDescriptionFor(final TopicResource resource) {
+        return DESCRIPTION.getForResource(resource);
     }
 
     /**

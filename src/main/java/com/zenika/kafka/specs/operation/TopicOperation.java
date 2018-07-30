@@ -17,8 +17,6 @@
 package com.zenika.kafka.specs.operation;
 
 import com.zenika.kafka.specs.OperationResult;
-import com.zenika.kafka.specs.command.TopicsCommands;
-import com.zenika.kafka.specs.internal.Time;
 import com.zenika.kafka.specs.resources.Named;
 import com.zenika.kafka.specs.resources.ResourcesIterable;
 import com.zenika.kafka.specs.resources.TopicResource;
@@ -29,11 +27,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public abstract class TopicOperation<T extends ResourceOperationOptions> implements
-        ClusterOperation<ResourcesIterable<TopicResource>, T, Collection<OperationResult<TopicResource>>> {
+public abstract class TopicOperation<T extends ResourceOperationOptions> extends AbstractOperation<TopicResource, T> {
 
     /**
      * {@inheritDoc}
@@ -60,22 +56,8 @@ public abstract class TopicOperation<T extends ResourceOperationOptions> impleme
 
     }
 
-    abstract TopicsCommands getCommand();
-
     protected abstract Map<String, KafkaFuture<Void>> doExecute(final AdminClient client,
                                                                 final ResourcesIterable<TopicResource> resource,
                                                                 final ResourceOperationOptions options);
 
-
-    private CompletableFuture<OperationResult<TopicResource>> makeCompletableFuture(final KafkaFuture<Void> future,
-                                                                                    final TopicResource resource) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                future.get();
-                return OperationResult.changed(resource, getCommand());
-            } catch (InterruptedException|ExecutionException e) {
-                return OperationResult.failed(resource, getCommand(), e);
-            }
-        });
-    }
 }

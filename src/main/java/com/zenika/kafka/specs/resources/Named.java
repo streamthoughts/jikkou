@@ -37,4 +37,6 @@ public interface Named {
         Stream<T> stream = resources.stream();
         return stream.collect(Collectors.toMap(Named::name, o -> o));
     }
+
+
 }

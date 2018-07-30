@@ -14,28 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zenika.kafka.specs.command;
+package com.zenika.kafka.specs;
 
-import com.zenika.kafka.specs.resources.ClusterResource;
+public class InvalidSpecificationException extends RuntimeException {
 
-public enum TopicsCommands {
-
-    UNKNOWN("Unknown operation on topic \"%s\""),
-    CREATE("Create a new topic \"%s\""),
-    DELETE("Delete topic \"%s\""),
-    ALTER("Alter existing topic \"%s\"");
-
-    private String format;
-
-    /**
-     * Creating a new TopicsCommands instance.
-     * @param format
-     */
-    TopicsCommands(final String format) {
-        this.format = format;
+    private static void requireNonNull(final Object o, final String message) {
+        if (o == null) {
+            throw new InvalidSpecificationException(message);
+        }
     }
 
-    public String format(final ClusterResource resource) {
-        return String.format(format, resource.name());
+    public InvalidSpecificationException(final String message) {
+        super(message);
     }
 }

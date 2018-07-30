@@ -19,48 +19,80 @@ package com.zenika.kafka.specs.command;
 import com.zenika.kafka.specs.ClusterSpec;
 import com.zenika.kafka.specs.KafkaSpecsRunnerOptions;
 import com.zenika.kafka.specs.YAMLClusterSpecWriter;
+import com.zenika.kafka.specs.acl.AclRule;
+import com.zenika.kafka.specs.acl.AclRulesBuilder;
+import com.zenika.kafka.specs.acl.AclUserPolicy;
+import com.zenika.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
+import com.zenika.kafka.specs.internal.AdminClientUtils;
+import com.zenika.kafka.specs.operation.DescribeAclsOperation;
 import com.zenika.kafka.specs.operation.DescribeOperationOptions;
 import com.zenika.kafka.specs.operation.DescribeTopicOperation;
-import com.zenika.kafka.specs.resources.Named;
+import com.zenika.kafka.specs.operation.ResourceOperationOptions;
 import com.zenika.kafka.specs.resources.ResourcesIterable;
 import com.zenika.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.TopicListing;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class ExportTopicsCommand implements ClusterCommand<Void> {
+public class ExportClusterSpecCommand implements ClusterCommand<Void> {
+
+    private final AdminClient client;
+
+    private final AclRulesBuilder aclRulesBuilder;
+
+    /**
+     * Creates a new {@link ExportClusterSpecCommand} instance.
+     * @param client    the admin client to be used.
+     */
+    public ExportClusterSpecCommand(final AdminClient client) {
+        this.client = client;
+        this.aclRulesBuilder =  new TopicMatchingAclRulesBuilder(client);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Void execute(final KafkaSpecsRunnerOptions options,
-                        final AdminClient client) {
+    public Void execute(final KafkaSpecsRunnerOptions options) {
         try {
+
             Collection<String> topicNames = (options.topics().isEmpty()) ?
-                    client.listTopics().names().get() :
-                    options.topics();
+                    loadClusterTopicsNames(client) :  options.topics();
+
             List<TopicResource> topics = topicNames.stream().map(TopicResource::new).collect(Collectors.toList());
             ResourcesIterable<TopicResource> it = new ResourcesIterable<>(topics);
 
             Collection<TopicResource> resources = new DescribeTopicOperation().execute(client, it,
                     DescribeOperationOptions.withDescribeDefaultConfigs(options.isDefaultConfigs()));
 
+            Collection<AclRule> rules = new DescribeAclsOperation().execute(client, null, new ResourceOperationOptions() {});
+            Collection<AclUserPolicy> policies = aclRulesBuilder.toAclUserPolicy(rules);
+
+
             File file = options.clusterSpecificationOpt();
             OutputStream os = (file != null) ? new FileOutputStream(options.clusterSpecificationOpt()) : System.out;
-            YAMLClusterSpecWriter.instance().write(new ClusterSpec(Named.keyByName(resources)), os);
+            YAMLClusterSpecWriter.instance().write(new ClusterSpec(resources, Collections.emptyList(), policies), os);
 
             return null;
 
-        } catch (InterruptedException | ExecutionException | FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Collection<String> loadClusterTopicsNames(final AdminClient client) {
+        CompletableFuture<Collection<TopicListing>> topics = AdminClientUtils.listTopics(client);
+        return topics
+                .thenApply(t -> t.stream().map(TopicListing::name).collect(Collectors.toList()))
+                .join();
     }
 }

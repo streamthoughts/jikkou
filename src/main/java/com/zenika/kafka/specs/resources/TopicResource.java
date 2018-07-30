@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * A Kafka topic resource.
  */
-public class TopicResource implements ClusterResource, Serializable {
+public class TopicResource implements ClusterResource,  Named, Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(TopicResource.class);
 
@@ -100,10 +100,6 @@ public class TopicResource implements ClusterResource, Serializable {
         return replicationFactor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Configs configs() {
         return configs;
     }

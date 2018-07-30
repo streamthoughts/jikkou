@@ -24,11 +24,13 @@ import java.io.InputStream;
 public interface ClusterSpecReader {
 
     class Fields {
-        static final String TOPIC_PARTITIONS_FIELD          = "partitions";
-        static final String TOPIC_REPLICATION_FACTOR_FIELD  = "replication_factor";
-        static final String TOPIC_NAME_FIELD                = "name";
-        static final String TOPIC_CONFIGS_FIELD             = "configs";
+        // topics
         static final String TOPICS_FIELD                    = "topics";
+
+        // ACLs groups and users
+        static final String ACL_FIELD                       = "acls";
+        static final String ACL_GROUP_POLICIES_FIELD        = "group_policies";
+        static final String ACL_ACCESS_POLICIES_FIELD       = "access_policies";
     }
 
     /**

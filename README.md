@@ -1,4 +1,4 @@
-Kafka Specs (Topics management made easy!)
+Kafka Specs (Cluster management made easy!)
 ==========================================
 
 [![CircleCI](https://circleci.com/gh/Zenika/kafka-specs/tree/feature%2Fcircle-ci-init.svg?style=svg&circle-token=44dffabbf60d064f8195246fbc2a63549998e582)](https://circleci.com/gh/Zenika/kafka-specs/tree/feature%2Fcircle-ci-init)
@@ -6,7 +6,7 @@ Kafka Specs (Topics management made easy!)
 
 [Apache Kafka](http://kafka.apache.org/) is a high-throughput, distributed, publish-subscribe messaging system.
 
-**KafkaSpecs** is a java tool to simplify the management of your Kafka topics.
+**KafkaSpecs** is a java tool to simplify the management of your Kafka Topics and ACLs.
 
 ## Requirements :
 
@@ -26,22 +26,23 @@ topics:
     min.insync.replicas: '1'
   name: my-topic
   partitions: 12
-  replicationFactor: 1
+  replication_factor: 1
 ```
+
+## How to Manage Topics ?
 
 **KafkaSpecs can be used to create topics :**
 
 ```bash
-./bin/kafka-specs --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml
+./bin/kafka-specs --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml --entity-type topics
 ```
 
 (output)
-```
-TASK [create] changed *****************************
+```json
+TASK [CREATE] Create a new topic my-topic (partitions=12, replicas=1) - CHANGED *************************
 {
   "changed": true,
-  "cmd": "create",
-  "end": 1531514308647,
+  "end": 1539682759748,
   "resource": {
     "name": "my-topic",
     "partitions": 12,
@@ -52,7 +53,8 @@ TASK [create] changed *****************************
       "min.insync.replicas": "1"
     }
   },
-  "failed": false
+  "failed": false,
+  "status": "CHANGED"
 }
 ok : 0, changed : 1, failed : 0
 ```
@@ -60,10 +62,10 @@ ok : 0, changed : 1, failed : 0
 **KafkaSpecs can be used describe existing topics:**
 
 ```bash
-./bin/kafka-specs --export --bootstrap-server localhost:9092 --default-configs
+./bin/kafka-specs --export --bootstrap-server localhost:9092 --default-configs --entity-type topics
 ```
 (output)
-```
+```json
 topics:
 - configs:
     cleanup.policy: compact
@@ -95,6 +97,113 @@ topics:
   replicationFactor: 1
 ```
 
+## How to Manage ACLs
+
+**KafkaSpecs can be used to simply describe all ACLs that need to be created on Kafka Cluster:**
+
+```yaml
+acls:
+  access_policies:
+    - principal : 'User:benchmark'
+      groups  : []
+      permissions :
+        - resource :
+            type : 'topic'
+            pattern : 'bench-'
+            patternType : 'PREFIXED'
+          allow_operations : ['READ:*', 'WRITE:*']
+        - resource :
+            type : 'group'
+            pattern : '*'
+            patternType : 'LITERAL'
+          allow_operations : ['DESCRIBE:*']
+```
+
+You can also defined a *group_policies* to defined ACLs to be applied to multiple principal. 
+Kafka Specs will take care of creating all corresponding ACLs
+
+```yaml
+acls:
+  group_policies:
+    - name : 'spec-access-all-topics'
+      resource :
+        type : 'topic'
+        pattern : '*'
+        patternType : 'LITERAL'
+      allow_operations : ['ALL:*']
+
+     - name : 'spec-access-all-groups'
+      resource :
+        type : 'group'
+        pattern : '*'
+        patternType : 'LITERAL'
+      allow_operations : ['ALL:*']
+
+  access_policies:
+    - principal : 'User:kafka'
+      groups    : [ 'spec-access-all-topics', 'spec-access-all-groups' ]
+      
+    - principal : 'User:admin-topic'
+      groups    : [ 'spec-access-all-topics']
+```
+
+As of Kafka 2.0.0, you can use LITERAL and PREFIXED pattern-type to define new ACLs, then MATCH and ANY for filtering.
+
+With Kafka Specs you can use the pattern-type MATCH to create ACLs. This will defined ACLs with LITERAL pattern type for all topics matching the defined regex.
+
+```yaml
+acls:
+  access_policies:
+    - principal : 'User:benchmark'
+      groups  : []
+      permissions :
+        - resource :
+            type : 'topic'
+            pattern : '/bench-([.-])*/'
+            patternType : 'MATCH'
+          allow_operations : ['READ:*', 'WRITE:*']
+```
+
+```json
+TASK [CREATE] Create a new ACL (ALLOW User:benchmark to WRITE TOPIC:LITERAL:bench-p1-r1) - CHANGED ******
+{
+  "changed": true,
+  "end": 1539685171168,
+  "resource": {
+    "principalType": "User",
+    "principalName": "benchmark",
+    "resourcePattern": "bench-p1-r1",
+    "patternType": "LITERAL",
+    "resourceType": "TOPIC",
+    "operation": "WRITE",
+    "permission": "ALLOW",
+    "host": "*"
+  },
+  "failed": false,
+  "status": "CHANGED"
+}
+TASK [CREATE] Create a new ACL (ALLOW User:benchmark to READ TOPIC:LITERAL:bench-p1-r1) - CHANGED *******
+{
+  "changed": true,
+  "end": 1539685171168,
+  "resource": {
+    "principalType": "User",
+    "principalName": "benchmark",
+    "resourcePattern": "bench-p1-r1",
+    "patternType": "LITERAL",
+    "resourceType": "TOPIC",
+    "operation": "READ",
+    "permission": "ALLOW",
+    "host": "*"
+  },
+  "failed": false,
+  "status": "CHANGED"
+}
+
+```
+
+Limitation : Currently Kafka Specs only support create and describe actions.
+
 ## All Actions
 
 ```bash
@@ -103,7 +212,7 @@ topics:
 Create, Alter, Delete, Describe or clean Kafka cluster resources
 Option                                  Description                           
 ------                                  -----------                           
---alter                                 OPTION : Alter all existing topics    
+--alter                                 OPTION : Alter all existing entities  
                                           that have configuration changed     
 --bootstrap-server <String: server(s)   REQUIRED: The server to connect to.   
   to use for bootstrapping>                                                   
@@ -114,13 +223,13 @@ Option                                  Description
   config property>                        be passed to Admin Client.          
 --command.config <File: command config  A property file containing configs to 
   property file>                          be passed to Admin Client.          
---create                                OPTION : Create all topics that       
+--create                                OPTION : Create all entities that     
                                           currently do not exist on remote    
                                           cluster                             
 --default-configs                       OPTION : Export built-in default      
                                           configuration for configs that have 
                                           a default value                     
---delete                                OPTION : Delete all remote topics     
+--delete                                OPTION : Delete all remote entities   
                                           which are not described in          
                                           specifications                      
 --describe                              COMMAND: Describe resources           
@@ -130,6 +239,8 @@ Option                                  Description
                                           specifications                      
 --dry-run                               OPTION : Execute command in Dry-Run   
                                           mode                                
+--entity-type <String>                  OPTION : entity on which to execute   
+                                          command [topics|users]              
 --execute                               COMMAND: Align cluster resources with 
                                           the specified specifications        
 --file <File>                           The cluster specification to used for 

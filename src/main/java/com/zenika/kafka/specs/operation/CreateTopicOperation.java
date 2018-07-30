@@ -16,7 +16,9 @@
  */
 package com.zenika.kafka.specs.operation;
 
-import com.zenika.kafka.specs.command.TopicsCommands;
+import com.zenika.kafka.specs.Description;
+import com.zenika.kafka.specs.command.OperationType;
+import com.zenika.kafka.specs.internal.DescriptionProvider;
 import com.zenika.kafka.specs.resources.Configs;
 import com.zenika.kafka.specs.resources.ResourcesIterable;
 import com.zenika.kafka.specs.resources.TopicResource;
@@ -40,12 +42,18 @@ public class CreateTopicOperation extends TopicOperation<CreateTopicOperationOpt
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTopicOperation.class);
 
+    public static DescriptionProvider<TopicResource> DESCRIPTION = (resource -> {
+        return (Description.Create) () -> String.format("Create a new topic %s (partitions=%d, replicas=%d)",
+                resource.name(), resource.partitions(), resource.replicationFactor());
+    });
+
+
     /**
      * {@inheritDoc}
      */
     @Override
-    TopicsCommands getCommand() {
-        return TopicsCommands.CREATE;
+    Description getDescriptionFor(final TopicResource resource) {
+        return DESCRIPTION.getForResource(resource);
     }
 
     /**

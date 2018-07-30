@@ -18,9 +18,11 @@ package com.zenika.kafka.specs.command;
 
 import com.zenika.kafka.specs.ClusterSpec;
 import com.zenika.kafka.specs.ClusterSpecReader;
+import com.zenika.kafka.specs.Description;
 import com.zenika.kafka.specs.KafkaSpecsRunnerOptions;
 import com.zenika.kafka.specs.OperationResult;
 import com.zenika.kafka.specs.YAMLClusterSpecReader;
+import com.zenika.kafka.specs.internal.DescriptionProvider;
 import com.zenika.kafka.specs.operation.AlterTopicOperation;
 import com.zenika.kafka.specs.operation.CreateTopicOperation;
 import com.zenika.kafka.specs.operation.CreateTopicOperationOptions;
@@ -37,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,16 +50,32 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
     private static final ClusterSpecReader READER = new YAMLClusterSpecReader();
 
-    private AdminClient client;
+    private static final Map<OperationType, DescriptionProvider<TopicResource>> DESCRIPTIONS_BY_TYPE = new HashMap<>();
+
+    static {
+        DESCRIPTIONS_BY_TYPE.put(OperationType.CREATE, CreateTopicOperation.DESCRIPTION);
+        DESCRIPTIONS_BY_TYPE.put(OperationType.DELETE, DeleteTopicOperation.DESCRIPTION);
+        DESCRIPTIONS_BY_TYPE.put(OperationType.ALTER, AlterTopicOperation.DESCRIPTION);
+        DESCRIPTIONS_BY_TYPE.put(OperationType.UNKNOWN, resource -> (Description.Unknown) () -> "Executing operation on topic " + resource.name());
+    }
+
+    private final AdminClient client;
 
     private KafkaSpecsRunnerOptions options;
+
+    /**
+     * Creates a new {@link ExecuteTopicCommand} instance.
+     * @param client
+     */
+    public ExecuteTopicCommand(final AdminClient client) {
+        this.client = client;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<OperationResult<TopicResource>> execute(final KafkaSpecsRunnerOptions options, final AdminClient client) {
-        this.client = client;
+    public Collection<OperationResult<TopicResource>> execute(final KafkaSpecsRunnerOptions options) {
         this.options = options;
         File specification = options.clusterSpecificationOpt();
         try {
@@ -88,30 +107,30 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
             final List<OperationResult<TopicResource>> results = new LinkedList<>();
 
-            TopicsCommands lastCommand = null;
+            OperationType lastOperation = null;
             if (options.isDeleteTopicsCommand()) {
-                lastCommand = TopicsCommands.DELETE;
+                lastOperation = OperationType.DELETE;
                 results.addAll(executeDeleteTopics(unknown));
             }
 
             if (options.isCreateTopicsCommand()) {
-                lastCommand = TopicsCommands.CREATE;
+                lastOperation = OperationType.CREATE;
                 results.addAll(executeCreateTopics(created));
             }
 
             if (options.isAlterTopicsCommand()) {
-                lastCommand = TopicsCommands.ALTER;
+                lastOperation = OperationType.ALTER;
                 results.addAll(executeAlterTopics(altered));
             }
 
             // We should keep trace of unchanged topic for tool output - in theory the last command should never be null.
-            final TopicsCommands command = lastCommand == null ? TopicsCommands.UNKNOWN : lastCommand;
-            if (options.isDryRun()) {
-                results.addAll(buildDryRunResult(unchanged, false, command));
+            final OperationType command = lastOperation == null ? OperationType.UNKNOWN : lastOperation;
 
+            if (options.isDryRun()) {
+                results.addAll(buildDryRunResult(unchanged, false, DESCRIPTIONS_BY_TYPE.get(command)));
             } else {
                 results.addAll(unchanged.stream()
-                        .map(r -> OperationResult.unchanged(r, command))
+                        .map(r -> OperationResult.unchanged(r, DESCRIPTIONS_BY_TYPE.get(command).getForResource(r)))
                         .collect(Collectors.toList()));
             }
             return results;
@@ -123,7 +142,7 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
     private Collection<OperationResult<TopicResource>> executeAlterTopics(final Collection<TopicResource> topics) {
         if (options.isDryRun()) {
-            return buildDryRunResult(topics, true, TopicsCommands.ALTER);
+            return buildDryRunResult(topics, true, AlterTopicOperation.DESCRIPTION);
         }
         return new AlterTopicOperation()
                 .execute(client, new ResourcesIterable<>(topics), new ResourceOperationOptions() {
@@ -132,7 +151,7 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
     private Collection<OperationResult<TopicResource>> executeCreateTopics(final Collection<TopicResource> topics) {
         if (options.isDryRun()) {
-            return buildDryRunResult(topics, true, TopicsCommands.CREATE);
+            return buildDryRunResult(topics, true, CreateTopicOperation.DESCRIPTION);
         }
 
         return new CreateTopicOperation()
@@ -141,7 +160,7 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
     private Collection<OperationResult<TopicResource>> executeDeleteTopics(final Collection<TopicResource> topics) {
         if (options.isDryRun()) {
-            return buildDryRunResult(topics, true, TopicsCommands.DELETE);
+            return buildDryRunResult(topics, true, DeleteTopicOperation.DESCRIPTION);
         }
 
         return new DeleteTopicOperation()
@@ -150,9 +169,9 @@ public class ExecuteTopicCommand implements ClusterCommand<Collection<OperationR
 
     private List<OperationResult<TopicResource>> buildDryRunResult(final Collection<TopicResource> resources,
                                                                    final boolean changed,
-                                                                   final TopicsCommands command) {
+                                                                   final DescriptionProvider<TopicResource> provider) {
         return resources.stream()
-                .map(r -> OperationResult.dryRun(r, changed, command))
+                .map(r -> OperationResult.dryRun(r, changed, provider.getForResource(r)))
                 .collect(Collectors.toList());
     }
 

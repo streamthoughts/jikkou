@@ -14,21 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zenika.kafka.specs.operation;
+package com.zenika.kafka.specs.internal;
 
-public class DescribeOperationOptions implements ResourceOperationOptions {
+import com.zenika.kafka.specs.Description;
 
-    private boolean describeDefaultConfigs;
+/**
+ * Simple interface to provide a description object.
+ *
+ * @param <T>   the resource type.
+ */
+@FunctionalInterface
+public interface DescriptionProvider<T> {
 
-    public static DescribeOperationOptions withDescribeDefaultConfigs(final boolean describeDefaultConfigs) {
-        return new DescribeOperationOptions(describeDefaultConfigs);
-    }
+    /**
+     * Get a description for the specified resource.
+     *
+     * @param resource the resource to be used
+     *
+     * @return a new {@link Description} instance.
+     */
+    Description getForResource(T resource);
 
-    private DescribeOperationOptions(boolean describeDefaultConfigs) {
-        this.describeDefaultConfigs = describeDefaultConfigs;
-    }
-
-    public boolean describeDefaultConfigs() {
-        return describeDefaultConfigs;
-    }
 }

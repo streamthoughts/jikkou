@@ -16,8 +16,6 @@
  */
 package com.zenika.kafka.specs;
 
-import com.zenika.kafka.specs.command.TopicsCommands;
-import com.zenika.kafka.specs.resources.ClusterResource;
 import com.zenika.kafka.specs.resources.Configs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,7 +33,7 @@ import java.util.Collection;
  */
 public class Printer {
 
-    private static final String PADDING = "************************************************************";
+    private static final String PADDING = "********************************************************************************";
 
     private static final String KAFKA_SPECS_COLOR_ENABLED = "KAFKA_SPECS_COLOR_ENABLED";
 
@@ -56,10 +54,8 @@ public class Printer {
      *
      * @param results   the execution results to print.
      * @param verbose   print details.
-     * @param <T>       type of resource.
      */
-    public static <T extends ClusterResource> void printAndExit(final Collection<OperationResult<T>> results,
-                                                                final boolean verbose) {
+    public static void printAndExit(final Collection<OperationResult> results, final boolean verbose) {
         int ok = 0;
         int changed = 0;
         int failed = 0;
@@ -77,7 +73,7 @@ public class Printer {
                 color = ANSI_GREEN;
                 ok++;
             }
-            printTask(r.getCmd(), r.getResource(), r.status().name());
+            printTask(r.description(), r.status().name());
             if (verbose) {
                 PS.printf("%s%s\n", isColor() ? color : "", json);
             }
@@ -86,12 +82,10 @@ public class Printer {
         System.exit( (failed > 0) ? 1 : 0);
     }
 
-    private static void printTask(final TopicsCommands command,
-                                  final ClusterResource resource,
-                                  final String status) {
-        String description = command.format(resource);
-        String padding = PADDING.substring(description.length());
-        PS.printf("%sTASK [%s] %s - %s %s\n", isColor() ? ANSI_WHITE : "", command.name(), description, status, padding);
+    private static void printTask(final Description description, final String status) {
+        String text = description.textDescription();
+        String padding =  (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
+        PS.printf("%sTASK [%s] %s - %s %s\n", isColor() ? ANSI_WHITE : "", description.operation().name(), text, status, padding);
     }
 
     private static boolean isColor() {

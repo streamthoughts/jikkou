@@ -16,12 +16,17 @@
  */
 package com.zenika.kafka.specs;
 
+import com.zenika.kafka.specs.acl.AclGroupPolicy;
+import com.zenika.kafka.specs.acl.AclUserPolicy;
+import com.zenika.kafka.specs.resources.Named;
 import com.zenika.kafka.specs.resources.TopicResource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -31,12 +36,39 @@ public class ClusterSpec implements Serializable {
 
     private Map<String, TopicResource> topics;
 
+    private Map<String, AclGroupPolicy> aclGroupPolicies;
+
+    private final Collection<AclUserPolicy> aclUsers;
+
     /**
      * Creates a new {@link ClusterSpec} instance.
      * @param topics  the topic list
      */
-    public ClusterSpec(final Map<String, TopicResource> topics) {
-        this.topics = topics;
+    public ClusterSpec(final Collection<TopicResource> topics) {
+        this(topics, Collections.emptyList(), Collections.emptyList());
+    }
+
+    /**
+     * Creates a new {@link ClusterSpec} instance.
+     * @param topics  the topic list
+     */
+    public ClusterSpec(final Collection<TopicResource> topics,
+                       final Collection<AclGroupPolicy> aclGroupPolicies,
+                       final Collection<AclUserPolicy> aclUsers) {
+        Objects.requireNonNull(topics, "topics cannot be null");
+        Objects.requireNonNull(topics, "aclGroupPolicies cannot be null");
+        Objects.requireNonNull(topics, "aclUsers cannot be null");
+        this.topics = Named.keyByName(topics);
+        this.aclGroupPolicies = Named.keyByName(aclGroupPolicies);
+        this.aclUsers = aclUsers;
+    }
+
+    public Map<String, AclGroupPolicy> getAclGroupPolicies() {
+        return aclGroupPolicies;
+    }
+
+    public Collection<AclUserPolicy> getAclUsers() {
+        return aclUsers;
     }
 
     public Collection<TopicResource> getTopics() {
