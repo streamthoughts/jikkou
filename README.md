@@ -1,6 +1,9 @@
 Kafka Specs (Topics management made easy!)
 ==========================================
 
+[![CircleCI](https://circleci.com/gh/Zenika/kafka-specs/tree/feature%2Fcircle-ci-init.svg?style=svg&circle-token=44dffabbf60d064f8195246fbc2a63549998e582)](https://circleci.com/gh/Zenika/kafka-specs/tree/feature%2Fcircle-ci-init)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Zenika/kafka-specs/blob/master/LICENSE)
+
 [Apache Kafka](http://kafka.apache.org/) is a high-throughput, distributed, publish-subscribe messaging system.
 
 **KafkaSpecs** is a java tool to simplify the management of your Kafka topics.
