@@ -28,7 +28,7 @@ dependencies {
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '1.1.0'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.0.0'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.19'
     compile group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '5.0.4'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
