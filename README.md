@@ -8,6 +8,21 @@ Kafka Specs (Cluster management made easy!)
 
 **KafkaSpecs** is a java tool to simplify the management of your Kafka Topics and ACLs.
 
+Currently, there are different ways to create/alter topics : 
+
+- **Automatically** with auto.create.topics.enable configured to true (But this not really a good idea in a production or even even in non-production environment).
+- **Using kafka-topics.sh** - But first you will need a kafka distribution. In addition, this tool need an access to zookeeper.
+- **Using AdminClient API** -  This is a low-level API (the one used by Kafka Specs).
+
+Those solutions are easy to use when starting with Kafka and/or during development cycles. 
+However, while moving into production you will need more sophisticated tools to automate the creation of your topics.
+
+
+Kafka Specs allow you to describe you cluster through a YAML file. This file will then be used to create, delete or alter topics and/or acls.
+
+
+Kafka Specs help you to adopt a GitOps approach to manage Kafka cluster resources.
+
 ## Requirements :
 
 1. Kafka 1.0.0 ...
@@ -38,7 +53,7 @@ topics:
 ```
 
 (output)
-```json
+```
 TASK [CREATE] Create a new topic my-topic (partitions=12, replicas=1) - CHANGED *************************
 {
   "changed": true,
@@ -65,7 +80,7 @@ ok : 0, changed : 1, failed : 0
 ./bin/kafka-specs --export --bootstrap-server localhost:9092 --default-configs --entity-type topics
 ```
 (output)
-```json
+```
 topics:
 - configs:
     cleanup.policy: compact
@@ -164,7 +179,7 @@ acls:
           allow_operations : ['READ:*', 'WRITE:*']
 ```
 
-```json
+```
 TASK [CREATE] Create a new ACL (ALLOW User:benchmark to WRITE TOPIC:LITERAL:bench-p1-r1) - CHANGED ******
 {
   "changed": true,
