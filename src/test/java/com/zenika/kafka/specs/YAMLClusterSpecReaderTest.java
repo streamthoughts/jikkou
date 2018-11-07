@@ -24,6 +24,7 @@ import org.apache.kafka.common.config.TopicConfig;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
@@ -92,7 +93,19 @@ public class YAMLClusterSpecReaderTest {
     private  YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
 
     @Test
-    public void shouldReadMultipleAclGroupsGivenAValidInputYAML() throws UnsupportedEncodingException {
+    public void shouldReadEmptyFileWithCurrentVersion() {
+        ClusterSpec specification = readTestSample(reader, "version: " + YAMLClusterSpecReader.CURRENT_VERSION);
+        assertNotNull(specification);
+    }
+
+    @Test
+    public void shouldReadEmptyFileWithNoInvalidVersion() {
+        ClusterSpec specification = readTestSample(reader, "version: " + YAMLClusterSpecReader.CURRENT_VERSION.version());
+        assertNotNull(specification);
+    }
+
+    @Test
+    public void shouldReadMultipleAclGroupsGivenAValidInputYAML() {
         ClusterSpec specification = readTestSample(reader, ACL_GROUP_POLICIES);
         assertNotNull(specification);
 
@@ -102,18 +115,18 @@ public class YAMLClusterSpecReaderTest {
         assertNotNull(groupOne);
 
         assertEquals("group_one", groupOne.name());
-        assertEquals("/([.-])*/", groupOne.permission().pattern().toString());
+        assertEquals("/([.-])*/", groupOne.permission().pattern());
         assertEquals(4, groupOne.permission().operations().size());
 
         AclGroupPolicy groupTwo = policies.get("group_two");
         assertNotNull(groupTwo);
         assertEquals("group_two", groupTwo.name());
-        assertEquals("/public-([.-])*/", groupTwo.permission().pattern().toString());
+        assertEquals("/public-([.-])*/", groupTwo.permission().pattern());
         assertEquals(2, groupTwo.permission().operations().size());
     }
 
     @Test
-    public void shouldReadMultipleAclUserGivenAValidInputYAML() throws UnsupportedEncodingException {
+    public void shouldReadMultipleAclUserGivenAValidInputYAML() {
         ClusterSpec specification = readTestSample(reader, ACL_USER_POLICIES);
         assertNotNull(specification);
 
@@ -122,7 +135,7 @@ public class YAMLClusterSpecReaderTest {
     }
 
     @Test
-    public void shouldReadMultipleTopicResourcesGivenAValidInputYAML() throws UnsupportedEncodingException {
+    public void shouldReadMultipleTopicResourcesGivenAValidInputYAML() {
         ClusterSpec specification = readTestSample(reader, THREE_TOPICS_SIMPLE_CONFIG);
         assertNotNull(specification);
         Collection<TopicResource> topics = specification.getTopics();
@@ -134,8 +147,8 @@ public class YAMLClusterSpecReaderTest {
     }
 
 
-    private ClusterSpec readTestSample(YAMLClusterSpecReader reader, String aclGroupPolicies) throws UnsupportedEncodingException {
-        return reader.read(new ByteArrayInputStream(aclGroupPolicies.getBytes("UTF-8")));
+    private ClusterSpec readTestSample(final YAMLClusterSpecReader reader, final String content) {
+        return reader.read(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
 
 }

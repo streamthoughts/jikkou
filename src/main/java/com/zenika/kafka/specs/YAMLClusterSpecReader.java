@@ -24,6 +24,8 @@ import com.zenika.kafka.specs.reader.EntitySpecificationReader;
 import com.zenika.kafka.specs.reader.MapObjectReader;
 import com.zenika.kafka.specs.reader.TopicClusterSpecReader;
 import com.zenika.kafka.specs.resources.TopicResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
@@ -42,9 +44,68 @@ import static com.zenika.kafka.specs.ClusterSpecReader.Fields.TOPICS_FIELD;
  */
 public class YAMLClusterSpecReader implements ClusterSpecReader {
 
-    private final TopicClusterSpecReader TOPIC_READER = new TopicClusterSpecReader();
-    private final AclGroupPolicyReader ACL_GROUP_READER = new AclGroupPolicyReader();
-    private final AclUserPolicyReader ACL_USER_READER = new AclUserPolicyReader();
+    private static final Logger LOG = LoggerFactory.getLogger(YAMLClusterSpecReader.class);
+
+    private static final String VERSION_FIELD = "version";
+
+    static final SpecVersion CURRENT_VERSION = SpecVersion.VERSION_1;
+
+    public enum SpecVersion {
+        VERSION_1("1") {
+            @SuppressWarnings("unchecked")
+            @Override
+            ClusterSpec read(Map<String, Object> specification) {
+                final Set<TopicResource> mTopics = read(TOPICS_FIELD, specification, new TopicClusterSpecReader());
+
+                Map<String, Object> acls = (Map<String, Object>) specification.get(ACL_FIELD);
+
+                final Set<AclGroupPolicy> mGroups = read(ACL_GROUP_POLICIES_FIELD, acls, new AclGroupPolicyReader());
+                final Set<AclUserPolicy> sUsers = read(ACL_ACCESS_POLICIES_FIELD, acls, new AclUserPolicyReader());
+
+                return new ClusterSpec(mTopics, mGroups, sUsers);
+            }
+        };
+
+        private String version;
+
+        SpecVersion(final String version) {
+            this.version = version;
+        }
+
+        public String version() {
+            return version;
+        }
+
+        abstract ClusterSpec read(final Map<String, Object> specification);
+
+
+        /**
+         * Read the specification entity with the specified reader.
+         *
+         * @param key       the entity key to read.
+         * @param input     the specification input.
+         * @param reader    the reader
+         * @param <T>       the output entity type.
+         *
+         * @return          a set of new {@link T} instance.
+         */
+        protected static <T> Set<T> read(final String key, final Map<String, Object> input, final EntitySpecificationReader<T> reader) {
+            if (input == null) return Collections.emptySet();
+
+            return Optional.ofNullable(input.get(key))
+                    .map(t -> reader.read(MapObjectReader.toList(t)))
+                    .orElse(Collections.emptySet());
+        }
+
+        public static Optional<SpecVersion> getVersionFromString(final String version) {
+            for (SpecVersion e : SpecVersion.values()) {
+                if (e.version().endsWith(version)) {
+                    return Optional.of(e);
+                }
+            }
+            return Optional.empty();
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -56,33 +117,19 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
         Map<String, Object> specification = yaml.load(stream);
         requireNonNull(specification, "Cluster specification is empty or invalid.");
 
-        final Set<TopicResource> mTopics = read(TOPICS_FIELD, specification, TOPIC_READER);
+        final Object version = specification.get(VERSION_FIELD);
+        if (version == null) {
+            LOG.warn("No version found in input specification file, using current version {}", CURRENT_VERSION.version);
+            return CURRENT_VERSION.read(specification);
+        }
 
-        Map<String, Object> acls = (Map<String, Object>) specification.get(ACL_FIELD);
-
-        final Set<AclGroupPolicy> mGroups = read(ACL_GROUP_POLICIES_FIELD, acls, ACL_GROUP_READER);
-        final Set<AclUserPolicy> sUsers = read(ACL_ACCESS_POLICIES_FIELD, acls, ACL_USER_READER);
-
-        return new ClusterSpec(mTopics, mGroups, sUsers);
+        Optional<SpecVersion> specVersion = SpecVersion.getVersionFromString(version.toString());
+        return specVersion.orElseGet(() -> {
+            LOG.info("Unknown version '{}', using current version {}", version, CURRENT_VERSION);
+            return CURRENT_VERSION;
+        }).read(specification);
     }
 
-    /**
-     * Read the specification entity with the specified reader.
-     *
-     * @param key       the entity key to read.
-     * @param input     the specification input.
-     * @param reader    the reader
-     * @param <T>       the output entity type.
-     *
-     * @return          a set of new {@link T} instance.
-     */
-    private static <T> Set<T> read(final String key, final Map<String, Object> input, final EntitySpecificationReader<T> reader) {
-        if (input == null) return Collections.emptySet();
-
-        return Optional.ofNullable(input.get(key))
-            .map(t -> reader.read(MapObjectReader.toList(t)))
-            .orElse(Collections.emptySet());
-    }
 
     private static void requireNonNull(final Object o, final String message) {
         if (o == null) {
