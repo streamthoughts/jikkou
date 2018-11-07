@@ -34,6 +34,7 @@ Kafka Topics are described using simple YAML description file :
 
 cluster-dev-topics.yaml : 
 ```yaml
+version: 1
 topics:
 - configs:
     cleanup.policy: compact
@@ -81,6 +82,7 @@ ok : 0, changed : 1, failed : 0
 ```
 (output)
 ```
+version: 1
 topics:
 - configs:
     cleanup.policy: compact
@@ -117,6 +119,7 @@ topics:
 **KafkaSpecs can be used to simply describe all ACLs that need to be created on Kafka Cluster:**
 
 ```yaml
+version: 1
 acls:
   access_policies:
     - principal : 'User:benchmark'
@@ -138,6 +141,7 @@ You can also defined a *group_policies* to defined ACLs to be applied to multipl
 Kafka Specs will take care of creating all corresponding ACLs
 
 ```yaml
+version: 1
 acls:
   group_policies:
     - name : 'spec-access-all-topics'
@@ -167,6 +171,7 @@ As of Kafka 2.0.0, you can use LITERAL and PREFIXED pattern-type to define new A
 With Kafka Specs you can use the pattern-type MATCH to create ACLs. This will defined ACLs with LITERAL pattern type for all topics matching the defined regex.
 
 ```yaml
+version: 1
 acls:
   access_policies:
     - principal : 'User:benchmark'
