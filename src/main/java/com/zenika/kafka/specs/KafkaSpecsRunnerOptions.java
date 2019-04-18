@@ -82,6 +82,9 @@ public class KafkaSpecsRunnerOptions {
     private static final String VerboseArg              = "verbose";
     private static final String VerboseDoc              = "Print resources details";
 
+    private static final String AssumeYesArg            = "yes";
+    private static final String AssumeYesDoc            = "Assume yes; assume that the answer to any question which would be asked is yes. ";
+
     private final OptionSet options;
 
     private final ArgumentAcceptingOptionSpec<File> commandConfigOpt;
@@ -161,6 +164,7 @@ public class KafkaSpecsRunnerOptions {
         parser.accepts(DryRunExecuteArg, DryRunExecuteDoc);
         parser.accepts(DefaultConfigArg, DefaultConfigDoc);
         parser.accepts(VerboseArg, VerboseDoc);
+        parser.accepts(AssumeYesArg, AssumeYesDoc);
 
         parser.mutuallyExclusive(executeSpecBuilder, diffSpecBuilder, exportSpecBuilder, cleanAllSpecBuilder);
 
@@ -182,6 +186,10 @@ public class KafkaSpecsRunnerOptions {
         return (options.has(entityTypes)) ?
                 entityTypes.values(options).stream().map(EntityType::from).collect(Collectors.toList()) :
                 Collections.emptyList();
+    }
+
+    public boolean isAssumeYes() {
+         return options.has(AssumeYesArg);
     }
 
     public boolean hasSingleAction() {
