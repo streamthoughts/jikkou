@@ -52,7 +52,9 @@ public class KafkaSpecsRunner {
         try (AdminClient client = AdminClientUtils.newAdminClient(options)) {
 
             if (options.isExecuteCommand() ) {
-                CLIUtils.askToProceed();
+                if (! options.isAssumeYes()) {
+                    CLIUtils.askToProceed();
+                }
 
                 Collection<OperationResult> results = new LinkedList<>();
 

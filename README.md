@@ -273,6 +273,9 @@ Option                                  Description
 --topics <String>                       OPTION : Only run command for this of 
                                           topics (separated by ,)             
 --verbose                               Print resources details
+--yes                                   Assume yes; assume that the answer to 
+                                          any question which would be asked is
+                                          yes.
 ``` 
 
 ## How to build project ?
