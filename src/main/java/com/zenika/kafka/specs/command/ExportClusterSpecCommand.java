@@ -17,6 +17,7 @@
 package com.zenika.kafka.specs.command;
 
 import com.zenika.kafka.specs.ClusterSpec;
+import com.zenika.kafka.specs.EntityType;
 import com.zenika.kafka.specs.KafkaSpecsRunnerOptions;
 import com.zenika.kafka.specs.YAMLClusterSpecWriter;
 import com.zenika.kafka.specs.acl.AclRule;
@@ -39,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -68,15 +70,24 @@ public class ExportClusterSpecCommand implements ClusterCommand<Void> {
             Collection<String> topicNames = (options.topics().isEmpty()) ?
                     loadClusterTopicsNames(client) :  options.topics();
 
-            List<TopicResource> topics = topicNames.stream().map(TopicResource::new).collect(Collectors.toList());
-            ResourcesIterable<TopicResource> it = new ResourcesIterable<>(topics);
+            final Collection<TopicResource> resources = new LinkedList<>();
+            if (options.entityTypes().contains(EntityType.TOPICS) || options.entityTypes().isEmpty()) {
+                List<TopicResource> topics = topicNames.stream().map(TopicResource::new).collect(Collectors.toList());
+                ResourcesIterable<TopicResource> it = new ResourcesIterable<>(topics);
+                resources.addAll(
+                    new DescribeTopicOperation().execute(
+                        client,
+                        it,
+                        DescribeOperationOptions.withDescribeDefaultConfigs(options.isDefaultConfigs())
+                    )
+                );
+            }
 
-            Collection<TopicResource> resources = new DescribeTopicOperation().execute(client, it,
-                    DescribeOperationOptions.withDescribeDefaultConfigs(options.isDefaultConfigs()));
-
-            Collection<AclRule> rules = new DescribeAclsOperation().execute(client, null, new ResourceOperationOptions() {});
-            Collection<AclUserPolicy> policies = aclRulesBuilder.toAclUserPolicy(rules);
-
+            final LinkedList<AclUserPolicy> policies = new LinkedList<>();
+            if (options.entityTypes().contains(EntityType.ACLS) || options.entityTypes().isEmpty()) {
+                Collection<AclRule> rules = new DescribeAclsOperation().execute(client, null, new ResourceOperationOptions() {});
+                policies.addAll(aclRulesBuilder.toAclUserPolicy(rules));
+            }
 
             File file = options.clusterSpecificationOpt();
             OutputStream os = (file != null) ? new FileOutputStream(options.clusterSpecificationOpt()) : System.out;

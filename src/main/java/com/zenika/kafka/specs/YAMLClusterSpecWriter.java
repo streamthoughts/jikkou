@@ -25,6 +25,8 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -65,17 +67,28 @@ public class YAMLClusterSpecWriter implements ClusterSpecWriter {
     private Map<String, Object> toWritableMap(final ClusterSpec spec) {
         Map<String, Object> outputClusterMap = new HashMap<>();
 
-        outputClusterMap.put(ClusterSpecReader.Fields.ACL_FIELD, new HashMap<String, Object>(){{
-            put(ACL_ACCESS_POLICIES_FIELD, usersToMap(spec));
-        }});
-        outputClusterMap.put(ClusterSpecReader.Fields.TOPICS_FIELD, topicsToMap(spec) );
+        final Collection<AclUserPolicy> acls = spec.getAclUsers();
+        if (!acls.isEmpty()) {
+            outputClusterMap.put(
+                    ClusterSpecReader.Fields.ACL_FIELD,
+                    Collections.singletonMap(ACL_ACCESS_POLICIES_FIELD, usersToMap(acls))
+            );
+        }
+
+        final Collection<TopicResource> topics = spec.getTopics();
+        if (!topics.isEmpty()) {
+            outputClusterMap.put(
+                    ClusterSpecReader.Fields.TOPICS_FIELD,
+                    topicsToMap(topics)
+            );
+        }
 
         return outputClusterMap;
     }
 
-    private List<Map<String, Object>> usersToMap(ClusterSpec spec) {
+    private List<Map<String, Object>> usersToMap(final Collection<AclUserPolicy> policies) {
         List<Map<String, Object>> outputUsers = new LinkedList<>();
-        for (AclUserPolicy policy : spec.getAclUsers()) {
+        for (AclUserPolicy policy : policies) {
             Map<String, Object> user = new LinkedHashMap<>();
             user.put(ACL_PRINCIPAL_FIELD, policy.principal());
             user.put(ACL_GROUPS_FIELD, policy.groups().toArray());
@@ -97,9 +110,9 @@ public class YAMLClusterSpecWriter implements ClusterSpecWriter {
         return outputUsers;
     }
 
-    private List<Map<String, Object>> topicsToMap(ClusterSpec spec) {
+    private List<Map<String, Object>> topicsToMap(final Collection<TopicResource> topics) {
         List<Map<String, Object>> outputTopics = new LinkedList<>();
-        for (TopicResource resource : spec.getTopics()) {
+        for (TopicResource resource : topics) {
             Map<String, Object> outputTopicMap = new LinkedHashMap<>();
             outputTopicMap.put(TOPIC_NAME_FIELD, resource.name());
             outputTopicMap.put(TOPIC_PARTITIONS_FIELD, resource.partitions());
