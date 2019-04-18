@@ -47,10 +47,10 @@ topics:
 
 ## How to Manage Topics ?
 
-**KafkaSpecs can be used to create topics :**
+**KafkaSpecs can be used to create, delete or alter topics :**
 
 ```bash
-./bin/kafka-specs --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml --entity-type topics
+./bin/kafka-specs --execute --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml --entity-type topics
 ```
 
 (output)
@@ -78,7 +78,7 @@ ok : 0, changed : 1, failed : 0
 **KafkaSpecs can be used describe existing topics:**
 
 ```bash
-./bin/kafka-specs --export --bootstrap-server localhost:9092 --default-configs --entity-type topics
+./bin/kafka-specs --describe --bootstrap-server localhost:9092 --default-configs --entity-type topics
 ```
 (output)
 ```
@@ -182,6 +182,10 @@ acls:
             pattern : '/bench-([.-])*/'
             patternType : 'MATCH'
           allow_operations : ['READ:*', 'WRITE:*']
+```
+
+```bash
+./bin/kafka-specs --execute --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml --entity-type acls
 ```
 
 ```
