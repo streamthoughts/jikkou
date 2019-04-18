@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -177,8 +178,10 @@ public class KafkaSpecsRunnerOptions {
         }
     }
 
-    public Collection<String> entityTypes() {
-        return (options.has(entityTypes)) ? entityTypes.values(options) : Collections.emptyList();
+    public Collection<EntityType> entityTypes() {
+        return (options.has(entityTypes)) ?
+                entityTypes.values(options).stream().map(EntityType::from).collect(Collectors.toList()) :
+                Collections.emptyList();
     }
 
     public boolean hasSingleAction() {

@@ -260,7 +260,7 @@ Option                                  Description
 --dry-run                               OPTION : Execute command in Dry-Run   
                                           mode                                
 --entity-type <String>                  OPTION : entity on which to execute   
-                                          command [topics|users]              
+                                          command [topics|acls]
 --execute                               COMMAND: Align cluster resources with 
                                           the specified specifications        
 --file <File>                           The cluster specification to used for 

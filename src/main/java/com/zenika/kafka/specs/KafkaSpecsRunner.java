@@ -56,12 +56,12 @@ public class KafkaSpecsRunner {
 
                 Collection<OperationResult> results = new LinkedList<>();
 
-                if (options.entityTypes().contains("topics")) {
+                if (options.entityTypes().contains(EntityType.TOPICS)) {
                     ExecuteTopicCommand command = new ExecuteTopicCommand(client);
                     results.addAll(command.execute(options));
                 }
 
-                if (options.entityTypes().contains("acls")) {
+                if (options.entityTypes().contains(EntityType.ACLS)) {
                     AclRulesBuilder builder = AclRulesBuilder.combines(
                             new LiteralAclRulesBuilder(),
                             new TopicMatchingAclRulesBuilder(client));
