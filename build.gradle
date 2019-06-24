@@ -10,7 +10,7 @@ targetCompatibility = 1.8
 apply plugin: 'application'
 apply plugin: 'maven'
 
-mainClassName = "com.zenika.kafka.specs.KafkaSpecsRunner"
+mainClassName = "io.streamthoughts.kafka.specs.KafkaSpecsRunner"
 applicationDefaultJvmArgs = ['-Dlogback.configurationFile=file:LOGBACK_APP_HOME/etc/logback.xml']
 
 def junitVersion = '5.2.0'
