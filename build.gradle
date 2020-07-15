@@ -82,3 +82,9 @@ test {
         events "passed", "skipped", "failed"
     }
 }
+
+task printVersion {
+    doLast {
+        println project.version
+    }
+}
