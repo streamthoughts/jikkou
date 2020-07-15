@@ -59,14 +59,8 @@ public class KafkaSpecsRunnerOptions {
     private static final String DefaultConfigArg        = "default-configs";
     private static final String DefaultConfigDoc        = "OPTION : Export built-in default configuration for configs that have a default value";
 
-    private static final String DiffCommandArg          = "diff";
-    private static final String DiffCommandDoc          = "COMMAND: Display difference between cluster resources and the specified specifications";
-
     private static final String ExportCommandArg        = "describe";
     private static final String ExportCommandDoc        = "COMMAND: Describe resources configuration of a specified cluster";
-
-    private static final String CleanAllCommandArg      = "clean-all";
-    private static final String CleanAllCommandDoc      = "COMMAND: Temporally set retention.ms to 0 in order to delete messages for each topic";
 
     private static final String BootstrapServerArg      = "bootstrap-server";
     private static final String BootstrapServerDoc      = "REQUIRED: The server to connect to.";
@@ -136,15 +130,10 @@ public class KafkaSpecsRunnerOptions {
         // commands
         OptionSpecBuilder executeSpecBuilder = parser.accepts(ExecuteCommandArg, ExecuteCommandDoc);
         OptionSpecBuilder exportSpecBuilder = parser.accepts(ExportCommandArg, ExportCommandDoc);
-        OptionSpecBuilder cleanAllSpecBuilder = parser.accepts(CleanAllCommandArg, CleanAllCommandDoc);
-        OptionSpecBuilder diffSpecBuilder = parser.accepts(DiffCommandArg, DiffCommandDoc);
 
         actions = new HashSet<>();
         actions.add(executeSpecBuilder);
         actions.add(exportSpecBuilder);
-        actions.add(cleanAllSpecBuilder);
-        actions.add(diffSpecBuilder);
-
 
         // options for executes
         OptionSpecBuilder create = parser.accepts(CreateCommandArg, CreateCommandDoc);
@@ -166,7 +155,7 @@ public class KafkaSpecsRunnerOptions {
         parser.accepts(VerboseArg, VerboseDoc);
         parser.accepts(AssumeYesArg, AssumeYesDoc);
 
-        parser.mutuallyExclusive(executeSpecBuilder, diffSpecBuilder, exportSpecBuilder, cleanAllSpecBuilder);
+        parser.mutuallyExclusive(executeSpecBuilder, exportSpecBuilder);
 
         parser.accepts( "help", "Print usage information." ).forHelp();
 
@@ -206,14 +195,6 @@ public class KafkaSpecsRunnerOptions {
 
     public boolean isExportCommand() {
         return options.has(ExportCommandArg);
-    }
-
-    public boolean isDiffCommand() {
-        return options.has(DiffCommandArg);
-    }
-
-    public boolean isCleanAllCommand() {
-        return options.has(CleanAllCommandArg);
     }
 
     public boolean isAlterTopicsCommand() {

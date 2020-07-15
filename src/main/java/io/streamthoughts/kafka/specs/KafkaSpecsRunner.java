@@ -78,11 +78,6 @@ public class KafkaSpecsRunner {
                 command.execute(options);
             }
 
-            if (options.isDiffCommand()|| options.isCleanAllCommand()) {
-                System.err.println("Command not supported yet!");
-                exitCode = 1;
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
             exitCode = 1;
