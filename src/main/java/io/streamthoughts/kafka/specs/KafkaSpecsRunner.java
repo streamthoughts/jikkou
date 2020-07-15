@@ -41,11 +41,11 @@ public class KafkaSpecsRunner {
         final KafkaSpecsRunnerOptions options = new KafkaSpecsRunnerOptions(args);
 
         if(args.length == 0) {
-            CLIUtils.printUsageAndDie(options.parser, "Create, Alter, Delete, Describe or clean Kafka cluster resources");
+            CLIUtils.printUsageAndDie(options.parser, "Create, Alter, Delete or Describe Kafka cluster resources");
         }
 
         if(!options.hasSingleAction()) {
-            CLIUtils.printUsageAndDie(options.parser, "Command must include exactly one action: --execute, --describe, --clean or --diff");
+            CLIUtils.printUsageAndDie(options.parser, "Command must include exactly one action: --execute, --describe");
         }
 
         options.checkArgs();

@@ -32,7 +32,7 @@ Kafka Specs help you to adopt a GitOps approach to manage Kafka cluster resource
 
 Kafka Topics are described using simple YAML description file : 
 
-cluster-dev-topics.yaml : 
+kafka-specs.yaml : 
 ```yaml
 version: 1
 topics:
@@ -47,10 +47,17 @@ topics:
 
 ## How to Manage Topics ?
 
-**KafkaSpecs can be used to create, delete or alter topics :**
+**Kafka Specs can be used to create, delete or alter topics :**
 
 ```bash
-./bin/kafka-specs --execute --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml --entity-type topics
+docker run -it --net host \
+-v $(pwd)/kafka-specs.yaml:/kafka-specs.yaml \
+streamthoughts/kafka-specs \
+--file /cluster-dev-topics.yml \
+--bootstrap-server localhost:9092 \
+--execute --create \
+--entity-type topics \
+--verbose
 ```
 
 (output)
@@ -75,10 +82,15 @@ TASK [CREATE] Create a new topic my-topic (partitions=12, replicas=1) - CHANGED 
 ok : 0, changed : 1, failed : 0
 ```
 
-**KafkaSpecs can be used describe existing topics:**
+**Kafka Specs can be used describe existing topics:**
 
 ```bash
-./bin/kafka-specs --describe --bootstrap-server localhost:9092 --default-configs --entity-type topics
+docker run --net host \
+streamthoughts/kafka-specs \
+--bootstrap-server localhost:9092 \
+--describe \
+--entity-type topics \
+--default-configs
 ```
 (output)
 ```
@@ -116,7 +128,7 @@ topics:
 
 ## How to Manage ACLs
 
-**KafkaSpecs can be used to simply describe all ACLs that need to be created on Kafka Cluster:**
+**Kafka Specs can be used to simply describe all ACLs that need to be created on Kafka Cluster:**
 
 ```yaml
 version: 1
@@ -185,7 +197,14 @@ acls:
 ```
 
 ```bash
-./bin/kafka-specs --execute --create --bootstrap-server localhost:9092 --verbose --file cluster-dev-topics.yaml --entity-type acls
+docker run -it --net host \
+-v $(pwd)/kafka-specs.yaml:/kafka-specs.yaml \
+streamthoughts/kafka-specs \
+--file /cluster-dev-topics.yml \
+--bootstrap-server localhost:9092 \
+--execute --create \
+--entity-type acls \
+--verbose
 ```
 
 ```
@@ -231,18 +250,15 @@ Limitation : Currently Kafka Specs only support create and describe actions.
 ## All Actions
 
 ```bash
-./bin/kafka-specs        
+$ docker run -it streamthoughts/kafka-specs --help        
                                                      
-Create, Alter, Delete, Describe or clean Kafka cluster resources
+Create, Alter, Delete or Describe Kafka cluster resources
 Option                                  Description                           
 ------                                  -----------                           
 --alter                                 OPTION : Alter all existing entities  
                                           that have configuration changed     
 --bootstrap-server <String: server(s)   REQUIRED: The server to connect to.   
   to use for bootstrapping>                                                   
---clean-all                             COMMAND: Temporally set retention.ms  
-                                          to 0 in order to delete messages for
-                                          each topic                          
 --command-property <String: command     A property file containing configs to 
   config property>                        be passed to Admin Client.          
 --command.config <File: command config  A property file containing configs to 
@@ -258,13 +274,10 @@ Option                                  Description
                                           specifications                      
 --describe                              COMMAND: Describe resources           
                                           configuration of a specified cluster
---diff                                  COMMAND: Display difference between   
-                                          cluster resources and the specified 
-                                          specifications                      
 --dry-run                               OPTION : Execute command in Dry-Run   
                                           mode                                
 --entity-type <String>                  OPTION : entity on which to execute   
-                                          command [topics|acls]
+                                          command [topics|acls]              
 --execute                               COMMAND: Align cluster resources with 
                                           the specified specifications        
 --file <File>                           The cluster specification to used for 
@@ -272,7 +285,7 @@ Option                                  Description
 --help                                  Print usage information.              
 --topics <String>                       OPTION : Only run command for this of 
                                           topics (separated by ,)             
---verbose                               Print resources details
+--verbose                               Print resources details               
 --yes                                   Assume yes; assume that the answer to 
                                           any question which would be asked is
                                           yes.

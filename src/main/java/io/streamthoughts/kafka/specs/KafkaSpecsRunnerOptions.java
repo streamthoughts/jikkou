@@ -53,7 +53,7 @@ public class KafkaSpecsRunnerOptions {
     private static final String DryRunExecuteDoc        = "OPTION : Execute command in Dry-Run mode";
 
     private static final String EntityTypeArg           = "entity-type";
-    private static final String EntityTypeDoc           = "OPTION : entity on which to execute command [topics|users]";
+    private static final String EntityTypeDoc           = "OPTION : entity on which to execute command [topics|acls]";
 
     private static final String TopicsExecuteArg        = "topics";
     private static final String TopicsExecuteDoc        = "OPTION : Only run command for this of topics (separated by ,)";
