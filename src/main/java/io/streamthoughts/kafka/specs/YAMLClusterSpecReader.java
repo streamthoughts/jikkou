@@ -22,9 +22,11 @@ import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
 import io.streamthoughts.kafka.specs.reader.AclGroupPolicyReader;
 import io.streamthoughts.kafka.specs.reader.AclUserPolicyReader;
+import io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader;
 import io.streamthoughts.kafka.specs.reader.EntitySpecificationReader;
 import io.streamthoughts.kafka.specs.reader.MapObjectReader;
 import io.streamthoughts.kafka.specs.reader.TopicClusterSpecReader;
+import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,17 +55,18 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             @Override
             ClusterSpec read(Map<String, Object> specification) {
                 final Set<TopicResource> mTopics = read(Fields.TOPICS_FIELD, specification, new TopicClusterSpecReader());
+                final Set<BrokerResource> mBrokers = read(Fields.BROKERS_FIELD, specification, new BrokerClusterSpecReader());
 
                 Map<String, Object> acls = (Map<String, Object>) specification.get(Fields.ACL_FIELD);
 
                 final Set<AclGroupPolicy> mGroups = read(Fields.ACL_GROUP_POLICIES_FIELD, acls, new AclGroupPolicyReader());
                 final Set<AclUserPolicy> sUsers = read(Fields.ACL_ACCESS_POLICIES_FIELD, acls, new AclUserPolicyReader());
 
-                return new ClusterSpec(mTopics, mGroups, sUsers);
+                return new ClusterSpec(mBrokers, mTopics, mGroups, sUsers);
             }
         };
 
-        private String version;
+        private final String version;
 
         SpecVersion(final String version) {
             this.version = version;
@@ -108,7 +111,6 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public ClusterSpec read(final InputStream stream) {
         Yaml yaml = new Yaml();
         Map<String, Object> specification = yaml.load(stream);

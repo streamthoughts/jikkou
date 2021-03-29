@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
+import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.yaml.snakeyaml.DumperOptions;
@@ -36,7 +37,17 @@ import java.util.List;
 import java.util.Map;
 
 import static io.streamthoughts.kafka.specs.ClusterSpecReader.Fields.ACL_ACCESS_POLICIES_FIELD;
-import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.*;
+import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.ACL_ALLOW_OPERATIONS_FIELD;
+import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.ACL_GROUPS_FIELD;
+import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.ACL_PERMISSION_FIELD;
+import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.ACL_PRINCIPAL_FIELD;
+import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.ACL_RESOURCE_FIELD;
+import static io.streamthoughts.kafka.specs.reader.AclUserPolicyReader.ACL_TYPE_FIELD;
+import static io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader.BROKER_CONFIGS_FIELD;
+import static io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader.BROKER_HOST_FIELD;
+import static io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader.BROKER_ID_FIELD;
+import static io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader.BROKER_PORT_FIELD;
+import static io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader.BROKER_RACK_FIELD;
 import static io.streamthoughts.kafka.specs.reader.TopicClusterSpecReader.TOPIC_CONFIGS_FIELD;
 import static io.streamthoughts.kafka.specs.reader.TopicClusterSpecReader.TOPIC_NAME_FIELD;
 import static io.streamthoughts.kafka.specs.reader.TopicClusterSpecReader.TOPIC_PARTITIONS_FIELD;
@@ -47,7 +58,7 @@ import static io.streamthoughts.kafka.specs.reader.TopicClusterSpecReader.TOPIC_
  */
 public class YAMLClusterSpecWriter implements ClusterSpecWriter {
 
-    private static YAMLClusterSpecWriter INSTANCE = new YAMLClusterSpecWriter();
+    private static final YAMLClusterSpecWriter INSTANCE = new YAMLClusterSpecWriter();
 
     public static YAMLClusterSpecWriter instance() {
         return INSTANCE;
@@ -77,6 +88,13 @@ public class YAMLClusterSpecWriter implements ClusterSpecWriter {
             );
         }
 
+        if (!spec.getBrokers().isEmpty()) {
+            outputClusterMap.put(
+                    ClusterSpecReader.Fields.BROKERS_FIELD,
+                    brokersToMap(spec.getBrokers())
+            );
+        }
+
         final Collection<TopicResource> topics = spec.getTopics();
         if (!topics.isEmpty()) {
             outputClusterMap.put(
@@ -84,6 +102,7 @@ public class YAMLClusterSpecWriter implements ClusterSpecWriter {
                     topicsToMap(topics)
             );
         }
+
 
         return outputClusterMap;
     }
@@ -120,6 +139,20 @@ public class YAMLClusterSpecWriter implements ClusterSpecWriter {
             outputTopicMap.put(TOPIC_PARTITIONS_FIELD, resource.partitions());
             outputTopicMap.put(TOPIC_REPLICATION_FACTOR_FIELD, resource.replicationFactor());
             outputTopicMap.put(TOPIC_CONFIGS_FIELD, Configs.asStringValueMap(resource.configs()));
+            outputTopics.add(outputTopicMap);
+        }
+        return outputTopics;
+    }
+
+    private List<Map<String, Object>> brokersToMap(final Collection<BrokerResource> topics) {
+        List<Map<String, Object>> outputTopics = new LinkedList<>();
+        for (BrokerResource resource : topics) {
+            Map<String, Object> outputTopicMap = new LinkedHashMap<>();
+            outputTopicMap.put(BROKER_ID_FIELD, resource.id());
+            outputTopicMap.put(BROKER_HOST_FIELD, resource.host());
+            outputTopicMap.put(BROKER_PORT_FIELD, resource.port());
+            outputTopicMap.put(BROKER_RACK_FIELD, resource.rack());
+            outputTopicMap.put(BROKER_CONFIGS_FIELD, Configs.asStringValueMap(resource.configs()));
             outputTopics.add(outputTopicMap);
         }
         return outputTopics;

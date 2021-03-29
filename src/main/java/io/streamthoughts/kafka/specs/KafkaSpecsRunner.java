@@ -72,12 +72,12 @@ public class KafkaSpecsRunner {
                     ExecuteAclCommand command = new ExecuteAclCommand(client, builder);
                     results.addAll(command.execute(options));
                 }
+
                 Printer.printAndExit(results, options.verbose());
             }
 
             if (options.isExportCommand()) {
-                ClusterCommand command = new ExportClusterSpecCommand(client);
-                command.execute(options);
+                new ExportClusterSpecCommand(client).execute(options);
             }
 
         } catch (Exception e) {

@@ -29,6 +29,9 @@ public interface ClusterSpecReader {
         // topics
         static final String TOPICS_FIELD                    = "topics";
 
+        // brokers
+        static final String BROKERS_FIELD                   = "brokers";
+
         // ACLs groups and users
         static final String ACL_FIELD                       = "acls";
         static final String ACL_GROUP_POLICIES_FIELD        = "group_policies";

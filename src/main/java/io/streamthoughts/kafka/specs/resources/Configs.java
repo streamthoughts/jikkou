@@ -18,6 +18,10 @@
  */
 package io.streamthoughts.kafka.specs.resources;
 
+
+import org.apache.kafka.clients.admin.Config;
+
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -43,12 +47,22 @@ public class Configs implements Iterable<ConfigValue> {
         return EMPTY_CONFIGS;
     }
 
-    private TreeMap<String, ConfigValue> entries;
+    private final TreeMap<String, ConfigValue> entries;
+
+    public static Configs of(final Config config, final boolean describeDefault) {
+        Set<ConfigValue> configs = config.entries().stream()
+                .filter(entry -> !entry.isDefault() || describeDefault)
+                .map(entry -> new ConfigValue(entry.name(), entry.value(), entry.isDefault()))
+                .collect(Collectors.toSet());
+        return new Configs(configs);
+    }
 
     public static Map<String, String> asStringValueMap(final Configs configs) {
+        if (configs == null || configs.isEmpty()) return Collections.emptyMap();
         return new TreeMap<>(configs.values()
-                .stream()
-                .collect(Collectors.toMap(ConfigValue::name, ConfigValue::getValue)));
+            .stream()
+            .filter(it -> it.getValue() != null)
+            .collect(Collectors.toMap(ConfigValue::name, ConfigValue::getValue)));
     }
 
     /**
@@ -109,6 +123,10 @@ public class Configs implements Iterable<ConfigValue> {
 
     public int size() {
         return this.entries.size();
+    }
+
+    public boolean isEmpty() {
+        return this.entries.isEmpty();
     }
 
     public ConfigValue get(final String name) {
@@ -175,5 +193,15 @@ public class Configs implements Iterable<ConfigValue> {
     public int hashCode() {
 
         return Objects.hash(entries);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Configs{" +
+                "entries=" + entries +
+                '}';
     }
 }

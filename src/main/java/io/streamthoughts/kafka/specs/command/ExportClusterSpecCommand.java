@@ -28,13 +28,16 @@ import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
 import io.streamthoughts.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import io.streamthoughts.kafka.specs.operation.DescribeAclsOperation;
+import io.streamthoughts.kafka.specs.operation.DescribeBrokerOperation;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.operation.DescribeTopicOperation;
 import io.streamthoughts.kafka.specs.operation.ResourceOperationOptions;
+import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
+import org.apache.kafka.common.Node;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -69,14 +72,26 @@ public class ExportClusterSpecCommand implements ClusterCommand<Void> {
     public Void execute(final KafkaSpecsRunnerOptions options) {
         try {
 
-            Collection<String> topicNames = (options.topics().isEmpty()) ?
-                    loadClusterTopicsNames(client) :  options.topics();
+            final Collection<BrokerResource> brokerResources = new LinkedList<>();
+            if (options.entityTypes().contains(EntityType.BROKERS) || options.entityTypes().isEmpty()) {
+                var brokerIds = (options.topics().isEmpty()) ? loadClusterBrokerIds(client) : options.topics();
+                List<BrokerResource> brokers = brokerIds.stream().map(BrokerResource::new).collect(Collectors.toList());
+                ResourcesIterable<BrokerResource> it = new ResourcesIterable<>(brokers);
+                brokerResources.addAll(
+                    new DescribeBrokerOperation().execute(
+                        client,
+                        it,
+                        DescribeOperationOptions.withDescribeDefaultConfigs(options.isDefaultConfigs())
+                    )
+                );
+            }
 
-            final Collection<TopicResource> resources = new LinkedList<>();
+            final Collection<TopicResource> topicResources = new LinkedList<>();
             if (options.entityTypes().contains(EntityType.TOPICS) || options.entityTypes().isEmpty()) {
+                var topicNames = (options.topics().isEmpty()) ? loadClusterTopicsNames(client) : options.topics();
                 List<TopicResource> topics = topicNames.stream().map(TopicResource::new).collect(Collectors.toList());
                 ResourcesIterable<TopicResource> it = new ResourcesIterable<>(topics);
-                resources.addAll(
+                topicResources.addAll(
                     new DescribeTopicOperation().execute(
                         client,
                         it,
@@ -93,13 +108,27 @@ public class ExportClusterSpecCommand implements ClusterCommand<Void> {
 
             File file = options.clusterSpecificationOpt();
             OutputStream os = (file != null) ? new FileOutputStream(options.clusterSpecificationOpt()) : System.out;
-            YAMLClusterSpecWriter.instance().write(new ClusterSpec(resources, Collections.emptyList(), policies), os);
-
+            YAMLClusterSpecWriter.instance().write(
+                new ClusterSpec(
+                    brokerResources,
+                    topicResources,
+                    Collections.emptyList(),
+                    policies
+                ),
+                os
+            );
             return null;
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Collection<String> loadClusterBrokerIds(final AdminClient client) {
+        CompletableFuture<Collection<Node>> topics = AdminClientUtils.listBrokers(client);
+        return topics
+                .thenApply(t -> t.stream().map(Node::idString).collect(Collectors.toList()))
+                .join();
     }
 
     private Collection<String> loadClusterTopicsNames(final AdminClient client) {

@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs;
 
 public enum EntityType {
 
-    TOPICS, ACLS;
+    ACLS, BROKERS, TOPICS;
 
     public static EntityType from(final String type) {
         return EntityType.valueOf(type.toUpperCase());

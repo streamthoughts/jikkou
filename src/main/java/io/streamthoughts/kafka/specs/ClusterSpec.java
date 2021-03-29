@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
+import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.Named;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
 
@@ -42,24 +43,28 @@ public class ClusterSpec implements Serializable {
 
     private final Collection<AclUserPolicy> aclUsers;
 
+    private final Collection<BrokerResource> brokers;
+
     /**
      * Creates a new {@link ClusterSpec} instance.
      * @param topics  the topic list
      */
     public ClusterSpec(final Collection<TopicResource> topics) {
-        this(topics, Collections.emptyList(), Collections.emptyList());
+        this(Collections.emptyList(), topics, Collections.emptyList(), Collections.emptyList());
     }
 
     /**
      * Creates a new {@link ClusterSpec} instance.
      * @param topics  the topic list
      */
-    public ClusterSpec(final Collection<TopicResource> topics,
+    public ClusterSpec(final Collection<BrokerResource> brokers,
+                       final Collection<TopicResource> topics,
                        final Collection<AclGroupPolicy> aclGroupPolicies,
                        final Collection<AclUserPolicy> aclUsers) {
         Objects.requireNonNull(topics, "topics cannot be null");
         Objects.requireNonNull(topics, "aclGroupPolicies cannot be null");
         Objects.requireNonNull(topics, "aclUsers cannot be null");
+        this.brokers = brokers;
         this.topics = Named.keyByName(topics);
         this.aclGroupPolicies = Named.keyByName(aclGroupPolicies);
         this.aclUsers = aclUsers;
@@ -75,6 +80,10 @@ public class ClusterSpec implements Serializable {
 
     public Collection<TopicResource> getTopics() {
         return new ArrayList<>(topics.values());
+    }
+
+    public Collection<BrokerResource> getBrokers() {
+        return brokers;
     }
 
     public Collection<TopicResource> getTopics(Collection<String> filter) {

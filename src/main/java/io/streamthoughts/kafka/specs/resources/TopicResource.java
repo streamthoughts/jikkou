@@ -33,13 +33,13 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
 
     private static final short INVALID_REPLICA = -1;
 
-    private String name;
+    private final String name;
 
-    private int partitions;
+    private final int partitions;
 
-    private short replicationFactor;
+    private final short replicationFactor;
 
-    private Configs configs;
+    private final Configs configs;
 
     /**
      * Creates a new {@link TopicResource} instance.

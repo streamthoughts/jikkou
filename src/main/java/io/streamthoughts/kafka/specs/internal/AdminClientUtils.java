@@ -23,6 +23,7 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,11 +66,17 @@ public class AdminClientUtils {
         return props;
     }
 
+    public static CompletableFuture<Collection<Node>> listBrokers(final AdminClient client) {
+        Objects.requireNonNull(client, "client cannot be null");
+        return toCompletableFuture(client.describeCluster().nodes());
+    }
 
     public static CompletableFuture<Collection<TopicListing>> listTopics(final AdminClient client) {
         Objects.requireNonNull(client, "client cannot be null");
+        return toCompletableFuture(client.listTopics().listings());
+    }
 
-        KafkaFuture<Collection<TopicListing>> listings = client.listTopics().listings();
+    private static <T> CompletableFuture<Collection<T>> toCompletableFuture(final KafkaFuture<Collection<T>> listings) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return listings.get();

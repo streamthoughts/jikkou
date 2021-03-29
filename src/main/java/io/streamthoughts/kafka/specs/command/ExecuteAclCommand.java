@@ -51,9 +51,9 @@ public class ExecuteAclCommand implements ClusterCommand<Collection<OperationRes
 
     private static final ClusterSpecReader READER = new YAMLClusterSpecReader();
 
-    private AdminClient client;
+    private final AdminClient client;
 
-    private AclRulesBuilder aclBindingBuilder;
+    private final AclRulesBuilder aclBindingBuilder;
 
     private KafkaSpecsRunnerOptions options;
 
