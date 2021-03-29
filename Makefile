@@ -1,6 +1,6 @@
 # Makefile used to build docker images for kafka-specs
 
-PROJECT_VERSION := $(shell gradle printVersion -q)
+PROJECT_VERSION := $(shell ./gradlew printVersion -q)
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
