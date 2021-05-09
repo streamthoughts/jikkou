@@ -29,6 +29,7 @@ import com.google.gson.JsonSerializer;
 import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Helper class pretty print execution results.
@@ -39,14 +40,14 @@ public class Printer {
 
     private static final String KAFKA_SPECS_COLOR_ENABLED = "KAFKA_SPECS_COLOR_ENABLED";
 
-    private static PrintStream PS = System.out;
+    private static final PrintStream PS = System.out;
 
     private static final String ANSI_RED = "\u001B[31m";
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_WHITE = "\u001B[37m";
     private static final String ANSI_YELLOW = "\u001B[33m";
 
-    private static Gson GSON = new GsonBuilder()
+    private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Configs.class, new ConfigsSerializer())
             .setPrettyPrinting()
             .create();
@@ -57,11 +58,11 @@ public class Printer {
      * @param results   the execution results to print.
      * @param verbose   print details.
      */
-    public static void printAndExit(final Collection<OperationResult> results, final boolean verbose) {
+    public static <T> int print(final Collection<OperationResult<T>> results, final boolean verbose) {
         int ok = 0;
         int changed = 0;
         int failed = 0;
-        for (OperationResult r : results) {
+        for (OperationResult<?> r : results) {
             final String json = GSON.toJson(r);
             String color;
             if (r.isFailed()) {
@@ -81,7 +82,7 @@ public class Printer {
             }
         }
         PS.printf("%sok : %d, changed : %d, failed : %d\n", isColor() ? ANSI_WHITE : "", ok, changed, failed);
-        System.exit( (failed > 0) ? 1 : 0);
+        return failed > 0 ? 1 : 0;
     }
 
     private static void printTask(final Description description, final String status) {

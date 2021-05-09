@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,9 +18,27 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
+import picocli.CommandLine.Option;
 
-public enum OperationType {
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
-    CREATE, DELETE, ALTER, UNKNOWN
+public class AdminClientMixin {
 
+    @Option(names = "--bootstrap-servers",
+            defaultValue = "localhost:9092",
+            description = "A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.")
+    String bootstrapServer;
+
+
+    @Option(names = "--command-config",
+            description = "A property file containing configs to be passed to Admin Client."
+    )
+    File clientCommandConfig;
+
+    @Option(names = "--command-property",
+            description = "A property file containing configs to be passed to Admin Client."
+    )
+    Map<String, String> clientCommandProperties = new HashMap<>();
 }

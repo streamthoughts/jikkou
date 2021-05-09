@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +40,7 @@ public class ClusterSpec implements Serializable {
 
     private Map<String, TopicResource> topics;
 
-    private Map<String, AclGroupPolicy> aclGroupPolicies;
+    private final Map<String, AclGroupPolicy> aclGroupPolicies;
 
     private final Collection<AclUserPolicy> aclUsers;
 
@@ -47,15 +48,27 @@ public class ClusterSpec implements Serializable {
 
     /**
      * Creates a new {@link ClusterSpec} instance.
-     * @param topics  the topic list
      */
-    public ClusterSpec(final Collection<TopicResource> topics) {
-        this(Collections.emptyList(), topics, Collections.emptyList(), Collections.emptyList());
+    public static ClusterSpec withTopics(final Collection<TopicResource> topics) {
+        return new ClusterSpec(Collections.emptyList(), topics, Collections.emptyList(), Collections.emptyList());
     }
 
     /**
      * Creates a new {@link ClusterSpec} instance.
-     * @param topics  the topic list
+     */
+    public static ClusterSpec withBrokers(final Collection<BrokerResource> brokers) {
+        return new ClusterSpec(brokers, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+    }
+
+    /**
+     * Creates a new {@link ClusterSpec} instance.
+     */
+    public static ClusterSpec withUserPolicy(final Collection<AclUserPolicy> aclUsers) {
+        return new ClusterSpec(Collections.emptyList(), Collections.emptyList(),  Collections.emptyList(), aclUsers);
+    }
+
+    /**
+     * Creates a new {@link ClusterSpec} instance.
      */
     public ClusterSpec(final Collection<BrokerResource> brokers,
                        final Collection<TopicResource> topics,
@@ -84,6 +97,14 @@ public class ClusterSpec implements Serializable {
 
     public Collection<BrokerResource> getBrokers() {
         return brokers;
+    }
+
+    public Collection<TopicResource> getTopics(final Predicate<TopicResource> predicate) {
+        if (predicate == null) return getTopics();
+        return topics.values()
+                .stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
     public Collection<TopicResource> getTopics(Collection<String> filter) {

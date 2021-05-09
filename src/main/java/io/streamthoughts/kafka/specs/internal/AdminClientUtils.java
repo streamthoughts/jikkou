@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.specs.internal;
 
-import io.streamthoughts.kafka.specs.KafkaSpecsRunnerOptions;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
@@ -28,40 +27,44 @@ import org.apache.kafka.common.Node;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import static io.streamthoughts.kafka.specs.internal.PropertiesUtils.parse;
 
 /**
  * Class which is used to create a new {@link AdminClient} instance using tool arguments.
  */
 public class AdminClientUtils {
 
-    public static AdminClient newAdminClient(final KafkaSpecsRunnerOptions opts){
-        Properties props = getClientConfig(opts);
-        props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, opts.bootstrapServerOpt());
+    public static AdminClient newAdminClient(final String bootstrapServer,
+                                             final File clientConfigFile,
+                                             final Map<String, String> clientConfigProps){
+        final Properties props = loadClientPropertiesConfig(clientConfigFile);
+        props.putAll(clientConfigProps);
+        props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         return AdminClient.create(props);
     }
 
-    private static Properties getClientConfig(final KafkaSpecsRunnerOptions opts) {
+    private static Properties loadClientPropertiesConfig(final File clientConfigFile) {
         final Properties props = new Properties();
-        if (opts.configPropsFileOpt() != null) {
-            File configFile = opts.configPropsFileOpt();
-            if (!configFile.exists() || !configFile.canRead()) {
-                throw new IllegalArgumentException("Invalid argument : File doesn't exist or is not readable : ' " + configFile.getPath() + " ' ");
+        if (clientConfigFile != null) {
+            if (!clientConfigFile.exists() || !clientConfigFile.canRead()) {
+                throw new IllegalArgumentException(
+                        "Invalid argument : File doesn't exist or is not readable : ' "
+                        + clientConfigFile.getPath() + " ' "
+                );
             }
             try {
-                Properties properties = PropertiesUtils.loadProps(configFile.getPath());
+                Properties properties = PropertiesUtils.loadProps(clientConfigFile);
                 props.putAll(properties);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Invalid argument : File doesn't exist or is not readable : ' " + configFile.getPath() + " ' ");
+                throw new IllegalArgumentException(
+                        "Invalid argument : File doesn't exist or is not readable : ' "
+                        + clientConfigFile.getPath() + " ' "
+                );
             }
-        }
-        if (!opts.configPropsOpts().isEmpty()) {
-            props.putAll(parse(opts.configPropsOpts()));
         }
         return props;
     }

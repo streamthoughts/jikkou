@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.command.OperationType;
+import io.streamthoughts.kafka.specs.operation.OperationType;
 
 /**
  * Simple interface to get a human-readable description of an executed operation.
