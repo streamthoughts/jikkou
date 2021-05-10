@@ -74,11 +74,11 @@ public class KafkaSpecs {
                 err.println(cmd.getColorScheme().stackTraceText(ex));
             }
 
-            err.println(cmd.getColorScheme().errorText(ex.getMessage()));
+            err.println(ex.getMessage());
             CommandLine.UnmatchedArgumentException.printSuggestions(ex, err);
             CommandSpec spec = cmd.getCommandSpec();
             cmd.usage(err);
-            err.printf("%nSee '%s --help' for more information.%n", spec.qualifiedName());
+            err.printf("%nSee '%s --help' for more information about a command.%n", spec.qualifiedName());
             return cmd.getExitCodeExceptionMapper() != null
                     ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
                     : spec.exitCodeOnInvalidInput();

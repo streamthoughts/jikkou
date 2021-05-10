@@ -22,6 +22,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.apache.kafka.common.utils.Exit;
+import picocli.CommandLine;
 
 import java.io.Console;
 import java.io.IOException;
@@ -61,11 +62,11 @@ public class CLIUtils {
         } catch (IOException ignore) {
         }
         System.exit(1);
-
     }
 
-    static void askToProceed() {
-        System.out.println("Are you sure you want to continue? [y/n]");
+    public static void askToProceed(final CommandLine.Model.CommandSpec spec) {
+        final String description = spec.commandLine().getHelp().description();
+        System.out.printf("Warning: You are about to: %n %s%n%n Are you sure you want to continue [y/n]%n", description);
         Console console = System.console();
         if (!console.readLine().equalsIgnoreCase("y")) {
             System.out.println("Ending your session");

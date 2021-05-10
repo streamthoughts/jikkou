@@ -27,6 +27,7 @@ import io.streamthoughts.kafka.specs.acl.builder.LiteralAclRulesBuilder;
 import io.streamthoughts.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
+import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
         description = "This command can be used to create ACLs on a remote Kafka cluster",
         subcommands = {
                 Create.class,
+                Describe.class,
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)

@@ -34,7 +34,7 @@ import static java.util.Arrays.stream;
          parameterListHeading = "%nParameters:%n%n",
          optionListHeading    = "%nOptions:%n%n",
          commandListHeading   = "%nCommands:%n%n",
-        mixinStandardHelpOptions = true)
+         mixinStandardHelpOptions = true)
 public abstract class BaseCommand implements Callable<Integer> {
 
     @Mixin

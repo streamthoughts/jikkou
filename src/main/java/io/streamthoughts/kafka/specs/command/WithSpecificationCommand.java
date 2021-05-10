@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
+import io.streamthoughts.kafka.specs.CLIUtils;
 import io.streamthoughts.kafka.specs.ClusterSpec;
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
 import io.streamthoughts.kafka.specs.OperationResult;
@@ -26,7 +27,9 @@ import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Spec;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,11 +56,18 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
         URL url;
     }
 
+    @Spec
+    private CommandSpec spec;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call(final AdminClient adminClient) {
+        clusterSpec(); // ensure specification is valid.
+        if (!execOptions.yes) {
+            CLIUtils.askToProceed(spec);
+        }
         final Collection<OperationResult<T>> results = executeCommand(adminClient);
         Printer.print(results, execOptions.verbose);
         return CommandLine.ExitCode.OK;
@@ -75,7 +85,8 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
             try {
                 return READER.read(specOptions.url.openStream());
             } catch (IOException e) {
-                throw new RuntimeException("Can't open specification from URL '" + specOptions.url + "'.");
+                throw new RuntimeException("Can't read specification from URL '" + specOptions.url + "': "
+                        + e.getMessage());
             }
         }
 
@@ -84,7 +95,8 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
                 return READER.read(new FileInputStream(specOptions.file));
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Can't open specification from file '" + specOptions.file + "'.");
+            throw new RuntimeException("Can't read specification from file '" + specOptions.file + "': "
+                    + e.getMessage());
         }
         throw new IllegalArgumentException("no specification");
     }

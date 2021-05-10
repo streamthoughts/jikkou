@@ -30,8 +30,9 @@ public class ExecOptionsMixin {
     public boolean verbose;
 
     @Option(names = {"--yes"},
-            description = "Assume yes; assume that the answer to any question which would be asked is yes.",
-            interactive = true, arity = "0..1")
+            defaultValue = "false",
+            description = "Assume yes; assume that the answer to any question which would be asked is yes",
+            arity = "0..1")
     public Boolean yes;
 
     @Option(names = "--dry-run",

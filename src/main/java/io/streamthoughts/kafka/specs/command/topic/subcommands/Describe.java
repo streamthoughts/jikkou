@@ -39,7 +39,7 @@ import java.util.Collection;
 import static io.streamthoughts.kafka.specs.command.topic.TopicsCommand.listClusterTopics;
 
 @Command(name = "describe",
-        description = "Describe all the Topics that currently exist on remote cluster."
+        description = "Describe all the topics that currently exist on the remote Kafka cluster."
 )
 public class Describe extends BaseCommand {
 

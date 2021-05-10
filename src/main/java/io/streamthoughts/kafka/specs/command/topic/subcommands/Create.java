@@ -32,7 +32,7 @@ import picocli.CommandLine.Command;
 import java.util.Collection;
 
 @Command(name = "create",
-        description = "Create the missing Topics using the specified specifications."
+        description = "Create the topics missing on the cluster as describe in the specification file."
 )
 public class Create extends TopicsCommand.Base {
     /**

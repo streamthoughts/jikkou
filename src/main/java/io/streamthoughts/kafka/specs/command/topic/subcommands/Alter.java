@@ -32,7 +32,7 @@ import picocli.CommandLine.Command;
 import java.util.Collection;
 
 @Command(name = "alter",
-        description = "Alter the Topics using the specified specifications."
+        description = "Alter the topic configurations as describe in the specification file."
 )
 public class Alter extends TopicsCommand.Base {
 
