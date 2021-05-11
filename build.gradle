@@ -1,26 +1,32 @@
 plugins {
     id 'java'
     id 'application'
-    id 'maven-publish'
+    id('com.github.johnrengelman.shadow') version("6.1.0")
+    id('maven-publish')
+    id('signing')
 }
 
 group 'kafka'
 version '0.4.0'
 
+mainClassName = "io.streamthoughts.kafka.specs.KafkaSpecs"
+
 /* Plugin Java */
 java {
     sourceCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
 }
 
 /* Plugin Application */
 application {
-    mainClass = "io.streamthoughts.kafka.specs.KafkaSpecs"
     applicationDefaultJvmArgs = ['-Dlogback.configurationFile=file:LOGBACK_APP_HOME/etc/logback.xml']
 }
 
 def junitVersion = '5.2.0'
 
 repositories {
+    jcenter()
     mavenCentral()
     mavenLocal()
 }
@@ -94,11 +100,75 @@ task printVersion {
 jar {
     manifest {
         attributes(
+            "Main-Class": "$mainClassName",
             "Built-By": System.properties["user.name"],
             "Build-Jdk": "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
             "Created-By": "Gradle ${gradle.gradleVersion}",
             "Implementation-Title": "kafka-specs",
             "Implementation-Version": archiveVersion)
+    }
+}
+shadowJar {
+    archiveClassifier = 'all'
+}
+
+tasks.build.dependsOn tasks.shadowJar
+
+publishing {
+    repositories {
+        maven {
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+            url = project.hasProperty('release') ? releasesRepoUrl : snapshotsRepoUrl
+            credentials {
+                username = project.hasProperty('repository.oss.username') ? project.property('repository.oss.username') : ''
+                password = project.hasProperty('repository.oss.password') ? project.property('repository.oss.password') : ''
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.streamthoughts'
+            artifactId = 'kafka-specs'
+            pom {
+                name = 'KafkaSpecs'
+                description = 'Tool to ease and automate Apache Kafka cluster configuration management'
+                url = 'https://github.com/streamthoughts/kafka-specs'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                organization {
+                    name = 'streamthoughts'
+                    url = 'https://www.streamthoughts.io'
+                }
+                developers {
+                    developer {
+                        organization = 'streamthoughts'
+                        organizationUrl = 'https://www.streamthoughts.io'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/streamthoughts/kafka-specs.git'
+                    developerConnection = 'scm:git:ssh://github.com/streamthoughts/kafka-specs.git'
+                    url = 'https://github.com/streamthoughts/kafka-specs.git'
+                }
+            }
+            from components.java
+            artifact distZip
+        }
+    }
+    signing {
+        sign publishing.publications.mavenJava
+        useGpgCmd()
+    }
+
+    javadoc {
+        if(JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
     }
 }
 
