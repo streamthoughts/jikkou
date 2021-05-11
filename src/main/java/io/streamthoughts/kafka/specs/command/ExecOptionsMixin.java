@@ -25,26 +25,26 @@ import java.util.regex.Pattern;
 public class ExecOptionsMixin {
 
     @Option(names = "--verbose",
-            description = "Print resources details"
+            description = "Print resources details."
     )
     public boolean verbose;
 
     @Option(names = {"--yes"},
             defaultValue = "false",
-            description = "Assume yes; assume that the answer to any question which would be asked is yes",
+            description = "Assume yes; assume that the answer to any question which would be asked is yes.",
             arity = "0..1")
     public Boolean yes;
 
     @Option(names = "--dry-run",
-            description = "Execute command in Dry-Run mode"
+            description = "Execute command in Dry-Run mode."
     )
     public boolean dryRun;
 
     @Option(names = "--exclude",
-            description = "the regex patterns to use for excluding resources")
+            description = "The regex patterns to use for excluding resources.")
     public Pattern[] exclude;
 
     @Option(names = "--include",
-            description = "the regex patterns to use for including resources")
+            description = "The regex patterns to use for including resources.")
     public Pattern[] include;
 }

@@ -47,11 +47,11 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
 
     static class FileOptions {
         @Option(names = "--file-path",
-                description = "Align cluster resources with the specified specifications."
+                description = "The path of a file containing the specifications for Kafka resources."
         )
         File file;
         @Option(names = "--file-url",
-                description = "Delete all remote entities which are not described in specifications."
+                description = "The URL of a a file containing the specification for Kafka resources."
         )
         URL url;
     }
