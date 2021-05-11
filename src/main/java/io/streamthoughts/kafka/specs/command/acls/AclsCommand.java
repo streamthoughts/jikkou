@@ -25,6 +25,7 @@ import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
 import io.streamthoughts.kafka.specs.acl.builder.LiteralAclRulesBuilder;
 import io.streamthoughts.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
+import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
@@ -55,7 +56,7 @@ import java.util.stream.Collectors;
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)
-public class AclsCommand {
+public class AclsCommand extends WithAdminClientCommand {
 
     public static abstract class Base extends WithSpecificationCommand<AclRule> {
 

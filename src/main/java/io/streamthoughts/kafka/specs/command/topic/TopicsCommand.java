@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs.command.topic;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.OperationResult;
+import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Alter;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
@@ -65,7 +66,7 @@ import java.util.stream.Collectors;
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)
-public class TopicsCommand {
+public class TopicsCommand extends WithAdminClientCommand {
 
     /**
      * Helper methods to list all topics on Kafka Cluster matching the given predicate.

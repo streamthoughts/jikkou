@@ -18,10 +18,14 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
+import io.streamthoughts.kafka.specs.KafkaSpecs;
+import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.ParentCommand;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -38,19 +42,17 @@ import static java.util.Arrays.stream;
 public abstract class BaseCommand implements Callable<Integer> {
 
     @Mixin
-    protected ExecOptionsMixin execOptions;
+    ExecOptionsMixin execOptions;
 
-    @Mixin
-    protected AdminClientMixin adminClientOptions;
+    @ParentCommand
+    WithAdminClientCommand command;
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Integer call() {
-        try (AdminClient client = AdminClientUtils.newAdminClient(
-                adminClientOptions.bootstrapServer,
-                adminClientOptions.clientCommandConfig,
-                adminClientOptions.clientCommandProperties
-        )) {
-            return call(client);
-        }
+        return command.withAdminClient(this::call);
     }
 
     public abstract Integer call(final AdminClient client);

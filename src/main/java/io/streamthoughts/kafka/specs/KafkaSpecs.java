@@ -43,10 +43,11 @@ import static picocli.CommandLine.Model.CommandSpec;
 public class KafkaSpecs {
 
     @Mixin
-    AdminClientMixin adminClientOptions;
+    public AdminClientMixin options;
 
     public static void main(final String... args) {
         final CommandLine commandLine = new CommandLine(new KafkaSpecs())
+                .setUsageHelpWidth(120)
                 .setExecutionStrategy(new CommandLine.RunLast())
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 

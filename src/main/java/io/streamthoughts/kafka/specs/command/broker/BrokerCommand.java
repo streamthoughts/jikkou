@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.broker;
 
+import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.broker.subcommands.Describe;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -36,6 +37,6 @@ import picocli.CommandLine.Command;
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)
-public class BrokerCommand {
+public class BrokerCommand extends WithAdminClientCommand {
 
 }
