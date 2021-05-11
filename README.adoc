@@ -1,0 +1,341 @@
+= Kafka Specs (Cluster management made easy!)
+:toc:
+:toc-placement!:
+
+image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[https://github.com/streamthoughts/kafka-specs/blob/master/LICENSE]
+image:https://circleci.com/gh/streamthoughts/kafka-specs.svg?style=svg[https://circleci.com/gh/streamthoughts/kafka-specs]
+
+toc::[]
+
+http://kafka.apache.org/[Apache Kafka] is a high-throughput, distributed, publish-subscribe messaging system.
+
+**KafkaSpecs** is a java tool to simplify the management of your Kafka Topics and ACLs.
+
+Currently, there are different ways to create/alter topics: ::
+- **Automatically** with `auto.create.topics.enable` configured to true (But this not really a good idea in a production or even in non-production environment).
+- **Using kafka-topics.sh** - But first you will need a kafka distribution.In addition, this tool need access to zookeeper.
+- **Using AdminClient API** - This is a low-level API (the one used by Kafka Specs).
+
+Those solutions are easy to use when starting with Kafka and/or during development cycles.
+However, while moving into production you will need more sophisticated tools to automate the creation of your topics.
+
+**KafkaSpecs** allows you to describe you cluster through a YAML file.This file will then be used to create, delete or alter topics and/or acls.
+
+**KafkaSpecs** helps you to adopt a GitOps approach to manage Kafka cluster resources.
+
+== Requirements :
+
+1. Kafka 1.0.0 ...
+2. Java 11+
+
+== 🚀 Quick-Start
+
+Kafka Topics are described using simple YAML description file :
+
+kafka-specs.yaml::
+[source,yaml]
+----
+version: 1
+topics:
+- configs:
+    cleanup.policy: compact
+    compression.type: producer
+    min.insync.replicas: '1'
+  name: my-topic
+  partitions: 12
+  replication_factor: 1
+----
+
+== How to Manage Topics ?
+
+Kafka Specs can be used to create, delete or alter topics: ::
+[source,bash]
+----
+$ docker run -it --net host \
+-v $(pwd)/kafka-specs.yaml:/kafka-specs.yaml \
+streamthoughts/kafka-specs \
+--bootstrap-servers localhost:9092 \
+topics \
+create \
+--file-path /cluster-dev-topics.yml \
+--verbose
+----
+
+(output)
+
+[source]
+----
+TASK [CREATE] Create a new topic my-topic (partitions=12, replicas=1) - CHANGED *************************
+{
+  "changed": true,
+  "end": 1539682759748,
+  "resource": {
+    "name": "my-topic",
+    "partitions": 12,
+    "replicationFactor": 1,
+    "configs": {
+      "cleanup.policy": "compact",
+      "compression.type": "producer",
+      "min.insync.replicas": "1"
+    }
+  },
+  "failed": false,
+  "status": "CHANGED"
+}
+ok : 0, changed : 1, failed : 0
+----
+
+It can be used describe existing topics: ::
+[source,bash]
+----
+$ docker run --net host \
+streamthoughts/kafka-specs:latest \
+--bootstrap-servers localhost:9092 \
+topics \
+describe \
+--default-configs
+----
+(output)
+
+[source]
+----
+version: 1
+topics:
+- configs:
+    cleanup.policy: compact
+    compression.type: producer
+    delete.retention.ms: '86400000'
+    file.delete.delay.ms: '60000'
+    flush.messages: '9223372036854775807'
+    flush.ms: '9223372036854775807'
+    follower.replication.throttled.replicas: ''
+    index.interval.bytes: '4096'
+    leader.replication.throttled.replicas: ''
+    max.message.bytes: '1000012'
+    message.format.version: 1.0-IV0
+    message.timestamp.difference.max.ms: '9223372036854775807'
+    message.timestamp.type: CreateTime
+    min.cleanable.dirty.ratio: '0.5'
+    min.compaction.lag.ms: '0'
+    min.insync.replicas: '1'
+    preallocate: 'false'
+    retention.bytes: '-1'
+    retention.ms: '604800000'
+    segment.bytes: '1073741824'
+    segment.index.bytes: '10485760'
+    segment.jitter.ms: '0'
+    segment.ms: '604800000'
+    unclean.leader.election.enable: 'false'
+  name: my-topic
+  partitions: 12
+  replicationFactor: 1
+----
+
+== How to Manage ACLs
+
+**Kafka Specs can be used to simply describe all ACLs that need to be created on Kafka Cluster:**
+
+[source,yaml]
+----
+version: 1
+acls:
+  access_policies:
+    - principal : 'User:benchmark'
+      groups  : []
+      permissions :
+        - resource :
+            type : 'topic'
+            pattern : 'bench-'
+            patternType : 'PREFIXED'
+          allow_operations : ['READ:*', 'WRITE:*']
+        - resource :
+            type : 'group'
+            pattern : '*'
+            patternType : 'LITERAL'
+          allow_operations : ['DESCRIBE:*']
+----
+
+You can also defined a *group_policies* to defined ACLs to be applied to multiple principal.
+Kafka Specs will take care of creating all corresponding ACLs
+
+[source,yaml]
+----
+version: 1
+acls:
+  group_policies:
+    - name : 'spec-access-all-topics'
+      resource :
+        type : 'topic'
+        pattern : '*'
+        patternType : 'LITERAL'
+      allow_operations : ['ALL:*']
+
+     - name : 'spec-access-all-groups'
+      resource :
+        type : 'group'
+        pattern : '*'
+        patternType : 'LITERAL'
+      allow_operations : ['ALL:*']
+
+  access_policies:
+    - principal : 'User:kafka'
+      groups    : [ 'spec-access-all-topics', 'spec-access-all-groups' ]
+
+    - principal : 'User:admin-topic'
+      groups    : [ 'spec-access-all-topics']
+----
+
+As of Kafka 2.0.0, you can use `LITERAL` and `PREFIXED` pattern-type to define new ACLs, then `MATCH` and `ANY` for filtering.
+
+With Kafka Specs you can use the pattern-type `MATCH` to create ACLs. This will defined ACLs with `LITERAL` pattern type for all topics matching the defined regex.
+
+[source,yaml]
+----
+version: 1
+acls:
+  access_policies:
+    - principal : 'User:benchmark'
+      groups  : []
+      permissions :
+        - resource :
+            type : 'topic'
+            pattern : '/bench-([.-])*/'
+            patternType : 'MATCH'
+          allow_operations : ['READ:*', 'WRITE:*']
+----
+
+[source,bash]
+----
+docker run -it --net host \
+-v $(pwd)/kafka-specs.yaml:/kafka-specs.yaml \
+streamthoughts/kafka-specs:latest \
+--bootstrap-servers localhost:9092 \
+create \
+acls \
+--file-path /cluster-dev-topics.yml \
+--verbose
+----
+
+[source]
+----
+TASK [CREATE] Create a new ACL (ALLOW User:benchmark to WRITE TOPIC:LITERAL:bench-p1-r1) - CHANGED ******
+{
+  "changed": true,
+  "end": 1539685171168,
+  "resource": {
+    "principalType": "User",
+    "principalName": "benchmark",
+    "resourcePattern": "bench-p1-r1",
+    "patternType": "LITERAL",
+    "resourceType": "TOPIC",
+    "operation": "WRITE",
+    "permission": "ALLOW",
+    "host": "*"
+  },
+  "failed": false,
+  "status": "CHANGED"
+}
+TASK [CREATE] Create a new ACL (ALLOW User:benchmark to READ TOPIC:LITERAL:bench-p1-r1) - CHANGED *******
+{
+  "changed": true,
+  "end": 1539685171168,
+  "resource": {
+    "principalType": "User",
+    "principalName": "benchmark",
+    "resourcePattern": "bench-p1-r1",
+    "patternType": "LITERAL",
+    "resourceType": "TOPIC",
+    "operation": "READ",
+    "permission": "ALLOW",
+    "host": "*"
+  },
+  "failed": false,
+  "status": "CHANGED"
+}
+----
+
+NOTE: **Limitation**: Currently **KafkaSpecs** only supports `create` and `describe` commands.
+
+== KafkaSpecs Usages
+
+[source, bash]
+----
+$ docker run -it streamthoughts/kafka-specs --help
+Usage:
+kafka-specs [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>]
+            [--command-property=<String=String>]... [COMMAND]
+
+Description:
+
+CLI to ease and automate Apache Kafka cluster configuration management.
+
+Options:
+
+      --bootstrap-servers=<bootstrapServer>
+                  A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
+      --command-config=<clientCommandConfig>
+                  A property file containing configs to be passed to Admin Client.
+      --command-property=<String=String>
+                  A property file containing configs to be passed to Admin Client.
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+
+Commands:
+
+  topics   Execute changes to the Kafka cluster Topics.
+  acls     Execute changes to the Kafka cluster ACLs.
+  brokers  Execute changes to the Kafka cluster Brokers.
+  help     Displays help information about the specified command
+----
+
+== How to build project ?
+
+You need to have http://www.gradle.org/installation[Gradle] and http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java] installed.
+
+=== To build jar
+
+[source,bash]
+----
+$ ./gradlew jar
+----
+=== To package distribution
+
+[source,bash]
+----
+$ ./gradlew distTar
+----
+=== Build javadoc
+
+[source,bash]
+----
+$ ./gradlew javadoc
+----
+
+=== Cleaning build
+
+[source,bash]
+----
+$ ./gradlew clean
+----
+
+== 💡 Contributions
+
+Any feedback, bug reports and PRs are greatly appreciated!
+
+- **Source Code**: https://github.com/streamthoughts/kafka-specs
+- **Issue Tracker**: https://github.com/streamthoughts/kafka-specs/issues
+
+== 🙏 Show your support
+
+You think this project can help you or your team to manage your Apache Kafka Cluster ?
+Please ⭐ this repository to support us!
+
+== Licence
+
+Copyright 2020 StreamThoughts.
+
+Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.See the NOTICE file distributed with this work for additional information regarding copyright ownership.The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.See the License for the specific language governing permissions and limitations under the License
