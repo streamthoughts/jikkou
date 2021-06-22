@@ -18,9 +18,13 @@
  */
 package io.streamthoughts.kafka.specs.resources;
 
-
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.kafka.clients.admin.Config;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,24 +34,26 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Class which is used to represent a set of resource configuration.
  **/
+@JsonSerialize(using = Configs.Serializer.class)
 public class Configs implements Iterable<ConfigValue> {
 
     private static final Configs EMPTY_CONFIGS = new Configs() {
         @Override
-        public ConfigValue add(ConfigValue value) {
+        public ConfigValue add(final ConfigValue value) {
             throw new UnsupportedOperationException();
         }
     };
 
-    public static Configs emptyConfigs() {
+    public static Configs empty() {
         return EMPTY_CONFIGS;
     }
 
-    private final TreeMap<String, ConfigValue> entries;
+    private final TreeMap<String, ConfigValue> values;
 
     public static Configs of(final Config config, final boolean describeDefault) {
         Set<ConfigValue> configs = config.entries().stream()
@@ -60,9 +66,9 @@ public class Configs implements Iterable<ConfigValue> {
     public static Map<String, String> asStringValueMap(final Configs configs) {
         if (configs == null || configs.isEmpty()) return Collections.emptyMap();
         return new TreeMap<>(configs.values()
-            .stream()
-            .filter(it -> it.getValue() != null)
-            .collect(Collectors.toMap(ConfigValue::name, ConfigValue::getValue)));
+                .stream()
+                .filter(it -> it.value() != null)
+                .collect(Collectors.toMap(ConfigValue::name, v -> v.value().toString())));
     }
 
     /**
@@ -74,38 +80,39 @@ public class Configs implements Iterable<ConfigValue> {
 
     /**
      * Creates a new {@link Configs} instances.
-     * @param values    the config values.
+     *
+     * @param values the config values.
      */
     public Configs(final Set<ConfigValue> values) {
-        this.entries = new TreeMap<>();
+        this.values = new TreeMap<>();
         values.forEach(this::add);
     }
 
     /**
      * Add a new {@link ConfigValue} to this configs.
      *
-     * @param   value a new config entry.
-     * @return  the previous config containing into this configs.
+     * @param value a new config entry.
+     * @return the previous config containing into this configs.
      */
     public ConfigValue add(final ConfigValue value) {
-        return this.entries.put(value.name(), value);
+        return this.values.put(value.name(), value);
     }
 
     /**
      * Returns all config values.
      *
-     * @return  a new {@link Set} of {@link ConfigValue}.
+     * @return a new {@link Set} of {@link ConfigValue}.
      */
     public Set<ConfigValue> values() {
-        return new LinkedHashSet<>(this.entries.values());
+        return new LinkedHashSet<>(this.values.values());
     }
 
     private Map<String, ConfigValue> asOrderedMap() {
-        return new TreeMap<>(entries);
+        return new TreeMap<>(values);
     }
 
     public Configs defaultConfigs() {
-        Set<ConfigValue> values = this.entries.values()
+        Set<ConfigValue> values = this.values.values()
                 .stream()
                 .filter(ConfigValue::isDefault)
                 .collect(Collectors.toSet());
@@ -113,7 +120,7 @@ public class Configs implements Iterable<ConfigValue> {
     }
 
     public Configs filters(final Configs configs) {
-        Set<ConfigValue> filteredConfigs = this.entries.values()
+        Set<ConfigValue> filteredConfigs = this.values.values()
                 .stream()
                 .filter(v -> !configs.values().contains(v))
                 .collect(Collectors.toSet());
@@ -122,29 +129,26 @@ public class Configs implements Iterable<ConfigValue> {
 
 
     public int size() {
-        return this.entries.size();
+        return this.values.size();
     }
 
     public boolean isEmpty() {
-        return this.entries.isEmpty();
+        return this.values.isEmpty();
     }
 
     public ConfigValue get(final String name) {
-        return this.entries.get(name);
+        return this.values.get(name);
     }
 
     /**
-     * Checks whether this configuration contains some changes.
-     *
-     * @param configs
-     * @return
+     * @return {@code true} if the given {@link Configs} contains some changes.
      */
     public boolean containsChanges(final Configs configs) {
 
         Map<String, ConfigValue> thatConfigs = configs.asOrderedMap();
 
         // Check if all same configs are the same value.
-        for (ConfigValue config : this.entries.values()) {
+        for (ConfigValue config : this.values.values()) {
             if (isNotEqualOrNotExist(thatConfigs, config)) {
                 return true;
             }
@@ -171,9 +175,8 @@ public class Configs implements Iterable<ConfigValue> {
      */
     @Override
     public Iterator<ConfigValue> iterator() {
-        return entries.values().iterator();
+        return values.values().iterator();
     }
-
 
     /**
      * {@inheritDoc}
@@ -181,9 +184,9 @@ public class Configs implements Iterable<ConfigValue> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Configs)) return false;
         Configs that = (Configs) o;
-        return Objects.equals(entries, that.entries);
+        return Objects.equals(values, that.values);
     }
 
     /**
@@ -191,8 +194,7 @@ public class Configs implements Iterable<ConfigValue> {
      */
     @Override
     public int hashCode() {
-
-        return Objects.hash(entries);
+        return Objects.hash(values);
     }
 
     /**
@@ -201,7 +203,25 @@ public class Configs implements Iterable<ConfigValue> {
     @Override
     public String toString() {
         return "Configs{" +
-                "entries=" + entries +
+                "values=" + values +
                 '}';
+    }
+
+    public static class Serializer extends JsonSerializer<Configs> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void serialize(final Configs configs,
+                              final JsonGenerator gen,
+                              final SerializerProvider serializers) throws IOException {
+
+            gen.writeObject(new TreeMap<>(StreamSupport.
+                    stream(configs.spliterator(), false)
+                    .collect(Collectors.toMap(ConfigValue::name, ConfigValue::value))
+                    )
+            );
+        }
     }
 }

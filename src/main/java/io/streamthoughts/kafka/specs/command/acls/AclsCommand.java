@@ -31,6 +31,8 @@ import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
+import io.streamthoughts.kafka.specs.resources.AclsResource;
+import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -39,6 +41,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Command(name = "acls",
@@ -65,23 +68,28 @@ public class AclsCommand extends WithAdminClientCommand {
          */
         @Override
         public Collection<OperationResult<AclRule>> executeCommand(final AdminClient client) {
-            final Map<String, AclGroupPolicy> groups = clusterSpec().getAclGroupPolicies();
-            final Collection<AclUserPolicy> users = clusterSpec().getAclUsers();
-
-            final AclRulesBuilder builder = AclRulesBuilder.combines(
-                    new LiteralAclRulesBuilder(),
-                    new TopicMatchingAclRulesBuilder(client));
-
-            List<AclRule> rules = users
-                    .stream()
-                    .flatMap(user -> builder.toAclRules(groups.values(), user).stream())
-                    .collect(Collectors.toList());
-
             final List<OperationResult<AclRule>> results = new LinkedList<>();
-            if (isDryRun()) {
-                results.addAll(buildDryRunResults(rules, true, CreateAclsOperation.DESCRIPTION));
-            } else {
-                results.addAll(execute(rules, client));
+
+            final Optional<AclsResource> optional = clusterSpec().getAcls();
+
+            if (optional.isPresent()) {
+                final AclsResource resource = optional.get();
+                final AclRulesBuilder builder = AclRulesBuilder.combines(
+                        new LiteralAclRulesBuilder(),
+                        new TopicMatchingAclRulesBuilder(client));
+
+                final Map<String, AclGroupPolicy> groups = Named.keyByName(resource.getAclGroupPolicies());
+                final Collection<AclUserPolicy> users = resource.getAclUsersPolicies();
+                List<AclRule> rules = users
+                        .stream()
+                        .flatMap(user -> builder.toAclRules(groups.values(), user).stream())
+                        .collect(Collectors.toList());
+
+                if (isDryRun()) {
+                    results.addAll(buildDryRunResults(rules, true, CreateAclsOperation.DESCRIPTION));
+                } else {
+                    results.addAll(execute(rules, client));
+                }
             }
             return results;
         }

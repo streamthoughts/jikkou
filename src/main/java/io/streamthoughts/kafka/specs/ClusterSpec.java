@@ -18,8 +18,10 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
+import io.streamthoughts.kafka.specs.resources.AclsResource;
 import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.Named;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -40,9 +42,7 @@ public class ClusterSpec implements Serializable {
 
     private Map<String, TopicResource> topics;
 
-    private final Map<String, AclGroupPolicy> aclGroupPolicies;
-
-    private final Collection<AclUserPolicy> aclUsers;
+    private final AclsResource acls;
 
     private final Collection<BrokerResource> brokers;
 
@@ -50,45 +50,33 @@ public class ClusterSpec implements Serializable {
      * Creates a new {@link ClusterSpec} instance.
      */
     public static ClusterSpec withTopics(final Collection<TopicResource> topics) {
-        return new ClusterSpec(Collections.emptyList(), topics, Collections.emptyList(), Collections.emptyList());
+        return new ClusterSpec(Collections.emptyList(), topics, null);
     }
 
     /**
      * Creates a new {@link ClusterSpec} instance.
      */
     public static ClusterSpec withBrokers(final Collection<BrokerResource> brokers) {
-        return new ClusterSpec(brokers, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+        return new ClusterSpec(brokers, Collections.emptyList(), null);
     }
 
     /**
      * Creates a new {@link ClusterSpec} instance.
      */
     public static ClusterSpec withUserPolicy(final Collection<AclUserPolicy> aclUsers) {
-        return new ClusterSpec(Collections.emptyList(), Collections.emptyList(),  Collections.emptyList(), aclUsers);
+        return new ClusterSpec(Collections.emptyList(), Collections.emptyList(), new AclsResource(null, aclUsers));
     }
 
     /**
      * Creates a new {@link ClusterSpec} instance.
      */
-    public ClusterSpec(final Collection<BrokerResource> brokers,
-                       final Collection<TopicResource> topics,
-                       final Collection<AclGroupPolicy> aclGroupPolicies,
-                       final Collection<AclUserPolicy> aclUsers) {
-        Objects.requireNonNull(topics, "topics cannot be null");
-        Objects.requireNonNull(topics, "aclGroupPolicies cannot be null");
-        Objects.requireNonNull(topics, "aclUsers cannot be null");
-        this.brokers = brokers;
-        this.topics = Named.keyByName(topics);
-        this.aclGroupPolicies = Named.keyByName(aclGroupPolicies);
-        this.aclUsers = aclUsers;
-    }
-
-    public Map<String, AclGroupPolicy> getAclGroupPolicies() {
-        return aclGroupPolicies;
-    }
-
-    public Collection<AclUserPolicy> getAclUsers() {
-        return aclUsers;
+    @JsonCreator
+    public ClusterSpec(@JsonProperty("brokers") final Collection<BrokerResource> brokers,
+                       @JsonProperty("topics") final Collection<TopicResource> topics,
+                       @JsonProperty("acls") final AclsResource acls) {
+        this.brokers = Optional.ofNullable(brokers).orElse(Collections.emptyList());
+        this.topics = Named.keyByName(Optional.ofNullable(topics).orElse(Collections.emptyList()));
+        this.acls = acls;
     }
 
     public Collection<TopicResource> getTopics() {
@@ -99,6 +87,10 @@ public class ClusterSpec implements Serializable {
         return brokers;
     }
 
+    public Optional<AclsResource> getAcls() {
+        return Optional.ofNullable(acls);
+    }
+
     public Collection<TopicResource> getTopics(final Predicate<TopicResource> predicate) {
         if (predicate == null) return getTopics();
         return topics.values()
@@ -107,15 +99,7 @@ public class ClusterSpec implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public Collection<TopicResource> getTopics(Collection<String> filter) {
-        if (filter.isEmpty()) return getTopics();
-        return topics.values()
-                .stream()
-                .filter(t -> filter.contains(t.name()))
-                .collect(Collectors.toList());
-    }
-
-    public void setTopics(Collection<TopicResource> topics) {
+    public void setTopics(final Collection<TopicResource> topics) {
         this.topics = topics.stream().collect(Collectors.toMap(TopicResource::name, o -> o));
     }
 }

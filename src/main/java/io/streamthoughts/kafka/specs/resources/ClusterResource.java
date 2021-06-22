@@ -22,7 +22,4 @@ package io.streamthoughts.kafka.specs.resources;
 /**
  * Default interface to represent a kafka configurable resource (i.e Topic).
  */
-public interface ClusterResource {
-
-
-}
+public interface ClusterResource { }

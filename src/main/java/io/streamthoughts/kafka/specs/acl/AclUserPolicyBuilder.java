@@ -31,8 +31,8 @@ import java.util.Set;
 public class AclUserPolicyBuilder {
 
     private String principal;
-    private Set<String> groups  = new HashSet<>();
-    private Set<AclResourcePermission> permissions  = new HashSet<>();
+    private final Set<String> groups  = new HashSet<>();
+    private final Set<AclResourcePermission> permissions  = new HashSet<>();
 
     /**
      * Creates a new builder.
@@ -63,7 +63,10 @@ public class AclUserPolicyBuilder {
                                               final PatternType patternType,
                                               final ResourceType type,
                                               final Set<AclOperationPolicy> operations) {
-        this.permissions.add(new AclResourcePermission(pattern, patternType, type, operations));
+        this.permissions.add(
+            new AclResourcePermission(new AclResourceMatcher(pattern, patternType, type)
+            ,operations)
+        );
         return this;
     }
 

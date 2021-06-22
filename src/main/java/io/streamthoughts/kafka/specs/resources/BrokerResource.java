@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.specs.resources;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -30,15 +33,25 @@ public class BrokerResource implements ClusterResource, Serializable {
 
     private final Configs configs;
 
-    public BrokerResource(final String id) {
-        this(id, null, -1, null, new Configs());
+    public static BrokerResource withBrokerId(final String id) {
+        return new BrokerResource(id, null, -1, null, new Configs());
     }
 
-    public BrokerResource(final String id,
-                          final String host,
-                          final int port,
-                          final String rack,
-                          final Configs configs) {
+    /**
+     * Creates a new {@link BrokerResource} instance.
+     *
+     * @param id        the broker id.
+     * @param host      the broker host.
+     * @param port      the broker listener port.
+     * @param rack      the broker rack.
+     * @param configs   the configurations of the broker.
+     */
+    @JsonCreator
+    public BrokerResource(@JsonProperty("id") final String id,
+                          @JsonProperty("host") final String host,
+                          @JsonProperty("port") final int port,
+                          @JsonProperty("rack") final String rack,
+                          @JsonProperty("configs") final Configs configs) {
         this.id = id;
         this.host = host;
         this.port = port;
@@ -46,22 +59,27 @@ public class BrokerResource implements ClusterResource, Serializable {
         this.configs = configs;
     }
 
+    @JsonProperty
     public String host() {
         return host;
     }
 
+    @JsonProperty
     public int port() {
         return port;
     }
 
+    @JsonProperty
     public String rack() {
         return rack;
     }
 
+    @JsonProperty
     public Configs configs() {
         return configs;
     }
 
+    @JsonProperty
     public String id() {
         return id;
     }

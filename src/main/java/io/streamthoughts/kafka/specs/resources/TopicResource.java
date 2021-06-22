@@ -18,26 +18,34 @@
  */
 package io.streamthoughts.kafka.specs.resources;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A Kafka topic resource.
  */
-public class TopicResource implements ClusterResource,  Named, Serializable {
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public final class TopicResource implements ClusterResource, Named, Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(TopicResource.class);
 
-    private static final short INVALID_REPLICA = -1;
-
     private final String name;
 
-    private final int partitions;
+    private final Integer partitions;
 
-    private final short replicationFactor;
+    private final Short replicationFactor;
 
     private final Configs configs;
 
@@ -47,7 +55,7 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
      * @param name          the topic name.
      */
     public TopicResource(final String name) {
-        this(name, INVALID_REPLICA, INVALID_REPLICA);
+        this(name, null, null);
     }
 
     /**
@@ -57,8 +65,24 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
      * @param partitions    the number of partitions
      * @param replication   the replication factor.
      */
-    public TopicResource(final String name, final int partitions, final short replication) {
-        this(name, partitions, replication, new Configs());
+    public TopicResource(final String name, final Integer partitions, final Short replication) {
+        this(name, partitions, replication, Collections.emptyMap());
+    }
+
+    /**
+     * Creates a new {@link TopicResource} instance.
+     *
+     * @param name          the topic name.
+     * @param partitions    the number of partitions.
+     * @param replication   the replication factor.
+     * @param configs       the topic configs to override.
+     */
+    @JsonCreator
+    public TopicResource(@JsonProperty("name") final String name,
+                         @JsonProperty("partitions") final Integer partitions,
+                         @JsonProperty("replication_factor") final Short replication,
+                         @JsonProperty("configs") final Map<String, Object> configs) {
+        this(name, partitions, replication, toConfigs(configs));
     }
 
     /**
@@ -70,20 +94,20 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
      * @param configs       the topic configs to override.
      */
     public TopicResource(final String name,
-                         final int partitions,
-                         final short replication,
+                         final Integer partitions,
+                         final Short replication,
                          final Configs configs) {
         this.name = name;
         this.partitions = partitions;
         this.replicationFactor = replication;
         this.configs = configs;
-;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @JsonProperty
     public String name() {
         return name;
     }
@@ -91,6 +115,7 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
     /**
      * @return the number of partitions for this topic.
      */
+    @JsonProperty
     public int partitions() {
         return partitions;
     }
@@ -98,10 +123,12 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
     /**
      * @return the replication factor for this topic.
      */
+    @JsonProperty
     public short replicationFactor() {
         return replicationFactor;
     }
 
+    @JsonProperty
     public Configs configs() {
         return configs;
     }
@@ -124,8 +151,9 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
                     "Can't check changes on resources with different names " + this.name + "<>" + resource.name);
         }
 
-        if (this.partitions != resource.partitions ||
-            this.replicationFactor != resource.replicationFactor) {
+        if ((this.partitions != null && !this.partitions.equals(resource.partitions)) ||
+            (this.replicationFactor != null && !this.replicationFactor.equals(resource.replicationFactor))
+        ) {
           LOG.warn("Topic partitions and/or replication-factor change is not supported!" +
                   " You should consider altering topic through scripts 'kafka-topics' or 'kafka-configs'");
         }
@@ -151,12 +179,12 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof TopicResource)) return false;
         TopicResource that = (TopicResource) o;
-        return this.partitions == that.partitions &&
-                this.replicationFactor == that.replicationFactor &&
-                Objects.equals(this.name, that.name) &&
-                Objects.equals(this.configs, that.configs);
+        return Objects.equals(name, that.name) &&
+                Objects.equals(partitions, that.partitions) &&
+                Objects.equals(replicationFactor, that.replicationFactor) &&
+                Objects.equals(configs, that.configs);
     }
 
     /**
@@ -173,10 +201,21 @@ public class TopicResource implements ClusterResource,  Named, Serializable {
     @Override
     public String toString() {
         return "TopicResource{" +
-                "name='" + name + '\'' +
+                "name=" + name +
                 ", partitions=" + partitions +
-                ", replicationFactor=" + replicationFactor +
+                ", replication_factor=" + replicationFactor +
                 ", configs=" + configs +
                 '}';
+    }
+
+    public static Configs toConfigs(final Map<String, Object> configs) {
+        if (configs == null || configs.isEmpty())  return new Configs();
+
+        final Set<ConfigValue> values = configs.entrySet()
+                .stream()
+                .map(e -> new ConfigValue(e.getKey(), e.getValue()))
+                .collect(Collectors.toSet());
+
+        return new Configs(values);
     }
 }

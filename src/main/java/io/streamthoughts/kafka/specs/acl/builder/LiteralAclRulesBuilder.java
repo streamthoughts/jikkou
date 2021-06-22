@@ -99,7 +99,7 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
         final Stream<AclResourcePermission> groupsPermissions = groups.stream().map(AclGroupPolicy::permission);
 
         List<AclResourcePermission> permissions = Stream.concat(userPermissions, groupsPermissions)
-                .filter(p -> !p.isPatternOfTypeMatchRegex())
+                .filter(p -> !p.resource().isPatternOfTypeMatchRegex())
                 .collect(Collectors.toList());
         
         return createAllAclsFor(user.principal(), permissions);

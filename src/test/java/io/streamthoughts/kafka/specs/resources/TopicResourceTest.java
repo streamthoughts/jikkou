@@ -28,7 +28,6 @@ public class TopicResourceTest {
 
     private TopicResource defaultTopic;
 
-
     @BeforeEach
     public void setUp() {
         Configs defaultTopicConfigs = new Configs();
@@ -40,8 +39,8 @@ public class TopicResourceTest {
     }
 
    @Test
-   public void shouldNotDetectConfigsChangesGivenTopicResourceWithDifferentPartitions() {
-       TopicResource resource = new TopicResource(TOPIC_TEST, 10, DEFAULT_REPLICATION_FACTOR, Configs.emptyConfigs());
+   public void should_not_detect_configs_changes_given_topic_resource_with_different_partitions() {
+       TopicResource resource = new TopicResource(TOPIC_TEST, 10, DEFAULT_REPLICATION_FACTOR, Configs.empty());
        Assertions.assertFalse(resource.containsConfigsChanges(defaultTopic));
    }
 }

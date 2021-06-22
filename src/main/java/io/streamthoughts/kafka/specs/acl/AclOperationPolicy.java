@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.specs.acl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.kafka.common.acl.AclOperation;
 
 import java.util.Objects;
@@ -32,15 +35,29 @@ public class AclOperationPolicy {
     public static AclOperationPolicy fromString(final String policy) {
         if (policy.contains(":")) {
             String operation = policy.substring(0, policy.indexOf(":"));
-            String host = policy.substring(operation.length() + 1, policy.length());
+            String host = policy.substring(operation.length() + 1);
             return new AclOperationPolicy(AclOperation.fromString(operation), host);
         }
 
         return new AclOperationPolicy(AclOperation.fromString(policy));
     }
 
+    @JsonCreator
+    public AclOperationPolicy(final String value) {
+        if (value.contains(":")) {
+            String operation = value.substring(0, value.indexOf(":"));
+            String host = value.substring(operation.length() + 1);
+            this.operation = AclOperation.fromString(operation);
+            this.host = host;
+        } else {
+            this.operation = AclOperation.fromString(value);
+            this.host = ANY_HOSTS;
+        }
+    }
+
     /**
      * Creates a new {@link AclOperationPolicy} instance.
+     *
      * @param operation
      */
     public AclOperationPolicy(final AclOperation operation) {
@@ -86,11 +103,9 @@ public class AclOperationPolicy {
         return Objects.hash(host, operation);
     }
 
+    @JsonValue
     @Override
     public String toString() {
-        return "AclOperationPolicy{" +
-                "host='" + host + '\'' +
-                ", operation=" + operation +
-                '}';
+        return operation + ":" + host;
     }
 }

@@ -18,9 +18,13 @@
  */
 package io.streamthoughts.kafka.specs.acl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.streamthoughts.kafka.specs.resources.Named;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class AclGroupPolicy implements Named {
 
@@ -39,11 +43,14 @@ public class AclGroupPolicy implements Named {
      * @param name      the group policy name.
      * @param resource  the resource permission to
      */
-    AclGroupPolicy(final String name, final AclResourcePermission resource) {
+    @JsonCreator
+    AclGroupPolicy(@JsonProperty("name") final String name,
+                   @JsonProperty("resource") final AclResourceMatcher resource,
+                   @JsonProperty("allow_operations") final Set<AclOperationPolicy> operations) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(resource, "resource cannot be null");
         this.name = name;
-        this.resource = resource;
+        this.resource = new AclResourcePermission(resource, operations);
     }
 
     /**
@@ -54,6 +61,7 @@ public class AclGroupPolicy implements Named {
         return name;
     }
 
+    @JsonUnwrapped
     public AclResourcePermission permission() {
         return resource;
     }
@@ -64,7 +72,7 @@ public class AclGroupPolicy implements Named {
     @Override
     public String toString() {
         return "AclGroupPolicy{" +
-                "name='" + name + '\'' +
+                "name=" + name +
                 ", resource=" + resource +
                 '}';
     }

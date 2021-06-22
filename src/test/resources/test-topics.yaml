@@ -1,0 +1,12 @@
+topics:
+  - name: 'my-topic-p1'
+    partitions: 1
+    replication_factor: 1
+
+  - name: 'my-topic-p2'
+    partitions: 2
+    replication_factor: 1
+    configs:
+      retention.ms: 10000
+
+  - name: 'my-topic-p3'

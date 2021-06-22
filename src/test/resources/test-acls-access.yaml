@@ -1,0 +1,13 @@
+acls:
+  access_policies:
+    - principal: 'principal_one'
+      groups: [ 'group_one' ]
+
+    - principal: 'principal_two'
+      groups: [ ]
+      permissions:
+        - resource:
+            type: 'topic'
+            pattern: 'bench-'
+            patternType: 'PREFIXED'
+          allow_operations: [ 'READ:*', 'WRITE:*' ]

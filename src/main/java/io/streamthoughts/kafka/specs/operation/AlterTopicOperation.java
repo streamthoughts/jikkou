@@ -71,9 +71,10 @@ public class AlterTopicOperation extends TopicOperation<ResourceOperationOptions
                             .setName(resource.name());
             topicsNames.add(resource.name());
 
-            resource.configs().forEach(v -> topicConfigs.setConfig(v.name(), v.getValue()));
+            resource.configs().forEach(v -> topicConfigs.setConfig(v.name(), v.value().toString()));
         });
         LOG.info("Starting to alter topics {}", topicsNames);
+
         AlterConfigsResult result = client.alterConfigs(builder.build());
 
         final Map<String, KafkaFuture<Void>> futures = new HashMap<>();

@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 public class ConfigsTest {
 
     private Configs defaultTopicConfigs;
@@ -35,33 +37,33 @@ public class ConfigsTest {
     }
 
     @Test
-    public void shouldDetectNoChangesGivenEmptyConfigsWhenComparingWithDefaultValues() {
-        Configs emptyConfigs = Configs.emptyConfigs();
+    public void should_detect_no_changes_given_empty_configs_when_comparing_with_default_values() {
+        Configs emptyConfigs = Configs.empty();
         boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
         Assertions.assertFalse(result);
     }
 
     @Test
-    public void shouldDetectNoChangesGivenOverrideConfigsWithNoChangesWhenComparingWithDefaultValues() {
+    public void should_detect_no_changes_given_override_configs_with_no_changes_when_comparing_with_default_values() {
         Configs configs = new Configs();
-        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
+        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE, true));
 
         boolean result = configs.containsChanges(defaultTopicConfigs);
         Assertions.assertFalse(result);
     }
 
     @Test
-    public void shouldDetectChangesGivenEmptyConfigsWhenComparingWithDefaultAndOverrideValues() {
+    public void should_detect_changes_given_empty_configs_when_comparing_with_default_and_override_values() {
         // override default value
         defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
 
-        Configs emptyConfigs = Configs.emptyConfigs();
+        Configs emptyConfigs = Configs.empty();
         boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
         Assertions.assertTrue(result);
     }
 
     @Test
-    public void shouldDetectChangesGivenOverrideConfigsWhenComparingWithDefaultValues() {
+    public void should_detect_changes_given_override_configs_when_comparing_with_default_values() {
         Configs configs = new Configs();
         configs.add(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "10000"));
 
@@ -70,7 +72,7 @@ public class ConfigsTest {
     }
 
     @Test
-    public void shouldBeAbleToGetSubDefaultDefaultConfigs() {
+    public void should_be_able_to_get_sub_default_configs() {
         // override default value
         defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
         Configs configs = defaultTopicConfigs.defaultConfigs();
@@ -81,7 +83,7 @@ public class ConfigsTest {
     }
 
     @Test
-    public void shouldFilterOnNonEqualsConfigs() {
+    public void should_filter_on_non_equals_configs() {
         Configs configs = new Configs(defaultTopicConfigs.values());
         // override default config entry
         configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
@@ -94,6 +96,13 @@ public class ConfigsTest {
         Assertions.assertEquals(2, result.size());
         Assertions.assertNotNull(configs.get(TopicConfig.MAX_MESSAGE_BYTES_CONFIG));
         Assertions.assertNotNull(configs.get(TopicConfig.CLEANUP_POLICY_CONFIG));
+    }
+
+    @Test
+    public void should_compare_two_configs() {
+        final Configs config1 = new Configs(Set.of(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, 1)));
+        final Configs config2 = new Configs(Set.of(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, 1)));
+        Assertions.assertEquals(config1, config2);
     }
 
 }

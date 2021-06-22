@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs.acl.builder;
 
 import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
 import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
+import io.streamthoughts.kafka.specs.acl.AclResourceMatcher;
 import io.streamthoughts.kafka.specs.acl.AclResourcePermission;
 import io.streamthoughts.kafka.specs.acl.AclRule;
 import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
@@ -51,11 +52,13 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
         List<AclRule> rules = new LinkedList<>();
         for (AclResourcePermission permission : permissions) {
             for (AclOperationPolicy operation : permission.operations()) {
+
+                final AclResourceMatcher resource = permission.resource();
                 rules.add(createNewAcl(
                         principal,
-                        (overrideResourcePattern == null) ? permission.pattern() : overrideResourcePattern,
-                        (overridePatternType == null) ? permission.patternType() : overridePatternType,
-                        (overrideResourceType == null) ? permission.getType() : overrideResourceType,
+                        (overrideResourcePattern == null) ? resource.pattern() : overrideResourcePattern,
+                        (overridePatternType == null) ? resource.patternType() : overridePatternType,
+                        (overrideResourceType == null) ? resource.type() : overrideResourceType,
                         operation));
             }
         }

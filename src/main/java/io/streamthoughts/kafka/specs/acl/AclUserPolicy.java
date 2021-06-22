@@ -18,6 +18,10 @@
  */
 package io.streamthoughts.kafka.specs.acl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -37,15 +41,16 @@ public class AclUserPolicy {
      * @param groups
      * @param permissions
      */
-    AclUserPolicy(final String principal,
-                  final Set<String> groups,
-                  final Set<AclResourcePermission> permissions) {
+    @JsonCreator
+    AclUserPolicy(@JsonProperty("principal") final String principal,
+                  @JsonProperty("groups") final Set<String> groups,
+                  @JsonProperty("permissions") final Set<AclResourcePermission> permissions) {
         Objects.requireNonNull(principal, "principal cannot be null");
         Objects.requireNonNull(principal, "groups cannot be null");
         Objects.requireNonNull(principal, "permissions cannot be null");
         this.principal = principal;
         this.groups = groups;
-        this.permissions = Collections.unmodifiableSet(permissions);
+        this.permissions = permissions == null ? Collections.emptySet() : Collections.unmodifiableSet(permissions);
     }
 
     public String principal() {

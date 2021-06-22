@@ -82,6 +82,10 @@ public class AclGroupPolicyBuilder {
     }
 
     public AclGroupPolicy build() {
-        return new AclGroupPolicy(name, new AclResourcePermission(pattern, patternType, type, operations));
+        return new AclGroupPolicy(
+                name,
+                new AclResourceMatcher(pattern, patternType, type),
+                operations
+        );
     }
 }

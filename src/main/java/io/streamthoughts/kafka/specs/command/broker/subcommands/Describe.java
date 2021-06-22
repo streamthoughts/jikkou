@@ -63,7 +63,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call(final AdminClient client) {
         var brokerIds = loadClusterBrokerIds(client);
-        List<BrokerResource> brokers = brokerIds.stream().map(BrokerResource::new).collect(Collectors.toList());
+        List<BrokerResource> brokers = brokerIds.stream().map(BrokerResource::withBrokerId).collect(Collectors.toList());
         ResourcesIterable<BrokerResource> it = new ResourcesIterable<>(brokers);
         final Collection<BrokerResource> resources = new DescribeBrokerOperation().execute(
                 client,

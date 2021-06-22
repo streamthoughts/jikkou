@@ -29,7 +29,6 @@ import com.google.gson.JsonSerializer;
 import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Helper class pretty print execution results.
@@ -102,13 +101,15 @@ public class Printer {
      */
     private static final class ConfigsSerializer implements JsonSerializer<Configs> {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public JsonElement serialize(final Configs configs,
                                      final Type typeOfSrc,
                                      final JsonSerializationContext context) {
-
             JsonObject jsonObject = new JsonObject();
-            configs.forEach(c -> jsonObject.addProperty(c.name(), c.getValue()));
+            configs.forEach(c -> jsonObject.addProperty(c.name(), c.value().toString()));
             return jsonObject;
         }
     }

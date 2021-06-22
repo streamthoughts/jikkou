@@ -25,24 +25,11 @@ import java.io.InputStream;
  */
 public interface ClusterSpecReader {
 
-    class Fields {
-        // topics
-        static final String TOPICS_FIELD                    = "topics";
-
-        // brokers
-        static final String BROKERS_FIELD                   = "brokers";
-
-        // ACLs groups and users
-        static final String ACL_FIELD                       = "acls";
-        static final String ACL_GROUP_POLICIES_FIELD        = "group_policies";
-        static final String ACL_ACCESS_POLICIES_FIELD       = "access_policies";
-    }
-
     /**
      * Retrieves a {@link ClusterSpec} from the specified input stream.
      *
      * @param stream    the input stream from which to read the specification.
      * @return          a new {@link ClusterSpec} instance.
      */
-    ClusterSpec read(final InputStream stream);
+    ClusterSpec read(final InputStream stream) throws InvalidSpecificationException;
 }

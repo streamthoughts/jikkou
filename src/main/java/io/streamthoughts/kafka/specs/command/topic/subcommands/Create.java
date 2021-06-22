@@ -32,7 +32,7 @@ import picocli.CommandLine.Command;
 import java.util.Collection;
 
 @Command(name = "create",
-        description = "Create the topics missing on the cluster as describe in the specification file."
+         description = "Create the topics missing on the cluster as describe in the specification file."
 )
 public class Create extends TopicsCommand.Base {
     /**
@@ -40,7 +40,7 @@ public class Create extends TopicsCommand.Base {
      */
     @Override
     public Collection<OperationResult<TopicResource>> execute(final Collection<TopicResource> topics,
-                                                       final AdminClient client) {
+                                                              final AdminClient client) {
         return new CreateTopicOperation()
                 .execute(
                         client,

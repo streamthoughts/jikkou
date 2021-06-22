@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 
@@ -81,23 +82,28 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
 
     public ClusterSpec clusterSpec() {
 
+        final InputStream is;
         if (specOptions.url != null) {
             try {
-                return READER.read(specOptions.url.openStream());
-            } catch (IOException e) {
+               is = specOptions.url.openStream();
+            } catch (Exception e) {
                 throw new RuntimeException("Can't read specification from URL '" + specOptions.url + "': "
                         + e.getMessage());
             }
-        }
-
-        try {
-            if (specOptions.file != null) {
-                return READER.read(new FileInputStream(specOptions.file));
+        } else if (specOptions.file != null) {
+            try {
+                is = new FileInputStream(specOptions.file);
+            } catch (Exception e) {
+                throw new RuntimeException("Can't read specification from file '" + specOptions.file + "': "
+                        + e.getMessage());
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Can't read specification from file '" + specOptions.file + "': "
-                    + e.getMessage());
+        } else {
+            throw new IllegalArgumentException("no specification");
         }
-        throw new IllegalArgumentException("no specification");
+        try {
+            return READER.read(is);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
     }
 }

@@ -106,8 +106,8 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                                                                   final TopicListing topic) {
         List<AclResourcePermission> permissions = user.permissions()
                 .stream()
-                .filter(p -> p.getType() == ResourceType.TOPIC)
-                .filter(AclResourcePermission::isPatternOfTypeMatchRegex)
+                .filter(p -> p.resource().type() == ResourceType.TOPIC)
+                .filter(p -> p.resource().isPatternOfTypeMatchRegex())
                 .collect(Collectors.toList());
         return createAllAclsFor(user.principal(),
                 filterPermissionMatchingTopic(permissions, topic),
@@ -121,8 +121,8 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                                                                     final TopicListing topic) {
         List<AclResourcePermission> permissions = groups.stream()
                 .map(AclGroupPolicy::permission)
-                .filter(p -> p.getType() == ResourceType.TOPIC)
-                .filter(AclResourcePermission::isPatternOfTypeMatchRegex)
+                .filter(p -> p.resource().type() == ResourceType.TOPIC)
+                .filter(p -> p.resource().isPatternOfTypeMatchRegex())
                 .collect(Collectors.toList());
 
         return createAllAclsFor(user.principal(),
@@ -143,7 +143,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                                                                             final TopicListing topic) {
         return groups.stream()
             .filter(permission -> {
-                String regex = permission.pattern();
+                String regex = permission.resource().pattern();
                 regex = regex.substring(1, regex.length() - 1);
                 Matcher matcher = Pattern.compile(regex).matcher(topic.name());
                 return matcher.matches();

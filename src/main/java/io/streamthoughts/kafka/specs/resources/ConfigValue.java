@@ -18,15 +18,18 @@
  */
 package io.streamthoughts.kafka.specs.resources;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import java.util.Objects;
 
 /**
+ *
  */
 public class ConfigValue implements Named {
 
     private final String name;
 
-    private final String value;
+    private final Object value;
 
     private final boolean isDefault;
 
@@ -36,7 +39,8 @@ public class ConfigValue implements Named {
      * @param name      the property name.
      * @param value     the property value.
      */
-    public ConfigValue(final String name, final String value) {
+    public ConfigValue(final String name,
+                       final Object value) {
         this(name, value, false);
     }
 
@@ -46,17 +50,23 @@ public class ConfigValue implements Named {
      * @param name      the property name.
      * @param value     the property value.
      */
-    public ConfigValue(final String name, final String value, final boolean isDefault) {
+    public ConfigValue(final String name,
+                       final Object value,
+                       final boolean isDefault) {
         this.name = name;
         this.value = value;
         this.isDefault = isDefault;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String name() {
         return name;
     }
 
-    public String getValue() {
+    public Object value() {
         return value;
     }
 
@@ -64,26 +74,36 @@ public class ConfigValue implements Named {
         return isDefault;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ConfigValue)) return false;
         ConfigValue that = (ConfigValue) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(value, that.value);
+        return isDefault == that.isDefault &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(value.toString(), that.value.toString());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(name, value);
+        return Objects.hash(name, value, isDefault);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ConfigValue{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", value='").append(value).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "ConfigValue{" +
+                "name=" + name +
+                ", value=" + value +
+                ", isDefault=" + isDefault +
+                '}';
     }
 }

@@ -18,25 +18,16 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
-import io.streamthoughts.kafka.specs.reader.AclGroupPolicyReader;
-import io.streamthoughts.kafka.specs.reader.AclUserPolicyReader;
-import io.streamthoughts.kafka.specs.reader.BrokerClusterSpecReader;
-import io.streamthoughts.kafka.specs.reader.EntitySpecificationReader;
-import io.streamthoughts.kafka.specs.reader.MapObjectReader;
-import io.streamthoughts.kafka.specs.reader.TopicClusterSpecReader;
-import io.streamthoughts.kafka.specs.resources.BrokerResource;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Class used to read a Kafka cluster specification a from a YAML input file.
@@ -45,30 +36,27 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
 
     private static final Logger LOG = LoggerFactory.getLogger(YAMLClusterSpecReader.class);
 
-    private static final String VERSION_FIELD = "version";
+    static final ClusterSpecReaders CURRENT_VERSION = ClusterSpecReaders.VERSION_1;
 
-    static final SpecVersion CURRENT_VERSION = SpecVersion.VERSION_1;
-
-    public enum SpecVersion {
+    public enum ClusterSpecReaders implements ClusterSpecReader {
         VERSION_1("1") {
-            @SuppressWarnings("unchecked")
             @Override
-            ClusterSpec read(Map<String, Object> specification) {
-                final Set<TopicResource> mTopics = read(Fields.TOPICS_FIELD, specification, new TopicClusterSpecReader());
-                final Set<BrokerResource> mBrokers = read(Fields.BROKERS_FIELD, specification, new BrokerClusterSpecReader());
-
-                Map<String, Object> acls = (Map<String, Object>) specification.get(Fields.ACL_FIELD);
-
-                final Set<AclGroupPolicy> mGroups = read(Fields.ACL_GROUP_POLICIES_FIELD, acls, new AclGroupPolicyReader());
-                final Set<AclUserPolicy> sUsers = read(Fields.ACL_ACCESS_POLICIES_FIELD, acls, new AclUserPolicyReader());
-
-                return new ClusterSpec(mBrokers, mTopics, mGroups, sUsers);
+            public ClusterSpec read(final InputStream specification) throws InvalidSpecificationException {
+                try {
+                    return Jackson.OBJECT_MAPPER.readValue(specification, ClusterSpec.class);
+                } catch (IOException e) {
+                    throw new InvalidSpecificationException("Invalid specification file: " + e.getLocalizedMessage());
+                }
             }
         };
 
         private final String version;
 
-        SpecVersion(final String version) {
+        /**
+         * Creates a new
+         * @param version   the string version.
+         */
+        ClusterSpecReaders(final String version) {
             this.version = version;
         }
 
@@ -76,29 +64,10 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             return version;
         }
 
-        abstract ClusterSpec read(final Map<String, Object> specification);
+        public abstract ClusterSpec read(final InputStream specification) throws InvalidSpecificationException;
 
-
-        /**
-         * Read the specification entity with the specified reader.
-         *
-         * @param key       the entity key to read.
-         * @param input     the specification input.
-         * @param reader    the reader
-         * @param <T>       the output entity type.
-         *
-         * @return          a set of new {@link T} instance.
-         */
-        protected static <T> Set<T> read(final String key, final Map<String, Object> input, final EntitySpecificationReader<T> reader) {
-            if (input == null) return Collections.emptySet();
-
-            return Optional.ofNullable(input.get(key))
-                    .map(t -> reader.read(MapObjectReader.toList(t)))
-                    .orElse(Collections.emptySet());
-        }
-
-        public static Optional<SpecVersion> getVersionFromString(final String version) {
-            for (SpecVersion e : SpecVersion.values()) {
+        public static Optional<ClusterSpecReaders> getVersionFromString(final String version) {
+            for (ClusterSpecReaders e : ClusterSpecReaders.values()) {
                 if (e.version().endsWith(version)) {
                     return Optional.of(e);
                 }
@@ -112,27 +81,54 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
      */
     @Override
     public ClusterSpec read(final InputStream stream) {
-        Yaml yaml = new Yaml();
-        Map<String, Object> specification = yaml.load(stream);
-        requireNonNull(specification, "Cluster specification is empty or invalid.");
+        try {
+            final String specification = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            if (specification.isEmpty()) {
+                throw new InvalidSpecificationException("Empty specification file");
+            }
+            final Versioned versioned = Jackson.OBJECT_MAPPER.readValue(
+                    newInputStream(specification),
+                    Versioned.class
+            );
 
-        final Object version = specification.get(VERSION_FIELD);
-        if (version == null) {
-            LOG.warn("No version found in input specification file, using current version {}", CURRENT_VERSION.version);
-            return CURRENT_VERSION.read(specification);
+            if (versioned.version().isEmpty()) {
+                LOG.warn(
+                        "No version found in input specification file, fallback on the current version {}",
+                        CURRENT_VERSION.version
+                );
+                return CURRENT_VERSION.read(newInputStream(specification));
+            }
+
+            final Optional<ClusterSpecReaders> specVersion = ClusterSpecReaders.getVersionFromString(versioned.toString());
+            return specVersion.orElseGet(() -> {
+                LOG.info(
+                        "Unknown version '{}', using current version {}",
+                        versioned,
+                        CURRENT_VERSION
+                );
+                return CURRENT_VERSION;
+            }).read(newInputStream(specification));
+        } catch (IOException e) {
+            throw new InvalidSpecificationException(e.getLocalizedMessage());
         }
+    }
 
-        Optional<SpecVersion> specVersion = SpecVersion.getVersionFromString(version.toString());
-        return specVersion.orElseGet(() -> {
-            LOG.info("Unknown version '{}', using current version {}", version, CURRENT_VERSION);
-            return CURRENT_VERSION;
-        }).read(specification);
+    private InputStream newInputStream(final String specification) {
+        return new ByteArrayInputStream(specification.getBytes(StandardCharsets.UTF_8));
     }
 
 
-    private static void requireNonNull(final Object o, final String message) {
-        if (o == null) {
-            throw new InvalidSpecificationException(message);
+    private static class Versioned {
+
+        private final String version;
+
+        @JsonCreator
+        public Versioned(@JsonProperty("version") final String version) {
+            this.version = version;
+        }
+
+        public Optional<String> version() {
+            return Optional.ofNullable(version);
         }
     }
 }
