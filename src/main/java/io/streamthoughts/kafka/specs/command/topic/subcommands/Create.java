@@ -18,50 +18,23 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.TopicCandidates;
-import io.streamthoughts.kafka.specs.operation.OperationType;
 import io.streamthoughts.kafka.specs.operation.CreateTopicOperation;
 import io.streamthoughts.kafka.specs.operation.CreateTopicOperationOptions;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine.Command;
-
-import java.util.Collection;
 
 @Command(name = "create",
          description = "Create the topics missing on the cluster as describe in the specification file."
 )
 public class Create extends TopicsCommand.Base {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<OperationResult<TopicResource>> execute(final Collection<TopicResource> topics,
-                                                              final AdminClient client) {
-        return new CreateTopicOperation()
-                .execute(
-                        client,
-                        new ResourcesIterable<>(topics),
-                        new CreateTopicOperationOptions()
-                );
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<TopicResource> getTopics(final TopicCandidates candidates) {
-        return candidates.topicsToCreate();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OperationType getOperationType() {
-        return OperationType.CREATE;
+    public TopicOperation createTopicOperation(final AdminClient client) {
+        return new CreateTopicOperation(client, new CreateTopicOperationOptions());
     }
 }

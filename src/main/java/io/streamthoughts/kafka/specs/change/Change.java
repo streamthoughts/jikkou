@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,31 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.change;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import io.streamthoughts.kafka.specs.resources.Named;
 
-/**
- * Default interface to write a cluster specification.
- */
-public class YAMLClusterSpecWriter implements ClusterSpecWriter {
-
-    private static final YAMLClusterSpecWriter INSTANCE = new YAMLClusterSpecWriter();
-
-    public static YAMLClusterSpecWriter instance() {
-        return INSTANCE;
-    }
+public interface Change<T extends Change<T>> extends Named {
 
     /**
-     * {@inheritDoc}
+     * @return the name of the resource associated to this change.
      */
     @Override
-    public void write(final ClusterSpec spec, final OutputStream os) {
-        try {
-            Jackson.YAML_OBJECT_MAPPER.writeValue(os, spec);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to serialize specification into YAML: " + e.getLocalizedMessage());
-        }
+    String name();
+
+    /**
+     * @return the operation associated to this change.
+     */
+    OperationType getOperation();
+
+    enum OperationType {
+        NONE, ADD, DELETE, UPDATE
     }
 }

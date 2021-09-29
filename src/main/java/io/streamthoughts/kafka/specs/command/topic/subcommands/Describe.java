@@ -44,10 +44,10 @@ import static io.streamthoughts.kafka.specs.command.topic.TopicsCommand.listClus
 public class Describe extends BaseCommand {
 
     @Option(names = {"--default-configs"},
-            description = "Export built-in default configuration for configs that have a default value"
+            description = "Export built-in default configuration for configs that have a default value."
     )
     boolean describeDefaultConfigs;
-
+    
     @Option(names = "--file-path",
             description = "The file path to write the description of Topics."
     )

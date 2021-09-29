@@ -19,66 +19,99 @@
 package io.streamthoughts.kafka.specs.operation;
 
 import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.ConfigEntryChange;
+import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
-import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AlterConfigsResult;
+import org.apache.kafka.clients.admin.AlterConfigOp;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.config.ConfigResource;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Default command to alter multiple topics.
  */
-public class AlterTopicOperation extends TopicOperation<ResourceOperationOptions> {
-
-    public static DescriptionProvider<TopicResource> DESCRIPTION = (resource -> {
-        return (Description.Alter) () -> String.format("Alter topic %s", resource.name());
-    });
+public class AlterTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(AlterTopicOperation.class);
 
+    public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
+        return (Description.Alter) () -> String.format("Alter topic %s", resource.name());
+    });
+
+    private final AdminClient client;
+
+    private final boolean deleteOrphans;
+
     /**
-     * {@inheritDoc}
+     * Creates a new {@link AlterTopicOperation} instance.
+     *
+     * @param deleteOrphans is
      */
-    @Override
-    Description getDescriptionFor(final TopicResource resource) {
-        return DESCRIPTION.getForResource(resource);
+    public AlterTopicOperation(final AdminClient client, final boolean deleteOrphans) {
+        this.client = client;
+        this.deleteOrphans = deleteOrphans;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, KafkaFuture<Void>> doExecute(final AdminClient client,
-                                                       final ResourcesIterable<TopicResource> resources,
-                                                       final ResourceOperationOptions options) {
-        final ConfigsBuilder builder = new ConfigsBuilder();
+    public Description getDescriptionFor(@NotNull final TopicChange change) {
+        return DESCRIPTION.getForResource(change);
+    }
 
-        final List<String> topicsNames = new ArrayList<>();
-        resources.forEach(resource -> {
-            final ConfigsBuilder.ResourceConfigSupplier topicConfigs =
-                    builder.newResourceConfig()
-                            .setType(ConfigResource.Type.TOPIC)
-                            .setName(resource.name());
-            topicsNames.add(resource.name());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean test(final TopicChange change) {
+        return change.hasConfigEntryChanges();
+    }
 
-            resource.configs().forEach(v -> topicConfigs.setConfig(v.name(), v.value().toString()));
-        });
-        LOG.info("Starting to alter topics {}", topicsNames);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges topicChanges) {
+        final Map<ConfigResource, Collection<AlterConfigOp>> configs = new HashMap<>();
+        for (TopicChange change : topicChanges) {
+            final List<AlterConfigOp> alters = new ArrayList<>(change.getConfigEntryChanges().size());
+            for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
+                var operationType = configEntryChange.getOperation();
 
-        AlterConfigsResult result = client.alterConfigs(builder.build());
+                if (operationType == Change.OperationType.DELETE && deleteOrphans) {
+                    alters.add(new AlterConfigOp(
+                            new ConfigEntry(configEntryChange.name(), null),
+                            AlterConfigOp.OpType.DELETE)
+                    );
+                }
 
-        final Map<String, KafkaFuture<Void>> futures = new HashMap<>();
-        result.values().forEach( (k, v) -> futures.put(k.name(), v));
-        return futures;
+                if (operationType == Change.OperationType.UPDATE) {
+                    alters.add(new AlterConfigOp(
+                            new ConfigEntry(configEntryChange.name(), configEntryChange.getAfter()),
+                            AlterConfigOp.OpType.SET)
+                    );
+                }
+            }
+            configs.put(new ConfigResource(ConfigResource.Type.TOPIC, change.name()), alters);
+        }
+        return client.incrementalAlterConfigs(configs)
+                .values()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(it -> it.getKey().name(), Map.Entry::getValue));
     }
 }

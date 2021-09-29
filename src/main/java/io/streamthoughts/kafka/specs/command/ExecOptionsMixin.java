@@ -29,7 +29,7 @@ public class ExecOptionsMixin {
     )
     public boolean verbose;
 
-    @Option(names = {"--yes"},
+    @Option(names = "--yes",
             defaultValue = "false",
             description = "Assume yes; assume that the answer to any question which would be asked is yes.",
             arity = "0..1")

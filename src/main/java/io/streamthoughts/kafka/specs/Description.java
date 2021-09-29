@@ -35,7 +35,6 @@ public interface Description {
      */
     String textDescription();
 
-
     interface Create extends Description {
 
         /**
@@ -68,16 +67,4 @@ public interface Description {
             return OperationType.DELETE;
         }
     }
-
-    interface Unknown extends Description {
-
-        /**
-         * @return {@link OperationType#UNKNOWN}.
-         */
-        @Override
-        default OperationType operation() {
-            return OperationType.UNKNOWN;
-        }
-    }
-
 }

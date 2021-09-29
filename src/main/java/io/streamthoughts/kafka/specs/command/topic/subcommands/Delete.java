@@ -18,35 +18,17 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.TopicCandidates;
 import io.streamthoughts.kafka.specs.operation.DeleteTopicOperation;
-import io.streamthoughts.kafka.specs.operation.OperationType;
-import io.streamthoughts.kafka.specs.operation.ResourceOperationOptions;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Command(name = "delete",
         description = "Delete all topics not described in the specification file."
 )
 public class Delete extends TopicsCommand.Base {
-
-    private static final Set<String> INTERNAL_TOPICS = Set.of(
-            "__consumer_offsets",
-            "_schemas",
-            "__transaction_state",
-            "connect-offsets",
-            "connect-status",
-            "connect-configs"
-    );
 
     @Option(names = "--exclude-internals",
             description = "Exclude internal topics (i.e.: __consumer_offset, __transaction_state, connect-[offsets|status|configs], _schemas.)"
@@ -57,45 +39,7 @@ public class Delete extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public Collection<OperationResult<TopicResource>> execute(final Collection<TopicResource> topics,
-                                                              final AdminClient client) {
-
-        final Collection<TopicResource> filtered;
-        if (excludeInternalTopics) {
-            filtered = topics
-                .stream()
-                .filter(this::isNotInternalTopics)
-                .collect(Collectors.toList());
-        } else {
-            filtered = topics;
-        }
-
-        return new DeleteTopicOperation()
-                .execute(
-                        client,
-                        new ResourcesIterable<>(filtered),
-                        new ResourceOperationOptions() {
-                        }
-                );
-    }
-
-    private boolean isNotInternalTopics(final TopicResource topic) {
-        return !INTERNAL_TOPICS.contains(topic.name()) && !topic.name().startsWith("__");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<TopicResource> getTopics(final TopicCandidates candidates) {
-        return candidates.topicsExistingOnlyOnCluster();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OperationType getOperationType() {
-        return OperationType.DELETE;
+    public TopicOperation createTopicOperation(final AdminClient client) {
+        return new DeleteTopicOperation(client, excludeInternalTopics);
     }
 }

@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.specs.operation;
 
 import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
-import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.Named;
 import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
@@ -35,7 +34,6 @@ import org.apache.kafka.common.config.ConfigResource;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -94,7 +92,7 @@ public class DescribeTopicOperation implements ClusterOperation<ResourcesIterabl
      * @param desc  the topic description
      * @return      return {@literal -1} if all partitions do not have a same number of replicas (this may happen during replicas reassignment).
      */
-    private int computeReplicationFactor(TopicDescription desc) {
+    private int computeReplicationFactor(final TopicDescription desc) {
         Iterator<TopicPartitionInfo> it = desc.partitions().iterator();
         int rf = it.next().replicas().size();
         while (it.hasNext() && rf != -1) {

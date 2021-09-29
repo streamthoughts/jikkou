@@ -54,8 +54,8 @@ public class OperationResult<T> {
     /**
      * Build a new {@link OperationResult} that doesn't result in cluster resource changes.
      */
-    public static <T> OperationResult<T> unchanged(final T resource,
-                                                   final Description description) {
+    public static <T> OperationResult<T> ok(final T resource,
+                                            final Description description) {
         return new OperationResult<>(Status.OK, false, resource, description);
     }
 

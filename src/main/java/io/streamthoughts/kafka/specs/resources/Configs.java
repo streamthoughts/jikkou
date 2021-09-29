@@ -58,7 +58,7 @@ public class Configs implements Iterable<ConfigValue> {
     public static Configs of(final Config config, final boolean describeDefault) {
         Set<ConfigValue> configs = config.entries().stream()
                 .filter(entry -> !entry.isDefault() || describeDefault)
-                .map(entry -> new ConfigValue(entry.name(), entry.value(), entry.isDefault()))
+                .map(ConfigValue::new)
                 .collect(Collectors.toSet());
         return new Configs(configs);
     }
@@ -138,36 +138,6 @@ public class Configs implements Iterable<ConfigValue> {
 
     public ConfigValue get(final String name) {
         return this.values.get(name);
-    }
-
-    /**
-     * @return {@code true} if the given {@link Configs} contains some changes.
-     */
-    public boolean containsChanges(final Configs configs) {
-
-        Map<String, ConfigValue> thatConfigs = configs.asOrderedMap();
-
-        // Check if all same configs are the same value.
-        for (ConfigValue config : this.values.values()) {
-            if (isNotEqualOrNotExist(thatConfigs, config)) {
-                return true;
-            }
-            thatConfigs.remove(config.name());
-        }
-
-        // Checks if all remaining configuration are defaults.
-        for (ConfigValue config : thatConfigs.values()) {
-            if (!config.isDefault()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isNotEqualOrNotExist(final Map<String, ConfigValue> configs,
-                                         final ConfigValue config) {
-        return !configs.containsKey(config.name()) ||
-               !configs.get(config.name()).equals(config);
     }
 
     /**

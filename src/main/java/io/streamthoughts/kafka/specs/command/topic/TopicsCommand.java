@@ -20,32 +20,32 @@ package io.streamthoughts.kafka.specs.command.topic;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.OperationResult;
+import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Alter;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.TopicCandidates;
-import io.streamthoughts.kafka.specs.operation.OperationType;
-import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.operation.AlterTopicOperation;
-import io.streamthoughts.kafka.specs.operation.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.DeleteTopicOperation;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.operation.DescribeTopicOperation;
-import io.streamthoughts.kafka.specs.resources.Named;
+import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.common.KafkaFuture;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -100,68 +100,77 @@ public class TopicsCommand extends WithAdminClientCommand {
                 );
     }
 
-    public static abstract class Base extends WithSpecificationCommand<TopicResource> {
-
-        private static final Map<OperationType, DescriptionProvider<TopicResource>> DESCRIPTIONS_BY_TYPE = new HashMap<>();
-
-        static {
-            DESCRIPTIONS_BY_TYPE.put(OperationType.CREATE, CreateTopicOperation.DESCRIPTION);
-            DESCRIPTIONS_BY_TYPE.put(OperationType.DELETE, DeleteTopicOperation.DESCRIPTION);
-            DESCRIPTIONS_BY_TYPE.put(OperationType.ALTER, AlterTopicOperation.DESCRIPTION);
-            DESCRIPTIONS_BY_TYPE.put(OperationType.UNKNOWN, resource -> (Description.Unknown) () -> "Executing operation on topic " + resource.name());
-        }
+    public static abstract class Base extends WithSpecificationCommand<TopicChange> {
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Collection<OperationResult<TopicResource>> executeCommand(final AdminClient client) {
-            final Collection<TopicResource> declaredTopics = clusterSpec()
-                    .getTopics(it -> isResourceCandidate(it.name()));
+        public Collection<OperationResult<TopicChange>> executeCommand(final AdminClient client) {
 
-            final TopicCandidates candidates = new TopicCandidates(
-                    declaredTopics,
-                    Named.keyByName(listClusterTopics(client, this::isResourceCandidate)));
+            final TopicChanges topicChanges = TopicChanges.computeChanges(
+                    listClusterTopics(client, this::isResourceCandidate),
+                    clusterSpec().getTopics(it -> isResourceCandidate(it.name()))
+            );
 
-            Collection<TopicResource> topics = getTopics(candidates);
-            final LinkedList<OperationResult<TopicResource>> results = new LinkedList<>();
+            final TopicOperation operation = createTopicOperation(client);
+
+            final LinkedList<OperationResult<TopicChange>> results = new LinkedList<>();
+
             if (isDryRun()) {
-                results.addAll(buildDryRunResults(topics, true, CreateTopicOperation.DESCRIPTION));
+                topicChanges.all()
+                    .stream()
+                    .filter(it -> operation.test(it) || it.getOperation() == Change.OperationType.NONE)
+                    .map(change -> {
+                        Description description = operation.getDescriptionFor(change);
+                        return change.getOperation() == Change.OperationType.NONE ?
+                                OperationResult.ok(change, description) :
+                                OperationResult.changed(change, description);
+                    })
+                   .forEach(results::add);
             } else {
-                results.addAll(execute(topics, client));
+                results.addAll(applyChanges(topicChanges, operation));
+                topicChanges.all()
+                        .stream()
+                        .filter(it -> it.getOperation() == Change.OperationType.NONE)
+                        .map(change -> OperationResult.ok(change, operation.getDescriptionFor(change)))
+                        .forEach(results::add);
             }
-            results.addAll(addSynchronized(candidates, getOperationType(), isDryRun()));
+
             return results;
         }
 
-        public abstract Collection<OperationResult<TopicResource>> execute(final Collection<TopicResource> topics,
-                                                                           final AdminClient client);
+        private List<OperationResult<TopicChange>> applyChanges(final TopicChanges topicChanges,
+                                                                final TopicOperation topicOperation) {
 
-        public abstract Collection<TopicResource> getTopics(final TopicCandidates candidates);
+            final Map<String, KafkaFuture<Void>> resultMap = topicChanges.apply(topicOperation);
 
-        public abstract OperationType getOperationType();
+            List<CompletableFuture<OperationResult<TopicChange>>> completableFutures = resultMap.entrySet()
+                    .stream()
+                    .map(entry -> {
+                        final Future<Void> future = entry.getValue();
+                        return makeCompletableFuture(future, topicChanges.get(entry.getKey()), topicOperation);
+                    }).collect(Collectors.toList());
 
-        public static List<OperationResult<TopicResource>> addSynchronized(final TopicCandidates candidates,
-                                                                           final OperationType operationType,
-                                                                           final boolean isDryRun) {
-            // We should keep trace of unchanged topic for tool output - in theory the last command should never be null.
-            final OperationType command = operationType == null ? OperationType.UNKNOWN : operationType;
-            if (isDryRun) {
-                return buildDryRunResults(candidates.topicsSynchronized(), false, DESCRIPTIONS_BY_TYPE.get(command));
-            } else {
-                return candidates.topicsSynchronized()
-                        .stream()
-                        .map(r -> OperationResult.unchanged(r, DESCRIPTIONS_BY_TYPE.get(command).getForResource(r)))
-                        .collect(Collectors.toList());
-            }
-        }
-
-        private static List<OperationResult<TopicResource>> buildDryRunResults(final Collection<TopicResource> resources,
-                                                                               final boolean changed,
-                                                                               final DescriptionProvider<TopicResource> provider) {
-            return resources.stream()
-                    .map(r -> OperationResult.dryRun(r, changed, provider.getForResource(r)))
+            return completableFutures
+                    .stream()
+                    .map(CompletableFuture::join)
                     .collect(Collectors.toList());
         }
+
+        CompletableFuture<OperationResult<TopicChange>> makeCompletableFuture(final Future<Void> future,
+                                                                              final TopicChange change,
+                                                                              final TopicOperation operation) {
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    future.get();
+                    return OperationResult.changed(change, operation.getDescriptionFor(change));
+                } catch (InterruptedException | ExecutionException e) {
+                    return OperationResult.failed(change, operation.getDescriptionFor(change), e);
+                }
+            });
+        }
+
+        public abstract TopicOperation createTopicOperation(final AdminClient client);
     }
 }

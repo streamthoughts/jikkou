@@ -40,7 +40,7 @@ public class YAMLClusterSpecReaderTest {
     private static final TopicResource TOPIC_P1 = new TopicResource("my-topic-p1", 1, (short)1);
 
     private static final TopicResource TOPIC_P2 = new TopicResource("my-topic-p2", 2, (short)1)
-            .addConfigValue(new ConfigValue(TopicConfig.RETENTION_MS_CONFIG, "10000", false));
+            .addConfigValue(new ConfigValue(TopicConfig.RETENTION_MS_CONFIG, "10000"));
 
     private static final TopicResource TOPIC_P3 = new TopicResource("my-topic-p3", null, null);
 

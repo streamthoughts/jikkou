@@ -18,52 +18,30 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.TopicCandidates;
-import io.streamthoughts.kafka.specs.operation.OperationType;
 import io.streamthoughts.kafka.specs.operation.AlterTopicOperation;
-import io.streamthoughts.kafka.specs.operation.ResourceOperationOptions;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import java.util.Collection;
 
 @Command(name = "alter",
         description = "Alter the topic configurations as describe in the specification file."
 )
 public class Alter extends TopicsCommand.Base {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<OperationResult<TopicResource>> execute(final Collection<TopicResource> topics,
-                                                       final AdminClient client) {
-        return new AlterTopicOperation()
-                .execute(
-                        client,
-                        new ResourcesIterable<>(topics),
-                        new ResourceOperationOptions() {
-                        }
-                );
-    }
+    @CommandLine.Option(
+            names = "--delete-orphans",
+            defaultValue = "false",
+            description = "Delete config entries overridden on the cluster but absent from the specification file)"
+    )
+    Boolean deleteOrphans;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<TopicResource> getTopics(final TopicCandidates candidates) {
-        return candidates.topicsToAlter();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public OperationType getOperationType() {
-        return OperationType.CREATE;
+    public TopicOperation createTopicOperation(final AdminClient client) {
+        return new AlterTopicOperation(client, deleteOrphans);
     }
 }

@@ -31,7 +31,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 public interface ClusterOperation<T extends ClusterResource, C extends ResourceOperationOptions, O> {
 
     /**
-     * Execute a specific administrative operation on the specified resource.
+     * Execute sa specific administrative operation on the specified resource.
      *
      * @param client    the client used to run the operation.
      * @param resource  the resource to operate.
@@ -39,5 +39,5 @@ public interface ClusterOperation<T extends ClusterResource, C extends ResourceO
      *
      * @return
      */
-    O execute(AdminClient client, T resource, C options);
+    O execute(final AdminClient client, final T resource, final C options);
 }

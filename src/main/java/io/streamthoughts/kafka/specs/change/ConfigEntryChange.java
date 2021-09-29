@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,31 +16,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.change;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Default interface to write a cluster specification.
- */
-public class YAMLClusterSpecWriter implements ClusterSpecWriter {
+import java.util.Objects;
 
-    private static final YAMLClusterSpecWriter INSTANCE = new YAMLClusterSpecWriter();
+public class ConfigEntryChange extends ValueChange<String> implements Change<ConfigEntryChange> {
 
-    public static YAMLClusterSpecWriter instance() {
-        return INSTANCE;
+    private final String name;
+
+    /**
+     * Creates a new {@link ConfigEntryChange} instance.
+     *
+     * @param name          the config-entry name.
+     */
+    public ConfigEntryChange(@NotNull final String name,
+                             @NotNull final ValueChange<String> valueChange) {
+        super(valueChange);
+        this.name = Objects.requireNonNull(name, "'name' should not be null");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write(final ClusterSpec spec, final OutputStream os) {
-        try {
-            Jackson.YAML_OBJECT_MAPPER.writeValue(os, spec);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to serialize specification into YAML: " + e.getLocalizedMessage());
-        }
+    @JsonIgnore
+    public String name() {
+        return name;
     }
+
 }

@@ -19,52 +19,73 @@
 package io.streamthoughts.kafka.specs.operation;
 
 import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.ConfigEntryChange;
+import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.TopicChanges;
+import io.streamthoughts.kafka.specs.change.ValueChange;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.resources.Configs;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsOptions;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.KafkaFuture;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Default command to create multiple topics.
  */
-public class CreateTopicOperation extends TopicOperation<CreateTopicOperationOptions> {
+public class CreateTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTopicOperation.class);
 
-    public static DescriptionProvider<TopicResource> DESCRIPTION = (resource -> {
+    public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
         return (Description.Create) () -> String.format("Create a new topic %s (partitions=%d, replicas=%d)",
-                resource.name(), resource.partitions(), resource.replicationFactor());
+                resource.name(),
+                resource.getPartitions().get().getAfter(),
+                resource.getReplicationFactor().get().getAfter()
+        );
     });
 
+    private final CreateTopicOperationOptions options;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Description getDescriptionFor(final TopicResource resource) {
-        return DESCRIPTION.getForResource(resource);
+    private final AdminClient client;
+
+    public CreateTopicOperation(final AdminClient client,
+                                final CreateTopicOperationOptions options) {
+        this.options = options;
+        this.client = client;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, KafkaFuture<Void>> doExecute(final AdminClient client,
-                                                       final ResourcesIterable<TopicResource> resources,
-                                                       final ResourceOperationOptions options) {
-        List<NewTopic> topics = StreamSupport.stream(resources.spliterator(), false)
+    public Description getDescriptionFor(@NotNull final TopicChange topicChange) {
+        return DESCRIPTION.getForResource(topicChange);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean test(final TopicChange change) {
+        return change.getOperation() == Change.OperationType.ADD;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges topicChanges) {
+        List<NewTopic> topics = topicChanges.all()
+                .stream()
                 .map(this::toNewTopic)
                 .collect(Collectors.toList());
         LOG.info("Creating new topics : {}", topics);
@@ -73,10 +94,15 @@ public class CreateTopicOperation extends TopicOperation<CreateTopicOperationOpt
         return result.values();
     }
 
-    private NewTopic toNewTopic(final TopicResource t) {
-        Map<String, String> resourceConfig = Configs.asStringValueMap(t.configs());
-        return new NewTopic(t.name(), t.partitions(), t.replicationFactor())
-                .configs(resourceConfig);
+    private NewTopic toNewTopic(final TopicChange t) {
+        Map<String, String> configs = t.getConfigEntryChanges()
+                .stream().collect(Collectors.toMap(ConfigEntryChange::name, ValueChange::getAfter));
+
+        return new NewTopic(
+                t.name(),
+                t.getPartitions().get().getAfter(),
+                t.getReplicationFactor().get().getAfter())
+                .configs(configs);
     }
 
 }

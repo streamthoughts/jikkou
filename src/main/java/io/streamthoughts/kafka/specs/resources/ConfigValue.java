@@ -18,9 +18,10 @@
  */
 package io.streamthoughts.kafka.specs.resources;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import org.apache.kafka.clients.admin.ConfigEntry;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  *
@@ -31,7 +32,7 @@ public class ConfigValue implements Named {
 
     private final Object value;
 
-    private final boolean isDefault;
+    private final ConfigEntry entry;
 
     /**
      * Creates a new {@link ConfigValue} instance.
@@ -41,7 +42,16 @@ public class ConfigValue implements Named {
      */
     public ConfigValue(final String name,
                        final Object value) {
-        this(name, value, false);
+        this(name, value, null);
+    }
+
+    /**
+     * Creates a new {@link ConfigValue} instance.
+     *
+     * @param entry     the Kafka {@link ConfigEntry}.
+     */
+    public ConfigValue(final ConfigEntry entry) {
+        this(entry.name(), entry.value(), entry);
     }
 
     /**
@@ -52,10 +62,10 @@ public class ConfigValue implements Named {
      */
     public ConfigValue(final String name,
                        final Object value,
-                       final boolean isDefault) {
+                       final ConfigEntry entry) {
         this.name = name;
         this.value = value;
-        this.isDefault = isDefault;
+        this.entry = entry;
     }
 
     /**
@@ -71,7 +81,11 @@ public class ConfigValue implements Named {
     }
 
     public boolean isDefault() {
-        return isDefault;
+        return Optional.ofNullable(entry).map(ConfigEntry::isDefault).orElse(false);
+    }
+
+    public ConfigEntry unwrap() {
+        return entry;
     }
 
     /**
@@ -82,9 +96,8 @@ public class ConfigValue implements Named {
         if (this == o) return true;
         if (!(o instanceof ConfigValue)) return false;
         ConfigValue that = (ConfigValue) o;
-        return isDefault == that.isDefault &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(value.toString(), that.value.toString());
+        return Objects.equals(name, that.name) &&
+               Objects.equals(String.valueOf(value), String.valueOf(that.value));
     }
 
     /**
@@ -92,7 +105,7 @@ public class ConfigValue implements Named {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, value, isDefault);
+        return Objects.hash(name, value);
     }
 
     /**
@@ -103,7 +116,6 @@ public class ConfigValue implements Named {
         return "ConfigValue{" +
                 "name=" + name +
                 ", value=" + value +
-                ", isDefault=" + isDefault +
                 '}';
     }
 }

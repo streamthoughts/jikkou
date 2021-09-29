@@ -139,41 +139,6 @@ public final class TopicResource implements ClusterResource, Named, Serializable
     }
 
     /**
-     * Checks whether the specified resource has configuration differences with this.
-     *
-     * @param resource  the {@link TopicResource} to check.
-     * @return          <code>true</code> if {@literal resource} has config changes.
-     */
-    public boolean containsConfigsChanges(final TopicResource resource) {
-
-        if (!this.name.equals(resource.name)) {
-            throw new IllegalArgumentException(
-                    "Can't check changes on resources with different names " + this.name + "<>" + resource.name);
-        }
-
-        if ((this.partitions != null && !this.partitions.equals(resource.partitions)) ||
-            (this.replicationFactor != null && !this.replicationFactor.equals(resource.replicationFactor))
-        ) {
-          LOG.warn("Topic partitions and/or replication-factor change is not supported!" +
-                  " You should consider altering topic through scripts 'kafka-topics' or 'kafka-configs'");
-        }
-
-        return this.configs.containsChanges(resource.configs);
-
-    }
-
-    /**
-     * Removes all default configuration from the specified resource.
-     *
-     * @param resource  the resource from which to delete defaults.
-     * @return          a new {@link TopicResource} instance.
-     */
-    public TopicResource dropDefaultConfigs(final TopicResource resource) {
-        Configs withoutDefaultConfigs = this.configs.filters(resource.configs.defaultConfigs());
-        return new TopicResource(this.name, this.partitions, this.replicationFactor, withoutDefaultConfigs);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

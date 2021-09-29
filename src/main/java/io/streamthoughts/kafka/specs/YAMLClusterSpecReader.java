@@ -43,7 +43,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             @Override
             public ClusterSpec read(final InputStream specification) throws InvalidSpecificationException {
                 try {
-                    return Jackson.OBJECT_MAPPER.readValue(specification, ClusterSpec.class);
+                    return Jackson.YAML_OBJECT_MAPPER.readValue(specification, ClusterSpec.class);
                 } catch (IOException e) {
                     throw new InvalidSpecificationException("Invalid specification file: " + e.getLocalizedMessage());
                 }
@@ -86,7 +86,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             if (specification.isEmpty()) {
                 throw new InvalidSpecificationException("Empty specification file");
             }
-            final Versioned versioned = Jackson.OBJECT_MAPPER.readValue(
+            final Versioned versioned = Jackson.YAML_OBJECT_MAPPER.readValue(
                     newInputStream(specification),
                     Versioned.class
             );

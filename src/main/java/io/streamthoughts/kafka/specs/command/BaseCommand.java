@@ -18,11 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
-import io.streamthoughts.kafka.specs.KafkaSpecs;
-import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.ParentCommand;

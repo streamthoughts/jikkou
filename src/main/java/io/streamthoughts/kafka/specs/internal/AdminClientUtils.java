@@ -33,6 +33,8 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static io.streamthoughts.kafka.specs.internal.FutureUtils.toCompletableFuture;
+
 /**
  * Class which is used to create a new {@link AdminClient} instance using tool arguments.
  */
@@ -77,15 +79,5 @@ public class AdminClientUtils {
     public static CompletableFuture<Collection<TopicListing>> listTopics(final AdminClient client) {
         Objects.requireNonNull(client, "client cannot be null");
         return toCompletableFuture(client.listTopics().listings());
-    }
-
-    private static <T> CompletableFuture<Collection<T>> toCompletableFuture(final KafkaFuture<Collection<T>> listings) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return listings.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 }

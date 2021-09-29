@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Default interface to name an entity.
@@ -44,7 +45,10 @@ public interface Named {
      * @param <T>       the type.
      * @return          the Map of object keyed by name.
      */
-    static <T extends Named> Map<String, T> keyByName(final Collection<T> resources) {
-        return new TreeMap<>(resources.stream().collect(Collectors.toMap(Named::name, o -> o)));
+    static <T extends Named> Map<String, T> keyByName(final Iterable<T> resources) {
+        return new TreeMap<>(
+                StreamSupport.stream(resources.spliterator(), false)
+                .collect(Collectors.toMap(Named::name, o -> o))
+        );
     }
 }

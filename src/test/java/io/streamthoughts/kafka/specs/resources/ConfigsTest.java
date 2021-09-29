@@ -31,44 +31,9 @@ public class ConfigsTest {
     @BeforeEach
     public void setUp() {
         defaultTopicConfigs = new Configs();
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "1",  true));
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.UNCLEAN_LEADER_ELECTION_ENABLE_CONFIG, "false",  true));
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE,  true));
-    }
-
-    @Test
-    public void should_detect_no_changes_given_empty_configs_when_comparing_with_default_values() {
-        Configs emptyConfigs = Configs.empty();
-        boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    public void should_detect_no_changes_given_override_configs_with_no_changes_when_comparing_with_default_values() {
-        Configs configs = new Configs();
-        configs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE, true));
-
-        boolean result = configs.containsChanges(defaultTopicConfigs);
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    public void should_detect_changes_given_empty_configs_when_comparing_with_default_and_override_values() {
-        // override default value
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
-
-        Configs emptyConfigs = Configs.empty();
-        boolean result = emptyConfigs.containsChanges(defaultTopicConfigs);
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    public void should_detect_changes_given_override_configs_when_comparing_with_default_values() {
-        Configs configs = new Configs();
-        configs.add(new ConfigValue(TopicConfig.MAX_MESSAGE_BYTES_CONFIG, "10000"));
-
-        boolean result = configs.containsChanges(defaultTopicConfigs);
-        Assertions.assertTrue(result);
+        defaultTopicConfigs.add(new ConfigValue(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "1"));
+        defaultTopicConfigs.add(new ConfigValue(TopicConfig.UNCLEAN_LEADER_ELECTION_ENABLE_CONFIG, "false"));
+        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
     }
 
     @Test

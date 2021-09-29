@@ -18,48 +18,22 @@
  */
 package io.streamthoughts.kafka.specs.operation;
 
-import io.streamthoughts.kafka.specs.OperationResult;
-import io.streamthoughts.kafka.specs.resources.Named;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
-import org.apache.kafka.clients.admin.AdminClient;
+import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.TopicChanges;
 import org.apache.kafka.common.KafkaFuture;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
-public abstract class TopicOperation<T extends ResourceOperationOptions> extends AbstractOperation<TopicResource, T> {
+public interface TopicOperation extends Predicate<TopicChange> {
 
-    /**
-     * {@inheritDoc}
-     */
+    Description getDescriptionFor(@NotNull final TopicChange topicChange);
+
     @Override
-    public Collection<OperationResult<TopicResource>> execute(final AdminClient client,
-                                                              final ResourcesIterable<TopicResource> resources,
-                                                              final T options) {
+    boolean test(final TopicChange topicChange);
 
-        final Map<String, KafkaFuture<Void>> values = doExecute(client, resources, options);
-
-        final Map<String, TopicResource> topicKeyedByName = Named.keyByName(resources.originalCollections());
-        List<CompletableFuture<OperationResult<TopicResource>>> completableFutures = values.entrySet()
-                .stream()
-                .map(entry -> {
-                    final KafkaFuture<Void> future = entry.getValue();
-                    return makeCompletableFuture(future, topicKeyedByName.get(entry.getKey()));
-                }).collect(Collectors.toList());
-
-        return completableFutures
-                .stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
-
-    }
-
-    protected abstract Map<String, KafkaFuture<Void>> doExecute(final AdminClient client,
-                                                                final ResourcesIterable<TopicResource> resource,
-                                                                final ResourceOperationOptions options);
+    Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges topicChanges);
 
 }

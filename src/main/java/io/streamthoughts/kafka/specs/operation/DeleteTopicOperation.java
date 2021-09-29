@@ -19,54 +19,81 @@
 package io.streamthoughts.kafka.specs.operation;
 
 import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.common.KafkaFuture;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Default command to delete multiple topics.
  */
-public class DeleteTopicOperation extends TopicOperation<ResourceOperationOptions> {
+public class DeleteTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteTopicOperation.class);
 
-    public static DescriptionProvider<TopicResource> DESCRIPTION = (resource -> {
+    private static final Set<String> INTERNAL_TOPICS = Set.of(
+            "__consumer_offsets",
+            "_schemas",
+            "__transaction_state",
+            "connect-offsets",
+            "connect-status",
+            "connect-configs"
+    );
+
+    public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
         return (Description.Delete) () -> String.format("Delete topic %s ", resource.name());
     });
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Description getDescriptionFor(final TopicResource resource) {
-        return DESCRIPTION.getForResource(resource);
+    private final AdminClient client;
+    private final boolean excludeInternalTopics;
+
+    public DeleteTopicOperation(final AdminClient client,
+                                final boolean excludeInternalTopics) {
+        this.client = client;
+        this.excludeInternalTopics = excludeInternalTopics;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, KafkaFuture<Void>> doExecute(final AdminClient client,
-                                                       final ResourcesIterable<TopicResource> resources,
-                                                       final ResourceOperationOptions options) {
-        List<String> topics = StreamSupport.stream(resources.spliterator(), false)
-                .map(TopicResource::name)
+    public Description getDescriptionFor(@NotNull final TopicChange topicChange) {
+        return DESCRIPTION.getForResource(topicChange);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean test(final TopicChange change) {
+        return change.getOperation() == Change.OperationType.DELETE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges topicChanges) {
+        List<String> topics = topicChanges.all()
+                .stream()
+                .map(TopicChange::name)
+                .filter(name -> !excludeInternalTopics || isNotInternalTopics(name))
                 .collect(Collectors.toList());
+        LOG.info("Deleting topics: {}", topics);
+        return client.deleteTopics(topics).values();
+    }
 
-        LOG.info("Deleting topics : {}", topics);
-
-        DeleteTopicsResult result = client.deleteTopics(topics);
-
-        return result.values();
+    private boolean isNotInternalTopics(final String topic) {
+        return !INTERNAL_TOPICS.contains(topic) && !topic.startsWith("__");
     }
 }

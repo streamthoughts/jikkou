@@ -33,8 +33,6 @@ import picocli.CommandLine.Spec;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
@@ -70,7 +68,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
             CLIUtils.askToProceed(spec);
         }
         final Collection<OperationResult<T>> results = executeCommand(adminClient);
-        Printer.print(results, execOptions.verbose);
+        Printer.print(results, execOptions.verbose, isDryRun());
         return CommandLine.ExitCode.OK;
     }
 

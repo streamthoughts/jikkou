@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,31 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.internal;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import org.apache.kafka.common.KafkaFuture;
 
-/**
- * Default interface to write a cluster specification.
- */
-public class YAMLClusterSpecWriter implements ClusterSpecWriter {
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-    private static final YAMLClusterSpecWriter INSTANCE = new YAMLClusterSpecWriter();
+public class FutureUtils {
 
-    public static YAMLClusterSpecWriter instance() {
-        return INSTANCE;
+    public static <T> CompletableFuture<T> toCompletableFuture(final KafkaFuture<T> listings) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return listings.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final ClusterSpec spec, final OutputStream os) {
-        try {
-            Jackson.YAML_OBJECT_MAPPER.writeValue(os, spec);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to serialize specification into YAML: " + e.getLocalizedMessage());
-        }
-    }
 }

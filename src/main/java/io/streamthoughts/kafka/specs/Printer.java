@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,23 +47,27 @@ public class Printer {
     private static final String ANSI_WHITE = "\u001B[37m";
     private static final String ANSI_YELLOW = "\u001B[33m";
 
-    private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Configs.class, new ConfigsSerializer())
-            .setPrettyPrinting()
-            .create();
-
     /**
      * Print the specified execution results to stdout and terminate the application with the appropriate exit code.
      *
      * @param results   the execution results to print.
      * @param verbose   print details.
      */
-    public static <T> int print(final Collection<OperationResult<T>> results, final boolean verbose) {
+    public static <T> int print(final Collection<OperationResult<T>> results,
+                                final boolean verbose,
+                                final boolean dryRun) {
         int ok = 0;
         int changed = 0;
         int failed = 0;
         for (OperationResult<?> r : results) {
-            final String json = GSON.toJson(r);
+            final String json;
+            try {
+                json = Jackson.JSON_OBJECT_MAPPER
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(r);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
             String color;
             if (r.isFailed()) {
                 color = ANSI_RED;
@@ -80,7 +85,7 @@ public class Printer {
                 PS.printf("%s%s\n", isColor() ? color : "", json);
             }
         }
-        PS.printf("%sok : %d, changed : %d, failed : %d\n", isColor() ? ANSI_WHITE : "", ok, changed, failed);
+        PS.printf("%s%sok : %d, changed : %d, failed : %d\n", isColor() ? ANSI_WHITE : "", dryRun ? "[DRY_RUN] ": "", ok, changed, failed);
         return failed > 0 ? 1 : 0;
     }
 
@@ -92,7 +97,7 @@ public class Printer {
 
     private static boolean isColor() {
         String enabled = System.getenv(KAFKA_SPECS_COLOR_ENABLED);
-        return enabled == null || "true".equals(enabled.toLowerCase());
+        return enabled == null || "true".equalsIgnoreCase(enabled);
     }
 
 
