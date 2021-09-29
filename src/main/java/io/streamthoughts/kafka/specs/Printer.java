@@ -19,10 +19,8 @@
 package io.streamthoughts.kafka.specs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.streamthoughts.kafka.specs.resources.Configs;
 
 import java.io.PrintStream;
-import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
@@ -79,7 +77,9 @@ public class Printer {
                 PS.printf("%s%s\n", isColor() ? color : "", json);
             }
         }
-        PS.printf("%s%sok : %d, changed : %d, failed : %d\n", isColor() ? ANSI_WHITE : "", dryRun ? "[DRY_RUN] ": "", ok, changed, failed);
+
+        PS.printf("%sEXECUTION in %s %s\n", isColor() ? ANSI_WHITE : "", KafkaSpecs.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
+        PS.printf("%sok : %d, changed : %d, failed : %d\n", isColor() ? ANSI_WHITE : "", ok, changed, failed);
         return failed > 0 ? 1 : 0;
     }
 
@@ -93,4 +93,5 @@ public class Printer {
         String enabled = System.getenv(KAFKA_SPECS_COLOR_ENABLED);
         return enabled == null || "true".equalsIgnoreCase(enabled);
     }
+
 }

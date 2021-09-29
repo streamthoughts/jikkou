@@ -27,6 +27,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
 import java.io.PrintWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 import static picocli.CommandLine.Model.CommandSpec;
 
@@ -39,13 +42,16 @@ import static picocli.CommandLine.Model.CommandSpec;
         synopsisHeading = "%n",
         description = "CLI to ease and automate Apache Kafka cluster configuration management.",
         mixinStandardHelpOptions = true,
-        subcommands = { TopicsCommand.class, AclsCommand.class, BrokerCommand.class, CommandLine.HelpCommand.class})
+        subcommands = { TopicsCommand.class, AclsCommand.class, BrokerCommand.class, CommandLine.HelpCommand.class })
 public class KafkaSpecs {
+
+    static LocalDateTime START_TIME;
 
     @Mixin
     public AdminClientMixin options;
 
     public static void main(final String... args) {
+        START_TIME = LocalDateTime.now();
         final CommandLine commandLine = new CommandLine(new KafkaSpecs())
                 .setUsageHelpWidth(120)
                 .setExecutionStrategy(new CommandLine.RunLast())
@@ -84,5 +90,19 @@ public class KafkaSpecs {
                     ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
                     : spec.exitCodeOnInvalidInput();
         }
+    }
+
+    static String getExecutionTime() {
+        final long execTimeInMillis = Duration.between (START_TIME, LocalDateTime.now ()).toMillis();
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(execTimeInMillis) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(execTimeInMillis) % 60;
+        long milliseconds = execTimeInMillis % 1000;
+
+        if (minutes == 0) {
+            return seconds == 0 ?
+                String.format ("%dms", milliseconds) :
+                String.format ("%ds %dms", seconds, milliseconds);
+        }
+        return String.format("%dmin %ds %dms", minutes, seconds, milliseconds);
     }
 }
