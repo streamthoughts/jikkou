@@ -37,17 +37,6 @@ public class ConfigsTest {
     }
 
     @Test
-    public void should_be_able_to_get_sub_default_configs() {
-        // override default value
-        defaultTopicConfigs.add(new ConfigValue(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
-        Configs configs = defaultTopicConfigs.defaultConfigs();
-
-        Assertions.assertEquals(2, configs.size());
-        Assertions.assertNotNull(configs.get(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG));
-        Assertions.assertNotNull(configs.get(TopicConfig.UNCLEAN_LEADER_ELECTION_ENABLE_CONFIG));
-    }
-
-    @Test
     public void should_filter_on_non_equals_configs() {
         Configs configs = new Configs(defaultTopicConfigs.values());
         // override default config entry

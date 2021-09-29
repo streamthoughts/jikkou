@@ -20,12 +20,6 @@ package io.streamthoughts.kafka.specs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.streamthoughts.kafka.specs.resources.Configs;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import java.io.PrintStream;
 import java.lang.reflect.Type;
@@ -98,24 +92,5 @@ public class Printer {
     private static boolean isColor() {
         String enabled = System.getenv(KAFKA_SPECS_COLOR_ENABLED);
         return enabled == null || "true".equalsIgnoreCase(enabled);
-    }
-
-
-    /**
-     * Custom {@link JsonSerializer} implementation to serialize {@link Configs} instance.
-     */
-    private static final class ConfigsSerializer implements JsonSerializer<Configs> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public JsonElement serialize(final Configs configs,
-                                     final Type typeOfSrc,
-                                     final JsonSerializationContext context) {
-            JsonObject jsonObject = new JsonObject();
-            configs.forEach(c -> jsonObject.addProperty(c.name(), c.value().toString()));
-            return jsonObject;
-        }
     }
 }

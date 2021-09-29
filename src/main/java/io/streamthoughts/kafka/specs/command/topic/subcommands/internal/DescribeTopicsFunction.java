@@ -22,7 +22,12 @@ import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
-import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.DescribeConfigsResult;
+import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.config.ConfigResource;
 

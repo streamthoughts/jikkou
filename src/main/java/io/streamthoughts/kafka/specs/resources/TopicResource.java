@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class TopicResource implements ClusterResource, Named, Serializable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TopicResource.class);
-
     private final String name;
 
     private final Integer partitions;

@@ -21,6 +21,12 @@ package io.streamthoughts.kafka.specs.operation;
 
 public enum OperationType {
 
-    CREATE, DELETE, ALTER, UNKNOWN
+    CREATE,
+
+    DELETE,
+
+    ALTER,
+
+    UNKNOWN
 
 }

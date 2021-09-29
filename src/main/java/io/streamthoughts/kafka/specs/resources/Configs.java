@@ -26,11 +26,9 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -44,15 +42,8 @@ import java.util.stream.StreamSupport;
 @JsonSerialize(using = Configs.Serializer.class)
 public class Configs implements Iterable<ConfigValue> {
 
-    private static final Configs EMPTY_CONFIGS = new Configs() {
-        @Override
-        public ConfigValue add(final ConfigValue value) {
-            throw new UnsupportedOperationException();
-        }
-    };
-
     public static Configs empty() {
-        return EMPTY_CONFIGS;
+        return new Configs();
     }
 
     private final TreeMap<String, ConfigValue> values;
@@ -102,18 +93,6 @@ public class Configs implements Iterable<ConfigValue> {
         return new LinkedHashSet<>(this.values.values());
     }
 
-    private Map<String, ConfigValue> asOrderedMap() {
-        return new TreeMap<>(values);
-    }
-
-    public Configs defaultConfigs() {
-        Set<ConfigValue> values = this.values.values()
-                .stream()
-                .filter(ConfigValue::isDefault)
-                .collect(Collectors.toSet());
-        return new Configs(values);
-    }
-
     public Configs filters(final Configs configs) {
         Set<ConfigValue> filteredConfigs = this.values.values()
                 .stream()
@@ -125,10 +104,6 @@ public class Configs implements Iterable<ConfigValue> {
 
     public int size() {
         return this.values.size();
-    }
-
-    public boolean isEmpty() {
-        return this.values.isEmpty();
     }
 
     public ConfigValue get(final String name) {
