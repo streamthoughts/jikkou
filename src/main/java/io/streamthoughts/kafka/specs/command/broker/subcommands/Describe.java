@@ -22,11 +22,12 @@ import io.streamthoughts.kafka.specs.ClusterSpec;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
-import io.streamthoughts.kafka.specs.operation.DescribeBrokerOperation;
+import io.streamthoughts.kafka.specs.command.broker.subcommands.internal.DescribeBrokersFunction;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.Node;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -36,10 +37,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.*;
 
 @Command(name = "describe",
         description = "Describe all the Broker's configuration on remote cluster."
@@ -51,6 +56,17 @@ public class Describe extends BaseCommand {
     )
     boolean describeDefaultConfigs;
 
+    @Option(names = {"--static-broker-configs"},
+            defaultValue = "true",
+            description = "Export static configs provided as broker properties at start up (e.g. server.properties file)."
+    )
+    boolean describeStaticBrokerConfigs;
+
+    @Option(names = {"--dynamic-broker-configs"},
+            defaultValue = "true",
+            description = "Export dynamic configs that is configured as default for all brokers or for specific broker in the cluster."
+    )
+    boolean describeDynamicBrokerConfigs;
 
     @Option(names = "--file-path",
             description = "The file path to write the description of Topics."
@@ -63,13 +79,26 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call(final AdminClient client) {
         var brokerIds = loadClusterBrokerIds(client);
-        List<BrokerResource> brokers = brokerIds.stream().map(BrokerResource::withBrokerId).collect(Collectors.toList());
-        ResourcesIterable<BrokerResource> it = new ResourcesIterable<>(brokers);
-        final Collection<BrokerResource> resources = new DescribeBrokerOperation().execute(
+
+        DescribeBrokersFunction describeBrokers = new DescribeBrokersFunction(
                 client,
-                it,
                 DescribeOperationOptions.withDescribeDefaultConfigs(describeDefaultConfigs)
         );
+
+        if (!describeStaticBrokerConfigs) {
+            describeBrokers.addConfigEntryPredicate(config -> config.source() != STATIC_BROKER_CONFIG);
+        }
+
+        if (!describeDynamicBrokerConfigs) {
+            List<ConfigEntry.ConfigSource> excludeSources = Arrays.asList(
+                    DYNAMIC_BROKER_CONFIG,
+                    DYNAMIC_DEFAULT_BROKER_CONFIG
+            );
+            describeBrokers.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
+        }
+
+        Collection<BrokerResource> resources = describeBrokers.apply(brokerIds);
+
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
             YAMLClusterSpecWriter.instance().write(ClusterSpec.withBrokers(resources), os);

@@ -16,18 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.command.topic.subcommands.internal;
 
 import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
+import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.resources.Configs;
-import io.streamthoughts.kafka.specs.resources.Named;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.DescribeConfigsResult;
-import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.config.ConfigResource;
 
@@ -36,41 +31,61 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
- * Class that can be used to describe topic resources.
+ * Function to list all topics on Kafka Cluster matching a given predicate.
  */
-public class DescribeTopicOperation implements ClusterOperation<ResourcesIterable<TopicResource>, DescribeOperationOptions, Collection<TopicResource>> {
+public final class DescribeTopicsFunction implements Function<Predicate<String>, Collection<TopicResource>> {
 
-    private DescribeOperationOptions options;
+    private final AdminClient client;
 
-    private AdminClient client;
+    private Predicate<ConfigEntry> configEntryPredicate;
+
+    /**
+     * Creates a new {@link DescribeTopicsFunction} instance.
+     *
+     * @param client       the {@link AdminClient}.
+     * @param options      the {@link DescribeOperationOptions}.
+     */
+    public DescribeTopicsFunction(final AdminClient client,
+                                  final DescribeOperationOptions options) {
+        this.client = client;
+        this.configEntryPredicate = entry -> !entry.isDefault() || options.describeDefaultConfigs();
+    }
+
+    public DescribeTopicsFunction addConfigEntryPredicate(final Predicate<ConfigEntry> configEntryPredicate) {
+        this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
+        return this;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<TopicResource> execute(final AdminClient client,
-                                             final ResourcesIterable<TopicResource> resources,
-                                             final DescribeOperationOptions options) {
+    public Collection<TopicResource> apply(final Predicate<String> topicPredicate) {
 
-        this.options = options;
-        this.client = client;
+        final Collection<String> topicNames;
+        try {
+            topicNames = client.listTopics().names().get()
+                    .stream()
+                    .filter(topicPredicate)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        Collection<String> topicNames = StreamSupport.stream(resources.spliterator(), false)
-                .map(Named::name)
-                .collect(Collectors.toList());
-
-        final CompletableFuture<Map<String, TopicDescription>> futureTopicDesc = describe(topicNames);
-        final CompletableFuture<Map<String, Config>> futureTopicConfig = getTopicConfigs(topicNames);
+        final CompletableFuture<Map<String, TopicDescription>> futureTopicDesc = describeTopics(topicNames);
+        final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(topicNames);
 
         try {
             return futureTopicDesc.thenCombine(futureTopicConfig, (descriptions, configs) -> {
-                return descriptions.values().stream().map(desc -> {
-                    return newTopicResources(desc, configs.get(desc.name()));
-                }).collect(Collectors.toList());
+                return descriptions.values()
+                        .stream()
+                        .map(desc -> newTopicResources(desc, configs.get(desc.name())))
+                        .collect(Collectors.toList());
             }).get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
@@ -82,7 +97,7 @@ public class DescribeTopicOperation implements ClusterOperation<ResourcesIterabl
             desc.name(),
             desc.partitions().size(),
             (short) rf,
-            Configs.of(config, options.describeDefaultConfigs())
+            Configs.of(config, configEntryPredicate)
         );
     }
 
@@ -99,14 +114,12 @@ public class DescribeTopicOperation implements ClusterOperation<ResourcesIterabl
             int replica = it.next().replicas().size();
             if (rf != replica) {
                 rf = -1;
-            } else {
-                rf = replica;
             }
         }
         return rf;
     }
 
-    private CompletableFuture<Map<String, Config>> getTopicConfigs(final Collection<String> topicNames) {
+    private CompletableFuture<Map<String, Config>> describeConfigs(final Collection<String> topicNames) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 final ConfigsBuilder builder = new ConfigsBuilder();
@@ -125,7 +138,7 @@ public class DescribeTopicOperation implements ClusterOperation<ResourcesIterabl
         });
     }
 
-    private CompletableFuture<Map<String, TopicDescription>> describe(final Collection<String> topicNames) {
+    private CompletableFuture<Map<String, TopicDescription>> describeTopics(final Collection<String> topicNames) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 DescribeTopicsResult describeTopicsResult = client.describeTopics(topicNames);

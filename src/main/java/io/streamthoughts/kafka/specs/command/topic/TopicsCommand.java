@@ -30,9 +30,8 @@ import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import io.streamthoughts.kafka.specs.operation.DescribeTopicOperation;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopicsFunction;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
 import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.KafkaFuture;
@@ -68,38 +67,6 @@ import java.util.stream.Collectors;
         mixinStandardHelpOptions = true)
 public class TopicsCommand extends WithAdminClientCommand {
 
-    /**
-     * Helper methods to list all topics on Kafka Cluster matching the given predicate.
-     *
-     * @param client      the {@link AdminClient} to be used.
-     * @param isCandidate the {@link Predicate} to filter topics.
-     * @return A Collection of {@link TopicResource}.
-     */
-    public static Collection<TopicResource> listClusterTopics(final AdminClient client,
-                                                              final Predicate<String> isCandidate) {
-        final Collection<String> topicNames;
-        try {
-            topicNames = client.listTopics().names().get()
-                    .stream()
-                    .filter(isCandidate)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        final List<TopicResource> topics = topicNames
-                .stream()
-                .map(TopicResource::new)
-                .collect(Collectors.toList());
-
-        return new DescribeTopicOperation()
-                .execute(
-                        client,
-                        new ResourcesIterable<>(topics),
-                        DescribeOperationOptions.withDescribeDefaultConfigs(true)
-                );
-    }
-
     public static abstract class Base extends WithSpecificationCommand<TopicChange> {
 
         /**
@@ -108,8 +75,13 @@ public class TopicsCommand extends WithAdminClientCommand {
         @Override
         public Collection<OperationResult<TopicChange>> executeCommand(final AdminClient client) {
 
+            var topics = new DescribeTopicsFunction(
+                    client,
+                    DescribeOperationOptions.withDescribeDefaultConfigs(true)
+            ).apply(this::isResourceCandidate);
+
             final TopicChanges topicChanges = TopicChanges.computeChanges(
-                    listClusterTopics(client, this::isResourceCandidate),
+                    topics,
                     clusterSpec().getTopics(it -> isResourceCandidate(it.name()))
             );
 

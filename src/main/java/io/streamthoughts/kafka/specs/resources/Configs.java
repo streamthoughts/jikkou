@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -55,20 +57,13 @@ public class Configs implements Iterable<ConfigValue> {
 
     private final TreeMap<String, ConfigValue> values;
 
-    public static Configs of(final Config config, final boolean describeDefault) {
+    public static Configs of(final Config config,
+                             final Predicate<ConfigEntry> predicate) {
         Set<ConfigValue> configs = config.entries().stream()
-                .filter(entry -> !entry.isDefault() || describeDefault)
+                .filter(predicate)
                 .map(ConfigValue::new)
                 .collect(Collectors.toSet());
         return new Configs(configs);
-    }
-
-    public static Map<String, String> asStringValueMap(final Configs configs) {
-        if (configs == null || configs.isEmpty()) return Collections.emptyMap();
-        return new TreeMap<>(configs.values()
-                .stream()
-                .filter(it -> it.value() != null)
-                .collect(Collectors.toMap(ConfigValue::name, v -> v.value().toString())));
     }
 
     /**

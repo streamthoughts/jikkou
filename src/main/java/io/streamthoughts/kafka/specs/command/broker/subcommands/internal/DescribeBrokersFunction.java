@@ -16,14 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.command.broker.subcommands.internal;
 
 import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
+import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.resources.BrokerResource;
 import io.streamthoughts.kafka.specs.resources.Configs;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.common.Node;
@@ -33,35 +34,38 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Class that can be used to describe topic resources.
  */
-public class DescribeBrokerOperation implements ClusterOperation<ResourcesIterable<BrokerResource>, DescribeOperationOptions, Collection<BrokerResource>> {
+public class DescribeBrokersFunction implements Function<Collection<String>, Collection<BrokerResource>> {
 
-    private DescribeOperationOptions options;
+    private final AdminClient client;
 
-    private AdminClient client;
+    private Predicate<ConfigEntry> configEntryPredicate;
+
+    public DescribeBrokersFunction(final AdminClient client,
+                                   final DescribeOperationOptions options) {
+        this.client = client;
+        this.configEntryPredicate = entry -> !entry.isDefault() || options.describeDefaultConfigs();
+    }
+
+    public DescribeBrokersFunction addConfigEntryPredicate(final Predicate<ConfigEntry> configEntryPredicate) {
+        this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
+        return this;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<BrokerResource> execute(final AdminClient client,
-                                              final ResourcesIterable<BrokerResource> resources,
-                                              final DescribeOperationOptions options) {
+    public Collection<BrokerResource> apply(final Collection<String> brokerIds) {
 
-        this.options = options;
-        this.client = client;
-
-        Collection<String> brokerIds = StreamSupport.stream(resources.spliterator(), false)
-                .map(BrokerResource::id)
-                .collect(Collectors.toList());
-
-        final CompletableFuture<Map<String, Node>> futureTopicDesc = describe();
-        final CompletableFuture<Map<String, Config>> futureTopicConfig = getBrokerConfigs(brokerIds);
+        final CompletableFuture<Map<String, Node>> futureTopicDesc = describeCluster();
+        final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(brokerIds);
 
         try {
             return futureTopicDesc.thenCombine(futureTopicConfig, (descriptions, configs) -> {
@@ -71,7 +75,7 @@ public class DescribeBrokerOperation implements ClusterOperation<ResourcesIterab
                             desc.host(),
                             desc.port(),
                             desc.rack(),
-                            Configs.of(configs.get(desc.idString()), options.describeDefaultConfigs())
+                            Configs.of(configs.get(desc.idString()), configEntryPredicate)
                     );
                 }).collect(Collectors.toList());
             }).get();
@@ -80,7 +84,7 @@ public class DescribeBrokerOperation implements ClusterOperation<ResourcesIterab
         }
     }
 
-    private CompletableFuture<Map<String, Config>> getBrokerConfigs(final Collection<String> brokerIds) {
+    private CompletableFuture<Map<String, Config>> describeConfigs(final Collection<String> brokerIds) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 final ConfigsBuilder builder = new ConfigsBuilder();
@@ -99,7 +103,7 @@ public class DescribeBrokerOperation implements ClusterOperation<ResourcesIterab
         });
     }
 
-    private CompletableFuture<Map<String, Node>> describe() {
+    private CompletableFuture<Map<String, Node>> describeCluster() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 DescribeClusterResult describeClusterResult = client.describeCluster();
