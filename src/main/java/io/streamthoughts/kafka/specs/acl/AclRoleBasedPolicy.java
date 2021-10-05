@@ -26,7 +26,7 @@ import io.streamthoughts.kafka.specs.resources.Named;
 import java.util.Objects;
 import java.util.Set;
 
-public class AclGroupPolicy implements Named {
+public class AclRoleBasedPolicy implements Named {
 
     /**
      * The group name.
@@ -38,15 +38,15 @@ public class AclGroupPolicy implements Named {
     private final AclResourcePermission resource;
 
     /**
-     * Creates a new {@link AclGroupPolicy} instance.
+     * Creates a new {@link AclRoleBasedPolicy} instance.
      *
      * @param name      the group policy name.
      * @param resource  the resource permission to
      */
     @JsonCreator
-    AclGroupPolicy(@JsonProperty("name") final String name,
-                   @JsonProperty("resource") final AclResourceMatcher resource,
-                   @JsonProperty("allow_operations") final Set<AclOperationPolicy> operations) {
+    AclRoleBasedPolicy(@JsonProperty("name") final String name,
+                       @JsonProperty("resource") final AclResourceMatcher resource,
+                       @JsonProperty("allow_operations") final Set<AclOperationPolicy> operations) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(resource, "resource cannot be null");
         this.name = name;

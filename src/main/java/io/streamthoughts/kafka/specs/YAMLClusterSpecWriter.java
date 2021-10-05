@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -36,7 +38,7 @@ public class YAMLClusterSpecWriter implements ClusterSpecWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(final ClusterSpec spec, final OutputStream os) {
+    public void write(final V1SpecFile spec, final OutputStream os) {
         try {
             Jackson.YAML_OBJECT_MAPPER.writeValue(os, spec);
         } catch (IOException e) {

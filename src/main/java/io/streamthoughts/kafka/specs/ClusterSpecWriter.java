@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
+
 import java.io.OutputStream;
 
 /**
@@ -31,5 +33,5 @@ public interface ClusterSpecWriter {
      * @param spec  the cluster specification.
      * @param os    the output stream.
      */
-    void write(final ClusterSpec spec, final OutputStream os);
+    void write(final V1SpecFile spec, final OutputStream os);
 }

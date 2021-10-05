@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.command.broker.subcommands.internal;
 
 import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import io.streamthoughts.kafka.specs.resources.BrokerResource;
+import io.streamthoughts.kafka.specs.model.V1BrokerObject;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 /**
  * Class that can be used to describe topic resources.
  */
-public class DescribeBrokersFunction implements Function<Collection<String>, Collection<BrokerResource>> {
+public class DescribeBrokersFunction implements Function<Collection<String>, Collection<V1BrokerObject>> {
 
     private final AdminClient client;
 
@@ -62,7 +62,7 @@ public class DescribeBrokersFunction implements Function<Collection<String>, Col
      * {@inheritDoc}
      */
     @Override
-    public Collection<BrokerResource> apply(final Collection<String> brokerIds) {
+    public Collection<V1BrokerObject> apply(final Collection<String> brokerIds) {
 
         final CompletableFuture<Map<String, Node>> futureTopicDesc = describeCluster();
         final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(brokerIds);
@@ -70,7 +70,7 @@ public class DescribeBrokersFunction implements Function<Collection<String>, Col
         try {
             return futureTopicDesc.thenCombine(futureTopicConfig, (descriptions, configs) -> {
                 return descriptions.values().stream().map(desc -> {
-                    return new BrokerResource(
+                    return new V1BrokerObject(
                             desc.idString(),
                             desc.host(),
                             desc.port(),

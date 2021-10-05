@@ -18,10 +18,12 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.ClusterSpec;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopicsFunction;
+import io.streamthoughts.kafka.specs.model.MetaObject;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -95,7 +97,9 @@ public class Describe extends BaseCommand {
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
-            YAMLClusterSpecWriter.instance().write(ClusterSpec.withTopics(topics), os);
+
+            final V1SpecsObject specsObject = V1SpecsObject.withTopics(topics);
+            YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

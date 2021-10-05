@@ -16,15 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.resources;
+package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.kafka.specs.resources.ClusterResource;
+import io.streamthoughts.kafka.specs.resources.Configs;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class BrokerResource implements ClusterResource, Serializable {
+public class V1BrokerObject implements ClusterResource, Serializable {
 
     private final String id;
     private final String host;
@@ -33,12 +35,12 @@ public class BrokerResource implements ClusterResource, Serializable {
 
     private final Configs configs;
 
-    public static BrokerResource withBrokerId(final String id) {
-        return new BrokerResource(id, null, -1, null, new Configs());
+    public static V1BrokerObject withBrokerId(final String id) {
+        return new V1BrokerObject(id, null, -1, null, new Configs());
     }
 
     /**
-     * Creates a new {@link BrokerResource} instance.
+     * Creates a new {@link V1BrokerObject} instance.
      *
      * @param id        the broker id.
      * @param host      the broker host.
@@ -47,7 +49,7 @@ public class BrokerResource implements ClusterResource, Serializable {
      * @param configs   the configurations of the broker.
      */
     @JsonCreator
-    public BrokerResource(@JsonProperty("id") final String id,
+    public V1BrokerObject(@JsonProperty("id") final String id,
                           @JsonProperty("host") final String host,
                           @JsonProperty("port") final int port,
                           @JsonProperty("rack") final String rack,
@@ -90,8 +92,8 @@ public class BrokerResource implements ClusterResource, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BrokerResource)) return false;
-        BrokerResource that = (BrokerResource) o;
+        if (!(o instanceof V1BrokerObject)) return false;
+        V1BrokerObject that = (V1BrokerObject) o;
         return port == that.port &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(host, that.host) &&

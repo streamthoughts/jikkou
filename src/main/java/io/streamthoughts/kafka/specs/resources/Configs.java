@@ -60,7 +60,7 @@ public class Configs implements Iterable<ConfigValue> {
     /**
      * Creates a new {@link Configs} instances.
      */
-    Configs() {
+    public Configs() {
         this(new HashSet<>());
     }
 

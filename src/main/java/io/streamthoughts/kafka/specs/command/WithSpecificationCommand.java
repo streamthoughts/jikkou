@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.CLIUtils;
-import io.streamthoughts.kafka.specs.ClusterSpec;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
 import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.Printer;
@@ -63,7 +63,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
      */
     @Override
     public Integer call(final AdminClient adminClient) {
-        clusterSpec(); // ensure specification is valid.
+        specFile(); // ensure specification is valid.
         if (!execOptions.yes) {
             CLIUtils.askToProceed(spec);
         }
@@ -78,7 +78,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
         return execOptions.dryRun;
     }
 
-    public ClusterSpec clusterSpec() {
+    public V1SpecFile specFile() {
 
         final InputStream is;
         if (specOptions.url != null) {

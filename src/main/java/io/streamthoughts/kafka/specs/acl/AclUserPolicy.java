@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.specs.acl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -30,37 +29,37 @@ public class AclUserPolicy {
 
     private final String principal;
 
-    private final Set<String> groups;
+    private final Set<String> roles;
 
     private final Set<AclResourcePermission> permissions;
 
     /**
      * Creates a new {@link AclUserPolicy} instance.
      *
-     * @param principal
-     * @param groups
-     * @param permissions
+     * @param principal     the principal of user.
+     * @param roles         the roles of user.
+     * @param permissions   the permission of the user.
      */
     @JsonCreator
     AclUserPolicy(@JsonProperty("principal") final String principal,
-                  @JsonProperty("groups") final Set<String> groups,
+                  @JsonProperty("roles") final Set<String> roles,
                   @JsonProperty("permissions") final Set<AclResourcePermission> permissions) {
-        Objects.requireNonNull(principal, "principal cannot be null");
-        Objects.requireNonNull(principal, "groups cannot be null");
-        Objects.requireNonNull(principal, "permissions cannot be null");
-        this.principal = principal;
-        this.groups = groups;
+        this.principal = Objects.requireNonNull(principal, "principal cannot be null");;
+        this.roles = Objects.requireNonNull(roles, "roles cannot be null");;
         this.permissions = permissions == null ? Collections.emptySet() : Collections.unmodifiableSet(permissions);
     }
 
+    @JsonProperty
     public String principal() {
         return principal;
     }
 
-    public Set<String> groups() {
-        return groups;
+    @JsonProperty
+    public Set<String> roles() {
+        return roles;
     }
 
+    @JsonProperty
     public Set<AclResourcePermission> permissions() {
         return permissions;
     }
@@ -74,7 +73,7 @@ public class AclUserPolicy {
         if (o == null || getClass() != o.getClass()) return false;
         AclUserPolicy that = (AclUserPolicy) o;
         return Objects.equals(principal, that.principal) &&
-               Objects.equals(groups, that.groups) &&
+               Objects.equals(roles, that.roles) &&
                Objects.equals(permissions, that.permissions);
     }
 
@@ -83,14 +82,14 @@ public class AclUserPolicy {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(principal, groups, permissions);
+        return Objects.hash(principal, roles, permissions);
     }
 
     @Override
     public String toString() {
         return "AclUserPolicy{" +
                 "principal='" + principal + '\'' +
-                ", groups=" + groups +
+                ", roles=" + roles +
                 ", permissions=" + permissions +
                 '}';
     }

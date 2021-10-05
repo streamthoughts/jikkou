@@ -18,14 +18,15 @@
  */
 package io.streamthoughts.kafka.specs.command.broker.subcommands;
 
-import io.streamthoughts.kafka.specs.ClusterSpec;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import io.streamthoughts.kafka.specs.command.broker.subcommands.internal.DescribeBrokersFunction;
+import io.streamthoughts.kafka.specs.model.MetaObject;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import io.streamthoughts.kafka.specs.resources.BrokerResource;
-import io.streamthoughts.kafka.specs.resources.ResourcesIterable;
+import io.streamthoughts.kafka.specs.model.V1BrokerObject;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.Node;
@@ -44,7 +45,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.*;
+import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_BROKER_CONFIG;
+import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_DEFAULT_BROKER_CONFIG;
+import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.STATIC_BROKER_CONFIG;
 
 @Command(name = "describe",
         description = "Describe all the Broker's configuration on remote cluster."
@@ -97,11 +100,13 @@ public class Describe extends BaseCommand {
             describeBrokers.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
         }
 
-        Collection<BrokerResource> resources = describeBrokers.apply(brokerIds);
+        Collection<V1BrokerObject> resources = describeBrokers.apply(brokerIds);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
-            YAMLClusterSpecWriter.instance().write(ClusterSpec.withBrokers(resources), os);
+
+            final V1SpecsObject specsObject = V1SpecsObject.withBrokers(resources);
+            YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

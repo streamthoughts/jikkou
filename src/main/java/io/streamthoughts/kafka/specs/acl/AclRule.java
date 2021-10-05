@@ -26,7 +26,6 @@ import org.apache.kafka.common.resource.ResourceType;
 
 import java.util.Objects;
 
-
 public class AclRule implements ClusterResource {
 
     private final String principalType;

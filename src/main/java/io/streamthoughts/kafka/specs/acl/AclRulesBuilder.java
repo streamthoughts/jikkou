@@ -26,7 +26,7 @@ import java.util.LinkedList;
  */
 public interface AclRulesBuilder {
 
-    Collection<AclRule> toAclRules(final Collection<AclGroupPolicy> groups, final AclUserPolicy user);
+    Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups, final AclUserPolicy user);
 
     Collection<AclUserPolicy> toAclUserPolicy(final Collection<AclRule> rules);
 
@@ -42,7 +42,7 @@ public interface AclRulesBuilder {
              * {@inheritDoc}
              */
             @Override
-            public Collection<AclRule> toAclRules(final Collection<AclGroupPolicy> groups, final AclUserPolicy user) {
+            public Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups, final AclUserPolicy user) {
 
                 Collection<AclRule> rules = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {

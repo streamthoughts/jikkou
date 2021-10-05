@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.specs.command.topic.subcommands.internal;
 import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.resources.Configs;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Function to list all topics on Kafka Cluster matching a given predicate.
  */
-public final class DescribeTopicsFunction implements Function<Predicate<String>, Collection<TopicResource>> {
+public final class DescribeTopicsFunction implements Function<Predicate<String>, Collection<V1TopicObject>> {
 
     private final AdminClient client;
 
@@ -61,16 +61,15 @@ public final class DescribeTopicsFunction implements Function<Predicate<String>,
         this.configEntryPredicate = entry -> !entry.isDefault() || options.describeDefaultConfigs();
     }
 
-    public DescribeTopicsFunction addConfigEntryPredicate(final Predicate<ConfigEntry> configEntryPredicate) {
+    public void addConfigEntryPredicate(final Predicate<ConfigEntry> configEntryPredicate) {
         this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<TopicResource> apply(final Predicate<String> topicPredicate) {
+    public Collection<V1TopicObject> apply(final Predicate<String> topicPredicate) {
 
         final Collection<String> topicNames;
         try {
@@ -96,9 +95,9 @@ public final class DescribeTopicsFunction implements Function<Predicate<String>,
             throw new RuntimeException(e);
         }
     }
-    private TopicResource newTopicResources(final TopicDescription desc, final Config config) {
+    private V1TopicObject newTopicResources(final TopicDescription desc, final Config config) {
         int rf = computeReplicationFactor(desc);
-        return new TopicResource(
+        return new V1TopicObject(
             desc.name(),
             desc.partitions().size(),
             (short) rf,

@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +42,9 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
     public enum ClusterSpecReaders implements ClusterSpecReader {
         VERSION_1("1") {
             @Override
-            public ClusterSpec read(final InputStream specification) throws InvalidSpecificationException {
+            public V1SpecFile read(final InputStream specification) throws InvalidSpecificationException {
                 try {
-                    return Jackson.YAML_OBJECT_MAPPER.readValue(specification, ClusterSpec.class);
+                    return Jackson.YAML_OBJECT_MAPPER.readValue(specification, V1SpecFile.class);
                 } catch (IOException e) {
                     throw new InvalidSpecificationException("Invalid specification file: " + e.getLocalizedMessage());
                 }
@@ -64,7 +65,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             return version;
         }
 
-        public abstract ClusterSpec read(final InputStream specification) throws InvalidSpecificationException;
+        public abstract V1SpecFile read(final InputStream specification) throws InvalidSpecificationException;
 
         public static Optional<ClusterSpecReaders> getVersionFromString(final String version) {
             for (ClusterSpecReaders e : ClusterSpecReaders.values()) {
@@ -80,7 +81,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
      * {@inheritDoc}
      */
     @Override
-    public ClusterSpec read(final InputStream stream) {
+    public V1SpecFile read(final InputStream stream) {
         try {
             final String specification = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             if (specification.isEmpty()) {

@@ -32,7 +32,6 @@ import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopicsFunction;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.KafkaFuture;
 import picocli.CommandLine;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Command(name = "topics",
@@ -82,7 +80,7 @@ public class TopicsCommand extends WithAdminClientCommand {
 
             final TopicChanges topicChanges = TopicChanges.computeChanges(
                     topics,
-                    clusterSpec().getTopics(it -> isResourceCandidate(it.name()))
+                    specFile().specs().topics(it -> isResourceCandidate(it.name()))
             );
 
             final TopicOperation operation = createTopicOperation(client);

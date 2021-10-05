@@ -16,7 +16,7 @@
  */
 package io.streamthoughts.kafka.specs.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
 import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
 import io.streamthoughts.kafka.specs.acl.AclRule;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LiteralAclRulesBuilderTest {
 
-    static final List<AclGroupPolicy> EMPTY_GROUP = Collections.emptyList();
+    static final List<AclRoleBasedPolicy> EMPTY_GROUP = Collections.emptyList();
 
     static final String TOPIC_TEST_A        = "topic-test-a";
     static final String USER_TYPE           = "User:";

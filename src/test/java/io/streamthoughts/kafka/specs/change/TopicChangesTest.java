@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.change;
 
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Configs;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,10 +44,10 @@ public class TopicChangesTest {
         // Given
         Configs configs = Configs.empty();
         configs.add(new ConfigValue(CONFIG_PROP, "???", DUMMY_CONFIG_ENTRY));
-        TopicResource topic = new TopicResource(TEST_TOPIC, 1, (short) 1, configs);
+        V1TopicObject topic = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configs);
 
-        List<TopicResource> beforeTopicStates = List.of(topic);
-        List<TopicResource> afterTopicStates  = Collections.emptyList();
+        List<V1TopicObject> beforeTopicStates = List.of(topic);
+        List<V1TopicObject> afterTopicStates  = Collections.emptyList();
 
         // When
         TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
@@ -64,10 +64,10 @@ public class TopicChangesTest {
         // Given
         Configs configs = Configs.empty();
         configs.add(new ConfigValue(CONFIG_PROP, "???", DUMMY_CONFIG_ENTRY));
-        TopicResource topic = new TopicResource(TEST_TOPIC, 1, (short) 1, configs);
+        V1TopicObject topic = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configs);
 
-        List<TopicResource> beforeTopicStates = Collections.emptyList();
-        List<TopicResource> afterTopicStates  = List.of(topic);
+        List<V1TopicObject> beforeTopicStates = Collections.emptyList();
+        List<V1TopicObject> afterTopicStates  = List.of(topic);
 
         // When
         TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
@@ -84,14 +84,14 @@ public class TopicChangesTest {
         // Given
         Configs configsBefore = Configs.empty();
         configsBefore.add(new ConfigValue(CONFIG_PROP, "before", DUMMY_CONFIG_ENTRY));
-        TopicResource topicBefore = new TopicResource(TEST_TOPIC, 1, (short) 1, configsBefore);
+        V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsBefore);
 
-        List<TopicResource> beforeTopicStates = List.of(topicBefore);
+        List<V1TopicObject> beforeTopicStates = List.of(topicBefore);
 
         Configs configsAfter = Configs.empty();
         configsAfter.add(new ConfigValue(CONFIG_PROP, "after", DUMMY_CONFIG_ENTRY));
-        TopicResource topicAfter = new TopicResource(TEST_TOPIC, 1, (short) 1, configsAfter);
-        List<TopicResource> afterTopicStates  = List.of(topicAfter);
+        V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsAfter);
+        List<V1TopicObject> afterTopicStates  = List.of(topicAfter);
 
         // When
         TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
@@ -112,10 +112,10 @@ public class TopicChangesTest {
         // Given
         Configs configs = Configs.empty();
         configs.add(new ConfigValue(CONFIG_PROP, "???", DUMMY_CONFIG_ENTRY));
-        TopicResource topic = new TopicResource(TEST_TOPIC, 1, (short) 1, configs);
+        V1TopicObject topic = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configs);
 
-        List<TopicResource> beforeTopicStates = List.of(topic);
-        List<TopicResource> afterTopicStates  = List.of(topic);
+        List<V1TopicObject> beforeTopicStates = List.of(topic);
+        List<V1TopicObject> afterTopicStates  = List.of(topic);
 
         // When
         TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
@@ -139,13 +139,13 @@ public class TopicChangesTest {
         Mockito.when(mkConfigEntry.source()).thenReturn(ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG);
 
         configsBefore.add(new ConfigValue(CONFIG_PROP, "before", mkConfigEntry));
-        TopicResource topicBefore = new TopicResource(TEST_TOPIC, 1, (short) 1, configsBefore);
+        V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsBefore);
 
-        List<TopicResource> beforeTopicStates = List.of(topicBefore);
+        List<V1TopicObject> beforeTopicStates = List.of(topicBefore);
 
         Configs configsAfter = Configs.empty();
-        TopicResource topicAfter = new TopicResource(TEST_TOPIC, 1, (short) 1, configsAfter);
-        List<TopicResource> afterTopicStates  = List.of(topicAfter);
+        V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsAfter);
+        List<V1TopicObject> afterTopicStates  = List.of(topicAfter);
 
         // When
         TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
@@ -169,13 +169,13 @@ public class TopicChangesTest {
         Mockito.when(mkConfigEntry.source()).thenReturn(ConfigEntry.ConfigSource.DYNAMIC_BROKER_CONFIG);
 
         configsBefore.add(new ConfigValue(CONFIG_PROP, "before", mkConfigEntry));
-        TopicResource topicBefore = new TopicResource(TEST_TOPIC, 1, (short) 1, configsBefore);
+        V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsBefore);
 
-        List<TopicResource> beforeTopicStates = List.of(topicBefore);
+        List<V1TopicObject> beforeTopicStates = List.of(topicBefore);
 
         Configs configsAfter = Configs.empty();
-        TopicResource topicAfter = new TopicResource(TEST_TOPIC, 1, (short) 1, configsAfter);
-        List<TopicResource> afterTopicStates  = List.of(topicAfter);
+        V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsAfter);
+        List<V1TopicObject> afterTopicStates  = List.of(topicAfter);
 
         // When
         TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);

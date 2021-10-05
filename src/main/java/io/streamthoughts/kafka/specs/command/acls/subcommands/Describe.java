@@ -18,7 +18,9 @@
  */
 package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
-import io.streamthoughts.kafka.specs.ClusterSpec;
+import io.streamthoughts.kafka.specs.model.MetaObject;
+import io.streamthoughts.kafka.specs.model.V1SecurityObject;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.acl.AclRule;
 import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
@@ -26,6 +28,7 @@ import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
 import io.streamthoughts.kafka.specs.acl.builder.LiteralAclRulesBuilder;
 import io.streamthoughts.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.operation.DescribeAclsOperation;
 import io.streamthoughts.kafka.specs.operation.ResourceOperationOptions;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -57,10 +60,12 @@ public class Describe extends BaseCommand {
 
         final AclRulesBuilder builder = getAclRulesBuilder(client);
         Collection<AclRule> rules = new DescribeAclsOperation().execute(client, null, new ResourceOperationOptions() {});
-        final Collection<AclUserPolicy> policies = builder.toAclUserPolicy(rules);
+        final Collection<AclUserPolicy> users = builder.toAclUserPolicy(rules);
+
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
-            YAMLClusterSpecWriter.instance().write(ClusterSpec.withUserPolicy(policies), os);
+            final V1SpecsObject specsObject = V1SpecsObject.withSecurity(new V1SecurityObject(users, null));
+            YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

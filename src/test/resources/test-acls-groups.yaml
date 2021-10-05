@@ -1,15 +1,16 @@
-acls:
-  group_policies:
-    - name: 'group_one'
-      resource:
-        type: 'topic'
-        pattern: '/([.-])*/'
-        pattern_type: 'MATCH'
-      allow_operations: [ 'CREATE:*', 'DELETE:*', 'ALTER:*', 'ALTER_CONFIGS:*' ]
+specs:
+  security:
+      roles:
+        - name: 'group_one'
+          resource:
+            type: 'topic'
+            pattern: '/([.-])*/'
+            pattern_type: 'MATCH'
+          allow_operations: [ 'CREATE:*', 'DELETE:*', 'ALTER:*', 'ALTER_CONFIGS:*' ]
 
-    - name: 'group_two'
-      resource:
-        type: 'topic'
-        pattern: '/public-([.-])*/'
-        pattern_type: 'MATCH'
-      allow_operations: [ 'READ:*', 'WRITE:*' ]
+        - name: 'group_two'
+          resource:
+            type: 'topic'
+            pattern: '/public-([.-])*/'
+            pattern_type: 'MATCH'
+          allow_operations: [ 'READ:*', 'WRITE:*' ]

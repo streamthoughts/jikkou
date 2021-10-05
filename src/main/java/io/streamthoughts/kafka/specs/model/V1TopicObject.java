@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,15 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.resources;
+package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.streamthoughts.kafka.specs.resources.ClusterResource;
+import io.streamthoughts.kafka.specs.resources.ConfigValue;
+import io.streamthoughts.kafka.specs.resources.Configs;
+import io.streamthoughts.kafka.specs.resources.Named;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * A Kafka topic resource.
  */
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public final class TopicResource implements ClusterResource, Named, Serializable {
+public final class V1TopicObject implements ClusterResource, Named, Serializable {
 
     private final String name;
 
@@ -48,27 +49,27 @@ public final class TopicResource implements ClusterResource, Named, Serializable
     private final Configs configs;
 
     /**
-     * Creates a new {@link TopicResource} instance.
+     * Creates a new {@link V1TopicObject} instance.
      *
      * @param name          the topic name.
      */
-    public TopicResource(final String name) {
+    public V1TopicObject(final String name) {
         this(name, null, null);
     }
 
     /**
-     * Creates a new {@link TopicResource} instance.
+     * Creates a new {@link V1TopicObject} instance.
      *
      * @param name          the topic name
      * @param partitions    the number of partitions
      * @param replication   the replication factor.
      */
-    public TopicResource(final String name, final Integer partitions, final Short replication) {
+    public V1TopicObject(final String name, final Integer partitions, final Short replication) {
         this(name, partitions, replication, Collections.emptyMap());
     }
 
     /**
-     * Creates a new {@link TopicResource} instance.
+     * Creates a new {@link V1TopicObject} instance.
      *
      * @param name          the topic name.
      * @param partitions    the number of partitions.
@@ -76,7 +77,7 @@ public final class TopicResource implements ClusterResource, Named, Serializable
      * @param configs       the topic configs to override.
      */
     @JsonCreator
-    public TopicResource(@JsonProperty("name") final String name,
+    public V1TopicObject(@JsonProperty("name") final String name,
                          @JsonProperty("partitions") final Integer partitions,
                          @JsonProperty("replication_factor") final Short replication,
                          @JsonProperty("configs") final Map<String, Object> configs) {
@@ -84,14 +85,14 @@ public final class TopicResource implements ClusterResource, Named, Serializable
     }
 
     /**
-     * Creates a new {@link TopicResource} instance.
+     * Creates a new {@link V1TopicObject} instance.
      *
      * @param name          the topic name.
      * @param partitions    the number of partitions.
      * @param replication   the replication factor.
      * @param configs       the topic configs to override.
      */
-    public TopicResource(final String name,
+    public V1TopicObject(final String name,
                          final Integer partitions,
                          final Short replication,
                          final Configs configs) {
@@ -131,7 +132,7 @@ public final class TopicResource implements ClusterResource, Named, Serializable
         return configs;
     }
 
-    public TopicResource addConfigValue(final ConfigValue config) {
+    public V1TopicObject addConfigValue(final ConfigValue config) {
         this.configs.add(config);
         return this;
     }
@@ -142,8 +143,8 @@ public final class TopicResource implements ClusterResource, Named, Serializable
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TopicResource)) return false;
-        TopicResource that = (TopicResource) o;
+        if (!(o instanceof V1TopicObject)) return false;
+        V1TopicObject that = (V1TopicObject) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(partitions, that.partitions) &&
                 Objects.equals(replicationFactor, that.replicationFactor) &&

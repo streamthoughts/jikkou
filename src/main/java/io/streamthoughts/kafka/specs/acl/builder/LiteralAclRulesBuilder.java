@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
 import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
 import io.streamthoughts.kafka.specs.acl.AclResourcePermission;
 import io.streamthoughts.kafka.specs.acl.AclRule;
@@ -48,12 +48,12 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
      * {@inheritDoc}
      */
     @Override
-    public Collection<AclRule> toAclRules(final Collection<AclGroupPolicy> groups,
+    public Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups,
                                           final AclUserPolicy user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
-        List<AclGroupPolicy> userGroups = filterAclGroupsForUser(groups, user);
+        List<AclRoleBasedPolicy> userGroups = filterAclGroupsForUser(groups, user);
         return createAclsForLiteralOrPrefixPermissions(user, userGroups);
 
     }
@@ -93,10 +93,10 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
 
 
     private Collection<AclRule> createAclsForLiteralOrPrefixPermissions(final AclUserPolicy user,
-                                                                        final List<AclGroupPolicy> groups) {
+                                                                        final List<AclRoleBasedPolicy> groups) {
 
         final Stream<AclResourcePermission> userPermissions = user.permissions().stream();
-        final Stream<AclResourcePermission> groupsPermissions = groups.stream().map(AclGroupPolicy::permission);
+        final Stream<AclResourcePermission> groupsPermissions = groups.stream().map(AclRoleBasedPolicy::permission);
 
         List<AclResourcePermission> permissions = Stream.concat(userPermissions, groupsPermissions)
                 .filter(p -> !p.resource().isPatternOfTypeMatchRegex())

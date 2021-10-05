@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
 import io.streamthoughts.kafka.specs.acl.AclResourcePermission;
 import io.streamthoughts.kafka.specs.acl.AclRule;
 import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
@@ -61,12 +61,12 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
-    public Collection<AclRule> toAclRules(final Collection<AclGroupPolicy> groups,
+    public Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups,
                                           final AclUserPolicy user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
-        List<AclGroupPolicy> userGroups = filterAclGroupsForUser(groups, user);
+        List<AclRoleBasedPolicy> userGroups = filterAclGroupsForUser(groups, user);
 
         CompletableFuture<List<AclRule>> future = getListTopics().thenApply((topics) -> topics.stream()
                 .flatMap(topic -> {
@@ -117,10 +117,10 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
     }
 
     private Collection<AclRule> createAclForGroupsPoliciesMatchingTopic(final AclUserPolicy user,
-                                                                    final List<AclGroupPolicy> groups,
+                                                                    final List<AclRoleBasedPolicy> groups,
                                                                     final TopicListing topic) {
         List<AclResourcePermission> permissions = groups.stream()
-                .map(AclGroupPolicy::permission)
+                .map(AclRoleBasedPolicy::permission)
                 .filter(p -> p.resource().type() == ResourceType.TOPIC)
                 .filter(p -> p.resource().isPatternOfTypeMatchRegex())
                 .collect(Collectors.toList());

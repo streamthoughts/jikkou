@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.command.acls;
 
 import io.streamthoughts.kafka.specs.OperationResult;
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
 import io.streamthoughts.kafka.specs.acl.AclRule;
 import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
@@ -29,9 +29,9 @@ import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
+import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
-import io.streamthoughts.kafka.specs.resources.AclsResource;
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
@@ -70,16 +70,16 @@ public class AclsCommand extends WithAdminClientCommand {
         public Collection<OperationResult<AclRule>> executeCommand(final AdminClient client) {
             final List<OperationResult<AclRule>> results = new LinkedList<>();
 
-            final Optional<AclsResource> optional = clusterSpec().getAcls();
+            final Optional<V1SecurityObject> optional = specFile().specs().security();
 
             if (optional.isPresent()) {
-                final AclsResource resource = optional.get();
+                final V1SecurityObject resource = optional.get();
                 final AclRulesBuilder builder = AclRulesBuilder.combines(
                         new LiteralAclRulesBuilder(),
                         new TopicMatchingAclRulesBuilder(client));
 
-                final Map<String, AclGroupPolicy> groups = Named.keyByName(resource.getAclGroupPolicies());
-                final Collection<AclUserPolicy> users = resource.getAclUsersPolicies();
+                final Map<String, AclRoleBasedPolicy> groups = Named.keyByName(resource.roles());
+                final Collection<AclUserPolicy> users = resource.users();
                 List<AclRule> rules = users
                         .stream()
                         .flatMap(user -> builder.toAclRules(groups.values(), user).stream())

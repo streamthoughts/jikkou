@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
+
 import java.io.InputStream;
 
 /**
@@ -26,10 +28,10 @@ import java.io.InputStream;
 public interface ClusterSpecReader {
 
     /**
-     * Retrieves a {@link ClusterSpec} from the specified input stream.
+     * Retrieves a {@link V1SpecFile} from the specified input stream.
      *
      * @param stream    the input stream from which to read the specification.
-     * @return          a new {@link ClusterSpec} instance.
+     * @return          a new {@link V1SpecFile} instance.
      */
-    ClusterSpec read(final InputStream stream) throws InvalidSpecificationException;
+    V1SpecFile read(final InputStream stream) throws InvalidSpecificationException;
 }

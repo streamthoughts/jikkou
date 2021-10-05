@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.specs.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicyBuilder;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicyBuilder;
 import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
 import io.streamthoughts.kafka.specs.acl.AclRule;
 import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TopicMatchingAclRulesBuilderTest {
 
 
-    static final List<AclGroupPolicy> EMPTY_GROUP = Collections.emptyList();
+    static final List<AclRoleBasedPolicy> EMPTY_GROUP = Collections.emptyList();
 
     static final String TOPIC_REGEX         = "/topic-.*/";
     static final String TOPIC_TEST_A        = "topic-test-a";
@@ -95,7 +95,7 @@ public class TopicMatchingAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserAndGroupWithRegexPermission() {
 
-        AclGroupPolicy group = AclGroupPolicyBuilder.newBuilder()
+        AclRoleBasedPolicy group = AclRoleBasedPolicyBuilder.newBuilder()
                 .withName(SIMPLE_GROUP)
                 .allow(new AclOperationPolicy(AclOperation.CREATE))
                 .withPattern(TOPIC_REGEX)

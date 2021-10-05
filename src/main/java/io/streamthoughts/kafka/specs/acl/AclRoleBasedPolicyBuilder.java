@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.specs.acl;
 
-
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 
@@ -26,9 +25,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Builder class to create new {@link AclGroupPolicy} instances.
+ * Builder class to create new {@link AclRoleBasedPolicy} instances.
  */
-public class AclGroupPolicyBuilder {
+public class AclRoleBasedPolicyBuilder {
 
     private String name;
 
@@ -38,51 +37,51 @@ public class AclGroupPolicyBuilder {
 
     private ResourceType type;
 
-    private Set<AclOperationPolicy> operations = new HashSet<>();
+    private final Set<AclOperationPolicy> operations = new HashSet<>();
 
     /**
      * Creates a new builder.
      *
-     * @return new {@link AclGroupPolicyBuilder} instance.
+     * @return new {@link AclRoleBasedPolicyBuilder} instance.
      */
-    public static AclGroupPolicyBuilder newBuilder() {
-        return new AclGroupPolicyBuilder();
+    public static AclRoleBasedPolicyBuilder newBuilder() {
+        return new AclRoleBasedPolicyBuilder();
     }
 
     /**
-     * Creates a new {@link AclGroupPolicyBuilder} instance.
+     * Creates a new {@link AclRoleBasedPolicyBuilder} instance.
      */
-    private AclGroupPolicyBuilder() {
+    private AclRoleBasedPolicyBuilder() {
     }
 
-    public AclGroupPolicyBuilder withPatternType(final PatternType patternType) {
+    public AclRoleBasedPolicyBuilder withPatternType(final PatternType patternType) {
         this.patternType = patternType;
         return this;
     }
 
-    public AclGroupPolicyBuilder withName(final String name) {
+    public AclRoleBasedPolicyBuilder withName(final String name) {
         this.name = name;
         return this;
     }
 
-    public AclGroupPolicyBuilder withPattern(final String pattern) {
+    public AclRoleBasedPolicyBuilder withPattern(final String pattern) {
         this.pattern = pattern;
         return this;
     }
 
 
-    public AclGroupPolicyBuilder onResourceType(final ResourceType type) {
+    public AclRoleBasedPolicyBuilder onResourceType(final ResourceType type) {
         this.type = type;
         return this;
     }
 
-    public AclGroupPolicyBuilder allow(final AclOperationPolicy operation) {
+    public AclRoleBasedPolicyBuilder allow(final AclOperationPolicy operation) {
         this.operations.add(operation);
         return this;
     }
 
-    public AclGroupPolicy build() {
-        return new AclGroupPolicy(
+    public AclRoleBasedPolicy build() {
+        return new AclRoleBasedPolicy(
                 name,
                 new AclResourceMatcher(pattern, patternType, type),
                 operations

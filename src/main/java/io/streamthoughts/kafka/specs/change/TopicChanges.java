@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.specs.change;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Named;
-import io.streamthoughts.kafka.specs.resources.TopicResource;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
@@ -40,16 +40,16 @@ public class TopicChanges implements Iterable<TopicChange> {
 
     private final Map<String, TopicChange> changes;
 
-    public static TopicChanges computeChanges(@NotNull final Iterable<TopicResource> beforeTopicStates,
-                                              @NotNull final Iterable<TopicResource> afterTopicStates) {
+    public static TopicChanges computeChanges(@NotNull final Iterable<V1TopicObject> beforeTopicStates,
+                                              @NotNull final Iterable<V1TopicObject> afterTopicStates) {
 
-        final Map<String, TopicResource> beforeTopicResourceMapByName = Named.keyByName(beforeTopicStates);
+        final Map<String, V1TopicObject> beforeTopicResourceMapByName = Named.keyByName(beforeTopicStates);
 
         final Map<String, TopicChange> changes = new HashMap<>();
 
-        for (final TopicResource afterTopic : afterTopicStates) {
+        for (final V1TopicObject afterTopic : afterTopicStates) {
 
-            final TopicResource beforeTopic = beforeTopicResourceMapByName.get(afterTopic.name());
+            final V1TopicObject beforeTopic = beforeTopicResourceMapByName.get(afterTopic.name());
             final TopicChange change = beforeTopic == null ?
                     buildChangeForNewTopic(afterTopic) :
                     buildChangeForExistingTopic(afterTopic, beforeTopic);
@@ -68,7 +68,7 @@ public class TopicChanges implements Iterable<TopicChange> {
     }
 
     private static @NotNull Map<String, TopicChange> buildChangesForOrphanTopics(
-            @NotNull final Collection<TopicResource> topics,
+            @NotNull final Collection<V1TopicObject> topics,
             @NotNull final Set<String> changes)
     {
         return topics
@@ -83,8 +83,8 @@ public class TopicChanges implements Iterable<TopicChange> {
             .collect(Collectors.toMap(TopicChange::name, it -> it));
     }
 
-    private static @NotNull TopicChange buildChangeForExistingTopic(@NotNull final TopicResource afterTopic,
-                                                                    @NotNull final TopicResource beforeTopic) {
+    private static @NotNull TopicChange buildChangeForExistingTopic(@NotNull final V1TopicObject afterTopic,
+                                                                    @NotNull final V1TopicObject beforeTopic) {
 
         final Map<String, ConfigValue> beforeTopicConfigsByName = Named.keyByName(beforeTopic.configs());
         final Map<String, ConfigEntryChange> afterTopicConfigsByName = new HashMap<>();
@@ -138,7 +138,7 @@ public class TopicChanges implements Iterable<TopicChange> {
                 .build();
     }
 
-    private static @NotNull TopicChange buildChangeForNewTopic(@NotNull final TopicResource afterTopic) {
+    private static @NotNull TopicChange buildChangeForNewTopic(@NotNull final V1TopicObject afterTopic) {
 
         final TopicChange.Builder builder = new TopicChange.Builder()
                 .setName(afterTopic.name())

@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclGroupPolicy;
+import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
 import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
 import io.streamthoughts.kafka.specs.acl.AclResourceMatcher;
 import io.streamthoughts.kafka.specs.acl.AclResourcePermission;
@@ -70,12 +70,12 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
      *
      * @param groups    the groups to be filtered
      * @param user      the user to be used.
-     * @return          a new list of {@link AclGroupPolicy} instances.
+     * @return          a new list of {@link AclRoleBasedPolicy} instances.
      */
-    List<AclGroupPolicy> filterAclGroupsForUser(final Collection<AclGroupPolicy> groups,
-                                                final AclUserPolicy user) {
+    List<AclRoleBasedPolicy> filterAclGroupsForUser(final Collection<AclRoleBasedPolicy> groups,
+                                                    final AclUserPolicy user) {
         return groups.stream()
-                .filter(gr -> user.groups().contains(gr.name()))
+                .filter(gr -> user.roles().contains(gr.name()))
                 .collect(Collectors.toList());
     }
 
