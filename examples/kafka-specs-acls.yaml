@@ -1,0 +1,42 @@
+version: 1
+metadata: {}
+specs:
+  security:
+    users:
+    - principal: 'User:kafka'
+      roles: [ 'AdminTopics', 'AdminGroups' ]
+
+    - principal: 'User:benchmark'
+      roles: [ ]
+      permissions:
+        - resource:
+            type: 'topic'
+            pattern: 'bench-'
+            pattern_type: 'PREFIXED'
+          allow_operations: [ 'READ:*', 'WRITE:*' ]
+        - resource:
+            type: 'group'
+            pattern: '*'
+            pattern_type: 'LITERAL'
+          allow_operations: [ 'DESCRIBE:*' ]
+    roles:
+    - name: 'AdminTopics'
+      resource:
+        type: 'topic'
+        pattern: '*'
+        pattern_type: 'LITERAL'
+      allow_operations: [ 'ALL:*' ]
+
+    - name: 'AdminGroups'
+      resource:
+        type: 'group'
+        pattern: '*'
+        pattern_type: 'LITERAL'
+      allow_operations: [ 'ALL:*' ]
+
+    - name: 'ReadWriteTopicsMatchingBench'
+      resource:
+        type: 'topic'
+        pattern: '/^bench-([.-])*$/'
+        pattern_type: 'MATCH'
+      allow_operations: [ 'READ:*', 'WRITE:*' ]

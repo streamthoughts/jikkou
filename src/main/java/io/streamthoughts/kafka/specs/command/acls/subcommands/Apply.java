@@ -40,7 +40,7 @@ import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
 
 @Command(name = "apply",
-         description = "Apply all ACL changes on remote cluster."
+         description = "Apply all changes to the Kafka ACLs."
 )
 public class Apply extends AclsCommand.Base {
 

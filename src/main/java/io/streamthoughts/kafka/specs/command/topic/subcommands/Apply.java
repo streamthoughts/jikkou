@@ -35,10 +35,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.*;
+import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
+import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
+import static io.streamthoughts.kafka.specs.change.Change.OperationType.UPDATE;
 
 @Command(name = "apply",
-         description = "Apply all Topic changes on remote cluster."
+         description = "Apply changes to the Kafka topics."
 )
 public class Apply extends TopicsCommand.Base {
 

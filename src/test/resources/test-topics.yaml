@@ -1,3 +1,5 @@
+version: 1
+metadata: {}
 specs:
   topics:
     - name: 'my-topic-p1'

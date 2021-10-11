@@ -49,9 +49,9 @@ import java.util.LinkedList;
         description = "This command can be used to create, alter, delete or describe Topics on a remote Kafka cluster",
         subcommands = {
                 Alter.class,
+                Apply.class,
                 Create.class,
                 Delete.class,
-                Apply.class,
                 Describe.class,
                 CommandLine.HelpCommand.class
         },

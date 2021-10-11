@@ -62,10 +62,10 @@ import java.util.stream.Collectors;
         header = "Execute changes to the Kafka cluster ACLs.",
         description = "This command can be used to create ACLs on a remote Kafka cluster",
         subcommands = {
-                Create.class,
-                Describe.class,
-                Delete.class,
                 Apply.class,
+                Create.class,
+                Delete.class,
+                Describe.class,
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)

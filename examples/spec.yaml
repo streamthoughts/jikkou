@@ -1,9 +1,0 @@
-version: 1
-topics:
-- configs:
-    cleanup.policy: compact
-    compression.type: producer
-    min.insync.replicas: 1
-  name: my-topic
-  partitions: 12
-  replication_factor: 1
