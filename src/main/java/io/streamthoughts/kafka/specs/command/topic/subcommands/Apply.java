@@ -40,7 +40,7 @@ import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.UPDATE;
 
 @Command(name = "apply",
-         description = "Apply changes to the Kafka topics."
+         description = "Apply all changes to the Kafka topics."
 )
 public class Apply extends TopicsCommand.Base {
 
