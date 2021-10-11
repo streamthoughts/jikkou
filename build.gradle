@@ -38,7 +38,6 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     implementation "org.apache.kafka:kafka-clients:3.0.0"
     implementation 'org.yaml:snakeyaml:1.29'
-    implementation "net.sf.jopt-simple:jopt-simple:5.0.4"
     implementation 'ch.qos.logback:logback-classic:1.2.6'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.5'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.5'
