@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.kafka.specs.internal.Time;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Arrays;
 
 /**
@@ -38,7 +40,7 @@ public class OperationResult<T> implements Serializable {
     private final long end;
     private final T resource;
     private final boolean failed;
-    private final String[] error;
+    private final String error;
     private final Status status;
     private transient final Description description;
 
@@ -64,8 +66,14 @@ public class OperationResult<T> implements Serializable {
     public static <T> OperationResult<T> failed(final T resource,
                                                 final Description description,
                                                 final Exception exception) {
-        // TODO : Check whether an operation may fail after running some cluster resource changes ???
-        return new OperationResult<>(Status.FAILED, false, resource, description, true, null);
+        return new OperationResult<>(
+                Status.FAILED,
+                false,
+                resource,
+                description,
+                true,
+                getStacktrace(exception)
+        );
     }
 
     /**
@@ -86,7 +94,7 @@ public class OperationResult<T> implements Serializable {
                             final T resource,
                             final Description description,
                             final boolean failed,
-                            final String[] error) {
+                            final String error) {
         this(status, changed, resource, description, failed, error, Time.SYSTEM.milliseconds());
     }
 
@@ -98,7 +106,7 @@ public class OperationResult<T> implements Serializable {
                             final T resource,
                             final Description description,
                             final boolean failed,
-                            final String[] error,
+                            final String error,
                             final long end) {
         this.status = status;
         this.changed = changed;
@@ -129,7 +137,8 @@ public class OperationResult<T> implements Serializable {
         return failed;
     }
 
-    public String[] getError() {
+    @JsonProperty
+    public String error() {
         return error;
     }
 
@@ -150,9 +159,19 @@ public class OperationResult<T> implements Serializable {
                 ", end=" + end +
                 ", resource=" + resource +
                 ", failed=" + failed +
-                ", error=" + Arrays.toString(error) +
+                ", error=" + error +
                 ", status=" + status +
                 ", description=" + description +
                 '}';
+    }
+
+    /**
+     * @return the stacktrace representation for the given {@link Throwable}.
+     */
+    static String getStacktrace(final Throwable throwable) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.getBuffer().toString();
     }
 }
