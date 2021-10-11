@@ -196,6 +196,7 @@ specs:
 You can also define *roles* to be applied to one or more _principals_.
 Kafka Specs will take care of creating all corresponding ACLs policies.
 
+kafka-specs-security.yml::
 [source,yaml]
 ----
 version: 1
@@ -206,22 +207,99 @@ specs:
       resource:
         type: 'topic'
         pattern: '*'
-        patternType: 'LITERAL'
+        pattern_type: 'LITERAL'
       allow_operations: ['ALL:*']
 
     - name: 'AdminGroups'
       resource:
         type: 'group'
         pattern: '*'
-        patternType: 'LITERAL'
+        pattern_type: 'LITERAL'
       allow_operations: ['ALL:*']
 
-  users:
-    - principal: 'User:kafka'
-      roles: [ 'AdminTopics', 'AdminGroups' ]
+    users:
+      - principal: 'User:admin'
+        roles: [ 'AdminTopics', 'AdminGroups' ]
 
-    - principal: 'User:admin-topic'
-      roles: [ 'AdminTopics' ]
+      - principal: 'User:admin-topics'
+        roles: [ 'AdminTopics' ]
+----
+
+[source,bash]
+----
+$ kafka-specs --bootstrap-servers localhost:9092 \
+    acls \
+    apply \
+    --file-path kafka-specs-security.yml \
+    --verbose \
+    --yes
+----
+
+(output)
+[source]
+----
+TASK [CREATE] Create a new ACL (ALLOW User:admin-user to ALL TOPIC:LITERAL:*) - CHANGED *****************
+{
+  "changed" : true,
+  "end" : 1633980549689,
+  "resource" : {
+    "operation" : "ADD",
+    "principal_type" : "User",
+    "principal_name" : "admin-user",
+    "resource_pattern" : "*",
+    "pattern_type" : "LITERAL",
+    "resource_type" : "TOPIC",
+    "operation" : "ALL",
+    "permission" : "ALLOW",
+    "host" : "*",
+    "name" : "admin-user",
+    "principal" : "User:admin-user"
+  },
+  "failed" : false,
+  "status" : "CHANGED"
+}
+TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL GROUP:LITERAL:*) - CHANGED *****************
+{
+  "changed" : true,
+  "end" : 1633980549689,
+  "resource" : {
+    "operation" : "ADD",
+    "principal_type" : "User",
+    "principal_name" : "kafka-user",
+    "resource_pattern" : "*",
+    "pattern_type" : "LITERAL",
+    "resource_type" : "GROUP",
+    "operation" : "ALL",
+    "permission" : "ALLOW",
+    "host" : "*",
+    "name" : "kafka-user",
+    "principal" : "User:kafka-user"
+  },
+  "failed" : false,
+  "status" : "CHANGED"
+}
+TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL TOPIC:LITERAL:*) - CHANGED *****************
+{
+  "changed" : true,
+  "end" : 1633980549689,
+  "resource" : {
+    "operation" : "ADD",
+    "principal_type" : "User",
+    "principal_name" : "kafka-user",
+    "resource_pattern" : "*",
+    "pattern_type" : "LITERAL",
+    "resource_type" : "TOPIC",
+    "operation" : "ALL",
+    "permission" : "ALLOW",
+    "host" : "*",
+    "name" : "kafka-user",
+    "principal" : "User:kafka-user"
+  },
+  "failed" : false,
+  "status" : "CHANGED"
+}
+EXECUTION in 2s 146ms
+ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
 ----
 
 As of Kafka 2.0.0, you can use `LITERAL` and `PREFIXED` pattern-type to define new ACLs, then `MATCH` and `ANY` for filtering.
@@ -229,6 +307,7 @@ As of Kafka 2.0.0, you can use `LITERAL` and `PREFIXED` pattern-type to define n
 With Kafka Specs you can use the pattern-type `MATCH` to create ACLs.
 This will define ACLs with `LITERAL` pattern type for all topics matching the defined regex.
 
+kafka-specs-security.yml::
 [source,yaml]
 ----
 version: 1
@@ -236,12 +315,12 @@ specs:
   security:
     users:
     - principal : 'User:benchmark'
-      groups  : []
+      roles  : []
       permissions :
         - resource :
             type : 'topic'
-            pattern : '/bench-([.-])*/'
-            patternType : 'MATCH'
+            pattern : '/bench-[\w-]+/'
+            pattern_type : 'MATCH'
           allow_operations : ['READ:*', 'WRITE:*']
 ----
 
@@ -250,46 +329,52 @@ specs:
 kafka-specs --bootstrap-servers localhost:9092 \
     acls \
     apply \
-    --file-path /cluster-dev-topics.yml \
+    --file-path kafka-specs-security.yml \
     --verbose \
     --yes
 ----
 
 [source]
 ----
-TASK [CREATE] Create a new ACL (ALLOW User:benchmark to WRITE TOPIC:LITERAL:bench-p1-r1) - CHANGED ******
+TASK [CREATE] Create a new ACL (ALLOW User:specs to WRITE TOPIC:LITERAL:bench-p1-r3) - CHANGED **********
 {
-  "changed": true,
-  "end": 1539685171168,
-  "resource": {
-    "principalType": "User",
-    "principalName": "benchmark",
-    "resourcePattern": "bench-p1-r1",
-    "patternType": "LITERAL",
-    "resourceType": "TOPIC",
-    "operation": "WRITE",
-    "permission": "ALLOW",
-    "host": "*"
+  "changed" : true,
+  "end" : 1633985047120,
+  "resource" : {
+    "operation" : "ADD",
+    "principal_type" : "User",
+    "principal_name" : "specs",
+    "resource_pattern" : "bench-p1-r3",
+    "pattern_type" : "LITERAL",
+    "resource_type" : "TOPIC",
+    "operation" : "WRITE",
+    "permission" : "ALLOW",
+    "host" : "*",
+    "principal" : "User:specs",
+    "name" : "specs"
   },
-  "failed": false,
-  "status": "CHANGED"
+  "failed" : false,
+  "status" : "CHANGED"
 }
-TASK [CREATE] Create a new ACL (ALLOW User:benchmark to READ TOPIC:LITERAL:bench-p1-r1) - CHANGED *******
+TASK [CREATE] Create a new ACL (ALLOW User:specs to READ TOPIC:LITERAL:bench-p1-r3) - CHANGED ***********
 {
-  "changed": true,
-  "end": 1539685171168,
-  "resource": {
-    "principalType": "User",
-    "principalName": "benchmark",
-    "resourcePattern": "bench-p1-r1",
-    "patternType": "LITERAL",
-    "resourceType": "TOPIC",
-    "operation": "READ",
-    "permission": "ALLOW",
-    "host": "*"
+  "changed" : true,
+  "end" : 1633985047120,
+  "resource" : {
+    "operation" : "ADD",
+    "principal_type" : "User",
+    "principal_name" : "specs",
+    "resource_pattern" : "bench-p1-r3",
+    "pattern_type" : "LITERAL",
+    "resource_type" : "TOPIC",
+    "operation" : "READ",
+    "permission" : "ALLOW",
+    "host" : "*",
+    "principal" : "User:specs",
+    "name" : "specs"
   },
-  "failed": false,
-  "status": "CHANGED"
+  "failed" : false,
+  "status" : "CHANGED"
 }
 ----
 
