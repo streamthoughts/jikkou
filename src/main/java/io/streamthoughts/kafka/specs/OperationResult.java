@@ -18,8 +18,11 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.kafka.specs.internal.Time;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -27,12 +30,9 @@ import java.util.Arrays;
  *
  * @param <T>
  */
-public class OperationResult<T> {
+public class OperationResult<T> implements Serializable {
 
-    public enum Status {
-
-        CHANGED, OK, FAILED, DRY_RUN
-    }
+    public enum Status { CHANGED, OK, FAILED }
 
     private final boolean changed;
     private final long end;
@@ -41,15 +41,6 @@ public class OperationResult<T> {
     private final String[] error;
     private final Status status;
     private transient final Description description;
-
-    /**
-     * Build a new {@link OperationResult} that doesn't result in cluster resource changes.
-     */
-    public static <T> OperationResult<T> dryRun(final T resource,
-                                                final boolean changed,
-                                                final Description description) {
-        return new OperationResult<>(Status.DRY_RUN, changed, resource, description);
-    }
 
     /**
      * Build a new {@link OperationResult} that doesn't result in cluster resource changes.
@@ -118,18 +109,22 @@ public class OperationResult<T> {
         this.description = description;
     }
 
+    @JsonProperty
     public boolean isChanged() {
         return changed;
     }
 
+    @JsonProperty
     public long getEnd() {
         return end;
     }
 
-    public T getResource() {
+    @JsonProperty
+    public T resource() {
         return resource;
     }
 
+    @JsonProperty
     public boolean isFailed() {
         return failed;
     }
@@ -138,14 +133,15 @@ public class OperationResult<T> {
         return error;
     }
 
+    @JsonProperty
     public Status status() {
         return this.status;
     }
 
+    @JsonIgnore
     public Description description() {
         return this.description;
     }
-
 
     @Override
     public String toString() {

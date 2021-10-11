@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.operation.AlterTopicOperation;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -33,7 +34,7 @@ public class Alter extends TopicsCommand.Base {
     @CommandLine.Option(
             names = "--delete-orphans",
             defaultValue = "false",
-            description = "Delete config entries overridden on the cluster but absent from the specification file)"
+            description = "Delete config entries overridden on the cluster but absent from the specification file"
     )
     Boolean deleteOrphans;
 
@@ -41,7 +42,7 @@ public class Alter extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public TopicOperation createTopicOperation(final AdminClient client) {
+    public TopicOperation getOperation(@NotNull final AdminClient client) {
         return new AlterTopicOperation(client, deleteOrphans);
     }
 }

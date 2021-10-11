@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.operation.DeleteTopicOperation;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -39,7 +40,7 @@ public class Delete extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public TopicOperation createTopicOperation(final AdminClient client) {
+    public TopicOperation getOperation(@NotNull final AdminClient client) {
         return new DeleteTopicOperation(client, excludeInternalTopics);
     }
 }

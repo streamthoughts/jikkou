@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.specs.operation.CreateTopicOperation;
 import io.streamthoughts.kafka.specs.operation.CreateTopicOperationOptions;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
 @Command(name = "create",
@@ -34,7 +35,7 @@ public class Create extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public TopicOperation createTopicOperation(final AdminClient client) {
+    public TopicOperation getOperation(@NotNull final AdminClient client) {
         return new CreateTopicOperation(client, new CreateTopicOperationOptions());
     }
 }

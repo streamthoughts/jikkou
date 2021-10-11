@@ -18,12 +18,14 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.operation.OperationType;
+import io.streamthoughts.kafka.specs.change.Change;
 
 /**
  * Simple interface to get a human-readable description of an executed operation.
  */
 public interface Description {
+
+    enum OperationType { CREATE, ALTER, DELETE, NONE }
 
     /**
      * Get the type of the operation.
@@ -38,7 +40,7 @@ public interface Description {
     interface Create extends Description {
 
         /**
-         * @return {@link OperationType#CREATE}.
+         * @return {@link Change.OperationType#ADD}.
          */
         @Override
         default OperationType operation() {
@@ -49,7 +51,7 @@ public interface Description {
     interface Alter extends Description {
 
         /**
-         * @return {@link OperationType#ALTER}.
+         * @return {@link Change.OperationType#UPDATE}.
          */
         @Override
         default OperationType operation() {
@@ -60,11 +62,22 @@ public interface Description {
     interface Delete extends Description {
 
         /**
-         * @return {@link OperationType#DELETE}.
+         * @return {@link Change.OperationType#DELETE}.
          */
         @Override
         default OperationType operation() {
             return OperationType.DELETE;
+        }
+    }
+
+    interface None extends Description {
+
+        /**
+         * @return {@link Change.OperationType#NONE}.
+         */
+        @Override
+        default OperationType operation() {
+            return OperationType.NONE;
         }
     }
 }

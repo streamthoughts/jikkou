@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.operation.AclOperation;
 import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
 @Command(name = "create",
@@ -33,7 +34,7 @@ public class Create extends AclsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public AclOperation getOperation(final AdminClient client) {
+    public AclOperation getOperation(@NotNull final AdminClient client) {
         return new CreateAclsOperation(client);
     }
 }

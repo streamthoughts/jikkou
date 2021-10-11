@@ -23,9 +23,10 @@ import io.streamthoughts.kafka.specs.operation.AclOperation;
 import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
 import io.streamthoughts.kafka.specs.operation.DeleteAclsOperation;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
-@Command(name = "create",
+@Command(name = "delete",
          description = "Delete all ACL policies not described in the specification file."
 )
 public class Delete extends AclsCommand.Base {
@@ -34,7 +35,7 @@ public class Delete extends AclsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public AclOperation getOperation(final AdminClient client) {
+    public AclOperation getOperation(@NotNull final AdminClient client) {
         return new DeleteAclsOperation(client);
     }
 }

@@ -25,27 +25,18 @@ import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.Alter;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
-import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.*;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
+import io.streamthoughts.kafka.specs.operation.AclOperation;
+import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.common.KafkaFuture;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletableFuture;
 
 @Command(name = "topics",
         headerHeading = "Usage:%n%n",
@@ -60,6 +51,7 @@ import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletable
                 Alter.class,
                 Create.class,
                 Delete.class,
+                Apply.class,
                 Describe.class,
                 CommandLine.HelpCommand.class
         },
@@ -67,6 +59,14 @@ import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletable
 public class TopicsCommand extends WithAdminClientCommand {
 
     public static abstract class Base extends WithSpecificationCommand<TopicChange> {
+
+        /**
+         * Gets the operation to execute.
+         *
+         * @param client    the {@link AdminClient}.
+         * @return          a new {@link AclOperation}.
+         */
+        public abstract TopicOperation getOperation(@NotNull final AdminClient client);
 
         /**
          * {@inheritDoc}
@@ -84,7 +84,7 @@ public class TopicsCommand extends WithAdminClientCommand {
                     specFile().specs().topics(it -> isResourceCandidate(it.name()))
             );
 
-            final TopicOperation operation = createTopicOperation(client);
+            final TopicOperation operation = getOperation(client);
 
             final LinkedList<OperationResult<TopicChange>> results = new LinkedList<>();
 
@@ -100,7 +100,7 @@ public class TopicsCommand extends WithAdminClientCommand {
                     })
                    .forEach(results::add);
             } else {
-                results.addAll(applyChanges(topicChanges, operation));
+                results.addAll(topicChanges.apply(operation));
                 topicChanges.all()
                         .stream()
                         .filter(it -> it.getOperation() == Change.OperationType.NONE)
@@ -110,25 +110,5 @@ public class TopicsCommand extends WithAdminClientCommand {
 
             return results;
         }
-
-        private List<OperationResult<TopicChange>> applyChanges(final TopicChanges topicChanges,
-                                                                final TopicOperation topicOperation) {
-
-            final Map<String, KafkaFuture<Void>> resultMap = topicChanges.apply(topicOperation);
-
-            List<CompletableFuture<OperationResult<TopicChange>>> completableFutures = resultMap.entrySet()
-                    .stream()
-                    .map(entry -> {
-                        final Future<Void> future = entry.getValue();
-                        return makeCompletableFuture(future, topicChanges.get(entry.getKey()), topicOperation);
-                    }).collect(Collectors.toList());
-
-            return completableFutures
-                    .stream()
-                    .map(CompletableFuture::join)
-                    .collect(Collectors.toList());
-        }
-
-        public abstract TopicOperation createTopicOperation(final AdminClient client);
     }
 }

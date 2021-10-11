@@ -38,6 +38,7 @@ public class Printer {
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_WHITE = "\u001B[37m";
     private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_BLUE = "\u001B[36m";
 
     /**
      * Print the specified execution results to stdout and terminate the application with the appropriate exit code.
@@ -49,7 +50,9 @@ public class Printer {
                                 final boolean verbose,
                                 final boolean dryRun) {
         int ok = 0;
+        int created = 0;
         int changed = 0;
+        int deleted = 0;
         int failed = 0;
         for (OperationResult<?> r : results) {
             final String json;
@@ -60,18 +63,31 @@ public class Printer {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            String color;
-            if (r.isFailed()) {
-                color = ANSI_RED;
+
+            String color = ANSI_WHITE;
+            Description.OperationType operation = r.description().operation();
+            if (r.isChanged()) {
+                switch (operation) {
+                    case CREATE:
+                        color = ANSI_GREEN;
+                        created++;
+                        break;
+                    case ALTER:
+                        color = ANSI_YELLOW;
+                        changed++;
+                        break;
+                    case DELETE:
+                        color = ANSI_RED;
+                        deleted++;
+                        break;
+                }
+            } else if (r.isFailed()) {
                 failed++;
-            }
-            else if (r.isChanged()) {
-                color = ANSI_YELLOW;
-                changed++;
             } else {
-                color = ANSI_GREEN;
+                color = ANSI_BLUE;
                 ok++;
             }
+
             printTask(r.description(), r.status().name());
             if (verbose) {
                 PS.printf("%s%s\n", isColor() ? color : "", json);
@@ -79,14 +95,14 @@ public class Printer {
         }
 
         PS.printf("%sEXECUTION in %s %s\n", isColor() ? ANSI_WHITE : "", KafkaSpecs.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
-        PS.printf("%sok : %d, changed : %d, failed : %d\n", isColor() ? ANSI_WHITE : "", ok, changed, failed);
+        PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d\n", isColor() ? ANSI_WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }
 
     private static void printTask(final Description description, final String status) {
         String text = description.textDescription();
         String padding =  (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
-        PS.printf("%sTASK [%s] %s - %s %s\n", isColor() ? ANSI_WHITE : "", description.operation().name(), text, status, padding);
+        PS.printf("%sTASK [%s] %s - %s %s\n", isColor() ? ANSI_WHITE : "", description.operation(), text, status, padding);
     }
 
     private static boolean isColor() {

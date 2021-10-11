@@ -40,6 +40,7 @@ import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.operation.AclOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -49,11 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletableFuture;
 
 @Command(name = "acls",
         descriptionHeading = "%nDescription:%n%n",
@@ -79,10 +76,17 @@ public class AclsCommand extends WithAdminClientCommand {
         @CommandLine.Option(
                 names = "--delete-orphans",
                 defaultValue = "false",
-                description = "Delete ACLs policies for principals not specified in the specification file)"
+                description = "Delete all ACL policies for principals not specified in the specification file"
         )
         Boolean deleteOrphans;
 
+        /**
+         * Gets the operation to execute.
+         *
+         * @param client    the {@link AdminClient}.
+         * @return          a new {@link AclOperation}.
+         */
+        public abstract AclOperation getOperation(@NotNull final AdminClient client);
 
         /**
          * {@inheritDoc}
@@ -117,12 +121,12 @@ public class AclsCommand extends WithAdminClientCommand {
 
             final AclOperation operation = getOperation(client);
 
-            final AclChanges aclChanges = AclChanges.computeChanges(oldPolicies, newPolicies, deleteOrphans);
+            final AclChanges changes = AclChanges.computeChanges(oldPolicies, newPolicies, deleteOrphans);
 
             final LinkedList<OperationResult<AclChange>> results = new LinkedList<>();
 
             if (isDryRun()) {
-                aclChanges.all()
+                changes.all()
                         .stream()
                         .filter(it -> operation.test(it) || it.getOperation() == Change.OperationType.NONE)
                         .map(change -> {
@@ -133,8 +137,8 @@ public class AclsCommand extends WithAdminClientCommand {
                         })
                         .forEach(results::add);
             } else {
-                results.addAll(applyChanges(aclChanges, operation));
-                aclChanges.all()
+                results.addAll(changes.apply(operation));
+                changes.all()
                         .stream()
                         .filter(it -> it.getOperation() == Change.OperationType.NONE)
                         .map(change -> OperationResult.ok(change, operation.getDescriptionFor(change)))
@@ -143,25 +147,5 @@ public class AclsCommand extends WithAdminClientCommand {
 
             return results;
         }
-
-        private List<OperationResult<AclChange>> applyChanges(final AclChanges changes,
-                                                              final AclOperation operation) {
-
-            final Map<AccessControlPolicy, CompletableFuture<Void>> resultMap = changes.apply(operation);
-
-            List<CompletableFuture<OperationResult<AclChange>>> completableFutures = resultMap.entrySet()
-                    .stream()
-                    .map(entry -> {
-                        final Future<Void> future = entry.getValue();
-                        return makeCompletableFuture(future, changes.get(entry.getKey()), operation);
-                    }).collect(Collectors.toList());
-
-            return completableFutures
-                    .stream()
-                    .map(CompletableFuture::join)
-                    .collect(Collectors.toList());
-        }
-
-        public abstract AclOperation getOperation(final AdminClient client);
     }
 }

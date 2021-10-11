@@ -18,36 +18,34 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
+import io.streamthoughts.kafka.specs.OperationResult;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Named;
-import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class TopicChanges implements Iterable<TopicChange> {
+import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletableFuture;
+
+public class TopicChanges implements Changes<TopicChange, TopicOperation> {
 
     private final Map<String, TopicChange> changes;
 
-    public static TopicChanges computeChanges(@NotNull final Iterable<V1TopicObject> beforeTopicStates,
-                                              @NotNull final Iterable<V1TopicObject> afterTopicStates) {
+    public static TopicChanges computeChanges(@NotNull final Iterable<V1TopicObject> beforeTopicObjects,
+                                              @NotNull final Iterable<V1TopicObject> afterTopicObjects) {
 
-        final Map<String, V1TopicObject> beforeTopicResourceMapByName = Named.keyByName(beforeTopicStates);
+        final Map<String, V1TopicObject> beforeTopicResourceMapByName = Named.keyByName(beforeTopicObjects);
 
         final Map<String, TopicChange> changes = new HashMap<>();
 
-        for (final V1TopicObject afterTopic : afterTopicStates) {
+        for (final V1TopicObject afterTopic : afterTopicObjects) {
 
             final V1TopicObject beforeTopic = beforeTopicResourceMapByName.get(afterTopic.name());
             final TopicChange change = beforeTopic == null ?
@@ -172,23 +170,33 @@ public class TopicChanges implements Iterable<TopicChange> {
         return new ArrayList<>(changes.values());
     }
 
-    public Map<String, KafkaFuture<Void>> apply(final TopicOperation operation) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OperationResult<TopicChange>> apply( @NotNull final TopicOperation operation) {
 
-        Map<String, TopicChange> filtered = all()
+        Map<String, TopicChange> filtered = filter(operation)
                 .stream()
-                .filter(operation)
                 .collect(Collectors.toMap(TopicChange::name, it -> it));
 
-        return operation.apply(new TopicChanges(filtered));
+        Map<String, KafkaFuture<Void>> results = operation.apply(new TopicChanges(filtered));
+
+        List<CompletableFuture<OperationResult<TopicChange>>> completableFutures = results.entrySet()
+            .stream()
+            .map(entry -> {
+                final Future<Void> future = entry.getValue();
+                return makeCompletableFuture(future, get(entry.getKey()), operation);
+            }).collect(Collectors.toList());
+
+        return completableFutures
+                .stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
     }
 
     public TopicChange get(@NotNull final String topic) {
         return changes.get(topic);
     }
 
-    @NotNull
-    @Override
-    public Iterator<TopicChange> iterator() {
-        return all().iterator();
-    }
 }
