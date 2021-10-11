@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
 public class V1SecurityObject implements Serializable {
 
@@ -38,8 +40,8 @@ public class V1SecurityObject implements Serializable {
     @JsonCreator
     public V1SecurityObject(@JsonProperty("users") final Collection<V1AccessPrincipalObject> users,
                             @JsonProperty("roles") final Collection<V1AccessRoleObject> roles) {
-        this.users = users;
-        this.roles = roles;
+        this.users = Optional.ofNullable(users).orElse(Collections.emptyList());
+        this.roles = Optional.ofNullable(roles).orElse(Collections.emptyList());
     }
 
     /**

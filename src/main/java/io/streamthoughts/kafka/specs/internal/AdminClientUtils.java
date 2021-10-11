@@ -45,7 +45,10 @@ public class AdminClientUtils {
                                              final Map<String, String> clientConfigProps){
         final Properties props = loadClientPropertiesConfig(clientConfigFile);
         props.putAll(clientConfigProps);
-        props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        props.put(
+                CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
+                props.getProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer)
+        );
         return AdminClient.create(props);
     }
 

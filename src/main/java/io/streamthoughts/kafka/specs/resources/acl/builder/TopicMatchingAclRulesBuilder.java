@@ -43,9 +43,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
     private AdminClient client;
     private CompletableFuture<Collection<TopicListing>> listTopics;
 
-
     TopicMatchingAclRulesBuilder() {}
-
 
     /**
      * Creates a new {@link TopicMatchingAclRulesBuilder} instance.
@@ -66,13 +64,13 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
-        List<V1AccessRoleObject> userGroups = filterAclGroupsForUser(groups, user);
+        List<V1AccessRoleObject> userGroups = filterAclRolesForUser(groups, user);
 
         CompletableFuture<List<AccessControlPolicy>> future = getListTopics().thenApply((topics) -> topics.stream()
                 .flatMap(topic -> {
-                    Collection<AccessControlPolicy> groupAclBindings = createAclForGroupsPoliciesMatchingTopic(user, userGroups, topic);
+                    Collection<AccessControlPolicy> roleAclBindings = createAclForRolePoliciesMatchingTopic(user, userGroups, topic);
                     Collection<AccessControlPolicy> userAclBindings = createAclForUserPoliciesMatchingTopic(user, topic);
-                    return Stream.concat(groupAclBindings.stream(), userAclBindings.stream());
+                    return Stream.concat(roleAclBindings.stream(), userAclBindings.stream());
                 }).collect(Collectors.toList()));
 
         return future.join();
@@ -89,7 +87,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
     /**
      * Only for testing purpose.
      *
-     * @param topics
+     * @param topics    the list of topics.
      */
     void setListTopics(final CompletableFuture<Collection<TopicListing>> topics) {
         this.listTopics = topics;
@@ -116,9 +114,9 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                 ResourceType.TOPIC);
     }
 
-    private Collection<AccessControlPolicy> createAclForGroupsPoliciesMatchingTopic(final V1AccessPrincipalObject user,
-                                                                                    final List<V1AccessRoleObject> groups,
-                                                                                    final TopicListing topic) {
+    private Collection<AccessControlPolicy> createAclForRolePoliciesMatchingTopic(final V1AccessPrincipalObject user,
+                                                                                  final List<V1AccessRoleObject> groups,
+                                                                                  final TopicListing topic) {
         List<V1AccessPermission> permissions = groups.stream()
                 .map(V1AccessRoleObject::permission)
                 .filter(p -> p.resource().type() == ResourceType.TOPIC)

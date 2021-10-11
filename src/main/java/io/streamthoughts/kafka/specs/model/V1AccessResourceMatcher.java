@@ -94,4 +94,16 @@ public class V1AccessResourceMatcher {
     public int hashCode() {
         return Objects.hash(pattern, patternType, type);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "V1AccessResourceMatcher{" +
+                "pattern='" + pattern + '\'' +
+                ", patternType=" + patternType +
+                ", type=" + type +
+                '}';
+    }
 }

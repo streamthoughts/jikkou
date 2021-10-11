@@ -72,8 +72,8 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
      * @param user      the user to be used.
      * @return          a new list of {@link V1AccessRoleObject} instances.
      */
-    List<V1AccessRoleObject> filterAclGroupsForUser(final Collection<V1AccessRoleObject> groups,
-                                                    final V1AccessPrincipalObject user) {
+    List<V1AccessRoleObject> filterAclRolesForUser(final Collection<V1AccessRoleObject> groups,
+                                                   final V1AccessPrincipalObject user) {
         return groups.stream()
                 .filter(gr -> user.roles().contains(gr.name()))
                 .collect(Collectors.toList());

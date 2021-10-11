@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.specs.resources.acl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
@@ -25,9 +28,11 @@ import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class AccessControlPolicy implements Named {
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class AccessControlPolicy implements Serializable, Named {
 
     private final String principalType;
 
@@ -70,38 +75,47 @@ public class AccessControlPolicy implements Named {
         this.host = Objects.requireNonNull(host, "host cannot be null");
     }
 
+    @JsonProperty
     public String principalName() {
         return principalName;
     }
 
+    @JsonProperty
     public AclPermissionType permission() {
         return permission;
     }
 
+    @JsonProperty
     public String principal() {
         return this.principalType + ":" + this.principalName;
     }
 
+    @JsonProperty
     public String principalType() {
         return principalType;
     }
 
+    @JsonProperty
     public String resourcePattern() {
         return resourcePattern;
     }
 
+    @JsonProperty
     public PatternType patternType() {
         return patternType;
     }
 
+    @JsonProperty
     public ResourceType resourceType() {
         return resourceType;
     }
 
+    @JsonProperty
     public AclOperation operation() {
         return operation;
     }
 
+    @JsonProperty
     public String host() {
         return host;
     }

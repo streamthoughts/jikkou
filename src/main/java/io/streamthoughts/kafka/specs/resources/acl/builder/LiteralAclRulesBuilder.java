@@ -50,7 +50,7 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
-        List<V1AccessRoleObject> userGroups = filterAclGroupsForUser(groups, user);
+        List<V1AccessRoleObject> userGroups = filterAclRolesForUser(groups, user);
         return createAclsForLiteralOrPrefixPermissions(user, userGroups);
 
     }
