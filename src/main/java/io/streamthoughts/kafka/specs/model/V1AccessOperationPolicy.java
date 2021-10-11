@@ -16,34 +16,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.kafka.common.acl.AclOperation;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class AclOperationPolicy {
+public class V1AccessOperationPolicy implements Serializable {
 
     private static final String ANY_HOSTS = "*";
 
     private final String host;
     private final AclOperation operation;
 
-    public static AclOperationPolicy fromString(final String policy) {
+    public static V1AccessOperationPolicy fromString(final String policy) {
         if (policy.contains(":")) {
             String operation = policy.substring(0, policy.indexOf(":"));
             String host = policy.substring(operation.length() + 1);
-            return new AclOperationPolicy(AclOperation.fromString(operation), host);
+            return new V1AccessOperationPolicy(AclOperation.fromString(operation), host);
         }
 
-        return new AclOperationPolicy(AclOperation.fromString(policy));
+        return new V1AccessOperationPolicy(AclOperation.fromString(policy));
     }
 
     @JsonCreator
-    public AclOperationPolicy(final String value) {
+    public V1AccessOperationPolicy(final String value) {
         if (value.contains(":")) {
             String operation = value.substring(0, value.indexOf(":"));
             String host = value.substring(operation.length() + 1);
@@ -56,20 +56,20 @@ public class AclOperationPolicy {
     }
 
     /**
-     * Creates a new {@link AclOperationPolicy} instance.
+     * Creates a new {@link V1AccessOperationPolicy} instance.
      *
      * @param operation
      */
-    public AclOperationPolicy(final AclOperation operation) {
+    public V1AccessOperationPolicy(final AclOperation operation) {
         this(operation, ANY_HOSTS);
     }
 
     /**
-     * Creates a new {@link AclOperationPolicy} instance.
+     * Creates a new {@link V1AccessOperationPolicy} instance.
      * @param host
      * @param operation
      */
-    public AclOperationPolicy(final AclOperation operation, final String host) {
+    public V1AccessOperationPolicy(final AclOperation operation, final String host) {
         Objects.requireNonNull(host, "host should be non-null");
         Objects.requireNonNull(operation, "operation should be non-null");
         this.host = host;
@@ -92,7 +92,7 @@ public class AclOperationPolicy {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AclOperationPolicy that = (AclOperationPolicy) o;
+        V1AccessOperationPolicy that = (V1AccessOperationPolicy) o;
         return Objects.equals(host, that.host) &&
                 operation == that.operation;
     }

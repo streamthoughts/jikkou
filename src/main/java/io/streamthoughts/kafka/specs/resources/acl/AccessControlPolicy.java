@@ -16,25 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.resources.acl;
 
-import io.streamthoughts.kafka.specs.resources.ClusterResource;
+import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class AclRule implements ClusterResource {
+public class AccessControlPolicy implements Named {
 
     private final String principalType;
 
     private final String principalName;
 
-    private final String resourcePattern ;
+    private final String resourcePattern;
 
-    private final PatternType patternType ;
+    private final PatternType patternType;
 
     private final ResourceType resourceType;
 
@@ -44,38 +45,29 @@ public class AclRule implements ClusterResource {
 
     private final String host;
 
-
-    public static AclRuleBuilder newBuilder() {
-        return new AclRuleBuilder();
+    public static AccessControlPolicyBuilder newBuilder() {
+        return new AccessControlPolicyBuilder();
     }
 
-
     /**
-     * Creates a new {@link AclRule} instance.
+     * Creates a new {@link AccessControlPolicy} instance.
      */
-    AclRule(final String principalType,
-            final String principalName,
-            final String resourcePattern,
-            final PatternType patternType,
-            final ResourceType resourceType,
-            final AclPermissionType permission,
-            final AclOperation operation,
-            final String host) {
-        Objects.requireNonNull(principalName, "principalName cannot be null");
-        Objects.requireNonNull(resourcePattern, "resourcePattern cannot be null");
-        Objects.requireNonNull(patternType, "patternType cannot be null");
-        Objects.requireNonNull(permission, "permission cannot be null");
-        Objects.requireNonNull(resourceType, "resourceType cannot be null");
-        Objects.requireNonNull(operation, "operation cannot be null");
-        Objects.requireNonNull(host, "host cannot be null");
+    AccessControlPolicy(@NotNull final String principalType,
+                        @NotNull final String principalName,
+                        @NotNull final String resourcePattern,
+                        @NotNull final PatternType patternType,
+                        @NotNull final ResourceType resourceType,
+                        @NotNull final AclPermissionType permission,
+                        @NotNull final AclOperation operation,
+                        @NotNull final String host) {
         this.principalType = principalType;
-        this.principalName = principalName;
-        this.resourcePattern = resourcePattern;
-        this.patternType = patternType;
-        this.permission = permission;
-        this.resourceType = resourceType;
-        this.operation = operation;
-        this.host = host;
+        this.principalName = Objects.requireNonNull(principalName, "'principalName' cannot be null");
+        this.resourcePattern = Objects.requireNonNull(resourcePattern, "'resourcePattern' cannot be null");
+        this.patternType = Objects.requireNonNull(patternType, "'patternType' cannot be null");
+        this.permission = Objects.requireNonNull(permission, "'permission' cannot be null");
+        this.resourceType = Objects.requireNonNull(resourceType, "'resourceType' cannot be null");
+        this.operation = Objects.requireNonNull(operation, "'operation' cannot be null");
+        this.host = Objects.requireNonNull(host, "host cannot be null");
     }
 
     public String principalName() {
@@ -89,6 +81,7 @@ public class AclRule implements ClusterResource {
     public String principal() {
         return this.principalType + ":" + this.principalName;
     }
+
     public String principalType() {
         return principalType;
     }
@@ -118,7 +111,7 @@ public class AclRule implements ClusterResource {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AclRule rule = (AclRule) o;
+        AccessControlPolicy rule = (AccessControlPolicy) o;
         return Objects.equals(principalType, rule.principalType) &&
                 Objects.equals(principalName, rule.principalName) &&
                 Objects.equals(resourcePattern, rule.resourcePattern) &&
@@ -131,13 +124,21 @@ public class AclRule implements ClusterResource {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(principalType, principalName, resourcePattern, patternType, resourceType, operation, permission, host);
+        return Objects.hash(
+                principalType,
+                principalName,
+                resourcePattern,
+                patternType,
+                resourceType,
+                operation,
+                permission,
+                host
+        );
     }
 
     @Override
     public String toString() {
-        return "AclRule{" +
+        return "AccessControlPolicy{" +
                 "principalType=" + principalType +
                 ", principalName='" + principalName + '\'' +
                 ", resourcePattern='" + resourcePattern + '\'' +
@@ -147,5 +148,10 @@ public class AclRule implements ClusterResource {
                 ", permission=" + permission +
                 ", host='" + host + '\'' +
                 '}';
+    }
+
+    @Override
+    public String name() {
+        return principalName;
     }
 }

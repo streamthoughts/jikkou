@@ -20,13 +20,12 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.kafka.specs.resources.ClusterResource;
 import io.streamthoughts.kafka.specs.resources.Configs;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class V1BrokerObject implements ClusterResource, Serializable {
+public class V1BrokerObject implements Serializable {
 
     private final String id;
     private final String host;

@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl.builder;
+package io.streamthoughts.kafka.specs.resources.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
-import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
-import io.streamthoughts.kafka.specs.acl.AclRule;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicyBuilder;
+import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
@@ -31,11 +30,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LiteralAclRulesBuilderTest {
 
-    static final List<AclRoleBasedPolicy> EMPTY_GROUP = Collections.emptyList();
+    static final List<V1AccessRoleObject> EMPTY_GROUP = Collections.emptyList();
 
     static final String TOPIC_TEST_A        = "topic-test-a";
     static final String USER_TYPE           = "User:";
@@ -53,17 +52,17 @@ class LiteralAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserWithLiteralPermissionAndNoGroup() {
 
-        AclUserPolicy user = AclUserPolicyBuilder.newBuilder()
+        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
                 .principal(USER_TYPE + SIMPLE_USER)
                 .addPermission(TOPIC_TEST_A,
                         PatternType.LITERAL,
                         ResourceType.TOPIC,
-                        Collections.singleton(new AclOperationPolicy(AclOperation.CREATE)))
+                        Collections.singleton(new V1AccessOperationPolicy(AclOperation.CREATE)))
                 .build();
-        Collection<AclRule> rules = this.builder.toAclRules(EMPTY_GROUP, user);
+        Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(EMPTY_GROUP, user);
 
         assertEquals(1, rules.size());
-        AclRule rule = rules.iterator().next();
+        AccessControlPolicy rule = rules.iterator().next();
 
         assertEquals(WILDCARD, rule.host());
         assertEquals(AclOperation.CREATE, rule.operation());
@@ -76,17 +75,17 @@ class LiteralAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserWithLiteralAndWildcardPermissionAndNoGroup() {
 
-        AclUserPolicy user = AclUserPolicyBuilder.newBuilder()
+        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
                 .principal(USER_TYPE + SIMPLE_USER)
                 .addPermission(TOPIC_WITH_WILDCARD,
                         PatternType.PREFIXED,
                         ResourceType.TOPIC,
-                        Collections.singleton(new AclOperationPolicy(AclOperation.CREATE)))
+                        Collections.singleton(new V1AccessOperationPolicy(AclOperation.CREATE)))
                 .build();
-        Collection<AclRule> rules = this.builder.toAclRules(EMPTY_GROUP, user);
+        Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(EMPTY_GROUP, user);
 
         assertEquals(1, rules.size());
-        AclRule rule = rules.iterator().next();
+        AccessControlPolicy rule = rules.iterator().next();
 
         assertEquals(WILDCARD, rule.host());
         assertEquals(AclOperation.CREATE, rule.operation());

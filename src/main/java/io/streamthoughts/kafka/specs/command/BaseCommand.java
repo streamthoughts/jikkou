@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
+import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -52,6 +53,10 @@ public abstract class BaseCommand implements Callable<Integer> {
     }
 
     public abstract Integer call(final AdminClient client);
+
+    public final boolean isResourceCandidate(final Named resourceName) {
+        return isResourceCandidate(resourceName.name());
+    }
 
     public final boolean isResourceCandidate(final String resourceName) {
         return includePredicate().test(resourceName) && !excludePredicate().test(resourceName);

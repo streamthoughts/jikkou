@@ -34,35 +34,29 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
  * Class that can be used to describe topic resources.
  */
-public class DescribeBrokersFunction implements Function<Collection<String>, Collection<V1BrokerObject>> {
+public class DescribeBrokers {
 
     private final AdminClient client;
 
     private Predicate<ConfigEntry> configEntryPredicate;
 
-    public DescribeBrokersFunction(final AdminClient client,
-                                   final DescribeOperationOptions options) {
+    public DescribeBrokers(final AdminClient client,
+                           final DescribeOperationOptions options) {
         this.client = client;
         this.configEntryPredicate = entry -> !entry.isDefault() || options.describeDefaultConfigs();
     }
 
-    public DescribeBrokersFunction addConfigEntryPredicate(final Predicate<ConfigEntry> configEntryPredicate) {
+    public void addConfigEntryPredicate(final Predicate<ConfigEntry> configEntryPredicate) {
         this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
-        return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<V1BrokerObject> apply(final Collection<String> brokerIds) {
+    public Collection<V1BrokerObject> describe(final Collection<String> brokerIds) {
 
         final CompletableFuture<Map<String, Node>> futureTopicDesc = describeCluster();
         final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(brokerIds);

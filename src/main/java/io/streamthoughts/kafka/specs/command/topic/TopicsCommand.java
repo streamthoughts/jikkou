@@ -30,7 +30,7 @@ import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopicsFunction;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.KafkaFuture;
@@ -42,9 +42,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
+import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletableFuture;
 
 @Command(name = "topics",
         headerHeading = "Usage:%n%n",
@@ -73,10 +74,10 @@ public class TopicsCommand extends WithAdminClientCommand {
         @Override
         public Collection<OperationResult<TopicChange>> executeCommand(final AdminClient client) {
 
-            var topics = new DescribeTopicsFunction(
+            var topics = new DescribeTopics(
                     client,
                     DescribeOperationOptions.withDescribeDefaultConfigs(true)
-            ).apply(this::isResourceCandidate);
+            ).describe(this::isResourceCandidate);
 
             final TopicChanges topicChanges = TopicChanges.computeChanges(
                     topics,
@@ -126,19 +127,6 @@ public class TopicsCommand extends WithAdminClientCommand {
                     .stream()
                     .map(CompletableFuture::join)
                     .collect(Collectors.toList());
-        }
-
-        CompletableFuture<OperationResult<TopicChange>> makeCompletableFuture(final Future<Void> future,
-                                                                              final TopicChange change,
-                                                                              final TopicOperation operation) {
-            return CompletableFuture.supplyAsync(() -> {
-                try {
-                    future.get();
-                    return OperationResult.changed(change, operation.getDescriptionFor(change));
-                } catch (InterruptedException | ExecutionException e) {
-                    return OperationResult.failed(change, operation.getDescriptionFor(change), e);
-                }
-            });
         }
 
         public abstract TopicOperation createTopicOperation(final AdminClient client);

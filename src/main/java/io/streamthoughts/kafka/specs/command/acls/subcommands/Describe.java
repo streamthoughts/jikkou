@@ -18,19 +18,18 @@
  */
 package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
+import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
+import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
+import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRulesBuilder;
+import io.streamthoughts.kafka.specs.command.BaseCommand;
+import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeACLs;
 import io.streamthoughts.kafka.specs.model.MetaObject;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
-import io.streamthoughts.kafka.specs.acl.AclRule;
-import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
-import io.streamthoughts.kafka.specs.acl.builder.LiteralAclRulesBuilder;
-import io.streamthoughts.kafka.specs.acl.builder.TopicMatchingAclRulesBuilder;
-import io.streamthoughts.kafka.specs.command.BaseCommand;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import io.streamthoughts.kafka.specs.operation.DescribeAclsOperation;
-import io.streamthoughts.kafka.specs.operation.ResourceOperationOptions;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -59,8 +58,8 @@ public class Describe extends BaseCommand {
     public Integer call(final AdminClient client) {
 
         final AclRulesBuilder builder = getAclRulesBuilder(client);
-        Collection<AclRule> rules = new DescribeAclsOperation().execute(client, null, new ResourceOperationOptions() {});
-        final Collection<AclUserPolicy> users = builder.toAclUserPolicy(rules);
+        Collection<AccessControlPolicy> rules = new DescribeACLs(client).describe();
+        final Collection<V1AccessPrincipalObject> users = builder.toAclUserPolicy(rules);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;

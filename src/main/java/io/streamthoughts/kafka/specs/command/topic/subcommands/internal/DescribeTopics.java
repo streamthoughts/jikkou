@@ -36,27 +36,26 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
  * Function to list all topics on Kafka Cluster matching a given predicate.
  */
-public final class DescribeTopicsFunction implements Function<Predicate<String>, Collection<V1TopicObject>> {
+public final class DescribeTopics {
 
     private final AdminClient client;
 
     private Predicate<ConfigEntry> configEntryPredicate;
 
     /**
-     * Creates a new {@link DescribeTopicsFunction} instance.
+     * Creates a new {@link DescribeTopics} instance.
      *
      * @param client       the {@link AdminClient}.
      * @param options      the {@link DescribeOperationOptions}.
      */
-    public DescribeTopicsFunction(final AdminClient client,
-                                  final DescribeOperationOptions options) {
+    public DescribeTopics(final AdminClient client,
+                          final DescribeOperationOptions options) {
         this.client = client;
         this.configEntryPredicate = entry -> !entry.isDefault() || options.describeDefaultConfigs();
     }
@@ -65,11 +64,7 @@ public final class DescribeTopicsFunction implements Function<Predicate<String>,
         this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<V1TopicObject> apply(final Predicate<String> topicPredicate) {
+    public Collection<V1TopicObject> describe(final Predicate<String> topicPredicate) {
 
         final Collection<String> topicNames;
         try {

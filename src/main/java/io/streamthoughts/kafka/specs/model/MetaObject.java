@@ -21,11 +21,12 @@ package io.streamthoughts.kafka.specs.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class MetaObject {
+public class MetaObject implements Serializable {
 
     private final Map<String, String> annotations;
 

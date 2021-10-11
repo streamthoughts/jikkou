@@ -16,7 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.resources.acl;
+
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -26,9 +29,10 @@ import java.util.LinkedList;
  */
 public interface AclRulesBuilder {
 
-    Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups, final AclUserPolicy user);
+    Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+                                                          final V1AccessPrincipalObject user);
 
-    Collection<AclUserPolicy> toAclUserPolicy(final Collection<AclRule> rules);
+    Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules);
 
     default boolean canBuildAclUserPolicy() {
         return true;
@@ -42,11 +46,12 @@ public interface AclRulesBuilder {
              * {@inheritDoc}
              */
             @Override
-            public Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups, final AclUserPolicy user) {
+            public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+                                                                         final V1AccessPrincipalObject user) {
 
-                Collection<AclRule> rules = new LinkedList<>();
+                Collection<AccessControlPolicy> rules = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {
-                    rules.addAll(b.toAclRules(groups, user));
+                    rules.addAll(b.toAccessControlPolicy(groups, user));
                 }
                 return rules;
             }
@@ -55,8 +60,8 @@ public interface AclRulesBuilder {
              * {@inheritDoc}
              */
             @Override
-            public Collection<AclUserPolicy> toAclUserPolicy(final Collection<AclRule> rules) {
-                Collection<AclUserPolicy> policies = new LinkedList<>();
+            public Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules) {
+                Collection<V1AccessPrincipalObject> policies = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {
                     if (b.canBuildAclUserPolicy()) {
                         policies.addAll(b.toAclUserPolicy(rules));

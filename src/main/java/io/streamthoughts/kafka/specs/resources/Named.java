@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.specs.resources;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -38,8 +39,8 @@ public interface Named {
     @JsonProperty
     String name();
 
-    /**.
-     * Helper method to group all {@link Named} resources by name.
+    /**
+     * Helper method to key all {@link Named} resources by name.
      *
      * @param resources the list of resources.
      * @param <T>       the type.
@@ -47,8 +48,22 @@ public interface Named {
      */
     static <T extends Named> Map<String, T> keyByName(final Iterable<T> resources) {
         return new TreeMap<>(
-                StreamSupport.stream(resources.spliterator(), false)
-                .collect(Collectors.toMap(Named::name, o -> o))
+            StreamSupport
+            .stream(resources.spliterator(), false)
+            .collect(Collectors.toMap(Named::name, o -> o))
         );
+    }
+
+    /**
+     * Helper method to key all {@link Named} resources by name.
+     *
+     * @param resources the list of resources.
+     * @param <T>       the type.
+     * @return          the Map of object keyed by name.
+     */
+    static <T extends Named> Map<String, List<T>> groupByName(final Iterable<T> resources) {
+        return StreamSupport
+            .stream(resources.spliterator(), false)
+            .collect(Collectors.groupingBy(Named::name));
     }
 }

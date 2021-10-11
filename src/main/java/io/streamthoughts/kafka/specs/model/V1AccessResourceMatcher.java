@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,7 +26,7 @@ import org.apache.kafka.common.resource.ResourceType;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class AclResourceMatcher {
+public class V1AccessResourceMatcher {
 
     private static final String WILDCARD = "*";
     private static final Pattern LITERAL = Pattern.compile("[a-zA-Z0-9\\._\\-]+");
@@ -36,9 +36,9 @@ public class AclResourceMatcher {
     private final ResourceType type;
 
     @JsonCreator
-    public AclResourceMatcher(final @JsonProperty("pattern") String pattern,
-                              final @JsonProperty("pattern_type") PatternType patternType,
-                              final @JsonProperty("type") ResourceType type) {
+    public V1AccessResourceMatcher(final @JsonProperty("pattern") String pattern,
+                                   final @JsonProperty("pattern_type") PatternType patternType,
+                                   final @JsonProperty("type") ResourceType type) {
         this.pattern = pattern;
         this.patternType = patternType;
         this.type = type;
@@ -80,8 +80,8 @@ public class AclResourceMatcher {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AclResourceMatcher)) return false;
-        AclResourceMatcher that = (AclResourceMatcher) o;
+        if (!(o instanceof V1AccessResourceMatcher)) return false;
+        V1AccessResourceMatcher that = (V1AccessResourceMatcher) o;
         return Objects.equals(pattern, that.pattern) &&
                 patternType == that.patternType &&
                 type == that.type;

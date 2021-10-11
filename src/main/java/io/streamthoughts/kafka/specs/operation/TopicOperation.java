@@ -27,8 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public interface TopicOperation extends Predicate<TopicChange> {
+public interface TopicOperation extends Operation<TopicChange> {
 
+    @Override
     Description getDescriptionFor(@NotNull final TopicChange topicChange);
 
     @Override

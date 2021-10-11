@@ -16,23 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.change;
+package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
-/**
- * Represents a change operation on a cluster resource.
- * @param <T>
- */
-public interface Change<T extends Change<T>> {
+import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
+import io.streamthoughts.kafka.specs.operation.AclOperation;
+import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
+import io.streamthoughts.kafka.specs.operation.DeleteAclsOperation;
+import org.apache.kafka.clients.admin.AdminClient;
+import picocli.CommandLine.Command;
+
+@Command(name = "create",
+         description = "Delete all ACL policies not described in the specification file."
+)
+public class Delete extends AclsCommand.Base {
 
     /**
-     * @return the operation associated to this change.
+     * {@inheritDoc}
      */
-    OperationType getOperation();
-
-    /**
-     * Supported operations.
-     */
-    enum OperationType {
-        NONE, ADD, DELETE, UPDATE
+    @Override
+    public AclOperation getOperation(final AdminClient client) {
+        return new DeleteAclsOperation(client);
     }
 }

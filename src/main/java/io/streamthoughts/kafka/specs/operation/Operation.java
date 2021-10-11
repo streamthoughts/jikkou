@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,14 +16,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.operation;
 
-public enum EntityType {
+import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.change.Change;
+import org.jetbrains.annotations.NotNull;
 
-    ACLS, BROKERS, TOPICS;
+import java.util.function.Predicate;
 
-    public static EntityType from(final String type) {
-        return EntityType.valueOf(type.toUpperCase());
-    }
+public interface Operation<T extends Change<T>> extends Predicate<T> {
 
+    /**
+     * Returns a textual description for the given {@link Change}.
+     *
+     * @param change    the {@link Change}.
+     * @return          the textual description for this change.
+     */
+    Description getDescriptionFor(@NotNull final T change);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    boolean test(final T change);
 }

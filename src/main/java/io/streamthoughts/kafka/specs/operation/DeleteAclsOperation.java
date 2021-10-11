@@ -26,11 +26,10 @@ import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.internal.FutureUtils;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.CreateAclsResult;
-import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.acl.AccessControlEntry;
-import org.apache.kafka.common.acl.AclBinding;
-import org.apache.kafka.common.resource.ResourcePattern;
+import org.apache.kafka.clients.admin.DeleteAclsResult;
+import org.apache.kafka.common.acl.AccessControlEntryFilter;
+import org.apache.kafka.common.acl.AclBindingFilter;
+import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -39,10 +38,10 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class CreateAclsOperation implements AclOperation {
+public class DeleteAclsOperation implements AclOperation {
 
     public static final DescriptionProvider<AccessControlPolicy> DESCRIPTION = (r) -> (Description.Create) () -> {
-        return String.format("Create a new ACL (%s %s to %s %s:%s:%s)",
+        return String.format("Delete ACL (%s %s to %s %s:%s:%s)",
                 r.permission(),
                 r.principal(),
                 r.operation(),
@@ -56,11 +55,11 @@ public class CreateAclsOperation implements AclOperation {
     private final AdminClient adminClient;
 
     /**
-     * Creates a new {@link CreateAclsOperation} instance.
+     * Creates a new {@link DeleteAclsOperation} instance.
      *
      * @param adminClient   the {@link AdminClient}.
      */
-    public CreateAclsOperation(@NotNull final AdminClient adminClient) {
+    public DeleteAclsOperation(@NotNull final AdminClient adminClient) {
         this.adminClient = Objects.requireNonNull(adminClient, "'adminClient should not be null'");
     }
 
@@ -77,7 +76,7 @@ public class CreateAclsOperation implements AclOperation {
      */
     @Override
     public boolean test(final AclChange change) {
-        return change.getOperation() == Change.OperationType.ADD;
+        return change.getOperation() == Change.OperationType.DELETE;
     }
 
     /**
@@ -85,45 +84,44 @@ public class CreateAclsOperation implements AclOperation {
      */
     @Override
     public Map<AccessControlPolicy, CompletableFuture<Void>> apply(final @NotNull AclChanges changes) {
-        List<AclBinding> bindings = changes
+        List<AclBindingFilter> bindings = changes
                 .all()
                 .stream()
                 .map(AclChange::getAccessControlPolicy)
-                .map(converter::toAclBinding)
+                .map(converter::toAclBindingFilter)
                 .collect(Collectors.toList());
 
-        CreateAclsResult result = adminClient.createAcls(bindings);
-
-        Map<AclBinding, KafkaFuture<Void>> values = result.values();
-
-        return values.entrySet()
+        DeleteAclsResult result = adminClient.deleteAcls(bindings);
+         return result.values().entrySet()
               .stream()
               .collect(Collectors.toMap(
-                      e -> converter.fromAclBinding(e.getKey()),
-                      e -> FutureUtils.toCompletableFuture(e.getValue()))
+                      e -> converter.fromAclBindingFilter(e.getKey()),
+                      e -> FutureUtils.toVoidCompletableFuture(e.getValue()))
               );
     }
 
     private static class AclBindingConverter {
 
-        AclBinding toAclBinding(final AccessControlPolicy rule) {
-            return new AclBinding(
-                    new ResourcePattern(rule.resourceType(), rule.resourcePattern(), rule.patternType()),
-                    new AccessControlEntry(rule.principal(), rule.host(), rule.operation(), rule.permission())
+        AclBindingFilter toAclBindingFilter(final AccessControlPolicy rule) {
+            return new AclBindingFilter(
+                    new ResourcePatternFilter(rule.resourceType(), rule.resourcePattern(), rule.patternType()),
+                    new AccessControlEntryFilter(rule.principal(), rule.host(), rule.operation(), rule.permission())
             );
         }
 
-        AccessControlPolicy fromAclBinding(final AclBinding binding) {
-            String principal = binding.entry().principal();
+        AccessControlPolicy fromAclBindingFilter(final AclBindingFilter binding) {
+            final AccessControlEntryFilter entryFilter = binding.entryFilter();
+            final ResourcePatternFilter pattern = binding.patternFilter();
+
+            String principal = entryFilter.principal();
             String[] principalTypeAndName = principal.split(":");
-            ResourcePattern pattern = binding.pattern();
             return AccessControlPolicy.newBuilder()
                     .withResourcePattern(pattern.name())
                     .withPatternType(pattern.patternType())
                     .withResourceType(pattern.resourceType())
-                    .withOperation(binding.entry().operation())
-                    .withPermission(binding.entry().permissionType())
-                    .withHost(binding.entry().host())
+                    .withOperation(entryFilter.operation())
+                    .withPermission(entryFilter.permissionType())
+                    .withHost(entryFilter.host())
                     .withPrincipalName(principalTypeAndName[1])
                     .withPrincipalType(principalTypeAndName[0])
                     .build();

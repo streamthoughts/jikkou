@@ -16,15 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl.builder;
+package io.streamthoughts.kafka.specs.resources.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
-import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
-import io.streamthoughts.kafka.specs.acl.AclResourceMatcher;
-import io.streamthoughts.kafka.specs.acl.AclResourcePermission;
-import io.streamthoughts.kafka.specs.acl.AclRule;
-import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
+import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
+import io.streamthoughts.kafka.specs.model.V1AccessPermission;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessResourceMatcher;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
@@ -37,23 +37,23 @@ import java.util.stream.Collectors;
 abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
 
 
-    Collection<AclRule> createAllAclsFor(final String principal,
-                                         final Collection<AclResourcePermission> permissions) {
+    Collection<AccessControlPolicy> createAllAclsFor(final String principal,
+                                                     final Collection<V1AccessPermission> permissions) {
         return createAllAclsFor(principal, permissions, null, null, null);
     }
 
-    Collection<AclRule> createAllAclsFor(final String principal,
-                                         final Collection<AclResourcePermission> permissions,
-                                         final String overrideResourcePattern,
-                                         final PatternType overridePatternType,
-                                         final ResourceType overrideResourceType
+    Collection<AccessControlPolicy> createAllAclsFor(final String principal,
+                                                     final Collection<V1AccessPermission> permissions,
+                                                     final String overrideResourcePattern,
+                                                     final PatternType overridePatternType,
+                                                     final ResourceType overrideResourceType
     ) {
 
-        List<AclRule> rules = new LinkedList<>();
-        for (AclResourcePermission permission : permissions) {
-            for (AclOperationPolicy operation : permission.operations()) {
+        List<AccessControlPolicy> rules = new LinkedList<>();
+        for (V1AccessPermission permission : permissions) {
+            for (V1AccessOperationPolicy operation : permission.operations()) {
 
-                final AclResourceMatcher resource = permission.resource();
+                final V1AccessResourceMatcher resource = permission.resource();
                 rules.add(createNewAcl(
                         principal,
                         (overrideResourcePattern == null) ? resource.pattern() : overrideResourcePattern,
@@ -70,17 +70,17 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
      *
      * @param groups    the groups to be filtered
      * @param user      the user to be used.
-     * @return          a new list of {@link AclRoleBasedPolicy} instances.
+     * @return          a new list of {@link V1AccessRoleObject} instances.
      */
-    List<AclRoleBasedPolicy> filterAclGroupsForUser(final Collection<AclRoleBasedPolicy> groups,
-                                                    final AclUserPolicy user) {
+    List<V1AccessRoleObject> filterAclGroupsForUser(final Collection<V1AccessRoleObject> groups,
+                                                    final V1AccessPrincipalObject user) {
         return groups.stream()
                 .filter(gr -> user.roles().contains(gr.name()))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Creates a new {@link AclRule} for the specified user, topic and operation.
+     * Creates a new {@link AccessControlPolicy} for the specified user, topic and operation.
      *
      * @param principal       the user principal to be used.
      * @param resourcePattern the resource pattern.
@@ -88,20 +88,20 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
      * @param resourceType    the resource type.
      * @param resourcePattern the resource on which to apply access control.
      * @param operation       the operation.
-     * @return                a new {@link AclRule} instance.
+     * @return                a new {@link AccessControlPolicy} instance.
      */
-    private AclRule createNewAcl(final String principal,
-                                 final String resourcePattern,
-                                 final PatternType patternType,
-                                 final ResourceType resourceType,
-                                 final AclOperationPolicy operation) {
-        return AclRule.newBuilder()
+    private AccessControlPolicy createNewAcl(final String principal,
+                                             final String resourcePattern,
+                                             final PatternType patternType,
+                                             final ResourceType resourceType,
+                                             final V1AccessOperationPolicy operation) {
+        return AccessControlPolicy.newBuilder()
                 .withPrincipal(principal)
                 .withResourcePattern(resourcePattern)
                 .withPatternType(patternType)
                 .withResourceType(resourceType)
                 .withPermission(AclPermissionType.ALLOW)
-                .withhOperation(operation.operation())
+                .withOperation(operation.operation())
                 .withHost(operation.host())
                 .build();
     }

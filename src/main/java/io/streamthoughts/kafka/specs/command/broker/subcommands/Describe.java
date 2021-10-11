@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.command.broker.subcommands;
 
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.command.broker.subcommands.internal.DescribeBrokersFunction;
+import io.streamthoughts.kafka.specs.command.broker.subcommands.internal.DescribeBrokers;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
@@ -83,7 +83,7 @@ public class Describe extends BaseCommand {
     public Integer call(final AdminClient client) {
         var brokerIds = loadClusterBrokerIds(client);
 
-        DescribeBrokersFunction describeBrokers = new DescribeBrokersFunction(
+        DescribeBrokers describeBrokers = new DescribeBrokers(
                 client,
                 DescribeOperationOptions.withDescribeDefaultConfigs(describeDefaultConfigs)
         );
@@ -100,7 +100,7 @@ public class Describe extends BaseCommand {
             describeBrokers.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
         }
 
-        Collection<V1BrokerObject> resources = describeBrokers.apply(brokerIds);
+        Collection<V1BrokerObject> resources = describeBrokers.describe(brokerIds);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;

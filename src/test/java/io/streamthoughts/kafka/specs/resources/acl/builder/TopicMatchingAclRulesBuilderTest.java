@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl.builder;
+package io.streamthoughts.kafka.specs.resources.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicyBuilder;
-import io.streamthoughts.kafka.specs.acl.AclOperationPolicy;
-import io.streamthoughts.kafka.specs.acl.AclRule;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicyBuilder;
+import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.resource.PatternType;
@@ -36,12 +34,12 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TopicMatchingAclRulesBuilderTest {
 
 
-    static final List<AclRoleBasedPolicy> EMPTY_GROUP = Collections.emptyList();
+    static final List<V1AccessRoleObject> EMPTY_GROUP = Collections.emptyList();
 
     static final String TOPIC_REGEX         = "/topic-.*/";
     static final String TOPIC_TEST_A        = "topic-test-a";
@@ -70,17 +68,17 @@ public class TopicMatchingAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserWithRegexPermissionAndNoGroup() {
 
-        AclUserPolicy user = AclUserPolicyBuilder.newBuilder()
+        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
                 .principal(USER_TYPE + SIMPLE_USER)
-                .addPermission(TOPIC_REGEX, PatternType.MATCH, ResourceType.TOPIC, Collections.singleton(new AclOperationPolicy(AclOperation.CREATE)))
+                .addPermission(TOPIC_REGEX, PatternType.MATCH, ResourceType.TOPIC, Collections.singleton(new V1AccessOperationPolicy(AclOperation.CREATE)))
                 .build();
-        Collection<AclRule> rules = this.builder.toAclRules(EMPTY_GROUP, user);
+        Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(EMPTY_GROUP, user);
 
         assertEquals(2, rules.size());
 
         String[] topics = new String[]{TOPIC_TEST_A, TOPIC_TEST_B};
         int i = 0;
-        for (AclRule rule : rules) {
+        for (AccessControlPolicy rule : rules) {
             assertEquals(WILDCARD, rule.host());
             assertEquals(AclOperation.CREATE, rule.operation());
             assertEquals(USER_TYPE +  SIMPLE_USER, rule.principal());
@@ -95,25 +93,25 @@ public class TopicMatchingAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserAndGroupWithRegexPermission() {
 
-        AclRoleBasedPolicy group = AclRoleBasedPolicyBuilder.newBuilder()
+        V1AccessRoleObject group = V1AccessRoleObject.newBuilder()
                 .withName(SIMPLE_GROUP)
-                .allow(new AclOperationPolicy(AclOperation.CREATE))
+                .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
                 .withPattern(TOPIC_REGEX)
                 .withPatternType(PatternType.MATCH)
                 .onResourceType(ResourceType.TOPIC)
                 .build();
 
-        AclUserPolicy user = AclUserPolicyBuilder.newBuilder()
+        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
                 .principal(USER_TYPE + SIMPLE_USER)
                 .groups(Collections.singleton(SIMPLE_GROUP))
                 .build();
-        Collection<AclRule> rules = this.builder.toAclRules(Collections.singleton(group), user);
+        Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(Collections.singleton(group), user);
 
         assertEquals(2, rules.size());
 
         String[] topics = new String[]{TOPIC_TEST_A, TOPIC_TEST_B};
         int i = 0;
-        for (AclRule rule : rules) {
+        for (AccessControlPolicy rule : rules) {
             assertEquals(WILDCARD, rule.host());
             assertEquals(AclOperation.CREATE, rule.operation());
             assertEquals(USER_TYPE +  SIMPLE_USER, rule.principal());

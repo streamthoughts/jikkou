@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2020 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,23 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.change;
+package io.streamthoughts.kafka.specs.operation;
 
-/**
- * Represents a change operation on a cluster resource.
- * @param <T>
- */
-public interface Change<T extends Change<T>> {
+import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.streamthoughts.kafka.specs.change.AclChange;
+import io.streamthoughts.kafka.specs.change.AclChanges;
+import org.jetbrains.annotations.NotNull;
 
-    /**
-     * @return the operation associated to this change.
-     */
-    OperationType getOperation();
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
-    /**
-     * Supported operations.
-     */
-    enum OperationType {
-        NONE, ADD, DELETE, UPDATE
-    }
+public interface AclOperation extends Operation<AclChange> {
+
+    Description getDescriptionFor(@NotNull final AclChange change);
+
+    @Override
+    boolean test(final AclChange change);
+
+    Map<AccessControlPolicy, CompletableFuture<Void>> apply(@NotNull final AclChanges changes);
+
 }

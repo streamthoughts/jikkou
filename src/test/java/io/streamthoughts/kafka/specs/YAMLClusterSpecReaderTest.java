@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
@@ -66,16 +66,16 @@ public class YAMLClusterSpecReaderTest {
         final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-groups.yaml"));
         assertNotNull(specFile);
 
-        final Map<String, AclRoleBasedPolicy> policies = keyByName(specFile.specs().security().get().roles());
+        final Map<String, V1AccessRoleObject> policies = keyByName(specFile.specs().security().get().roles());
         assertEquals(2, policies.size());
-        AclRoleBasedPolicy groupOne = policies.get("group_one");
+        V1AccessRoleObject groupOne = policies.get("group_one");
         assertNotNull(groupOne);
 
         assertEquals("group_one", groupOne.name());
         assertEquals("/([.-])*/", groupOne.permission().resource().pattern());
         assertEquals(4, groupOne.permission().operations().size());
 
-        AclRoleBasedPolicy groupTwo = policies.get("group_two");
+        V1AccessRoleObject groupTwo = policies.get("group_two");
         assertNotNull(groupTwo);
         assertEquals("group_two", groupTwo.name());
         assertEquals("/public-([.-])*/", groupTwo.permission().resource().pattern());
@@ -86,7 +86,7 @@ public class YAMLClusterSpecReaderTest {
     public void should_read_multiple_acl_access_given_valid_YAML() {
         final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-access.yaml"));
         assertNotNull(specFile);
-        Collection<AclUserPolicy> policies = specFile.specs().security().get().users();
+        Collection<V1AccessPrincipalObject> policies = specFile.specs().security().get().users();
         assertEquals(2, policies.size());
     }
 

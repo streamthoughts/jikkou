@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.operation;
 
 public class DescribeOperationOptions implements ResourceOperationOptions {
 
-    private boolean describeDefaultConfigs;
+    private final boolean describeDefaultConfigs;
 
     public static DescribeOperationOptions withDescribeDefaultConfigs(final boolean describeDefaultConfigs) {
         return new DescribeOperationOptions(describeDefaultConfigs);

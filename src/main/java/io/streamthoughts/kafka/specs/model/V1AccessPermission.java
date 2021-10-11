@@ -16,47 +16,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
 /**
  * Represents a binding between resources pattern and a set of allowed operations.
  */
-public class AclResourcePermission {
+public class V1AccessPermission implements Serializable {
 
-    private final AclResourceMatcher resourcePattern;
-    private final Set<AclOperationPolicy> operations;
+    private final V1AccessResourceMatcher resourcePattern;
+    private final Set<V1AccessOperationPolicy> operations;
 
     /**
-     * Creates a new {@link AclResourcePermission} instance.
+     * Creates a new {@link V1AccessPermission} instance.
      *
      * @param resource   apply operations to all resources matching specified pattern.
      * @param operations        list operations to allowed.
      */
     @JsonCreator
-    AclResourcePermission(@JsonProperty("resource") final AclResourceMatcher resource,
-                          @JsonProperty("allow_operations") final Set<AclOperationPolicy> operations) {
+    V1AccessPermission(@JsonProperty("resource") final V1AccessResourceMatcher resource,
+                       @JsonProperty("allow_operations") final Set<V1AccessOperationPolicy> operations) {
         this.resourcePattern = Objects.requireNonNull(resource, "'resource' should not be null");
         this.operations = Objects.requireNonNull(operations, "'operations' should not be null");
     }
 
-    public Set<AclOperationPolicy> operations() {
+    public Set<V1AccessOperationPolicy> operations() {
         return operations;
     }
 
-    public AclResourceMatcher resource() {
+    public V1AccessResourceMatcher resource() {
         return resourcePattern;
     }
 
     public String[] operationLiterals() {
       return this.operations
                 .stream()
-                .map(AclOperationPolicy::toLiteral)
+                .map(V1AccessOperationPolicy::toLiteral)
                 .toArray(String[]::new);
     }
 
@@ -66,8 +67,8 @@ public class AclResourcePermission {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AclResourcePermission)) return false;
-        AclResourcePermission that = (AclResourcePermission) o;
+        if (!(o instanceof V1AccessPermission)) return false;
+        V1AccessPermission that = (V1AccessPermission) o;
         return Objects.equals(resourcePattern, that.resourcePattern) &&
                 Objects.equals(operations, that.operations);
     }

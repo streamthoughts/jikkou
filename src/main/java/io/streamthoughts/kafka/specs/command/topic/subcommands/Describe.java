@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopicsFunction;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
@@ -76,7 +76,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call(final AdminClient client) {
 
-        DescribeTopicsFunction describeTopics = new DescribeTopicsFunction(
+        DescribeTopics describeTopics = new DescribeTopics(
                 client,
                 DescribeOperationOptions.withDescribeDefaultConfigs(describeDefaultConfigs)
         );
@@ -93,7 +93,7 @@ public class Describe extends BaseCommand {
             describeTopics.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
         }
 
-        var topics = describeTopics.apply(this::isResourceCandidate);
+        var topics = describeTopics.describe(this::isResourceCandidate);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;

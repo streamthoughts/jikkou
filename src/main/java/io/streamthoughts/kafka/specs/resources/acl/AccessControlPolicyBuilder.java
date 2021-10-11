@@ -16,14 +16,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.resources.acl;
 
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 
-public class AclRuleBuilder {
+/**
+ * Builder class to create a new {@link AccessControlPolicy} object.
+ */
+public class AccessControlPolicyBuilder {
+
+    private static final String PRINCIPAL_TYPE_SEPARATOR = ":";
 
     private String principalType;
     private String principalName;
@@ -34,53 +39,63 @@ public class AclRuleBuilder {
     private AclOperation operation;
     private String host;
 
-    public AclRuleBuilder withPrincipal(final String principal) {
-        String[] split = principal.split(":");
+    public AccessControlPolicyBuilder withPrincipal(final String principal) {
+        String[] split = principal.split(PRINCIPAL_TYPE_SEPARATOR);
         this.principalType = split[0];
         this.principalName = split[1];
         return this;
     }
-    public AclRuleBuilder withPrincipalType(final String principalType) {
+
+    public AccessControlPolicyBuilder withPrincipalType(final String principalType) {
         this.principalType = principalType;
         return this;
     }
 
-    public AclRuleBuilder withPrincipalName(final String principalName) {
+    public AccessControlPolicyBuilder withPrincipalName(final String principalName) {
         this.principalName = principalName;
         return this;
     }
 
-    public AclRuleBuilder withResourcePattern(final String resource) {
+    public AccessControlPolicyBuilder withResourcePattern(final String resource) {
         this.resource = resource;
         return this;
     }
 
-    public AclRuleBuilder withPatternType(final PatternType patternType) {
+    public AccessControlPolicyBuilder withPatternType(final PatternType patternType) {
         this.patternType = patternType;
         return this;
     }
 
-    public AclRuleBuilder withResourceType(final ResourceType resourceType) {
+    public AccessControlPolicyBuilder withResourceType(final ResourceType resourceType) {
         this.resourceType = resourceType;
         return this;
     }
 
-    public AclRuleBuilder withPermission(final AclPermissionType permission) {
+    public AccessControlPolicyBuilder withPermission(final AclPermissionType permission) {
         this.permission = permission;
         return this;
     }
 
-    public AclRuleBuilder withhOperation(final AclOperation operation) {
+    public AccessControlPolicyBuilder withOperation(final AclOperation operation) {
         this.operation = operation;
         return this;
     }
 
-    public AclRuleBuilder withHost(final String host) {
+    public AccessControlPolicyBuilder withHost(final String host) {
         this.host = host;
         return this;
     }
 
-    public AclRule build() {
-        return new AclRule(principalType, principalName, resource, patternType, resourceType, permission, operation, host);
+    public AccessControlPolicy build() {
+        return new AccessControlPolicy(
+                principalType,
+                principalName,
+                resource,
+                patternType,
+                resourceType,
+                permission,
+                operation,
+                host
+        );
     }
 }

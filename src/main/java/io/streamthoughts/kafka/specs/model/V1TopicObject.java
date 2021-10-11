@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import io.streamthoughts.kafka.specs.resources.ClusterResource;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.Named;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  * A Kafka topic resource.
  */
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public final class V1TopicObject implements ClusterResource, Named, Serializable {
+public final class V1TopicObject implements Named, Serializable {
 
     private final String name;
 

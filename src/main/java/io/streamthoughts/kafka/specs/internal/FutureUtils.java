@@ -18,10 +18,16 @@
  */
 package io.streamthoughts.kafka.specs.internal;
 
+import io.streamthoughts.kafka.specs.OperationResult;
+import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.operation.Operation;
+import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import org.apache.kafka.common.KafkaFuture;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class FutureUtils {
 
@@ -35,4 +41,28 @@ public class FutureUtils {
         });
     }
 
+    public static CompletableFuture<Void> toVoidCompletableFuture(final KafkaFuture<?> listings) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                listings.get();
+                return null;
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public static <T extends Change<T>> CompletableFuture<OperationResult<T>> makeCompletableFuture(
+            final Future<Void> future,
+            final T change,
+            final Operation<T> operation) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                future.get();
+                return OperationResult.changed(change, operation.getDescriptionFor(change));
+            } catch (InterruptedException | ExecutionException e) {
+                return OperationResult.failed(change, operation.getDescriptionFor(change), e);
+            }
+        });
+    }
 }

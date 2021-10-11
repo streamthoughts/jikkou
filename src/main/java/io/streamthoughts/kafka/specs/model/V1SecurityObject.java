@@ -20,42 +20,41 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public class V1SecurityObject {
+public class V1SecurityObject implements Serializable {
 
-    private final Collection<AclUserPolicy> users;
-    private final Collection<AclRoleBasedPolicy> roles;
+    private final Collection<V1AccessPrincipalObject> users;
+    private final Collection<V1AccessRoleObject> roles;
 
     /**
      * Creates a new {@link V1SecurityObject} instance.
      * 
-     * @param users the list of {@link AclUserPolicy} instance
-     * @param roles the list of {@link AclRoleBasedPolicy} instance
+     * @param users the list of {@link V1AccessPrincipalObject} instance
+     * @param roles the list of {@link V1AccessRoleObject} instance
      */
     @JsonCreator
-    public V1SecurityObject(@JsonProperty("users") final Collection<AclUserPolicy> users,
-                            @JsonProperty("roles") final Collection<AclRoleBasedPolicy> roles) {
+    public V1SecurityObject(@JsonProperty("users") final Collection<V1AccessPrincipalObject> users,
+                            @JsonProperty("roles") final Collection<V1AccessRoleObject> roles) {
         this.users = users;
         this.roles = roles;
     }
 
     /**
-     * @return  the list of {@link AclUserPolicy}.
+     * @return  the list of {@link V1AccessPrincipalObject}.
      */
     @JsonProperty
-    public Collection<AclUserPolicy> users() {
+    public Collection<V1AccessPrincipalObject> users() {
         return users;
     }
 
     /**
-     * @return  the list of {@link AclRoleBasedPolicy}.
+     * @return  the list of {@link V1AccessRoleObject}.
      */
     @JsonProperty
-    public Collection<AclRoleBasedPolicy> roles() {
+    public Collection<V1AccessRoleObject> roles() {
         return roles;
     }
 }

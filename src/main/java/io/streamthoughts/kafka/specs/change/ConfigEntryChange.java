@@ -19,11 +19,12 @@
 package io.streamthoughts.kafka.specs.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.streamthoughts.kafka.specs.resources.Named;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ConfigEntryChange extends ValueChange<String> implements Change<ConfigEntryChange> {
+public class ConfigEntryChange extends ValueChange<String> implements Change<ConfigEntryChange>, Named {
 
     private final String name;
 

@@ -16,13 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl.builder;
+package io.streamthoughts.kafka.specs.resources.acl.builder;
 
-import io.streamthoughts.kafka.specs.acl.AclRoleBasedPolicy;
-import io.streamthoughts.kafka.specs.acl.AclResourcePermission;
-import io.streamthoughts.kafka.specs.acl.AclRule;
-import io.streamthoughts.kafka.specs.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.acl.AclUserPolicy;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessPermission;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
+import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
@@ -44,12 +44,12 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
     private CompletableFuture<Collection<TopicListing>> listTopics;
 
 
-    TopicMatchingAclRulesBuilder() {
-    }
+    TopicMatchingAclRulesBuilder() {}
 
 
     /**
      * Creates a new {@link TopicMatchingAclRulesBuilder} instance.
+     *
      * @param client    the kafka admin client to be used.
      */
     public TopicMatchingAclRulesBuilder(final AdminClient client) {
@@ -61,17 +61,17 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
-    public Collection<AclRule> toAclRules(final Collection<AclRoleBasedPolicy> groups,
-                                          final AclUserPolicy user) {
+    public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+                                                                 final V1AccessPrincipalObject user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
-        List<AclRoleBasedPolicy> userGroups = filterAclGroupsForUser(groups, user);
+        List<V1AccessRoleObject> userGroups = filterAclGroupsForUser(groups, user);
 
-        CompletableFuture<List<AclRule>> future = getListTopics().thenApply((topics) -> topics.stream()
+        CompletableFuture<List<AccessControlPolicy>> future = getListTopics().thenApply((topics) -> topics.stream()
                 .flatMap(topic -> {
-                    Collection<AclRule> groupAclBindings = createAclForGroupsPoliciesMatchingTopic(user, userGroups, topic);
-                    Collection<AclRule> userAclBindings = createAclForUserPoliciesMatchingTopic(user, topic);
+                    Collection<AccessControlPolicy> groupAclBindings = createAclForGroupsPoliciesMatchingTopic(user, userGroups, topic);
+                    Collection<AccessControlPolicy> userAclBindings = createAclForUserPoliciesMatchingTopic(user, topic);
                     return Stream.concat(groupAclBindings.stream(), userAclBindings.stream());
                 }).collect(Collectors.toList()));
 
@@ -82,7 +82,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
-    public Collection<AclUserPolicy> toAclUserPolicy(final Collection<AclRule> rules) {
+    public Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules) {
         throw new UnsupportedOperationException();
     }
 
@@ -102,9 +102,9 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
         return listTopics;
     }
 
-    private Collection<AclRule> createAclForUserPoliciesMatchingTopic(final AclUserPolicy user,
-                                                                  final TopicListing topic) {
-        List<AclResourcePermission> permissions = user.permissions()
+    private Collection<AccessControlPolicy> createAclForUserPoliciesMatchingTopic(final V1AccessPrincipalObject user,
+                                                                                  final TopicListing topic) {
+        List<V1AccessPermission> permissions = user.permissions()
                 .stream()
                 .filter(p -> p.resource().type() == ResourceType.TOPIC)
                 .filter(p -> p.resource().isPatternOfTypeMatchRegex())
@@ -116,11 +116,11 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                 ResourceType.TOPIC);
     }
 
-    private Collection<AclRule> createAclForGroupsPoliciesMatchingTopic(final AclUserPolicy user,
-                                                                    final List<AclRoleBasedPolicy> groups,
-                                                                    final TopicListing topic) {
-        List<AclResourcePermission> permissions = groups.stream()
-                .map(AclRoleBasedPolicy::permission)
+    private Collection<AccessControlPolicy> createAclForGroupsPoliciesMatchingTopic(final V1AccessPrincipalObject user,
+                                                                                    final List<V1AccessRoleObject> groups,
+                                                                                    final TopicListing topic) {
+        List<V1AccessPermission> permissions = groups.stream()
+                .map(V1AccessRoleObject::permission)
                 .filter(p -> p.resource().type() == ResourceType.TOPIC)
                 .filter(p -> p.resource().isPatternOfTypeMatchRegex())
                 .collect(Collectors.toList());
@@ -137,10 +137,10 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      *
      * @param groups    the permissions to be filtered
      * @param topic     the topic to be used.
-     * @return          a new list of {@link AclResourcePermission} instances.
+     * @return          a new list of {@link V1AccessPermission} instances.
      */
-    private Collection<AclResourcePermission> filterPermissionMatchingTopic(final Collection<AclResourcePermission> groups,
-                                                                            final TopicListing topic) {
+    private Collection<V1AccessPermission> filterPermissionMatchingTopic(final Collection<V1AccessPermission> groups,
+                                                                         final TopicListing topic) {
         return groups.stream()
             .filter(permission -> {
                 String regex = permission.resource().pattern();

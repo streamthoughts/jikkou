@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.streamthoughts.kafka.specs.resources.Named;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TopicChange implements Change<TopicChange> {
+public class TopicChange implements Change<TopicChange>, Named {
 
     private final String name;
     private final OperationType operation;

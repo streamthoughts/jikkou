@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.acl;
+package io.streamthoughts.kafka.specs.resources.acl;
 
+import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
 import org.apache.kafka.common.acl.AclOperation;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ class AclOperationPolicyTest {
     @Test
     public void shouldBuildAclOperationPolicyFromString() {
 
-        AclOperationPolicy policy = AclOperationPolicy.fromString("READ:*");
+        V1AccessOperationPolicy policy = V1AccessOperationPolicy.fromString("READ:*");
         assertEquals(AclOperation.READ, policy.operation());
         assertEquals("*", policy.host());
     }
