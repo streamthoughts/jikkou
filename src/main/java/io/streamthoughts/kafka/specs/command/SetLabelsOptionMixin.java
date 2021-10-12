@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,11 +16,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.command;
 
-public class InvalidSpecificationException extends KafkaSpecsException {
+import picocli.CommandLine;
 
-    public InvalidSpecificationException(final String message) {
-        super(message);
+import java.util.HashMap;
+import java.util.Map;
+
+public class SetLabelsOptionMixin {
+
+    @CommandLine.Option(names = { "--set-label", "-s" },
+            description = "Set labels on the command line (can specify multiple values: -s key1=val1 -s key2=val2)"
+    )
+    public Map<String, Object> clientLabels = new HashMap<>();
+
+
+    public Map<String, Object> getClientLabels() {
+        return clientLabels;
     }
 }

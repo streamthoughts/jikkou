@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.command.AdminClientMixin;
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
+import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -42,7 +43,7 @@ import static picocli.CommandLine.Model.CommandSpec;
         synopsisHeading = "%n",
         description = "CLI to ease and automate Apache Kafka cluster configuration management.",
         mixinStandardHelpOptions = true,
-        subcommands = { TopicsCommand.class, AclsCommand.class, BrokerCommand.class, CommandLine.HelpCommand.class })
+        subcommands = {ValidateCommand.class, TopicsCommand.class, AclsCommand.class, BrokerCommand.class, CommandLine.HelpCommand.class })
 public class KafkaSpecs {
 
     static LocalDateTime START_TIME;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,9 +18,20 @@
  */
 package io.streamthoughts.kafka.specs;
 
-public class InvalidSpecificationException extends KafkaSpecsException {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    public InvalidSpecificationException(final String message) {
-        super(message);
+import java.util.Map;
+
+
+public class GlobalSpecsContextTest {
+
+    @Test
+    public void testGetExplodedLabels() {
+        GlobalSpecsContext context = new GlobalSpecsContext().labels(Map.of("key1.key2", "value"));
+        Map<String, Object> labels = context.getLabels();
+        Assertions.assertTrue(labels.containsKey("key1"));
+        Assertions.assertTrue(((Map)labels.get("key1")).containsKey("key2"));
+        Assertions.assertTrue(((Map)labels.get("key1")).containsKey("key2"));
     }
 }

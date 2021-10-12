@@ -20,43 +20,27 @@ package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.CLIUtils;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.ClusterSpecReader;
 import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.Printer;
-import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Option;
 import picocli.CommandLine.Spec;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Collection;
 
 public abstract class WithSpecificationCommand<T> extends BaseCommand {
 
-    private static final ClusterSpecReader READER = new YAMLClusterSpecReader();
-
     @ArgGroup(multiplicity = "1")
-    FileOptions specOptions;
-
-    static class FileOptions {
-        @Option(names = "--file-path",
-                description = "The path of a file containing the specifications for Kafka resources."
-        )
-        File file;
-        @Option(names = "--file-url",
-                description = "The URL of a a file containing the specification for Kafka resources."
-        )
-        URL url;
-    }
+    SpecFileOptionsMixin specOptions;
 
     @Spec
     private CommandSpec spec;
+
+    @CommandLine.Mixin
+    SetLabelsOptionMixin labelsOption;
+
 
     /**
      * {@inheritDoc}
@@ -79,29 +63,6 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
     }
 
     public V1SpecFile specFile() {
-
-        final InputStream is;
-        if (specOptions.url != null) {
-            try {
-               is = specOptions.url.openStream();
-            } catch (Exception e) {
-                throw new RuntimeException("Can't read specification from URL '" + specOptions.url + "': "
-                        + e.getMessage());
-            }
-        } else if (specOptions.file != null) {
-            try {
-                is = new FileInputStream(specOptions.file);
-            } catch (Exception e) {
-                throw new RuntimeException("Can't read specification from file '" + specOptions.file + "': "
-                        + e.getMessage());
-            }
-        } else {
-            throw new IllegalArgumentException("no specification");
-        }
-        try {
-            return READER.read(is);
-        } catch (Exception exception) {
-            throw new RuntimeException(exception);
-        }
+        return specOptions.parse(labelsOption.getClientLabels());
     }
 }

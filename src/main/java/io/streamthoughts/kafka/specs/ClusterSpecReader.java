@@ -19,8 +19,10 @@
 package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Default interface to read a cluster specification.
@@ -30,8 +32,9 @@ public interface ClusterSpecReader {
     /**
      * Retrieves a {@link V1SpecFile} from the specified input stream.
      *
-     * @param stream    the input stream from which to read the specification.
+     * @param specs    the input stream from which to read the specification.
      * @return          a new {@link V1SpecFile} instance.
      */
-    V1SpecFile read(final InputStream stream) throws InvalidSpecificationException;
+    V1SpecFile read(@NotNull final InputStream specs,
+                    @NotNull final Map<String, Object> labels) throws KafkaSpecsException;
 }

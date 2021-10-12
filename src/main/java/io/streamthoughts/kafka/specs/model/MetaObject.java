@@ -23,12 +23,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class MetaObject implements Serializable {
 
     private final Map<String, String> annotations;
+
+    private final Map<String, Object> labels;
 
     public static MetaObject defaults() {
         final MetaObject metaObject = new MetaObject();
@@ -38,11 +42,19 @@ public class MetaObject implements Serializable {
 
     public MetaObject() {
         this.annotations = new TreeMap<>();
+        this.labels = new TreeMap<>();
     }
 
     @JsonCreator
-    public MetaObject(@JsonProperty("annotations") final Map<String, String> annotations) {
-        this.annotations = annotations;
+    public MetaObject(@JsonProperty("annotations") final Map<String, String> annotations,
+                      @JsonProperty("labels") final Map<String, Object> labels) {
+        this.annotations = Optional.ofNullable(annotations).orElse(new HashMap<>());
+        this.labels = Optional.ofNullable(labels).orElse(new HashMap<>());
+    }
+
+    public MetaObject setLabels(final Map<String, Object> labels) {
+        this.labels.putAll(labels);
+        return this;
     }
 
     public MetaObject setAnnotation(final String key, final String value) {
@@ -52,5 +64,9 @@ public class MetaObject implements Serializable {
 
     public Map<String, String> getAnnotations() {
         return annotations;
+    }
+
+    public Map<String, Object> getLabels() {
+        return labels;
     }
 }

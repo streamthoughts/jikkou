@@ -21,8 +21,8 @@ package io.streamthoughts.kafka.specs.internal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,9 +30,6 @@ import java.util.Properties;
  */
 public class PropertiesUtils {
 
-    public static Properties loadProps(final String path) throws IOException {
-        return loadProps(path != null ? new File(path) : null);
-    }
     public static Properties loadProps(final File f) throws IOException {
         Properties props = new Properties();
         try (FileInputStream is = new FileInputStream(f)) {
@@ -41,23 +38,12 @@ public class PropertiesUtils {
         return props;
     }
 
-    public static Map<String, String> toMap(Properties props) {
-        final Map<String, String> map = new HashMap<>();
-        for (final String name: props.stringPropertyNames())
-            map.put(name, props.getProperty(name));
-        return map;
-    }
-
-    public static Map<String, String> parse(List<String> props) {
-        final Map<String, String> map = new HashMap<>();
-        for (final String s : props) {
-            if (!s.contains("=")) {
-                throw new IllegalArgumentException("Invalid key/value property : " + s);
-            }
-            String[] pair = s.split("=", 0);
-            map.put(pair[0], pair[1]);
+    public static Map<String, String> fromProperties(final Properties props) {
+        Map<String, String> builder = new LinkedHashMap<>();
+        for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
+            String key = (String) e.nextElement();
+            builder.put(key, props.getProperty(key));
         }
-        return map;
+        return builder;
     }
-
 }

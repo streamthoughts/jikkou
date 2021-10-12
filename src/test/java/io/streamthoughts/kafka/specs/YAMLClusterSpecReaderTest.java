@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import static io.streamthoughts.kafka.specs.resources.Named.keyByName;
@@ -44,6 +45,8 @@ public class YAMLClusterSpecReaderTest {
             .addConfigValue(new ConfigValue(TopicConfig.RETENTION_MS_CONFIG, "10000"));
 
     private static final V1TopicObject TOPIC_P3 = new V1TopicObject("my-topic-p3", null, null);
+
+    private static final Map<String, Object> EMPTY_LABELS = Collections.emptyMap();
 
     private final YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
 
@@ -63,7 +66,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_acl_groups_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-groups.yaml"));
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-groups.yaml"), Collections.emptyMap());
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> policies = keyByName(specFile.specs().security().get().roles());
@@ -84,7 +87,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_acl_access_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-access.yaml"));
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-access.yaml"), EMPTY_LABELS);
         assertNotNull(specFile);
         Collection<V1AccessPrincipalObject> policies = specFile.specs().security().get().users();
         assertEquals(2, policies.size());
@@ -92,7 +95,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_topics_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-topics.yaml"));
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-topics.yaml"), EMPTY_LABELS);
         assertNotNull(specFile);
         Collection<V1TopicObject> topics = specFile.specs().topics();
         assertNotNull(topics);
@@ -107,6 +110,6 @@ public class YAMLClusterSpecReaderTest {
     }
 
     private V1SpecFile readTestSample(final YAMLClusterSpecReader reader, final String content) {
-        return reader.read(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+        return reader.read(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), EMPTY_LABELS);
     }
 }
