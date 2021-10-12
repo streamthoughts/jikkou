@@ -54,7 +54,7 @@ public class KafkaSpecs {
     public static void main(final String... args) {
         START_TIME = LocalDateTime.now();
         final CommandLine commandLine = new CommandLine(new KafkaSpecs())
-                .setUsageHelpWidth(120)
+                .setUsageHelpWidth(160)
                 .setExecutionStrategy(new CommandLine.RunLast())
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 

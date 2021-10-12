@@ -65,10 +65,10 @@ public class Describe extends BaseCommand {
     )
     boolean describeDynamicBrokerConfigs;
 
-    @Option(names = "--file-path",
-            description = "The file path to write the description of Topics."
+    @Option(names = "--output-file",
+            description = "Writes the result of the command to this file instead of stdout."
     )
-    File filePath;
+    File outputFile;
 
     /**
      * {@inheritDoc}
@@ -96,7 +96,7 @@ public class Describe extends BaseCommand {
         var topics = describeTopics.describe(this::isResourceCandidate);
 
         try {
-            OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
+            OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
 
             final V1SpecsObject specsObject = V1SpecsObject.withTopics(topics);
             YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);

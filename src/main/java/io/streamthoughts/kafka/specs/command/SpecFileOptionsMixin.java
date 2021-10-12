@@ -35,11 +35,11 @@ public class SpecFileOptionsMixin {
     private static final ClusterSpecReader READER = new YAMLClusterSpecReader();
 
     @CommandLine.Option(names = "--file-path",
-            description = "The path of a file containing the specifications for Kafka resources."
+            description = "Location of the file containing the specifications for Kafka resources."
     )
     File file;
     @CommandLine.Option(names = "--file-url",
-            description = "The URL of a a file containing the specification for Kafka resources."
+            description = "Location of the file containing the specification for Kafka resources."
     )
     URL url;
 

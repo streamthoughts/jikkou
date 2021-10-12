@@ -37,9 +37,7 @@ However, while moving into production you will need more sophisticated tools to 
 [source,bash]
 ----
 $ docker run -it streamthoughts/kafka-specs --help
-Usage:
-kafka-specs [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>]
-            [--command-property=<String=String>]... [COMMAND]
+kafka-specs [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--command-property=<String=String>]... [COMMAND]
 
 Description:
 
@@ -58,10 +56,11 @@ Options:
 
 Commands:
 
-  topics   Execute changes to the Kafka cluster Topics.
-  acls     Execute changes to the Kafka cluster ACLs.
-  brokers  Execute changes to the Kafka cluster Brokers.
-  help     Displays help information about the specified command
+  validate  Validate your specification file.
+  topics    Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  acls      Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  brokers   Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  help      Displays help information about the specified command.
 ----
 
 == 🚀 Getting Started
@@ -98,7 +97,7 @@ specs:
 Kafka Specs is available:
 
 * As zip/tar.gz source package.
-* As a docker image available from docker hub.
+* As a docker image available from https://hub.docker.com/r/streamthoughts/kafka-specs[docker hub].
 
 === How to Manage Topics ?
 
@@ -126,6 +125,7 @@ Currently, the templating mechanism supports the following scopes:
 * `system.props`: uses to reference a system property.
 
 kafka-specs-topics.yml::
+
 [source,yaml]
 ----
 version: 1

@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
         commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage:%n%n",
         synopsisHeading = "%n",
-        header = "Execute changes to the Kafka cluster ACLs.",
+        header = "Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.",
         description = "This command can be used to create ACLs on a remote Kafka cluster",
         subcommands = {
                 Apply.class,

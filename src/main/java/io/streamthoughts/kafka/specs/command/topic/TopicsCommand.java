@@ -45,7 +45,7 @@ import java.util.LinkedList;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Execute changes to the Kafka cluster Topics.",
+        header = "Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.",
         description = "This command can be used to create, alter, delete or describe Topics on a remote Kafka cluster",
         subcommands = {
                 Alter.class,
