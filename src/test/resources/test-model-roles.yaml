@@ -1,0 +1,17 @@
+version: 1
+metadata: {}
+specs:
+  security:
+      roles:
+        - name: 'role_one'
+          resource:
+            type: 'topic'
+            pattern: 'my_topic'
+          allow_operations: [ 'WRITE:*' ]
+
+        - name: 'role_two'
+          resource:
+            type: 'topic'
+            pattern: 'my_'
+            pattern_type: 'PREFIXED'
+          allow_operations: [ 'READ:*' ]

@@ -40,7 +40,7 @@ public class V1AccessResourceMatcher {
                                    final @JsonProperty("pattern_type") PatternType patternType,
                                    final @JsonProperty("type") ResourceType type) {
         this.pattern = pattern;
-        this.patternType = patternType;
+        this.patternType = patternType == null ? PatternType.LITERAL : patternType;
         this.type = type;
         validate();
     }
