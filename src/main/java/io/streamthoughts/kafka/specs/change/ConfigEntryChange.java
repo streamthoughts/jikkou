@@ -32,6 +32,7 @@ public class ConfigEntryChange extends ValueChange<String> implements Change<Con
      * Creates a new {@link ConfigEntryChange} instance.
      *
      * @param name          the config-entry name.
+     * @param valueChange   the {@link ValueChange}.
      */
     public ConfigEntryChange(@NotNull final String name,
                              @NotNull final ValueChange<String> valueChange) {

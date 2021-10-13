@@ -28,12 +28,12 @@ public interface Description {
     enum OperationType { CREATE, ALTER, DELETE, NONE }
 
     /**
-     * Get the type of the operation.
+     * @return the type of the operation.
      */
     OperationType operation();
 
     /**
-     * Get a textual description of the operation.
+     * @return a textual description of the operation.
      */
     String textDescription();
 

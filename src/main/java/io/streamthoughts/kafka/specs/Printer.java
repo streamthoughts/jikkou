@@ -45,6 +45,9 @@ public class Printer {
      *
      * @param results   the execution results to print.
      * @param verbose   print details.
+     * @param dryRun    is dry-run enabled.
+     * @param <T>       the result-type.
+     * @return          the exit code.
      */
     public static <T> int print(final Collection<OperationResult<T>> results,
                                 final boolean verbose,

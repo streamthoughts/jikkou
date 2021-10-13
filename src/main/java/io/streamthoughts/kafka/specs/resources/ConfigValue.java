@@ -59,6 +59,7 @@ public class ConfigValue implements Named {
      *
      * @param name      the property name.
      * @param value     the property value.
+     * @param entry     the {@link ConfigEntry}.
      */
     public ConfigValue(final String name,
                        final Object value,

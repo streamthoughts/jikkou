@@ -23,7 +23,7 @@ public interface Time {
     Time SYSTEM = new SystemTime();
 
     /**
-     * Returns the current time in milliseconds.
+     * @return the current time in milliseconds.
      */
     long milliseconds();
 

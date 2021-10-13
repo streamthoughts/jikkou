@@ -58,7 +58,7 @@ public class V1AccessOperationPolicy implements Serializable {
     /**
      * Creates a new {@link V1AccessOperationPolicy} instance.
      *
-     * @param operation
+     * @param operation the {@link AclOperation}.
      */
     public V1AccessOperationPolicy(final AclOperation operation) {
         this(operation, ANY_HOSTS);
@@ -66,8 +66,9 @@ public class V1AccessOperationPolicy implements Serializable {
 
     /**
      * Creates a new {@link V1AccessOperationPolicy} instance.
-     * @param host
-     * @param operation
+     *
+     * @param operation the {@link AclOperation}.
+     * @param host      the host.
      */
     public V1AccessOperationPolicy(final AclOperation operation, final String host) {
         Objects.requireNonNull(host, "host should be non-null");

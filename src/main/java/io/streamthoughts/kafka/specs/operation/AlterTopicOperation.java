@@ -58,7 +58,8 @@ public class AlterTopicOperation implements TopicOperation {
     /**
      * Creates a new {@link AlterTopicOperation} instance.
      *
-     * @param deleteOrphans is
+     * @param client        the {@link AdminClient} instance.
+     * @param deleteOrphans flag to indicate if orphans topics should be deleted.
      */
     public AlterTopicOperation(final AdminClient client, final boolean deleteOrphans) {
         this.client = client;

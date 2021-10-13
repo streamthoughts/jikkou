@@ -40,21 +40,29 @@ public class V1SpecsObject implements Serializable {
     private final Collection<V1BrokerObject> brokers;
 
     /**
-     * Creates a new {@link V1SpecFile} instance.
+     * @param topics the {@link V1TopicObject} list.
+     *
+     * @return a new {@link V1SpecFile} instance.
      */
     public static V1SpecsObject withTopics(final Collection<V1TopicObject> topics) {
         return new V1SpecsObject(Collections.emptyList(), topics, null);
     }
 
     /**
-     * Creates a new {@link V1SpecFile} instance.
+     *
+     * @param brokers the {@link V1BrokerObject} list.
+     *
+     * @return a new {@link V1SpecFile} instance.
      */
     public static V1SpecsObject withBrokers(final Collection<V1BrokerObject> brokers) {
         return new V1SpecsObject(brokers, Collections.emptyList(), null);
     }
 
     /**
-     * Creates a new {@link V1SpecFile} instance.
+     *
+     * @param security the {@link V1SecurityObject}.
+     *
+     * @return a new {@link V1SpecFile} instance.
      */
     public static V1SpecsObject withSecurity(final V1SecurityObject security) {
         return new V1SpecsObject(
@@ -73,6 +81,10 @@ public class V1SpecsObject implements Serializable {
 
     /**
      * Creates a new {@link V1SpecFile} instance.
+     *
+     * @param brokers   the list of {@link V1BrokerObject}.
+     * @param topics    the list of {@link V1TopicObject}.
+     * @param security  the {@link V1SecurityObject}.
      */
     @JsonCreator
     public V1SpecsObject(@JsonProperty("brokers") final Collection<V1BrokerObject> brokers,

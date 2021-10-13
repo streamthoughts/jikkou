@@ -25,12 +25,11 @@ import io.streamthoughts.kafka.specs.internal.Time;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Arrays;
 
 /**
  * This class is used to describe the result of an operation that succeed of failed.
  *
- * @param <T>
+ * @param <T>   the operation result-type.
  */
 public class OperationResult<T> implements Serializable {
 
@@ -45,7 +44,13 @@ public class OperationResult<T> implements Serializable {
     private transient final Description description;
 
     /**
-     * Build a new {@link OperationResult} that doesn't result in cluster resource changes.
+     * Static method to build a new {@link OperationResult} that doesn't result in cluster resource changes.
+     *
+     * @param resource      the operation result.
+     * @param description   the operation result description.
+     * @param <T>           the operation result-type.
+     *
+     * @return              a new {@link OperationResult}.
      */
     public static <T> OperationResult<T> ok(final T resource,
                                             final Description description) {
@@ -53,7 +58,13 @@ public class OperationResult<T> implements Serializable {
     }
 
     /**
-     * Build a new {@link OperationResult} that do result in cluster resource changes.
+     * Static method to build a new {@link OperationResult} that do result in cluster resource changes.
+     *
+     * @param resource      the operation result.
+     * @param description   the operation result description.
+     * @param <T>           the operation result-type.
+     *
+     * @return              a new {@link OperationResult}.
      */
     public static <T> OperationResult<T> changed(final T resource,
                                                  final Description description) {
@@ -61,7 +72,14 @@ public class OperationResult<T> implements Serializable {
     }
 
     /**
-     * Build a new {@link OperationResult} that failed with the specified exception.
+     * Static method to build a new {@link OperationResult}  that failed with the specified exception.
+     *
+     * @param resource      the operation result.
+     * @param description   the operation result description.
+     * @param exception     the exception.
+     * @param <T>           the operation result-type.
+     *
+     * @return              a new {@link OperationResult}.
      */
     public static <T> OperationResult<T> failed(final T resource,
                                                 final Description description,

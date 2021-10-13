@@ -20,7 +20,8 @@ package io.streamthoughts.kafka.specs.change;
 
 /**
  * Represents a change operation on a resource.
- * @param <T>
+ *
+ * @param <T>   the change-type.
  */
 public interface Change<T extends Change<T>> {
 

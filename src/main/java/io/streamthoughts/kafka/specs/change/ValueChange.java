@@ -28,34 +28,34 @@ public class ValueChange<T> {
     private final Change.OperationType op;
 
     /**
-     * Static helper method to create a new {@link ValueChange<T>} instance.
+     * Static helper method to create a new {@link ValueChange} instance.
      *
      * @param value   the target value.
      * @param <T>     the value type.
-     * @return        a new {@link ValueChange<T>}
+     * @return        a new {@link ValueChange}
      */
     public static <T> ValueChange<T> withAfterValue(@Nullable final T value) {
         return with(value, null);
     }
 
     /**
-     * Static helper method to create a new {@link ValueChange<T>} instance.
+     * Static helper method to create a new {@link ValueChange} instance.
      *
      * @param value    the previous value.
      * @param <T>      the value type.
-     * @return         a new {@link ValueChange<T>}
+     * @return         a new {@link ValueChange}
      */
     public static <T> ValueChange<T> withBeforeValue(@Nullable final T value) {
         return with(null, value);
     }
 
     /**
-     * Static helper method to create a new {@link ValueChange<T>} instance.
+     * Static helper method to create a new {@link ValueChange} instance.
      *
      * @param after   the target value.
      * @param before  the previous value.
-     * @param <T>           the value type.
-     * @return              a new {@link ValueChange<T>}
+     * @param <T>     the value type.
+     * @return        a new {@link ValueChange}
      */
     public static <T> ValueChange<T> with(@Nullable final T after,
                                           @Nullable final T before) {
@@ -95,6 +95,7 @@ public class ValueChange<T> {
 
     /**
      * Creates a new {@link ValueChange} instance.
+     *
      * @param change    the {@link ValueChange} to copy.
      */
     protected ValueChange(@NotNull final ValueChange<T> change) {
