@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -27,10 +28,7 @@ import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.Named;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +36,9 @@ import java.util.stream.Collectors;
  */
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class V1TopicObject implements Named, Serializable {
+
+    public static final int NO_NUM_PARTITIONS = -1;
+    public static final short NO_REPLICATION_FACTOR = -1;
 
     private final String name;
 
@@ -114,16 +115,26 @@ public final class V1TopicObject implements Named, Serializable {
      * @return the number of partitions for this topic.
      */
     @JsonProperty
-    public int partitions() {
-        return partitions;
+    public Optional<Integer> partitions() {
+        return Optional.ofNullable(partitions);
     }
 
     /**
      * @return the replication factor for this topic.
      */
     @JsonProperty
-    public short replicationFactor() {
-        return replicationFactor;
+    public Optional<Short> replicationFactor() {
+        return Optional.ofNullable(replicationFactor);
+    }
+
+    @JsonIgnore
+    public Integer partitionsOrDefault() {
+        return Optional.ofNullable(partitions).orElse(NO_NUM_PARTITIONS);
+    }
+
+    @JsonIgnore
+    public Short replicationFactorOrDefault() {
+        return Optional.ofNullable(replicationFactor).orElse(NO_REPLICATION_FACTOR);
     }
 
     @JsonProperty

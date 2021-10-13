@@ -124,8 +124,14 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
 
         orphanChanges.forEach(it -> afterTopicConfigsByName.put(it.name(), it));
 
-        var partitions = ValueChange.with(afterTopic.partitions(), beforeTopic.partitions());
-        var replication = ValueChange.with(afterTopic.replicationFactor(), beforeTopic.replicationFactor());
+        var partitions = ValueChange.with(
+                afterTopic.partitionsOrDefault(),
+                beforeTopic.partitionsOrDefault()
+        );
+        var replication = ValueChange.with(
+                afterTopic.replicationFactorOrDefault(),
+                beforeTopic.replicationFactorOrDefault()
+        );
 
         return new TopicChange.Builder()
                 .setName(afterTopic.name())
@@ -140,8 +146,8 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
 
         final TopicChange.Builder builder = new TopicChange.Builder()
                 .setName(afterTopic.name())
-                .setPartitionsChange(ValueChange.withAfterValue(afterTopic.partitions()))
-                .setReplicationFactorChange(ValueChange.withAfterValue(afterTopic.replicationFactor()))
+                .setPartitionsChange(ValueChange.withAfterValue(afterTopic.partitionsOrDefault()))
+                .setReplicationFactorChange(ValueChange.withAfterValue(afterTopic.replicationFactorOrDefault()))
                 .setOperation(Change.OperationType.ADD);
 
         afterTopic.configs().forEach(it -> builder.addConfigChange(
