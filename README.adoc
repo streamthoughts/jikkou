@@ -92,12 +92,13 @@ specs:
 * `specs.security.roles`: the description of your ACLs roles that you can reference in the `users` section.
 * `specs.topics`:  the description of your Kafka Topics.
 
-== How to use it ?
+=== How to use it ?
 
 Kafka Specs is available:
 
-* As zip/tar.gz source package.
-* As a docker image available from https://hub.docker.com/r/streamthoughts/kafka-specs[docker hub].
+* As a zip/tar.gz package from https://github.com/streamthoughts/kafka-specs/releases/tag/v0.5.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/kafka-specs/0.5.0/[Maven Central]
+* As a docker image available from https://hub.docker.com/r/streamthoughts/kafka-specs[Docker Hub].
 
 === How to Manage Topics ?
 
