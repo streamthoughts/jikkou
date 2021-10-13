@@ -1,0 +1,52 @@
+package io.streamthoughts.kafka.specs.model;
+
+import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
+import io.streamthoughts.kafka.specs.YAMLClusterSpecReaderTest;
+import org.apache.kafka.common.resource.PatternType;
+import org.junit.jupiter.api.Test;
+
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+
+import static io.streamthoughts.kafka.specs.resources.Named.keyByName;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class V1AccessResourceMatcherTest {
+    private final YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
+
+    @Test
+    public void should_read_resource_with_default_pattern_type() {
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-model-roles.yaml"), Collections.emptyMap());
+        assertNotNull(specFile);
+
+        final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());
+        assertEquals(2, roles.size());
+        V1AccessRoleObject roleOne = roles.get("role_one");
+        assertNotNull(roleOne);
+
+        assertEquals("role_one", roleOne.name());
+        assertEquals("my_topic", roleOne.permission().resource().pattern());
+        assertEquals(PatternType.LITERAL, roleOne.permission().resource().patternType());
+    }
+
+    @Test
+    public void should_read_resource_with_prefixed_pattern_type() {
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-model-roles.yaml"), Collections.emptyMap());
+        assertNotNull(specFile);
+
+        final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());
+        assertEquals(2, roles.size());
+        V1AccessRoleObject roleTwo = roles.get("role_two");
+        assertNotNull(roleTwo);
+
+        assertEquals("role_two", roleTwo.name());
+        assertEquals("my_", roleTwo.permission().resource().pattern());
+        assertEquals(PatternType.PREFIXED, roleTwo.permission().resource().patternType());
+    }
+
+    private static InputStream getResourceAsStream(final String resource) {
+        return V1AccessResourceMatcherTest.class.getClassLoader().getResourceAsStream(resource);
+    }
+}
