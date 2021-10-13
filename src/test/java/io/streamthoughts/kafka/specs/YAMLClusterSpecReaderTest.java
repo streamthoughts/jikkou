@@ -17,11 +17,8 @@
 package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
-import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
-import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.model.*;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
-import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.apache.kafka.common.config.TopicConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,12 +28,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import static io.streamthoughts.kafka.specs.resources.Named.keyByName;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class YAMLClusterSpecReaderTest {
 
@@ -76,14 +72,22 @@ public class YAMLClusterSpecReaderTest {
         assertNotNull(groupOne);
 
         assertEquals("group_one", groupOne.name());
-        assertEquals("/([.-])*/", groupOne.permission().resource().pattern());
-        assertEquals(4, groupOne.permission().operations().size());
+        assertEquals(1, groupOne.permissions().size());
+        V1AccessPermission permOne = groupOne.permissions().iterator().next();
+        assertEquals("/([.-])*/", permOne.resource().pattern());
+        assertEquals(4, permOne.operations().size());
 
         V1AccessRoleObject groupTwo = policies.get("group_two");
         assertNotNull(groupTwo);
         assertEquals("group_two", groupTwo.name());
-        assertEquals("/public-([.-])*/", groupTwo.permission().resource().pattern());
-        assertEquals(2, groupTwo.permission().operations().size());
+        assertEquals(2, groupTwo.permissions().size());
+        Iterator<V1AccessPermission> permTwoIter = groupTwo.permissions().iterator();
+        V1AccessPermission permTwo = permTwoIter.next();
+        assertEquals("/public-([.-])*/", permTwo.resource().pattern());
+        assertEquals(2, permTwo.operations().size());
+        permTwo = permTwoIter.next();
+        assertEquals("public-", permTwo.resource().pattern());
+        assertEquals(1, permTwo.operations().size());
     }
 
     @Test

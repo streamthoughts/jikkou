@@ -20,15 +20,10 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.streamthoughts.kafka.specs.resources.Named;
-import org.apache.kafka.common.resource.PatternType;
-import org.apache.kafka.common.resource.ResourceType;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class V1AccessRoleObject implements Named, Serializable {
 
@@ -37,24 +32,23 @@ public class V1AccessRoleObject implements Named, Serializable {
      */
     private final String name;
     /**
-     * The resource permission.
+     * The role permissions.
      */
-    private final V1AccessPermission resource;
+    private final Set<V1AccessPermission> permissions;
 
     /**
      * Creates a new {@link V1AccessRoleObject} instance.
      *
      * @param name      the group policy name.
-     * @param resource  the resource permission to
+     * @param permissions   the permission of the role.
      */
     @JsonCreator
     V1AccessRoleObject(@JsonProperty("name") final String name,
-                       @JsonProperty("resource") final V1AccessResourceMatcher resource,
-                       @JsonProperty("allow_operations") final Set<V1AccessOperationPolicy> operations) {
+                       @JsonProperty("permissions") final Set<V1AccessPermission> permissions) {
         Objects.requireNonNull(name, "name cannot be null");
-        Objects.requireNonNull(resource, "resource cannot be null");
+        Objects.requireNonNull(permissions, "permissions cannot be null");
         this.name = name;
-        this.resource = new V1AccessPermission(resource, operations);
+        this.permissions = Collections.unmodifiableSet(permissions);
     }
 
     /**
@@ -65,9 +59,8 @@ public class V1AccessRoleObject implements Named, Serializable {
         return name;
     }
 
-    @JsonUnwrapped
-    public V1AccessPermission permission() {
-        return resource;
+    public Set<V1AccessPermission> permissions() {
+        return permissions;
     }
 
     /**
@@ -78,7 +71,7 @@ public class V1AccessRoleObject implements Named, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         V1AccessRoleObject that = (V1AccessRoleObject) o;
-        return Objects.equals(name, that.name) && Objects.equals(resource, that.resource);
+        return Objects.equals(name, that.name) && Objects.equals(permissions, that.permissions);
     }
 
     /**
@@ -86,7 +79,7 @@ public class V1AccessRoleObject implements Named, Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, resource);
+        return Objects.hash(name, permissions);
     }
 
     /**
@@ -96,7 +89,7 @@ public class V1AccessRoleObject implements Named, Serializable {
     public String toString() {
         return "V1AccessRoleObject{" +
                 "name='" + name + '\'' +
-                ", resource=" + resource +
+                ", permissions=" + permissions +
                 '}';
     }
 
@@ -108,19 +101,20 @@ public class V1AccessRoleObject implements Named, Serializable {
 
         private String name;
 
-        private String pattern;
-
-        private PatternType patternType;
-
-        private ResourceType type;
-
-        private final Set<V1AccessOperationPolicy> operations = new HashSet<>();
+        private Set<V1AccessPermission> permissions = new HashSet<>();
 
         Builder() {
         }
 
-        public Builder withPatternType(final PatternType patternType) {
-            this.patternType = patternType;
+        public Builder withPermission(final V1AccessPermission permission) {
+            Objects.requireNonNull(permission);
+            this.permissions.add(permission);
+            return this;
+        }
+
+        public Builder withPermissions(final Collection<V1AccessPermission> permissions) {
+            Objects.requireNonNull(permissions);
+            this.permissions.addAll(permissions);
             return this;
         }
 
@@ -129,27 +123,10 @@ public class V1AccessRoleObject implements Named, Serializable {
             return this;
         }
 
-        public Builder withPattern(final String pattern) {
-            this.pattern = pattern;
-            return this;
-        }
-
-
-        public Builder onResourceType(final ResourceType type) {
-            this.type = type;
-            return this;
-        }
-
-        public Builder allow(final V1AccessOperationPolicy operation) {
-            this.operations.add(operation);
-            return this;
-        }
-
         public V1AccessRoleObject build() {
             return new V1AccessRoleObject(
                     name,
-                    new V1AccessResourceMatcher(pattern, patternType, type),
-                    operations
+                    permissions
             );
         }
     }

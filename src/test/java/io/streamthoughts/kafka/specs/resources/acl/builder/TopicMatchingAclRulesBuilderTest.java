@@ -17,6 +17,7 @@
 package io.streamthoughts.kafka.specs.resources.acl.builder;
 
 import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
+import io.streamthoughts.kafka.specs.model.V1AccessPermission;
 import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
@@ -95,10 +96,12 @@ public class TopicMatchingAclRulesBuilderTest {
 
         V1AccessRoleObject group = V1AccessRoleObject.newBuilder()
                 .withName(SIMPLE_GROUP)
-                .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
-                .withPattern(TOPIC_REGEX)
-                .withPatternType(PatternType.MATCH)
-                .onResourceType(ResourceType.TOPIC)
+                .withPermission(V1AccessPermission.newBuilder()
+                    .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
+                    .withPattern(TOPIC_REGEX)
+                    .withPatternType(PatternType.MATCH)
+                    .onResourceType(ResourceType.TOPIC)
+                    .build())
                 .build();
 
         V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()

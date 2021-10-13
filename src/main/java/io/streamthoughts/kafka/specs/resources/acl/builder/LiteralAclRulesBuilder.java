@@ -93,10 +93,11 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
                                                                                     final List<V1AccessRoleObject> groups) {
 
         final Stream<V1AccessPermission> userPermissions = user.permissions().stream();
-        final Stream<V1AccessPermission> groupsPermissions = groups.stream().map(V1AccessRoleObject::permission);
+        final Stream<V1AccessPermission> groupsPermissions = groups.stream().flatMap(g -> g.permissions().stream());
 
         List<V1AccessPermission> permissions = Stream.concat(userPermissions, groupsPermissions)
                 .filter(p -> !p.resource().isPatternOfTypeMatchRegex())
+                .distinct()
                 .collect(Collectors.toList());
         
         return createAllAclsFor(user.principal(), permissions);
