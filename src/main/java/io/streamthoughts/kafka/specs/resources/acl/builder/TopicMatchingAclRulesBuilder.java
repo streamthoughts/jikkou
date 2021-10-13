@@ -118,9 +118,10 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                                                                                   final List<V1AccessRoleObject> groups,
                                                                                   final TopicListing topic) {
         List<V1AccessPermission> permissions = groups.stream()
-                .map(V1AccessRoleObject::permission)
+                .flatMap(g -> g.permissions().stream())
                 .filter(p -> p.resource().type() == ResourceType.TOPIC)
                 .filter(p -> p.resource().isPatternOfTypeMatchRegex())
+                .distinct()
                 .collect(Collectors.toList());
 
         return createAllAclsFor(user.principal(),

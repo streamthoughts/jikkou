@@ -1,7 +1,6 @@
 package io.streamthoughts.kafka.specs.model;
 
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
-import io.streamthoughts.kafka.specs.YAMLClusterSpecReaderTest;
 import org.apache.kafka.common.resource.PatternType;
 import org.junit.jupiter.api.Test;
 
@@ -27,8 +26,9 @@ public class V1AccessResourceMatcherTest {
         assertNotNull(roleOne);
 
         assertEquals("role_one", roleOne.name());
-        assertEquals("my_topic", roleOne.permission().resource().pattern());
-        assertEquals(PatternType.LITERAL, roleOne.permission().resource().patternType());
+        V1AccessPermission permOne = roleOne.permissions().iterator().next();
+        assertEquals("my_topic", permOne.resource().pattern());
+        assertEquals(PatternType.LITERAL, permOne.resource().patternType());
     }
 
     @Test
@@ -42,8 +42,9 @@ public class V1AccessResourceMatcherTest {
         assertNotNull(roleTwo);
 
         assertEquals("role_two", roleTwo.name());
-        assertEquals("my_", roleTwo.permission().resource().pattern());
-        assertEquals(PatternType.PREFIXED, roleTwo.permission().resource().patternType());
+        V1AccessPermission permTwo = roleTwo.permissions().iterator().next();
+        assertEquals("my_", permTwo.resource().pattern());
+        assertEquals(PatternType.PREFIXED, permTwo.resource().patternType());
     }
 
     private static InputStream getResourceAsStream(final String resource) {

@@ -20,8 +20,11 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourceType;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,13 +40,17 @@ public class V1AccessPermission implements Serializable {
      * Creates a new {@link V1AccessPermission} instance.
      *
      * @param resource   apply operations to all resources matching specified pattern.
-     * @param operations        list operations to allowed.
+     * @param operations list operations to allowed.
      */
     @JsonCreator
     V1AccessPermission(@JsonProperty("resource") final V1AccessResourceMatcher resource,
                        @JsonProperty("allow_operations") final Set<V1AccessOperationPolicy> operations) {
         this.resourcePattern = Objects.requireNonNull(resource, "'resource' should not be null");
         this.operations = Objects.requireNonNull(operations, "'operations' should not be null");
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     public Set<V1AccessOperationPolicy> operations() {
@@ -55,7 +62,7 @@ public class V1AccessPermission implements Serializable {
     }
 
     public String[] operationLiterals() {
-      return this.operations
+        return this.operations
                 .stream()
                 .map(V1AccessOperationPolicy::toLiteral)
                 .toArray(String[]::new);
@@ -90,5 +97,37 @@ public class V1AccessPermission implements Serializable {
                 "resourcePattern=" + resourcePattern +
                 ", operations=" + operations +
                 '}';
+    }
+
+    public static class Builder {
+        private ResourceType type;
+        private String pattern;
+        private PatternType patternType;
+        private final Set<V1AccessOperationPolicy> operations = new HashSet<>();
+
+        public Builder withPattern(final String pattern) {
+            this.pattern = pattern;
+            return this;
+        }
+
+        public Builder withPatternType(final PatternType patternType) {
+            this.patternType = patternType;
+            return this;
+        }
+
+        public Builder onResourceType(final ResourceType type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder allow(final V1AccessOperationPolicy operation) {
+            this.operations.add(operation);
+            return this;
+        }
+
+        public V1AccessPermission build() {
+            return new V1AccessPermission(new V1AccessResourceMatcher(pattern, patternType, type), operations);
+        }
+
     }
 }

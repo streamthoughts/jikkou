@@ -256,18 +256,20 @@ specs:
   security:
     roles:
     - name: 'AdminTopics'
-      resource:
-        type: 'topic'
-        pattern: '*'
-        pattern_type: 'LITERAL'
-      allow_operations: ['ALL:*']
+      permissions:
+        - resource:
+            type: 'topic'
+            pattern: '*'
+            pattern_type: 'LITERAL'
+          allow_operations: ['ALL:*']
 
     - name: 'AdminGroups'
-      resource:
-        type: 'group'
-        pattern: '*'
-        pattern_type: 'LITERAL'
-      allow_operations: ['ALL:*']
+      permissions:
+        - resource:
+            type: 'group'
+            pattern: '*'
+            pattern_type: 'LITERAL'
+          allow_operations: ['ALL:*']
 
     users:
       - principal: 'User:admin'
