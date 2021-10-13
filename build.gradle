@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.0'
     implementation "com.googlecode.java-diff-utils:diffutils:1.3.0"
     implementation 'info.picocli:picocli:4.6.1'
-    implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
+    implementation 'com.hubspot.jinjava:jinjava:2.5.10'
 }
 
 task copyLicense {

@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
+import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -56,6 +57,14 @@ public class KafkaSpecs {
         final CommandLine commandLine = new CommandLine(new KafkaSpecs())
                 .setUsageHelpWidth(160)
                 .setExecutionStrategy(new CommandLine.RunLast())
+                .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
+                    final PrintWriter err = cmd.getErr();
+                    if (! (ex instanceof KafkaSpecsException) ) {
+                        err.println(cmd.getColorScheme().stackTraceText(ex));
+                    }
+                    err.println(cmd.getColorScheme().errorText(ex.getMessage()));
+                    return cmd.getCommandSpec().exitCodeOnExecutionException();
+                })
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
         if (args.length > 0) {

@@ -16,6 +16,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
@@ -52,7 +53,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_fail_given_empty_file_using_current_version() {
-        final InvalidSpecificationException e = Assertions.assertThrows(InvalidSpecificationException.class, () -> {
+        final InvalidSpecsFileException e = Assertions.assertThrows(InvalidSpecsFileException.class, () -> {
             readTestSample(reader, "");
         });
         assertEquals("Empty specification file", e.getLocalizedMessage());

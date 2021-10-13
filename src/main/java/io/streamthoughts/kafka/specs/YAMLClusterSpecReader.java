@@ -20,10 +20,11 @@ package io.streamthoughts.kafka.specs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.mustachejava.MustacheException;
-import io.streamthoughts.kafka.specs.internal.MustacheUtil;
+import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
+import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
                 try {
                     return Jackson.YAML_OBJECT_MAPPER.readValue(specification, V1SpecFile.class);
                 } catch (IOException e) {
-                    throw new InvalidSpecificationException("Invalid specification file: " + e.getLocalizedMessage());
+                    throw new InvalidSpecsFileException("Invalid specification file: " + e.getLocalizedMessage());
                 }
             }
         };
@@ -93,7 +94,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             final String specification = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
 
             if (specification.isEmpty()) {
-                throw new InvalidSpecificationException("Empty specification file");
+                throw new InvalidSpecsFileException("Empty specification file");
             }
 
             final Versioned versioned = Jackson.YAML_OBJECT_MAPPER.readValue(
@@ -124,7 +125,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             return read(reader, specification, overrideLabels);
 
         } catch (IOException e) {
-            throw new InvalidSpecificationException(e.getLocalizedMessage());
+            throw new InvalidSpecsFileException(e.getLocalizedMessage());
         }
     }
 
@@ -139,12 +140,12 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             labels.putAll(overrideLabels);
 
             GlobalSpecsContext context = new GlobalSpecsContext().labels(labels);
-            final String compiled = MustacheUtil.compile(specification, context, 2);
+            final String compiled = Template.compile(specification, context);
 
             return reader.read(newInputStream(compiled), labels);
 
-        } catch (final MustacheException | IOException e) {
-            throw new InvalidSpecificationException(e.getLocalizedMessage());
+        } catch (final IOException e) {
+            throw new InvalidSpecsFileException(e.getLocalizedMessage());
         }
     }
 

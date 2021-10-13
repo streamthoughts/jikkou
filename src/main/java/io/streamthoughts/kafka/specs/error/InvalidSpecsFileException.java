@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2020 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,23 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.error;
 
-/**
- * Top-level exception for Kafka Specs.
- */
-public class KafkaSpecsException extends RuntimeException {
+public class InvalidSpecsFileException extends KafkaSpecsException {
 
-    public KafkaSpecsException() {
+    public InvalidSpecsFileException() {
         super();
     }
 
-    public KafkaSpecsException(final String message) {
+    public InvalidSpecsFileException(final String message) {
         super(message);
     }
 
-    public KafkaSpecsException(final String message, final Throwable throwable) {
+    public InvalidSpecsFileException(final String message, final Throwable throwable) {
         super(message, throwable);
     }
 
+    public InvalidSpecsFileException(final Throwable throwable) {
+        super(throwable);
+    }
 }

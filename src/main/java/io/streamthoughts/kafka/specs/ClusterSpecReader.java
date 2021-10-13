@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import org.jetbrains.annotations.NotNull;
 

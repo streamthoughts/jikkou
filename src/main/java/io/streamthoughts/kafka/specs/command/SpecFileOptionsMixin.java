@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
-import io.streamthoughts.kafka.specs.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import picocli.CommandLine;
@@ -43,8 +43,7 @@ public class SpecFileOptionsMixin {
     )
     URL url;
 
-    public V1SpecFile parse(Map<String, Object> clientLabels) {
-
+    public V1SpecFile parse(final Map<String, Object> clientLabels) {
         final InputStream is;
         if (url != null) {
             try {
@@ -63,10 +62,6 @@ public class SpecFileOptionsMixin {
         } else {
             throw new IllegalArgumentException("no specification");
         }
-        try {
-            return READER.read(is, clientLabels);
-        } catch (Exception exception) {
-            throw new RuntimeException(exception);
-        }
+        return READER.read(is, clientLabels);
     }
 }

@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.specs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,7 +30,9 @@ import static io.streamthoughts.kafka.specs.internal.PropertiesUtils.fromPropert
 
 public class GlobalSpecsContext {
 
-    private final Map<String, Object> system;
+    private final Map<String, String> systemEnv;
+
+    private final Map<String, String> systemProps;
 
     private final Map<String, Object> labels;
 
@@ -48,9 +49,8 @@ public class GlobalSpecsContext {
      * @param labels    a list of labels.
      */
     public GlobalSpecsContext(@NotNull final Map<String, Object> labels) {
-        this.system = new HashMap<>();
-        this.system.put("props", fromProperties(System.getProperties()));
-        this.system.put("env",  System.getenv());
+        this.systemProps = fromProperties(System.getProperties());
+        this.systemEnv = System.getenv();
         this.labels = labels;
     }
 
@@ -63,15 +63,20 @@ public class GlobalSpecsContext {
         return explode(labels);
     }
 
-    public Map<String, Object> getSystem() {
-        return system;
+    public Map<String, String> getSystemEnv() {
+        return systemEnv;
+    }
+
+    public Map<String, String> getSystemProps() {
+        return systemProps;
     }
 
 
     @Override
     public String toString() {
         return "[" +
-                ", system=" + system +
+                ", systemEnv=" + systemEnv +
+                ", systemProps=" + systemProps +
                 ", labels=" + labels +
                 ']';
     }
