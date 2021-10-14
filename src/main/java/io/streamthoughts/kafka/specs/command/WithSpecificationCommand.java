@@ -48,7 +48,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
     @Override
     public Integer call(final AdminClient adminClient) {
         specFile(); // ensure specification is valid.
-        if (!execOptions.yes) {
+        if (!execOptions.yes && !isDryRun()) {
             CLIUtils.askToProceed(spec);
         }
         final Collection<OperationResult<T>> results = executeCommand(adminClient);
