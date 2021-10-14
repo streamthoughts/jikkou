@@ -31,25 +31,12 @@ import java.util.concurrent.Future;
 
 public class FutureUtils {
 
-    public static <T> CompletableFuture<T> toCompletableFuture(final KafkaFuture<T> listings) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return listings.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public static <T> CompletableFuture<T> toCompletableFuture(final KafkaFuture<T> future) {
+        return future.toCompletionStage().toCompletableFuture();
     }
 
-    public static CompletableFuture<Void> toVoidCompletableFuture(final KafkaFuture<?> listings) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                listings.get();
-                return null;
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public static CompletableFuture<Void> toVoidCompletableFuture(final KafkaFuture<?> future) {
+        return toCompletableFuture(future).thenApply(p -> null);
     }
 
     public static <T extends Change<T>> CompletableFuture<OperationResult<T>> makeCompletableFuture(
