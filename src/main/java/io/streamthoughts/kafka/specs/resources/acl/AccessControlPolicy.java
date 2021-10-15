@@ -18,9 +18,6 @@
  */
 package io.streamthoughts.kafka.specs.resources.acl;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
@@ -31,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AccessControlPolicy implements Serializable, Named {
 
     private final String principalType;
@@ -67,55 +63,46 @@ public class AccessControlPolicy implements Serializable, Named {
                         @NotNull final String host) {
         this.principalType = principalType;
         this.principalName = Objects.requireNonNull(principalName, "'principalName' cannot be null");
+        this.permission = Objects.requireNonNull(permission, "'permission' cannot be null");
+        this.operation = Objects.requireNonNull(operation, "'operation' cannot be null");
+        this.host = Objects.requireNonNull(host, "'host' cannot be null");
         this.resourcePattern = Objects.requireNonNull(resourcePattern, "'resourcePattern' cannot be null");
         this.patternType = Objects.requireNonNull(patternType, "'patternType' cannot be null");
-        this.permission = Objects.requireNonNull(permission, "'permission' cannot be null");
         this.resourceType = Objects.requireNonNull(resourceType, "'resourceType' cannot be null");
-        this.operation = Objects.requireNonNull(operation, "'operation' cannot be null");
-        this.host = Objects.requireNonNull(host, "host cannot be null");
     }
 
-    @JsonProperty
     public String principalName() {
         return principalName;
     }
 
-    @JsonProperty
     public AclPermissionType permission() {
         return permission;
     }
 
-    @JsonProperty
     public String principal() {
         return this.principalType + ":" + this.principalName;
     }
 
-    @JsonProperty
     public String principalType() {
         return principalType;
     }
 
-    @JsonProperty
     public String resourcePattern() {
         return resourcePattern;
     }
 
-    @JsonProperty
     public PatternType patternType() {
         return patternType;
     }
 
-    @JsonProperty
     public ResourceType resourceType() {
         return resourceType;
     }
 
-    @JsonProperty
     public AclOperation operation() {
         return operation;
     }
 
-    @JsonProperty
     public String host() {
         return host;
     }
@@ -125,15 +112,15 @@ public class AccessControlPolicy implements Serializable, Named {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccessControlPolicy rule = (AccessControlPolicy) o;
-        return Objects.equals(principalType, rule.principalType) &&
-                Objects.equals(principalName, rule.principalName) &&
-                Objects.equals(resourcePattern, rule.resourcePattern) &&
-                patternType == rule.patternType &&
-                resourceType == rule.resourceType &&
-                operation == rule.operation &&
-                permission == rule.permission &&
-                Objects.equals(host, rule.host);
+        AccessControlPolicy that = (AccessControlPolicy) o;
+        return Objects.equals(principalType, that.principalType) &&
+               Objects.equals(principalName, that.principalName) &&
+               Objects.equals(resourcePattern, that.resourcePattern) &&
+                patternType == that.patternType &&
+                resourceType == that.resourceType &&
+                operation == that.operation &&
+                permission == that.permission &&
+                Objects.equals(host, that.host);
     }
 
     @Override
@@ -148,20 +135,6 @@ public class AccessControlPolicy implements Serializable, Named {
                 permission,
                 host
         );
-    }
-
-    @Override
-    public String toString() {
-        return "AccessControlPolicy{" +
-                "principalType=" + principalType +
-                ", principalName='" + principalName + '\'' +
-                ", resourcePattern='" + resourcePattern + '\'' +
-                ", patternType='" + patternType + '\'' +
-                ", resourceType=" + resourceType +
-                ", operation=" + operation +
-                ", permission=" + permission +
-                ", host='" + host + '\'' +
-                '}';
     }
 
     @Override

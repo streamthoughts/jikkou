@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
@@ -68,6 +69,7 @@ public class V1AccessResourceMatcher {
         return type;
     }
 
+    @JsonIgnore
     public boolean isPatternOfTypeMatchRegex() {
         return this.patternType == PatternType.MATCH
                 && this.pattern.startsWith("/")
@@ -105,5 +107,38 @@ public class V1AccessResourceMatcher {
                 ", patternType=" + patternType +
                 ", type=" + type +
                 '}';
+    }
+
+    /**
+     * @return new {@link V1AccessUserObject.Builder} instance.
+     */
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private String pattern;
+        private PatternType patternType;
+        private ResourceType type;
+
+        public Builder withPattern(final String pattern) {
+            this.pattern = pattern;
+            return this;
+        }
+
+        public Builder withPatternType(final PatternType patternType) {
+            this.patternType = patternType;
+            return this;
+        }
+
+        public Builder withType(final ResourceType type) {
+            this.type = type;
+            return this;
+        }
+
+        public V1AccessResourceMatcher build() {
+            return new V1AccessResourceMatcher(pattern, patternType, type);
+        }
     }
 }

@@ -22,7 +22,7 @@ import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.model.V1AccessPermission;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
@@ -59,8 +59,16 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
+    public boolean canBuildAclUserPolicy() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
-                                                                 final V1AccessPrincipalObject user) {
+                                                                 final V1AccessUserObject user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
@@ -80,7 +88,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
-    public Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules) {
+    public Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
         throw new UnsupportedOperationException();
     }
 
@@ -100,7 +108,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
         return listTopics;
     }
 
-    private Collection<AccessControlPolicy> createAclForUserPoliciesMatchingTopic(final V1AccessPrincipalObject user,
+    private Collection<AccessControlPolicy> createAclForUserPoliciesMatchingTopic(final V1AccessUserObject user,
                                                                                   final TopicListing topic) {
         List<V1AccessPermission> permissions = user.permissions()
                 .stream()
@@ -114,7 +122,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
                 ResourceType.TOPIC);
     }
 
-    private Collection<AccessControlPolicy> createAclForRolePoliciesMatchingTopic(final V1AccessPrincipalObject user,
+    private Collection<AccessControlPolicy> createAclForRolePoliciesMatchingTopic(final V1AccessUserObject user,
                                                                                   final List<V1AccessRoleObject> groups,
                                                                                   final TopicListing topic) {
         List<V1AccessPermission> permissions = groups.stream()

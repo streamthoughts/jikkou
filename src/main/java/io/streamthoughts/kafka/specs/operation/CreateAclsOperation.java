@@ -48,7 +48,8 @@ public class CreateAclsOperation implements AclOperation {
                 r.operation(),
                 r.resourceType(),
                 r.patternType(),
-                r.resourcePattern());
+                r.resourcePattern()
+        );
     };
 
     private final AclBindingConverter converter = new AclBindingConverter();
@@ -114,9 +115,7 @@ public class CreateAclsOperation implements AclOperation {
         }
 
         AccessControlPolicy fromAclBinding(final AclBinding binding) {
-            String principal = binding.entry().principal();
-            String[] principalTypeAndName = principal.split(":");
-            ResourcePattern pattern = binding.pattern();
+            final ResourcePattern pattern = binding.pattern();
             return AccessControlPolicy.newBuilder()
                     .withResourcePattern(pattern.name())
                     .withPatternType(pattern.patternType())
@@ -124,8 +123,7 @@ public class CreateAclsOperation implements AclOperation {
                     .withOperation(binding.entry().operation())
                     .withPermission(binding.entry().permissionType())
                     .withHost(binding.entry().host())
-                    .withPrincipalName(principalTypeAndName[1])
-                    .withPrincipalType(principalTypeAndName[0])
+                    .withPrincipal(binding.entry().principal())
                     .build();
         }
     }

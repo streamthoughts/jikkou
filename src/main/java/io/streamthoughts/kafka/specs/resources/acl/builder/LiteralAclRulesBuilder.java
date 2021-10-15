@@ -18,16 +18,18 @@
  */
 package io.streamthoughts.kafka.specs.resources.acl.builder;
 
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
-import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
 import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
 import io.streamthoughts.kafka.specs.model.V1AccessPermission;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessResourceMatcher;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
+import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourceType;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +40,8 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
     /**
      * Creates a new {@link LiteralAclRulesBuilder} instance.
      */
-    public LiteralAclRulesBuilder() {}
+    public LiteralAclRulesBuilder() {
+    }
 
 
     /**
@@ -46,7 +49,7 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
      */
     @Override
     public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
-                                                                 final V1AccessPrincipalObject user) {
+                                                                 final V1AccessUserObject user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
 
@@ -59,37 +62,51 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
      * {@inheritDoc}
      */
     @Override
-    public Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules) {
+    public Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
 
         return rules
                 .stream()
-                .collect(Collectors.groupingBy(AccessControlPolicy::principalName))
+                .collect(Collectors.groupingBy(AccessControlPolicy::principal))
                 .entrySet()
                 .stream()
-                .map(e -> buildAclUserPolicy(e.getKey(), e.getValue()))
+                .map(e -> buildAccessUserObject(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
 
-    private V1AccessPrincipalObject buildAclUserPolicy(final String principal, final List<AccessControlPolicy> rules) {
-        V1AccessPrincipalObject.Builder builder = V1AccessPrincipalObject
+    private V1AccessUserObject buildAccessUserObject(final String principal,
+                                                     final List<AccessControlPolicy> accessControlPolicies) {
+
+        final V1AccessUserObject.Builder builder = V1AccessUserObject
                 .newBuilder()
-                .principal(principal);
+                .withPrincipal(principal);
 
-        Map<String, List<AccessControlPolicy>> aclGroupsByResource = rules
+        accessControlPolicies
                 .stream()
-                .collect(Collectors.groupingBy(AccessControlPolicy::resourcePattern));
+                .collect(Collectors.groupingBy(ResourcePattern::new))
+                .forEach((pattern, policies) -> {
+                    final V1AccessResourceMatcher resource = V1AccessResourceMatcher
+                            .newBuilder()
+                            .withPattern(pattern.pattern)
+                            .withType(pattern.resourceType)
+                            .withPatternType(pattern.patternType)
+                            .build();
 
-        aclGroupsByResource.forEach( (resource, acls) -> {
-            Set<V1AccessOperationPolicy> policies = acls.stream()
-                    .map(a -> new V1AccessOperationPolicy(a.operation(), a.host()))
-                    .collect(Collectors.toSet());
-            builder.addPermission(resource, acls.get(0).patternType(), acls.get(0).resourceType(), policies);
+                    final Set<V1AccessOperationPolicy> operations = policies
+                            .stream()
+                            .map(a -> new V1AccessOperationPolicy(a.operation(), a.host()))
+                            .collect(Collectors.toSet());
 
-        });
+                    final V1AccessPermission permission = V1AccessPermission
+                            .newBuilder()
+                            .allow(operations)
+                            .onResource(resource)
+                            .build();
+                    builder.withPermission(permission);
+                });
         return builder.build();
     }
 
-    private Collection<AccessControlPolicy> createAclsForLiteralOrPrefixPermissions(final V1AccessPrincipalObject user,
+    private Collection<AccessControlPolicy> createAclsForLiteralOrPrefixPermissions(final V1AccessUserObject user,
                                                                                     final List<V1AccessRoleObject> groups) {
 
         final Stream<V1AccessPermission> userPermissions = user.permissions().stream();
@@ -99,8 +116,42 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
                 .filter(p -> !p.resource().isPatternOfTypeMatchRegex())
                 .distinct()
                 .collect(Collectors.toList());
-        
+
         return createAllAclsFor(user.principal(), permissions);
+    }
+
+    public static class ResourcePattern {
+
+        public final String pattern;
+        public final ResourceType resourceType;
+        public final PatternType patternType;
+
+        public ResourcePattern(final AccessControlPolicy policy) {
+            this(policy.resourcePattern(), policy.resourceType(), policy.patternType());
+        }
+
+        public ResourcePattern(final String pattern,
+                               final ResourceType resourceType,
+                               final PatternType patternType) {
+            this.pattern = pattern;
+            this.resourceType = resourceType;
+            this.patternType = patternType;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ResourcePattern that = (ResourcePattern) o;
+            return Objects.equals(pattern, that.pattern) &&
+                   Objects.equals(resourceType, that.resourceType) &&
+                   Objects.equals(patternType, that.patternType);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(pattern, resourceType, patternType);
+        }
     }
 
 }

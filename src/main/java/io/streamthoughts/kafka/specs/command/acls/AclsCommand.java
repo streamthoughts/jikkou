@@ -29,7 +29,7 @@ import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeA
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
 import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRulesBuilder;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
@@ -105,7 +105,7 @@ public class AclsCommand extends WithAdminClientCommand {
                     new TopicMatchingAclRulesBuilder(client));
 
             final Map<String, V1AccessRoleObject> groups = Named.keyByName(resource.roles());
-            final Collection<V1AccessPrincipalObject> users = resource.users();
+            final Collection<V1AccessUserObject> users = resource.users();
 
             List<AccessControlPolicy> newPolicies = users
                     .stream()

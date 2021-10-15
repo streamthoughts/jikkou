@@ -22,7 +22,7 @@ import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
 import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
 import io.streamthoughts.kafka.specs.model.V1AccessPermission;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1AccessResourceMatcher;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import org.apache.kafka.common.acl.AclPermissionType;
@@ -73,7 +73,7 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
      * @return          a new list of {@link V1AccessRoleObject} instances.
      */
     List<V1AccessRoleObject> filterAclRolesForUser(final Collection<V1AccessRoleObject> groups,
-                                                   final V1AccessPrincipalObject user) {
+                                                   final V1AccessUserObject user) {
         return groups.stream()
                 .filter(gr -> user.roles().contains(gr.name()))
                 .collect(Collectors.toList());

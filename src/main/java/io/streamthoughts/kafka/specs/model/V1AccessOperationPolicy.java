@@ -100,7 +100,6 @@ public class V1AccessOperationPolicy implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(host, operation);
     }
 

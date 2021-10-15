@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.resources.acl;
 
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -30,9 +30,9 @@ import java.util.LinkedList;
 public interface AclRulesBuilder {
 
     Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
-                                                          final V1AccessPrincipalObject user);
+                                                          final V1AccessUserObject user);
 
-    Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules);
+    Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules);
 
     default boolean canBuildAclUserPolicy() {
         return true;
@@ -47,7 +47,7 @@ public interface AclRulesBuilder {
              */
             @Override
             public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
-                                                                         final V1AccessPrincipalObject user) {
+                                                                         final V1AccessUserObject user) {
 
                 Collection<AccessControlPolicy> rules = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {
@@ -60,11 +60,11 @@ public interface AclRulesBuilder {
              * {@inheritDoc}
              */
             @Override
-            public Collection<V1AccessPrincipalObject> toAclUserPolicy(final Collection<AccessControlPolicy> rules) {
-                Collection<V1AccessPrincipalObject> policies = new LinkedList<>();
+            public Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
+                Collection<V1AccessUserObject> policies = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {
                     if (b.canBuildAclUserPolicy()) {
-                        policies.addAll(b.toAclUserPolicy(rules));
+                        policies.addAll(b.toAccessUserObjects(rules));
                     }
                 }
                 return policies;

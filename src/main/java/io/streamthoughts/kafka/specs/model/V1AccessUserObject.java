@@ -20,13 +20,11 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.kafka.common.resource.PatternType;
-import org.apache.kafka.common.resource.ResourceType;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class V1AccessPrincipalObject implements Serializable {
+public class V1AccessUserObject implements Serializable {
 
     private final String principal;
 
@@ -35,16 +33,16 @@ public class V1AccessPrincipalObject implements Serializable {
     private final Set<V1AccessPermission> permissions;
 
     /**
-     * Creates a new {@link V1AccessPrincipalObject} instance.
+     * Creates a new {@link V1AccessUserObject} instance.
      *
      * @param principal     the principal of user.
      * @param roles         the roles of user.
      * @param permissions   the permission of the user.
      */
     @JsonCreator
-    V1AccessPrincipalObject(@JsonProperty("principal") final String principal,
-                            @JsonProperty("roles") final Set<String> roles,
-                            @JsonProperty("permissions") final Set<V1AccessPermission> permissions) {
+    V1AccessUserObject(@JsonProperty("principal") final String principal,
+                       @JsonProperty("roles") final Set<String> roles,
+                       @JsonProperty("permissions") final Set<V1AccessPermission> permissions) {
         this.principal = Objects.requireNonNull(principal, "principal cannot be null");;
         this.roles = Objects.requireNonNull(roles, "roles cannot be null");;
         this.permissions = permissions == null ? Collections.emptySet() : Collections.unmodifiableSet(permissions);
@@ -72,7 +70,7 @@ public class V1AccessPrincipalObject implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        V1AccessPrincipalObject that = (V1AccessPrincipalObject) o;
+        V1AccessUserObject that = (V1AccessUserObject) o;
         return Objects.equals(principal, that.principal) &&
                Objects.equals(roles, that.roles) &&
                Objects.equals(permissions, that.permissions);
@@ -88,7 +86,7 @@ public class V1AccessPrincipalObject implements Serializable {
 
     @Override
     public String toString() {
-        return "AclUserPolicy{" +
+        return "V1AccessUserObject{" +
                 "principal='" + principal + '\'' +
                 ", roles=" + roles +
                 ", permissions=" + permissions +
@@ -107,7 +105,7 @@ public class V1AccessPrincipalObject implements Serializable {
     public static class Builder {
 
         private String principal;
-        private final Set<String> groups  = new HashSet<>();
+        private final Set<String> roles  = new HashSet<>();
         private final Set<V1AccessPermission> permissions  = new HashSet<>();
 
         /**
@@ -115,29 +113,23 @@ public class V1AccessPrincipalObject implements Serializable {
          */
         Builder() {}
 
-        public Builder principal(final String principal) {
+        public Builder withPrincipal(final String principal) {
             this.principal = principal;
             return this;
         }
 
-        public Builder groups(final Collection<String> groups) {
-            this.groups.addAll(groups);
+        public Builder withRoles(final Collection<String> roles) {
+            this.roles.addAll(roles);
             return this;
         }
 
-        public Builder addPermission(final String pattern,
-                                     final PatternType patternType,
-                                     final ResourceType type,
-                                     final Set<V1AccessOperationPolicy> operations) {
-            this.permissions.add(
-                    new V1AccessPermission(new V1AccessResourceMatcher(pattern, patternType, type)
-                            ,operations)
-            );
+        public Builder withPermission(final V1AccessPermission permission) {
+            this.permissions.add(permission);
             return this;
         }
 
-        public V1AccessPrincipalObject build() {
-            return new V1AccessPrincipalObject(principal, groups, permissions);
+        public V1AccessUserObject build() {
+            return new V1AccessUserObject(principal, roles, permissions);
         }
     }
 

@@ -26,7 +26,7 @@ import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRules
 import io.streamthoughts.kafka.specs.command.BaseCommand;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeACLs;
 import io.streamthoughts.kafka.specs.model.MetaObject;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
@@ -59,7 +59,7 @@ public class Describe extends BaseCommand {
 
         final AclRulesBuilder builder = getAclRulesBuilder(client);
         Collection<AccessControlPolicy> rules = new DescribeACLs(client).describe();
-        final Collection<V1AccessPrincipalObject> users = builder.toAclUserPolicy(rules);
+        final Collection<V1AccessUserObject> users = builder.toAccessUserObjects(rules);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;

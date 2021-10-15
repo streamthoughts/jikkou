@@ -20,8 +20,6 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.kafka.common.resource.PatternType;
-import org.apache.kafka.common.resource.ResourceType;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -33,7 +31,7 @@ import java.util.Set;
  */
 public class V1AccessPermission implements Serializable {
 
-    private final V1AccessResourceMatcher resourcePattern;
+    private final V1AccessResourceMatcher resource;
     private final Set<V1AccessOperationPolicy> operations;
 
     /**
@@ -45,27 +43,18 @@ public class V1AccessPermission implements Serializable {
     @JsonCreator
     V1AccessPermission(@JsonProperty("resource") final V1AccessResourceMatcher resource,
                        @JsonProperty("allow_operations") final Set<V1AccessOperationPolicy> operations) {
-        this.resourcePattern = Objects.requireNonNull(resource, "'resource' should not be null");
+        this.resource = Objects.requireNonNull(resource, "'resource' should not be null");
         this.operations = Objects.requireNonNull(operations, "'operations' should not be null");
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
+    @JsonProperty("allow_operations")
     public Set<V1AccessOperationPolicy> operations() {
         return operations;
     }
 
+    @JsonProperty("resource")
     public V1AccessResourceMatcher resource() {
-        return resourcePattern;
-    }
-
-    public String[] operationLiterals() {
-        return this.operations
-                .stream()
-                .map(V1AccessOperationPolicy::toLiteral)
-                .toArray(String[]::new);
+        return resource;
     }
 
     /**
@@ -76,7 +65,7 @@ public class V1AccessPermission implements Serializable {
         if (this == o) return true;
         if (!(o instanceof V1AccessPermission)) return false;
         V1AccessPermission that = (V1AccessPermission) o;
-        return Objects.equals(resourcePattern, that.resourcePattern) &&
+        return Objects.equals(resource, that.resource) &&
                 Objects.equals(operations, that.operations);
     }
 
@@ -85,7 +74,7 @@ public class V1AccessPermission implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(resourcePattern, operations);
+        return Objects.hash(resource, operations);
     }
 
     /**
@@ -93,30 +82,33 @@ public class V1AccessPermission implements Serializable {
      */
     @Override
     public String toString() {
-        return "AclResourcePermission{" +
-                "resourcePattern=" + resourcePattern +
+        return "V1AccessPermission{" +
+                "resource=" + resource +
                 ", operations=" + operations +
                 '}';
     }
 
+    /**
+     * Creates a new builder.
+     *
+     * @return new {@link V1AccessUserObject.Builder} instance.
+     */
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public static class Builder {
-        private ResourceType type;
-        private String pattern;
-        private PatternType patternType;
+
+        private V1AccessResourceMatcher resource;
         private final Set<V1AccessOperationPolicy> operations = new HashSet<>();
 
-        public Builder withPattern(final String pattern) {
-            this.pattern = pattern;
+        public Builder onResource(final V1AccessResourceMatcher resource) {
+            this.resource = resource;
             return this;
         }
 
-        public Builder withPatternType(final PatternType patternType) {
-            this.patternType = patternType;
-            return this;
-        }
-
-        public Builder onResourceType(final ResourceType type) {
-            this.type = type;
+        public Builder allow(final Set<V1AccessOperationPolicy> operations) {
+            this.operations.addAll(operations);
             return this;
         }
 
@@ -126,8 +118,7 @@ public class V1AccessPermission implements Serializable {
         }
 
         public V1AccessPermission build() {
-            return new V1AccessPermission(new V1AccessResourceMatcher(pattern, patternType, type), operations);
+            return new V1AccessPermission(resource, operations);
         }
-
     }
 }

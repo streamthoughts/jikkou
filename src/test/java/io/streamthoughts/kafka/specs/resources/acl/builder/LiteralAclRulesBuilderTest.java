@@ -17,8 +17,10 @@
 package io.streamthoughts.kafka.specs.resources.acl.builder;
 
 import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
+import io.streamthoughts.kafka.specs.model.V1AccessPermission;
+import io.streamthoughts.kafka.specs.model.V1AccessResourceMatcher;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.resource.PatternType;
@@ -36,10 +38,10 @@ class LiteralAclRulesBuilderTest {
 
     static final List<V1AccessRoleObject> EMPTY_GROUP = Collections.emptyList();
 
-    static final String TOPIC_TEST_A        = "topic-test-a";
-    static final String USER_TYPE           = "User:";
-    static final String SIMPLE_USER         = "SimpleUser";
-    static final String WILDCARD            = "*";
+    static final String TOPIC_TEST_A = "topic-test-a";
+    static final String USER_TYPE = "User:";
+    static final String SIMPLE_USER = "SimpleUser";
+    static final String WILDCARD = "*";
     static final String TOPIC_WITH_WILDCARD = "topic-*";
 
     private LiteralAclRulesBuilder builder;
@@ -52,12 +54,19 @@ class LiteralAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserWithLiteralPermissionAndNoGroup() {
 
-        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
-                .principal(USER_TYPE + SIMPLE_USER)
-                .addPermission(TOPIC_TEST_A,
-                        PatternType.LITERAL,
-                        ResourceType.TOPIC,
-                        Collections.singleton(new V1AccessOperationPolicy(AclOperation.CREATE)))
+        final V1AccessPermission permission = V1AccessPermission.newBuilder()
+                .onResource(V1AccessResourceMatcher.newBuilder()
+                        .withPattern(TOPIC_TEST_A)
+                        .withPatternType(PatternType.LITERAL)
+                        .withType(ResourceType.TOPIC)
+                        .build()
+                )
+                .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
+                .build();
+
+        final V1AccessUserObject user = V1AccessUserObject.newBuilder()
+                .withPrincipal(USER_TYPE + SIMPLE_USER)
+                .withPermission(permission)
                 .build();
         Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(EMPTY_GROUP, user);
 
@@ -66,7 +75,7 @@ class LiteralAclRulesBuilderTest {
 
         assertEquals(WILDCARD, rule.host());
         assertEquals(AclOperation.CREATE, rule.operation());
-        assertEquals(USER_TYPE +  SIMPLE_USER, rule.principal());
+        assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
         assertEquals(SIMPLE_USER, rule.principalName());
         assertEquals(TOPIC_TEST_A, rule.resourcePattern());
         assertEquals(ResourceType.TOPIC, rule.resourceType());
@@ -75,13 +84,21 @@ class LiteralAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserWithLiteralAndWildcardPermissionAndNoGroup() {
 
-        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
-                .principal(USER_TYPE + SIMPLE_USER)
-                .addPermission(TOPIC_WITH_WILDCARD,
-                        PatternType.PREFIXED,
-                        ResourceType.TOPIC,
-                        Collections.singleton(new V1AccessOperationPolicy(AclOperation.CREATE)))
+        final V1AccessPermission permission = V1AccessPermission.newBuilder()
+                .onResource(V1AccessResourceMatcher.newBuilder()
+                        .withPattern(TOPIC_WITH_WILDCARD)
+                        .withPatternType(PatternType.PREFIXED)
+                        .withType(ResourceType.TOPIC)
+                        .build()
+                )
+                .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
                 .build();
+
+        final V1AccessUserObject user = V1AccessUserObject.newBuilder()
+                .withPrincipal(USER_TYPE + SIMPLE_USER)
+                .withPermission(permission)
+                .build();
+
         Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(EMPTY_GROUP, user);
 
         assertEquals(1, rules.size());
@@ -89,7 +106,7 @@ class LiteralAclRulesBuilderTest {
 
         assertEquals(WILDCARD, rule.host());
         assertEquals(AclOperation.CREATE, rule.operation());
-        assertEquals(USER_TYPE +  SIMPLE_USER, rule.principal());
+        assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
         assertEquals(SIMPLE_USER, rule.principalName());
         assertEquals(TOPIC_WITH_WILDCARD, rule.resourcePattern());
         assertEquals(ResourceType.TOPIC, rule.resourceType());

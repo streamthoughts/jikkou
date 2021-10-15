@@ -18,8 +18,8 @@ package io.streamthoughts.kafka.specs.resources.acl.builder;
 
 import io.streamthoughts.kafka.specs.model.V1AccessOperationPolicy;
 import io.streamthoughts.kafka.specs.model.V1AccessPermission;
-import io.streamthoughts.kafka.specs.model.V1AccessPrincipalObject;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.*;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.acl.AclOperation;
@@ -42,14 +42,14 @@ public class TopicMatchingAclRulesBuilderTest {
 
     static final List<V1AccessRoleObject> EMPTY_GROUP = Collections.emptyList();
 
-    static final String TOPIC_REGEX         = "/topic-.*/";
-    static final String TOPIC_TEST_A        = "topic-test-a";
-    static final String TOPIC_TEST_B        = "topic-test-b";
-    static final String USER_TYPE           = "User:";
-    static final String SIMPLE_USER         = "SimpleUser";
-    static final String WILDCARD            = "*";
+    static final String TOPIC_REGEX = "/topic-.*/";
+    static final String TOPIC_TEST_A = "topic-test-a";
+    static final String TOPIC_TEST_B = "topic-test-b";
+    static final String USER_TYPE = "User:";
+    static final String SIMPLE_USER = "SimpleUser";
+    static final String WILDCARD = "*";
     static final String TOPIC_WITH_WILDCARD = "topic-*";
-    static final String SIMPLE_GROUP        = "SimpleGroup";
+    static final String SIMPLE_GROUP = "SimpleGroup";
 
     private TopicMatchingAclRulesBuilder builder;
 
@@ -69,10 +69,21 @@ public class TopicMatchingAclRulesBuilderTest {
     @Test
     public void shouldBuildAclRulesGivenUserWithRegexPermissionAndNoGroup() {
 
-        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
-                .principal(USER_TYPE + SIMPLE_USER)
-                .addPermission(TOPIC_REGEX, PatternType.MATCH, ResourceType.TOPIC, Collections.singleton(new V1AccessOperationPolicy(AclOperation.CREATE)))
+        final V1AccessPermission permission = V1AccessPermission.newBuilder()
+                .onResource(V1AccessResourceMatcher.newBuilder()
+                        .withPattern(TOPIC_REGEX)
+                        .withPatternType(PatternType.MATCH)
+                        .withType(ResourceType.TOPIC)
+                        .build()
+                )
+                .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
                 .build();
+
+        final V1AccessUserObject user = V1AccessUserObject.newBuilder()
+                .withPrincipal(USER_TYPE + SIMPLE_USER)
+                .withPermission(permission)
+                .build();
+
         Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(EMPTY_GROUP, user);
 
         assertEquals(2, rules.size());
@@ -82,7 +93,7 @@ public class TopicMatchingAclRulesBuilderTest {
         for (AccessControlPolicy rule : rules) {
             assertEquals(WILDCARD, rule.host());
             assertEquals(AclOperation.CREATE, rule.operation());
-            assertEquals(USER_TYPE +  SIMPLE_USER, rule.principal());
+            assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
             assertEquals(SIMPLE_USER, rule.principalName());
             assertEquals(topics[i], rule.resourcePattern());
             assertEquals(ResourceType.TOPIC, rule.resourceType());
@@ -98,15 +109,19 @@ public class TopicMatchingAclRulesBuilderTest {
                 .withName(SIMPLE_GROUP)
                 .withPermission(V1AccessPermission.newBuilder()
                     .allow(new V1AccessOperationPolicy(AclOperation.CREATE))
-                    .withPattern(TOPIC_REGEX)
-                    .withPatternType(PatternType.MATCH)
-                    .onResourceType(ResourceType.TOPIC)
+                    .onResource(V1AccessResourceMatcher
+                            .newBuilder()
+                            .withType(ResourceType.TOPIC)
+                            .withPatternType(PatternType.MATCH)
+                            .withPattern(TOPIC_REGEX)
+                            .build()
+                    )
                     .build())
                 .build();
 
-        V1AccessPrincipalObject user = V1AccessPrincipalObject.newBuilder()
-                .principal(USER_TYPE + SIMPLE_USER)
-                .groups(Collections.singleton(SIMPLE_GROUP))
+        V1AccessUserObject user = V1AccessUserObject.newBuilder()
+                .withPrincipal(USER_TYPE + SIMPLE_USER)
+                .withRoles(Collections.singleton(SIMPLE_GROUP))
                 .build();
         Collection<AccessControlPolicy> rules = this.builder.toAccessControlPolicy(Collections.singleton(group), user);
 
@@ -117,7 +132,7 @@ public class TopicMatchingAclRulesBuilderTest {
         for (AccessControlPolicy rule : rules) {
             assertEquals(WILDCARD, rule.host());
             assertEquals(AclOperation.CREATE, rule.operation());
-            assertEquals(USER_TYPE +  SIMPLE_USER, rule.principal());
+            assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
             assertEquals(SIMPLE_USER, rule.principalName());
             assertEquals(topics[i], rule.resourcePattern());
             assertEquals(ResourceType.TOPIC, rule.resourceType());

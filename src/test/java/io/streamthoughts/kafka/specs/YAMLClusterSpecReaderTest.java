@@ -17,7 +17,11 @@
 package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
-import io.streamthoughts.kafka.specs.model.*;
+import io.streamthoughts.kafka.specs.model.V1AccessPermission;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import org.apache.kafka.common.config.TopicConfig;
 import org.junit.jupiter.api.Assertions;
@@ -63,7 +67,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_acl_groups_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-groups.yaml"), Collections.emptyMap());
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-roles.yaml"), Collections.emptyMap());
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> policies = keyByName(specFile.specs().security().get().roles());
@@ -92,9 +96,9 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_acl_access_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-access.yaml"), EMPTY_LABELS);
+        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-users.yaml"), EMPTY_LABELS);
         assertNotNull(specFile);
-        Collection<V1AccessPrincipalObject> policies = specFile.specs().security().get().users();
+        Collection<V1AccessUserObject> policies = specFile.specs().security().get().users();
         assertEquals(2, policies.size());
     }
 

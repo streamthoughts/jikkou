@@ -28,27 +28,35 @@ import java.util.Optional;
 
 public class V1SecurityObject implements Serializable {
 
-    private final Collection<V1AccessPrincipalObject> users;
+    private final Collection<V1AccessUserObject> users;
     private final Collection<V1AccessRoleObject> roles;
+
+    public static V1SecurityObject withUsers(final Collection<V1AccessUserObject> users) {
+        return new V1SecurityObject(users, null);
+    }
+
+    public static V1SecurityObject withRoles(final Collection<V1AccessRoleObject> roles) {
+        return new V1SecurityObject(null, null);
+    }
 
     /**
      * Creates a new {@link V1SecurityObject} instance.
      * 
-     * @param users the list of {@link V1AccessPrincipalObject} instance
+     * @param users the list of {@link V1AccessUserObject} instance
      * @param roles the list of {@link V1AccessRoleObject} instance
      */
     @JsonCreator
-    public V1SecurityObject(@JsonProperty("users") final Collection<V1AccessPrincipalObject> users,
+    public V1SecurityObject(@JsonProperty("users") final Collection<V1AccessUserObject> users,
                             @JsonProperty("roles") final Collection<V1AccessRoleObject> roles) {
         this.users = Optional.ofNullable(users).orElse(Collections.emptyList());
         this.roles = Optional.ofNullable(roles).orElse(Collections.emptyList());
     }
 
     /**
-     * @return  the list of {@link V1AccessPrincipalObject}.
+     * @return  the list of {@link V1AccessUserObject}.
      */
     @JsonProperty
-    public Collection<V1AccessPrincipalObject> users() {
+    public Collection<V1AccessUserObject> users() {
         return users;
     }
 
