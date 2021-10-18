@@ -24,7 +24,8 @@ import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.template.Template;
+import io.streamthoughts.kafka.specs.template.TemplateBindings;
+import io.streamthoughts.kafka.specs.template.TemplateRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,8 +140,8 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             labels.putAll(parseSpecificationLabels(specification));
             labels.putAll(overrideLabels);
 
-            GlobalSpecsContext context = new GlobalSpecsContext().labels(labels);
-            final String compiled = Template.compile(specification, context);
+            TemplateBindings context = TemplateBindings.withLabels(labels);
+            final String compiled = TemplateRenderer.compile(specification, context);
 
             return reader.read(newInputStream(compiled), labels);
 

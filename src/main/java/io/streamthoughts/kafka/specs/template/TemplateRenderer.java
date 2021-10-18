@@ -22,7 +22,6 @@ import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.RenderResult;
 import com.hubspot.jinjava.interpret.TemplateError;
-import io.streamthoughts.kafka.specs.GlobalSpecsContext;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 
 import java.nio.charset.StandardCharsets;
@@ -32,9 +31,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Utility class for manipulating template using Mustache.
+ * Utility class for manipulating template using Jinja.
  */
-public class Template {
+public class TemplateRenderer {
 
     public static final String SCOPE_LABELS = "labels";
     public static final String SCOPE_SYSTEM = "system";
@@ -42,7 +41,7 @@ public class Template {
     public static final String SCOPE_SYSTEM_PROPS = "props";
 
     public static String compile(final String template,
-                                 final GlobalSpecsContext context) {
+                                 final TemplateBindings bindings) {
 
         JinjavaConfig config = JinjavaConfig.newBuilder()
                 .withCharset(StandardCharsets.UTF_8)
@@ -51,14 +50,14 @@ public class Template {
 
         Jinjava jinjava = new Jinjava(config);
 
-        HashMap<String, Object> bindings = new HashMap<>();
-        bindings.put(SCOPE_LABELS, context.getLabels());
-        bindings.put(SCOPE_SYSTEM, Map.of(
-                SCOPE_SYSTEM_ENV, context.getSystemEnv(),
-                SCOPE_SYSTEM_PROPS, context.getSystemProps())
+        HashMap<String, Object> bindingsMap = new HashMap<>();
+        bindingsMap.put(SCOPE_LABELS, bindings.getLabels());
+        bindingsMap.put(SCOPE_SYSTEM, Map.of(
+                SCOPE_SYSTEM_ENV, bindings.getSystemEnv(),
+                SCOPE_SYSTEM_PROPS, bindings.getSystemProps())
         );
 
-        RenderResult result = jinjava.renderForResult(template, bindings);
+        RenderResult result = jinjava.renderForResult(template, bindingsMap);
 
         List<TemplateError> errors = result.getErrors();
         if (!errors.isEmpty()) {
