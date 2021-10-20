@@ -13,11 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class V1AccessResourceMatcherTest {
+
+    private static final String TEST_MODEL_ROLES_YAML = "test-model-roles.yaml";
+
     private final YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
 
     @Test
     public void should_read_resource_with_default_pattern_type() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-model-roles.yaml"), Collections.emptyMap());
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap());
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());
@@ -33,7 +36,7 @@ public class V1AccessResourceMatcherTest {
 
     @Test
     public void should_read_resource_with_prefixed_pattern_type() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-model-roles.yaml"), Collections.emptyMap());
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap());
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());

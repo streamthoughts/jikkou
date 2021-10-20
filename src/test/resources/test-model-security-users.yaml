@@ -1,0 +1,16 @@
+version: 1
+metadata: {}
+specs:
+  security:
+    users:
+      - principal: 'principal_one'
+        roles: [ 'group_one' ]
+
+      - principal: 'principal_two'
+        roles: [ ]
+        permissions:
+          - resource:
+              type: 'topic'
+              pattern: 'bench-'
+              patternType: 'PREFIXED'
+            allow_operations: [ 'READ:*', 'WRITE:*' ]

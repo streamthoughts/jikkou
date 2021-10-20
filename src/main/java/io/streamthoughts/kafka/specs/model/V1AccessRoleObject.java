@@ -34,7 +34,7 @@ public class V1AccessRoleObject implements Named, Serializable {
     /**
      * The role permissions.
      */
-    private final Set<V1AccessPermission> permissions;
+    private final List<V1AccessPermission> permissions;
 
     /**
      * Creates a new {@link V1AccessRoleObject} instance.
@@ -44,11 +44,11 @@ public class V1AccessRoleObject implements Named, Serializable {
      */
     @JsonCreator
     V1AccessRoleObject(@JsonProperty("name") final String name,
-                       @JsonProperty("permissions") final Set<V1AccessPermission> permissions) {
+                       @JsonProperty("permissions") final List<V1AccessPermission> permissions) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(permissions, "permissions cannot be null");
         this.name = name;
-        this.permissions = Collections.unmodifiableSet(permissions);
+        this.permissions = Collections.unmodifiableList(permissions);
     }
 
     /**
@@ -59,7 +59,7 @@ public class V1AccessRoleObject implements Named, Serializable {
         return name;
     }
 
-    public Set<V1AccessPermission> permissions() {
+    public List<V1AccessPermission> permissions() {
         return permissions;
     }
 
@@ -71,7 +71,8 @@ public class V1AccessRoleObject implements Named, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         V1AccessRoleObject that = (V1AccessRoleObject) o;
-        return Objects.equals(name, that.name) && Objects.equals(permissions, that.permissions);
+        return Objects.equals(name, that.name) &&
+               Objects.equals(permissions, that.permissions);
     }
 
     /**
@@ -101,7 +102,7 @@ public class V1AccessRoleObject implements Named, Serializable {
 
         private String name;
 
-        private Set<V1AccessPermission> permissions = new HashSet<>();
+        private final List<V1AccessPermission> permissions = new LinkedList<>();
 
         Builder() {
         }

@@ -31,6 +31,7 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -56,7 +57,7 @@ public class DescribeBrokers {
         this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
     }
 
-    public Collection<V1BrokerObject> describe(final Collection<String> brokerIds) {
+    public List<V1BrokerObject> describe(final Collection<String> brokerIds) {
 
         final CompletableFuture<Map<String, Node>> futureTopicDesc = describeCluster();
         final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(brokerIds);

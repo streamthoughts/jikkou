@@ -93,7 +93,7 @@ public class AclsCommand extends WithAdminClientCommand {
          */
         @Override
         public Collection<OperationResult<AclChange>> executeCommand(final AdminClient client) {
-            final Optional<V1SecurityObject> optional = specFile().specs().security();
+            final Optional<V1SecurityObject> optional = loadSpecsObject().security();
 
             if (optional.isEmpty()) {
                 return Collections.emptyList();
