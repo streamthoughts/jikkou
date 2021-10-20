@@ -18,11 +18,13 @@
  */
 package io.streamthoughts.kafka.specs.command.validate;
 
+import io.streamthoughts.kafka.specs.SpecFileValidator;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.SetLabelsOptionMixin;
 import io.streamthoughts.kafka.specs.command.SpecFileOptionsMixin;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -52,15 +54,17 @@ public class ValidateCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() {
+        V1SpecFile file = specOptions.parse(labelsOption.getClientLabels());
 
-        final V1SpecFile parsed = specOptions.parse(labelsOption.getClientLabels());
+        V1SpecFile validate = new SpecFileValidator()
+                .withTransforms(new ApplyConfigMapsTransformation())
+                .apply(file);
 
         OutputStream os = System.out;
         MetaObject metaObject = MetaObject.defaults()
-                .setLabels(parsed.metadata().getLabels())
-                .setLabels(labelsOption.getClientLabels());
-
-        V1SpecFile validated = new V1SpecFile(metaObject, parsed.specs());
+                .setAnnotations(validate.metadata().getAnnotations())
+                .setLabels(validate.metadata().getLabels());
+        V1SpecFile validated = new V1SpecFile(metaObject, validate.specs());
         YAMLClusterSpecWriter.instance().write(validated, os);
         return CommandLine.ExitCode.OK;
     }

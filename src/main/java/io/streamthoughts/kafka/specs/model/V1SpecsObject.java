@@ -19,33 +19,29 @@
 package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.kafka.specs.resources.Named;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class V1SpecsObject implements Serializable {
 
-    private Map<String, V1TopicObject> topics;
+    private final V1ConfigMaps configMaps;
+
+    private final List<V1TopicObject> topics;
 
     private final V1SecurityObject security;
 
-    private final Collection<V1BrokerObject> brokers;
+    private final List<V1BrokerObject> brokers;
 
     /**
      * @param topics the {@link V1TopicObject} list.
      *
      * @return a new {@link V1SpecFile} instance.
      */
-    public static V1SpecsObject withTopics(final Collection<V1TopicObject> topics) {
-        return new V1SpecsObject(Collections.emptyList(), topics, null);
+    public static V1SpecsObject withTopics(final List<V1TopicObject> topics) {
+        return new V1SpecsObject(Collections.emptyList(), topics, null, Collections.emptyList());
     }
 
     /**
@@ -54,8 +50,8 @@ public class V1SpecsObject implements Serializable {
      *
      * @return a new {@link V1SpecFile} instance.
      */
-    public static V1SpecsObject withBrokers(final Collection<V1BrokerObject> brokers) {
-        return new V1SpecsObject(brokers, Collections.emptyList(), null);
+    public static V1SpecsObject withBrokers(final List<V1BrokerObject> brokers) {
+        return new V1SpecsObject(brokers, Collections.emptyList(), null, Collections.emptyList());
     }
 
     /**
@@ -68,7 +64,8 @@ public class V1SpecsObject implements Serializable {
         return new V1SpecsObject(
                 Collections.emptyList(),
                 Collections.emptyList(),
-                security
+                security,
+                Collections.emptyList()
         );
     }
 
@@ -76,7 +73,7 @@ public class V1SpecsObject implements Serializable {
      * Creates a new {@link V1SpecFile} instance.
      */
     public V1SpecsObject() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     /**
@@ -87,17 +84,23 @@ public class V1SpecsObject implements Serializable {
      * @param security  the {@link V1SecurityObject}.
      */
     @JsonCreator
-    public V1SpecsObject(@JsonProperty("brokers") final Collection<V1BrokerObject> brokers,
-                         @JsonProperty("topics") final Collection<V1TopicObject> topics,
-                         @JsonProperty("security") final V1SecurityObject security) {
+    public V1SpecsObject(@JsonProperty("brokers") final List<V1BrokerObject> brokers,
+                         @JsonProperty("topics") final List<V1TopicObject> topics,
+                         @JsonProperty("security") final V1SecurityObject security,
+                         @JsonProperty("config_maps") final List<V1ConfigMap> configMaps) {
         this.brokers = Optional.ofNullable(brokers).orElse(Collections.emptyList());
-        this.topics = Named.keyByName(Optional.ofNullable(topics).orElse(Collections.emptyList()));
+        this.topics = Optional.ofNullable(topics).orElse(Collections.emptyList());
         this.security = security;
+        this.configMaps = new V1ConfigMaps(configMaps);
     }
 
     @JsonProperty
-    public Collection<V1TopicObject> topics() {
-        return new ArrayList<>(topics.values());
+    public List<V1TopicObject> topics() {
+        return topics;
+    }
+
+    public V1SpecsObject topics(final List<V1TopicObject> topics) {
+        return new V1SpecsObject(brokers, topics, security, configMaps.all());
     }
 
     @JsonProperty
@@ -110,15 +113,39 @@ public class V1SpecsObject implements Serializable {
         return Optional.ofNullable(security);
     }
 
-    public Collection<V1TopicObject> topics(final Predicate<V1TopicObject> predicate) {
-        if (predicate == null) return topics();
-        return topics.values()
-                .stream()
-                .filter(predicate)
-                .collect(Collectors.toList());
+    @JsonIgnore
+    public V1ConfigMaps configMaps() {
+        return configMaps;
     }
 
-    public void setTopics(final Collection<V1TopicObject> topics) {
-        this.topics = topics.stream().collect(Collectors.toMap(V1TopicObject::name, o -> o));
+    @JsonIgnore
+    public V1SpecsObject configMaps(final List<V1ConfigMap> configMaps) {
+        return new V1SpecsObject(brokers, topics, security, configMaps);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        V1SpecsObject that = (V1SpecsObject) o;
+        return Objects.equals(configMaps, that.configMaps) &&
+               Objects.equals(topics, that.topics) &&
+               Objects.equals(security, that.security) &&
+               Objects.equals(brokers, that.brokers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(configMaps, topics, security, brokers);
+    }
+
+    @Override
+    public String toString() {
+        return "V1SpecsObject{" +
+                "configMaps=" + configMaps +
+                ", topics=" + topics +
+                ", security=" + security +
+                ", brokers=" + brokers +
+                '}';
     }
 }

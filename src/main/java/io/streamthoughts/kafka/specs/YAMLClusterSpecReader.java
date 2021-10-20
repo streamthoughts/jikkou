@@ -143,7 +143,9 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             TemplateBindings context = TemplateBindings.withLabels(labels);
             final String compiled = TemplateRenderer.compile(specification, context);
 
-            return reader.read(newInputStream(compiled), labels);
+            V1SpecFile file = reader.read(newInputStream(compiled), labels);
+            file.metadata().setLabels(overrideLabels);
+            return file;
 
         } catch (final IOException e) {
             throw new InvalidSpecsFileException(e.getLocalizedMessage());

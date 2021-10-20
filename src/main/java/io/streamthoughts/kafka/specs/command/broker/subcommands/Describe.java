@@ -100,7 +100,7 @@ public class Describe extends BaseCommand {
             describeBrokers.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
         }
 
-        Collection<V1BrokerObject> resources = describeBrokers.describe(brokerIds);
+        List<V1BrokerObject> resources = describeBrokers.describe(brokerIds);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;

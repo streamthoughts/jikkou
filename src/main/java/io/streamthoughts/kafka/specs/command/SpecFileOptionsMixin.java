@@ -19,8 +19,8 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
+import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import picocli.CommandLine;
 

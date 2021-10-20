@@ -33,6 +33,7 @@ import org.apache.kafka.common.config.ConfigResource;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -64,7 +65,7 @@ public final class DescribeTopics {
         this.configEntryPredicate = this.configEntryPredicate.and(configEntryPredicate) ;
     }
 
-    public Collection<V1TopicObject> describe(final Predicate<String> topicPredicate) {
+    public List<V1TopicObject> describe(final Predicate<String> topicPredicate) {
 
         final Collection<String> topicNames;
         try {

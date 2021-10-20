@@ -19,9 +19,12 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.CLIUtils;
+import io.streamthoughts.kafka.specs.SpecFileValidator;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.Printer;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
@@ -47,7 +50,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
      */
     @Override
     public Integer call(final AdminClient adminClient) {
-        specFile(); // ensure specification is valid.
+        loadSpecsObject(); // ensure specification is valid.
         if (!execOptions.yes && !isDryRun()) {
             CLIUtils.askToProceed(spec);
         }
@@ -62,7 +65,11 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
         return execOptions.dryRun;
     }
 
-    public V1SpecFile specFile() {
-        return specOptions.parse(labelsOption.getClientLabels());
+    public V1SpecsObject loadSpecsObject() {
+        V1SpecFile parsed = specOptions.parse(labelsOption.getClientLabels());
+        return new SpecFileValidator()
+                .withTransforms(new ApplyConfigMapsTransformation())
+                .apply(parsed)
+                .specs();
     }
 }

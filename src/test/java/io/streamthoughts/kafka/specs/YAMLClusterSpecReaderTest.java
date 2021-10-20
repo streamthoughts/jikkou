@@ -43,11 +43,16 @@ public class YAMLClusterSpecReaderTest {
     private static final V1TopicObject TOPIC_P1 = new V1TopicObject("my-topic-p1", 1, (short)1);
 
     private static final V1TopicObject TOPIC_P2 = new V1TopicObject("my-topic-p2", 2, (short)1)
-            .addConfigValue(new ConfigValue(TopicConfig.RETENTION_MS_CONFIG, "10000"));
+            .addConfigValue(new ConfigValue(TopicConfig.RETENTION_MS_CONFIG, "10000"))
+            .addConfigMapRef("CleanupPolicy");
 
     private static final V1TopicObject TOPIC_P3 = new V1TopicObject("my-topic-p3", null, null);
 
     private static final Map<String, Object> EMPTY_LABELS = Collections.emptyMap();
+
+    private static final String TEST_MODEL_TOPICS_YAML = "test-model-topics.yaml";
+    private static final String TEST_ACLS_USERS_YAML = "test-model-security-users.yaml";
+    private static final String TEST_ACLS_ROLES_YAML = "test-model-security-roles.yaml";
 
     private final YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
 
@@ -66,8 +71,8 @@ public class YAMLClusterSpecReaderTest {
     }
 
     @Test
-    public void should_read_multiple_acl_groups_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-roles.yaml"), Collections.emptyMap());
+    public void should_read_multiple_acl_roles_given_valid_YAML() {
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_ACLS_ROLES_YAML), Collections.emptyMap());
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> policies = keyByName(specFile.specs().security().get().roles());
@@ -96,7 +101,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_acl_access_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-acls-users.yaml"), EMPTY_LABELS);
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_ACLS_USERS_YAML), EMPTY_LABELS);
         assertNotNull(specFile);
         Collection<V1AccessUserObject> policies = specFile.specs().security().get().users();
         assertEquals(2, policies.size());
@@ -104,7 +109,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_multiple_topics_given_valid_YAML() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream("test-topics.yaml"), EMPTY_LABELS);
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_TOPICS_YAML), EMPTY_LABELS);
         assertNotNull(specFile);
         Collection<V1TopicObject> topics = specFile.specs().topics();
         assertNotNull(topics);

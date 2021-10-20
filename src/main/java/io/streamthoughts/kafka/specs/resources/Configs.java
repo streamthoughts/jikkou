@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -46,8 +47,33 @@ public class Configs implements Iterable<ConfigValue> {
         return new Configs();
     }
 
-    private final TreeMap<String, ConfigValue> values;
+    private final TreeMap<String, ConfigValue> configValues;
 
+    /**
+     * Static helper method to create a new {@link Configs} object from a given {@link Map}.
+     *
+     * @param configs   the {@link Map}.
+     * @return          new {@link Configs}.
+     */
+    public static Configs of(final Map<String, Object> configs) {
+        if (configs == null || configs.isEmpty())  return new Configs();
+
+        final Set<ConfigValue> values = configs.entrySet()
+                .stream()
+                .map(e -> new ConfigValue(e.getKey(), e.getValue()))
+                .collect(Collectors.toSet());
+
+        return new Configs(values);
+    }
+
+    /**
+     * Static helper method to create a new {@link Configs} object from a given Kafka {@link Config}.
+     * A {@link Predicate} can be passed to filter config entries.
+     *
+     * @param config        the {@link Config}.
+     * @param predicate     the {@link Predicate}.
+     * @return              a new {@link Configs}.
+     */
     public static Configs of(final Config config,
                              final Predicate<ConfigEntry> predicate) {
         Set<ConfigValue> configs = config.entries().stream()
@@ -70,7 +96,7 @@ public class Configs implements Iterable<ConfigValue> {
      * @param values the config values.
      */
     public Configs(final Set<ConfigValue> values) {
-        this.values = new TreeMap<>();
+        this.configValues = new TreeMap<>();
         values.forEach(this::add);
     }
 
@@ -81,7 +107,7 @@ public class Configs implements Iterable<ConfigValue> {
      * @return the previous config containing into this configs.
      */
     public ConfigValue add(final ConfigValue value) {
-        return this.values.put(value.name(), value);
+        return this.configValues.put(value.name(), value);
     }
 
     /**
@@ -90,11 +116,11 @@ public class Configs implements Iterable<ConfigValue> {
      * @return a new {@link Set} of {@link ConfigValue}.
      */
     public Set<ConfigValue> values() {
-        return new LinkedHashSet<>(this.values.values());
+        return new LinkedHashSet<>(this.configValues.values());
     }
 
     public Configs filters(final Configs configs) {
-        Set<ConfigValue> filteredConfigs = this.values.values()
+        Set<ConfigValue> filteredConfigs = this.configValues.values()
                 .stream()
                 .filter(v -> !configs.values().contains(v))
                 .collect(Collectors.toSet());
@@ -103,11 +129,11 @@ public class Configs implements Iterable<ConfigValue> {
 
 
     public int size() {
-        return this.values.size();
+        return this.configValues.size();
     }
 
     public ConfigValue get(final String name) {
-        return this.values.get(name);
+        return this.configValues.get(name);
     }
 
     /**
@@ -115,7 +141,11 @@ public class Configs implements Iterable<ConfigValue> {
      */
     @Override
     public Iterator<ConfigValue> iterator() {
-        return values.values().iterator();
+        return configValues.values().iterator();
+    }
+
+    public Map<String, Object> toMap() {
+        return configValues.values().stream().collect(Collectors.toMap(ConfigValue::name, ConfigValue::value));
     }
 
     /**
@@ -126,7 +156,7 @@ public class Configs implements Iterable<ConfigValue> {
         if (this == o) return true;
         if (!(o instanceof Configs)) return false;
         Configs that = (Configs) o;
-        return Objects.equals(values, that.values);
+        return Objects.equals(configValues, that.configValues);
     }
 
     /**
@@ -134,7 +164,7 @@ public class Configs implements Iterable<ConfigValue> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(values);
+        return Objects.hash(configValues);
     }
 
     /**
@@ -143,7 +173,7 @@ public class Configs implements Iterable<ConfigValue> {
     @Override
     public String toString() {
         return "Configs{" +
-                "values=" + values +
+                "values=" + configValues +
                 '}';
     }
 

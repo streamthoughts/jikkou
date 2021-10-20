@@ -20,19 +20,17 @@ package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.kafka.specs.internal.CollectionUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 public class MetaObject implements Serializable {
 
-    private final Map<String, String> annotations;
+    private final Map<String, Object> annotations = new TreeMap<>();
 
-    private final Map<String, Object> labels;
+    private final Map<String, Object> labels = new TreeMap<>();
 
     public static MetaObject defaults() {
         final MetaObject metaObject = new MetaObject();
@@ -40,20 +38,22 @@ public class MetaObject implements Serializable {
         return metaObject;
     }
 
-    public MetaObject() {
-        this.annotations = new TreeMap<>();
-        this.labels = new TreeMap<>();
-    }
+    public MetaObject() {}
 
     @JsonCreator
-    public MetaObject(@JsonProperty("annotations") final Map<String, String> annotations,
+    public MetaObject(@JsonProperty("annotations") final Map<String, Object> annotations,
                       @JsonProperty("labels") final Map<String, Object> labels) {
-        this.annotations = Optional.ofNullable(annotations).orElse(new HashMap<>());
-        this.labels = Optional.ofNullable(labels).orElse(new HashMap<>());
+        CollectionUtils.toFlattenMap(this.annotations, Optional.ofNullable(annotations).orElse(new HashMap<>()), null);
+        CollectionUtils.toFlattenMap(this.labels, Optional.ofNullable(labels).orElse(new HashMap<>()), null);
     }
 
     public MetaObject setLabels(final Map<String, Object> labels) {
         this.labels.putAll(labels);
+        return this;
+    }
+
+    public MetaObject setAnnotations(final Map<String, Object> annotations) {
+        this.annotations.putAll(annotations);
         return this;
     }
 
@@ -62,11 +62,12 @@ public class MetaObject implements Serializable {
         return this;
     }
 
-    public Map<String, String> getAnnotations() {
+    public Map<String, Object> getAnnotations() {
         return annotations;
     }
 
     public Map<String, Object> getLabels() {
         return labels;
     }
+
 }

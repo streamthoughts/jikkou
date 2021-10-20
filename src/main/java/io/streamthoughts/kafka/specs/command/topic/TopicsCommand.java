@@ -27,6 +27,7 @@ import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.*;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.operation.AclOperation;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
@@ -37,6 +38,7 @@ import picocli.CommandLine.Command;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 @Command(name = "topics",
         headerHeading = "Usage:%n%n",
@@ -74,20 +76,23 @@ public class TopicsCommand extends WithAdminClientCommand {
         @Override
         public Collection<OperationResult<TopicChange>> executeCommand(final AdminClient client) {
 
-            var topics = new DescribeTopics(
+            // Get the list of topics, that are candidates for this execution, from the remote Kafka cluster
+            final Collection<V1TopicObject> clusterTopicObjects  = new DescribeTopics(
                     client,
                     DescribeOperationOptions.withDescribeDefaultConfigs(true)
             ).describe(this::isResourceCandidate);
 
-            final TopicChanges topicChanges = TopicChanges.computeChanges(
-                    topics,
-                    specFile().specs().topics(it -> isResourceCandidate(it.name()))
-            );
+            // Get the list of topics, that are candidates for this execution, from the SpecsFile.
+            final Collection<V1TopicObject> userTopicObjects = loadSpecsObject().topics().stream()
+                    .filter(it -> isResourceCandidate(it.name()))
+                    .collect(Collectors.toList());
 
+            // Compute state changes
+            final TopicChanges topicChanges = TopicChanges.computeChanges(clusterTopicObjects, userTopicObjects);
+
+            // Execute the operation on changes
             final TopicOperation operation = getOperation(client);
-
             final LinkedList<OperationResult<TopicChange>> results = new LinkedList<>();
-
             if (isDryRun()) {
                 topicChanges.all()
                     .stream()

@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.specs.template;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +30,10 @@ public class TemplateBindingsTest {
     @Test
     public void test_should_return_labels_as_nested_map() {
 
-        Map<String, Object> result = new HashMap<>();
-        TemplateBindings.toNestedMap(Map.of(
+        Map<String, Object> result = new TemplateBindings(Map.of(
                 "key1.key2.key3", "value1",
                 "key1.key2.key4", "value2"
-        ), result, null);
+        )).getLabels();
 
         Assertions.assertNotNull(getValue("key1", result));
         Assertions.assertNotNull(getValue("key1.key2", result));
@@ -46,11 +44,10 @@ public class TemplateBindingsTest {
     @Test
     public void test_should_fail_return_labels_as_nested_map_given_duplicate_key() {
         Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> {
-            Map<String, Object> result = new HashMap<>();
-            TemplateBindings.toNestedMap(Map.of(
+            new TemplateBindings(Map.of(
                     "key1.key2", "value1",
                     "key1.key2.key3", "value2"
-            ), result, null);
+            ));
         });
     }
 
