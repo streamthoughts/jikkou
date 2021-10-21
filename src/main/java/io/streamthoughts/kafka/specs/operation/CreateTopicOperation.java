@@ -96,7 +96,8 @@ public class CreateTopicOperation implements TopicOperation {
 
     private NewTopic toNewTopic(final TopicChange t) {
         Map<String, String> configs = t.getConfigEntryChanges()
-                .stream().collect(Collectors.toMap(ConfigEntryChange::name, ValueChange::getAfter));
+                .stream()
+                .collect(Collectors.toMap(ConfigEntryChange::name, v -> String.valueOf(v.getAfter())));
 
         return new NewTopic(
                 t.name(),

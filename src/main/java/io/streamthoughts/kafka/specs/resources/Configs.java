@@ -55,7 +55,7 @@ public class Configs implements Iterable<ConfigValue> {
      * @param configs   the {@link Map}.
      * @return          new {@link Configs}.
      */
-    public static Configs of(final Map<String, Object> configs) {
+    public static Configs of(final Map<String, ?> configs) {
         if (configs == null || configs.isEmpty())  return new Configs();
 
         final Set<ConfigValue> values = configs.entrySet()

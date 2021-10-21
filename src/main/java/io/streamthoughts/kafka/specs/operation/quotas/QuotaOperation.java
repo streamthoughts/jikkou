@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,25 +16,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.quotas;
 
 import io.streamthoughts.kafka.specs.Description;
+import io.streamthoughts.kafka.specs.change.QuotaChange;
+import io.streamthoughts.kafka.specs.change.QuotaChanges;
 import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.change.TopicChanges;
+import io.streamthoughts.kafka.specs.operation.Operation;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.function.Predicate;
 
-public interface TopicOperation extends Operation<TopicChange> {
+/**
+ * Represents an operation to apply on client-quotas.
+ */
+public interface QuotaOperation extends Operation<QuotaChange> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    Description getDescriptionFor(@NotNull final TopicChange change);
+    Description getDescriptionFor(@NotNull final QuotaChange change);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    boolean test(final TopicChange change);
+    boolean test(@NotNull final QuotaChange change);
 
-    Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges change);
+    /**
+     * Applies the given changes.
+     *
+     * @param changes   the changes to apply.
+     * @return          the results of operation execution.
+     */
+    @NotNull Map<ClientQuotaEntity, KafkaFuture<Void>> apply(@NotNull final QuotaChanges changes);
 
 }

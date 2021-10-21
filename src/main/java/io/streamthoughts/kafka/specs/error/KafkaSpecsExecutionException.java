@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,25 +16,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.error;
 
-import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
-import org.apache.kafka.common.KafkaFuture;
-import org.jetbrains.annotations.NotNull;
+/**
+ * Execution exception for Kafka Specs.
+ */
+public class KafkaSpecsExecutionException extends RuntimeException {
 
-import java.util.Map;
-import java.util.function.Predicate;
+    public KafkaSpecsExecutionException() {
+        super();
+    }
 
-public interface TopicOperation extends Operation<TopicChange> {
+    public KafkaSpecsExecutionException(final String message) {
+        super(message);
+    }
 
-    @Override
-    Description getDescriptionFor(@NotNull final TopicChange change);
+    public KafkaSpecsExecutionException(final String message, final Throwable throwable) {
+        super(message, throwable);
+    }
 
-    @Override
-    boolean test(final TopicChange change);
-
-    Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges change);
+    public KafkaSpecsExecutionException(final Throwable cause) {
+        super(cause);
+    }
 
 }

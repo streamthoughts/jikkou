@@ -32,6 +32,7 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
+    implementation group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-3'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
