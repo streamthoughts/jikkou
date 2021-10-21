@@ -24,7 +24,6 @@ import io.streamthoughts.kafka.specs.command.SetLabelsOptionMixin;
 import io.streamthoughts.kafka.specs.command.SpecFileOptionsMixin;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -56,9 +55,7 @@ public class ValidateCommand implements Callable<Integer> {
     public Integer call() {
         V1SpecFile file = specOptions.parse(labelsOption.getClientLabels());
 
-        V1SpecFile validate = new SpecFileValidator()
-                .withTransforms(new ApplyConfigMapsTransformation())
-                .apply(file);
+        V1SpecFile validate = SpecFileValidator.getDefault().apply(file);
 
         OutputStream os = System.out;
         MetaObject metaObject = MetaObject.defaults()

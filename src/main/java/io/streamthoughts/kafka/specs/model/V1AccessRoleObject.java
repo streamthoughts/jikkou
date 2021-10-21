@@ -39,12 +39,12 @@ public class V1AccessRoleObject implements Named, Serializable {
     /**
      * Creates a new {@link V1AccessRoleObject} instance.
      *
-     * @param name      the group policy name.
-     * @param permissions   the permission of the role.
+     * @param name        the group policy name.
+     * @param permissions the permission of the role.
      */
     @JsonCreator
-    V1AccessRoleObject(@JsonProperty("name") final String name,
-                       @JsonProperty("permissions") final List<V1AccessPermission> permissions) {
+    public V1AccessRoleObject(@JsonProperty("name") final String name,
+                              @JsonProperty("permissions") final List<V1AccessPermission> permissions) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(permissions, "permissions cannot be null");
         this.name = name;
@@ -72,7 +72,7 @@ public class V1AccessRoleObject implements Named, Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         V1AccessRoleObject that = (V1AccessRoleObject) o;
         return Objects.equals(name, that.name) &&
-               Objects.equals(permissions, that.permissions);
+                Objects.equals(permissions, that.permissions);
     }
 
     /**

@@ -20,7 +20,15 @@ package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import io.streamthoughts.kafka.specs.transforms.Transformation;
+import io.streamthoughts.kafka.specs.validations.TopicMinNumPartitionsValidation;
+import io.streamthoughts.kafka.specs.validations.NoDuplicateRolesAllowedValidation;
+import io.streamthoughts.kafka.specs.validations.NoDuplicateTopicsAllowedValidation;
+import io.streamthoughts.kafka.specs.validations.NoDuplicateUsersAllowedValidation;
+import io.streamthoughts.kafka.specs.validations.TopicMinReplicationFactorValidation;
+import io.streamthoughts.kafka.specs.validations.Validation;
+import io.streamthoughts.kafka.specs.validations.ValidationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -30,12 +38,23 @@ import java.util.Objects;
 public class SpecFileValidator {
 
     private final List<Transformation> transformations;
+    private final List<Validation> validations;
+
+    public static SpecFileValidator getDefault() {
+        return new SpecFileValidator()
+            .withTransformation(new ApplyConfigMapsTransformation())
+            .withValidation(new NoDuplicateTopicsAllowedValidation())
+            .withValidation(new NoDuplicateUsersAllowedValidation())
+            .withValidation(new NoDuplicateRolesAllowedValidation())
+            .withValidation(new TopicMinNumPartitionsValidation())
+            .withValidation(new TopicMinReplicationFactorValidation());
+    }
 
     /**
      * Creates a new {@link SpecFileValidator} instance.
      */
     public SpecFileValidator() {
-        this(new LinkedList<>());
+        this(new LinkedList<>(), new LinkedList<>());
     }
 
     /**
@@ -43,12 +62,19 @@ public class SpecFileValidator {
      *
      * @param transformations   the list of {@link Transformation}.
      */
-    public SpecFileValidator(final @NotNull List<Transformation> transformations) {
+    public SpecFileValidator(final @NotNull List<Transformation> transformations,
+                             final @NotNull List<Validation> validations) {
         this.transformations = Objects.requireNonNull(transformations, "'transformations' cannot be null");
+        this.validations = Objects.requireNonNull(validations, "'validations' cannot be null");
     }
 
-    public @NotNull SpecFileValidator withTransforms(@NotNull final Transformation transformation) {
+    public @NotNull SpecFileValidator withTransformation(@NotNull final Transformation transformation) {
         this.transformations.add(transformation);
+        return this;
+    }
+
+    public @NotNull SpecFileValidator withValidation(@NotNull final Validation validation) {
+        this.validations.add(validation);
         return this;
     }
 
@@ -57,6 +83,22 @@ public class SpecFileValidator {
         for (Transformation transformation : transformations) {
             specs = transformation.transform(specs);
         }
+
+        List<ValidationException> exceptions = new LinkedList<>();
+        for (Validation validation : validations) {
+            try {
+                validation.validate(specs);
+            } catch (ValidationException e) {
+                exceptions.add(e);
+            }
+        }
+
+        if (!exceptions.isEmpty()) {
+            throw new ValidationException(exceptions)
+                    .errorSuffixMessage("\t- ")
+                    .suffixMessage("Validation rule violation:\n");
+        }
+
         return new V1SpecFile(file.metadata(), specs);
     }
 }
