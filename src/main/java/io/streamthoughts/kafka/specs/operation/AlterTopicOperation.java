@@ -45,8 +45,6 @@ import java.util.stream.Collectors;
  */
 public class AlterTopicOperation implements TopicOperation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AlterTopicOperation.class);
-
     public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
         return (Description.Alter) () -> String.format("Alter topic %s", resource.name());
     });
@@ -102,7 +100,7 @@ public class AlterTopicOperation implements TopicOperation {
 
                 if (operationType == Change.OperationType.UPDATE) {
                     alters.add(new AlterConfigOp(
-                            new ConfigEntry(configEntryChange.name(), configEntryChange.getAfter()),
+                            new ConfigEntry(configEntryChange.name(), String.valueOf(configEntryChange.getAfter())),
                             AlterConfigOp.OpType.SET)
                     );
                 }

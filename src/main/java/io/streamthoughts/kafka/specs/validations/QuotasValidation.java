@@ -16,32 +16,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.transforms;
+package io.streamthoughts.kafka.specs.validations;
 
-import io.streamthoughts.kafka.specs.model.ConfigMapRefs;
+import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * Transformation to apply all config-maps to topic objects.
+ * Validation for {@link V1QuotaObject}.
  */
-public class ApplyConfigMapsTransformation implements Transformation {
+public abstract class QuotasValidation implements Validation {
 
-    @Override
-    public @NotNull V1SpecsObject transform(@NotNull final V1SpecsObject specs) {
-        return specs
-                .topics(transform(specs, specs.topics()))
-                .quotas(transform(specs, specs.quotas()));
+    /**
+     * {@inheritDoc}
+     */
+    public void validate(@NotNull final V1SpecsObject specsObject) throws ValidationException {
+        final List<V1QuotaObject> quotas = specsObject.quotas();
+        if (quotas.isEmpty()) return;
+
+        List<ValidationException> exceptions = new ArrayList<>(quotas.size());
+        for (V1QuotaObject quota : quotas) {
+            try {
+                validateQuota(quota);
+            } catch (ValidationException e) {
+                exceptions.add(e);
+            }
+        }
+        if (!exceptions.isEmpty()) {
+            throw new ValidationException(exceptions);
+        }
     }
 
-    private <T extends ConfigMapRefs<T>> List<T> transform(@NotNull final V1SpecsObject specs,
-                                                           @NotNull final List<T> configMapRefs) {
-
-        return configMapRefs.stream()
-                .map(topic -> topic.applyConfigMaps(specs.configMaps()))
-                .collect(Collectors.toList());
-    }
+    public abstract void validateQuota(@NotNull final V1QuotaObject quota) throws ValidationException;
 }

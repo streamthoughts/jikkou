@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Named;
+import io.vavr.Tuple2;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
@@ -67,62 +68,21 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
 
     private static @NotNull Map<String, TopicChange> buildChangesForOrphanTopics(
             @NotNull final Collection<V1TopicObject> topics,
-            @NotNull final Set<String> changes)
-    {
+            @NotNull final Set<String> changes) {
         return topics
-            .stream()
-            .filter(it ->!changes.contains(it.name()))
-            .map(topic -> {
-                TopicChange.Builder change = new TopicChange.Builder()
-                    .setName(topic.name())
-                    .setOperation(Change.OperationType.DELETE);
-                return change.build();
-            })
-            .collect(Collectors.toMap(TopicChange::name, it -> it));
+                .stream()
+                .filter(it -> !changes.contains(it.name()))
+                .map(topic -> {
+                    TopicChange.Builder change = new TopicChange.Builder()
+                            .setName(topic.name())
+                            .setOperation(Change.OperationType.DELETE);
+                    return change.build();
+                })
+                .collect(Collectors.toMap(TopicChange::name, it -> it));
     }
 
     private static @NotNull TopicChange buildChangeForExistingTopic(@NotNull final V1TopicObject afterTopic,
                                                                     @NotNull final V1TopicObject beforeTopic) {
-
-        final Map<String, ConfigValue> beforeTopicConfigsByName = Named.keyByName(beforeTopic.configs());
-        final Map<String, ConfigEntryChange> afterTopicConfigsByName = new HashMap<>();
-
-        Change.OperationType topicOp = Change.OperationType.NONE;
-
-        for (ConfigValue afterConfigValue : afterTopic.configs()) {
-            final String configEntryName = afterConfigValue.name();
-
-            final ConfigValue beforeConfigValue = beforeTopicConfigsByName.getOrDefault(
-                    configEntryName,
-                    new ConfigValue(configEntryName, null)
-            );
-
-            var change = ValueChange.with(
-                    String.valueOf(afterConfigValue.value()),
-                    String.valueOf(beforeConfigValue.value())
-            );
-
-            if (change.getOperation() != Change.OperationType.NONE) {
-                topicOp = Change.OperationType.UPDATE;
-            }
-
-            afterTopicConfigsByName.put(configEntryName, new ConfigEntryChange(configEntryName, change));
-        }
-
-        // Iterate on all configs apply on the topic for
-        // looking for DYNAMIC_TOPIC_CONFIGS that may be orphan.
-        List<ConfigEntryChange> orphanChanges = beforeTopicConfigsByName.values()
-                .stream()
-                .filter(it -> it.unwrap().source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG)
-                .filter(it -> !afterTopicConfigsByName.containsKey(it.name()))
-                .map(it -> new ConfigEntryChange(it.name(), ValueChange.withBeforeValue(String.valueOf(it.value()))))
-                .collect(Collectors.toList());
-
-        if (!orphanChanges.isEmpty()) {
-            topicOp = Change.OperationType.UPDATE;
-        }
-
-        orphanChanges.forEach(it -> afterTopicConfigsByName.put(it.name(), it));
 
         var partitions = ValueChange.with(
                 afterTopic.partitionsOrDefault(),
@@ -133,12 +93,17 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
                 beforeTopic.replicationFactorOrDefault()
         );
 
+        final Tuple2<Change.OperationType, List<ConfigEntryChange>> t = ConfigEntryChanges.computeChange(
+                beforeTopic.configs(),
+                afterTopic.configs()
+        );
+
         return new TopicChange.Builder()
                 .setName(afterTopic.name())
                 .setPartitionsChange(partitions)
                 .setReplicationFactorChange(replication)
-                .setOperation(topicOp)
-                .setConfigs(new ArrayList<>(afterTopicConfigsByName.values()))
+                .setOperation(t._1)
+                .setConfigs(t._2)
                 .build();
     }
 
@@ -151,10 +116,10 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
                 .setOperation(Change.OperationType.ADD);
 
         afterTopic.configs().forEach(it -> builder.addConfigChange(
-                        new ConfigEntryChange(
-                                it.name(),
-                                ValueChange.withAfterValue(String.valueOf(it.value()))
-                        )
+                new ConfigEntryChange(
+                        it.name(),
+                        ValueChange.withAfterValue(String.valueOf(it.value()))
+                )
                 )
         );
         return builder.build();
@@ -180,7 +145,7 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
      * {@inheritDoc}
      */
     @Override
-    public List<OperationResult<TopicChange>> apply( @NotNull final TopicOperation operation) {
+    public List<OperationResult<TopicChange>> apply(@NotNull final TopicOperation operation) {
 
         Map<String, TopicChange> filtered = filter(operation)
                 .stream()
@@ -189,11 +154,11 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
         Map<String, KafkaFuture<Void>> results = operation.apply(new TopicChanges(filtered));
 
         List<CompletableFuture<OperationResult<TopicChange>>> completableFutures = results.entrySet()
-            .stream()
-            .map(entry -> {
-                final Future<Void> future = entry.getValue();
-                return makeCompletableFuture(future, get(entry.getKey()), operation);
-            }).collect(Collectors.toList());
+                .stream()
+                .map(entry -> {
+                    final Future<Void> future = entry.getValue();
+                    return makeCompletableFuture(future, get(entry.getKey()), operation);
+                }).collect(Collectors.toList());
 
         return completableFutures
                 .stream()

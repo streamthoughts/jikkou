@@ -27,6 +27,7 @@ import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.Named;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
@@ -35,7 +36,7 @@ import java.util.*;
  * A Kafka topic resource.
  */
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public final class V1TopicObject implements Named, Serializable {
+public final class V1TopicObject extends ConfigMapRefs<V1TopicObject> implements Named, Serializable {
 
     public static final int NO_NUM_PARTITIONS = -1;
     public static final short NO_REPLICATION_FACTOR = -1;
@@ -45,8 +46,6 @@ public final class V1TopicObject implements Named, Serializable {
     private final Integer partitions;
 
     private final Short replicationFactor;
-
-    private final List<String> configMapRefs;
 
     private final Configs configs;
 
@@ -67,7 +66,7 @@ public final class V1TopicObject implements Named, Serializable {
      * @param replication the replication factor.
      */
     public V1TopicObject(final String name, final Integer partitions, final Short replication) {
-        this(name, partitions, replication, new HashMap<>(), new LinkedList<>());
+        this(name, partitions, replication, new HashMap<>(), new HashSet<>());
     }
 
     /**
@@ -83,7 +82,7 @@ public final class V1TopicObject implements Named, Serializable {
                          @JsonProperty("partitions") final Integer partitions,
                          @JsonProperty("replication_factor") final Short replication,
                          @JsonProperty("configs") final Map<String, Object> configs,
-                         @JsonProperty("config_map_refs") final List<String> configMaps) {
+                         @JsonProperty("config_map_refs") final Set<String> configMaps) {
         this(name, partitions, replication, Configs.of(configs), configMaps);
     }
 
@@ -99,7 +98,7 @@ public final class V1TopicObject implements Named, Serializable {
                          final Integer partitions,
                          final Short replication,
                          final Configs configs) {
-        this(name, partitions, replication, configs, Collections.emptyList());
+        this(name, partitions, replication, configs, Collections.emptySet());
     }
 
     /**
@@ -114,11 +113,11 @@ public final class V1TopicObject implements Named, Serializable {
                          final Integer partitions,
                          final Short replication,
                          final Configs configs,
-                         final List<String> configMapRefs) {
+                         final Set<String> configMapRefs) {
+        super(configMapRefs);
         this.name = Objects.requireNonNull(name, "'name' should not be null");
         this.partitions = partitions;
         this.replicationFactor = replication;
-        this.configMapRefs = Optional.ofNullable(configMapRefs).orElse(new LinkedList<>());
         this.configs =  Optional.ofNullable(configs).orElse(Configs.empty());
     }
 
@@ -157,12 +156,12 @@ public final class V1TopicObject implements Named, Serializable {
         return configs;
     }
 
-    /**
-     * @return the configMaps associated to this topic.
-     */
-    @JsonIgnore
-    public List<String> configMapRefs() {
-        return configMapRefs;
+    @Override
+    public V1TopicObject addConfigs(@NotNull Map<String, Object> configs) {
+        final HashMap<String, Object> merged = new HashMap<>();
+        merged.putAll(configs);
+        merged.putAll(this.configs.toMap());
+        return new V1TopicObject(name, partitions, replicationFactor, Configs.of(configs));
     }
 
     @JsonIgnore
@@ -170,30 +169,8 @@ public final class V1TopicObject implements Named, Serializable {
         return Optional.ofNullable(replicationFactor).orElse(NO_REPLICATION_FACTOR);
     }
 
-    /**
-     *
-     * @param configMaps    the {@link V1ConfigMaps} to apply on this object.
-     * @return              a new {@link V1TopicObject}.
-     */
-    public V1TopicObject apply(final V1ConfigMaps configMaps) {
-        Map<String, Object> newConfigs = new HashMap<>();
-        this.configMapRefs.forEach(name -> newConfigs.putAll(
-                configMaps.findConfigMap(name)
-                        .orElseThrow(() -> new KafkaSpecsException("configmap '" + name + "' not found"))
-                        .configs()
-                        .toMap())
-        );
-        newConfigs.putAll(this.configs.toMap());
-        return new V1TopicObject(name, partitions, replicationFactor, Configs.of(newConfigs));
-    }
-
     public V1TopicObject addConfigValue(final ConfigValue config) {
         this.configs.add(config);
-        return this;
-    }
-
-    public V1TopicObject addConfigMapRef(final String configMapRef) {
-        this.configMapRefs.add(configMapRef);
         return this;
     }
 
@@ -203,12 +180,12 @@ public final class V1TopicObject implements Named, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof V1TopicObject)) return false;
+        if (!super.equals(o)) return false;
         V1TopicObject that = (V1TopicObject) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(partitions, that.partitions) &&
                 Objects.equals(replicationFactor, that.replicationFactor) &&
-                Objects.equals(configMapRefs, that.configMapRefs) &&
                 Objects.equals(configs, that.configs);
     }
 
@@ -217,7 +194,7 @@ public final class V1TopicObject implements Named, Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, partitions, replicationFactor, configMapRefs, configs);
+        return Objects.hash(super.hashCode(), name, partitions, replicationFactor, configs);
     }
 
     /**

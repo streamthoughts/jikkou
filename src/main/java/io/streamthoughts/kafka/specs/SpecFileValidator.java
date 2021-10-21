@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import io.streamthoughts.kafka.specs.transforms.Transformation;
+import io.streamthoughts.kafka.specs.validations.QuotasEntityValidation;
 import io.streamthoughts.kafka.specs.validations.TopicMinNumPartitionsValidation;
 import io.streamthoughts.kafka.specs.validations.NoDuplicateRolesAllowedValidation;
 import io.streamthoughts.kafka.specs.validations.NoDuplicateTopicsAllowedValidation;
@@ -47,7 +48,8 @@ public class SpecFileValidator {
             .withValidation(new NoDuplicateUsersAllowedValidation())
             .withValidation(new NoDuplicateRolesAllowedValidation())
             .withValidation(new TopicMinNumPartitionsValidation())
-            .withValidation(new TopicMinReplicationFactorValidation());
+            .withValidation(new TopicMinReplicationFactorValidation())
+            .withValidation(new QuotasEntityValidation());
     }
 
     /**

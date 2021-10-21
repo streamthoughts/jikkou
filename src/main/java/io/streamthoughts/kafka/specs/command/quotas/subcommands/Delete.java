@@ -16,37 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.change;
+package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.streamthoughts.kafka.specs.resources.Named;
+import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
+import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
+import io.streamthoughts.kafka.specs.operation.quotas.DeleteQuotasOperation;
+import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
+import picocli.CommandLine.Command;
 
-import java.util.Objects;
-
-public class ConfigEntryChange extends ValueChange<Object> implements Change<ConfigEntryChange>, Named {
-
-    private final String name;
-
-    /**
-     * Creates a new {@link ConfigEntryChange} instance.
-     *
-     * @param name          the config-entry name.
-     * @param valueChange   the {@link ValueChange}.
-     */
-    public ConfigEntryChange(@NotNull final String name,
-                             @NotNull final ValueChange<Object> valueChange) {
-        super(valueChange);
-        this.name = Objects.requireNonNull(name, "'name' should not be null");
-    }
+@Command(name = "delete",
+        description = "Delete all client-quotas not described in the specification file."
+)
+public class Delete extends QuotasCommand.Base {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
-    public String name() {
-        return name;
+    public QuotaOperation getOperation(@NotNull final AdminClient client) {
+        return new DeleteQuotasOperation(client);
     }
-
 }

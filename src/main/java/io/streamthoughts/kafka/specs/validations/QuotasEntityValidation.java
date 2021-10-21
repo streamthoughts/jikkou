@@ -16,37 +16,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.change;
+package io.streamthoughts.kafka.specs.validations;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.streamthoughts.kafka.specs.resources.Named;
+import io.streamthoughts.kafka.specs.model.V1QuotaObject;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ConfigEntryChange extends ValueChange<Object> implements Change<ConfigEntryChange>, Named {
-
-    private final String name;
-
-    /**
-     * Creates a new {@link ConfigEntryChange} instance.
-     *
-     * @param name          the config-entry name.
-     * @param valueChange   the {@link ValueChange}.
-     */
-    public ConfigEntryChange(@NotNull final String name,
-                             @NotNull final ValueChange<Object> valueChange) {
-        super(valueChange);
-        this.name = Objects.requireNonNull(name, "'name' should not be null");
-    }
+/**
+ * Validation for {@link V1QuotaObject}.
+ */
+public class QuotasEntityValidation extends QuotasValidation {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @JsonIgnore
-    public String name() {
-        return name;
+    public void validateQuota(@NotNull V1QuotaObject quota) throws ValidationException {
+        try {
+            quota.type().validate(quota.entity());
+        } catch (Exception e) {
+            throw new ValidationException(e.getMessage(), this);
+        }
     }
-
 }

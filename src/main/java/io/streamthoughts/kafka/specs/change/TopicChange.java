@@ -87,7 +87,7 @@ public class TopicChange implements Change<TopicChange>, Named {
         return configs;
     }
 
-    public Map<String, ValueChange<String>> getConfigs() {
+    public Map<String, ValueChange<Object>> getConfigs() {
         return configs.stream().collect(Collectors.toMap(ConfigEntryChange::name, it -> it));
     }
 

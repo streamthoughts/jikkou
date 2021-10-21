@@ -21,9 +21,11 @@ package io.streamthoughts.kafka.specs;
 import io.streamthoughts.kafka.specs.command.AdminClientMixin;
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
+import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import org.apache.kafka.common.metrics.Quota;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -44,7 +46,15 @@ import static picocli.CommandLine.Model.CommandSpec;
         synopsisHeading = "%n",
         description = "CLI to ease and automate Apache Kafka cluster configuration management.",
         mixinStandardHelpOptions = true,
-        subcommands = {ValidateCommand.class, TopicsCommand.class, AclsCommand.class, BrokerCommand.class, CommandLine.HelpCommand.class })
+        subcommands = {
+            ValidateCommand.class,
+            TopicsCommand.class,
+            AclsCommand.class,
+            BrokerCommand.class,
+            QuotasCommand.class,
+            CommandLine.HelpCommand.class,
+        }
+)
 public class KafkaSpecs {
 
     static LocalDateTime START_TIME;
