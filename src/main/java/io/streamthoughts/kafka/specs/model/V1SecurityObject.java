@@ -36,7 +36,7 @@ public class V1SecurityObject implements Serializable {
     }
 
     public static V1SecurityObject withRoles(final Collection<V1AccessRoleObject> roles) {
-        return new V1SecurityObject(null, null);
+        return new V1SecurityObject(null, roles);
     }
 
     /**
