@@ -18,10 +18,8 @@
  */
 package io.streamthoughts.kafka.specs.template;
 
-import io.streamthoughts.kafka.specs.internal.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -38,30 +36,35 @@ public class TemplateBindings {
 
     private final Map<String, String> systemProps;
 
+    private final Map<String, Object> vars;
+
     private final Map<String, Object> labels;
 
-    public static TemplateBindings withLabels(final Map<String, Object> labels) {
-        return new TemplateBindings(labels);
+    public static TemplateBindings defaults() {
+        return new TemplateBindings(
+                System.getenv(),
+                fromProperties(System.getProperties()),
+                new LinkedHashMap<>(),
+                new LinkedHashMap<>()
+        );
     }
 
-    /**
-     * Creates a new {@link TemplateBindings} instance.
-     */
-    public TemplateBindings() {
-        this(new LinkedHashMap<>());
+    private TemplateBindings(@NotNull final Map<String, String> systemEnv,
+                             @NotNull final Map<String, String> systemProps,
+                             @NotNull final Map<String, Object> vars,
+                             @NotNull final Map<String, Object> labels) {
+        this.systemEnv = systemEnv;
+        this.systemProps = systemProps;
+        this.labels = labels;
+        this.vars = vars;
     }
 
-    /**
-     * Creates a new {@link TemplateBindings} instance.
-     *
-     * @param labels a list of labels.
-     */
-    public TemplateBindings(@NotNull final Map<String, Object> labels) {
-        this.systemProps = fromProperties(System.getProperties());
-        this.systemEnv = System.getenv();
-        this.labels = new HashMap<>();
-        CollectionUtils.toNestedMap(labels, this.labels, null);
-        CollectionUtils.toFlattenMap(labels, this.labels, null);
+    public TemplateBindings withLabels(@NotNull final Map<String, Object> labels) {
+        return new TemplateBindings(systemEnv, systemProps, vars, labels);
+    }
+
+    public TemplateBindings withVars(@NotNull final Map<String, Object> vars) {
+        return new TemplateBindings(systemEnv, systemProps, vars, labels);
     }
 
     public Map<String, Object> getLabels() {
@@ -74,6 +77,10 @@ public class TemplateBindings {
 
     public Map<String, String> getSystemProps() {
         return systemProps;
+    }
+
+    public Map<String, Object> getVars() {
+        return vars;
     }
 
     @Override

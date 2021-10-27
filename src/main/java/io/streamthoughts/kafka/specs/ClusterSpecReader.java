@@ -34,9 +34,11 @@ public interface ClusterSpecReader {
      * Retrieves a {@link V1SpecFile} from the specified input stream.
      *
      * @param specs    the input stream from which to read the specification.
+     * @param vars     the vars passed through the command-line arguments.
      * @param labels   the labels passed through the command-line arguments.
      * @return         a new {@link V1SpecFile} instance.
      */
     V1SpecFile read(@NotNull final InputStream specs,
+                    @NotNull final Map<String, Object> vars,
                     @NotNull final Map<String, Object> labels) throws KafkaSpecsException;
 }

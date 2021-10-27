@@ -29,14 +29,14 @@ public class TemplateRendererTest {
     public void should_render_template_given_simple_key() {
         var result = TemplateRenderer.compile(
                 "{{ labels.my_var }}",
-                TemplateBindings.withLabels(Map.of("my_var", "test"))
+                TemplateBindings.defaults().withLabels(Map.of("my_var", "test"))
         );
         Assertions.assertEquals("test", result);
     }
 
     @Test
     public void should_render_template_given_hierarchical_keys() {
-        TemplateBindings binding = TemplateBindings.withLabels(Map.of(
+        TemplateBindings binding = TemplateBindings.defaults().withLabels(Map.of(
                 "my.var1", "val1",
                 "my", Map.of("var2", "val2")
         ));

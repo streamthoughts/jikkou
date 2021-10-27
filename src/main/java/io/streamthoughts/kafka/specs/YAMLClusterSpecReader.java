@@ -22,8 +22,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
-import io.streamthoughts.kafka.specs.model.MetaObject;
+import io.streamthoughts.kafka.specs.model.V1MetadataObjects;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.model.V1VarsObjects;
 import io.streamthoughts.kafka.specs.template.TemplateBindings;
 import io.streamthoughts.kafka.specs.template.TemplateRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
         VERSION_1("1") {
             @Override
             public V1SpecFile read(@NotNull final InputStream specification,
+                                   @NotNull final Map<String, Object> vars,
                                    @NotNull final Map<String, Object> labels) throws KafkaSpecsException {
                 try {
                     return Jackson.YAML_OBJECT_MAPPER.readValue(specification, V1SpecFile.class);
@@ -90,6 +92,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
      */
     @Override
     public V1SpecFile read(@NotNull final InputStream stream,
+                           @NotNull final Map<String, Object> overrideVars,
                            @NotNull final Map<String, Object> overrideLabels) {
         try {
             final String specification = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
@@ -123,7 +126,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
                         });
             }
 
-            return read(reader, specification, overrideLabels);
+            return read(reader, specification, overrideVars, overrideLabels);
 
         } catch (IOException e) {
             throw new InvalidSpecsFileException(e.getLocalizedMessage());
@@ -132,18 +135,25 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
 
     private V1SpecFile read(final VersionedSpecReader reader,
                             final String specification,
+                            final Map<String, Object> overrideVars,
                             final Map<String, Object> overrideLabels) {
         try {
 
             Map<String, Object> labels = new HashMap<>();
-
             labels.putAll(parseSpecificationLabels(specification));
             labels.putAll(overrideLabels);
 
-            TemplateBindings context = TemplateBindings.withLabels(labels);
+            Map<String, Object> vars = new HashMap<>();
+            vars.putAll(parseSpecificationVars(specification));
+            vars.putAll(overrideVars);
+
+            final TemplateBindings context = TemplateBindings.defaults()
+                    .withLabels(labels)
+                    .withVars(vars);
+
             final String compiled = TemplateRenderer.compile(specification, context);
 
-            V1SpecFile file = reader.read(newInputStream(compiled), labels);
+            V1SpecFile file = reader.read(newInputStream(compiled), vars, labels);
             file.metadata().setLabels(overrideLabels);
             return file;
 
@@ -152,28 +162,22 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
         }
     }
 
-    private Map<String, Object> parseSpecificationLabels(String specification) throws IOException {
+    private Map<String, Object> parseSpecificationVars(final String specification) throws IOException {
         return Jackson.YAML_OBJECT_MAPPER.readValue(
                 newInputStream(specification),
-                MetaObjectHolder.class
+                V1VarsObjects.class
+        ).vars();
+    }
+
+    private Map<String, Object> parseSpecificationLabels(final String specification) throws IOException {
+        return Jackson.YAML_OBJECT_MAPPER.readValue(
+                newInputStream(specification),
+                V1MetadataObjects.class
         ).metadata().getLabels();
     }
 
     private InputStream newInputStream(final String specification) {
         return new ByteArrayInputStream(specification.getBytes(StandardCharsets.UTF_8));
-    }
-
-    private static class MetaObjectHolder {
-        private final MetaObject metadata;
-
-        @JsonCreator
-        public MetaObjectHolder(@JsonProperty("metadata") final MetaObject metadata) {
-            this.metadata = Optional.ofNullable(metadata).orElse(new MetaObject());
-        }
-
-        public MetaObject metadata() {
-            return metadata;
-        }
     }
 
     private static class Versioned {

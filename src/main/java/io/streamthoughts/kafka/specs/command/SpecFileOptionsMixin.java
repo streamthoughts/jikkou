@@ -22,13 +22,13 @@ import io.streamthoughts.kafka.specs.ClusterSpecReader;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
 
 public class SpecFileOptionsMixin {
 
@@ -43,7 +43,7 @@ public class SpecFileOptionsMixin {
     )
     URL url;
 
-    public V1SpecFile parse(final Map<String, Object> clientLabels) {
+    public V1SpecFile parse(@NotNull final SetOptionsMixin options) {
         final InputStream is;
         if (url != null) {
             try {
@@ -62,6 +62,6 @@ public class SpecFileOptionsMixin {
         } else {
             throw new IllegalArgumentException("no specification");
         }
-        return READER.read(is, clientLabels);
+        return READER.read(is, options.getClientLabels(), options.getClientVars());
     }
 }

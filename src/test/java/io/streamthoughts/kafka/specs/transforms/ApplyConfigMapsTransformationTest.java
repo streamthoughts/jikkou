@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ApplyConfigMapsTransformationTest {
 
@@ -37,7 +38,7 @@ public class ApplyConfigMapsTransformationTest {
             null,
             null,
             Configs.empty(),
-            List.of(TEST_CONFIG_MAP_NAME)
+            Set.of(TEST_CONFIG_MAP_NAME)
     );
 
     @Test

@@ -28,11 +28,9 @@ import java.util.Optional;
 /**
  * The Kafka cluster specification.
  */
-public class V1SpecFile implements Serializable {
+public class V1SpecFile extends V1MetadataObjects implements Serializable {
 
     public static final String VERSION = "1";
-
-    private final MetaObject metadata;
 
     private final V1SpecsObject specs;
 
@@ -45,13 +43,13 @@ public class V1SpecFile implements Serializable {
     @JsonCreator
     public V1SpecFile(@Nullable @JsonProperty("metadata") final MetaObject metadata,
                       @Nullable @JsonProperty("specs") final V1SpecsObject specs) {
-        this.metadata = Optional.ofNullable(metadata).orElse(new MetaObject());
+        super(metadata);
         this.specs = Optional.ofNullable(specs).orElse(new V1SpecsObject());
     }
 
-    @JsonProperty
-    public MetaObject metadata() {
-        return metadata;
+    @JsonProperty(index = 0)
+    public String version() {
+        return VERSION;
     }
 
     @JsonProperty
@@ -59,8 +57,4 @@ public class V1SpecFile implements Serializable {
         return specs;
     }
 
-    @JsonProperty
-    public String version() {
-        return VERSION;
-    }
 }
