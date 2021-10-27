@@ -16,24 +16,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.template;
+package io.streamthoughts.kafka.specs.internal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class TemplateBindingsTest {
+public class CollectionUtilsTest {
 
     @Test
-    public void test_should_return_labels_as_nested_map() {
+    public void test_should_return_nested_map() {
 
-        Map<String, Object> result = new TemplateBindings(Map.of(
+        Map<String, Object> result = new HashMap<>();
+
+        CollectionUtils.toNestedMap(
+                Map.of(
                 "key1.key2.key3", "value1",
                 "key1.key2.key4", "value2"
-        )).getLabels();
+                ),
+                result,
+                null
+        );
 
         Assertions.assertNotNull(getValue("key1", result));
         Assertions.assertNotNull(getValue("key1.key2", result));
@@ -42,12 +49,18 @@ public class TemplateBindingsTest {
     }
 
     @Test
-    public void test_should_fail_return_labels_as_nested_map_given_duplicate_key() {
+    public void test_should_fail_return_nested_map_given_duplicate_key() {
         Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> {
-            new TemplateBindings(Map.of(
-                    "key1.key2", "value1",
-                    "key1.key2.key3", "value2"
-            ));
+            Map<String, Object> result = new HashMap<>();
+
+            CollectionUtils.toNestedMap(
+                    Map.of(
+                            "key1.key2", "value1",
+                            "key1.key2.key3", "value2"
+                    ),
+                    result,
+                    null
+            );
         });
     }
 
@@ -71,5 +84,4 @@ public class TemplateBindingsTest {
         }
         return result;
     }
-
 }

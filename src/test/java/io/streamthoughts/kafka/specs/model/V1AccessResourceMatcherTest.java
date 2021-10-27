@@ -20,7 +20,7 @@ public class V1AccessResourceMatcherTest {
 
     @Test
     public void should_read_resource_with_default_pattern_type() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap());
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap(), Collections.emptyMap());
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());
@@ -36,7 +36,8 @@ public class V1AccessResourceMatcherTest {
 
     @Test
     public void should_read_resource_with_prefixed_pattern_type() {
-        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap());
+        final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap(), Collections.emptyMap());
+
         assertNotNull(specFile);
 
         final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());

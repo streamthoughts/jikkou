@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.command.validate;
 
 import io.streamthoughts.kafka.specs.SpecFileValidator;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
-import io.streamthoughts.kafka.specs.command.SetLabelsOptionMixin;
+import io.streamthoughts.kafka.specs.command.SetOptionsMixin;
 import io.streamthoughts.kafka.specs.command.SpecFileOptionsMixin;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
@@ -46,14 +46,14 @@ public class ValidateCommand implements Callable<Integer> {
     SpecFileOptionsMixin specOptions;
 
     @CommandLine.Mixin
-    SetLabelsOptionMixin labelsOption;
+    SetOptionsMixin labelsOption;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() {
-        V1SpecFile file = specOptions.parse(labelsOption.getClientLabels());
+        V1SpecFile file = specOptions.parse(labelsOption);
 
         V1SpecFile validate = SpecFileValidator.getDefault().apply(file);
 

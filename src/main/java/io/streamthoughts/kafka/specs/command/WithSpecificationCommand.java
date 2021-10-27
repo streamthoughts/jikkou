@@ -41,7 +41,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
     private CommandSpec spec;
 
     @CommandLine.Mixin
-    SetLabelsOptionMixin labelsOption;
+    SetOptionsMixin labelsOption;
 
 
     /**
@@ -65,7 +65,7 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
     }
 
     public V1SpecsObject loadSpecsObject() {
-        V1SpecFile parsed = specOptions.parse(labelsOption.getClientLabels());
+        V1SpecFile parsed = specOptions.parse(labelsOption);
         return SpecFileValidator.getDefault().apply(parsed).specs();
     }
 }

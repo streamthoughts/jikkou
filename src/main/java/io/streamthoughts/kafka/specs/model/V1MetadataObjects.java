@@ -16,22 +16,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.command;
+package io.streamthoughts.kafka.specs.model;
 
-import picocli.CommandLine;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
-public class SetLabelsOptionMixin {
+public class V1MetadataObjects {
 
-    @CommandLine.Option(names = { "--set-label", "-s" },
-            description = "Set labels on the command line (can specify multiple values: -s key1=val1 -s key2=val2)"
-    )
-    public Map<String, Object> clientLabels = new HashMap<>();
+    private final MetaObject metadata;
 
+    /**
+     * Creates a new {@link V1MetadataObjects} instance.
+     *
+     * @param metadata  the metadata.
+     */
+    @JsonCreator
+    public V1MetadataObjects(@JsonProperty("metadata") final MetaObject metadata) {
+        this.metadata = Optional.ofNullable(metadata).orElse(new MetaObject());
+    }
 
-    public Map<String, Object> getClientLabels() {
-        return clientLabels;
+    @JsonProperty
+    public MetaObject metadata() {
+        return metadata;
     }
 }

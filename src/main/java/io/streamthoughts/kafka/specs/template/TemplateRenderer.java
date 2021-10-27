@@ -23,6 +23,9 @@ import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.RenderResult;
 import com.hubspot.jinjava.interpret.TemplateError;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.internal.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -35,13 +38,15 @@ import java.util.regex.Pattern;
  */
 public class TemplateRenderer {
 
-    public static final String SCOPE_LABELS = "labels";
-    public static final String SCOPE_SYSTEM = "system";
-    public static final String SCOPE_SYSTEM_ENV = "env";
-    public static final String SCOPE_SYSTEM_PROPS = "props";
+    // list of scopes for bindings
+    public static final String SCOPE_LABELS             = "labels";
+    public static final String SCOPE_VARS               = "vars";
+    public static final String SCOPE_SYSTEM             = "system";
+    public static final String SCOPE_SYSTEM_ENV         = "env";
+    public static final String SCOPE_SYSTEM_PROPS       = "props";
 
-    public static String compile(final String template,
-                                 final TemplateBindings bindings) {
+    public static String compile(@NotNull final String template,
+                                 @NotNull final TemplateBindings bindings) {
 
         JinjavaConfig config = JinjavaConfig.newBuilder()
                 .withCharset(StandardCharsets.UTF_8)
@@ -50,12 +55,7 @@ public class TemplateRenderer {
 
         Jinjava jinjava = new Jinjava(config);
 
-        HashMap<String, Object> bindingsMap = new HashMap<>();
-        bindingsMap.put(SCOPE_LABELS, bindings.getLabels());
-        bindingsMap.put(SCOPE_SYSTEM, Map.of(
-                SCOPE_SYSTEM_ENV, bindings.getSystemEnv(),
-                SCOPE_SYSTEM_PROPS, bindings.getSystemProps())
-        );
+        Map<String, Object> bindingsMap = buildBindingsMapFrom(bindings);
 
         RenderResult result = jinjava.renderForResult(template, bindingsMap);
 
@@ -72,6 +72,28 @@ public class TemplateRenderer {
         }
 
         return result.getOutput();
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static Map<String, Object> buildBindingsMapFrom(final TemplateBindings bindings) {
+        HashMap<String, Object> bindingsMap = new HashMap<>();
+
+        Map<String, Object> vars = new HashMap<>();
+        CollectionUtils.toNestedMap(bindings.getVars(), vars, null);
+        CollectionUtils.toFlattenMap(bindings.getVars(), vars, null);
+        bindingsMap.put(SCOPE_VARS, vars);
+
+        Map<String, Object> labels = new HashMap<>();
+        CollectionUtils.toNestedMap(bindings.getLabels(), labels, null);
+        CollectionUtils.toFlattenMap(bindings.getLabels(), labels, null);
+        bindingsMap.put(SCOPE_LABELS, labels);
+
+        bindingsMap.put(SCOPE_SYSTEM, Map.of(
+                SCOPE_SYSTEM_ENV, bindings.getSystemEnv(),
+                SCOPE_SYSTEM_PROPS, bindings.getSystemProps())
+        );
+        return bindingsMap;
     }
 
     /**
