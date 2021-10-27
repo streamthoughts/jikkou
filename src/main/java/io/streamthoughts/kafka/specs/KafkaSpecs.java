@@ -25,15 +25,19 @@ import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
-import org.apache.kafka.common.metrics.Quota;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import static picocli.CommandLine.Model.CommandSpec;
 
@@ -46,6 +50,7 @@ import static picocli.CommandLine.Model.CommandSpec;
         synopsisHeading = "%n",
         description = "CLI to ease and automate Apache Kafka cluster configuration management.",
         mixinStandardHelpOptions = true,
+        versionProvider = KafkaSpecs.ManifestVersionProvider.class,
         subcommands = {
             ValidateCommand.class,
             TopicsCommand.class,
@@ -124,5 +129,38 @@ public class KafkaSpecs {
                 String.format ("%ds %dms", seconds, milliseconds);
         }
         return String.format("%dmin %ds %dms", minutes, seconds, milliseconds);
+    }
+
+    /**
+     * Returns version information from jar file's {@code /META-INF/MANIFEST.MF} file.
+     */
+    static class ManifestVersionProvider implements CommandLine.IVersionProvider {
+        public String[] getVersion() throws Exception {
+            Enumeration<URL> resources = CommandLine.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                try {
+                    Manifest manifest = new Manifest(url.openStream());
+                    if (isApplicableManifest(manifest)) {
+                        Attributes attr = manifest.getMainAttributes();
+                        return new String[] {
+                            get(attr, "Implementation-Title") + " version v" + get(attr, "Implementation-Version")
+                        };
+                    }
+                } catch (IOException ex) {
+                    return new String[] { "Unable to read from " + url + ": " + ex };
+                }
+            }
+            return new String[0];
+        }
+
+        private boolean isApplicableManifest(Manifest manifest) {
+            Attributes attributes = manifest.getMainAttributes();
+            return "kafka-specs".equals(get(attributes, "Implementation-Title"));
+        }
+
+        private static Object get(Attributes attributes, String key) {
+            return attributes.get(new Attributes.Name(key));
+        }
     }
 }
