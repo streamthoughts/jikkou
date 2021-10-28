@@ -24,7 +24,7 @@
         </encoder>
     </appender>
 
-    <root level="WARN">
+    <root level="${ROOT_LOG_LEVEL:-WARN}">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
