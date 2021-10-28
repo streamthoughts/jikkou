@@ -25,21 +25,48 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-public class V1VarsObjects {
+/**
+ * Object wrapper used {@code template} section.
+ */
+public class V1TemplateObject {
 
-    private final Map<String, Object> vars;
+    private final V1Template template;
 
     /**
-     * Creates a new {@link V1VarsObjects} instance.
+     * Creates a new {@link V1TemplateObject} instance.
      *
-     * @param vars  the variables.
+     * @param template  the variables.
      */
     @JsonCreator
-    public V1VarsObjects(@JsonProperty("vars") final Map<String, Object> vars) {
-        this.vars = Optional.ofNullable(vars).orElse(Collections.emptyMap());
+    public V1TemplateObject(@JsonProperty("template") final V1Template template) {
+        this.template = Optional.ofNullable(template).orElse(new V1Template());
     }
 
-    public Map<String, Object> vars() {
-        return vars;
+    public V1Template template() {
+        return template;
+    }
+
+    public static class V1Template {
+
+        private final Map<String, Object> vars;
+
+        public V1Template() {
+            this(Collections.emptyMap());
+        }
+
+        /**
+         * Creates a new {@link V1Template} instance.
+         *
+         * @param vars  the variables.
+         */
+        @JsonCreator
+        public V1Template(@JsonProperty("vars") final Map<String, Object> vars) {
+            this.vars = Optional.ofNullable(vars).orElse(Collections.emptyMap());
+        }
+
+        public Map<String, Object> vars() {
+            return vars;
+        }
+
     }
 }

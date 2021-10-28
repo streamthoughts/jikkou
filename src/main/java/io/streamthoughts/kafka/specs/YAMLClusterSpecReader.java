@@ -24,7 +24,7 @@ import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.V1MetadataObjects;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1VarsObjects;
+import io.streamthoughts.kafka.specs.model.V1TemplateObject;
 import io.streamthoughts.kafka.specs.template.TemplateBindings;
 import io.streamthoughts.kafka.specs.template.TemplateRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -165,8 +165,8 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
     private Map<String, Object> parseSpecificationVars(final String specification) throws IOException {
         return Jackson.YAML_OBJECT_MAPPER.readValue(
                 newInputStream(specification),
-                V1VarsObjects.class
-        ).vars();
+                V1TemplateObject.class
+        ).template().vars();
     }
 
     private Map<String, Object> parseSpecificationLabels(final String specification) throws IOException {
