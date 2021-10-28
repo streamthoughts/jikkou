@@ -18,19 +18,23 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
+import io.streamthoughts.kafka.specs.ConfigOptions;
+import io.streamthoughts.kafka.specs.KafkaSpecsConfig;
+import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import picocli.CommandLine.Option;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
-public class AdminClientMixin {
+public class CLIOptionsMixin {
 
     @Option(names = "--bootstrap-servers",
-            defaultValue = "localhost:9092",
+            defaultValue = "",
             description = "A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.")
     public String bootstrapServer;
-
 
     @Option(names = "--command-config",
             description = "A property file containing configs to be passed to Admin Client."
@@ -41,4 +45,27 @@ public class AdminClientMixin {
             description = "A property file containing configs to be passed to Admin Client."
     )
     public Map<String, String> clientCommandProperties = new HashMap<>();
+
+    @Option(names = "--config-file",
+            defaultValue = "",
+            description = "The configuration file.")
+    public String configFile;
+
+    public KafkaSpecsConfig getConfig() {
+        Map<String, Object> adminClientParams = new HashMap<>();
+        if (clientCommandConfig != null) {
+            final Properties cliCommandProps = PropertiesUtils.loadPropertiesConfig(clientCommandConfig);
+            adminClientParams.putAll(PropertiesUtils.toMap(cliCommandProps));
+        }
+        adminClientParams.putAll(clientCommandProperties);
+        if (bootstrapServer != null && !bootstrapServer.isEmpty()) {
+            adminClientParams.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        }
+
+        Map<String, Object> cliConfigParams = new HashMap<>();
+        cliConfigParams.put(ConfigOptions.ADMIN_CLIENT_OPTION, adminClientParams);
+
+        return KafkaSpecsConfig.getOrCreate(cliConfigParams, configFile);
+
+    }
 }

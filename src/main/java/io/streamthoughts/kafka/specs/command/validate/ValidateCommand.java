@@ -46,14 +46,14 @@ public class ValidateCommand implements Callable<Integer> {
     SpecFileOptionsMixin specOptions;
 
     @CommandLine.Mixin
-    SetOptionsMixin labelsOption;
+    SetOptionsMixin setOptions;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() {
-        V1SpecFile file = specOptions.parse(labelsOption);
+        V1SpecFile file = specOptions.parse(setOptions);
 
         V1SpecFile validate = SpecFileValidator.getDefault().apply(file);
 

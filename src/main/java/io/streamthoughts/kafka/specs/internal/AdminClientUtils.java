@@ -18,20 +18,15 @@
  */
 package io.streamthoughts.kafka.specs.internal;
 
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static io.streamthoughts.kafka.specs.internal.FutureUtils.toCompletableFuture;
 
@@ -40,38 +35,8 @@ import static io.streamthoughts.kafka.specs.internal.FutureUtils.toCompletableFu
  */
 public class AdminClientUtils {
 
-    public static AdminClient newAdminClient(final String bootstrapServer,
-                                             final File clientConfigFile,
-                                             final Map<String, String> clientConfigProps){
-        final Properties props = loadClientPropertiesConfig(clientConfigFile);
-        props.putAll(clientConfigProps);
-        props.put(
-                CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG,
-                props.getProperty(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer)
-        );
-        return AdminClient.create(props);
-    }
-
-    private static Properties loadClientPropertiesConfig(final File clientConfigFile) {
-        final Properties props = new Properties();
-        if (clientConfigFile != null) {
-            if (!clientConfigFile.exists() || !clientConfigFile.canRead()) {
-                throw new IllegalArgumentException(
-                        "Invalid argument : File doesn't exist or is not readable : ' "
-                        + clientConfigFile.getPath() + " ' "
-                );
-            }
-            try {
-                Properties properties = PropertiesUtils.loadProps(clientConfigFile);
-                props.putAll(properties);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(
-                        "Invalid argument : File doesn't exist or is not readable : ' "
-                        + clientConfigFile.getPath() + " ' "
-                );
-            }
-        }
-        return props;
+    public static AdminClient newAdminClient(@NotNull final Properties clientConfigProps){
+        return AdminClient.create(clientConfigProps);
     }
 
     public static CompletableFuture<Collection<Node>> listBrokers(final AdminClient client) {

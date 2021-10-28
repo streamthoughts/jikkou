@@ -16,26 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.command;
+package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.KafkaSpecs;
-import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
-import org.apache.kafka.clients.admin.AdminClient;
-import picocli.CommandLine.ParentCommand;
+/**
+ * The list of configuration operations.
+ */
+public class ConfigOptions {
 
-import java.util.Properties;
-import java.util.function.Function;
-
-public class WithAdminClientCommand {
-
-    @ParentCommand
-    private KafkaSpecs specs;
-
-    public Integer withAdminClient(final Function<AdminClient, Integer> function) {
-        final Properties adminClientProps = specs.options.getConfig().getAdminClientProps();
-        try (AdminClient client = AdminClientUtils.newAdminClient(adminClientProps)) {
-            return function.apply(client);
-        }
-    }
-
+    public static final String ADMIN_CLIENT_OPTION = "adminClient";
 }
