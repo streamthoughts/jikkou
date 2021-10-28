@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.command.AdminClientMixin;
+import io.streamthoughts.kafka.specs.command.CLIOptionsMixin;
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
@@ -65,7 +65,7 @@ public class KafkaSpecs {
     static LocalDateTime START_TIME;
 
     @Mixin
-    public AdminClientMixin options;
+    public CLIOptionsMixin options;
 
     public static void main(final String... args) {
         START_TIME = LocalDateTime.now();

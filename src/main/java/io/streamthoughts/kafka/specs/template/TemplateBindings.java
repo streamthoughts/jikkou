@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static io.streamthoughts.kafka.specs.internal.PropertiesUtils.fromProperties;
+import static io.streamthoughts.kafka.specs.internal.PropertiesUtils.toMap;
 
 /**
  * Represents objects to put into scope for rendering template.
@@ -43,7 +43,7 @@ public class TemplateBindings {
     public static TemplateBindings defaults() {
         return new TemplateBindings(
                 System.getenv(),
-                fromProperties(System.getProperties()),
+                toMap(System.getProperties()),
                 new LinkedHashMap<>(),
                 new LinkedHashMap<>()
         );

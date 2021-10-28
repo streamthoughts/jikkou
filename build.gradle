@@ -33,12 +33,12 @@ repositories {
 dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-3'
+    implementation 'com.typesafe:config:1.4.1'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     implementation "org.apache.kafka:kafka-clients:3.0.0"
-    implementation 'org.yaml:snakeyaml:1.29'
     implementation 'ch.qos.logback:logback-classic:1.2.6'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.0'

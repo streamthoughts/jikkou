@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.specs.internal;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,15 +33,31 @@ import java.util.Properties;
  */
 public class PropertiesUtils {
 
-    public static Properties loadProps(final File f) throws IOException {
-        Properties props = new Properties();
-        try (FileInputStream is = new FileInputStream(f)) {
-            props.load(is);
+    @NotNull
+    public static Properties loadPropertiesConfig(@Nullable final File file) {
+        final Properties props = new Properties();
+        if (file != null) {
+            if (!file.exists() || !file.canRead()) {
+                throw new IllegalArgumentException(
+                        "Invalid argument : File doesn't exist or is not readable : ' "
+                                + file.getPath() + " ' "
+                );
+            }
+            try {
+                try (FileInputStream is = new FileInputStream(file)) {
+                    props.load(is);
+                }
+            } catch (IOException e) {
+                throw new IllegalArgumentException(
+                        "Invalid argument : File doesn't exist or is not readable : ' "
+                                + file.getPath() + " ' "
+                );
+            }
         }
         return props;
     }
 
-    public static Map<String, String> fromProperties(final Properties props) {
+    public static Map<String, String> toMap(final Properties props) {
         Map<String, String> builder = new LinkedHashMap<>();
         for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
             String key = (String) e.nextElement();
