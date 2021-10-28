@@ -38,32 +38,32 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class KafkaSpecsConfig {
+public class JikkouConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaSpecsConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JikkouConfig.class);
 
     private static final String DEFAULT_CONFIG = "application.conf";
-    private static final String ROOT_CONFIG_KEY = "kafkaspecs";
+    private static final String ROOT_CONFIG_KEY = "jikkou";
 
-    private static KafkaSpecsConfig CACHED;
+    private static JikkouConfig CACHED;
 
     private final Config config;
 
-    public static KafkaSpecsConfig get() {
+    public static JikkouConfig get() {
         if (CACHED != null) return CACHED;
         throw new IllegalStateException("No configuration was initialized");
     }
 
     /**
-     * Helper method to get or create a new {@link KafkaSpecsConfig} instance.
+     * Helper method to get or create a new {@link JikkouConfig} instance.
      *
      * @param cliConfigParams  the config params passed through the command-mine arguments.
      * @param cliConfigFile    the configFile passed through the command-line arguments.
      *
-     * @return                 a new {@link KafkaSpecsConfig}
+     * @return                 a new {@link JikkouConfig}
      */
-    public static KafkaSpecsConfig getOrCreate(final @Nullable Map<String, Object> cliConfigParams,
-                                               final @Nullable String cliConfigFile) {
+    public static JikkouConfig getOrCreate(final @Nullable Map<String, Object> cliConfigParams,
+                                           final @Nullable String cliConfigFile) {
 
         if (CACHED != null) return CACHED;
 
@@ -79,7 +79,7 @@ public class KafkaSpecsConfig {
             final Config overridingConfig = ConfigFactory.parseMap(cliConfigParams);
             config = overridingConfig.withFallback(config);
         }
-        CACHED = new KafkaSpecsConfig(config);
+        CACHED = new JikkouConfig(config);
 
         return CACHED;
     }
@@ -93,8 +93,12 @@ public class KafkaSpecsConfig {
             return Optional.of(configFromCurrentRelative.toAbsolutePath().toString());
         }
 
-        final String user = System.getProperty("user.home");
-        Path configFromUserHome = Paths.get(user + "/.kafkaspecs/" + DEFAULT_CONFIG);
+        Path configFromUserHome = Paths.get(String.format(
+                "%s/.%s/%s",
+                System.getProperty("user.home"),
+                ROOT_CONFIG_KEY,
+                DEFAULT_CONFIG)
+        );
         if (Files.exists(configFromUserHome)) {
             return Optional.of(configFromUserHome.toAbsolutePath().toString());
         }
@@ -103,11 +107,11 @@ public class KafkaSpecsConfig {
     }
 
     /**
-     * Creates a new {@link KafkaSpecsConfig} instance.
+     * Creates a new {@link JikkouConfig} instance.
      *
      * @param config    the {@link Config}.
      */
-    public KafkaSpecsConfig(@NotNull final Config config) {
+    public JikkouConfig(@NotNull final Config config) {
         this.config = Objects.requireNonNull(config, "'config' cannot be null");
         Map<String, Object> confAsMap = new TreeMap<>(getConfAsMap(config));
         final String configLogs = confAsMap.entrySet()

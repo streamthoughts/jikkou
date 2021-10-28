@@ -97,7 +97,7 @@ public class Printer {
             }
         }
 
-        PS.printf("%sEXECUTION in %s %s\n", isColor() ? ANSI_WHITE : "", KafkaSpecs.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
+        PS.printf("%sEXECUTION in %s %s\n", isColor() ? ANSI_WHITE : "", Jikkou.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
         PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d\n", isColor() ? ANSI_WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }

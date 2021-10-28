@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
-import io.streamthoughts.kafka.specs.KafkaSpecs;
+import io.streamthoughts.kafka.specs.Jikkou;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine.ParentCommand;
@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class WithAdminClientCommand {
 
     @ParentCommand
-    private KafkaSpecs specs;
+    private Jikkou specs;
 
     public Integer withAdminClient(final Function<AdminClient, Integer> function) {
         final Properties adminClientProps = specs.options.getConfig().getAdminClientProps();
