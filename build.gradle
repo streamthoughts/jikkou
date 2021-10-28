@@ -9,7 +9,7 @@ plugins {
 group 'io.streamthoughts'
 version '0.5.0'
 
-mainClassName = "io.streamthoughts.kafka.specs.KafkaSpecs"
+mainClassName = "io.streamthoughts.kafka.specs.Jikkou"
 
 /* Plugin Java */
 java {
@@ -113,7 +113,7 @@ jar {
             "Built-By": System.properties["user.name"],
             "Build-Jdk": "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
             "Created-By": "Gradle ${gradle.gradleVersion}",
-            "Implementation-Title": "kafka-specs",
+            "Implementation-Title": "Jikkou",
             "Implementation-Version": archiveVersion)
     }
 }

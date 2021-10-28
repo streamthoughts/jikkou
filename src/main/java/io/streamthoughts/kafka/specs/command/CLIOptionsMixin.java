@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.ConfigOptions;
-import io.streamthoughts.kafka.specs.KafkaSpecsConfig;
+import io.streamthoughts.kafka.specs.JikkouConfig;
 import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import picocli.CommandLine.Option;
@@ -51,7 +51,7 @@ public class CLIOptionsMixin {
             description = "The configuration file.")
     public String configFile;
 
-    public KafkaSpecsConfig getConfig() {
+    public JikkouConfig getConfig() {
         Map<String, Object> adminClientParams = new HashMap<>();
         if (clientCommandConfig != null) {
             final Properties cliCommandProps = PropertiesUtils.loadPropertiesConfig(clientCommandConfig);
@@ -65,7 +65,7 @@ public class CLIOptionsMixin {
         Map<String, Object> cliConfigParams = new HashMap<>();
         cliConfigParams.put(ConfigOptions.ADMIN_CLIENT_OPTION, adminClientParams);
 
-        return KafkaSpecsConfig.getOrCreate(cliConfigParams, configFile);
+        return JikkouConfig.getOrCreate(cliConfigParams, configFile);
 
     }
 }

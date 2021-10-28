@@ -41,7 +41,10 @@ import java.util.jar.Manifest;
 
 import static picocli.CommandLine.Model.CommandSpec;
 
-@Command(name = "kafka-specs",
+/**
+ * The main-class
+ */
+@Command(name = "Jikkou",
         descriptionHeading   = "%nDescription:%n%n",
         parameterListHeading = "%nParameters:%n%n",
         optionListHeading    = "%nOptions:%n%n",
@@ -50,7 +53,7 @@ import static picocli.CommandLine.Model.CommandSpec;
         synopsisHeading = "%n",
         description = "CLI to ease and automate Apache Kafka cluster configuration management.",
         mixinStandardHelpOptions = true,
-        versionProvider = KafkaSpecs.ManifestVersionProvider.class,
+        versionProvider = Jikkou.ManifestVersionProvider.class,
         subcommands = {
             ValidateCommand.class,
             TopicsCommand.class,
@@ -60,7 +63,7 @@ import static picocli.CommandLine.Model.CommandSpec;
             CommandLine.HelpCommand.class,
         }
 )
-public class KafkaSpecs {
+public class Jikkou {
 
     static LocalDateTime START_TIME;
 
@@ -69,7 +72,7 @@ public class KafkaSpecs {
 
     public static void main(final String... args) {
         START_TIME = LocalDateTime.now();
-        final CommandLine commandLine = new CommandLine(new KafkaSpecs())
+        final CommandLine commandLine = new CommandLine(new Jikkou())
                 .setUsageHelpWidth(160)
                 .setExecutionStrategy(new CommandLine.RunLast())
                 .setExecutionExceptionHandler((ex, cmd, parseResult) -> {

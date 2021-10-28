@@ -1,4 +1,4 @@
-= Kafka Specs: Automate the management of your Apache Kafka using GitOps approach!
+= Jikkou : Automate the management of your Apache Kafka using GitOps approach!
 :toc:
 :toc-placement!:
 
@@ -8,36 +8,96 @@ image:https://img.shields.io/github/forks/streamthoughts/kafka-specs[]
 image:https://img.shields.io/github/stars/streamthoughts/kafka-specs[]
 image:https://circleci.com/gh/streamthoughts/kafka-specs.svg?style=svg[https://circleci.com/gh/streamthoughts/kafka-specs]
 
-
 toc::[]
 
-http://kafka.apache.org/[Apache Kafka] is a high-throughput, distributed, publish-subscribe messaging system.
+__Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of this project can still be found under that name.__
 
-**KafkaSpecs** is a java tool to simplify the management of your Kafka Topics and ACLs.
+**Jikkou** (jikkō / 実行) is a command-line tool to help you automate the management of the configurations that live on your http://kafka.apache.org/[Apache Kafka] clusters.
 
-Currently, there are different ways to create/alter topics: ::
-- **Automatically** with `auto.create.topics.enable` configured to true (But this not really a good idea in a production or even in non-production environment).
-- **Using kafka-topics.sh** - But first you will need a kafka distribution.In addition, this tool need access to zookeeper.
-- **Using AdminClient API** - This is a low-level API (the one used by Kafka Specs).
+It allows you to define the desired current state of your **Topics**, **ACLs**, or **Quotas**, using one or more YAML specification files (called _kafka-specs_ files):
 
-Those solutions are easy to use when starting with Kafka and/or during development cycles.
-However, while moving into production you will need more sophisticated tools to automate the creation of your topics.
+topics-specs.yml:::
+[source,yaml]
+----
+version: 1
+specs:
+  topics:
+  - name: 'my-first-topic-with-jikkou'
+    partitions: 12
+    replication_factor: 3
+    configs:
+      min.insync.replicas: 2
+----
 
-**KafkaSpecs** allows you to describe your Apache Kafka cluster through a YAML file which is used to create, delete or alter: Topics, ACLs, etc.
+It will then take care of computing and applying the necessary changes directly to your cluster.
 
-**KafkaSpecs** helps you to adopt a GitOps approach to manage Kafka cluster resources.
+[source, bash]
+----
+$ jikkou --bootstrap-servers localhost:9092 topics apply \
+    --file-path topics-specs.yml \
+    --yes
+----
+
+[source]
+----
+TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, replicas=3) - CHANGED **********************
+----
+[source, json]
+----
+{
+  "changed" : true,
+  "end" : 1634071489773,
+  "resource" : {
+    "name" : "my-first-topic-with-jikkou",
+    "operation" : "ADD",
+    "partitions" : {
+      "after" : 12,
+      "operation" : "ADD"
+    },
+    "replication_factor" : {
+      "after" : 3,
+      "operation" : "ADD"
+    },
+    "configs" : {
+      "min.insync.replicas" : {
+        "after" : "2",
+        "operation" : "ADD"
+      }
+    }
+  },
+  "failed" : false,
+  "status" : "CHANGED"
+}
+----
+[source]
+----
+EXECUTION in 2s 661ms (DRY_RUN)
+ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
+----
+
+Most of the time, you will use Jikkou part of your CI/CD pipeline allowing you to version and ship your Apache Kafka resources directly from Git (more on https://about.gitlab.com/topics/gitops/[GitOps])
+
+Jikkou can be used with self-hosted Kafka, managed Kafka and Confluent Cloud.
+
+== Why ?
+
+We initially started this project to allow us to quickly and easily (re)create Kafka topics in a declarative way on ephemeral Kafka clusters that we used only for integration testing purposes.
+
+Over time, we began to refactor the solution and extend its functionality to support more production contexts and allow developers and operations teams to share a common tool for working on Kafka.
 
 == Requirements :
 
 1. Kafka 1.0.0 ...
 2. Java 11+
 
+_Note: Internally, Jikkou uses the Kafka Java Admin Client API._ Depending on the Kafka Cluster version you use all features may not be supported.
+
 == Usages
 
 [source,bash]
 ----
-$ docker run -it streamthoughts/kafka-specs --help
-kafka-specs [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--command-property=<String=String>]... [COMMAND]
+$ docker run -it streamthoughts/jikkou:latest --help
+jikkou [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--command-property=<String=String>]... [COMMAND]
 
 Description:
 
@@ -67,15 +127,17 @@ Commands:
 
 === The File format
 
-Kafka Specs uses a common structure for describing the resources to manipulate on your Kafka Cluster (i.e. Topics, ACLs, etc).
+Jikkou uses a common structure for describing the resources/configs to manipulate on your Kafka Cluster (i.e. Topics, ACLs, Quotas, etc).
 
-An empty Kafka Specs file::
+An empty Jikkou specification file::
 [source,yaml]
 ----
 version: 1
 metadata:
   labels: {}
   annotations: {}
+template:
+  vars: {}
 specs:
     brokers: {}
     topics: {}
@@ -84,9 +146,19 @@ specs:
       roles: {}
 ----
 
-* `version`: the version of specs file (default is `1`).
-* `metadata.labels`: a set of key/value pairs that you can reference in the `specs` sections (a.k.a. _templating_).
-* `metadata.annotations`: a set of key/value pairs automatically generated by the client.
+* `version`: the version of the Jikkou's API (default is `1`).
+
+**Metadata**
+
+* `metadata.labels`: a set of key/value pairs that you can use to describe your specification file (_Note: labels can be referenced in the `specs` sections (a.k.a. templating_).
+* `metadata.annotations`: a set of key/value pairs automatically generated by the tool.
+
+**Template**
+
+* `template.vars`: a set of key/value pairs that
+
+**Specs**
+
 * `specs.brokers`: the configuration state of Kafka brokers.
 * `specs.security.users`: the description of your ACLs grouped per user (i.e. _principal_).
 * `specs.security.roles`: the description of your ACLs roles that you can reference in the `users` section.
@@ -94,17 +166,17 @@ specs:
 
 === How to use it ?
 
-Kafka Specs is available:
+Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/kafka-specs/releases/tag/v0.5.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/kafka-specs/0.5.0/[Maven Central]
-* As a docker image available from https://hub.docker.com/r/streamthoughts/kafka-specs[Docker Hub].
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.6.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.6.0/[Maven Central]
+* As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
 
 === How to Manage Topics ?
 
-Kafka Specs can be used to create, alter and even delete Kafka topics.
+Jikkou can be used to create, alter and even delete Kafka topics.
 
-kafka-specs-topics.yml::
+topics-specs.yml::
 [source,yaml]
 ----
 version: 1
@@ -117,40 +189,39 @@ specs:
         min.insync.replicas: 2
 ----
 
-Kafka Specs provides a basic templating mechanism to dynamically set any entity values using double curly-brace notation.
+Jikkou provides a basic templating mechanism to dynamically set any entity values using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
 
 Currently, the templating mechanism supports the following scopes:
 
+* `vars`: uses to reference any key/value pairs from the `template.vars` sections or pass through the command arguments.
 * `labels`: uses to reference any key/value pairs from the `metadata.labels` sections or pass through the command arguments.
 * `system.env`: uses to reference an environment variable.
 * `system.props`: uses to reference a system property.
 
-kafka-specs-topics.yml::
+topics-specs.yml::
 
 [source,yaml]
 ----
 version: 1
-metadata:
-  labels:
+template:
+  vars:
     topic_prefix: ""
     default_replication_factor: 3
 specs:
     topics:
-    - name: "{{labels.topic_prefix}}my-topic"
+    - name: "{{vars.topic_prefix}}my-topic"
       partitions: 6
-      replication_factor: {{ labels.default_replication_factor }}
+      replication_factor: {{ vars.default_replication_factor }}
       configs:
         min.insync.replicas: 2
 ----
 
-Kafka Specs can be used to create, delete or alter topics: ::
+Jikkou can be used to create, delete or alter topics: ::
 
 [source,bash]
 ----
-$ kafka-specs --bootstrap-servers localhost:9092 \
-topics \
-create \
---file-path kafka-specs-topics.yml \
+$ jikkou --bootstrap-servers localhost:9092 topics create \
+--file-path topics-specs.yml \
 --set-label topic_prefix=dev- \
 --verbose \
 --yes
@@ -193,7 +264,7 @@ It can be used describe existing topics: ::
 
 [source,bash]
 ----
-$ kafka-specs --bootstrap-servers localhost:9092 topics describe
+$ jikkou --bootstrap-servers localhost:9092 topics describe
 ----
 
 (output)
@@ -221,9 +292,9 @@ specs:
 
 === How to Manage ACLs ?
 
-**Kafka Specs can be used to describe all ACL policies that need to be created on Kafka Cluster:**
+**Jikkou can be used to describe all ACL policies that need to be created on Kafka Cluster:**
 
-kafka-specs-users.yml::
+users-specs.yml::
 [source,yaml]
 ----
 version: 1
@@ -246,9 +317,9 @@ specs:
 ----
 
 You can also define *roles* to be applied to one or more _principals_.
-Kafka Specs will take care of creating all corresponding ACLs policies.
+Jikkou will take care of creating all corresponding ACLs policies.
 
-kafka-specs-security.yml::
+security-specs.yml::
 [source,yaml]
 ----
 version: 1
@@ -281,10 +352,8 @@ specs:
 
 [source,bash]
 ----
-$ kafka-specs --bootstrap-servers localhost:9092 \
-    acls \
-    apply \
-    --file-path kafka-specs-security.yml \
+$ jikkou --bootstrap-servers localhost:9092 acls apply \
+    --file-path security-specs.yml \
     --verbose \
     --yes
 ----
@@ -358,10 +427,10 @@ ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
 
 As of Kafka 2.0.0, you can use `LITERAL` and `PREFIXED` pattern-type to define new ACLs, then `MATCH` and `ANY` for filtering.
 
-With Kafka Specs you can use the pattern-type `MATCH` to create ACLs.
+With Jikkou you can use the pattern-type `MATCH` to create ACLs.
 This will define ACLs with `LITERAL` pattern type for all topics matching the defined regex.
 
-kafka-specs-security.yml::
+security-specs.yml::
 [source,yaml]
 ----
 version: 1
@@ -380,10 +449,10 @@ specs:
 
 [source,bash]
 ----
-kafka-specs --bootstrap-servers localhost:9092 \
+$ jikkou --bootstrap-servers localhost:9092 \
     acls \
     apply \
-    --file-path kafka-specs-security.yml \
+    --file-path security-specs.yml \
     --verbose \
     --yes
 ----
@@ -432,7 +501,10 @@ TASK [CREATE] Create a new ACL (ALLOW User:specs to READ TOPIC:LITERAL:bench-p1-
 }
 ----
 
-== How to build project ?
+=== How to Manage Quotas ?
+
+
+== 🏭 How to build project ?
 
 You need to have http://www.gradle.org/installation[Gradle] and http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java] installed.
 
@@ -468,17 +540,19 @@ $ ./gradlew clean
 
 Any feedback, bug reports and PRs are greatly appreciated!
 
-- **Source Code**: https://github.com/streamthoughts/kafka-specs
-- **Issue Tracker**: https://github.com/streamthoughts/kafka-specs/issues
+- **Source Code**: https://github.com/streamthoughts/jikkou
+- **Issue Tracker**: https://github.com/streamthoughts/jikkou/issues
 
 == 🙏 Show your support
 
 You think this project can help you or your team to manage your Apache Kafka Cluster ?
 Please ⭐ this repository to support us!
 
+== FAQ
+
 == Licence
 
-Copyright 2020 StreamThoughts.
+Copyright 2021 StreamThoughts.
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.See the NOTICE file distributed with this work for additional information regarding copyright ownership.The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.You may obtain a copy of the License at
 
