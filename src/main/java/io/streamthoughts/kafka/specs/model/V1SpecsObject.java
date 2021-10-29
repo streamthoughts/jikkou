@@ -57,7 +57,6 @@ public class V1SpecsObject implements Serializable {
     }
 
     /**
-     *
      * @param brokers the {@link V1BrokerObject} list.
      *
      * @return a new {@link V1SpecFile} instance.
@@ -112,9 +111,11 @@ public class V1SpecsObject implements Serializable {
     /**
      * Creates a new {@link V1SpecFile} instance.
      *
-     * @param brokers   the list of {@link V1BrokerObject}.
-     * @param topics    the list of {@link V1TopicObject}.
-     * @param security  the {@link V1SecurityObject}.
+     * @param brokers    the list of {@link V1BrokerObject}.
+     * @param topics     the list of {@link V1TopicObject}.
+     * @param security   the {@link V1SecurityObject}.
+     * @param configMaps the list of {@link V1ConfigMap}.
+     * @param quotas     the {@link V1QuotaObject}.
      */
     @JsonCreator
     public V1SpecsObject(@JsonProperty("brokers") final List<V1BrokerObject> brokers,

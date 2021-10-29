@@ -104,10 +104,11 @@ public final class V1TopicObject extends ConfigMapRefs<V1TopicObject> implements
     /**
      * Creates a new {@link V1TopicObject} instance.
      *
-     * @param name        the topic name.
-     * @param partitions  the number of partitions.
-     * @param replication the replication factor.
-     * @param configs     the topic configs to override.
+     * @param name              the topic name.
+     * @param partitions        the number of partitions.
+     * @param replication       the replication factor.
+     * @param configs           the topic configs to override.
+     * @param configMapRefs     the topic configs-map references.
      */
     public V1TopicObject(final String name,
                          final Integer partitions,

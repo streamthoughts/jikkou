@@ -63,6 +63,7 @@ public class SpecFileValidator {
      * Creates a new {@link SpecFileValidator} instance.
      *
      * @param transformations   the list of {@link Transformation}.
+     * @param validations       the list of {@link Validation}.
      */
     public SpecFileValidator(final @NotNull List<Transformation> transformations,
                              final @NotNull List<Validation> validations) {

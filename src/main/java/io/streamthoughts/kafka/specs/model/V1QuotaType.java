@@ -31,21 +31,21 @@ import java.util.Map;
  *
  * <pre>
  * The order of precedence for quota configuration is:
- *  1. /config/users/<user>/clients/<client-id>
- *  2. /config/users/<user>/clients/<default>
- *  3. /config/users/<user>
- *  4. /config/users/<default>/clients/<client-id>
- *  5. /config/users/<default>/clients/<default>
- *  6. /config/users/<default>
- *  7. /config/clients/<client-id>
- *  8. /config/clients/<default>
+ *  1. /config/users/:user/clients/:client-id
+ *  2. /config/users/:user/clients/default
+ *  3. /config/users/:user
+ *  4. /config/users/default/clients/:client-id
+ *  5. /config/users/default/clients/default
+ *  6. /config/users/default
+ *  7. /config/clients/:client-id
+ *  8. /config/clients/default
  * </pre>
  */
 public enum V1QuotaType {
 
     /**
      * Set default quotas for all users.
-     * i.e., /config/users/<default>
+     * i.e.,  {@literal /config/users/<default>}
      */
     USERS_DEFAULT() {
         @Override
@@ -84,7 +84,7 @@ public enum V1QuotaType {
 
     /**
      * Set quotas for a specific user principal.
-     * i.e., /config/users/<user>
+     * i.e.,  {@literal /config/users/<user>}
      */
     USER() {
         @Override
@@ -124,7 +124,7 @@ public enum V1QuotaType {
 
     /**
      * Set quotas for a specific user principal and a specific client-id.
-     * i.e., config/users/<user>/clients/<client-id>.
+     * i.e., {@literal config/users/<user>/clients/<client-id> }.
      */
     USER_CLIENT() {
         @Override
@@ -168,7 +168,7 @@ public enum V1QuotaType {
 
     /**
      * Set default quotas for a specific user and all clients
-     * i.e., /config/users/<user>/clients/<default>)
+     * i.e., {@literal /config/users/<user>/clients/<default>}
      */
     USER_ALL_CLIENTS() {
         @Override
@@ -212,7 +212,7 @@ public enum V1QuotaType {
 
     /**
      * Set default quotas for all clients
-     * i.e., /config/clients/<default>
+     * i.e., {@literal /config/clients/<default> }
      */
     CLIENTS_DEFAULT() {
         @Override
@@ -248,7 +248,7 @@ public enum V1QuotaType {
 
     /**
      * Set default quotas for a specific client.
-     * i.e., /config/clients/<client-id>
+     * i.e., {@literal /config/clients/<client-id>}
      */
     CLIENT() {
         @Override
