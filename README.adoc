@@ -1,12 +1,10 @@
 = Jikkou : Automate the management of your Apache Kafka using GitOps approach!
-:toc:
-:toc-placement!:
 
-image:https://img.shields.io/github/license/streamthoughts/kafka-specs[]
-image:https://img.shields.io/github/issues/streamthoughts/kafka-specs[]
-image:https://img.shields.io/github/forks/streamthoughts/kafka-specs[]
-image:https://img.shields.io/github/stars/streamthoughts/kafka-specs[]
-image:https://circleci.com/gh/streamthoughts/kafka-specs.svg?style=svg[https://circleci.com/gh/streamthoughts/kafka-specs]
+image:https://img.shields.io/github/license/streamthoughts/jikkou[]
+image:https://img.shields.io/github/issues/streamthoughts/jikkou[]
+image:https://img.shields.io/github/forks/streamthoughts/jikkou[]
+image:https://img.shields.io/github/stars/streamthoughts/jikkou[]
+image:https://circleci.com/gh/streamthoughts/jikkou.svg?style=svg[https://circleci.com/gh/streamthoughts/jikkou]
 
 toc::[]
 
@@ -97,7 +95,9 @@ _Note: Internally, Jikkou uses the Kafka Java Admin Client API._ Depending on th
 [source,bash]
 ----
 $ docker run -it streamthoughts/jikkou:latest --help
-jikkou [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--command-property=<String=String>]... [COMMAND]
+Usage:
+Jikkou [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--config-file=<configFile>]
+       [--command-property=<String=String>]... [COMMAND]
 
 Description:
 
@@ -111,6 +111,8 @@ Options:
                   A property file containing configs to be passed to Admin Client.
       --command-property=<String=String>
                   A property file containing configs to be passed to Admin Client.
+      --config-file=<configFile>
+                  The configuration file.
   -h, --help      Show this help message and exit.
   -V, --version   Print version information and exit.
 
@@ -120,7 +122,8 @@ Commands:
   topics    Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
   acls      Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
   brokers   Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  help      Displays help information about the specified command.
+  quotas    Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  help      Displays help information about the specified command
 ----
 
 == 🚀 Getting Started
@@ -189,34 +192,7 @@ specs:
         min.insync.replicas: 2
 ----
 
-Jikkou provides a basic templating mechanism to dynamically set any entity values using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
-
-Currently, the templating mechanism supports the following scopes:
-
-* `vars`: uses to reference any key/value pairs from the `template.vars` sections or pass through the command arguments.
-* `labels`: uses to reference any key/value pairs from the `metadata.labels` sections or pass through the command arguments.
-* `system.env`: uses to reference an environment variable.
-* `system.props`: uses to reference a system property.
-
-topics-specs.yml::
-
-[source,yaml]
-----
-version: 1
-template:
-  vars:
-    topic_prefix: ""
-    default_replication_factor: 3
-specs:
-    topics:
-    - name: "{{vars.topic_prefix}}my-topic"
-      partitions: 6
-      replication_factor: {{ vars.default_replication_factor }}
-      configs:
-        min.insync.replicas: 2
-----
-
-Jikkou can be used to create, delete or alter topics: ::
+Additionally, Jikkou can be used to create, delete or alter topics: ::
 
 [source,bash]
 ----
@@ -503,6 +479,130 @@ TASK [CREATE] Create a new ACL (ALLOW User:specs to READ TOPIC:LITERAL:bench-p1-
 
 === How to Manage Quotas ?
 
+Jikkou allows you to define the quotas to apply to consumers or producers identified by a client-id or a user principal.
+
+The below example shows you how to set default quotas for all clients, then to override that quotas for a specific client and user.
+
+quotas-specs.yml::
+[source,yaml]
+----
+version: 1
+specs:
+  quotas:
+  - type: CLIENTS_DEFAULT
+    configs:
+      # quota in percentage (%) of total requests.
+      request_byte_rate: 20
+
+  - type: CLIENT
+    entity:
+      client_id: "producer-client"
+    configs:
+      # quota in bytes for restricting data production.
+      producer_byte_rate: 1000
+
+  - type: USER
+    entity:
+      user:  "consumer-user"
+    configs:
+      # quota in bytes for restricting data consumption.
+      consumer_byte_rate: 1000
+----
+
+Supported quota types are::
+* `USERS_DEFAULT`: Set default quotas for all users.
+* `USER`: Set quotas for a specific user principal.
+* `USER_CLIENT`: Set quotas for a specific user principal and a specific client-id.
+* `USER_ALL_CLIENTS`: Set default quotas for a specific user and all clients.
+* `CLIENT`: Set default quotas for a specific client.
+* `CLIENTS_DEFAULT`: Set default quotas for all clients.
+
+== ConfigMaps
+
+In Jikkou, `ConfigMaps` allows you to define configuration maps
+that can be referenced by multiple specs entities (e.g. Topics, Quotas).
+
+topics-specs.yml::
+[source,yaml]
+----
+version: 1
+specs:
+    config_maps:
+    - name: DefaultTopicConfig
+      configs:
+        log.retention.hours: 72
+        min.insync.replicas: 2
+    topics:
+    - name: "my-first-topic"
+      partitions: 6
+      replication_factor: 3
+      config_map_refs: [ 'DefaultTopicConfig' ]
+
+    - name: "my-second-topic"
+      partitions: 12
+      replication_factor: 3
+      config_map_refs: [ 'DefaultTopicConfig' ]
+----
+
+== Templating
+
+Jikkou provides a basic templating mechanism to dynamically set any entity values using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
+
+Currently, the templating mechanism supports the following scopes::
+* `vars`: uses to reference any key/value pairs from the `template.vars` sections or pass through the command arguments.
+* `labels`: uses to reference any key/value pairs from the `metadata.labels` sections or pass through the command arguments.
+* `system.env`: uses to reference an environment variable.
+* `system.props`: uses to reference a system property.
+
+topics-specs.yml::
+[source,yaml]
+----
+version: 1
+template:
+  vars:
+    topic_prefix: "{{ system.env.TOPIC_PREFIX | default('', true) }}"
+    default_replication_factor: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}"
+    default_min_insync_replicas: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) | int | add(-1) }}"
+specs:
+    config_maps:
+    - name: DefaultTopicConfig
+      configs:
+        log.retention.hours: 72
+        min.insync.replicas: "{{ vars.default_min_insync_replicas }}"
+    topics:
+    - name: "{{ vars.topic_prefix }}my-first-topic"
+      partitions: 6
+      replication_factor: "{{ vars.default_replication_factor }}"
+      config_map_refs: [ 'DefaultTopicConfig' ]
+
+    - name: "{{ vars.topic_prefix }}my-second-topic"
+      partitions: 12
+      replication_factor: "{{ vars.default_replication_factor }}"
+      config_map_refs: [ 'DefaultTopicConfig' ]
+----
+
+NOTE: Jinja templating was introduced to allow you to reuse the same _specs-files_ for multiple target environments.
+
+== Configuration
+
+Internally, Jikkou uses the Java Admin client API for interacting with Kafka.
+You can set the configs to be passed to Admin Client using either the command-line arguments `command-config` and `command-property`.
+
+Additionally, Jikkou will lookup for an https://github.com/lightbend/config[HOCON ]file named `application.conf` in the following locations:
+
+* `./application.conf`
+* `$HOME/.jikku/application.conf`
+
+
+reference.conf::
+[source, hocon]
+----
+jikkou {
+  adminClient {
+    bootstrap.servers = "localhost:9092"
+  }
+}
+----
 
 == 🏭 How to build project ?
 
