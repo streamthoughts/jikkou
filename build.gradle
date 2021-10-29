@@ -138,11 +138,11 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'io.streamthoughts'
-            artifactId = 'kafka-specs'
+            artifactId = 'jikkou'
             pom {
-                name = 'KafkaSpecs'
+                name = 'Jikkou'
                 description = 'Tool to ease and automate Apache Kafka cluster configuration management'
-                url = 'https://github.com/streamthoughts/kafka-specs'
+                url = 'https://github.com/streamthoughts/jikkou'
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
@@ -160,9 +160,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/streamthoughts/kafka-specs.git'
-                    developerConnection = 'scm:git:ssh://github.com/streamthoughts/kafka-specs.git'
-                    url = 'https://github.com/streamthoughts/kafka-specs.git'
+                    connection = 'scm:git:git://github.com/streamthoughts/jikkou.git'
+                    developerConnection = 'scm:git:ssh://github.com/streamthoughts/jikkou.git'
+                    url = 'https://github.com/streamthoughts/jikkou.git'
                 }
             }
             from components.java

@@ -16,34 +16,34 @@
 # limitations under the License.
 FROM alpine:latest
 
-ARG kafkaSpecsVersion
+ARG jikkouVersion
 
-ENV KAFKA_SPECS_VERSION="${kafkaSpecsVersion}"
+ENV JIKKOU_VERSION="${jikkouVersion}"
 
 RUN apk update && apk --no-cache add unzip
 
-COPY ./build/distributions/kafka-specs-${KAFKA_SPECS_VERSION}.zip kafka-specs-${KAFKA_SPECS_VERSION}.zip
-RUN unzip kafka-specs-${KAFKA_SPECS_VERSION}.zip && mv kafka-specs-${KAFKA_SPECS_VERSION} kafka-specs
+COPY ./build/distributions/jikkou-${JIKKOU_VERSION}.zip jikkou-${JIKKOU_VERSION}.zip
+RUN unzip jikkou-${JIKKOU_VERSION}.zip && mv jikkou-${JIKKOU_VERSION} jikkou
 
 FROM azul/zulu-openjdk:13
 
-ARG kafkaSpecsVersion
-ARG kafkaSpecsBranch
-ARG kafkaSpecsCommit
+ARG jikkouVersion
+ARG jikkouBranch
+ARG jikkouCommit
 
-ENV KAFKA_SPECS_VERSION="${kafkaSpecsVersion}" \
-    KAFKA_SPECS_COMMIT="${kafkaSpecsCommit}" \
-    KAFKA_SPECS_BRANCH="${kafkaSpecsBranch}"
+ENV JIKKOU_VERSION="${jikkouVersion}" \
+    JIKKOU_COMMIT="${jikkouCommit}" \
+    JIKKOU_BRANCH="${jikkouBranch}"
 
-WORKDIR /opt/kafka-specs
+WORKDIR /opt/jikkou
 
-COPY --from=0 /kafka-specs .
+COPY --from=0 /jikkou .
 
-LABEL io.streamthoughts.docker.name="kafka-specs" \
-      io.streamthoughts.docker.version=$KAFKA_SPECS_VERSION \
-      io.streamthoughts.docker.branch=$KAFKA_SPECS_BRANCH \
-      io.streamthoughts.docker.commit=$KAFKA_SPECS_COMMIT
+LABEL io.streamthoughts.docker.name="jikkou" \
+      io.streamthoughts.docker.version=$JIKKOU_VERSION \
+      io.streamthoughts.docker.branch=$JIKKOU_BRANCH \
+      io.streamthoughts.docker.commit=$JIKKOU_COMMIT
 
-ENTRYPOINT ["/bin/bash","/opt/kafka-specs/bin/kafka-specs"]
+ENTRYPOINT ["/bin/bash","/opt/jikkou/bin/jikkou"]
 
 

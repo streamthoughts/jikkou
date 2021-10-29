@@ -5,7 +5,7 @@ GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 REPOSITORY = streamthoughts
-IMAGE = kafka-specs
+IMAGE = jikkou
 
 .SILENT:
 
@@ -33,9 +33,9 @@ build-images:
 	echo "==========================================\n "
 	./gradlew clean distZip && \
 	docker build \
-	--build-arg kafkaSpecsVersion=${PROJECT_VERSION} \
-	--build-arg kafkaSpecsCommit=${GIT_COMMIT} \
-	--build-arg kafkaSpecsBranch=${GIT_BRANCH} \
+	--build-arg jikkouVersion=${PROJECT_VERSION} \
+	--build-arg jikkouCommit=${GIT_COMMIT} \
+	--build-arg jikkouBranch=${GIT_BRANCH} \
     -f Dockerfile \
 	-t ${REPOSITORY}/${IMAGE}:latest . || exit 1 ;
 	docker tag ${REPOSITORY}/${IMAGE}:latest ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} || exit 1 ;
