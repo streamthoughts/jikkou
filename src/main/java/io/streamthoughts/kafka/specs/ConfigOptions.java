@@ -24,4 +24,6 @@ package io.streamthoughts.kafka.specs;
 public class ConfigOptions {
 
     public static final String ADMIN_CLIENT_OPTION = "adminClient";
+
+    public static final String TEMPLATING_VARS_OPTION = "templating.vars";
 }

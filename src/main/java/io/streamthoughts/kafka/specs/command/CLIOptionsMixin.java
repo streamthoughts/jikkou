@@ -18,16 +18,11 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
-import io.streamthoughts.kafka.specs.ConfigOptions;
-import io.streamthoughts.kafka.specs.JikkouConfig;
-import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import picocli.CommandLine.Option;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class CLIOptionsMixin {
 
@@ -50,22 +45,4 @@ public class CLIOptionsMixin {
             defaultValue = "",
             description = "The configuration file.")
     public String configFile;
-
-    public JikkouConfig getConfig() {
-        Map<String, Object> adminClientParams = new HashMap<>();
-        if (clientCommandConfig != null) {
-            final Properties cliCommandProps = PropertiesUtils.loadPropertiesConfig(clientCommandConfig);
-            adminClientParams.putAll(PropertiesUtils.toMap(cliCommandProps));
-        }
-        adminClientParams.putAll(clientCommandProperties);
-        if (bootstrapServer != null && !bootstrapServer.isEmpty()) {
-            adminClientParams.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        }
-
-        Map<String, Object> cliConfigParams = new HashMap<>();
-        cliConfigParams.put(ConfigOptions.ADMIN_CLIENT_OPTION, adminClientParams);
-
-        return JikkouConfig.getOrCreate(cliConfigParams, configFile);
-
-    }
 }

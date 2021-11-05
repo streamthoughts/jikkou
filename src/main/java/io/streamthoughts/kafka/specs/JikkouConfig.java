@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import io.vavr.control.Option;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,10 @@ public class JikkouConfig {
 
     private final Config config;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static JikkouConfig get() {
         if (CACHED != null) return CACHED;
         throw new IllegalStateException("No configuration was initialized");
@@ -57,15 +62,12 @@ public class JikkouConfig {
     /**
      * Helper method to get or create a new {@link JikkouConfig} instance.
      *
-     * @param cliConfigParams  the config params passed through the command-mine arguments.
-     * @param cliConfigFile    the configFile passed through the command-line arguments.
-     *
+     * @param cliConfigParams the config params passed through the command-mine arguments.
+     * @param cliConfigFile   the configFile passed through the command-line arguments.
      * @return                 a new {@link JikkouConfig}
      */
-    public static JikkouConfig getOrCreate(final @Nullable Map<String, Object> cliConfigParams,
-                                           final @Nullable String cliConfigFile) {
-
-        if (CACHED != null) return CACHED;
+    private static JikkouConfig create(final @Nullable Map<String, Object> cliConfigParams,
+                                       final @Nullable String cliConfigFile) {
 
         getConfigFile(cliConfigFile).ifPresent(configFile -> {
             LOG.info("Loading configuration from: '{}'", configFile);
@@ -79,9 +81,7 @@ public class JikkouConfig {
             final Config overridingConfig = ConfigFactory.parseMap(cliConfigParams);
             config = overridingConfig.withFallback(config);
         }
-        CACHED = new JikkouConfig(config);
-
-        return CACHED;
+        return new JikkouConfig(config);
     }
 
     private static Optional<String> getConfigFile(@Nullable final String clientConfigFile) {
@@ -109,7 +109,7 @@ public class JikkouConfig {
     /**
      * Creates a new {@link JikkouConfig} instance.
      *
-     * @param config    the {@link Config}.
+     * @param config the {@link Config}.
      */
     public JikkouConfig(@NotNull final Config config) {
         this.config = Objects.requireNonNull(config, "'config' cannot be null");
@@ -123,6 +123,30 @@ public class JikkouConfig {
 
     public Config unwrap() {
         return config;
+    }
+
+    public Option<String> findString(@NotNull final String path) {
+        return config.hasPath(path) ? Option.of(config.getString(path)) : Option.none();
+    }
+
+    public Option<Boolean> findBoolean(@NotNull final String path) {
+        return config.hasPath(path) ? Option.of(config.getBoolean(path)) : Option.none();
+    }
+
+    public Option<Long> findLong(@NotNull final String path) {
+        return config.hasPath(path) ? Option.of(config.getLong(path)) : Option.none();
+    }
+
+    public Option<Integer> findInt(@NotNull final String path) {
+        return config.hasPath(path) ? Option.of(config.getInt(path)) : Option.none();
+    }
+
+    public Option<Config> findConfig(@NotNull final String path) {
+        return config.hasPath(path) ? Option.some(config.getConfig(path)) : Option.none();
+    }
+
+    public Option<Map<String, Object>> findConfigAsMap(@NotNull final String path) {
+        return findConfig(path).map(JikkouConfig::getConfAsMap);
     }
 
     public Properties getAdminClientProps() {
@@ -162,4 +186,26 @@ public class JikkouConfig {
         }
         return parsed;
     }
+
+    public static class Builder {
+
+        private String cliConfigFile;
+        private Map<String, Object> cliConfigParams;
+
+        public Builder withCLIConfigFile(final @NotNull String cliConfigFile) {
+            this.cliConfigFile = cliConfigFile;
+            return this;
+        }
+
+        public Builder withCLIConfigParams(final @NotNull Map<String, Object> cliConfigParams) {
+            this.cliConfigParams = cliConfigParams;
+            return this;
+        }
+
+        public JikkouConfig getOrCreate() {
+            Option.of(CACHED).onEmpty(() -> CACHED = create(cliConfigParams, cliConfigFile));
+            return CACHED;
+        }
+    }
+
 }

@@ -19,9 +19,12 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
+import io.streamthoughts.kafka.specs.ConfigOptions;
+import io.streamthoughts.kafka.specs.JikkouConfig;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -29,6 +32,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpecFileOptionsMixin {
 
@@ -62,6 +67,14 @@ public class SpecFileOptionsMixin {
         } else {
             throw new IllegalArgumentException("no specification");
         }
-        return READER.read(is, options.getClientLabels(), options.getClientVars());
+
+        Map<String, Object> templatingVars = JikkouConfig.get()
+                .findConfigAsMap(ConfigOptions.TEMPLATING_VARS_OPTION)
+                .orElse(() -> Option.of(new HashMap<>()))
+                .map(m -> {
+                    m.putAll(options.getClientVars());
+                    return m;
+                }).get();
+        return READER.read(is, templatingVars, options.getClientLabels());
     }
 }

@@ -25,6 +25,8 @@ import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
 import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -35,6 +37,9 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -72,7 +77,8 @@ public class Jikkou {
 
     public static void main(final String... args) {
         START_TIME = LocalDateTime.now();
-        final CommandLine commandLine = new CommandLine(new Jikkou())
+        final Jikkou command = new Jikkou();
+        final CommandLine commandLine = new CommandLine(command)
                 .setUsageHelpWidth(160)
                 .setExecutionStrategy(new CommandLine.RunLast())
                 .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
@@ -86,11 +92,33 @@ public class Jikkou {
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
         if (args.length > 0) {
+            command.initGlobalConfig();
             final int exitCode = commandLine.execute(args);
             System.exit(exitCode);
         } else {
             commandLine.usage(System.out);
         }
+    }
+
+    public void initGlobalConfig() {
+        Map<String, Object> adminClientParams = new HashMap<>();
+        if (options.clientCommandConfig != null) {
+            final Properties cliCommandProps = PropertiesUtils.loadPropertiesConfig(options.clientCommandConfig);
+            adminClientParams.putAll(PropertiesUtils.toMap(cliCommandProps));
+        }
+
+        adminClientParams.putAll(options.clientCommandProperties);
+        if (options.bootstrapServer != null && !options.bootstrapServer.isEmpty()) {
+            adminClientParams.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, options.bootstrapServer);
+        }
+
+        Map<String, Object> cliConfigParams = new HashMap<>();
+        cliConfigParams.put(ConfigOptions.ADMIN_CLIENT_OPTION, adminClientParams);
+
+        JikkouConfig.builder()
+            .withCLIConfigFile(options.configFile)
+            .withCLIConfigParams(cliConfigParams)
+            .getOrCreate();
     }
 
     public static class ShortErrorMessageHandler implements CommandLine.IParameterExceptionHandler {
