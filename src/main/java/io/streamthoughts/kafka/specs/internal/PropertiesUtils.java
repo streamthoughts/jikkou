@@ -57,6 +57,12 @@ public class PropertiesUtils {
         return props;
     }
 
+    public static Properties fromMap(final Map<String, Object> map) {
+        Properties properties = new Properties();
+        properties.putAll(map);
+        return properties;
+    }
+
     public static Map<String, String> toMap(final Properties props) {
         Map<String, String> builder = new LinkedHashMap<>();
         for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {

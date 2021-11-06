@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.transforms;
 
+import io.streamthoughts.kafka.specs.config.Configurable;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * Transform an input {@link V1SpecsObject}.
  */
 @FunctionalInterface
-public interface Transformation {
+public interface Transformation extends Configurable {
 
     /**
      * Applies the transformation on the given {@link V1SpecFile} object.

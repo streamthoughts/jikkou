@@ -19,7 +19,8 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.Jikkou;
-import io.streamthoughts.kafka.specs.JikkouConfig;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine.ParentCommand;
@@ -33,7 +34,7 @@ public class WithAdminClientCommand {
     private Jikkou specs;
 
     public Integer withAdminClient(final Function<AdminClient, Integer> function) {
-        final Properties adminClientProps = JikkouConfig.get().getAdminClientProps();
+        final Properties adminClientProps = JikkouParams.ADMIN_CLIENT_CONFIG.get(JikkouConfig.get());
         try (AdminClient client = AdminClientUtils.newAdminClient(adminClientProps)) {
             return function.apply(client);
         }

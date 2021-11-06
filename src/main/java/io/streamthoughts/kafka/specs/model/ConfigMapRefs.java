@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +69,7 @@ public abstract class ConfigMapRefs<T extends ConfigMapRefs<T>> {
         Map<String, Object> newConfigs = new HashMap<>();
         this.configMapRefs.forEach(name -> newConfigs.putAll(
                 configMaps.findConfigMap(name)
-                        .orElseThrow(() -> new KafkaSpecsException("configmap '" + name + "' not found"))
+                        .orElseThrow(() -> new JikkouException("configmap '" + name + "' not found"))
                         .configs()
                         .toMap())
         );

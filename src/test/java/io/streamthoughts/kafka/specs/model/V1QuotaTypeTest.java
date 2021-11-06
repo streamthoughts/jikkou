@@ -18,32 +18,31 @@
  */
 package io.streamthoughts.kafka.specs.model;
 
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class V1QuotaTypeTest {
 
     @Test
     public void should_throw_exception_given_invalid_quota_type_user() {
-        Assertions.assertThrows(KafkaSpecsException.class, () -> {
+        Assertions.assertThrows(JikkouException.class, () -> {
             V1QuotaType.USER.validate(new V1QuotaEntityObject(null, null));
         });
     }
 
     @Test
     public void should_throw_exception_given_invalid_quota_type_client() {
-        Assertions.assertThrows(KafkaSpecsException.class, () -> {
+        Assertions.assertThrows(JikkouException.class, () -> {
             V1QuotaType.CLIENT.validate(new V1QuotaEntityObject(null, null));
         });
     }
 
     @Test
     public void should_throw_exception_given_invalid_quota_type_user_client() {
-        Assertions.assertThrows(KafkaSpecsException.class, () -> {
+        Assertions.assertThrows(JikkouException.class, () -> {
             V1QuotaType.USER_CLIENT.validate(new V1QuotaEntityObject(null, null));
         });
     }

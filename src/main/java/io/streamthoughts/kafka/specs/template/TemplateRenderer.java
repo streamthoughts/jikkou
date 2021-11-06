@@ -22,7 +22,7 @@ import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.RenderResult;
 import com.hubspot.jinjava.interpret.TemplateError;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.internal.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -62,7 +62,7 @@ public class TemplateRenderer {
         List<TemplateError> errors = result.getErrors();
         if (!errors.isEmpty()) {
             TemplateError error = errors.get(0);
-            throw new KafkaSpecsException(
+            throw new JikkouException(
                     String.format(
                             "%s: line %d, %s",
                             formatErrorReason(error.getReason().name()),

@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.model;
 
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.Named;
 
@@ -46,7 +46,7 @@ public class V1ConfigMaps {
                 .stream()
                 .map(e -> {
                     if (e.getValue().size() > 1) {
-                        throw new KafkaSpecsException("Duplicate configMaps for name '" + e.getKey() + "'");
+                        throw new JikkouException("Duplicate configMaps for name '" + e.getKey() + "'");
                     }
                     return Map.entry(e.getKey(), e.getValue().get(0));
                 })

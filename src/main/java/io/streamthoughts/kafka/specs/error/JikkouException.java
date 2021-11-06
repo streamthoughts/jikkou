@@ -16,14 +16,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.error;
 
 /**
- * The list of configuration operations.
+ * Top-level exception for Kafka Specs.
  */
-public class ConfigOptions {
+public class JikkouException extends RuntimeException {
 
-    public static final String ADMIN_CLIENT_OPTION = "adminClient";
+    public JikkouException() {
+        super();
+    }
 
-    public static final String TEMPLATING_VARS_OPTION = "templating.vars";
+    public JikkouException(final String message) {
+        super(message);
+    }
+
+    public JikkouException(final String message, final Throwable throwable) {
+        super(message, throwable);
+    }
+
+    public JikkouException(final Throwable cause) {
+        super(cause);
+    }
+
 }

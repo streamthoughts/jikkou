@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.error;
 
-public class InvalidSpecsFileException extends KafkaSpecsException {
+public class InvalidSpecsFileException extends JikkouException {
 
     public InvalidSpecsFileException() {
         super();

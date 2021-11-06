@@ -18,8 +18,11 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
+import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,9 +33,20 @@ import java.util.List;
  */
 public abstract class TopicValidation implements Validation {
 
+    private JikkouConfig config;
+
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void configure(@NotNull final JikkouConfig config) throws ConfigException {
+        this.config = config;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void validate(@NotNull final V1SpecsObject specsObject) throws ValidationException {
         final List<V1TopicObject> topics = specsObject.topics();
         if (topics.isEmpty()) return;
@@ -48,6 +62,10 @@ public abstract class TopicValidation implements Validation {
         if (!exceptions.isEmpty()) {
             throw new ValidationException(exceptions);
         }
+    }
+
+    public JikkouConfig config() {
+        return Option.of(config).getOrElseThrow(() -> new IllegalStateException("not configured."));
     }
 
     public abstract void validateTopic(@NotNull final V1TopicObject topic) throws ValidationException;

@@ -16,27 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.error;
+package io.streamthoughts.kafka.specs.config;
+
+import io.streamthoughts.kafka.specs.error.ConfigException;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Execution exception for Kafka Specs.
+ * Any class that need be configured with external config properties should implement that interface.
+ *
+ * @see JikkouConfig
  */
-public class KafkaSpecsExecutionException extends RuntimeException {
+public interface Configurable {
 
-    public KafkaSpecsExecutionException() {
-        super();
+    /**
+     * Configures the given class with the given config.
+     *
+     * @param config    the {@link JikkouConfig}.
+     */
+    default void configure(@NotNull JikkouConfig config) throws ConfigException {
+
     }
-
-    public KafkaSpecsExecutionException(final String message) {
-        super(message);
-    }
-
-    public KafkaSpecsExecutionException(final String message, final Throwable throwable) {
-        super(message, throwable);
-    }
-
-    public KafkaSpecsExecutionException(final Throwable cause) {
-        super(cause);
-    }
-
 }

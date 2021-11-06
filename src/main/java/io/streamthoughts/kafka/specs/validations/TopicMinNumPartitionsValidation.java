@@ -18,25 +18,31 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
+import io.streamthoughts.kafka.specs.config.ConfigParam;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.jetbrains.annotations.NotNull;
 
 public class TopicMinNumPartitionsValidation extends TopicValidation {
 
-    private static final int DEFAULT_MIN_NUM_PARTITIONS = 1;
+    private static final ConfigParam<Integer> MIN_PARTITIONS_PARAM = JikkouParams
+            .VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void validateTopic(final @NotNull V1TopicObject topic) throws ValidationException {
+        final Integer minNumPartitions = MIN_PARTITIONS_PARAM.get(config());
         topic.partitions().ifPresent(p -> {
-            if (p != V1TopicObject.NO_NUM_PARTITIONS && p < DEFAULT_MIN_NUM_PARTITIONS) {
+            if (p != V1TopicObject.NO_NUM_PARTITIONS && p < minNumPartitions) {
                 throw new ValidationException(String.format(
                         "Number of partitions for topic '%s' is less than the minimum required: %d < %d",
                         topic.name(),
                         p,
-                        DEFAULT_MIN_NUM_PARTITIONS
+                        minNumPartitions
                 ), this);
             }
         });

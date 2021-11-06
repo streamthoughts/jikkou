@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.specs;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.model.V1MetadataObjects;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1TemplateObject;
@@ -53,7 +53,7 @@ public class YAMLClusterSpecReader implements ClusterSpecReader {
             @Override
             public V1SpecFile read(@NotNull final InputStream specification,
                                    @NotNull final Map<String, Object> vars,
-                                   @NotNull final Map<String, Object> labels) throws KafkaSpecsException {
+                                   @NotNull final Map<String, Object> labels) throws JikkouException {
                 try {
                     return Jackson.YAML_OBJECT_MAPPER.readValue(specification, V1SpecFile.class);
                 } catch (IOException e) {

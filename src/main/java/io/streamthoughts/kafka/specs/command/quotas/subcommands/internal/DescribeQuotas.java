@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.command.quotas.subcommands.internal;
 
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsExecutionException;
+import io.streamthoughts.kafka.specs.error.ExecutionException;
 import io.streamthoughts.kafka.specs.model.V1QuotaLimitsObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaEntityObject;
@@ -65,7 +65,7 @@ public class DescribeQuotas {
                     })
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new KafkaSpecsExecutionException(e);
+            throw new ExecutionException(e);
         }
     }
 }

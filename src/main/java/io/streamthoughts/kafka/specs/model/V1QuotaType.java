@@ -18,8 +18,8 @@
  */
 package io.streamthoughts.kafka.specs.model;
 
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsExecutionException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
+import io.streamthoughts.kafka.specs.error.ExecutionException;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,9 +49,9 @@ public enum V1QuotaType {
      */
     USERS_DEFAULT() {
         @Override
-        public void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException {
+        public void validate(final V1QuotaEntityObject entityObject) throws JikkouException {
             if (!isValid(toEntities(entityObject))) {
-                throw new KafkaSpecsException(
+                throw new JikkouException(
                         String.format(
                                 "Defined entity for type '%s' is invalid (expected: user=null)",
                                 this.name()
@@ -88,9 +88,9 @@ public enum V1QuotaType {
      */
     USER() {
         @Override
-        public void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException {
+        public void validate(final V1QuotaEntityObject entityObject) throws JikkouException {
             if (!isValid(toEntities(entityObject))) {
-                throw new KafkaSpecsException(
+                throw new JikkouException(
                         String.format(
                                 "Defined entity for type '%s' is invalid (expected: user=<user-principal>)",
                                 this.name()
@@ -128,9 +128,9 @@ public enum V1QuotaType {
      */
     USER_CLIENT() {
         @Override
-        public void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException {
+        public void validate(final V1QuotaEntityObject entityObject) throws JikkouException {
             if (!isValid(toEntities(entityObject))) {
-                throw new KafkaSpecsException(
+                throw new JikkouException(
                         String.format(
                                 "Defined entity for type '%s' is invalid (expected: user=<user-principal>, client_client=<client-id>)",
                                 this.name()
@@ -172,9 +172,9 @@ public enum V1QuotaType {
      */
     USER_ALL_CLIENTS() {
         @Override
-        public void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException {
+        public void validate(final V1QuotaEntityObject entityObject) throws JikkouException {
             if (!isValid(toEntities(entityObject))) {
-                throw new KafkaSpecsException(
+                throw new JikkouException(
                         String.format(
                                 "Defined entity for type '%s' is invalid (expected: user=<user-principal>, client_client=null)",
                                 this.name()
@@ -216,9 +216,9 @@ public enum V1QuotaType {
      */
     CLIENTS_DEFAULT() {
         @Override
-        public void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException {
+        public void validate(final V1QuotaEntityObject entityObject) throws JikkouException {
             if (!isValid(toEntities(entityObject))) {
-                throw new KafkaSpecsException(
+                throw new JikkouException(
                         String.format(
                                 "Defined entity for type '%s' is invalid (expected: client_client=null)",
                                 this.name()
@@ -252,9 +252,9 @@ public enum V1QuotaType {
      */
     CLIENT() {
         @Override
-        public void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException {
+        public void validate(final V1QuotaEntityObject entityObject) throws JikkouException {
             if (!isValid(toEntities(entityObject))) {
-                throw new KafkaSpecsException(
+                throw new JikkouException(
                         String.format(
                                 "Defined entity for type '%s' is invalid (expected: client_client=<client-id>)",
                                 this.name()
@@ -288,9 +288,9 @@ public enum V1QuotaType {
      * Validates the given map of quota entities for this type.
      *
      * @param entityObject the {@link V1QuotaEntityObject} to validate.
-     * @throws KafkaSpecsException if the given map is not valid.
+     * @throws JikkouException if the given map is not valid.
      */
-    public abstract void validate(final V1QuotaEntityObject entityObject) throws KafkaSpecsException;
+    public abstract void validate(final V1QuotaEntityObject entityObject) throws JikkouException;
 
     /**
      * Checks if the given map of entities is valid for this type and return the list of missing entities.
@@ -320,7 +320,7 @@ public enum V1QuotaType {
                 return type;
             }
         }
-        throw new KafkaSpecsExecutionException("Failed to identify QuotaEntityType from: " + entries);
+        throw new ExecutionException("Failed to identify QuotaEntityType from: " + entries);
     }
 
     /**

@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.config.Configurable;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
@@ -36,12 +39,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class SpecFileValidator {
+public class SpecFileValidator implements Configurable {
 
     private final List<Transformation> transformations;
     private final List<Validation> validations;
+    private JikkouConfig config;
 
-    public static SpecFileValidator getDefault() {
+    public static SpecFileValidator newDefault() {
         return new SpecFileValidator()
             .withTransformation(new ApplyConfigMapsTransformation())
             .withValidation(new NoDuplicateTopicsAllowedValidation())
@@ -65,10 +69,18 @@ public class SpecFileValidator {
      * @param transformations   the list of {@link Transformation}.
      * @param validations       the list of {@link Validation}.
      */
-    public SpecFileValidator(final @NotNull List<Transformation> transformations,
-                             final @NotNull List<Validation> validations) {
+    private SpecFileValidator(final @NotNull List<Transformation> transformations,
+                              final @NotNull List<Validation> validations) {
         this.transformations = Objects.requireNonNull(transformations, "'transformations' cannot be null");
         this.validations = Objects.requireNonNull(validations, "'validations' cannot be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configure(final @NotNull JikkouConfig config) throws ConfigException {
+        this.config = config;
     }
 
     public @NotNull SpecFileValidator withTransformation(@NotNull final Transformation transformation) {
@@ -84,12 +96,14 @@ public class SpecFileValidator {
     public @NotNull V1SpecFile apply(@NotNull final V1SpecFile file) {
         V1SpecsObject specs = file.specs();
         for (Transformation transformation : transformations) {
+            transformation.configure(config);
             specs = transformation.transform(specs);
         }
 
         List<ValidationException> exceptions = new LinkedList<>();
         for (Validation validation : validations) {
             try {
+                validation.configure(config);
                 validation.validate(specs);
             } catch (ValidationException e) {
                 exceptions.add(e);

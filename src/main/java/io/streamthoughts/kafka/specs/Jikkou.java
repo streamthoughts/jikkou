@@ -24,7 +24,9 @@ import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import picocli.CommandLine;
@@ -83,7 +85,7 @@ public class Jikkou {
                 .setExecutionStrategy(new CommandLine.RunLast())
                 .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
                     final PrintWriter err = cmd.getErr();
-                    if (! (ex instanceof KafkaSpecsException) ) {
+                    if (! (ex instanceof JikkouException) ) {
                         err.println(cmd.getColorScheme().stackTraceText(ex));
                     }
                     err.println(cmd.getColorScheme().errorText(ex.getMessage()));
@@ -113,7 +115,7 @@ public class Jikkou {
         }
 
         Map<String, Object> cliConfigParams = new HashMap<>();
-        cliConfigParams.put(ConfigOptions.ADMIN_CLIENT_OPTION, adminClientParams);
+        cliConfigParams.put(JikkouParams.ADMIN_CLIENT_CONFIG_NAME, adminClientParams);
 
         JikkouConfig.builder()
             .withCLIConfigFile(options.configFile)

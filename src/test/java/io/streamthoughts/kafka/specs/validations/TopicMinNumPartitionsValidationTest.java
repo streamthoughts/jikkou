@@ -18,13 +18,21 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TopicMinNumPartitionsValidationTest {
 
-    final TopicMinNumPartitionsValidation validation = new TopicMinNumPartitionsValidation();
+    TopicMinNumPartitionsValidation validation;
+
+    @BeforeEach
+    public void before() {
+        validation = new TopicMinNumPartitionsValidation();
+        validation.configure(JikkouConfig.empty());
+    }
 
     @Test
     public void should_throw_exception_when_min_replication_is_not_valid() {

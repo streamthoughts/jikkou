@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  *
  * @see Validation
  */
-public class ValidationException extends KafkaSpecsException {
+public class ValidationException extends JikkouException {
 
     private final Validation validation;
     private final List<ValidationException> errors;
@@ -91,18 +91,18 @@ public class ValidationException extends KafkaSpecsException {
         final String message;
         if (!errors.isEmpty()) {
             message = errors.stream()
-                .map(e -> e.suffixMessage(errorSuffixMessage).getMessage())
+                .map(e -> e.errorSuffixMessage(errorSuffixMessage).getMessage())
                 .collect(Collectors.joining("\n"));
         } else {
-            message = getFormattedMessage();
+            message = getFormattedMessage(errorSuffixMessage);
         }
         return String.format("%s%s", suffixMessage, message);
     }
 
-    private String getFormattedMessage() {
+    private String getFormattedMessage(final String suffix) {
         final String message = super.getMessage();
         return Optional.ofNullable(validation)
-        .map(Validation::name).map(s -> String.format("[%s]: %s", s, message))
+        .map(Validation::name).map(s -> String.format("%s[%s]: %s", suffix, s, message))
         .orElse(message);
     }
 }

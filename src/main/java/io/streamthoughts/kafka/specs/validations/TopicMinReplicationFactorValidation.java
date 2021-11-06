@@ -18,25 +18,29 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
+import io.streamthoughts.kafka.specs.config.ConfigParam;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.jetbrains.annotations.NotNull;
 
 public class TopicMinReplicationFactorValidation extends TopicValidation {
 
-    private static final int DEFAULT_MIN_REPLICATION_FACTOR = 1;
+    private static final ConfigParam<Integer> MIN_REPLICAS_PARAM = JikkouParams
+            .VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void validateTopic(final @NotNull V1TopicObject topic) throws ValidationException {
+        final Integer minReplicationFactor = MIN_REPLICAS_PARAM.get(config());
         topic.replicationFactor().ifPresent(p -> {
-            if (p != V1TopicObject.NO_REPLICATION_FACTOR && p < DEFAULT_MIN_REPLICATION_FACTOR) {
+            if (p != V1TopicObject.NO_REPLICATION_FACTOR && p < minReplicationFactor) {
                 throw new ValidationException(String.format(
                         "Replication factor for topic '%s' is less than the minimum required: %d < %d",
                         topic.name(),
                         p,
-                        DEFAULT_MIN_REPLICATION_FACTOR
+                        minReplicationFactor
                 ), this);
             }
         });

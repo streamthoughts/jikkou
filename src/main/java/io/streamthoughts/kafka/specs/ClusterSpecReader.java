@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,5 +40,5 @@ public interface ClusterSpecReader {
      */
     V1SpecFile read(@NotNull final InputStream specs,
                     @NotNull final Map<String, Object> vars,
-                    @NotNull final Map<String, Object> labels) throws KafkaSpecsException;
+                    @NotNull final Map<String, Object> labels) throws JikkouException;
 }

@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.SpecFileValidator;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.SetOptionsMixin;
 import io.streamthoughts.kafka.specs.command.SpecFileOptionsMixin;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import picocli.CommandLine;
@@ -55,7 +56,10 @@ public class ValidateCommand implements Callable<Integer> {
     public Integer call() {
         V1SpecFile file = specOptions.parse(setOptions);
 
-        V1SpecFile validate = SpecFileValidator.getDefault().apply(file);
+        final SpecFileValidator validator = SpecFileValidator.newDefault();
+        validator.configure(JikkouConfig.get());
+
+        V1SpecFile validate = validator.apply(file);
 
         OutputStream os = System.out;
         MetaObject metaObject = MetaObject.defaults()

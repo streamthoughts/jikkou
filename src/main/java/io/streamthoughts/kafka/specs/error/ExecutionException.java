@@ -19,23 +19,23 @@
 package io.streamthoughts.kafka.specs.error;
 
 /**
- * Top-level exception for Kafka Specs.
+ * Execution exception for Kafka Specs.
  */
-public class KafkaSpecsException extends RuntimeException {
+public class ExecutionException extends JikkouException {
 
-    public KafkaSpecsException() {
+    public ExecutionException() {
         super();
     }
 
-    public KafkaSpecsException(final String message) {
+    public ExecutionException(final String message) {
         super(message);
     }
 
-    public KafkaSpecsException(final String message, final Throwable throwable) {
+    public ExecutionException(final String message, final Throwable throwable) {
         super(message, throwable);
     }
 
-    public KafkaSpecsException(final Throwable cause) {
+    public ExecutionException(final Throwable cause) {
         super(cause);
     }
 

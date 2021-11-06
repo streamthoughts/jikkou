@@ -19,12 +19,11 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
-import io.streamthoughts.kafka.specs.ConfigOptions;
-import io.streamthoughts.kafka.specs.JikkouConfig;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
-import io.streamthoughts.kafka.specs.error.KafkaSpecsException;
+import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -32,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 public class SpecFileOptionsMixin {
@@ -54,27 +52,23 @@ public class SpecFileOptionsMixin {
             try {
                 is = url.openStream();
             } catch (Exception e) {
-                throw new KafkaSpecsException("Can't read specification from URL '" + url + "': "
+                throw new JikkouException("Can't read specification from URL '" + url + "': "
                         + e.getMessage());
             }
         } else if (file != null) {
             try {
                 is = new FileInputStream(file);
             } catch (Exception e) {
-                throw new KafkaSpecsException("Can't read specification from file '" + file + "': "
+                throw new JikkouException("Can't read specification from file '" + file + "': "
                         + e.getMessage());
             }
         } else {
             throw new IllegalArgumentException("no specification");
         }
 
-        Map<String, Object> templatingVars = JikkouConfig.get()
-                .findConfigAsMap(ConfigOptions.TEMPLATING_VARS_OPTION)
-                .orElse(() -> Option.of(new HashMap<>()))
-                .map(m -> {
-                    m.putAll(options.getClientVars());
-                    return m;
-                }).get();
+        Map<String, Object> templatingVars = JikkouParams.TEMPLATING_VARS_CONFIG.get(JikkouConfig.get());
+        templatingVars.putAll(options.getClientVars());
+
         return READER.read(is, templatingVars, options.getClientLabels());
     }
 }

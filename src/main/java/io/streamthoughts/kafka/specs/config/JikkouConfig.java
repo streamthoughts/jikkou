@@ -16,12 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.config;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigParseOptions;
 import io.vavr.control.Option;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -35,11 +35,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class JikkouConfig {
+/**
+ * The default configuration class backed by the Typesafe {@link Config}.
+ */
+public final class JikkouConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(JikkouConfig.class);
 
@@ -50,8 +52,33 @@ public class JikkouConfig {
 
     private final Config config;
 
-    public static Builder builder() {
-        return new Builder();
+    /**
+     * Static helper that can be used to creates a new empty {@link JikkouConfig} instance.
+     *
+     * @return a new {@link JikkouConfig} instance.
+     */
+    public static JikkouConfig empty() {
+        return new JikkouConfig(ConfigFactory.empty());
+    }
+
+    /**
+     * Static helper that can be used to creates a new {@link JikkouConfig} instance
+     * from the specified properties.
+     *
+     * @return a new {@link JikkouConfig} instance.
+     */
+    public static JikkouConfig create(final Properties config) {
+        return new JikkouConfig(ConfigFactory.parseProperties(config, ConfigParseOptions.defaults()));
+    }
+
+    /**
+     * Static helper that can be used to creates a new {@link JikkouConfig} instance
+     * from the specified map.
+     *
+     * @return a new {@link JikkouConfig} instance.
+     */
+    public static JikkouConfig create(final Map<String, Object> config) {
+        return new JikkouConfig(ConfigFactory.parseMap(config));
     }
 
     public static JikkouConfig get() {
@@ -149,17 +176,6 @@ public class JikkouConfig {
         return findConfig(path).map(JikkouConfig::getConfAsMap);
     }
 
-    public Properties getAdminClientProps() {
-        final Config config = this.config.getConfig(ConfigOptions.ADMIN_CLIENT_OPTION);
-
-        final Map<String, Object> adminClientConfigs = getAdminClientConfigs(getConfAsMap(config));
-
-        Properties properties = new Properties();
-        properties.putAll(adminClientConfigs);
-
-        return properties;
-    }
-
     private static Map<String, Object> getConfAsMap(@NotNull final Config config) {
         Map<String, Object> props = new HashMap<>();
         config.entrySet().forEach(e -> props.put(e.getKey(), config.getAnyRef(e.getKey())));
@@ -172,19 +188,8 @@ public class JikkouConfig {
         return properties;
     }
 
-    private static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
-        return getConfigsForKeys(configs, AdminClientConfig.configNames());
-    }
-
-    private static Map<String, Object> getConfigsForKeys(final Map<String, Object> configs,
-                                                         final Set<String> keys) {
-        final Map<String, Object> parsed = new HashMap<>();
-        for (final String configName : keys) {
-            if (configs.containsKey(configName)) {
-                parsed.put(configName, configs.get(configName));
-            }
-        }
-        return parsed;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {
