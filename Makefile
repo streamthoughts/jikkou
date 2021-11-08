@@ -6,6 +6,7 @@ GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 REPOSITORY = streamthoughts
 IMAGE = jikkou
+DOCKER_PATH=./docker
 
 .SILENT:
 
@@ -21,23 +22,33 @@ clean-images:
         docker rmi -f $${image} || exit 1 ; \
     done
 
+print-info:
+	echo "\n==========================================\n";
+	echo "CONNECT_VERSION="$(PROJECT_VERSION);
+	echo "GIT_COMMIT="$(GIT_COMMIT);
+	echo "GIT_BRANCH="$(GIT_BRANCH);
+	echo "\n==========================================\n";
+
 clean-build:
 	echo "Cleaning build directory \n========================================== ";
 	rm -rf ./docker-build;
 
-build-images:
-	echo "Building image \n========================================== ";
-	echo "PROJECT_VERSION="$(PROJECT_VERSION)
-	echo "GIT_COMMIT="$(GIT_COMMIT)
-	echo "GIT_BRANCH="$(GIT_BRANCH)
-	echo "==========================================\n "
-	./gradlew clean distZip && \
-	docker build \
+build-dist: print-info
+	./gradlew clean distZip
+
+build-images: build-dist
+	cp ./build/distributions/jikkou-${PROJECT_VERSION}.zip ./docker/jikkou-${PROJECT_VERSION}.zip 
+	docker build --compress \
 	--build-arg jikkouVersion=${PROJECT_VERSION} \
 	--build-arg jikkouCommit=${GIT_COMMIT} \
 	--build-arg jikkouBranch=${GIT_BRANCH} \
-    -f Dockerfile \
-	-t ${REPOSITORY}/${IMAGE}:latest . || exit 1 ;
-	docker tag ${REPOSITORY}/${IMAGE}:latest ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} || exit 1 ;
+	--rm \
+        -f ./docker/Dockerfile \
+	-t ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} ${DOCKER_PATH} || exit 1 ;
+	
+	docker tag ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} ${REPOSITORY}/${IMAGE}:${GIT_BRANCH} || exit 1 ;
+
+docker-tag-latest: build-images
+	docker tag ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
 
 clean: clean-containers clean-images clean-build
