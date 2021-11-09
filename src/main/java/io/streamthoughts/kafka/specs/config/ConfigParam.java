@@ -22,6 +22,7 @@ import io.vavr.Lazy;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -31,17 +32,16 @@ import java.util.function.Supplier;
 /**
  * Represent a configuration param.
  *
+ * @param <T> param type.
  * @see JikkouConfig
  * @see JikkouParams
- *
- * @param <T> param type.
  */
 public class ConfigParam<T> {
 
     /**
      * Static helper method to create a new {@link ConfigParam} with an expected {@link Integer} value.
      *
-     * @param path         the option string path.
+     * @param path the option string path.
      * @return a new {@link ConfigParam}.
      */
     public static ConfigParam<Integer> ofInt(final @NotNull String path) {
@@ -51,7 +51,7 @@ public class ConfigParam<T> {
     /**
      * Static helper method to create a new {@link ConfigParam} with an expected {@link Long} value.
      *
-     * @param path         the option string path.
+     * @param path the option string path.
      * @return a new {@link ConfigParam}.
      */
     public static ConfigParam<Long> ofLong(final @NotNull String path) {
@@ -61,7 +61,7 @@ public class ConfigParam<T> {
     /**
      * Static helper method to create a new {@link ConfigParam} with an expected {@link String} value.
      *
-     * @param path         the option string path.
+     * @param path the option string path.
      * @return a new {@link ConfigParam}.
      */
     public static ConfigParam<String> ofString(final @NotNull String path) {
@@ -71,7 +71,7 @@ public class ConfigParam<T> {
     /**
      * Static helper method to create a new {@link ConfigParam} with an expected {@link Boolean} value.
      *
-     * @param path         the option string path.
+     * @param path the option string path.
      * @return a new {@link ConfigParam}.
      */
     public static ConfigParam<Boolean> ofBoolean(final @NotNull String path) {
@@ -81,15 +81,35 @@ public class ConfigParam<T> {
     /**
      * Static helper method to create a new {@link ConfigParam} with an expected {@link Map} value.
      *
-     * @param path         the option string path.
+     * @param path the option string path.
      * @return a new {@link ConfigParam}.
      */
     public static ConfigParam<Map<String, Object>> ofMap(final @NotNull String path) {
         return new ConfigParam<>(path, (p, config) -> config.findConfigAsMap(p));
     }
 
-    public final String path;
-    public final Lazy<T> defaultValue;
+    /**
+     * Static helper method to create a new {@link ConfigParam} with an expected {@link List} of string values.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigParam}.
+     */
+    public static ConfigParam<List<String>> ofList(final @NotNull String path) {
+        return new ConfigParam<>(path, (p, config) -> config.findStringList(p));
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigParam} with an expected {@link List} of classes.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigParam}.
+     */
+    public static <T> ConfigParam<List<Class<T>>> ofClasses(final @NotNull String path) {
+        return new ConfigParam<>(path, (p, config) -> config.findClassList(p));
+    }
+
+    private final String path;
+    private final Option<Lazy<T>> defaultValue;
 
     public final BiFunction<String, JikkouConfig, Option<T>> supplier;
 
@@ -100,7 +120,7 @@ public class ConfigParam<T> {
      */
     public ConfigParam(final @NotNull String path,
                        final @NotNull BiFunction<String, JikkouConfig, Option<T>> supplier) {
-        this(path, Lazy.of(() -> null), supplier);
+        this(path, Option.none(), supplier);
     }
 
     /**
@@ -111,6 +131,18 @@ public class ConfigParam<T> {
      */
     public ConfigParam(final @NotNull String path,
                        final @NotNull Lazy<T> defaultValue,
+                       final @NotNull BiFunction<String, JikkouConfig, Option<T>> supplier) {
+        this(path, Option.of(defaultValue), supplier);
+    }
+
+    /**
+     * Creates a new {@link ConfigParam} instance.
+     *
+     * @param path         the option string path.
+     * @param defaultValue the option default value.
+     */
+    private ConfigParam(final @NotNull String path,
+                       final @NotNull Option<Lazy<T>> defaultValue,
                        final @NotNull BiFunction<String, JikkouConfig, Option<T>> supplier) {
         this.path = Objects.requireNonNull(path, "'path cannot be null'");
         this.defaultValue = defaultValue;
@@ -134,7 +166,10 @@ public class ConfigParam<T> {
      * @return A new value
      */
     public <U> ConfigParam<U> map(Function<? super T, ? extends U> mapper) {
-        return new ConfigParam<>(path, defaultValue.map(mapper), (p, config) -> supplier.apply(p, config).map(mapper));
+        return new ConfigParam<>(
+            path, defaultValue.map(it -> it.map(mapper)),
+            (p, config) -> supplier.apply(p, config).map(mapper)
+        );
     }
 
     public T orElseGet(final @NotNull JikkouConfig config,
@@ -153,7 +188,15 @@ public class ConfigParam<T> {
      * @return the value for this param from the given {@link JikkouConfig}.
      */
     public Option<T> getOption(final @NotNull JikkouConfig config) {
-        return supplier.apply(path, config).orElse(defaultValue::toOption);
+        return supplier.apply(path, config).orElse(defaultValue.map(Lazy::get));
+    }
+
+    public String path() {
+        return path;
+    }
+
+    public Lazy<T> defaultValue() {
+        return defaultValue.getOrElse(Lazy.of( () -> (T) null));
     }
 
     /**

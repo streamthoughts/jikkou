@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.specs.config;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigParseOptions;
+import io.streamthoughts.kafka.specs.internal.ClassUtils;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -91,7 +93,7 @@ public final class JikkouConfig {
      *
      * @param cliConfigParams the config params passed through the command-mine arguments.
      * @param cliConfigFile   the configFile passed through the command-line arguments.
-     * @return                 a new {@link JikkouConfig}
+     * @return a new {@link JikkouConfig}
      */
     private static JikkouConfig create(final @Nullable Map<String, Object> cliConfigParams,
                                        final @Nullable String cliConfigFile) {
@@ -170,6 +172,20 @@ public final class JikkouConfig {
 
     public Option<Config> findConfig(@NotNull final String path) {
         return config.hasPath(path) ? Option.some(config.getConfig(path)) : Option.none();
+    }
+
+    public Option<List<String>> findStringList(@NotNull final String path) {
+        return config.hasPath(path) ? Option.some(config.getStringList(path)) : Option.none();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Option<List<Class<T>>> findClassList(@NotNull final String path) {
+        return findStringList(path).flatMap(classes -> {
+            var l = classes.stream()
+                .map(it -> (Class<T>) ClassUtils.forName(it))
+                .collect(Collectors.toList());
+            return Option.of(l);
+        });
     }
 
     public Option<Map<String, Object>> findConfigAsMap(@NotNull final String path) {

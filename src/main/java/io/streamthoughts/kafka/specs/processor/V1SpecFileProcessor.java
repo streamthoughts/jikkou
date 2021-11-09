@@ -16,61 +16,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.processor;
 
-import io.streamthoughts.kafka.specs.config.Configurable;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.error.ConfigException;
+import io.streamthoughts.kafka.specs.internal.ClassUtils;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import io.streamthoughts.kafka.specs.transforms.Transformation;
-import io.streamthoughts.kafka.specs.validations.QuotasEntityValidation;
-import io.streamthoughts.kafka.specs.validations.TopicMinNumPartitionsValidation;
 import io.streamthoughts.kafka.specs.validations.NoDuplicateRolesAllowedValidation;
 import io.streamthoughts.kafka.specs.validations.NoDuplicateTopicsAllowedValidation;
 import io.streamthoughts.kafka.specs.validations.NoDuplicateUsersAllowedValidation;
+import io.streamthoughts.kafka.specs.validations.QuotasEntityValidation;
+import io.streamthoughts.kafka.specs.validations.TopicMinNumPartitionsValidation;
 import io.streamthoughts.kafka.specs.validations.TopicMinReplicationFactorValidation;
 import io.streamthoughts.kafka.specs.validations.Validation;
 import io.streamthoughts.kafka.specs.validations.ValidationException;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class SpecFileValidator implements Configurable {
+public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(V1SpecFileProcessor.class);
 
     private final List<Transformation> transformations;
     private final List<Validation> validations;
     private JikkouConfig config;
 
-    public static SpecFileValidator newDefault() {
-        return new SpecFileValidator()
-            .withTransformation(new ApplyConfigMapsTransformation())
-            .withValidation(new NoDuplicateTopicsAllowedValidation())
-            .withValidation(new NoDuplicateUsersAllowedValidation())
-            .withValidation(new NoDuplicateRolesAllowedValidation())
-            .withValidation(new TopicMinNumPartitionsValidation())
-            .withValidation(new TopicMinReplicationFactorValidation())
-            .withValidation(new QuotasEntityValidation());
+    public static V1SpecFileProcessor create(final @NotNull JikkouConfig config) {
+        var processor = new V1SpecFileProcessor()
+                .withTransformation(new ApplyConfigMapsTransformation())
+                .withValidation(new NoDuplicateTopicsAllowedValidation())
+                .withValidation(new NoDuplicateUsersAllowedValidation())
+                .withValidation(new NoDuplicateRolesAllowedValidation())
+                .withValidation(new TopicMinNumPartitionsValidation())
+                .withValidation(new TopicMinReplicationFactorValidation())
+                .withValidation(new QuotasEntityValidation());
+        processor.configure(config);
+        return processor;
     }
 
     /**
-     * Creates a new {@link SpecFileValidator} instance.
+     * Creates a new {@link V1SpecFileProcessor} instance.
      */
-    public SpecFileValidator() {
+    public V1SpecFileProcessor() {
         this(new LinkedList<>(), new LinkedList<>());
     }
 
     /**
-     * Creates a new {@link SpecFileValidator} instance.
+     * Creates a new {@link V1SpecFileProcessor} instance.
      *
-     * @param transformations   the list of {@link Transformation}.
-     * @param validations       the list of {@link Validation}.
+     * @param transformations the list of {@link Transformation}.
+     * @param validations     the list of {@link Validation}.
      */
-    private SpecFileValidator(final @NotNull List<Transformation> transformations,
-                              final @NotNull List<Validation> validations) {
+    private V1SpecFileProcessor(final @NotNull List<Transformation> transformations,
+                                final @NotNull List<Validation> validations) {
         this.transformations = Objects.requireNonNull(transformations, "'transformations' cannot be null");
         this.validations = Objects.requireNonNull(validations, "'validations' cannot be null");
     }
@@ -81,18 +88,41 @@ public class SpecFileValidator implements Configurable {
     @Override
     public void configure(final @NotNull JikkouConfig config) throws ConfigException {
         this.config = config;
+        JikkouParams.TRANSFORMATIONS_CONFIG.get(config)
+                .stream()
+                .map(ClassUtils::newInstance)
+                .forEach(this::withTransformation);
+
+        JikkouParams.VALIDATIONS_CONFIG.get(config)
+                .stream()
+                .map(ClassUtils::newInstance)
+                .forEach(this::withValidation);
     }
 
-    public @NotNull SpecFileValidator withTransformation(@NotNull final Transformation transformation) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public @NotNull V1SpecFileProcessor withTransformation(@NotNull final Transformation transformation) {
+        LOG.info("Adding {}", transformation.getClass());
         this.transformations.add(transformation);
         return this;
     }
 
-    public @NotNull SpecFileValidator withValidation(@NotNull final Validation validation) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public @NotNull V1SpecFileProcessor withValidation(@NotNull final Validation validation) {
+        LOG.info("Adding {}", validation.getClass());
         this.validations.add(validation);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public @NotNull V1SpecFile apply(@NotNull final V1SpecFile file) {
         V1SpecsObject specs = file.specs();
         for (Transformation transformation : transformations) {

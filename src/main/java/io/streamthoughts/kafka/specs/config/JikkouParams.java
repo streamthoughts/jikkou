@@ -19,9 +19,12 @@
 package io.streamthoughts.kafka.specs.config;
 
 import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
+import io.streamthoughts.kafka.specs.transforms.Transformation;
+import io.streamthoughts.kafka.specs.validations.Validation;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -47,6 +50,15 @@ public final class JikkouParams {
 
     public static final ConfigParam<Integer> VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG = ConfigParam
             .ofInt("validation.topic.min.num.partitions").orElse(1);
+
+    public static final ConfigParam<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigParam
+            .ofString("validation.topic.name.regex");
+
+    public static final ConfigParam<List<Class<Validation>>> VALIDATIONS_CONFIG = ConfigParam
+            .ofClasses("validations");
+
+    public static final ConfigParam<List<Class<Transformation>>> TRANSFORMATIONS_CONFIG = ConfigParam
+            .ofClasses("transforms");
 
     private static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
         return getConfigsForKeys(configs, AdminClientConfig.configNames());

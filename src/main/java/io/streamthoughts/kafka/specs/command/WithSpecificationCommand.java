@@ -21,7 +21,8 @@ package io.streamthoughts.kafka.specs.command;
 import io.streamthoughts.kafka.specs.CLIUtils;
 import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.Printer;
-import io.streamthoughts.kafka.specs.SpecFileValidator;
+import io.streamthoughts.kafka.specs.processor.Processor;
+import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
@@ -66,9 +67,9 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
     }
 
     public V1SpecsObject loadSpecsObject() {
-        V1SpecFile parsed = specOptions.parse(labelsOption);
-        final SpecFileValidator validator = SpecFileValidator.newDefault();
-        validator.configure(JikkouConfig.get());
-        return validator.apply(parsed).specs();
+        return V1SpecFileProcessor
+                .create(JikkouConfig.get())
+                .apply(specOptions.parse(labelsOption))
+                .specs();
     }
 }
