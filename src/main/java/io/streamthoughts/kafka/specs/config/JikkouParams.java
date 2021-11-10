@@ -54,6 +54,12 @@ public final class JikkouParams {
     public static final ConfigParam<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigParam
             .ofString("validation.topic.name.regex");
 
+    public static final ConfigParam<List<String>> VALIDATION_TOPIC_NAME_PREFIXES_CONFIG = ConfigParam
+            .ofList("validation.topic.name.prefixes");
+
+    public static final ConfigParam<List<String>> VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG = ConfigParam
+            .ofList("validation.topic.name.suffixes");
+
     public static final ConfigParam<List<Class<Validation>>> VALIDATIONS_CONFIG = ConfigParam
             .ofClasses("validations");
 
