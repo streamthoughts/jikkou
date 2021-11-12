@@ -79,8 +79,16 @@ set CMD_LINE_ARGS=%*
 :execute
 @rem Setup the command line
 
-set CLASSPATH=$classpath
+if defined %CLASSPATH% goto override_classpath
 
+:set_classpath
+set CLASSPATH=$classpath
+goto java
+
+:override_classpath
+set CLASSPATH=%CLASSPATH%:$classpath
+
+:java
 @rem Execute ${applicationName}
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath "%CLASSPATH%" ${mainClassName} %CMD_LINE_ARGS%
 

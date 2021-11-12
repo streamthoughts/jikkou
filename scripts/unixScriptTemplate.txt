@@ -78,7 +78,7 @@ case "`uname`" in
     ;;
 esac
 
-CLASSPATH=$classpath
+CLASSPATH="\$CLASSPATH:$classpath"
 
 # Determine the Java command to use to start the JVM.
 if [ -n "\$JAVA_HOME" ] ; then
@@ -117,6 +117,9 @@ if [ "\$cygwin" = "false" -a "\$darwin" = "false" -a "\$nonstop" = "false" ] ; t
         warn "Could not query maximum file descriptor limit: \$MAX_FD_LIMIT"
     fi
 fi
+
+# Remove a possible colon prefix from the classpath (happens at lines like `CLASSPATH="\$CLASSPATH:\$classpath"` when CLASSPATH is blank)
+CLASSPATH=\${CLASSPATH#:}
 
 # For Darwin, add options to specify how the application appears in the dock
 if \$darwin; then
