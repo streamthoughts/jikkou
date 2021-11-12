@@ -21,7 +21,8 @@ package io.streamthoughts.kafka.specs.processor;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.error.ConfigException;
-import io.streamthoughts.kafka.specs.internal.ClassUtils;
+import io.streamthoughts.kafka.specs.extensions.ExtensionRegistry;
+import io.streamthoughts.kafka.specs.extensions.ReflectiveExtensionScanner;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +51,8 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
     private final List<Transformation> transformations;
     private final List<Validation> validations;
     private JikkouConfig config;
+
+    private final ExtensionRegistry registry = new ExtensionRegistry();
 
     public static V1SpecFileProcessor create(final @NotNull JikkouConfig config) {
         var processor = new V1SpecFileProcessor()
@@ -87,15 +91,25 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
      */
     @Override
     public void configure(final @NotNull JikkouConfig config) throws ConfigException {
+        LOG.info("Configuring {}", V1SpecFileProcessor.class.getName());
         this.config = config;
+
+        final List<String> extensionPaths = JikkouParams.EXTENSION_PATHS
+                .getOption(config).
+                getOrElse(Collections.emptyList());
+
+        if (!extensionPaths.isEmpty()) {
+            new ReflectiveExtensionScanner(registry).scan(extensionPaths);
+        }
+
         JikkouParams.TRANSFORMATIONS_CONFIG.get(config)
                 .stream()
-                .map(ClassUtils::newInstance)
+                .map(cls -> (Transformation) registry.getExtensionForClass(cls))
                 .forEach(this::withTransformation);
 
         JikkouParams.VALIDATIONS_CONFIG.get(config)
                 .stream()
-                .map(ClassUtils::newInstance)
+                .map(cls -> (Validation) registry.getExtensionForClass(cls))
                 .forEach(this::withValidation);
     }
 

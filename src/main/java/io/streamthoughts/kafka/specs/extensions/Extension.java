@@ -16,26 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.transforms;
-
-import io.streamthoughts.kafka.specs.config.Configurable;
-import io.streamthoughts.kafka.specs.extensions.Extension;
-import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import org.jetbrains.annotations.NotNull;
+package io.streamthoughts.kafka.specs.extensions;
 
 /**
- * Transform an input {@link V1SpecsObject}.
+ * The top-level interface for extension.
+ *
+ * @see io.streamthoughts.kafka.specs.validations.Validation
+ * @see io.streamthoughts.kafka.specs.transforms.Transformation
  */
-@FunctionalInterface
-public interface Transformation extends Extension, Configurable {
-
-    /**
-     * Applies the transformation on the given {@link V1SpecFile} object.
-     *
-     * @param V1SpecsObject    the {@link V1SpecsObject} object to transform.
-     * @return                 a {@link V1SpecsObject}.
-     */
-    @NotNull V1SpecsObject transform(@NotNull final V1SpecsObject V1SpecsObject);
-
+public interface Extension {
 }

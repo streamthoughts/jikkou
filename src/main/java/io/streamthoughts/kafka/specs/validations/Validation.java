@@ -19,11 +19,12 @@
 package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.config.Configurable;
+import io.streamthoughts.kafka.specs.extensions.Extension;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-public interface Validation extends Configurable {
+public interface Validation extends Extension, Configurable {
 
     /**
      * @return the name of this validation policy.

@@ -19,8 +19,6 @@
 package io.streamthoughts.kafka.specs.config;
 
 import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
-import io.streamthoughts.kafka.specs.transforms.Transformation;
-import io.streamthoughts.kafka.specs.validations.Validation;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 
 import java.util.HashMap;
@@ -60,11 +58,14 @@ public final class JikkouParams {
     public static final ConfigParam<List<String>> VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG = ConfigParam
             .ofList("validation.topic.name.suffixes");
 
-    public static final ConfigParam<List<Class<Validation>>> VALIDATIONS_CONFIG = ConfigParam
-            .ofClasses("validations");
+    public static final ConfigParam<List<String>> VALIDATIONS_CONFIG = ConfigParam
+            .ofList("validations");
 
-    public static final ConfigParam<List<Class<Transformation>>> TRANSFORMATIONS_CONFIG = ConfigParam
-            .ofClasses("transforms");
+    public static final ConfigParam<List<String>> TRANSFORMATIONS_CONFIG = ConfigParam
+            .ofList("transforms");
+
+    public static final ConfigParam<List<String>> EXTENSION_PATHS = ConfigParam
+            .ofList("extension.paths");
 
     private static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
         return getConfigsForKeys(configs, AdminClientConfig.configNames());
