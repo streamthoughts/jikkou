@@ -161,7 +161,7 @@ public final class V1TopicObject extends ConfigMapRefs<V1TopicObject> implements
         final HashMap<String, Object> merged = new HashMap<>();
         merged.putAll(configs);
         merged.putAll(this.configs.toMap());
-        return new V1TopicObject(name, partitions, replicationFactor, Configs.of(configs));
+        return new V1TopicObject(name, partitions, replicationFactor, Configs.of(merged));
     }
 
     @JsonIgnore

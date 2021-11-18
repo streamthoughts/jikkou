@@ -20,7 +20,8 @@ package io.streamthoughts.kafka.specs.operation.quotas;
 
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
-import io.streamthoughts.kafka.specs.change.QuotaChanges;
+import io.vavr.Tuple2;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterClientQuotasResult;
 import org.apache.kafka.common.KafkaFuture;
@@ -28,6 +29,7 @@ import org.apache.kafka.common.quota.ClientQuotaAlteration;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -66,8 +68,8 @@ public abstract class AbstractQuotaOperation implements QuotaOperation {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull Map<ClientQuotaEntity, KafkaFuture<Void>> apply(@NotNull final QuotaChanges changes) {
-        final List<ClientQuotaAlteration> alterations = changes.all()
+    public @NotNull Map<ClientQuotaEntity, List<Future<Void>>> doApply(@NotNull final Collection<QuotaChange> changes) {
+        final List<ClientQuotaAlteration> alterations = changes
                 .stream().map(quota -> {
                     final ClientQuotaEntity entity = new ClientQuotaEntity(quota.getType().toEntities(quota.getEntity()));
                     final List<ClientQuotaAlteration.Op> operations = quota.getConfigs()
@@ -77,7 +79,13 @@ public abstract class AbstractQuotaOperation implements QuotaOperation {
                             .collect(Collectors.toList());
                     return new ClientQuotaAlteration(entity, operations);
                 }).collect(Collectors.toList());
+
         final AlterClientQuotasResult result = client.alterClientQuotas(alterations);
-        return result.values();
+
+        final Map<ClientQuotaEntity, KafkaFuture<Void>> kafkaResults = result.values();
+        return kafkaResults.entrySet()
+                .stream()
+                .map(e -> new Tuple2<>(e.getKey(), List.of(Future.fromJavaFuture(e.getValue()))))
+                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
     }
 }

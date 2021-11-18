@@ -64,7 +64,7 @@ public class ValueChange<T> {
             throw new IllegalArgumentException("Target and previous value cannot be both 'null'.");
         }
         if (after != null && before != null) {
-            return after.equals(before) ?
+            return isEquals(after, before) ?
                     new ValueChange<>(after, before, Change.OperationType.NONE) :
                     new ValueChange<>(after, before, Change.OperationType.UPDATE);
 
@@ -76,6 +76,16 @@ public class ValueChange<T> {
 
         // before is NULL
         return new ValueChange<>(after, null, Change.OperationType.ADD);
+    }
+
+    private static <T> boolean isEquals(@NotNull final T after, @NotNull final T before) {
+        if (after instanceof String)
+            return after.equals(before.toString());
+
+        if (before instanceof String)
+            return before.equals(after.toString());
+
+        return after.equals(before);
     }
 
     /**

@@ -16,15 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.acls;
 
 import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.change.AclChanges;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.internal.FutureUtils;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.vavr.Tuple2;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateAclsResult;
 import org.apache.kafka.common.KafkaFuture;
@@ -33,10 +33,10 @@ import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.resource.ResourcePattern;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class CreateAclsOperation implements AclOperation {
@@ -59,7 +59,7 @@ public class CreateAclsOperation implements AclOperation {
     /**
      * Creates a new {@link CreateAclsOperation} instance.
      *
-     * @param adminClient   the {@link AdminClient}.
+     * @param adminClient the {@link AdminClient}.
      */
     public CreateAclsOperation(@NotNull final AdminClient adminClient) {
         this.adminClient = Objects.requireNonNull(adminClient, "'adminClient should not be null'");
@@ -85,9 +85,8 @@ public class CreateAclsOperation implements AclOperation {
      * {@inheritDoc}
      */
     @Override
-    public Map<AccessControlPolicy, CompletableFuture<Void>> apply(final @NotNull AclChanges changes) {
+    public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes) {
         List<AclBinding> bindings = changes
-                .all()
                 .stream()
                 .map(AclChange::getAccessControlPolicy)
                 .map(converter::toAclBinding)
@@ -95,14 +94,14 @@ public class CreateAclsOperation implements AclOperation {
 
         CreateAclsResult result = adminClient.createAcls(bindings);
 
-        Map<AclBinding, KafkaFuture<Void>> values = result.values();
+        Map<AclBinding, KafkaFuture<Void>> kafkaResults = result.values();
 
-        return values.entrySet()
-              .stream()
-              .collect(Collectors.toMap(
-                      e -> converter.fromAclBinding(e.getKey()),
-                      e -> FutureUtils.toCompletableFuture(e.getValue()))
-              );
+        return kafkaResults.entrySet()
+                .stream()
+                .map(e -> new Tuple2<>(converter.fromAclBinding(e.getKey()), e.getValue()))
+                .map(t -> t.map2(Future::fromJavaFuture))
+                .map(t -> t.map2(List::of))
+                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
     }
 
     private static class AclBindingConverter {

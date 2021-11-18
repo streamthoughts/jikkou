@@ -16,24 +16,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.acls;
 
 import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.change.AclChanges;
+import io.streamthoughts.kafka.specs.operation.Operation;
+import io.streamthoughts.kafka.specs.operation.SpecificOperation;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.vavr.concurrent.Future;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-public interface AclOperation extends Operation<AclChange> {
+public interface AclOperation extends SpecificOperation<AclChange, AccessControlPolicy, Void> {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     Description getDescriptionFor(@NotNull final AclChange change);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     boolean test(final AclChange change);
 
-    Map<AccessControlPolicy, CompletableFuture<Void>> apply(@NotNull final AclChanges changes);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes);
 
 }

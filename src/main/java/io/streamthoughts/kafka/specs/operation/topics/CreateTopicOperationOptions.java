@@ -16,7 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.topics;
+
+import io.streamthoughts.kafka.specs.operation.ResourceOperationOptions;
 
 public class CreateTopicOperationOptions implements ResourceOperationOptions {
 

@@ -61,26 +61,27 @@ public class ReflectiveExtensionScanner {
         this.registry = registry;
     }
 
-    public void scanComponentPath(final Path componentPath) {
-        ExtensionResolver resolver = new ExtensionResolver(componentPath);
-        for (ExternalExtension component : resolver.resolves()) {
-            ReflectiveExtensionScanner.LOG.info("Loading extension from path : {}", component.location());
+    public void scanExtensionPath(final Path extensionPath) {
+        ExtensionResolver resolver = new ExtensionResolver(extensionPath);
+        final List<ExternalExtension> extensions = resolver.resolves();
+        for (ExternalExtension extension : extensions) {
+            ReflectiveExtensionScanner.LOG.info("Loading extension from path : {}", extension.location());
             final ExtensionClassLoader classLoader = ExtensionClassLoader.newClassLoader(
-                    component.location(),
-                    component.resources(),
+                    extension.location(),
+                    extension.resources(),
                     ReflectiveExtensionScanner.class.getClassLoader()
             );
             ReflectiveExtensionScanner.LOG.info("Initialized new ClassLoader: {}", classLoader);
-            scanUrlsForComponents(component.resources(), classLoader, ReflectiveExtensionScanner.DEFAULT_FILTER_BY);
+            scanUrlsForComponents(extension.resources(), classLoader, ReflectiveExtensionScanner.DEFAULT_FILTER_BY);
         }
     }
 
-    public void scan(final List<String> componentPaths) {
+    public void scan(final List<String> extensionPaths) {
 
-        for (final String path : componentPaths) {
+        for (final String path : extensionPaths) {
             try {
-                final Path componentPath = Paths.get(path).toAbsolutePath();
-                scanComponentPath(componentPath);
+                final Path extensionPath = Paths.get(path).toAbsolutePath();
+                scanExtensionPath(extensionPath);
             } catch (InvalidPathException e) {
                 LOG.error("Ignoring top-level extension location '{}', invalid path.", path);
             }

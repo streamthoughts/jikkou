@@ -19,9 +19,8 @@
 package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
-import io.streamthoughts.kafka.specs.operation.AclOperation;
-import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
-import io.streamthoughts.kafka.specs.operation.DeleteAclsOperation;
+import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
+import io.streamthoughts.kafka.specs.operation.acls.DeleteAclsOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;

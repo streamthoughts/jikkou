@@ -16,25 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.topics;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
-import org.apache.kafka.common.KafkaFuture;
+import io.streamthoughts.kafka.specs.operation.SpecificOperation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.function.Predicate;
+public interface TopicOperation extends SpecificOperation<TopicChange, String, Void> {
 
-public interface TopicOperation extends Operation<TopicChange> {
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Description getDescriptionFor(@NotNull final TopicChange change);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     boolean test(final TopicChange change);
-
-    Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges change);
 
 }

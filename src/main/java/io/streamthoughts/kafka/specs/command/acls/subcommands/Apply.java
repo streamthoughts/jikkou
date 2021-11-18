@@ -20,21 +20,21 @@ package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.change.AclChanges;
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.operation.AclOperation;
-import io.streamthoughts.kafka.specs.operation.CreateAclsOperation;
-import io.streamthoughts.kafka.specs.operation.DeleteAclsOperation;
+import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
+import io.streamthoughts.kafka.specs.operation.acls.CreateAclsOperation;
+import io.streamthoughts.kafka.specs.operation.acls.DeleteAclsOperation;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
@@ -83,8 +83,8 @@ public class Apply extends AclsCommand.Base {
             }
 
             @Override
-            public Map<AccessControlPolicy, CompletableFuture<Void>> apply(final @NotNull AclChanges changes) {
-                HashMap<AccessControlPolicy, CompletableFuture<Void>> results = new HashMap<>();
+            public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull Collection<AclChange> changes) {
+                HashMap<AccessControlPolicy, List<Future<Void>>> results = new HashMap<>();
                 results.putAll(delete.apply(changes));
                 results.putAll(create.apply(changes));
                 return results;

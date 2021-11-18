@@ -18,34 +18,50 @@
  */
 package io.streamthoughts.kafka.specs.operation;
 
-import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.vavr.concurrent.Future;
-import io.vavr.control.Try;
-import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-public interface Operation<T extends Change<T>, K, V> {
+public interface SpecificOperation<T extends Change<T>, K, V> extends Predicate<T>, Operation<T, K, V> {
 
     /**
-     * Returns a textual description for the given {@link Change}.
-     *
-     * @param change    the {@link Change}.
-     * @return          the textual description for this change.
+     * {@inheritDoc}
      */
-    Description getDescriptionFor(@NotNull final T change);
+    @Override
+    boolean test(final T change);
 
     /**
      * Applies this operation on all changes.
      *
-     * @param changes   the list of change to be applied.
-     * @return          a map of operation results.
+     * @param changes the list of change to be applied.
+     * @return a map of operation results.
      */
-    @NotNull Map<K, List<Future<V>>> apply(@NotNull final Collection<T> changes);
+    default @NotNull Map<K, List<Future<V>>> apply(@NotNull final Collection<T> changes) {
+        return this.doApply(filter(changes, this));
+    }
+
+    /**
+     * Applies this operation on all changes.
+     *
+     * @param changes the list of change to be applied.
+     * @return a map of operation results.
+     */
+    @NotNull Map<K, List<Future<V>>> doApply(@NotNull final Collection<T> changes);
+
+    /**
+     * Returns the {@link Change} object that match the given predicate.
+     *
+     * @param predicate the {@link Predicate}.
+     * @return the filtered {@link Change} object.
+     */
+    private static <T extends Change<T>> Collection<T> filter(@NotNull final Collection<T> changes,
+                                                              @NotNull final Predicate<T> predicate) {
+        return changes.stream().filter(predicate).collect(Collectors.toList());
+    }
 }

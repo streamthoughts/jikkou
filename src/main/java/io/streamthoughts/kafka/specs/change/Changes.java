@@ -25,25 +25,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-public interface Changes<T extends Change<T>, O extends Operation<T>> extends Iterable<T> {
-
-    /**
-     * Returns the {@link Change} object that match the given predicate.
-     *
-     * @param predicate the {@link Predicate}.
-     * @return          the filtered {@link Change} object.
-     */
-    default Collection<T> filter(@NotNull final Predicate<T> predicate) {
-        return all().stream().filter(predicate).collect(Collectors.toList());
-    }
+public interface Changes<T extends Change<T>, K, V, O extends Operation<T, K, V>> extends Iterable<T> {
 
     /**
      * @return all {@link Change} object.
      */
     Collection<T> all();
+
+    T get(@NotNull final K resource);
 
     /**
      * Apply the given operation on changes.

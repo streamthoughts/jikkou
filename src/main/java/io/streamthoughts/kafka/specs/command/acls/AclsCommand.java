@@ -37,7 +37,7 @@ import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
-import io.streamthoughts.kafka.specs.operation.AclOperation;
+import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;

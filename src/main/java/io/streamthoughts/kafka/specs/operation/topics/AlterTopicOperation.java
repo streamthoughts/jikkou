@@ -16,29 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.topics;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.ConfigEntryChange;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Default command to alter multiple topics.
@@ -77,40 +73,44 @@ public class AlterTopicOperation implements TopicOperation {
      */
     @Override
     public boolean test(final TopicChange change) {
-        return change.hasConfigEntryChanges();
+        return change.getOperation() == Change.OperationType.UPDATE;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges topicChanges) {
+    public @NotNull Map<String, List<Future<Void>>> doApply(@NotNull final Collection<TopicChange> changes) {
         final Map<ConfigResource, Collection<AlterConfigOp>> configs = new HashMap<>();
-        for (TopicChange change : topicChanges) {
-            final List<AlterConfigOp> alters = new ArrayList<>(change.getConfigEntryChanges().size());
-            for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
-                var operationType = configEntryChange.getOperation();
 
-                if (operationType == Change.OperationType.DELETE && deleteOrphans) {
-                    alters.add(new AlterConfigOp(
-                            new ConfigEntry(configEntryChange.name(), null),
-                            AlterConfigOp.OpType.DELETE)
-                    );
-                }
+        final Map<String, List<Future<Void>>> results = new HashMap<>();
+        for (TopicChange change : changes) {
+            if (change.hasConfigEntryChanges()) {
+                final List<AlterConfigOp> alters = new ArrayList<>(change.getConfigEntryChanges().size());
+                for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
+                    var operationType = configEntryChange.getOperation();
 
-                if (operationType == Change.OperationType.UPDATE) {
-                    alters.add(new AlterConfigOp(
-                            new ConfigEntry(configEntryChange.name(), String.valueOf(configEntryChange.getAfter())),
-                            AlterConfigOp.OpType.SET)
-                    );
+                    if (operationType == Change.OperationType.DELETE && deleteOrphans) {
+                        alters.add(new AlterConfigOp(
+                                new ConfigEntry(configEntryChange.name(), null),
+                                AlterConfigOp.OpType.DELETE)
+                        );
+                    }
+
+                    if (operationType == Change.OperationType.UPDATE) {
+                        alters.add(new AlterConfigOp(
+                                new ConfigEntry(configEntryChange.name(), String.valueOf(configEntryChange.getAfter())),
+                                AlterConfigOp.OpType.SET)
+                        );
+                    }
                 }
+                configs.put(new ConfigResource(ConfigResource.Type.TOPIC, change.name()), alters);
+                results.put(change.name(), new ArrayList<>());
             }
-            configs.put(new ConfigResource(ConfigResource.Type.TOPIC, change.name()), alters);
         }
-        return client.incrementalAlterConfigs(configs)
-                .values()
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(it -> it.getKey().name(), Map.Entry::getValue));
+
+        client.incrementalAlterConfigs(configs).values()
+              .forEach((k, v) -> results.get(k.name()).add(Future.fromJavaFuture(v)));
+        return results;
     }
 }

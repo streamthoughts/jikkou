@@ -25,6 +25,8 @@ import io.streamthoughts.kafka.specs.internal.Time;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class is used to describe the result of an operation that succeed of failed.
@@ -39,7 +41,7 @@ public class OperationResult<T> implements Serializable {
     private final long end;
     private final T resource;
     private final boolean failed;
-    private final String error;
+    private final List<String> errors;
     private final Status status;
     private transient final Description description;
 
@@ -76,21 +78,21 @@ public class OperationResult<T> implements Serializable {
      *
      * @param resource      the operation result.
      * @param description   the operation result description.
-     * @param exception     the exception.
+     * @param exceptions    the exceptions.
      * @param <T>           the operation result-type.
      *
      * @return              a new {@link OperationResult}.
      */
     public static <T> OperationResult<T> failed(final T resource,
                                                 final Description description,
-                                                final Exception exception) {
+                                                final List<Throwable> exceptions) {
         return new OperationResult<>(
                 Status.FAILED,
                 false,
                 resource,
                 description,
                 true,
-                getStacktrace(exception)
+                exceptions.stream().map(OperationResult::getStacktrace).collect(Collectors.toList())
         );
     }
 
@@ -112,8 +114,8 @@ public class OperationResult<T> implements Serializable {
                             final T resource,
                             final Description description,
                             final boolean failed,
-                            final String error) {
-        this(status, changed, resource, description, failed, error, Time.SYSTEM.milliseconds());
+                            final List<String> errors) {
+        this(status, changed, resource, description, failed, errors, Time.SYSTEM.milliseconds());
     }
 
     /**
@@ -124,14 +126,14 @@ public class OperationResult<T> implements Serializable {
                             final T resource,
                             final Description description,
                             final boolean failed,
-                            final String error,
+                            final List<String> errors,
                             final long end) {
         this.status = status;
         this.changed = changed;
         this.resource = resource;
         this.end = end;
         this.failed = failed;
-        this.error = error;
+        this.errors = errors;
         this.description = description;
     }
 
@@ -156,8 +158,8 @@ public class OperationResult<T> implements Serializable {
     }
 
     @JsonProperty
-    public String error() {
-        return error;
+    public List<String> errors() {
+        return errors;
     }
 
     @JsonProperty
@@ -177,7 +179,7 @@ public class OperationResult<T> implements Serializable {
                 ", end=" + end +
                 ", resource=" + resource +
                 ", failed=" + failed +
-                ", error=" + error +
+                ", errors=" + errors +
                 ", status=" + status +
                 ", description=" + description +
                 '}';

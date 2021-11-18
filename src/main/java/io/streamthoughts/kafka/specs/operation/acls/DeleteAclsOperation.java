@@ -16,15 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.acls;
 
 import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.change.AclChanges;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.internal.FutureUtils;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.vavr.Tuple2;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DeleteAclsResult;
 import org.apache.kafka.common.acl.AccessControlEntryFilter;
@@ -32,10 +32,10 @@ import org.apache.kafka.common.acl.AclBindingFilter;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class DeleteAclsOperation implements AclOperation {
@@ -83,21 +83,20 @@ public class DeleteAclsOperation implements AclOperation {
      * {@inheritDoc}
      */
     @Override
-    public Map<AccessControlPolicy, CompletableFuture<Void>> apply(final @NotNull AclChanges changes) {
+    public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes) {
         List<AclBindingFilter> bindings = changes
-                .all()
                 .stream()
                 .map(AclChange::getAccessControlPolicy)
                 .map(converter::toAclBindingFilter)
                 .collect(Collectors.toList());
 
-        DeleteAclsResult result = adminClient.deleteAcls(bindings);
-         return result.values().entrySet()
-              .stream()
-              .collect(Collectors.toMap(
-                      e -> converter.fromAclBindingFilter(e.getKey()),
-                      e -> FutureUtils.toVoidCompletableFuture(e.getValue()))
-              );
+        DeleteAclsResult kafkaResults = adminClient.deleteAcls(bindings);
+        return kafkaResults.values().entrySet()
+                .stream()
+                .map(e -> new Tuple2<>(converter.fromAclBindingFilter(e.getKey()), e.getValue()))
+                .map(t -> t.map2(Future::fromJavaFuture))
+                .map(t -> t.map2(f -> List.of(f.map(it -> (Void) null))))
+                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
     }
 
     private static class AclBindingConverter {

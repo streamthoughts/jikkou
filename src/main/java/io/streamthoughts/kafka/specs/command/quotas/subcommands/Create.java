@@ -19,10 +19,6 @@
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
-import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.operation.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.CreateTopicOperationOptions;
-import io.streamthoughts.kafka.specs.operation.TopicOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
 import org.apache.kafka.clients.admin.AdminClient;

@@ -32,7 +32,7 @@ import io.streamthoughts.kafka.specs.command.quotas.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.Describe;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.internal.DescribeQuotas;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
-import io.streamthoughts.kafka.specs.operation.AclOperation;
+import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;

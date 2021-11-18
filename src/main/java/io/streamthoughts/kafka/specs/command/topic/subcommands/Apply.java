@@ -21,16 +21,20 @@ package io.streamthoughts.kafka.specs.command.topic.subcommands;
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.operation.*;
+import io.streamthoughts.kafka.specs.operation.topics.AlterTopicOperation;
+import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperation;
+import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperationOptions;
+import io.streamthoughts.kafka.specs.operation.topics.DeleteTopicOperation;
+import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,11 +103,11 @@ public class Apply extends TopicsCommand.Base {
             }
 
             @Override
-            public Map<String, KafkaFuture<Void>> apply(final @NotNull TopicChanges changes) {
-                 HashMap<String, KafkaFuture<Void>> results = new HashMap<>();
-                 if (deleteTopicOrphans) {
-                     results.putAll(delete.apply(changes));
-                 }
+            public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
+                HashMap<String, List<Future<Void>>> results = new HashMap<>();
+                if (deleteTopicOrphans) {
+                    results.putAll(delete.apply(changes));
+                }
                 results.putAll(create.apply(changes));
                 results.putAll(alter.apply(changes));
                 return results;

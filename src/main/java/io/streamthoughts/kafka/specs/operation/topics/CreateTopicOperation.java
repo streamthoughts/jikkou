@@ -16,15 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.operation.topics;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.ConfigEntryChange;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
-import io.streamthoughts.kafka.specs.change.ValueChange;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
+import io.vavr.Tuple2;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsOptions;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,15 +84,19 @@ public class CreateTopicOperation implements TopicOperation {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, KafkaFuture<Void>> apply(@NotNull final TopicChanges topicChanges) {
-        List<NewTopic> topics = topicChanges.all()
+    public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
+        List<NewTopic> topics = changes
                 .stream()
                 .map(this::toNewTopic)
                 .collect(Collectors.toList());
         LOG.info("Creating new topics : {}", topics);
         CreateTopicsResult result = client.createTopics(topics, new CreateTopicsOptions());
 
-        return result.values();
+        final Map<String, KafkaFuture<Void>> kafkaResults = result.values();
+        return kafkaResults.entrySet()
+                .stream()
+                .map(e -> new Tuple2<>(e.getKey(), List.of(Future.fromJavaFuture(e.getValue()))))
+                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
     }
 
     private NewTopic toNewTopic(final TopicChange t) {

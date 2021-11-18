@@ -21,20 +21,20 @@ package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
-import io.streamthoughts.kafka.specs.change.QuotaChanges;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.DeleteQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,8 +102,8 @@ public class Apply extends QuotasCommand.Base {
             }
 
             @Override
-            public @NotNull Map<ClientQuotaEntity, KafkaFuture<Void>> apply(@NotNull QuotaChanges changes) {
-                HashMap<ClientQuotaEntity, KafkaFuture<Void>> results = new HashMap<>();
+            public @NotNull Map<ClientQuotaEntity, List<Future<Void>>> doApply(@NotNull final Collection<QuotaChange> changes) {
+                HashMap<ClientQuotaEntity, List<Future<Void>>> results = new HashMap<>();
                 if (deleteQuotaOrphans) {
                     results.putAll(delete.apply(changes));
                 }

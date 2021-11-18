@@ -47,47 +47,49 @@ public class ExtensionResolver {
         return path.toString().toLowerCase().endsWith(".class");
     }
 
-    private final Path componentPath;
+    private final Path extensionPath;
 
     /**
      * Creates a new {@link ExtensionResolver} instance.
      *
-     * @param componentPath the top-level component path.
+     * @param extensionPath the top-level component path.
      */
-    public ExtensionResolver(final Path componentPath) {
-        Objects.requireNonNull(componentPath, "componentPath cannot be null");
-        this.componentPath = componentPath;
+    public ExtensionResolver(final Path extensionPath) {
+        Objects.requireNonNull(extensionPath, "extensionPath cannot be null");
+        this.extensionPath = extensionPath;
     }
 
     public List<ExternalExtension> resolves() {
         List<ExternalExtension> components = new ArrayList<>();
         try (
-            final DirectoryStream<Path> paths = Files.newDirectoryStream(componentPath, entry -> {
-                return Files.isDirectory(entry) || isArchiveFile(entry);
-            });
+                final DirectoryStream<Path> paths = Files.newDirectoryStream(extensionPath, entry -> {
+                    return Files.isDirectory(entry) || isArchiveFile(entry);
+                });
         ) {
             for (Path path : paths) {
                 final List<URL> resources = resolveUrlsForComponentPath(path);
                 components.add(new ExternalExtension(
-                    path.toUri().toURL(),
-                    resources.toArray(new URL[0]))
+                        path.toUri().toURL(),
+                        resources.toArray(new URL[0]))
                 );
             }
-        } catch (final InvalidPathException | MalformedURLException e) {
-            LOG.error("Invalid component path '{}', path ignored.", componentPath, e);
-        } catch (IOException e) {
-            LOG.error("Error while listing component path '{}' path ignored.", componentPath, e);
+        } catch (Exception e) {
+            LOG.warn(
+                    "Failed to list extensions from path '{}'. {}",
+                    extensionPath,
+                    e.getMessage()
+            );
         }
         return components;
     }
 
     /**
      * <p>
-     *   This method is inspired from the original class : org.apache.kafka.connect.runtime.isolation.PluginUtils.
-     *   from <a href="https://github.com/apache/kafka">Apache Kafka</a> project.
+     * This method is inspired from the original class : org.apache.kafka.connect.runtime.isolation.PluginUtils.
+     * from <a href="https://github.com/apache/kafka">Apache Kafka</a> project.
      * </p>
      *
-     * @throws IOException  if an error occurred while traversing the given path.
+     * @throws IOException if an error occurred while traversing the given path.
      */
     private static List<URL> resolveUrlsForComponentPath(final Path path) throws IOException {
 
@@ -104,9 +106,9 @@ public class ExtensionResolver {
             while (!directories.isEmpty()) {
                 final Path directory = directories.poll();
                 try (
-                    final DirectoryStream<Path> stream = Files.newDirectoryStream(directory,  entry -> {
-                        return Files.isDirectory(entry) || isArchiveFile(entry) || isClassFile(entry);
-                    })
+                        final DirectoryStream<Path> stream = Files.newDirectoryStream(directory, entry -> {
+                            return Files.isDirectory(entry) || isArchiveFile(entry) || isClassFile(entry);
+                        })
                 ) {
                     for (Path entry : stream) {
                         if (isArchiveFile(entry)) {
@@ -132,8 +134,8 @@ public class ExtensionResolver {
                 return Collections.singletonList(path.toUri().toURL());
             }
             LOG.error(
-                "Component path '{}' contains both java class files and JARs, " +
-                "class files will be ignored and only archives will be scanned.", path);
+                    "Component path '{}' contains both java class files and JARs, " +
+                            "class files will be ignored and only archives will be scanned.", path);
         }
 
         List<URL> urls = new ArrayList<>(archives.size());

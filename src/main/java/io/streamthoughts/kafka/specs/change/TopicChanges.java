@@ -18,26 +18,20 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
-import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
-import io.streamthoughts.kafka.specs.operation.TopicOperation;
-import io.streamthoughts.kafka.specs.resources.ConfigValue;
+import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
 import io.vavr.Tuple2;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletableFuture;
-
-public class TopicChanges implements Changes<TopicChange, TopicOperation> {
-
-    private final Map<String, TopicChange> changes;
+public class TopicChanges extends AbstractChanges<TopicChange, String, Void, TopicOperation> {
 
     public static TopicChanges computeChanges(@NotNull final Iterable<V1TopicObject> beforeTopicObjects,
                                               @NotNull final Iterable<V1TopicObject> afterTopicObjects) {
@@ -131,43 +125,6 @@ public class TopicChanges implements Changes<TopicChange, TopicOperation> {
      * @param changes the changes by topic name.
      */
     TopicChanges(@NotNull final Map<String, TopicChange> changes) {
-        this.changes = Objects.requireNonNull(changes, "'changes cannot be null'");
+        super(changes);
     }
-
-    /**
-     * @return the list of {@link TopicChange}.
-     */
-    public List<TopicChange> all() {
-        return new ArrayList<>(changes.values());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<OperationResult<TopicChange>> apply(@NotNull final TopicOperation operation) {
-
-        Map<String, TopicChange> filtered = filter(operation)
-                .stream()
-                .collect(Collectors.toMap(TopicChange::name, it -> it));
-
-        Map<String, KafkaFuture<Void>> results = operation.apply(new TopicChanges(filtered));
-
-        List<CompletableFuture<OperationResult<TopicChange>>> completableFutures = results.entrySet()
-                .stream()
-                .map(entry -> {
-                    final Future<Void> future = entry.getValue();
-                    return makeCompletableFuture(future, get(entry.getKey()), operation);
-                }).collect(Collectors.toList());
-
-        return completableFutures
-                .stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
-    }
-
-    public TopicChange get(@NotNull final String topic) {
-        return changes.get(topic);
-    }
-
 }

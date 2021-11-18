@@ -18,8 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
-import io.streamthoughts.kafka.specs.OperationResult;
-import io.streamthoughts.kafka.specs.operation.AclOperation;
+import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import org.jetbrains.annotations.NotNull;
@@ -29,14 +28,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static io.streamthoughts.kafka.specs.internal.FutureUtils.makeCompletableFuture;
-
-public class AclChanges implements Changes<AclChange, AclOperation> {
+public class AclChanges extends AbstractChanges<AclChange, AccessControlPolicy, Void, AclOperation> {
 
     public static AclChanges computeChanges(@NotNull final Iterable<AccessControlPolicy> beforeAccessControlPolicies,
                                             @NotNull final Iterable<AccessControlPolicy> afterAccessControlPolicies,
@@ -90,47 +85,14 @@ public class AclChanges implements Changes<AclChange, AclOperation> {
         return new AclChanges(changes.values().stream().flatMap(Collection::stream).collect(Collectors.toList()));
     }
 
-    private final Map<AccessControlPolicy, AclChange> changes;
-
     /**
      * Creates a new {@link AclChanges} instance.
+     *
      * @param changes   the list of {@link Change}.
      */
     public AclChanges(@NotNull final Collection<AclChange> changes) {
-        this.changes = changes
+        super(changes
                 .stream()
-                .collect(Collectors.toMap(AclChange::getAccessControlPolicy, it -> it));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<AclChange> all() {
-        return changes.values();
-    }
-
-    public AclChange get(@NotNull final AccessControlPolicy policy) {
-        return changes.get(policy);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<OperationResult<AclChange>> apply(@NotNull final AclOperation operation) {
-        Map<AccessControlPolicy, CompletableFuture<Void>> results = operation.apply(new AclChanges(filter(operation)));
-
-        List<CompletableFuture<OperationResult<AclChange>>> completableFutures = results.entrySet()
-                .stream()
-                .map(entry -> {
-                    final Future<Void> future = entry.getValue();
-                    return makeCompletableFuture(future, changes.get(entry.getKey()), operation);
-                }).collect(Collectors.toList());
-
-        return completableFutures
-                .stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(AclChange::getAccessControlPolicy, it -> it)));
     }
 }

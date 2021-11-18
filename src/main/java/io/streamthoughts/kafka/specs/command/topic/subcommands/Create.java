@@ -19,9 +19,9 @@
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.operation.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.CreateTopicOperationOptions;
-import io.streamthoughts.kafka.specs.operation.TopicOperation;
+import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperation;
+import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperationOptions;
+import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
