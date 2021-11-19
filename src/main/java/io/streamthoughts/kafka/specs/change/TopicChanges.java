@@ -82,22 +82,27 @@ public class TopicChanges extends AbstractChanges<TopicChange, String, Void, Top
                 afterTopic.partitionsOrDefault(),
                 beforeTopic.partitionsOrDefault()
         );
+
         var replication = ValueChange.with(
                 afterTopic.replicationFactorOrDefault(),
                 beforeTopic.replicationFactorOrDefault()
         );
 
-        final Tuple2<Change.OperationType, List<ConfigEntryChange>> t = ConfigEntryChanges.computeChange(
+        final Tuple2<Change.OperationType, List<ConfigEntryChange>> configs = ConfigEntryChanges.computeChange(
                 beforeTopic.configs(),
                 afterTopic.configs()
         );
+
+        Change.OperationType op = List.of(partitions.getOperation(), configs._1()).contains(Change.OperationType.UPDATE) ?
+                Change.OperationType.UPDATE :
+                Change.OperationType.NONE;
 
         return new TopicChange.Builder()
                 .setName(afterTopic.name())
                 .setPartitionsChange(partitions)
                 .setReplicationFactorChange(replication)
-                .setOperation(t._1)
-                .setConfigs(t._2)
+                .setOperation(op)
+                .setConfigs(configs._2())
                 .build();
     }
 
@@ -114,8 +119,7 @@ public class TopicChanges extends AbstractChanges<TopicChange, String, Void, Top
                         it.name(),
                         ValueChange.withAfterValue(String.valueOf(it.value()))
                 )
-                )
-        );
+        ));
         return builder.build();
     }
 

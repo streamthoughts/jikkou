@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.kafka.specs.resources.Named;
+import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,8 +40,8 @@ public class TopicChange implements Change<TopicChange>, Named {
     private final String name;
     private final OperationType operation;
 
-    private final Optional<ValueChange<Integer>> partitions;
-    private final Optional<ValueChange<Short>> replicationFactor;
+    private final Option<ValueChange<Integer>> partitions;
+    private final Option<ValueChange<Short>> replicationFactor;
 
     private final List<ConfigEntryChange> configs;
 
@@ -51,8 +52,8 @@ public class TopicChange implements Change<TopicChange>, Named {
                        @NotNull final List<ConfigEntryChange> configs) {
         this.name = Objects.requireNonNull(name, "'name should not be nul'");
         this.operation = Objects.requireNonNull(operation, "'operation should not be nul'");
-        this.partitions = Optional.ofNullable(partitionChange);
-        this.replicationFactor = Optional.ofNullable(replicationFactorChange);
+        this.partitions = Option.of(partitionChange);
+        this.replicationFactor = Option.of(replicationFactorChange);
         this.configs = configs;
     }
 
@@ -73,12 +74,12 @@ public class TopicChange implements Change<TopicChange>, Named {
     }
 
     @JsonProperty
-    public Optional<ValueChange<Integer>> getPartitions() {
+    public Option<ValueChange<Integer>> getPartitions() {
         return partitions;
     }
 
     @JsonProperty
-    public Optional<ValueChange<Short>> getReplicationFactor() {
+    public Option<ValueChange<Short>> getReplicationFactor() {
         return replicationFactor;
     }
 

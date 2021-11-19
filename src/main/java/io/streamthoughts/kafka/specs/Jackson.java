@@ -25,11 +25,13 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import io.vavr.jackson.datatype.VavrModule;
 
 public interface Jackson {
 
     ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory())
         .registerModule(new Jdk8Module())
+        .registerModule(new VavrModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
         .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
@@ -37,10 +39,11 @@ public interface Jackson {
         .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 
     ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper(new JsonFactory())
-            .registerModule(new Jdk8Module())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
-            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-            .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        .registerModule(new Jdk8Module())
+        .registerModule(new VavrModule())
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
+        .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+        .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 }

@@ -33,6 +33,7 @@ repositories {
 dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-3'
+    implementation group: 'io.vavr', name: 'vavr-jackson', version: '1.0.0-alpha-3'
     implementation 'com.typesafe:config:1.4.1'
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"

@@ -22,11 +22,13 @@ import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.ConfigEntryChange;
 import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.ValueChange;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,36 +83,54 @@ public class AlterTopicOperation implements TopicOperation {
      */
     @Override
     public @NotNull Map<String, List<Future<Void>>> doApply(@NotNull final Collection<TopicChange> changes) {
-        final Map<ConfigResource, Collection<AlterConfigOp>> configs = new HashMap<>();
+
+        final Map<ConfigResource, Collection<AlterConfigOp>> alterConfigs = new HashMap<>();
+        final Map<String, NewPartitions> newPartitions = new HashMap<>();
 
         final Map<String, List<Future<Void>>> results = new HashMap<>();
         for (TopicChange change : changes) {
+            results.put(change.name(), new ArrayList<>());
+
             if (change.hasConfigEntryChanges()) {
                 final List<AlterConfigOp> alters = new ArrayList<>(change.getConfigEntryChanges().size());
                 for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
                     var operationType = configEntryChange.getOperation();
 
                     if (operationType == Change.OperationType.DELETE && deleteOrphans) {
-                        alters.add(new AlterConfigOp(
-                                new ConfigEntry(configEntryChange.name(), null),
-                                AlterConfigOp.OpType.DELETE)
-                        );
+                        alters.add(newAlterConfigOp(configEntryChange, null, AlterConfigOp.OpType.DELETE));
                     }
 
                     if (operationType == Change.OperationType.UPDATE) {
-                        alters.add(new AlterConfigOp(
-                                new ConfigEntry(configEntryChange.name(), String.valueOf(configEntryChange.getAfter())),
-                                AlterConfigOp.OpType.SET)
-                        );
+                        final String configValue = String.valueOf(configEntryChange.getAfter());
+                        alters.add(newAlterConfigOp(configEntryChange, configValue, AlterConfigOp.OpType.SET));
                     }
                 }
-                configs.put(new ConfigResource(ConfigResource.Type.TOPIC, change.name()), alters);
-                results.put(change.name(), new ArrayList<>());
+                alterConfigs.put(new ConfigResource(ConfigResource.Type.TOPIC, change.name()), alters);
             }
+
+            change.getPartitions()
+                  .flatMap(ValueChange::tOption)
+                  .forEach(newValue -> newPartitions.put(change.name(), NewPartitions.increaseTo(newValue)));
+
         }
 
-        client.incrementalAlterConfigs(configs).values()
-              .forEach((k, v) -> results.get(k.name()).add(Future.fromJavaFuture(v)));
+        if (!alterConfigs.isEmpty()) {
+            client.incrementalAlterConfigs(alterConfigs).values()
+                    .forEach((k, v) -> results.get(k.name()).add(Future.fromJavaFuture(v)));
+        }
+
+        if (!newPartitions.isEmpty()) {
+            client.createPartitions(newPartitions).values()
+                    .forEach((k, v) -> results.get(k).add(Future.fromJavaFuture(v)));
+        }
+
         return results;
+    }
+
+    @NotNull
+    private AlterConfigOp newAlterConfigOp(final ConfigEntryChange configEntryChange,
+                                           final String value,
+                                           final AlterConfigOp.OpType op) {
+        return new AlterConfigOp(new ConfigEntry(configEntryChange.name(), value), op);
     }
 }

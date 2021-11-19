@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
+import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,6 +121,10 @@ public class ValueChange<T> {
 
     public T getBefore() {
         return before;
+    }
+
+    public Option<T> tOption() {
+        return op == Change.OperationType.NONE ? Option.none() : Option.of(after);
     }
 
     public Change.OperationType getOperation() {
