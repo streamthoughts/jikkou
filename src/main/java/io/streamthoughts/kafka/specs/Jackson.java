@@ -19,31 +19,31 @@
 package io.streamthoughts.kafka.specs;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import io.vavr.jackson.datatype.VavrModule;
 
 public interface Jackson {
 
-    ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory())
-        .registerModule(new Jdk8Module())
-        .registerModule(new VavrModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
-        .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
-        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+    ObjectMapper YAML_OBJECT_MAPPER = YAMLMapper.builder()
+            .addModules(new Jdk8Module(), new VavrModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
+            .serializationInclusion(JsonInclude.Include.NON_ABSENT)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+            .build();
 
-    ObjectMapper JSON_OBJECT_MAPPER = new ObjectMapper(new JsonFactory())
-        .registerModule(new Jdk8Module())
-        .registerModule(new VavrModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
-        .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
-        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+    ObjectMapper JSON_OBJECT_MAPPER = JsonMapper.builder()
+            .addModules(new Jdk8Module(), new VavrModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
+            .serializationInclusion(JsonInclude.Include.NON_ABSENT)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+            .build();
 }
