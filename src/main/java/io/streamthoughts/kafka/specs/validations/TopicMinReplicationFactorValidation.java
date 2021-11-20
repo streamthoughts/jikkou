@@ -18,22 +18,38 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
-import io.streamthoughts.kafka.specs.config.ConfigParam;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.config.JikkouParams;
+import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.jetbrains.annotations.NotNull;
 
 public class TopicMinReplicationFactorValidation extends TopicValidation {
 
-    private static final ConfigParam<Integer> MIN_REPLICAS_PARAM = JikkouParams
-            .VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG;
+    private Integer minReplicationFactor;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configure(@NotNull final JikkouConfig config) throws ConfigException {
+        super.configure(config);
+        minReplicationFactor = JikkouParams.VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.getOption(config)
+                .getOrElseThrow(() -> {
+                    throw new ConfigException(
+                            String.format("The '%s' configuration property is required for %s",
+                                    JikkouParams.VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.path(),
+                                    TopicNameSuffixValidation.class.getSimpleName()
+                            )
+                    );
+                });
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void validateTopic(final @NotNull V1TopicObject topic) throws ValidationException {
-        final Integer minReplicationFactor = MIN_REPLICAS_PARAM.get(config());
         topic.replicationFactor().ifPresent(p -> {
             if (p != V1TopicObject.NO_REPLICATION_FACTOR && p < minReplicationFactor) {
                 throw new ValidationException(String.format(

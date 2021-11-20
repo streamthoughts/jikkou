@@ -19,10 +19,13 @@
 package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 public class TopicMinNumPartitionsValidationTest {
 
@@ -31,7 +34,9 @@ public class TopicMinNumPartitionsValidationTest {
     @BeforeEach
     public void before() {
         validation = new TopicMinNumPartitionsValidation();
-        validation.configure(JikkouConfig.empty());
+        validation.configure(JikkouConfig.create(
+                Map.of(JikkouParams.VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.path(), 1)
+        ));
     }
 
     @Test

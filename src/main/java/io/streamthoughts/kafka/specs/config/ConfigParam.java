@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.config;
 
+import com.typesafe.config.Config;
 import io.vavr.Lazy;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +107,18 @@ public class ConfigParam<T> {
      */
     public static <T> ConfigParam<List<Class<T>>> ofClasses(final @NotNull String path) {
         return new ConfigParam<>(path, (p, config) -> config.findClassList(p));
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigParam} with an expected {@link List} of {@link Config}.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigParam}.
+     */
+    public static ConfigParam<List<? extends Config>> ofConfigs(final @NotNull String path) {
+        return new ConfigParam<>(path, (p, config) ->
+            config.unwrap().hasPath(p) ? Option.of(config.unwrap().getConfigList(p)) : Option.none()
+        );
     }
 
     private final String path;

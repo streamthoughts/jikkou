@@ -23,10 +23,11 @@ import io.vavr.Lazy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class ExtensionRegistry {
 
-    private final Map<String, Lazy<? extends Extension>> extensions;
+    private final Map<String, Supplier<? extends Extension>> extensions;
 
     /**
      * Creates a new {@link ExtensionRegistry} instance.
@@ -36,7 +37,7 @@ public class ExtensionRegistry {
     }
 
     public void register(final String extensionClass,
-                         final Lazy<? extends Extension> supplier) {
+                         final Supplier<? extends Extension> supplier) {
         this.extensions.put(extensionClass, supplier);
     }
 

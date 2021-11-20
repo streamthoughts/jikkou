@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.specs.config.Configurable;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.transforms.Transformation;
 import io.streamthoughts.kafka.specs.validations.Validation;
+import io.vavr.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,9 +31,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Processor<T extends Processor<T>> extends Configurable {
 
-    @NotNull T withTransformation(@NotNull final Transformation transformation);
+    @NotNull T withTransformation(@NotNull final Lazy<Transformation> transformation);
 
-    @NotNull T withValidation(@NotNull final Validation validation);
+    @NotNull T withValidation(@NotNull final Lazy<Validation> validation);
 
     @NotNull V1SpecFile apply(@NotNull final V1SpecFile spec);
 }

@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.specs.extensions;
 
 import io.streamthoughts.kafka.specs.internal.ClassUtils;
-import io.vavr.Lazy;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
@@ -111,7 +110,7 @@ public class ReflectiveExtensionScanner {
         for (Class<?> cls : extensions) {
             if (ClassUtils.canBeInstantiated(cls)) {
                 LOG.info("Registering external extension: {}", cls);
-                registry.register(cls.getName(), Lazy.of(() -> (Extension) ClassUtils.newInstance(cls, classLoader)));
+                registry.register(cls.getName(), () -> (Extension) ClassUtils.newInstance(cls, classLoader));
             }
         }
     }

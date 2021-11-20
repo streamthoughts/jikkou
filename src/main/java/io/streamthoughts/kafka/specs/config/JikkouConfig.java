@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs.config;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigMergeable;
 import com.typesafe.config.ConfigParseOptions;
 import io.streamthoughts.kafka.specs.internal.ClassUtils;
 import io.vavr.control.Option;
@@ -60,7 +61,7 @@ public final class JikkouConfig {
      * @return a new {@link JikkouConfig} instance.
      */
     public static JikkouConfig empty() {
-        return new JikkouConfig(ConfigFactory.empty());
+        return new JikkouConfig(ConfigFactory.empty(), false);
     }
 
     /**
@@ -141,39 +142,95 @@ public final class JikkouConfig {
      * @param config the {@link Config}.
      */
     public JikkouConfig(@NotNull final Config config) {
-        this.config = Objects.requireNonNull(config, "'config' cannot be null");
-        Map<String, Object> confAsMap = new TreeMap<>(getConfAsMap(config));
-        final String configLogs = confAsMap.entrySet()
-                .stream()
-                .map(e -> e.getKey() + " = " + e.getValue())
-                .collect(Collectors.joining("\n\t"));
-        LOG.info("Creating new {}:\n\t{}", this.getClass().getName(), configLogs);
+        this(config, true);
     }
 
+    /**
+     * Creates a new {@link JikkouConfig} instance.
+     *
+     * @param config the {@link Config}.
+     * @param doLog  flag indicating if config should be logged.
+     */
+    public JikkouConfig(@NotNull final Config config, final boolean doLog) {
+        this.config = Objects.requireNonNull(config, "'config' cannot be null");
+        if (doLog) {
+            LOG.info("Creating new {}:\n\t{}", this.getClass().getName(), toPrettyString());
+        }
+    }
+
+    /**
+     * @return  the underlying {@link Config} object.
+     */
     public Config unwrap() {
         return config;
     }
 
+    /**
+     * @see Config#getString(String)
+     */
+    public String getString(@NotNull final String path) {
+        return config.getString(path);
+    }
+
+    /**
+     * @see Config#getString(String)
+     */
     public Option<String> findString(@NotNull final String path) {
         return config.hasPath(path) ? Option.of(config.getString(path)) : Option.none();
     }
 
+    /**
+     * @see Config#getBoolean(String)
+     */
+    public boolean getBoolean(@NotNull final String path) {
+        return config.getBoolean(path);
+    }
+
+    /**
+     * @see Config#getBoolean(String)
+     */
     public Option<Boolean> findBoolean(@NotNull final String path) {
         return config.hasPath(path) ? Option.of(config.getBoolean(path)) : Option.none();
     }
 
+    /**
+     * @see Config#getLong(String)
+     */
+    public long getLong(@NotNull final String path) {
+        return config.getLong(path);
+    }
+
+    /**
+     * @see Config#getLong(String)
+     */
     public Option<Long> findLong(@NotNull final String path) {
         return config.hasPath(path) ? Option.of(config.getLong(path)) : Option.none();
     }
 
+    /**
+     * @see Config#getInt(String)
+     */
+    public int getInt(@NotNull final String path) {
+        return config.getInt(path);
+    }
+
+    /**
+     * @see Config#getInt(String)
+     */
     public Option<Integer> findInt(@NotNull final String path) {
         return config.hasPath(path) ? Option.of(config.getInt(path)) : Option.none();
     }
 
-    public Option<Config> findConfig(@NotNull final String path) {
-        return config.hasPath(path) ? Option.some(config.getConfig(path)) : Option.none();
+    /**
+     * @see Config#getConfig(String)
+     */
+    public Option<JikkouConfig> findConfig(@NotNull final String path) {
+        return config.hasPath(path) ? Option.some(new JikkouConfig(config.getConfig(path), false)) : Option.none();
     }
 
+    /**
+     * @see Config#getStringList(String)
+     */
     public Option<List<String>> findStringList(@NotNull final String path) {
         return config.hasPath(path) ? Option.some(config.getStringList(path)) : Option.none();
     }
@@ -189,7 +246,14 @@ public final class JikkouConfig {
     }
 
     public Option<Map<String, Object>> findConfigAsMap(@NotNull final String path) {
-        return findConfig(path).map(JikkouConfig::getConfAsMap);
+        return findConfig(path).map(JikkouConfig::unwrap).map(JikkouConfig::getConfAsMap);
+    }
+
+    /**
+     * @see Config#withFallback(ConfigMergeable)
+     */
+    public JikkouConfig withFallback(final JikkouConfig config) {
+        return new JikkouConfig(this.config.withFallback(config.config), false);
     }
 
     private static Map<String, Object> getConfAsMap(@NotNull final Config config) {
@@ -202,6 +266,14 @@ public final class JikkouConfig {
         Properties properties = new Properties();
         config.entrySet().forEach(e -> properties.setProperty(e.getKey(), config.getString(e.getKey())));
         return properties;
+    }
+
+    public String toPrettyString() {
+        Map<String, Object> confAsMap = new TreeMap<>(getConfAsMap(config));
+        return confAsMap.entrySet()
+                .stream()
+                .map(e -> e.getKey() + " = " + e.getValue())
+                .collect(Collectors.joining("\n\t"));
     }
 
     public static Builder builder() {

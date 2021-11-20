@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.specs.config;
 
 import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
+import io.vavr.Tuple2;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The list of configuration parameters.
@@ -44,26 +46,41 @@ public final class JikkouParams {
             .ofMap("templating.vars").orElse(HashMap::new);
 
     public static final ConfigParam<Integer> VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG = ConfigParam
-            .ofInt("validation.topic.min.replication.factor").orElse(1);
+            .ofInt("topic-min-replication-factor");
 
     public static final ConfigParam<Integer> VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG = ConfigParam
-            .ofInt("validation.topic.min.num.partitions").orElse(1);
+            .ofInt("topic-min-num-partitions");
 
     public static final ConfigParam<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigParam
-            .ofString("validation.topic.name.regex");
+            .ofString("topic-name-regex");
 
     public static final ConfigParam<List<String>> VALIDATION_TOPIC_NAME_PREFIXES_CONFIG = ConfigParam
-            .ofList("validation.topic.name.prefixes");
+            .ofList("topic-name-prefixes-allowed");
 
     public static final ConfigParam<List<String>> VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG = ConfigParam
-            .ofList("validation.topic.name.suffixes");
+            .ofList("topic-name-suffixes-allowed");
 
-    public static final ConfigParam<List<String>> VALIDATIONS_CONFIG = ConfigParam
-            .ofList("validations");
+    public static final ConfigParam<List<Tuple2<String, JikkouConfig>>> VALIDATIONS_CONFIG = ConfigParam
+            .ofConfigs("validations")
+            .map(configs -> configs.stream()
+                       .map(o -> new JikkouConfig(o, false))
+                       .map(config ->  new Tuple2<>(
+                               config.getString("type"),
+                               config.findConfig("config").getOrElse(JikkouConfig.empty())
+                       ))
+                       .collect(Collectors.toList())
+            );
 
-    public static final ConfigParam<List<String>> TRANSFORMATIONS_CONFIG = ConfigParam
-            .ofList("transforms");
-
+    public static final ConfigParam<List<Tuple2<String, JikkouConfig>>> TRANSFORMATIONS_CONFIG = ConfigParam
+            .ofConfigs("transforms")
+            .map(configs -> configs.stream()
+                    .map(o -> new JikkouConfig(o, false))
+                    .map(config ->  new Tuple2<>(
+                            config.getString("type"),
+                            config.findConfig("config").getOrElse(JikkouConfig.empty())
+                    ))
+                    .collect(Collectors.toList())
+            );
     public static final ConfigParam<List<String>> EXTENSION_PATHS = ConfigParam
             .ofList("extension.paths");
 
