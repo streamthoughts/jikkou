@@ -658,6 +658,37 @@ Additionally, you can implement and configure custom _validations_ by implementi
 * `io.streamthoughts.kafka.specs.validations.TopicValidation`
 * `io.streamthoughts.kafka.specs.validations.QuotaValidation`
 
+Custom `Validations` should be packaged as an uber JAR and then configured as a Jikkou link:#Extensions[Extension].
+
+== Transforming Kafka Resources
+
+Jikkou allows you to plug custom transformations on declared resources (i.e. _Topics_, _Quotas_, _ACLs_, etc) before executing any action on your Kafka cluster and before executing validation rules.
+
+To do that, you should implement the `io.streamthoughts.kafka.specs.transforms.Transformation` interface transformations.
+Then, transformation must be configured in your `application.conf` file as follows:
+
+[source, hocon]
+----
+jikkou {
+    transformations = [
+        {
+          # The fully-qualified name of the Transformation class, e.g.:
+          type = ...
+          # The config values that will be passed to the Transformation.
+          config = {}
+        }
+   ]
+}
+----
+
+NOTE: The `config` object of a validation will fallback on the top-level Jikkou config.
+
+Custom `Transformations` should be packaged as an uber JAR and then configured as a Jikkou link:#Extensions[Extension].
+
+== Extensions
+
+Jikkou allows implementing and configuring extensions, i.e., _Validation_ and _Transformer_.
+
 Jikkou sources are available on https://mvnrepository.com/artifact/io.streamthoughts/jikkou[Maven Central]
 
 For Maven::
@@ -675,6 +706,15 @@ For Gradle::
 ----
 implementation group: 'io.streamthoughts', name: 'jikkou', version: '0.7.0'
 ----
+
+To make your extensions available to Jikkou, install them into one or many local directories.
+Then, use the `jikkou.extension.paths` property to configure the list of locations from which the extensions will be loaded.
+
+Each configured directories may contain:
+
+* an uber JAR containing all of the classes and third-party dependencies for the extensions.
+* a directory containing all JARs for the extensions.
+
 
 == 🏭 How to build project ?
 
