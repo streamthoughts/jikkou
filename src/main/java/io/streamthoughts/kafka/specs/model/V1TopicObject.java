@@ -29,7 +29,13 @@ import io.streamthoughts.kafka.specs.resources.Named;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * A Kafka topic resource.
@@ -131,6 +137,16 @@ public final class V1TopicObject extends ConfigMapRefs<V1TopicObject> implements
     }
 
     /**
+     * Gets a new {@link V1TopicObject} object with the given name.
+     *
+     * @param name  the new name to set.
+     * @return      a new {@link V1TopicObject}.
+     */
+    public V1TopicObject withName(@NotNull final String name) {
+        return new V1TopicObject(name, partitions, replicationFactor, configs, configMapRefs);
+    }
+
+    /**
      * @return the number of partitions for this topic.
      */
     @JsonProperty
@@ -139,11 +155,31 @@ public final class V1TopicObject extends ConfigMapRefs<V1TopicObject> implements
     }
 
     /**
+     * Gets a new {@link V1TopicObject} object with the given number of partitions.
+     *
+     * @param partitions  the new partitions to set.
+     * @return            a new {@link V1TopicObject}.
+     */
+    public V1TopicObject withPartitions(final int partitions) {
+        return new V1TopicObject(name, partitions, replicationFactor, configs, configMapRefs);
+    }
+
+    /**
      * @return the replication factor for this topic.
      */
     @JsonProperty
     public Optional<Short> replicationFactor() {
         return Optional.ofNullable(replicationFactor);
+    }
+
+    /**
+     * Gets a new {@link V1TopicObject} object with the given replication factor.
+     *
+     * @param replicationFactor  the new replication factor to set.
+     * @return                   a new {@link V1TopicObject}.
+     */
+    public V1TopicObject withReplicationFactor(final short replicationFactor) {
+        return new V1TopicObject(name, partitions, replicationFactor, configs, configMapRefs);
     }
 
     @JsonIgnore
@@ -156,6 +192,19 @@ public final class V1TopicObject extends ConfigMapRefs<V1TopicObject> implements
         return configs;
     }
 
+    /**
+     * Gets a new {@link V1TopicObject} object with the given configs.
+     *
+     * @param configs     the new configs to set.
+     * @return            a new {@link V1TopicObject}.
+     */
+    public V1TopicObject withConfigs(@NotNull final Map<String, Object> configs) {
+        return new V1TopicObject(name, partitions, replicationFactor, configs, configMapRefs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public V1TopicObject addConfigs(@NotNull Map<String, Object> configs) {
         final HashMap<String, Object> merged = new HashMap<>();
