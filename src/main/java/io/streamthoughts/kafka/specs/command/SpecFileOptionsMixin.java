@@ -19,9 +19,9 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.ClusterSpecReader;
-import io.streamthoughts.kafka.specs.config.JikkouParams;
-import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import org.jetbrains.annotations.NotNull;

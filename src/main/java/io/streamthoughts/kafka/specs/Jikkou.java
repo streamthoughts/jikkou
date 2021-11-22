@@ -24,8 +24,8 @@ import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
-import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.config.JikkouParams;
 import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -82,7 +82,14 @@ public class Jikkou {
         final Jikkou command = new Jikkou();
         final CommandLine commandLine = new CommandLine(command)
                 .setUsageHelpWidth(160)
-                .setExecutionStrategy(new CommandLine.RunLast())
+                .setExecutionStrategy(new CommandLine.RunLast(){
+                    @Override
+                    public int execute(final CommandLine.ParseResult parseResult) throws CommandLine.ExecutionException {
+                        // Initialization must be triggered after args was parsed by Picocli
+                        command.initialize();
+                        return super.execute(parseResult);
+                    }
+                })
                 .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
                     final PrintWriter err = cmd.getErr();
                     if (! (ex instanceof JikkouException) ) {
@@ -94,7 +101,6 @@ public class Jikkou {
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
         if (args.length > 0) {
-            command.initGlobalConfig();
             final int exitCode = commandLine.execute(args);
             System.exit(exitCode);
         } else {
@@ -102,7 +108,10 @@ public class Jikkou {
         }
     }
 
-    public void initGlobalConfig() {
+    /**
+     * Initializes the global-static configuration object.
+     */
+    private void initialize() {
         Map<String, Object> adminClientParams = new HashMap<>();
         if (options.clientCommandConfig != null) {
             final Properties cliCommandProps = PropertiesUtils.loadPropertiesConfig(options.clientCommandConfig);
@@ -118,9 +127,9 @@ public class Jikkou {
         cliConfigParams.put(JikkouParams.ADMIN_CLIENT_CONFIG_NAME, adminClientParams);
 
         JikkouConfig.builder()
-            .withCLIConfigFile(options.configFile)
-            .withCLIConfigParams(cliConfigParams)
-            .getOrCreate();
+                .withCLIConfigFile(options.configFile)
+                .withCLIConfigParams(cliConfigParams)
+                .getOrCreate();
     }
 
     public static class ShortErrorMessageHandler implements CommandLine.IParameterExceptionHandler {

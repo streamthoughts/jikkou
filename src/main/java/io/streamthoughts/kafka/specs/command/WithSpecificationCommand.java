@@ -21,11 +21,9 @@ package io.streamthoughts.kafka.specs.command;
 import io.streamthoughts.kafka.specs.CLIUtils;
 import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.Printer;
-import io.streamthoughts.kafka.specs.processor.Processor;
-import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
-import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.vavr.Lazy;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
@@ -46,12 +44,11 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
     @CommandLine.Mixin
     SetOptionsMixin labelsOption;
 
-    private final Lazy<V1SpecsObject> object = Lazy.of(() -> {
-       return  V1SpecFileProcessor
-                .create(JikkouConfig.get())
-                .apply(specOptions.parse(labelsOption))
-                .specs();
-    });
+    private final Lazy<V1SpecsObject> object = Lazy.of(() -> V1SpecFileProcessor
+         .create(JikkouConfig.get())
+         .apply(specOptions.parse(labelsOption))
+         .specs()
+    );
 
 
     /**
