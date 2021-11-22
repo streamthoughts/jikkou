@@ -56,7 +56,7 @@ public final class JikkouConfig {
     private final Config config;
 
     /**
-     * Static helper that can be used to creates a new empty {@link JikkouConfig} instance.
+     * Static helper that can be used to create a new empty {@link JikkouConfig} instance.
      *
      * @return a new {@link JikkouConfig} instance.
      */
@@ -65,7 +65,7 @@ public final class JikkouConfig {
     }
 
     /**
-     * Static helper that can be used to creates a new {@link JikkouConfig} instance
+     * Static helper that can be used to create a new {@link JikkouConfig} instance
      * from the specified properties.
      *
      * @return a new {@link JikkouConfig} instance.
@@ -75,7 +75,7 @@ public final class JikkouConfig {
     }
 
     /**
-     * Static helper that can be used to creates a new {@link JikkouConfig} instance
+     * Static helper that can be used to create a new {@link JikkouConfig} instance
      * from the specified map.
      *
      * @return a new {@link JikkouConfig} instance.
@@ -84,7 +84,13 @@ public final class JikkouConfig {
         return new JikkouConfig(ConfigFactory.parseMap(config));
     }
 
-    public static JikkouConfig get() {
+    /**
+     * Retrieves the global static configuration.
+     *
+     * @throws IllegalStateException if no configuration was initialized.
+     * @return  the {@link JikkouConfig} configuration object.
+     */
+    public static @NotNull JikkouConfig get() {
         if (CACHED != null) return CACHED;
         throw new IllegalStateException("No configuration was initialized");
     }
@@ -99,10 +105,10 @@ public final class JikkouConfig {
     private static JikkouConfig create(final @Nullable Map<String, Object> cliConfigParams,
                                        final @Nullable String cliConfigFile) {
 
-        getConfigFile(cliConfigFile).ifPresent(configFile -> {
+        getConfigFile(cliConfigFile).ifPresentOrElse(configFile -> {
             LOG.info("Loading configuration from: '{}'", configFile);
             System.setProperty("config.file", configFile);
-        });
+        }, () -> LOG.info("No configuration file was found"));
 
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig(ROOT_CONFIG_KEY);
@@ -154,7 +160,7 @@ public final class JikkouConfig {
     public JikkouConfig(@NotNull final Config config, final boolean doLog) {
         this.config = Objects.requireNonNull(config, "'config' cannot be null");
         if (doLog) {
-            LOG.info("Creating new {}:\n\t{}", this.getClass().getName(), toPrettyString());
+            LOG.info("Created new {}:\n\t{}", this.getClass().getName(), toPrettyString());
         }
     }
 

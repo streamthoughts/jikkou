@@ -18,13 +18,13 @@
  */
 package io.streamthoughts.kafka.specs.command.validate;
 
-import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
 import io.streamthoughts.kafka.specs.command.SetOptionsMixin;
 import io.streamthoughts.kafka.specs.command.SpecFileOptionsMixin;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
+import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
