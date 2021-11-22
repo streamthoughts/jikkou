@@ -198,7 +198,7 @@ public class Jikkou {
 
         private boolean isApplicableManifest(Manifest manifest) {
             Attributes attributes = manifest.getMainAttributes();
-            return "kafka-specs".equals(get(attributes, "Implementation-Title"));
+            return Jikkou.class.getSimpleName().equals(get(attributes, "Implementation-Title"));
         }
 
         private static Object get(Attributes attributes, String key) {
