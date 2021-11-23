@@ -18,34 +18,11 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
-import io.streamthoughts.kafka.specs.OperationResult;
-import io.streamthoughts.kafka.specs.operation.Operation;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-public interface Changes<T extends Change<T>, K, V, O extends Operation<T, K, V>> extends Iterable<T> {
+public interface ChangeComputer<S, K, C extends Change<K>, O extends ChangeComputer.Options> {
 
-    /**
-     * @return all {@link Change} object.
-     */
-    Collection<T> all();
+    class Options { }
 
-    T get(@NotNull final K resource);
-
-    /**
-     * Apply the given operation on changes.
-     *
-     * @param operation the operation to apply.
-     * @return          the operation results.
-     */
-    List<OperationResult<T>> apply(@NotNull final O operation);
-
-    @NotNull
-    @Override
-    default Iterator<T> iterator() {
-        return all().iterator();
-    }
+    List<C> computeChanges(Iterable<S> actualStates, Iterable<S> expectedStates, O options);
 }

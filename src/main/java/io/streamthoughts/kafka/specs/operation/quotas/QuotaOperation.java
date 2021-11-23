@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.operation.quotas;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
-import io.streamthoughts.kafka.specs.operation.SpecificOperation;
+import io.streamthoughts.kafka.specs.operation.ExecutableOperation;
 import io.vavr.concurrent.Future;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Represents an operation to apply on client-quotas.
  */
-public interface QuotaOperation extends SpecificOperation<QuotaChange, ClientQuotaEntity, Void> {
+public interface QuotaOperation extends ExecutableOperation<QuotaChange, ClientQuotaEntity, Void> {
 
     /**
      * {@inheritDoc}

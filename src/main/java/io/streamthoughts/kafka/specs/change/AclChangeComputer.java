@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
-import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import org.jetbrains.annotations.NotNull;
@@ -31,14 +30,27 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class AclChanges extends AbstractChanges<AclChange, AccessControlPolicy, Void, AclOperation> {
+public class AclChangeComputer implements ChangeComputer<AccessControlPolicy, AccessControlPolicy, AclChange, AclChangeComputer.AclChangeOptions> {
 
-    public static AclChanges computeChanges(@NotNull final Iterable<AccessControlPolicy> beforeAccessControlPolicies,
-                                            @NotNull final Iterable<AccessControlPolicy> afterAccessControlPolicies,
-                                            final boolean deleteOrphans) {
 
-        Map<String, List<AccessControlPolicy>> beforePoliciesGroupedByPrincipal = Named.groupByName(beforeAccessControlPolicies);
-        Map<String, List<AccessControlPolicy>> afterPoliciesGroupedByPrincipal = Named.groupByName(afterAccessControlPolicies);
+    public static class AclChangeOptions extends Options {
+        final boolean deleteOrphans;
+
+        public AclChangeOptions(boolean deleteOrphans) {
+            this.deleteOrphans = deleteOrphans;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<AclChange> computeChanges(@NotNull final Iterable<AccessControlPolicy> actualStates,
+                                          @NotNull final Iterable<AccessControlPolicy> expectedStates,
+                                          @NotNull final AclChangeOptions options) {
+
+        Map<String, List<AccessControlPolicy>> beforePoliciesGroupedByPrincipal = Named.groupByName(actualStates);
+        Map<String, List<AccessControlPolicy>> afterPoliciesGroupedByPrincipal = Named.groupByName(expectedStates);
 
         final Map<String, List<AclChange>> changes = new HashMap<>();
         afterPoliciesGroupedByPrincipal.forEach((principal, afterPrincipalPolicies) -> {
@@ -70,7 +82,7 @@ public class AclChanges extends AbstractChanges<AclChange, AccessControlPolicy, 
 
         });
 
-        if (deleteOrphans) {
+        if (options.deleteOrphans) {
             beforePoliciesGroupedByPrincipal.keySet()
                     .stream()
                     .filter(Predicate.not(changes::containsKey))
@@ -82,17 +94,6 @@ public class AclChanges extends AbstractChanges<AclChange, AccessControlPolicy, 
                                     .collect(Collectors.toList())
                     ));
         }
-        return new AclChanges(changes.values().stream().flatMap(Collection::stream).collect(Collectors.toList()));
-    }
-
-    /**
-     * Creates a new {@link AclChanges} instance.
-     *
-     * @param changes   the list of {@link Change}.
-     */
-    public AclChanges(@NotNull final Collection<AclChange> changes) {
-        super(changes
-                .stream()
-                .collect(Collectors.toMap(AclChange::getAccessControlPolicy, it -> it)));
+        return changes.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 }

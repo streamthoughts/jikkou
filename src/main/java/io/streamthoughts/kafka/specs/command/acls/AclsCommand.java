@@ -18,27 +18,26 @@
  */
 package io.streamthoughts.kafka.specs.command.acls;
 
-import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.change.AclChanges;
-import io.streamthoughts.kafka.specs.change.Change;
-import io.streamthoughts.kafka.specs.command.acls.subcommands.Apply;
-import io.streamthoughts.kafka.specs.command.acls.subcommands.Delete;
-import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeACLs;
-import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
-import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
-import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
-import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRulesBuilder;
+import io.streamthoughts.kafka.specs.change.AclChangeComputer;
+import io.streamthoughts.kafka.specs.change.ChangeExecutor;
+import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
+import io.streamthoughts.kafka.specs.command.acls.subcommands.Apply;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
+import io.streamthoughts.kafka.specs.command.acls.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
+import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeACLs;
+import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
+import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
+import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
+import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
+import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
+import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRulesBuilder;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
@@ -46,10 +45,10 @@ import picocli.CommandLine.Command;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Command(name = "acls",
@@ -83,8 +82,8 @@ public class AclsCommand extends WithAdminClientCommand {
         /**
          * Gets the operation to execute.
          *
-         * @param client    the {@link AdminClient}.
-         * @return          a new {@link AclOperation}.
+         * @param client the {@link AdminClient}.
+         * @return a new {@link AclOperation}.
          */
         public abstract AclOperation getOperation(@NotNull final AdminClient client);
 
@@ -92,7 +91,7 @@ public class AclsCommand extends WithAdminClientCommand {
          * {@inheritDoc}
          */
         @Override
-        public Collection<OperationResult<AclChange>> executeCommand(final AdminClient client) {
+        public Collection<ChangeResult<AclChange>> executeCommand(final AdminClient client) {
             final Optional<V1SecurityObject> optional = loadSpecsObject().security();
 
             if (optional.isEmpty()) {
@@ -107,45 +106,23 @@ public class AclsCommand extends WithAdminClientCommand {
             final Map<String, V1AccessRoleObject> groups = Named.keyByName(resource.roles());
             final Collection<V1AccessUserObject> users = resource.users();
 
-            List<AccessControlPolicy> newPolicies = users
+            List<AccessControlPolicy> expectedStates = users
                     .stream()
                     .flatMap(user -> builder.toAccessControlPolicy(groups.values(), user).stream())
                     .filter(this::isResourceCandidate)
                     .collect(Collectors.toList());
 
-            List<AccessControlPolicy> oldPolicies = new DescribeACLs(client)
+            List<AccessControlPolicy> actualStates = new DescribeACLs(client)
                     .describe()
                     .stream()
                     .filter(this::isResourceCandidate)
                     .collect(Collectors.toList());
 
-            final AclOperation operation = getOperation(client);
+            // Compute state changes
+            Supplier<List<AclChange>> supplier = () -> new AclChangeComputer().
+                    computeChanges(actualStates, expectedStates, new AclChangeComputer.AclChangeOptions(deleteOrphans));
 
-            final AclChanges changes = AclChanges.computeChanges(oldPolicies, newPolicies, deleteOrphans);
-
-            final LinkedList<OperationResult<AclChange>> results = new LinkedList<>();
-
-            if (isDryRun()) {
-                changes.all()
-                        .stream()
-                        .filter(it -> operation.test(it) || it.getOperation() == Change.OperationType.NONE)
-                        .map(change -> {
-                            Description description = operation.getDescriptionFor(change);
-                            return change.getOperation() == Change.OperationType.NONE ?
-                                    OperationResult.ok(change, description) :
-                                    OperationResult.changed(change, description);
-                        })
-                        .forEach(results::add);
-            } else {
-                results.addAll(changes.apply(operation));
-                changes.all()
-                        .stream()
-                        .filter(it -> it.getOperation() == Change.OperationType.NONE)
-                        .map(change -> OperationResult.ok(change, operation.getDescriptionFor(change)))
-                        .forEach(results::add);
-            }
-
-            return results;
+            return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }
     }
 }

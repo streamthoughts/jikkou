@@ -19,8 +19,9 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.CLIUtils;
-import io.streamthoughts.kafka.specs.OperationResult;
+import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.Printer;
+import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
@@ -33,7 +34,7 @@ import picocli.CommandLine.Spec;
 
 import java.util.Collection;
 
-public abstract class WithSpecificationCommand<T> extends BaseCommand {
+public abstract class WithSpecificationCommand<T extends Change<?>> extends BaseCommand {
 
     @ArgGroup(multiplicity = "1")
     SpecFileOptionsMixin specOptions;
@@ -60,12 +61,12 @@ public abstract class WithSpecificationCommand<T> extends BaseCommand {
         if (!execOptions.yes && !isDryRun()) {
             CLIUtils.askToProceed(spec);
         }
-        final Collection<OperationResult<T>> results = executeCommand(adminClient);
+        final Collection<ChangeResult<T>> results = executeCommand(adminClient);
         Printer.print(results, execOptions.verbose, isDryRun());
         return CommandLine.ExitCode.OK;
     }
 
-    public abstract Collection<OperationResult<T>> executeCommand(final AdminClient adminClient);
+    public abstract Collection<ChangeResult<T>> executeCommand(final AdminClient adminClient);
 
     public boolean isDryRun() {
         return execOptions.dryRun;

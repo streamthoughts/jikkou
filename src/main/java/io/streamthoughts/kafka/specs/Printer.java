@@ -19,6 +19,8 @@
 package io.streamthoughts.kafka.specs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.ChangeResult;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -43,21 +45,20 @@ public class Printer {
     /**
      * Print the specified execution results to stdout and terminate the application with the appropriate exit code.
      *
-     * @param results   the execution results to print.
-     * @param verbose   print details.
-     * @param dryRun    is dry-run enabled.
-     * @param <T>       the result-type.
-     * @return          the exit code.
+     * @param results the execution results to print.
+     * @param verbose print details.
+     * @param dryRun  is dry-run enabled.
+     * @return the exit code.
      */
-    public static <T> int print(final Collection<OperationResult<T>> results,
-                                final boolean verbose,
-                                final boolean dryRun) {
+    public static <T extends Change<?>> int print(final Collection<ChangeResult<T>> results,
+                                                  final boolean verbose,
+                                                  final boolean dryRun) {
         int ok = 0;
         int created = 0;
         int changed = 0;
         int deleted = 0;
         int failed = 0;
-        for (OperationResult<?> r : results) {
+        for (ChangeResult<?> r : results) {
             final String json;
             try {
                 json = Jackson.JSON_OBJECT_MAPPER
@@ -104,7 +105,7 @@ public class Printer {
 
     private static void printTask(final Description description, final String status) {
         String text = description.textDescription();
-        String padding =  (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
+        String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
         PS.printf("%sTASK [%s] %s - %s %s\n", isColor() ? ANSI_WHITE : "", description.operation(), text, status, padding);
     }
 

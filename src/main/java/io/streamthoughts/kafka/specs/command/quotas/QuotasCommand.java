@@ -18,18 +18,10 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas;
 
-import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.OperationResult;
-import io.streamthoughts.kafka.specs.change.Change;
-import io.streamthoughts.kafka.specs.change.QuotaChange;
-import io.streamthoughts.kafka.specs.change.QuotaChanges;
+import io.streamthoughts.kafka.specs.change.*;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.Alter;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.Apply;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.Create;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.Delete;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.Describe;
+import io.streamthoughts.kafka.specs.command.quotas.subcommands.*;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.internal.DescribeQuotas;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
@@ -39,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @CommandLine.Command(name = "quotas",
         headerHeading = "Usage:%n%n",
@@ -76,41 +68,19 @@ public class QuotasCommand extends WithAdminClientCommand {
          * {@inheritDoc}
          */
         @Override
-        public Collection<OperationResult<QuotaChange>> executeCommand(final AdminClient client) {
+        public Collection<ChangeResult<QuotaChange>> executeCommand(final AdminClient client) {
 
             // Get the list of quotas, that are candidates for this execution, from the SpecsFile.
-            final List<V1QuotaObject> userQuotaObjects = loadSpecsObject().quotas();
+            final List<V1QuotaObject> expectedStates = loadSpecsObject().quotas();
 
             // Get the list of quotas, that are candidates for this execution, from the remote Kafka cluster
-            final Collection<V1QuotaObject> clusterQuotaObjects = new DescribeQuotas(client).describe();
+            final Collection<V1QuotaObject> actualStates = new DescribeQuotas(client).describe();
 
             // Compute state changes
-            final QuotaChanges changes = QuotaChanges.computeChanges(clusterQuotaObjects, userQuotaObjects);
+            Supplier<List<QuotaChange>> supplier = () -> new QuotaChangeComputer().
+                    computeChanges(actualStates, expectedStates, new ChangeComputer.Options());
 
-            // Execute the operation on changes
-            final QuotaOperation operation = getOperation(client);
-            final LinkedList<OperationResult<QuotaChange>> results = new LinkedList<>();
-
-            if (isDryRun()) {
-                changes.all()
-                        .stream()
-                        .filter(it -> operation.test(it) || it.getOperation() == Change.OperationType.NONE)
-                        .map(change -> {
-                            Description description = operation.getDescriptionFor(change);
-                            return change.getOperation() == Change.OperationType.NONE ?
-                                    OperationResult.ok(change, description) :
-                                    OperationResult.changed(change, description);
-                        })
-                        .forEach(results::add);
-            } else {
-                results.addAll(changes.apply(operation));
-                changes.all()
-                        .stream()
-                        .filter(it -> it.getOperation() == Change.OperationType.NONE)
-                        .map(change -> OperationResult.ok(change, operation.getDescriptionFor(change)))
-                        .forEach(results::add);
-            }
-            return results;
+            return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }
     }
 }

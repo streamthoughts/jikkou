@@ -20,10 +20,10 @@ package io.streamthoughts.kafka.specs.operation.topics;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.operation.SpecificOperation;
+import io.streamthoughts.kafka.specs.operation.ExecutableOperation;
 import org.jetbrains.annotations.NotNull;
 
-public interface TopicOperation extends SpecificOperation<TopicChange, String, Void> {
+public interface TopicOperation extends ExecutableOperation<TopicChange, String, Void> {
 
     /**
      * {@inheritDoc}

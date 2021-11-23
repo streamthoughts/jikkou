@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TopicChange implements Change<TopicChange>, Named {
+public class TopicChange implements Change<String>, Named {
 
     private final String name;
     private final OperationType operation;
@@ -71,6 +71,14 @@ public class TopicChange implements Change<TopicChange>, Named {
     @Override
     public OperationType getOperation() {
         return operation;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getKey() {
+        return name;
     }
 
     @JsonProperty

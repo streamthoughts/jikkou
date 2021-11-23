@@ -22,8 +22,14 @@ import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
+import io.vavr.concurrent.Future;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Operation to alter client quotas.

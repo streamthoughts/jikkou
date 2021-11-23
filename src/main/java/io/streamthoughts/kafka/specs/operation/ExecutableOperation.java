@@ -25,24 +25,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public interface SpecificOperation<T extends Change<T>, K, V> extends Predicate<T>, Operation<T, K, V> {
+public interface ExecutableOperation<T extends Change<K>, K, V> extends Operation<K, T>, Function<Collection<T>, Map<K, List<Future<V>>>> {
+
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    boolean test(final T change);
-
-    /**
-     * Applies this operation on all changes.
+     * Executes this operation for the given list of changes.
      *
      * @param changes the list of change to be applied.
      * @return a map of operation results.
      */
-    default @NotNull Map<K, List<Future<V>>> apply(@NotNull final Collection<T> changes) {
+    @Override
+    default Map<K, List<Future<V>>> apply(final Collection<T> changes) {
         return this.doApply(filter(changes, this));
     }
 
@@ -60,8 +57,9 @@ public interface SpecificOperation<T extends Change<T>, K, V> extends Predicate<
      * @param predicate the {@link Predicate}.
      * @return the filtered {@link Change} object.
      */
-    private static <T extends Change<T>> Collection<T> filter(@NotNull final Collection<T> changes,
-                                                              @NotNull final Predicate<T> predicate) {
+    private static <K, T extends Change<K>> Collection<T> filter(@NotNull final Collection<T> changes,
+                                                                 @NotNull final Predicate<T> predicate) {
         return changes.stream().filter(predicate).collect(Collectors.toList());
     }
 }
+

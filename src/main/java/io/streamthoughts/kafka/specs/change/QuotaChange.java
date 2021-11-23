@@ -23,13 +23,14 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.kafka.specs.model.V1QuotaEntityObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaType;
+import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class QuotaChange implements Change<QuotaChange> {
+public class QuotaChange implements Change<ClientQuotaEntity> {
 
     private final V1QuotaEntityObject entity;
 
@@ -62,6 +63,11 @@ public class QuotaChange implements Change<QuotaChange> {
     @Override
     public OperationType getOperation() {
         return operation;
+    }
+
+    @Override
+    public ClientQuotaEntity getKey() {
+        return null;
     }
 
     @JsonProperty
