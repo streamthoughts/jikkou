@@ -35,7 +35,6 @@ public class ValidationException extends JikkouException {
     private final Validation validation;
     private final List<ValidationException> errors;
     private String suffixMessage = "";
-    private String errorSuffixMessage = "";
 
     public ValidationException(final List<ValidationException> errors) {
         this(null, null, errors);
@@ -67,19 +66,8 @@ public class ValidationException extends JikkouException {
      * @param suffixMessage     the suffix to set.
      * @return                  {@code this}.
      */
-    public ValidationException suffixMessage(final String suffixMessage) {
+    public ValidationException withSuffixMessage(final String suffixMessage) {
         this.suffixMessage = suffixMessage;
-        return this;
-    }
-
-    /**
-     * Sets the suffix to be used for formatting the returned message containing nested errors.
-     *
-     * @param errorSuffixMessage     the suffix to set.
-     * @return                       {@code this}.
-     */
-    public ValidationException errorSuffixMessage(final String errorSuffixMessage) {
-        this.errorSuffixMessage = errorSuffixMessage;
         return this;
     }
 
@@ -90,19 +78,17 @@ public class ValidationException extends JikkouException {
     public String getMessage() {
         final String message;
         if (!errors.isEmpty()) {
-            message = errors.stream()
-                .map(e -> e.errorSuffixMessage(errorSuffixMessage).getMessage())
-                .collect(Collectors.joining("\n"));
+            message = errors.stream().map(ValidationException::getMessage).collect(Collectors.joining());
         } else {
-            message = getFormattedMessage(errorSuffixMessage);
+            message = getFormattedMessage();
         }
         return String.format("%s%s", suffixMessage, message);
     }
 
-    private String getFormattedMessage(final String suffix) {
+    private String getFormattedMessage() {
         final String message = super.getMessage();
         return Optional.ofNullable(validation)
-        .map(Validation::name).map(s -> String.format("%s[%s]: %s", suffix, s, message))
+        .map(Validation::name).map(s -> String.format("\n\t - [%s]: %s", s, message))
         .orElse(message);
     }
 }

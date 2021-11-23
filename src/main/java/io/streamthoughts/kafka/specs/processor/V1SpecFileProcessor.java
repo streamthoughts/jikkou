@@ -146,9 +146,7 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
 
         // (3) may throw all validation errors
         if (!errors.isEmpty()) {
-            throw new ValidationException(errors)
-                    .errorSuffixMessage("\t- ")
-                    .suffixMessage("Validation rule violations:\n");
+            throw new ValidationException(errors).withSuffixMessage("Validation rule violations:");
         }
 
         return new V1SpecFile(file.metadata(), v1SpecsObject);
