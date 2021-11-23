@@ -27,7 +27,7 @@ import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import java.util.Objects;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AclChange implements Change<AclChange> {
+public class AclChange implements Change<AccessControlPolicy> {
 
     private final OperationType operation;
 
@@ -45,15 +45,32 @@ public class AclChange implements Change<AclChange> {
         return new AclChange(OperationType.NONE, policy);
     }
 
+    /**
+     * Creates a new {@link AclChange} instance.
+     *
+     * @param operation the {@link OperationType}.
+     * @param policy    the {@link AccessControlPolicy}.
+     */
     private AclChange(final OperationType operation,
                       final AccessControlPolicy policy) {
         this.operation = Objects.requireNonNull(operation, "'operation' should not be null");
         this.policy = Objects.requireNonNull(policy, "'policy' should not be null");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public OperationType getOperation() {
         return operation;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessControlPolicy getKey() {
+        return policy;
     }
 
     @JsonProperty

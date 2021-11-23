@@ -16,10 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.internal.Time;
 
 import java.io.PrintWriter;
@@ -29,13 +30,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This class is used to describe the result of an operation that succeed of failed.
+ * This class is used to describe the result of a change operation that succeed of failed.
  *
- * @param <T>   the operation result-type.
+ * @param <T> the change-type.
  */
-public class OperationResult<T> implements Serializable {
+public class ChangeResult<T extends Change<?>> implements Serializable {
 
-    public enum Status { CHANGED, OK, FAILED }
+    public enum Status {CHANGED, OK, FAILED}
 
     private final boolean changed;
     private final long end;
@@ -46,88 +47,85 @@ public class OperationResult<T> implements Serializable {
     private transient final Description description;
 
     /**
-     * Static method to build a new {@link OperationResult} that doesn't result in cluster resource changes.
+     * Static method to build a new {@link ChangeResult} that doesn't result in cluster resource changes.
      *
-     * @param resource      the operation result.
-     * @param description   the operation result description.
-     * @param <T>           the operation result-type.
-     *
-     * @return              a new {@link OperationResult}.
+     * @param resource    the operation result.
+     * @param description the operation result description.
+     * @param <T>         the operation result-type.
+     * @return a new {@link ChangeResult}.
      */
-    public static <T> OperationResult<T> ok(final T resource,
-                                            final Description description) {
-        return new OperationResult<>(Status.OK, false, resource, description);
+    public static <T extends Change<?>> ChangeResult<T> ok(final T resource,
+                                                           final Description description) {
+        return new ChangeResult<>(Status.OK, false, resource, description);
     }
 
     /**
-     * Static method to build a new {@link OperationResult} that do result in cluster resource changes.
+     * Static method to build a new {@link ChangeResult} that do result in cluster resource changes.
      *
-     * @param resource      the operation result.
-     * @param description   the operation result description.
-     * @param <T>           the operation result-type.
-     *
-     * @return              a new {@link OperationResult}.
+     * @param resource    the operation result.
+     * @param description the operation result description.
+     * @param <T>         the operation result-type.
+     * @return a new {@link ChangeResult}.
      */
-    public static <T> OperationResult<T> changed(final T resource,
-                                                 final Description description) {
-        return new OperationResult<>(Status.CHANGED, true, resource, description);
+    public static <T extends Change<?>> ChangeResult<T> changed(final T resource,
+                                                                final Description description) {
+        return new ChangeResult<>(Status.CHANGED, true, resource, description);
     }
 
     /**
-     * Static method to build a new {@link OperationResult}  that failed with the specified exception.
+     * Static method to build a new {@link ChangeResult}  that failed with the specified exception.
      *
-     * @param resource      the operation result.
-     * @param description   the operation result description.
-     * @param exceptions    the exceptions.
-     * @param <T>           the operation result-type.
-     *
-     * @return              a new {@link OperationResult}.
+     * @param resource    the operation result.
+     * @param description the operation result description.
+     * @param exceptions  the exceptions.
+     * @param <T>         the operation result-type.
+     * @return a new {@link ChangeResult}.
      */
-    public static <T> OperationResult<T> failed(final T resource,
-                                                final Description description,
-                                                final List<Throwable> exceptions) {
-        return new OperationResult<>(
+    public static <T extends Change<?>> ChangeResult<T> failed(final T resource,
+                                                               final Description description,
+                                                               final List<Throwable> exceptions) {
+        return new ChangeResult<>(
                 Status.FAILED,
                 false,
                 resource,
                 description,
                 true,
-                exceptions.stream().map(OperationResult::getStacktrace).collect(Collectors.toList())
+                exceptions.stream().map(ChangeResult::getStacktrace).collect(Collectors.toList())
         );
     }
 
     /**
-     * Creates a new {@link OperationResult} instance.
+     * Creates a new {@link ChangeResult} instance.
      */
-    private OperationResult(final Status status,
-                            final boolean changed,
-                            final T resource,
-                            final Description description) {
+    private ChangeResult(final Status status,
+                         final boolean changed,
+                         final T resource,
+                         final Description description) {
         this(status, changed, resource, description, false, null);
     }
 
     /**
-     * Creates a new {@link OperationResult} instance.
+     * Creates a new {@link ChangeResult} instance.
      */
-    private OperationResult(final Status status,
-                            final boolean changed,
-                            final T resource,
-                            final Description description,
-                            final boolean failed,
-                            final List<String> errors) {
+    private ChangeResult(final Status status,
+                         final boolean changed,
+                         final T resource,
+                         final Description description,
+                         final boolean failed,
+                         final List<String> errors) {
         this(status, changed, resource, description, failed, errors, Time.SYSTEM.milliseconds());
     }
 
     /**
-     * Creates a new {@link OperationResult} instance.
+     * Creates a new {@link ChangeResult} instance.
      */
-    private OperationResult(final Status status,
-                            final boolean changed,
-                            final T resource,
-                            final Description description,
-                            final boolean failed,
-                            final List<String> errors,
-                            final long end) {
+    private ChangeResult(final Status status,
+                         final boolean changed,
+                         final T resource,
+                         final Description description,
+                         final boolean failed,
+                         final List<String> errors,
+                         final long end) {
         this.status = status;
         this.changed = changed;
         this.resource = resource;
@@ -174,7 +172,7 @@ public class OperationResult<T> implements Serializable {
 
     @Override
     public String toString() {
-        return "OperationResult{" +
+        return "ChangeResult{" +
                 "changed=" + changed +
                 ", end=" + end +
                 ", resource=" + resource +

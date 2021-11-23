@@ -28,12 +28,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.NONE;
 
-public class AclChangesTest {
+public class AclChangeComputerTest {
 
     private static AccessControlPolicy makeAclPolicy(final String topicName) {
         return AccessControlPolicy.newBuilder()
@@ -52,11 +54,14 @@ public class AclChangesTest {
         // Given
         AccessControlPolicy policy = makeAclPolicy("topic");
 
-        List<AccessControlPolicy> before = Collections.emptyList();
-        List<AccessControlPolicy> after  = List.of(policy);
+        List<AccessControlPolicy> actualState = Collections.emptyList();
+        List<AccessControlPolicy> expectedState  = List.of(policy);
 
         // When
-        AclChanges changes = AclChanges.computeChanges(before, after, false);
+        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
+                .stream()
+                .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
         AclChange change = changes.get(policy);
@@ -69,11 +74,14 @@ public class AclChangesTest {
         AccessControlPolicy policyA = makeAclPolicy("topicA");
         AccessControlPolicy policyB = makeAclPolicy("topicB");
 
-        List<AccessControlPolicy> before = List.of(policyA);
-        List<AccessControlPolicy> after  = List.of(policyB);
+        List<AccessControlPolicy> actualState = List.of(policyA);
+        List<AccessControlPolicy> expectedState  = List.of(policyB);
 
         // When
-        AclChanges changes = AclChanges.computeChanges(before, after, false);
+        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
+                .stream()
+                .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
         Assertions.assertEquals(DELETE, changes.get(policyA).getOperation());
@@ -84,11 +92,14 @@ public class AclChangesTest {
         // Given
         AccessControlPolicy policy = makeAclPolicy("topic");
 
-        List<AccessControlPolicy> before = List.of(policy);
-        List<AccessControlPolicy> after  = List.of(policy);
+        List<AccessControlPolicy> actualState = List.of(policy);
+        List<AccessControlPolicy> expectedState  = List.of(policy);
 
         // When
-        AclChanges changes = AclChanges.computeChanges(before, after, false);
+        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
+                .stream()
+                .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
         AclChange change = changes.get(policy);
@@ -100,11 +111,14 @@ public class AclChangesTest {
         // Given
         AccessControlPolicy policy = makeAclPolicy("topic");
 
-        List<AccessControlPolicy> before = List.of(policy);
-        List<AccessControlPolicy> after  = List.of();
+        List<AccessControlPolicy> actualState = List.of(policy);
+        List<AccessControlPolicy> expectedState  = List.of();
 
         // When
-        AclChanges changes = AclChanges.computeChanges(before, after, true);
+        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(true))
+                .stream()
+                .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
         AclChange change = changes.get(policy);
@@ -116,13 +130,16 @@ public class AclChangesTest {
         // Given
         AccessControlPolicy policy = makeAclPolicy("topic");
 
-        List<AccessControlPolicy> before = List.of(policy);
-        List<AccessControlPolicy> after  = List.of();
+        List<AccessControlPolicy> actualState = List.of(policy);
+        List<AccessControlPolicy> expectedState  = List.of();
 
         // When
-        AclChanges changes = AclChanges.computeChanges(before, after, false);
+        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
+                .stream()
+                .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
-        Assertions.assertTrue(changes.all().isEmpty());
+        Assertions.assertTrue(changes.isEmpty());
     }
 }

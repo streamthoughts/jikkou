@@ -20,8 +20,7 @@ package io.streamthoughts.kafka.specs.operation.acls;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.operation.Operation;
-import io.streamthoughts.kafka.specs.operation.SpecificOperation;
+import io.streamthoughts.kafka.specs.operation.ExecutableOperation;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.vavr.concurrent.Future;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public interface AclOperation extends SpecificOperation<AclChange, AccessControlPolicy, Void> {
+public interface AclOperation extends ExecutableOperation<AclChange, AccessControlPolicy, Void> {
 
     /**
      * {@inheritDoc}

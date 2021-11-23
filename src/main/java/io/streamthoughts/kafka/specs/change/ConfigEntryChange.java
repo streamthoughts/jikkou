@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ConfigEntryChange extends ValueChange<Object> implements Change<ConfigEntryChange>, Named {
+public class ConfigEntryChange extends ValueChange<Object> implements Change<String>, Named {
 
     private final String name;
 
@@ -49,4 +49,11 @@ public class ConfigEntryChange extends ValueChange<Object> implements Change<Con
         return name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getKey() {
+        return name;
+    }
 }

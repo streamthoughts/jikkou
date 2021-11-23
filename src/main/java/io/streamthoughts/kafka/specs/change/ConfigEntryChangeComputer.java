@@ -19,9 +19,7 @@
 package io.streamthoughts.kafka.specs.change;
 
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
-import io.streamthoughts.kafka.specs.resources.Configs;
 import io.streamthoughts.kafka.specs.resources.Named;
-import io.vavr.Tuple2;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,17 +29,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ConfigEntryChanges {
+public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, String, ConfigEntryChange, ChangeComputer.Options> {
 
-    public static Tuple2<Change.OperationType, List<ConfigEntryChange>> computeChange(@NotNull final Configs beforeConfigs,
-                                                                                      @NotNull final Configs afterConfigs) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigEntryChange> computeChanges(@NotNull final Iterable<ConfigValue> actualStates,
+                                                  @NotNull final Iterable<ConfigValue> expectedStates,
+                                                  @NotNull final Options options) {
 
-        final Map<String, ConfigValue> beforeConfigsByName = Named.keyByName(beforeConfigs);
+        final Map<String, ConfigValue> beforeConfigsByName = Named.keyByName(actualStates);
         final Map<String, ConfigEntryChange> afterConfigsByName = new HashMap<>();
 
-        Change.OperationType op = Change.OperationType.NONE;
-
-        for (ConfigValue afterConfigValue : afterConfigs) {
+        for (ConfigValue afterConfigValue : expectedStates) {
             final String configEntryName = afterConfigValue.name();
 
             final ConfigValue beforeConfigValue = beforeConfigsByName.getOrDefault(
@@ -50,13 +51,9 @@ public class ConfigEntryChanges {
             );
 
             final ValueChange<Object> change = ValueChange.with(
-                   afterConfigValue.value(),
-                   beforeConfigValue.value()
+                    afterConfigValue.value(),
+                    beforeConfigValue.value()
             );
-
-            if (change.getOperation() != Change.OperationType.NONE) {
-                op = Change.OperationType.UPDATE;
-            }
 
             afterConfigsByName.put(configEntryName, new ConfigEntryChange(configEntryName, change));
         }
@@ -70,12 +67,8 @@ public class ConfigEntryChanges {
                 .map(it -> new ConfigEntryChange(it.name(), ValueChange.withBeforeValue(it.value())))
                 .collect(Collectors.toList());
 
-        if (!orphanChanges.isEmpty()) {
-            op = Change.OperationType.UPDATE;
-        }
-
         orphanChanges.forEach(it -> afterConfigsByName.put(it.name(), it));
 
-        return new Tuple2<>(op, new ArrayList<>(afterConfigsByName.values()));
+        return new ArrayList<>(afterConfigsByName.values());
     }
 }

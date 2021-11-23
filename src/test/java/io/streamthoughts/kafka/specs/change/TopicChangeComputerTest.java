@@ -28,10 +28,12 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.*;
 
-public class TopicChangesTest {
+public class TopicChangeComputerTest {
 
     public static final ConfigEntry DUMMY_CONFIG_ENTRY = new ConfigEntry("???", "???");
 
@@ -46,11 +48,14 @@ public class TopicChangesTest {
         configs.add(new ConfigValue(CONFIG_PROP, "???", DUMMY_CONFIG_ENTRY));
         V1TopicObject topic = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configs);
 
-        List<V1TopicObject> beforeTopicStates = List.of(topic);
-        List<V1TopicObject> afterTopicStates  = Collections.emptyList();
+        List<V1TopicObject> actualState = List.of(topic);
+        List<V1TopicObject> expectedState  = Collections.emptyList();
 
         // When
-        TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, new ChangeComputer.Options())
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
 
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
@@ -66,11 +71,14 @@ public class TopicChangesTest {
         configs.add(new ConfigValue(CONFIG_PROP, "???", DUMMY_CONFIG_ENTRY));
         V1TopicObject topic = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configs);
 
-        List<V1TopicObject> beforeTopicStates = Collections.emptyList();
-        List<V1TopicObject> afterTopicStates  = List.of(topic);
+        List<V1TopicObject> actualState = Collections.emptyList();
+        List<V1TopicObject> expectedState  = List.of(topic);
 
         // When
-        TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, new ChangeComputer.Options())
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
 
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
@@ -82,19 +90,22 @@ public class TopicChangesTest {
     public void testReturnUpdateTopicConfigEntryChange() {
 
         // Given
-        Configs configsBefore = Configs.empty();
-        configsBefore.add(new ConfigValue(CONFIG_PROP, "before", DUMMY_CONFIG_ENTRY));
-        V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsBefore);
+        Configs actualConfig = Configs.empty();
+        actualConfig.add(new ConfigValue(CONFIG_PROP, "before", DUMMY_CONFIG_ENTRY));
+        V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, actualConfig);
 
-        List<V1TopicObject> beforeTopicStates = List.of(topicBefore);
+        List<V1TopicObject> actualState = List.of(topicBefore);
 
-        Configs configsAfter = Configs.empty();
-        configsAfter.add(new ConfigValue(CONFIG_PROP, "after", DUMMY_CONFIG_ENTRY));
-        V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsAfter);
-        List<V1TopicObject> afterTopicStates  = List.of(topicAfter);
+        Configs expectedConfig = Configs.empty();
+        expectedConfig.add(new ConfigValue(CONFIG_PROP, "after", DUMMY_CONFIG_ENTRY));
+        V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, expectedConfig);
+        List<V1TopicObject> expectedState  = List.of(topicAfter);
 
         // When
-        TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, new ChangeComputer.Options())
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
 
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
@@ -114,11 +125,14 @@ public class TopicChangesTest {
         configs.add(new ConfigValue(CONFIG_PROP, "???", DUMMY_CONFIG_ENTRY));
         V1TopicObject topic = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configs);
 
-        List<V1TopicObject> beforeTopicStates = List.of(topic);
-        List<V1TopicObject> afterTopicStates  = List.of(topic);
+        List<V1TopicObject> actualState = List.of(topic);
+        List<V1TopicObject> expectedState  = List.of(topic);
 
         // When
-        TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, new ChangeComputer.Options())
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
 
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
@@ -141,14 +155,17 @@ public class TopicChangesTest {
         configsBefore.add(new ConfigValue(CONFIG_PROP, "before", mkConfigEntry));
         V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsBefore);
 
-        List<V1TopicObject> beforeTopicStates = List.of(topicBefore);
+        List<V1TopicObject> actualState = List.of(topicBefore);
 
         Configs configsAfter = Configs.empty();
         V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsAfter);
-        List<V1TopicObject> afterTopicStates  = List.of(topicAfter);
+        List<V1TopicObject> expectedState  = List.of(topicAfter);
 
         // When
-        TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, new ChangeComputer.Options())
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
 
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
@@ -171,14 +188,17 @@ public class TopicChangesTest {
         configsBefore.add(new ConfigValue(CONFIG_PROP, "before", mkConfigEntry));
         V1TopicObject topicBefore = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsBefore);
 
-        List<V1TopicObject> beforeTopicStates = List.of(topicBefore);
+        List<V1TopicObject> actualState = List.of(topicBefore);
 
         Configs configsAfter = Configs.empty();
         V1TopicObject topicAfter = new V1TopicObject(TEST_TOPIC, 1, (short) 1, configsAfter);
-        List<V1TopicObject> afterTopicStates  = List.of(topicAfter);
+        List<V1TopicObject> expectedState  = List.of(topicAfter);
 
         // When
-        TopicChanges changes = TopicChanges.computeChanges(beforeTopicStates, afterTopicStates);
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, new ChangeComputer.Options())
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
 
         // Then
         TopicChange change = changes.get(TEST_TOPIC);

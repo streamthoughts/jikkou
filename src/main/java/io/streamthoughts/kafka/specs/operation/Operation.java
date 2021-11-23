@@ -20,18 +20,18 @@ package io.streamthoughts.kafka.specs.operation;
 
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
-import io.vavr.concurrent.Future;
-import io.vavr.control.Try;
-import org.apache.kafka.common.KafkaFuture;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
-public interface Operation<T extends Change<T>, K, V> {
+public interface Operation<K, T extends Change<K>> extends Predicate<T>{
+
+    /**
+     * Checks whether the given change is supported by this operation.
+     * @return {@code true} if the change can be accepted by this operation, {@code false} otherwise.
+     */
+    @Override
+    boolean test(final T change);
 
     /**
      * Returns a textual description for the given {@link Change}.
@@ -41,11 +41,4 @@ public interface Operation<T extends Change<T>, K, V> {
      */
     Description getDescriptionFor(@NotNull final T change);
 
-    /**
-     * Applies this operation on all changes.
-     *
-     * @param changes   the list of change to be applied.
-     * @return          a map of operation results.
-     */
-    @NotNull Map<K, List<Future<V>>> apply(@NotNull final Collection<T> changes);
 }

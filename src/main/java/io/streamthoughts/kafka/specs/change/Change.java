@@ -18,17 +18,24 @@
  */
 package io.streamthoughts.kafka.specs.change;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Represents a change operation on a resource.
  *
- * @param <T>   the change-type.
  */
-public interface Change<T extends Change<T>> {
+public interface Change<K> {
 
     /**
      * @return the operation associated to this change.
      */
     OperationType getOperation();
+
+    /**
+     * @return the key-identifier of the resource to be changed.
+     */
+    @JsonIgnore
+    K getKey();
 
     /**
      * Supported operations.

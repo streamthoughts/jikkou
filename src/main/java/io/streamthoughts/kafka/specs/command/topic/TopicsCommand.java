@@ -18,18 +18,23 @@
  */
 package io.streamthoughts.kafka.specs.command.topic;
 
-import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.OperationResult;
 import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.ChangeComputer;
+import io.streamthoughts.kafka.specs.change.ChangeExecutor;
+import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChanges;
+import io.streamthoughts.kafka.specs.change.TopicChangeComputer;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.*;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.Alter;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.Apply;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
+import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
-import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
+import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +42,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Command(name = "topics",
@@ -65,8 +71,8 @@ public class TopicsCommand extends WithAdminClientCommand {
         /**
          * Gets the operation to execute.
          *
-         * @param client    the {@link AdminClient}.
-         * @return          a new {@link AclOperation}.
+         * @param client the {@link AdminClient}.
+         * @return a new {@link AclOperation}.
          */
         public abstract TopicOperation getOperation(@NotNull final AdminClient client);
 
@@ -74,46 +80,24 @@ public class TopicsCommand extends WithAdminClientCommand {
          * {@inheritDoc}
          */
         @Override
-        public Collection<OperationResult<TopicChange>> executeCommand(final AdminClient client) {
+        public Collection<ChangeResult<TopicChange>> executeCommand(final AdminClient client) {
 
             // Get the list of topics, that are candidates for this execution, from the remote Kafka cluster
-            final Collection<V1TopicObject> clusterTopicObjects  = new DescribeTopics(
+            final Collection<V1TopicObject> actualStates = new DescribeTopics(
                     client,
                     DescribeOperationOptions.withDescribeDefaultConfigs(true)
             ).describe(this::isResourceCandidate);
 
             // Get the list of topics, that are candidates for this execution, from the SpecsFile.
-            final Collection<V1TopicObject> userTopicObjects = loadSpecsObject().topics().stream()
+            final Collection<V1TopicObject> expectedStates = loadSpecsObject().topics().stream()
                     .filter(it -> isResourceCandidate(it.name()))
                     .collect(Collectors.toList());
 
             // Compute state changes
-            final TopicChanges topicChanges = TopicChanges.computeChanges(clusterTopicObjects, userTopicObjects);
+            Supplier<List<TopicChange>> supplier = () -> new TopicChangeComputer().
+                    computeChanges(actualStates, expectedStates, new ChangeComputer.Options());
 
-            // Execute the operation on changes
-            final TopicOperation operation = getOperation(client);
-            final LinkedList<OperationResult<TopicChange>> results = new LinkedList<>();
-            if (isDryRun()) {
-                topicChanges.all()
-                    .stream()
-                    .filter(it -> operation.test(it) || it.getOperation() == Change.OperationType.NONE)
-                    .map(change -> {
-                        Description description = operation.getDescriptionFor(change);
-                        return change.getOperation() == Change.OperationType.NONE ?
-                                OperationResult.ok(change, description) :
-                                OperationResult.changed(change, description);
-                    })
-                   .forEach(results::add);
-            } else {
-                results.addAll(topicChanges.apply(operation));
-                topicChanges.all()
-                        .stream()
-                        .filter(it -> it.getOperation() == Change.OperationType.NONE)
-                        .map(change -> OperationResult.ok(change, operation.getDescriptionFor(change)))
-                        .forEach(results::add);
-            }
-
-            return results;
+            return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }
     }
 }

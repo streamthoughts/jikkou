@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.specs.change;
 
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
-import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 import io.streamthoughts.kafka.specs.resources.Named;
-import io.vavr.Tuple2;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,33 +30,37 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class TopicChanges extends AbstractChanges<TopicChange, String, Void, TopicOperation> {
+public class TopicChangeComputer implements ChangeComputer<V1TopicObject, String, TopicChange, ChangeComputer.Options> {
 
-    public static TopicChanges computeChanges(@NotNull final Iterable<V1TopicObject> beforeTopicObjects,
-                                              @NotNull final Iterable<V1TopicObject> afterTopicObjects) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<TopicChange> computeChanges(@NotNull final Iterable<V1TopicObject> actualStates,
+                                            @NotNull final Iterable<V1TopicObject> expectedStates,
+                                            @NotNull final ChangeComputer.Options options) {
 
-        final Map<String, V1TopicObject> beforeTopicResourceMapByName = Named.keyByName(beforeTopicObjects);
+        final Map<String, V1TopicObject> actualTopicResourceMapByName = Named.keyByName(actualStates);
 
         final Map<String, TopicChange> changes = new HashMap<>();
 
-        for (final V1TopicObject afterTopic : afterTopicObjects) {
+        for (final V1TopicObject expectedTopic : expectedStates) {
 
-            final V1TopicObject beforeTopic = beforeTopicResourceMapByName.get(afterTopic.name());
-            final TopicChange change = beforeTopic == null ?
-                    buildChangeForNewTopic(afterTopic) :
-                    buildChangeForExistingTopic(afterTopic, beforeTopic);
+            final V1TopicObject actualTopic = actualTopicResourceMapByName.get(expectedTopic.name());
+            final TopicChange change = actualTopic == null ?
+                    buildChangeForNewTopic(expectedTopic) :
+                    buildChangeForExistingTopic(actualTopic, expectedTopic);
 
             changes.put(change.name(), change);
         }
 
         Map<String, TopicChange> changeForDeletedTopics = buildChangesForOrphanTopics(
-                beforeTopicResourceMapByName.values(),
+                actualTopicResourceMapByName.values(),
                 changes.keySet()
         );
 
         changes.putAll(changeForDeletedTopics);
-
-        return new TopicChanges(changes);
+        return new ArrayList<>(changes.values());
     }
 
     private static @NotNull Map<String, TopicChange> buildChangesForOrphanTopics(
@@ -75,34 +78,37 @@ public class TopicChanges extends AbstractChanges<TopicChange, String, Void, Top
                 .collect(Collectors.toMap(TopicChange::name, it -> it));
     }
 
-    private static @NotNull TopicChange buildChangeForExistingTopic(@NotNull final V1TopicObject afterTopic,
-                                                                    @NotNull final V1TopicObject beforeTopic) {
+    private static @NotNull TopicChange buildChangeForExistingTopic(@NotNull final V1TopicObject actualState,
+                                                                    @NotNull final V1TopicObject expectedState) {
 
         var partitions = ValueChange.with(
-                afterTopic.partitionsOrDefault(),
-                beforeTopic.partitionsOrDefault()
+                expectedState.partitionsOrDefault(),
+                actualState.partitionsOrDefault()
         );
 
         var replication = ValueChange.with(
-                afterTopic.replicationFactorOrDefault(),
-                beforeTopic.replicationFactorOrDefault()
+                expectedState.replicationFactorOrDefault(),
+                actualState.replicationFactorOrDefault()
         );
 
-        final Tuple2<Change.OperationType, List<ConfigEntryChange>> configs = ConfigEntryChanges.computeChange(
-                beforeTopic.configs(),
-                afterTopic.configs()
-        );
+        var configEntryChanges = new ConfigEntryChangeComputer()
+                .computeChanges(actualState.configs(), expectedState.configs(), new Options());
 
-        Change.OperationType op = List.of(partitions.getOperation(), configs._1()).contains(Change.OperationType.UPDATE) ?
+        boolean hasChanged = configEntryChanges.stream()
+                .anyMatch(configEntryChange -> configEntryChange.getOperation() != Change.OperationType.NONE);
+
+        var configOpType = hasChanged ? Change.OperationType.UPDATE : Change.OperationType.NONE;
+        var partitionOpType = partitions.getOperation();
+        Change.OperationType op = List.of(partitionOpType, configOpType).contains(Change.OperationType.UPDATE) ?
                 Change.OperationType.UPDATE :
                 Change.OperationType.NONE;
 
         return new TopicChange.Builder()
-                .setName(afterTopic.name())
+                .setName(expectedState.name())
                 .setPartitionsChange(partitions)
                 .setReplicationFactorChange(replication)
                 .setOperation(op)
-                .setConfigs(configs._2())
+                .setConfigs(configEntryChanges)
                 .build();
     }
 
@@ -121,14 +127,5 @@ public class TopicChanges extends AbstractChanges<TopicChange, String, Void, Top
                 )
         ));
         return builder.build();
-    }
-
-    /**
-     * Creates a new {@link TopicChanges} instance.
-     *
-     * @param changes the changes by topic name.
-     */
-    TopicChanges(@NotNull final Map<String, TopicChange> changes) {
-        super(changes);
     }
 }
