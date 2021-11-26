@@ -20,7 +20,9 @@ package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.config.JikkouParams;
-import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
+import io.streamthoughts.kafka.specs.error.JikkouException;
+import io.streamthoughts.kafka.specs.internal.KafkaBrokersReady;
+import io.streamthoughts.kafka.specs.internal.KafkaUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 
 import java.util.Properties;
@@ -29,8 +31,26 @@ import java.util.function.Function;
 public class WithAdminClientCommand {
 
     public Integer withAdminClient(final Function<AdminClient, Integer> function) {
-        final Properties adminClientProps = JikkouParams.ADMIN_CLIENT_CONFIG.get(JikkouConfig.get());
-        try (AdminClient client = AdminClientUtils.newAdminClient(adminClientProps)) {
+        final JikkouConfig config = JikkouConfig.get();
+        final Properties adminClientProps = JikkouParams.ADMIN_CLIENT_CONFIG.get(config);
+        try (AdminClient client = KafkaUtils.newAdminClient(adminClientProps)) {
+            if (JikkouParams.KAFKA_BROKERS_WAIT_FOR_ENABLED.get(config)) {
+                final boolean isReady = KafkaUtils.waitForKafkaBrokers(
+                        client,
+                        KafkaBrokersReady.Options
+                                .withDefaults()
+                                .withMinAvailableBrokers(JikkouParams.KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.get(config))
+                                .withRetryBackoffMs(JikkouParams.KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.get(config))
+                                .withTimeoutMs(JikkouParams.KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.get(config))
+                );
+                if (!isReady) {
+                    throw new JikkouException(
+                        "Timeout expired. The timeout period elapsed prior to " +
+                        "the requested number of kafka brokers is available."
+                    );
+                }
+
+            }
             return function.apply(client);
         }
     }

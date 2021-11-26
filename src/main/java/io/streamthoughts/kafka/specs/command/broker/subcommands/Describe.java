@@ -24,7 +24,7 @@ import io.streamthoughts.kafka.specs.command.broker.subcommands.internal.Describ
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
+import io.streamthoughts.kafka.specs.internal.KafkaUtils;
 import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
 import io.streamthoughts.kafka.specs.model.V1BrokerObject;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -114,7 +114,7 @@ public class Describe extends BaseCommand {
     }
 
     private Collection<String> loadClusterBrokerIds(final AdminClient client) {
-        CompletableFuture<Collection<Node>> topics = AdminClientUtils.listBrokers(client);
+        CompletableFuture<Collection<Node>> topics = KafkaUtils.listBrokers(client);
         return topics
                 .thenApply(t -> t.stream().map(Node::idString).collect(Collectors.toList()))
                 .join();

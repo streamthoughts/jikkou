@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.specs.model.V1AccessPermission;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
-import io.streamthoughts.kafka.specs.internal.AdminClientUtils;
+import io.streamthoughts.kafka.specs.internal.KafkaUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.resource.PatternType;
@@ -103,7 +103,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
 
     private CompletableFuture<Collection<TopicListing>> getListTopics() {
         if (listTopics == null) {
-            this.listTopics = AdminClientUtils.listTopics(client);
+            this.listTopics = KafkaUtils.listTopics(client);
         }
         return listTopics;
     }

@@ -84,6 +84,18 @@ public final class JikkouParams {
     public static final ConfigParam<List<String>> EXTENSION_PATHS = ConfigParam
             .ofList("extension.paths");
 
+    public static final ConfigParam<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigParam
+            .ofBoolean("kafka.brokers.wait-for-enabled");
+
+    public static final ConfigParam<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigParam
+            .ofInt("kafka.brokers.wait-for-min-available");
+
+    public static final ConfigParam<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigParam
+            .ofLong("kafka.brokers.wait-for-retry-backoff-ms");
+
+    public static final ConfigParam<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigParam
+            .ofLong("kafka.brokers.wait-for-timeout-ms");
+
     private static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
         return getConfigsForKeys(configs, AdminClientConfig.configNames());
     }

@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '23.0.0'
     implementation group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-3'
     implementation group: 'io.vavr', name: 'vavr-jackson', version: '1.0.0-alpha-3'
     implementation 'com.typesafe:config:1.4.1'

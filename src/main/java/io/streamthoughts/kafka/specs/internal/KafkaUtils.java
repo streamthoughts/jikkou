@@ -33,7 +33,7 @@ import static io.streamthoughts.kafka.specs.internal.FutureUtils.toCompletableFu
 /**
  * Class which is used to create a new {@link AdminClient} instance using tool arguments.
  */
-public class AdminClientUtils {
+public class KafkaUtils {
 
     public static AdminClient newAdminClient(@NotNull final Properties clientConfigProps){
         return AdminClient.create(clientConfigProps);
@@ -47,5 +47,9 @@ public class AdminClientUtils {
     public static CompletableFuture<Collection<TopicListing>> listTopics(final AdminClient client) {
         Objects.requireNonNull(client, "client cannot be null");
         return toCompletableFuture(client.listTopics().listings());
+    }
+
+    public static boolean waitForKafkaBrokers(final AdminClient client, final KafkaBrokersReady.Options options) {
+        return new KafkaBrokersReady(options).waitForBrokers(client);
     }
 }
