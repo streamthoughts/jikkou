@@ -146,4 +146,40 @@ public class TopicChange implements Change<String>, Named {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TopicChange change = (TopicChange) o;
+        return operation == change.operation &&
+            Objects.equals(name, change.name) &&
+            Objects.equals(partitions, change.partitions) &&
+            Objects.equals(replicationFactor, change.replicationFactor) &&
+            Objects.equals(configs, change.configs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, operation, partitions, replicationFactor, configs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "TopicChange{" +
+                "name='" + name + '\'' +
+                ", operation=" + operation +
+                ", partitions=" + partitions +
+                ", replicationFactor=" + replicationFactor +
+                ", configs=" + configs +
+                '}';
+    }
 }

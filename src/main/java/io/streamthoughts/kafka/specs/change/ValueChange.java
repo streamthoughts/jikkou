@@ -22,6 +22,8 @@ import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class ValueChange<T> {
 
     private final T after;
@@ -129,5 +131,24 @@ public class ValueChange<T> {
 
     public Change.OperationType getOperation() {
         return op;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ValueChange<?> that = (ValueChange<?>) o;
+        return Objects.equals(after, that.after) && Objects.equals(before, that.before) && op == that.op;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(after, before, op);
     }
 }

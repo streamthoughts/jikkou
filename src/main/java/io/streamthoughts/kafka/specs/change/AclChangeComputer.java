@@ -30,16 +30,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class AclChangeComputer implements ChangeComputer<AccessControlPolicy, AccessControlPolicy, AclChange, AclChangeComputer.AclChangeOptions> {
+public class AclChangeComputer implements ChangeComputer<AccessControlPolicy, AccessControlPolicy, AclChange, AclChangeOptions> {
 
-
-    public static class AclChangeOptions extends Options {
-        final boolean deleteOrphans;
-
-        public AclChangeOptions(boolean deleteOrphans) {
-            this.deleteOrphans = deleteOrphans;
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -82,7 +74,7 @@ public class AclChangeComputer implements ChangeComputer<AccessControlPolicy, Ac
 
         });
 
-        if (options.deleteOrphans) {
+        if (options.isDeleteOrphans()) {
             beforePoliciesGroupedByPrincipal.keySet()
                     .stream()
                     .filter(Predicate.not(changes::containsKey))

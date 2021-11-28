@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 
 public interface ExecutableOperation<T extends Change<K>, K, V> extends Operation<K, T>, Function<Collection<T>, Map<K, List<Future<V>>>> {
 
-
     /**
      * Executes this operation for the given list of changes.
      *

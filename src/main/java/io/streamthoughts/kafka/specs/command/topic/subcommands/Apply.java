@@ -19,13 +19,12 @@
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
 import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.TopicChange;
+import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.operation.topics.AlterTopicOperation;
 import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperationOptions;
 import io.streamthoughts.kafka.specs.operation.topics.DeleteTopicOperation;
 import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 import io.vavr.concurrent.Future;
@@ -38,10 +37,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.UPDATE;
 
 @Command(name = "apply",
          description = "Apply all changes to the Kafka topics."
@@ -74,11 +69,22 @@ public class Apply extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
+    public TopicChangeOptions getOptions() {
+        return new TopicChangeOptions()
+                .withDeleteConfigOrphans(deleteConfigOrphans)
+                .withDeleteTopicOrphans(deleteTopicOrphans)
+                .withExcludeInternalTopics(excludeInternalTopics);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public TopicOperation getOperation(@NotNull final AdminClient client) {
         return new TopicOperation() {
-            final CreateTopicOperation create = new CreateTopicOperation(client, new CreateTopicOperationOptions());
-            final AlterTopicOperation alter = new AlterTopicOperation(client, deleteConfigOrphans);
-            final DeleteTopicOperation delete = new DeleteTopicOperation(client, excludeInternalTopics);
+            final CreateTopicOperation create = new CreateTopicOperation(client);
+            final AlterTopicOperation alter = new AlterTopicOperation(client);
+            final DeleteTopicOperation delete = new DeleteTopicOperation(client);
 
             @Override
             public Description getDescriptionFor(final @NotNull TopicChange change) {
@@ -96,18 +102,21 @@ public class Apply extends TopicsCommand.Base {
                 }
             }
 
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public boolean test(final TopicChange change) {
-                Change.OperationType operation = change.getOperation();
-                return (operation == DELETE && deleteTopicOrphans) || List.of(ADD, UPDATE).contains(operation);
+                return delete.test(change) || create.test(change) || alter.test(change);
             }
 
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
                 HashMap<String, List<Future<Void>>> results = new HashMap<>();
-                if (deleteTopicOrphans) {
-                    results.putAll(delete.apply(changes));
-                }
+                results.putAll(delete.apply(changes));
                 results.putAll(create.apply(changes));
                 results.putAll(alter.apply(changes));
                 return results;

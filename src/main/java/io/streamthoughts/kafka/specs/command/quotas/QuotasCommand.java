@@ -64,6 +64,8 @@ public class QuotasCommand extends WithAdminClientCommand {
          */
         public abstract QuotaOperation getOperation(@NotNull final AdminClient client);
 
+        public abstract QuotaChangeOptions getOptions();
+
         /**
          * {@inheritDoc}
          */
@@ -78,7 +80,7 @@ public class QuotasCommand extends WithAdminClientCommand {
 
             // Compute state changes
             Supplier<List<QuotaChange>> supplier = () -> new QuotaChangeComputer().
-                    computeChanges(actualStates, expectedStates, new ChangeComputer.Options());
+                    computeChanges(actualStates, expectedStates, getOptions());
 
             return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }

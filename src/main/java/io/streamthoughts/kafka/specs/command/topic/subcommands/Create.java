@@ -18,9 +18,9 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
+import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperationOptions;
 import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +36,14 @@ public class Create extends TopicsCommand.Base {
      */
     @Override
     public TopicOperation getOperation(@NotNull final AdminClient client) {
-        return new CreateTopicOperation(client, new CreateTopicOperationOptions());
+        return new CreateTopicOperation(client);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicChangeOptions getOptions() {
+        return new TopicChangeOptions();
     }
 }

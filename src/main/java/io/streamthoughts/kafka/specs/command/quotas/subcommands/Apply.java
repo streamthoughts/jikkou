@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
+import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
@@ -68,6 +69,16 @@ public class Apply extends QuotasCommand.Base {
                 resource.getType().toPettyString(resource.getEntity())
         );
     });
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QuotaChangeOptions getOptions() {
+        return new QuotaChangeOptions()
+                .withDeleteConfigOrphans(deleteConfigOrphans)
+                .withDeleteQuotaOrphans(deleteQuotaOrphans);
+    }
 
     /**
      * {@inheritDoc}

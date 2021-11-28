@@ -22,38 +22,42 @@ import io.streamthoughts.kafka.specs.model.V1QuotaEntityObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaType;
 import io.streamthoughts.kafka.specs.resources.Configs;
-import io.vavr.Tuple2;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class QuotaChangeComputer implements ChangeComputer<V1QuotaObject, ClientQuotaEntity, QuotaChange, ChangeComputer.Options> {
+public class QuotaChangeComputer implements ChangeComputer<V1QuotaObject, ClientQuotaEntity, QuotaChange, QuotaChangeOptions> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<QuotaChange> computeChanges(@NotNull final Iterable<V1QuotaObject> beforeQuotasObjects,
-                                            @NotNull final Iterable<V1QuotaObject> afterQuotasObjects,
-                                            @NotNull final ChangeComputer.Options options) {
+    public List<QuotaChange> computeChanges(@NotNull final Iterable<V1QuotaObject> actualQuotasObjects,
+                                            @NotNull final Iterable<V1QuotaObject> expectedQuotasObjects,
+                                            @NotNull final QuotaChangeOptions options) {
 
-        final Map<ClientQuotaEntity, V1QuotaObject> beforeQuotasMapByEntity = StreamSupport
-                .stream(beforeQuotasObjects.spliterator(), false)
+        final Map<ClientQuotaEntity, V1QuotaObject> actualQuotasMapByEntity = StreamSupport
+                .stream(actualQuotasObjects.spliterator(), false)
                 .collect(Collectors.toMap(it -> newClientQuotaEntity(it.type(), it.entity()), o -> o));
 
         final Map<ClientQuotaEntity, QuotaChange> changes = new HashMap<>();
 
-        for (final V1QuotaObject afterQuota : afterQuotasObjects) {
+        for (final V1QuotaObject expectedQuota : expectedQuotasObjects) {
 
-            final ClientQuotaEntity key = newClientQuotaEntity(afterQuota.type(), afterQuota.entity());
+            final ClientQuotaEntity key = newClientQuotaEntity(expectedQuota.type(), expectedQuota.entity());
 
-            final V1QuotaObject beforeQuota = beforeQuotasMapByEntity.get(key);
-            final QuotaChange change = beforeQuota == null ?
-                    buildChangeForNewQuota(afterQuota) :
-                    buildChangeForExistingQuota(beforeQuota, afterQuota);
+            final V1QuotaObject actualQuota = actualQuotasMapByEntity.get(key);
+            final QuotaChange change = actualQuota == null ?
+                    buildChangeForNewQuota(expectedQuota) :
+                    buildChangeForExistingQuota(actualQuota, expectedQuota, options);
 
             changes.put(
                     newClientQuotaEntity(change.getType(), change.getEntity()),
@@ -61,15 +65,11 @@ public class QuotaChangeComputer implements ChangeComputer<V1QuotaObject, Client
             );
         }
 
-        Map<ClientQuotaEntity, QuotaChange> changeForDeletedQuotas = buildChangesForOrphanQuotas(
-                beforeQuotasMapByEntity.values(),
-                changes.keySet()
-        );
-
-        changes.putAll(changeForDeletedQuotas);
+        if (options.isDeleteQuotaOrphans()) {
+            changes.putAll(buildChangesForOrphanQuotas(actualQuotasMapByEntity.values(), changes.keySet()));
+        }
 
         return new ArrayList<>(changes.values());
-
     }
 
     @NotNull
@@ -88,13 +88,18 @@ public class QuotaChangeComputer implements ChangeComputer<V1QuotaObject, Client
     }
 
 
-    public static QuotaChange buildChangeForExistingQuota(@NotNull final V1QuotaObject before,
-                                                          @NotNull final V1QuotaObject after) {
+    public static QuotaChange buildChangeForExistingQuota(@NotNull final V1QuotaObject actualState,
+                                                          @NotNull final V1QuotaObject expectedState,
+                                                          @NotNull final QuotaChangeOptions options) {
+
+
+        final ConfigEntryOptions configEntryOptions = new ConfigEntryOptions()
+                .withDeleteConfigOrphans(options.isDeleteConfigOrphans());
 
         List<ConfigEntryChange> configEntryChanges = new ConfigEntryChangeComputer().computeChanges(
-                Configs.of(before.configs().toMapDouble()),
-                Configs.of(after.configs().toMapDouble()),
-                new Options()
+                Configs.of(actualState.configs().toMapDouble()),
+                Configs.of(expectedState.configs().toMapDouble()),
+                configEntryOptions
         );
 
         boolean hasChanged = configEntryChanges.stream()
@@ -102,7 +107,7 @@ public class QuotaChangeComputer implements ChangeComputer<V1QuotaObject, Client
 
         var ot = hasChanged ? Change.OperationType.UPDATE : Change.OperationType.NONE;
 
-        return new QuotaChange(ot, before.type(), before.entity(), configEntryChanges);
+        return new QuotaChange(ot, actualState.type(), actualState.entity(), configEntryChanges);
     }
 
     private static @NotNull Map<ClientQuotaEntity, QuotaChange> buildChangesForOrphanQuotas(

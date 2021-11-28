@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
+import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
@@ -29,6 +30,14 @@ import picocli.CommandLine.Command;
          description = "Create the client quotas missing on the cluster as describe in the specification file."
 )
 public class Create extends QuotasCommand.Base {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QuotaChangeOptions getOptions() {
+        return new QuotaChangeOptions();
+    }
 
     /**
      * {@inheritDoc}

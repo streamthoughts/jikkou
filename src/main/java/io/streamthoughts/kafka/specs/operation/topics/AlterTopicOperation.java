@@ -49,17 +49,13 @@ public class AlterTopicOperation implements TopicOperation {
 
     private final AdminClient client;
 
-    private final boolean deleteOrphans;
-
     /**
      * Creates a new {@link AlterTopicOperation} instance.
      *
-     * @param client        the {@link AdminClient} instance.
-     * @param deleteOrphans flag to indicate if orphans topics should be deleted.
+     * @param client    the {@link AdminClient} to be used.
      */
-    public AlterTopicOperation(final AdminClient client, final boolean deleteOrphans) {
+    public AlterTopicOperation(final AdminClient client) {
         this.client = client;
-        this.deleteOrphans = deleteOrphans;
     }
 
     /**
@@ -89,6 +85,8 @@ public class AlterTopicOperation implements TopicOperation {
 
         final Map<String, List<Future<Void>>> results = new HashMap<>();
         for (TopicChange change : changes) {
+
+            verify(change);
             results.put(change.name(), new ArrayList<>());
 
             if (change.hasConfigEntryChanges()) {
@@ -96,7 +94,7 @@ public class AlterTopicOperation implements TopicOperation {
                 for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
                     var operationType = configEntryChange.getOperation();
 
-                    if (operationType == Change.OperationType.DELETE && deleteOrphans) {
+                    if (operationType == Change.OperationType.DELETE) {
                         alters.add(newAlterConfigOp(configEntryChange, null, AlterConfigOp.OpType.DELETE));
                     }
 
@@ -132,5 +130,11 @@ public class AlterTopicOperation implements TopicOperation {
                                            final String value,
                                            final AlterConfigOp.OpType op) {
         return new AlterConfigOp(new ConfigEntry(configEntryChange.name(), value), op);
+    }
+
+    private void verify(final @NotNull TopicChange change) {
+        if (!test(change)) {
+            throw new IllegalArgumentException("This operation does not support the passed change: " + change);
+        }
     }
 }
