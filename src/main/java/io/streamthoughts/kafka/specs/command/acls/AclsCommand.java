@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.specs.command.acls;
 
 import io.streamthoughts.kafka.specs.change.AclChange;
 import io.streamthoughts.kafka.specs.change.AclChangeComputer;
+import io.streamthoughts.kafka.specs.change.AclChangeOptions;
 import io.streamthoughts.kafka.specs.change.ChangeExecutor;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
@@ -120,7 +121,7 @@ public class AclsCommand extends WithAdminClientCommand {
 
             // Compute state changes
             Supplier<List<AclChange>> supplier = () -> new AclChangeComputer().
-                    computeChanges(actualStates, expectedStates, new AclChangeComputer.AclChangeOptions(deleteOrphans));
+                    computeChanges(actualStates, expectedStates, new AclChangeOptions().withDeleteOrphans(deleteOrphans));
 
             return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }

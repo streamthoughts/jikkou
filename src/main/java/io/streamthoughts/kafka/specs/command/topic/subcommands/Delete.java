@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
+import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.operation.topics.DeleteTopicOperation;
 import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
@@ -41,6 +42,15 @@ public class Delete extends TopicsCommand.Base {
      */
     @Override
     public TopicOperation getOperation(@NotNull final AdminClient client) {
-        return new DeleteTopicOperation(client, excludeInternalTopics);
+        return new DeleteTopicOperation(client);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicChangeOptions getOptions() {
+        return new TopicChangeOptions()
+                .withExcludeInternalTopics(excludeInternalTopics);
     }
 }

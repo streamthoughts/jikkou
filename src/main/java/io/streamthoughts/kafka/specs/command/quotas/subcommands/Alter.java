@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
+import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
@@ -45,5 +46,13 @@ public class Alter extends QuotasCommand.Base {
     @Override
     public QuotaOperation getOperation(@NotNull final AdminClient client) {
         return new AlterQuotasOperation(client, deleteOrphans);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QuotaChangeOptions getOptions() {
+        return new QuotaChangeOptions().withDeleteConfigOrphans(deleteOrphans);
     }
 }

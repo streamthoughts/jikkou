@@ -54,13 +54,14 @@ public class CreateTopicOperation implements TopicOperation {
         );
     });
 
-    private final CreateTopicOperationOptions options;
-
     private final AdminClient client;
 
-    public CreateTopicOperation(final AdminClient client,
-                                final CreateTopicOperationOptions options) {
-        this.options = options;
+    /**
+     * Creates a new {@link CreateTopicOperation} instance.
+     *
+     * @param client    the {@link AdminClient} to be used.
+     */
+    public CreateTopicOperation(final AdminClient client) {
         this.client = client;
     }
 
@@ -87,6 +88,7 @@ public class CreateTopicOperation implements TopicOperation {
     public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
         List<NewTopic> topics = changes
                 .stream()
+                .peek(this::verify)
                 .map(this::toNewTopic)
                 .collect(Collectors.toList());
         LOG.info("Creating new topics : {}", topics);
@@ -109,6 +111,12 @@ public class CreateTopicOperation implements TopicOperation {
                 t.getPartitions().get().getAfter(),
                 t.getReplicationFactor().get().getAfter())
                 .configs(configs);
+    }
+
+    private void verify(final @NotNull TopicChange change) {
+        if (!test(change)) {
+            throw new IllegalArgumentException("This operation does not support the passed change: " + change);
+        }
     }
 
 }

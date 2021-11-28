@@ -24,6 +24,7 @@ import io.streamthoughts.kafka.specs.change.ChangeExecutor;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.change.TopicChangeComputer;
+import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Alter;
@@ -76,6 +77,8 @@ public class TopicsCommand extends WithAdminClientCommand {
          */
         public abstract TopicOperation getOperation(@NotNull final AdminClient client);
 
+        public abstract TopicChangeOptions getOptions();
+
         /**
          * {@inheritDoc}
          */
@@ -95,9 +98,11 @@ public class TopicsCommand extends WithAdminClientCommand {
 
             // Compute state changes
             Supplier<List<TopicChange>> supplier = () -> new TopicChangeComputer().
-                    computeChanges(actualStates, expectedStates, new ChangeComputer.Options());
+                    computeChanges(actualStates, expectedStates, getOptions());
 
             return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }
+
+
     }
 }

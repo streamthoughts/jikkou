@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
+import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.DeleteQuotasOperation;
@@ -37,5 +38,13 @@ public class Delete extends QuotasCommand.Base {
     @Override
     public QuotaOperation getOperation(@NotNull final AdminClient client) {
         return new DeleteQuotasOperation(client);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QuotaChangeOptions getOptions() {
+        return new QuotaChangeOptions();
     }
 }

@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,26 +42,19 @@ public class DeleteTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteTopicOperation.class);
 
-    private static final Set<String> INTERNAL_TOPICS = Set.of(
-            "__consumer_offsets",
-            "_schemas",
-            "__transaction_state",
-            "connect-offsets",
-            "connect-status",
-            "connect-configs"
-    );
-
     public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
         return (Description.Delete) () -> String.format("Delete topic %s ", resource.name());
     });
 
     private final AdminClient client;
-    private final boolean excludeInternalTopics;
 
-    public DeleteTopicOperation(final AdminClient client,
-                                final boolean excludeInternalTopics) {
+    /**
+     * Creates a new {@link DeleteTopicOperation} instance.
+     *
+     * @param client    the {@link AdminClient} to be used.
+     */
+    public DeleteTopicOperation(final AdminClient client) {
         this.client = client;
-        this.excludeInternalTopics = excludeInternalTopics;
     }
 
     /**
@@ -88,11 +80,11 @@ public class DeleteTopicOperation implements TopicOperation {
     public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
         List<String> topics = changes
                 .stream()
+                .peek(this::verify)
                 .map(TopicChange::name)
-                .filter(name -> !excludeInternalTopics || isNotInternalTopics(name))
                 .collect(Collectors.toList());
-        LOG.info("Deleting topics: {}", topics);
 
+        LOG.info("Deleting topics: {}", topics);
         final Map<String, KafkaFuture<Void>> kafkaResults = client.deleteTopics(topics).topicNameValues();
         return kafkaResults.entrySet()
                 .stream()
@@ -100,7 +92,9 @@ public class DeleteTopicOperation implements TopicOperation {
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
     }
 
-    private boolean isNotInternalTopics(final String topic) {
-        return !INTERNAL_TOPICS.contains(topic) && !topic.startsWith("__");
+    private void verify(final @NotNull TopicChange change) {
+        if (!test(change)) {
+            throw new IllegalArgumentException("This operation does not support the passed change: " + change);
+        }
     }
 }

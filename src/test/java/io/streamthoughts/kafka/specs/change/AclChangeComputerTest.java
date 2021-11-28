@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
@@ -36,6 +35,8 @@ import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
 import static io.streamthoughts.kafka.specs.change.Change.OperationType.NONE;
 
 public class AclChangeComputerTest {
+
+    public static final AclChangeOptions DEFAULT_ACL_CHANGE_OPTIONS = new AclChangeOptions();
 
     private static AccessControlPolicy makeAclPolicy(final String topicName) {
         return AccessControlPolicy.newBuilder()
@@ -50,16 +51,16 @@ public class AclChangeComputerTest {
     }
 
     @Test
-    public void testReturnAddAclChange() {
+    public void should_return_add_changes_when_acl_not_exist() {
         // Given
-        AccessControlPolicy policy = makeAclPolicy("topic");
+        AccessControlPolicy policy = makeAclPolicy("???");
 
         List<AccessControlPolicy> actualState = Collections.emptyList();
         List<AccessControlPolicy> expectedState  = List.of(policy);
 
         // When
-        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
+        var changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS)
                 .stream()
                 .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
@@ -69,77 +70,55 @@ public class AclChangeComputerTest {
     }
 
     @Test
-    public void testReturnDeleteAclChange() {
+    public void should_return_delete_changes_given_delete_orphans_options_true() {
         // Given
-        AccessControlPolicy policyA = makeAclPolicy("topicA");
-        AccessControlPolicy policyB = makeAclPolicy("topicB");
+        AccessControlPolicy actual = makeAclPolicy("???");
 
-        List<AccessControlPolicy> actualState = List.of(policyA);
-        List<AccessControlPolicy> expectedState  = List.of(policyB);
-
-        // When
-        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
-                .stream()
-                .collect(Collectors.toMap(AclChange::getKey, it -> it));
-
-        // Then
-        Assertions.assertEquals(DELETE, changes.get(policyA).getOperation());
-    }
-
-    @Test
-    public void testReturnNoneAclChange() {
-        // Given
-        AccessControlPolicy policy = makeAclPolicy("topic");
-
-        List<AccessControlPolicy> actualState = List.of(policy);
-        List<AccessControlPolicy> expectedState  = List.of(policy);
-
-        // When
-        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
-                .stream()
-                .collect(Collectors.toMap(AclChange::getKey, it -> it));
-
-        // Then
-        AclChange change = changes.get(policy);
-        Assertions.assertEquals(NONE, change.getOperation());
-    }
-
-    @Test
-    public void testReturnDeleteAclChangeGivenOrphanTrue() {
-        // Given
-        AccessControlPolicy policy = makeAclPolicy("topic");
-
-        List<AccessControlPolicy> actualState = List.of(policy);
+        List<AccessControlPolicy> actualState = List.of(actual);
         List<AccessControlPolicy> expectedState  = List.of();
 
         // When
-        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(true))
+        var changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS.withDeleteOrphans(true))
                 .stream()
                 .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
-        AclChange change = changes.get(policy);
-        Assertions.assertEquals(DELETE, change.getOperation());
+        Assertions.assertEquals(DELETE, changes.get(actual).getOperation());
     }
 
     @Test
-    public void testReturnNoneAclChangeGivenOrphanFalse() {
+    public void should_not_return_delete_changes_given_delete_orphans_options_false() {
         // Given
-        AccessControlPolicy policy = makeAclPolicy("topic");
+        AccessControlPolicy actual = makeAclPolicy("???");
 
-        List<AccessControlPolicy> actualState = List.of(policy);
+        List<AccessControlPolicy> actualState = List.of(actual);
         List<AccessControlPolicy> expectedState  = List.of();
 
         // When
-        Map<AccessControlPolicy, AclChange> changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, new AclChangeComputer.AclChangeOptions(false))
+        var changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS.withDeleteOrphans(false))
                 .stream()
                 .collect(Collectors.toMap(AclChange::getKey, it -> it));
 
         // Then
         Assertions.assertTrue(changes.isEmpty());
+    }
+
+    @Test
+    public void should_return_non_changes_given_identical_acl() {
+        // Given
+        List<AccessControlPolicy> actualState = List.of(makeAclPolicy("???"));
+        List<AccessControlPolicy> expectedState  = List.of(makeAclPolicy("???"));
+
+        // When
+        var changes = new AclChangeComputer()
+                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS)
+                .stream()
+                .collect(Collectors.toMap(AclChange::getKey, it -> it));
+
+        // Then
+        AclChange change = changes.get(makeAclPolicy("???"));
+        Assertions.assertEquals(NONE, change.getOperation());
     }
 }

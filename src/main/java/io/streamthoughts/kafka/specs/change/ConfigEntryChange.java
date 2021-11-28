@@ -56,4 +56,24 @@ public class ConfigEntryChange extends ValueChange<Object> implements Change<Str
     public String getKey() {
         return name;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ConfigEntryChange that = (ConfigEntryChange) o;
+        return Objects.equals(name, that.name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name);
+    }
 }

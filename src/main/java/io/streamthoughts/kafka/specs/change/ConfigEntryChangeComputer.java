@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, String, ConfigEntryChange, ChangeComputer.Options> {
+public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, String, ConfigEntryChange, ConfigEntryOptions> {
 
     /**
      * {@inheritDoc}
@@ -37,38 +37,40 @@ public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, St
     @Override
     public List<ConfigEntryChange> computeChanges(@NotNull final Iterable<ConfigValue> actualStates,
                                                   @NotNull final Iterable<ConfigValue> expectedStates,
-                                                  @NotNull final Options options) {
+                                                  @NotNull final ConfigEntryOptions options) {
 
-        final Map<String, ConfigValue> beforeConfigsByName = Named.keyByName(actualStates);
-        final Map<String, ConfigEntryChange> afterConfigsByName = new HashMap<>();
+        final Map<String, ConfigValue> actualConfigsByName = Named.keyByName(actualStates);
+        final Map<String, ConfigEntryChange> expectedConfigsByName = new HashMap<>();
 
-        for (ConfigValue afterConfigValue : expectedStates) {
-            final String configEntryName = afterConfigValue.name();
+        for (ConfigValue expected : expectedStates) {
+            final String configEntryName = expected.name();
 
-            final ConfigValue beforeConfigValue = beforeConfigsByName.getOrDefault(
+            final ConfigValue beforeConfigValue = actualConfigsByName.getOrDefault(
                     configEntryName,
                     new ConfigValue(configEntryName, null)
             );
 
             final ValueChange<Object> change = ValueChange.with(
-                    afterConfigValue.value(),
+                    expected.value(),
                     beforeConfigValue.value()
             );
 
-            afterConfigsByName.put(configEntryName, new ConfigEntryChange(configEntryName, change));
+            expectedConfigsByName.put(configEntryName, new ConfigEntryChange(configEntryName, change));
         }
 
-        // Iterate on all configs apply on the topic for
-        // looking for DYNAMIC_TOPIC_CONFIGS that may be orphan.
-        List<ConfigEntryChange> orphanChanges = beforeConfigsByName.values()
-                .stream()
-                .filter(it -> it.unwrap() == null || it.unwrap().source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG)
-                .filter(it -> !afterConfigsByName.containsKey(it.name()))
-                .map(it -> new ConfigEntryChange(it.name(), ValueChange.withBeforeValue(it.value())))
-                .collect(Collectors.toList());
+        if (options.isDeleteConfigOrphans()) {
+            // Iterate on all configs apply on the topic for
+            // looking for DYNAMIC_TOPIC_CONFIGS that may be orphan.
+            List<ConfigEntryChange> orphanChanges = actualConfigsByName.values()
+                    .stream()
+                    .filter(it -> it.unwrap() == null || it.unwrap().source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG)
+                    .filter(it -> !expectedConfigsByName.containsKey(it.name()))
+                    .map(it -> new ConfigEntryChange(it.name(), ValueChange.withBeforeValue(it.value())))
+                    .collect(Collectors.toList());
 
-        orphanChanges.forEach(it -> afterConfigsByName.put(it.name(), it));
+            orphanChanges.forEach(it -> expectedConfigsByName.put(it.name(), it));
+        }
 
-        return new ArrayList<>(afterConfigsByName.values());
+        return new ArrayList<>(expectedConfigsByName.values());
     }
 }
