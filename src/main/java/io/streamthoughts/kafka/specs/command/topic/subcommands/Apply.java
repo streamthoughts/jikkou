@@ -32,6 +32,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,28 +40,29 @@ import java.util.List;
 import java.util.Map;
 
 @Command(name = "apply",
-         description = "Apply all changes to the Kafka topics."
+        description = "Apply all changes to the Kafka topics."
 )
 public class Apply extends TopicsCommand.Base {
 
-    @CommandLine.Option(
+    @Option(
             names = "--delete-config-orphans",
             defaultValue = "false",
             description = "Delete config entries overridden on the cluster but absent from the specification file"
     )
     Boolean deleteConfigOrphans;
 
-    @CommandLine.Option(
+    @Option(
             names = "--delete-topic-orphans",
             defaultValue = "false",
             description = "Delete Topics which exist on the cluster but absent from the specification files"
     )
     Boolean deleteTopicOrphans;
 
-    @CommandLine.Option(names = "--exclude-internals",
+    @Option(names = "--exclude-internals",
+            defaultValue = "true",
             description = "Exclude internal topics (i.e.: __consumer_offset, __transaction_state, connect-[offsets|status|configs], _schemas.)"
     )
-    boolean excludeInternalTopics = true;
+    Boolean excludeInternalTopics;
 
     public static DescriptionProvider<TopicChange> DESCRIPTION = resource ->
             (Description.None) () -> String.format("Unchanged topic %s ", resource.name());

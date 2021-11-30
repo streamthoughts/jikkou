@@ -22,11 +22,13 @@ import io.streamthoughts.kafka.specs.internal.PropertiesUtils;
 import io.vavr.Tuple2;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -83,6 +85,18 @@ public final class JikkouParams {
             );
     public static final ConfigParam<List<String>> EXTENSION_PATHS = ConfigParam
             .ofList("extension.paths");
+
+    public static final ConfigParam<Pattern[]> INCLUDE_RESOURCES = ConfigParam
+            .ofList("include-resources")
+            .map(l -> l.stream().map(Pattern::compile).collect(Collectors.toList()))
+            .orElse(Collections::emptyList)
+            .map(l -> l.toArray(Pattern[]::new));
+
+    public static final ConfigParam<Pattern[]> EXCLUDE_RESOURCES = ConfigParam
+            .ofList("exclude-resources")
+            .map(l -> l.stream().map(Pattern::compile).collect(Collectors.toList()))
+            .orElse(Collections::emptyList)
+            .map(l -> l.toArray(Pattern[]::new));
 
     public static final ConfigParam<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigParam
             .ofBoolean("kafka.brokers.wait-for-enabled");
