@@ -7,15 +7,27 @@ plugins {
 }
 
 group 'io.streamthoughts'
-version '0.8.0'
+version '0.9.0-SNAPSHOT'
 
 mainClassName = "io.streamthoughts.kafka.specs.Jikkou"
 
+ext {
+    minJavaVersion = JavaVersion.VERSION_17
+}
+
 /* Plugin Java */
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = minJavaVersion
+    targetCompatibility = minJavaVersion
     withJavadocJar()
     withSourcesJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    // https://github.com/gradle/gradle/issues/2510
+    if (JavaVersion.current().isJava9Compatible())
+        options.compilerArgs << "--release" << minJavaVersion
 }
 
 /* Plugin Application */

@@ -25,7 +25,7 @@ RUN apk update && apk --no-cache add unzip
 COPY ./jikkou-${JIKKOU_VERSION}.zip jikkou-${JIKKOU_VERSION}.zip
 RUN unzip jikkou-${JIKKOU_VERSION}.zip && mv jikkou-${JIKKOU_VERSION} jikkou
 
-FROM azul/zulu-openjdk:13
+FROM azul/zulu-openjdk:17
 
 ARG jikkouVersion
 ARG jikkouBranch

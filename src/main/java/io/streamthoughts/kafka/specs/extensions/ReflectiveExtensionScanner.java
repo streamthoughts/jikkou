@@ -111,6 +111,8 @@ public class ReflectiveExtensionScanner {
             if (ClassUtils.canBeInstantiated(cls)) {
                 LOG.info("Registering external extension: {}", cls);
                 registry.register(cls.getName(), () -> (Extension) ClassUtils.newInstance(cls, classLoader));
+            } else {
+                LOG.debug("Scanned class is not accessible '{}'", cls);
             }
         }
     }
