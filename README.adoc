@@ -185,7 +185,7 @@ topics-specs.yml::
 version: 1
 specs:
     topics:
-    - name: "my-topic"
+      - name: "{{ labels.topic_prefix | default('') }}my-topic"
       partitions: 6
       replication_factor: 3
       configs:
