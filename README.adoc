@@ -77,6 +77,8 @@ Most of the time, you will use Jikkou part of your CI/CD pipeline allowing you t
 
 Jikkou can be used with self-hosted Kafka, managed Kafka and Confluent Cloud.
 
+NOTE: you can use the environment variable `JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS` for connection to the Kafka cluster (instead of the CLI arg `--bootstrap-servers`) 
+
 == Why ?
 
 We initially started this project to allow us to quickly and easily (re)create Kafka topics in a declarative way on ephemeral Kafka clusters that we used only for integration testing purposes.
