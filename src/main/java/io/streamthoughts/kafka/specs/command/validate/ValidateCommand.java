@@ -18,7 +18,8 @@
  */
 package io.streamthoughts.kafka.specs.command.validate;
 
-import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
+import io.streamthoughts.kafka.specs.io.SpecFileLoader;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.command.SetOptionsMixin;
 import io.streamthoughts.kafka.specs.command.SpecFileOptionsMixin;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
@@ -27,8 +28,10 @@ import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @Command(name = "validate",
@@ -43,10 +46,10 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true)
 public class ValidateCommand implements Callable<Integer> {
 
-    @CommandLine.ArgGroup(multiplicity = "1")
+    @Mixin
     SpecFileOptionsMixin specOptions;
 
-    @CommandLine.Mixin
+    @Mixin
     SetOptionsMixin setOptions;
 
     /**
@@ -54,16 +57,25 @@ public class ValidateCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() {
-        V1SpecFile file = specOptions.parse(setOptions);
+        List<V1SpecFile> files = SpecFileLoader.newForYaml()
+                .withPattern(specOptions.pattern)
+                .withLabels(setOptions.clientLabels)
+                .withVars(setOptions.clientVars)
+                .loadFromPath(specOptions.files);
 
-        V1SpecFile validate = V1SpecFileProcessor.create(JikkouConfig.get()).apply(file);
+        V1SpecFileProcessor processor = V1SpecFileProcessor.create(JikkouConfig.get());
+        for (V1SpecFile file : files) {
+            V1SpecFile validate = processor.apply(file);
+            MetaObject metaObject = MetaObject.defaults()
+                    .setAnnotations(validate.metadata().getAnnotations())
+                    .setLabels(validate.metadata().getLabels());
+            V1SpecFile validated = new V1SpecFile(metaObject, validate.specs());
 
-        OutputStream os = System.out;
-        MetaObject metaObject = MetaObject.defaults()
-                .setAnnotations(validate.metadata().getAnnotations())
-                .setLabels(validate.metadata().getLabels());
-        V1SpecFile validated = new V1SpecFile(metaObject, validate.specs());
-        YAMLClusterSpecWriter.instance().write(validated, os);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            YAMLSpecWriter.instance().write(validated, baos);
+            System.out.println(baos);
+        }
+
         return CommandLine.ExitCode.OK;
     }
 

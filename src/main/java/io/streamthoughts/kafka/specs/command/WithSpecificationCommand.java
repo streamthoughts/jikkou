@@ -19,45 +19,52 @@
 package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.CLIUtils;
-import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.Printer;
+import io.streamthoughts.kafka.specs.io.SpecFileLoader;
 import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.vavr.Lazy;
 import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
-import picocli.CommandLine.ArgGroup;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Spec;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class WithSpecificationCommand<T extends Change<?>> extends BaseCommand {
 
-    @ArgGroup(multiplicity = "1")
+    @Mixin
     SpecFileOptionsMixin specOptions;
 
     @Spec
     private CommandSpec spec;
 
-    @CommandLine.Mixin
-    SetOptionsMixin labelsOption;
+    @Mixin
+    SetOptionsMixin options;
 
-    private final Lazy<V1SpecsObject> object = Lazy.of(() -> V1SpecFileProcessor
-         .create(JikkouConfig.get())
-         .apply(specOptions.parse(labelsOption))
-         .specs()
-    );
-
+    private final Lazy<List<V1SpecsObject>> object = Lazy.of(() -> {
+        V1SpecFileProcessor processor = V1SpecFileProcessor.create(JikkouConfig.get());
+        List<V1SpecFile> specFiles = SpecFileLoader.newForYaml()
+                .withPattern(specOptions.pattern)
+                .withLabels(options.clientLabels)
+                .withVars(options.clientVars)
+                .loadFromPath(specOptions.files);
+        return specFiles.stream().map(processor::apply).map(V1SpecFile::specs).collect(Collectors.toList());
+    });
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call(final AdminClient adminClient) {
-        loadSpecsObject(); // ensure specification is valid.
+        loadSpecObjects(); // ensure specification is valid.
         if (!execOptions.yes && !isDryRun()) {
             CLIUtils.askToProceed(spec);
         }
@@ -72,7 +79,7 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
         return execOptions.dryRun;
     }
 
-    public V1SpecsObject loadSpecsObject() {
+    public List<V1SpecsObject> loadSpecObjects() {
         return object.get();
     }
 }

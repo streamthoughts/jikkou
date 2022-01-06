@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
 import io.streamthoughts.kafka.specs.model.MetaObject;
@@ -99,7 +99,7 @@ public class Describe extends BaseCommand {
             OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
 
             final V1SpecsObject specsObject = V1SpecsObject.withTopics(topics);
-            YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
+            YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

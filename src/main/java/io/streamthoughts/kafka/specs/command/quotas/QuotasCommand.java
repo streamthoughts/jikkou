@@ -18,10 +18,18 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas;
 
-import io.streamthoughts.kafka.specs.change.*;
+import io.streamthoughts.kafka.specs.change.ChangeExecutor;
+import io.streamthoughts.kafka.specs.change.ChangeResult;
+import io.streamthoughts.kafka.specs.change.QuotaChange;
+import io.streamthoughts.kafka.specs.change.QuotaChangeComputer;
+import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.*;
+import io.streamthoughts.kafka.specs.command.quotas.subcommands.Alter;
+import io.streamthoughts.kafka.specs.command.quotas.subcommands.Apply;
+import io.streamthoughts.kafka.specs.command.quotas.subcommands.Create;
+import io.streamthoughts.kafka.specs.command.quotas.subcommands.Delete;
+import io.streamthoughts.kafka.specs.command.quotas.subcommands.Describe;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.internal.DescribeQuotas;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
@@ -33,6 +41,7 @@ import picocli.CommandLine;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @CommandLine.Command(name = "quotas",
         headerHeading = "Usage:%n%n",
@@ -72,17 +81,24 @@ public class QuotasCommand extends WithAdminClientCommand {
         @Override
         public Collection<ChangeResult<QuotaChange>> executeCommand(final AdminClient client) {
 
-            // Get the list of quotas, that are candidates for this execution, from the SpecsFile.
-            final List<V1QuotaObject> expectedStates = loadSpecsObject().quotas();
+            return loadSpecObjects()
+                .stream()
+                .flatMap(spec -> {
+                    // Get the list of quotas, that are candidates for this execution, from the SpecsFile.
+                    final List<V1QuotaObject> expectedStates = spec.quotas();
 
-            // Get the list of quotas, that are candidates for this execution, from the remote Kafka cluster
-            final Collection<V1QuotaObject> actualStates = new DescribeQuotas(client).describe();
+                    // Get the list of quotas, that are candidates for this execution, from the remote Kafka cluster
+                    final Collection<V1QuotaObject> actualStates = new DescribeQuotas(client).describe();
 
-            // Compute state changes
-            Supplier<List<QuotaChange>> supplier = () -> new QuotaChangeComputer().
-                    computeChanges(actualStates, expectedStates, getOptions());
+                    // Compute state changes
+                    Supplier<List<QuotaChange>> supplier = () -> new QuotaChangeComputer().
+                            computeChanges(actualStates, expectedStates, getOptions());
 
-            return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
+                    return ChangeExecutor.ofSupplier(supplier)
+                            .execute(getOperation(client), isDryRun())
+                            .stream();
+                })
+                .collect(Collectors.toList());
         }
     }
 }

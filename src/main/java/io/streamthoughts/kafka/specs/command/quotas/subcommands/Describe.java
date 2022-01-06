@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
-import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.internal.DescribeQuotas;
 import io.streamthoughts.kafka.specs.model.MetaObject;
@@ -54,7 +54,7 @@ public class Describe extends BaseCommand {
             final OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
             final List<V1QuotaObject> quotas = new DescribeQuotas(client).describe();
             final V1SpecsObject specsObject = V1SpecsObject.withQuotas(quotas);
-            YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
+            YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

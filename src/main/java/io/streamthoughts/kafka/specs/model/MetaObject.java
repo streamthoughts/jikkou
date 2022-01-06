@@ -28,13 +28,16 @@ import java.util.*;
 
 public class MetaObject implements Serializable {
 
+    public static final String ANNOT_RESOURCE = "resource";
+    public static final String ANNOT_GENERATED = "generated";
+
     private final Map<String, Object> annotations = new TreeMap<>();
 
     private final Map<String, Object> labels = new TreeMap<>();
 
     public static MetaObject defaults() {
         final MetaObject metaObject = new MetaObject();
-        metaObject.setAnnotation("generated", Instant.now().toString());
+        metaObject.setAnnotation(ANNOT_GENERATED, Instant.now().toString());
         return metaObject;
     }
 

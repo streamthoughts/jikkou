@@ -17,6 +17,7 @@
 package io.streamthoughts.kafka.specs;
 
 import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
+import io.streamthoughts.kafka.specs.io.YAMLSpecReader;
 import io.streamthoughts.kafka.specs.model.V1AccessPermission;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
@@ -55,7 +56,7 @@ public class YAMLClusterSpecReaderTest {
     private static final String TEST_ACLS_USERS_YAML = "test-model-security-users.yaml";
     private static final String TEST_ACLS_ROLES_YAML = "test-model-security-roles.yaml";
 
-    private final YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
+    private final YAMLSpecReader reader = new YAMLSpecReader();
 
     @Test
     public void should_fail_given_empty_file_using_current_version() {
@@ -67,7 +68,7 @@ public class YAMLClusterSpecReaderTest {
 
     @Test
     public void should_read_specification_given_empty_file_with_current_version() {
-        final V1SpecFile specification = readTestSample(reader, "version: " + YAMLClusterSpecReader.CURRENT_VERSION.version());
+        final V1SpecFile specification = readTestSample(reader, "version: " + YAMLSpecReader.CURRENT_VERSION.version());
         assertNotNull(specification);
     }
 
@@ -124,7 +125,7 @@ public class YAMLClusterSpecReaderTest {
         return YAMLClusterSpecReaderTest.class.getClassLoader().getResourceAsStream(resource);
     }
 
-    private V1SpecFile readTestSample(final YAMLClusterSpecReader reader, final String content) {
+    private V1SpecFile readTestSample(final YAMLSpecReader reader, final String content) {
         return reader.read(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), EMPTY_VARS, EMPTY_LABELS);
     }
 }

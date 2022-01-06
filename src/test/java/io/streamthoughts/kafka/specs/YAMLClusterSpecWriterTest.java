@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs;
 
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.model.*;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
@@ -50,7 +51,7 @@ public class YAMLClusterSpecWriterTest {
                 ).build();
         V1SpecsObject v1SpecsObject = V1SpecsObject.withSecurity(V1SecurityObject.withUsers(List.of(user)));
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), v1SpecsObject), os);
+        YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), v1SpecsObject), os);
         Assertions.assertNotNull(os.toString(StandardCharsets.UTF_8));
     }
 }

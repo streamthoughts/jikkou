@@ -1,6 +1,6 @@
 package io.streamthoughts.kafka.specs.model;
 
-import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
+import io.streamthoughts.kafka.specs.io.YAMLSpecReader;
 import org.apache.kafka.common.resource.PatternType;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ public class V1AccessResourceMatcherTest {
 
     private static final String TEST_MODEL_ROLES_YAML = "test-model-roles.yaml";
 
-    private final YAMLClusterSpecReader reader = new YAMLClusterSpecReader();
+    private final YAMLSpecReader reader = new YAMLSpecReader();
 
     @Test
     public void should_read_resource_with_default_pattern_type() {

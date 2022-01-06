@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Command(name = "acls",
         descriptionHeading = "%nDescription:%n%n",
@@ -93,37 +94,50 @@ public class AclsCommand extends WithAdminClientCommand {
          */
         @Override
         public Collection<ChangeResult<AclChange>> executeCommand(final AdminClient client) {
-            final Optional<V1SecurityObject> optional = loadSpecsObject().security();
 
-            if (optional.isEmpty()) {
-                return Collections.emptyList();
-            }
-
-            final V1SecurityObject resource = optional.get();
-            final AclRulesBuilder builder = AclRulesBuilder.combines(
-                    new LiteralAclRulesBuilder(),
-                    new TopicMatchingAclRulesBuilder(client));
-
-            final Map<String, V1AccessRoleObject> groups = Named.keyByName(resource.roles());
-            final Collection<V1AccessUserObject> users = resource.users();
-
-            List<AccessControlPolicy> expectedStates = users
+            return loadSpecObjects()
                     .stream()
-                    .flatMap(user -> builder.toAccessControlPolicy(groups.values(), user).stream())
-                    .filter(this::isResourceCandidate)
-                    .collect(Collectors.toList());
+                    .flatMap(spec -> {
+                        Optional<V1SecurityObject> optional = spec.security();
 
-            List<AccessControlPolicy> actualStates = new DescribeACLs(client)
-                    .describe()
-                    .stream()
-                    .filter(this::isResourceCandidate)
-                    .collect(Collectors.toList());
+                        if (optional.isEmpty()) {
+                            return Stream.empty();
+                        }
 
-            // Compute state changes
-            Supplier<List<AclChange>> supplier = () -> new AclChangeComputer().
-                    computeChanges(actualStates, expectedStates, new AclChangeOptions().withDeleteOrphans(deleteOrphans));
+                        final V1SecurityObject resource = optional.get();
+                        final AclRulesBuilder builder = AclRulesBuilder.combines(
+                                new LiteralAclRulesBuilder(),
+                                new TopicMatchingAclRulesBuilder(client));
 
-            return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
+                        final Map<String, V1AccessRoleObject> groups = Named.keyByName(resource.roles());
+                        final Collection<V1AccessUserObject> users = resource.users();
+
+                        List<AccessControlPolicy> expectedStates = users
+                                .stream()
+                                .flatMap(user -> builder.toAccessControlPolicy(groups.values(), user).stream())
+                                .filter(this::isResourceCandidate)
+                                .collect(Collectors.toList());
+
+                        // Get the actual state from the cluster.
+                        List<AccessControlPolicy> actualStates = new DescribeACLs(client)
+                                .describe()
+                                .stream()
+                                .filter(this::isResourceCandidate)
+                                .collect(Collectors.toList());
+
+                        // Compute state changes
+                        Supplier<List<AclChange>> supplier = () -> new AclChangeComputer().
+                                computeChanges(
+                                        actualStates,
+                                        expectedStates,
+                                        new AclChangeOptions().withDeleteOrphans(deleteOrphans)
+                                );
+
+                        return ChangeExecutor.ofSupplier(supplier)
+                                .execute(getOperation(client), isDryRun()).stream();
+
+                    }).collect(Collectors.toList());
+
         }
     }
 }

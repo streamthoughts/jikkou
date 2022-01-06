@@ -16,10 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.io;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.kafka.specs.Jackson;
 import io.streamthoughts.kafka.specs.error.InvalidSpecsFileException;
 import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.model.V1MetadataObjects;
@@ -42,13 +43,13 @@ import java.util.Optional;
 /**
  * Class used to read a Kafka cluster specification a from a YAML input file.
  */
-public class YAMLClusterSpecReader implements ClusterSpecReader {
+public class YAMLSpecReader implements SpecFileReader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(YAMLClusterSpecReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(YAMLSpecReader.class);
 
-    static final VersionedSpecReader CURRENT_VERSION = VersionedSpecReader.VERSION_1;
+    public static final VersionedSpecReader CURRENT_VERSION = VersionedSpecReader.VERSION_1;
 
-    public enum VersionedSpecReader implements ClusterSpecReader {
+    public enum VersionedSpecReader implements SpecFileReader {
         VERSION_1("1") {
             @Override
             public V1SpecFile read(@NotNull final InputStream specification,

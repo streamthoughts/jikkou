@@ -43,4 +43,11 @@ public class V1MetadataObjects {
     public MetaObject metadata() {
         return metadata;
     }
+
+    @Override
+    public String toString() {
+        return "V1MetadataObjects{" +
+                "metadata=" + metadata +
+                '}';
+    }
 }

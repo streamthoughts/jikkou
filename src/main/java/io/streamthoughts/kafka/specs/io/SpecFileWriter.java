@@ -16,29 +16,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.io;
 
-import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.util.Map;
+import java.io.OutputStream;
 
 /**
- * Default interface to read a cluster specification.
+ * Default interface to write a cluster specification.
  */
-public interface ClusterSpecReader {
+public interface SpecFileWriter {
 
     /**
-     * Retrieves a {@link V1SpecFile} from the specified input stream.
+     * Writes the cluster specification into the specified output stream.
      *
-     * @param specs    the input stream from which to read the specification.
-     * @param vars     the vars passed through the command-line arguments.
-     * @param labels   the labels passed through the command-line arguments.
-     * @return         a new {@link V1SpecFile} instance.
+     * @param spec  the cluster specification.
+     * @param os    the output stream.
      */
-    V1SpecFile read(@NotNull final InputStream specs,
-                    @NotNull final Map<String, Object> vars,
-                    @NotNull final Map<String, Object> labels) throws JikkouException;
+    void write(final V1SpecFile spec, final OutputStream os);
 }

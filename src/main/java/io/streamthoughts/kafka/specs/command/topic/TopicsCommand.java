@@ -18,8 +18,6 @@
  */
 package io.streamthoughts.kafka.specs.command.topic;
 
-import io.streamthoughts.kafka.specs.change.Change;
-import io.streamthoughts.kafka.specs.change.ChangeComputer;
 import io.streamthoughts.kafka.specs.change.ChangeExecutor;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.change.TopicChange;
@@ -85,24 +83,31 @@ public class TopicsCommand extends WithAdminClientCommand {
         @Override
         public Collection<ChangeResult<TopicChange>> executeCommand(final AdminClient client) {
 
-            // Get the list of topics, that are candidates for this execution, from the remote Kafka cluster
-            final Collection<V1TopicObject> actualStates = new DescribeTopics(
-                    client,
-                    DescribeOperationOptions.withDescribeDefaultConfigs(true)
-            ).describe(this::isResourceCandidate);
+            return loadSpecObjects()
+                    .stream()
+                    .flatMap(spec -> {
+                        // Get the list of topics, that are candidates for this execution, from the SpecsFile.
+                        final Collection<V1TopicObject> expectedStates = spec.topics().stream()
+                                .filter(it -> isResourceCandidate(it.name()))
+                                .collect(Collectors.toList());
 
-            // Get the list of topics, that are candidates for this execution, from the SpecsFile.
-            final Collection<V1TopicObject> expectedStates = loadSpecsObject().topics().stream()
-                    .filter(it -> isResourceCandidate(it.name()))
+                        // Compute state changes
+                        Supplier<List<TopicChange>> supplier = () -> {
+                            // Get the list of topics, that are candidates for this execution, from the remote Kafka cluster
+                            final Collection<V1TopicObject> actualStates = new DescribeTopics(
+                                    client,
+                                    DescribeOperationOptions.withDescribeDefaultConfigs(true)
+                            ).describe(this::isResourceCandidate);
+
+                            return new TopicChangeComputer().
+                                    computeChanges(actualStates, expectedStates, getOptions());
+                        };
+                        return ChangeExecutor
+                                .ofSupplier(supplier)
+                                .execute(getOperation(client), isDryRun())
+                                .stream();
+                    })
                     .collect(Collectors.toList());
-
-            // Compute state changes
-            Supplier<List<TopicChange>> supplier = () -> new TopicChangeComputer().
-                    computeChanges(actualStates, expectedStates, getOptions());
-
-            return ChangeExecutor.ofSupplier(supplier).execute(getOperation(client), isDryRun());
         }
-
-
     }
 }

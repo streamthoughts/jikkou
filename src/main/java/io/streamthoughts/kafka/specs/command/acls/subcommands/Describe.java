@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
-import io.streamthoughts.kafka.specs.YAMLClusterSpecWriter;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
 import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
@@ -64,7 +64,7 @@ public class Describe extends BaseCommand {
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
             final V1SpecsObject specsObject = V1SpecsObject.withSecurity(new V1SecurityObject(users, null));
-            YAMLClusterSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
+            YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

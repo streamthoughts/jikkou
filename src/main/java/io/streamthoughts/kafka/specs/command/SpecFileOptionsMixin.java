@@ -18,57 +18,27 @@
  */
 package io.streamthoughts.kafka.specs.command;
 
-import io.streamthoughts.kafka.specs.ClusterSpecReader;
-import io.streamthoughts.kafka.specs.YAMLClusterSpecReader;
-import io.streamthoughts.kafka.specs.config.JikkouConfig;
-import io.streamthoughts.kafka.specs.config.JikkouParams;
-import io.streamthoughts.kafka.specs.error.JikkouException;
-import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import org.jetbrains.annotations.NotNull;
-import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
+import java.util.List;
 
 public class SpecFileOptionsMixin {
 
-    private static final ClusterSpecReader READER = new YAMLClusterSpecReader();
-
-    @CommandLine.Option(names = "--file-path",
-            description = "Location of the file containing the specifications for Kafka resources."
+    @Option(
+            names = {"--files", "-f"},
+            arity = "1..*",
+            required = true,
+            description = "Specify the locations containing the specifications for Kafka resources in a YAML file, a directory or a URL (can specify multiple)."
     )
-    File file;
-    @CommandLine.Option(names = "--file-url",
-            description = "Location of the file containing the specification for Kafka resources."
+    public List<String> files;
+
+    @Option(
+            names = {"--file-name", "-n"},
+            defaultValue = "**/*.{yaml,yml}",
+            description =
+                "Specify the pattern used to match YAML file paths when one or multiple directories are given through the files argument. " +
+                "Pattern should be passed in the form of 'syntax:pattern'. The \"glob\" and \"regex\" syntaxes are supported (e.g.: **/*.{yaml,yml}). " +
+                "If no syntax is specified the 'glob' syntax is used."
     )
-    URL url;
-
-    public V1SpecFile parse(@NotNull final SetOptionsMixin options) {
-        final InputStream is;
-        if (url != null) {
-            try {
-                is = url.openStream();
-            } catch (Exception e) {
-                throw new JikkouException("Can't read specification from URL '" + url + "': "
-                        + e.getMessage());
-            }
-        } else if (file != null) {
-            try {
-                is = new FileInputStream(file);
-            } catch (Exception e) {
-                throw new JikkouException("Can't read specification from file '" + file + "': "
-                        + e.getMessage());
-            }
-        } else {
-            throw new IllegalArgumentException("no specification");
-        }
-
-        Map<String, Object> templatingVars = JikkouParams.TEMPLATING_VARS_CONFIG.get(JikkouConfig.get());
-        templatingVars.putAll(options.getClientVars());
-
-        return READER.read(is, templatingVars, options.getClientLabels());
-    }
+    public String pattern;
 }

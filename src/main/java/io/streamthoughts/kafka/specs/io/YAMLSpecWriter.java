@@ -16,8 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs;
+package io.streamthoughts.kafka.specs.io;
 
+import io.streamthoughts.kafka.specs.Jackson;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 
 import java.io.IOException;
@@ -26,11 +27,11 @@ import java.io.OutputStream;
 /**
  * Default interface to write a cluster specification.
  */
-public class YAMLClusterSpecWriter implements ClusterSpecWriter {
+public class YAMLSpecWriter implements SpecFileWriter {
 
-    private static final YAMLClusterSpecWriter INSTANCE = new YAMLClusterSpecWriter();
+    private static final YAMLSpecWriter INSTANCE = new YAMLSpecWriter();
 
-    public static YAMLClusterSpecWriter instance() {
+    public static YAMLSpecWriter instance() {
         return INSTANCE;
     }
 

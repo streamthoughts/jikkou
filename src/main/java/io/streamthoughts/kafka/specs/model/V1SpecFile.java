@@ -57,4 +57,11 @@ public class V1SpecFile extends V1MetadataObjects implements Serializable {
         return specs;
     }
 
+
+    @Override
+    public String toString() {
+        return "V1SpecFile{" +
+                "specs=" + specs +
+                '}';
+    }
 }
