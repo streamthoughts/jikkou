@@ -59,6 +59,7 @@ public class V1AccessRoleObject implements Named, Serializable {
         return name;
     }
 
+    @JsonProperty
     public List<V1AccessPermission> permissions() {
         return permissions;
     }

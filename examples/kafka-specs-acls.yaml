@@ -21,22 +21,25 @@ specs:
           allow_operations: [ 'DESCRIBE:*' ]
     roles:
     - name: 'AdminTopics'
-      resource:
-        type: 'topic'
-        pattern: '*'
-        pattern_type: 'LITERAL'
-      allow_operations: [ 'ALL:*' ]
+      permissions:
+        - resource:
+            type: 'topic'
+            pattern: '*'
+            pattern_type: 'LITERAL'
+          allow_operations: [ 'ALL:*' ]
 
     - name: 'AdminGroups'
-      resource:
-        type: 'group'
-        pattern: '*'
-        pattern_type: 'LITERAL'
-      allow_operations: [ 'ALL:*' ]
+      permissions:
+        - resource:
+            type: 'group'
+            pattern: '*'
+            pattern_type: 'LITERAL'
+          allow_operations: [ 'ALL:*' ]
 
     - name: 'ReadWriteTopicsMatchingBench'
-      resource:
-        type: 'topic'
-        pattern: '/^bench-([.-])*$/'
-        pattern_type: 'MATCH'
-      allow_operations: [ 'READ:*', 'WRITE:*' ]
+      permissions:
+        - resource:
+            type: 'topic'
+            pattern: '/^bench-([.-])*$/'
+            pattern_type: 'MATCH'
+          allow_operations: [ 'READ:*', 'WRITE:*' ]
