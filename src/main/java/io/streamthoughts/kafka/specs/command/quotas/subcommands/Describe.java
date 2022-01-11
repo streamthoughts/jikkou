@@ -18,14 +18,16 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
-import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.internal.DescribeQuotas;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
+import io.streamthoughts.kafka.specs.manager.DescribeOptions;
+import io.streamthoughts.kafka.specs.manager.KafkaQuotaManager;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaQuotaManager;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -48,11 +50,13 @@ public class Describe extends BaseCommand {
      * {@inheritDoc}
      */
     @Override
-    public Integer call(final AdminClient client) {
-
+    public Integer call() {
         try {
+            KafkaQuotaManager manager = new AdminClientKafkaQuotaManager();
+            manager.configure(JikkouConfig.get());
+
             final OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
-            final List<V1QuotaObject> quotas = new DescribeQuotas(client).describe();
+            final List<V1QuotaObject> quotas = manager.describe(new DescribeOptions() {});
             final V1SpecsObject specsObject = V1SpecsObject.withQuotas(quotas);
             YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;

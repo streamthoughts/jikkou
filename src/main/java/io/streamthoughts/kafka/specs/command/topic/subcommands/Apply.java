@@ -18,26 +18,11 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.operation.topics.AlterTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.DeleteTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
-import io.vavr.concurrent.Future;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
-import picocli.CommandLine;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Command(name = "apply",
         description = "Apply all changes to the Kafka topics."
@@ -64,65 +49,22 @@ public class Apply extends TopicsCommand.Base {
     )
     Boolean excludeInternalTopics;
 
-    public static DescriptionProvider<TopicChange> DESCRIPTION = resource ->
-            (Description.None) () -> String.format("Unchanged topic %s ", resource.name());
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public TopicChangeOptions getOptions() {
-        return new TopicChangeOptions()
-                .withDeleteConfigOrphans(deleteConfigOrphans)
-                .withDeleteTopicOrphans(deleteTopicOrphans)
-                .withExcludeInternalTopics(excludeInternalTopics);
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.APPLY;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TopicOperation getOperation(@NotNull final AdminClient client) {
-        return new TopicOperation() {
-            final CreateTopicOperation create = new CreateTopicOperation(client);
-            final AlterTopicOperation alter = new AlterTopicOperation(client);
-            final DeleteTopicOperation delete = new DeleteTopicOperation(client);
-
-            @Override
-            public Description getDescriptionFor(final @NotNull TopicChange change) {
-                switch (change.getOperation()) {
-                    case ADD:
-                        return create.getDescriptionFor(change);
-                    case UPDATE:
-                        return alter.getDescriptionFor(change);
-                    case DELETE:
-                        return delete.getDescriptionFor(change);
-                    case NONE:
-                        return DESCRIPTION.getForResource(change);
-                    default:
-                        throw new UnsupportedOperationException("Unsupported operation type: " + change.getOperation());
-                }
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public boolean test(final TopicChange change) {
-                return delete.test(change) || create.test(change) || alter.test(change);
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
-                HashMap<String, List<Future<Void>>> results = new HashMap<>();
-                results.putAll(delete.apply(changes));
-                results.putAll(create.apply(changes));
-                results.putAll(alter.apply(changes));
-                return results;
-            }
-        };
+    public TopicChangeOptions getChangeOptions() {
+        return new TopicChangeOptions()
+                .withDeleteConfigOrphans(deleteConfigOrphans)
+                .withDeleteTopicOrphans(deleteTopicOrphans)
+                .withExcludeInternalTopics(excludeInternalTopics);
     }
 }

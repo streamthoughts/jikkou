@@ -48,9 +48,8 @@ public class AlterQuotasOperation extends AbstractQuotaOperation {
      *
      * @param client    the {@link AdminClient}.
      */
-    public AlterQuotasOperation(@NotNull final AdminClient client,
-                                final boolean deleteConfigOrphans) {
-        super(client, Change.OperationType.UPDATE, deleteConfigOrphans);
+    public AlterQuotasOperation(@NotNull final AdminClient client) {
+        super(client);
     }
 
     /**
@@ -59,5 +58,13 @@ public class AlterQuotasOperation extends AbstractQuotaOperation {
     @Override
     public Description getDescriptionFor(@NotNull final QuotaChange change) {
         return DESCRIPTION.getForResource(change);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean test(@NotNull final QuotaChange change) {
+        return change.getOperation() == Change.OperationType.UPDATE;
     }
 }

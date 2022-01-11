@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.specs.operation.quotas;
 
-import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
 import io.vavr.Tuple2;
 import io.vavr.concurrent.Future;
@@ -38,30 +37,13 @@ public abstract class AbstractQuotaOperation implements QuotaOperation {
 
     private final AdminClient client;
 
-    private final Change.OperationType operationType;
-
-    private final boolean deleteConfigOrphans;
-
     /**
      * Creates a new {@link AlterQuotasOperation} instance.
      *
      * @param client        the {@link AdminClient}.
-     * @param operationType the supported operation-type.
      */
-    public AbstractQuotaOperation(@NotNull final AdminClient client,
-                                  @NotNull final Change.OperationType operationType,
-                                  final boolean deleteConfigOrphans) {
+    public AbstractQuotaOperation(@NotNull final AdminClient client) {
         this.client = client;
-        this.operationType = operationType;
-        this.deleteConfigOrphans = deleteConfigOrphans;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean test(@NotNull final QuotaChange change) {
-        return change.getOperation() == operationType;
     }
 
     /**
@@ -74,7 +56,6 @@ public abstract class AbstractQuotaOperation implements QuotaOperation {
                     final ClientQuotaEntity entity = new ClientQuotaEntity(quota.getType().toEntities(quota.getEntity()));
                     final List<ClientQuotaAlteration.Op> operations = quota.getConfigs()
                             .stream()
-                            .filter(it -> it.getOperation() != Change.OperationType.DELETE || deleteConfigOrphans)
                             .map(it -> new ClientQuotaAlteration.Op(it.name(), (Double) it.getAfter()))
                             .collect(Collectors.toList());
                     return new ClientQuotaAlteration(entity, operations);

@@ -18,32 +18,26 @@
  */
 package io.streamthoughts.kafka.specs.command.topic;
 
-import io.streamthoughts.kafka.specs.change.ChangeExecutor;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.change.TopicChange;
-import io.streamthoughts.kafka.specs.change.TopicChangeComputer;
 import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
-import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Alter;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Apply;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
-import io.streamthoughts.kafka.specs.model.V1TopicObject;
-import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
-import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaTopicManager;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 @Command(name = "topics",
         headerHeading = "Usage:%n%n",
@@ -63,51 +57,42 @@ import java.util.stream.Collectors;
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)
-public class TopicsCommand extends WithAdminClientCommand {
+public class TopicsCommand {
 
     public static abstract class Base extends WithSpecificationCommand<TopicChange> {
 
-        /**
-         * Gets the operation to execute.
-         *
-         * @param client the {@link AdminClient}.
-         * @return a new {@link AclOperation}.
-         */
-        public abstract TopicOperation getOperation(@NotNull final AdminClient client);
+        public abstract KafkaResourceManager.UpdateMode getUpdateMode();
 
-        public abstract TopicChangeOptions getOptions();
+        public abstract TopicChangeOptions getChangeOptions();
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Collection<ChangeResult<TopicChange>> executeCommand(final AdminClient client) {
+        public Collection<ChangeResult<TopicChange>> execute(List<V1SpecsObject> objects) {
+            AdminClientKafkaTopicManager manager = new AdminClientKafkaTopicManager();
+            manager.configure(JikkouConfig.get());
 
-            return loadSpecObjects()
-                    .stream()
-                    .flatMap(spec -> {
-                        // Get the list of topics, that are candidates for this execution, from the SpecsFile.
-                        final Collection<V1TopicObject> expectedStates = spec.topics().stream()
-                                .filter(it -> isResourceCandidate(it.name()))
-                                .collect(Collectors.toList());
+            return manager.update(
+                    getUpdateMode(),
+                    objects,
+                    new KafkaResourceOperationContext<>() {
+                        @Override
+                        public Predicate<String> getResourcePredicate() {
+                            return Base.this::isResourceCandidate;
+                        }
 
-                        // Compute state changes
-                        Supplier<List<TopicChange>> supplier = () -> {
-                            // Get the list of topics, that are candidates for this execution, from the remote Kafka cluster
-                            final Collection<V1TopicObject> actualStates = new DescribeTopics(
-                                    client,
-                                    DescribeOperationOptions.withDescribeDefaultConfigs(true)
-                            ).describe(this::isResourceCandidate);
+                        @Override
+                        public TopicChangeOptions getOptions() {
+                            return getChangeOptions();
+                        }
 
-                            return new TopicChangeComputer().
-                                    computeChanges(actualStates, expectedStates, getOptions());
-                        };
-                        return ChangeExecutor
-                                .ofSupplier(supplier)
-                                .execute(getOperation(client), isDryRun())
-                                .stream();
-                    })
-                    .collect(Collectors.toList());
+                        @Override
+                        public boolean isDryRun() {
+                            return Base.this.isDryRun();
+                        }
+                    }
+            );
         }
     }
 }

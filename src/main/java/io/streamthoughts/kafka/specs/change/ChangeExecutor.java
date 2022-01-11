@@ -60,7 +60,7 @@ public final class ChangeExecutor<K, T extends Change<K>> {
      *
      * @param operation the {@link ExecutableOperation} to be executed.
      * @param dryRun    {@code true} if the execution should be run as dry-run.
-     * @return          the list of {@link ChangeResult}.
+     * @return the list of {@link ChangeResult}.
      */
     public @NotNull Collection<ChangeResult<T>> execute(@NotNull final ExecutableOperation<T, K, ?> operation,
                                                         final boolean dryRun) {
@@ -123,8 +123,7 @@ public final class ChangeExecutor<K, T extends Change<K>> {
                                     ChangeResult.changed(t._1(), operation.getDescriptionFor(t._1())) :
                                     ChangeResult.failed(t._1(), operation.getDescriptionFor(t._1()), l))
                             .toCompletableFuture();
-                })
-                .collect(Collectors.toList());
+                }).toList();
 
         return futures
                 .stream()

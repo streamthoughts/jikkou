@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * Default command to alter multiple topics.
  */
-public class AlterTopicOperation implements TopicOperation {
+public final class AlterTopicOperation implements TopicOperation {
 
     public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
         return (Description.Alter) () -> String.format("Alter topic %s", resource.name());

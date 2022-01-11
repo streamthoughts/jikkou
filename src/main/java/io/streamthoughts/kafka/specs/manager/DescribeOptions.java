@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,23 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.command.acls.subcommands;
+package io.streamthoughts.kafka.specs.manager;
 
-import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
-import picocli.CommandLine.Command;
-
-@Command(name = "apply",
-         description = "Apply all changes to the Kafka ACLs."
-)
-public class Apply extends AclsCommand.Base {
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.APPLY;
-    }
+/**
+ * The purpose of this interface is to group all options to be used
+ * for describing Kafka resource.
+ */
+public interface DescribeOptions {
 }

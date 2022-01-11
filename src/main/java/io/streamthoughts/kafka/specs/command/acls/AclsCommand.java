@@ -19,39 +19,25 @@
 package io.streamthoughts.kafka.specs.command.acls;
 
 import io.streamthoughts.kafka.specs.change.AclChange;
-import io.streamthoughts.kafka.specs.change.AclChangeComputer;
 import io.streamthoughts.kafka.specs.change.AclChangeOptions;
-import io.streamthoughts.kafka.specs.change.ChangeExecutor;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
-import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Apply;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
-import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeACLs;
-import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
-import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
-import io.streamthoughts.kafka.specs.model.V1SecurityObject;
-import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
-import io.streamthoughts.kafka.specs.resources.Named;
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
-import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
-import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRulesBuilder;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.manager.KafkaAclsManager;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaAclsManager;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
 @Command(name = "acls",
         descriptionHeading = "%nDescription:%n%n",
@@ -70,7 +56,7 @@ import java.util.stream.Stream;
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)
-public class AclsCommand extends WithAdminClientCommand {
+public class AclsCommand {
 
     public static abstract class Base extends WithSpecificationCommand<AclChange> {
 
@@ -81,63 +67,34 @@ public class AclsCommand extends WithAdminClientCommand {
         )
         Boolean deleteOrphans;
 
-        /**
-         * Gets the operation to execute.
-         *
-         * @param client the {@link AdminClient}.
-         * @return a new {@link AclOperation}.
-         */
-        public abstract AclOperation getOperation(@NotNull final AdminClient client);
+        public abstract KafkaResourceManager.UpdateMode getUpdateMode();
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public Collection<ChangeResult<AclChange>> executeCommand(final AdminClient client) {
+        public Collection<ChangeResult<AclChange>> execute(List<V1SpecsObject> objects) {
 
-            return loadSpecObjects()
-                    .stream()
-                    .flatMap(spec -> {
-                        Optional<V1SecurityObject> optional = spec.security();
+            final KafkaAclsManager manager = new AdminClientKafkaAclsManager();
+            manager.configure(JikkouConfig.get());
 
-                        if (optional.isEmpty()) {
-                            return Stream.empty();
+            return manager.update(
+                    getUpdateMode(),
+                    objects,
+                    new KafkaResourceOperationContext<>() {
+                        @Override
+                        public Predicate<String> getResourcePredicate() {
+                            return AclsCommand.Base.this::isResourceCandidate;
                         }
 
-                        final V1SecurityObject resource = optional.get();
-                        final AclRulesBuilder builder = AclRulesBuilder.combines(
-                                new LiteralAclRulesBuilder(),
-                                new TopicMatchingAclRulesBuilder(client));
+                        @Override
+                        public AclChangeOptions getOptions() {
+                            return new AclChangeOptions().withDeleteOrphans(deleteOrphans);
+                        }
 
-                        final Map<String, V1AccessRoleObject> groups = Named.keyByName(resource.roles());
-                        final Collection<V1AccessUserObject> users = resource.users();
-
-                        List<AccessControlPolicy> expectedStates = users
-                                .stream()
-                                .flatMap(user -> builder.toAccessControlPolicy(groups.values(), user).stream())
-                                .filter(this::isResourceCandidate)
-                                .collect(Collectors.toList());
-
-                        // Get the actual state from the cluster.
-                        List<AccessControlPolicy> actualStates = new DescribeACLs(client)
-                                .describe()
-                                .stream()
-                                .filter(this::isResourceCandidate)
-                                .collect(Collectors.toList());
-
-                        // Compute state changes
-                        Supplier<List<AclChange>> supplier = () -> new AclChangeComputer().
-                                computeChanges(
-                                        actualStates,
-                                        expectedStates,
-                                        new AclChangeOptions().withDeleteOrphans(deleteOrphans)
-                                );
-
-                        return ChangeExecutor.ofSupplier(supplier)
-                                .execute(getOperation(client), isDryRun()).stream();
-
-                    }).collect(Collectors.toList());
-
+                        @Override
+                        public boolean isDryRun() {
+                            return AclsCommand.Base.this.isDryRun();
+                        }
+                    }
+            );
         }
     }
 }

@@ -20,10 +20,7 @@ package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
 import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
-import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine.Command;
 
 @Command(name = "create",
@@ -35,15 +32,15 @@ public class Create extends QuotasCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public QuotaChangeOptions getOptions() {
-        return new QuotaChangeOptions();
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.CREATE;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public QuotaOperation getOperation(@NotNull final AdminClient client) {
-        return new CreateQuotasOperation(client);
+    public QuotaChangeOptions getChangeOptions() {
+        return new QuotaChangeOptions();
     }
 }

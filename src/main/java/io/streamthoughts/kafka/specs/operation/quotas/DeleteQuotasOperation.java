@@ -43,7 +43,15 @@ public class DeleteQuotasOperation extends AbstractQuotaOperation {
      * @param client    the {@link AdminClient}.
      */
     public DeleteQuotasOperation(@NotNull final AdminClient client) {
-       super(client, Change.OperationType.DELETE, false);
+       super(client);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean test(@NotNull final QuotaChange change) {
+        return change.getOperation() == Change.OperationType.DELETE;
     }
 
     /**

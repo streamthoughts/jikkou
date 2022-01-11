@@ -67,7 +67,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
-    public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+    public List<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
                                                                  final V1AccessUserObject user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
@@ -88,7 +88,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractAclRulesBuilder implem
      * {@inheritDoc}
      */
     @Override
-    public Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
+    public List<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
         throw new UnsupportedOperationException();
     }
 

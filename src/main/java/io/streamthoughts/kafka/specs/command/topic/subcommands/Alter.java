@@ -20,10 +20,7 @@ package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
 import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.operation.topics.AlterTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -43,15 +40,16 @@ public class Alter extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public TopicOperation getOperation(@NotNull final AdminClient client) {
-        return new AlterTopicOperation(client);
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.ALTER;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TopicChangeOptions getOptions() {
+    public TopicChangeOptions getChangeOptions() {
         return new TopicChangeOptions().withDeleteConfigOrphans(deleteOrphans);
     }
+
 }

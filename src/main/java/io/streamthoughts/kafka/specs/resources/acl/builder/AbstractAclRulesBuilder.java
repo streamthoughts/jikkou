@@ -37,12 +37,12 @@ import java.util.stream.Collectors;
 abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
 
 
-    Collection<AccessControlPolicy> createAllAclsFor(final String principal,
+    List<AccessControlPolicy> createAllAclsFor(final String principal,
                                                      final Collection<V1AccessPermission> permissions) {
         return createAllAclsFor(principal, permissions, null, null, null);
     }
 
-    Collection<AccessControlPolicy> createAllAclsFor(final String principal,
+    List<AccessControlPolicy> createAllAclsFor(final String principal,
                                                      final Collection<V1AccessPermission> permissions,
                                                      final String overrideResourcePattern,
                                                      final PatternType overridePatternType,

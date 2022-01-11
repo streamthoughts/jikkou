@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 /**
  * Default command to create multiple topics.
  */
-public class CreateTopicOperation implements TopicOperation {
+public final class CreateTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTopicOperation.class);
 

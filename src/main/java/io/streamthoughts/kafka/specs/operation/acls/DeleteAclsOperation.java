@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.specs.operation.acls;
 import io.streamthoughts.kafka.specs.Description;
 import io.streamthoughts.kafka.specs.change.AclChange;
 import io.streamthoughts.kafka.specs.change.Change;
+import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
 import io.vavr.Tuple2;
@@ -86,6 +87,7 @@ public class DeleteAclsOperation implements AclOperation {
     public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes) {
         List<AclBindingFilter> bindings = changes
                 .stream()
+                .peek(this::verify)
                 .map(AclChange::getAccessControlPolicy)
                 .map(converter::toAclBindingFilter)
                 .collect(Collectors.toList());
@@ -97,6 +99,12 @@ public class DeleteAclsOperation implements AclOperation {
                 .map(t -> t.map2(Future::fromJavaFuture))
                 .map(t -> t.map2(f -> List.of(f.map(it -> (Void) null))))
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
+    }
+
+    private void verify(final @NotNull AclChange change) {
+        if (!test(change)) {
+            throw new IllegalArgumentException("This operation does not support the passed change: " + change);
+        }
     }
 
     private static class AclBindingConverter {

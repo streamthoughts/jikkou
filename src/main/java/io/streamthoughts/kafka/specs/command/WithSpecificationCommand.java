@@ -63,23 +63,19 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
      * {@inheritDoc}
      */
     @Override
-    public Integer call(final AdminClient adminClient) {
-        loadSpecObjects(); // ensure specification is valid.
+    public Integer call() {
         if (!execOptions.yes && !isDryRun()) {
             CLIUtils.askToProceed(spec);
         }
-        final Collection<ChangeResult<T>> results = executeCommand(adminClient);
+        final Collection<ChangeResult<T>> results = execute(object.get());
         Printer.print(results, execOptions.verbose, isDryRun());
         return CommandLine.ExitCode.OK;
     }
 
-    public abstract Collection<ChangeResult<T>> executeCommand(final AdminClient adminClient);
+    public abstract Collection<ChangeResult<T>> execute(List<V1SpecsObject> objects);
 
     public boolean isDryRun() {
         return execOptions.dryRun;
     }
 
-    public List<V1SpecsObject> loadSpecObjects() {
-        return object.get();
-    }
 }

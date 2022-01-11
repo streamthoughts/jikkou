@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 /**
  * Default command to delete multiple topics.
  */
-public class DeleteTopicOperation implements TopicOperation {
+public final class DeleteTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteTopicOperation.class);
 

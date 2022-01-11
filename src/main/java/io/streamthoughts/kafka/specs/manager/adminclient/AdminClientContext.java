@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.command;
+package io.streamthoughts.kafka.specs.manager.adminclient;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.config.JikkouParams;
@@ -24,16 +24,30 @@ import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.internal.KafkaBrokersReady;
 import io.streamthoughts.kafka.specs.internal.KafkaUtils;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Properties;
+import java.util.Objects;
 import java.util.function.Function;
 
-public class WithAdminClientCommand {
+public class AdminClientContext {
 
-    public Integer withAdminClient(final Function<AdminClient, Integer> function) {
-        final JikkouConfig config = JikkouConfig.get();
-        final Properties adminClientProps = JikkouParams.ADMIN_CLIENT_CONFIG.get(config);
-        try (AdminClient client = KafkaUtils.newAdminClient(adminClientProps)) {
+    public interface KafkaFunction<O> extends Function<AdminClient, O> { }
+
+    private final JikkouConfig config;
+
+    private AdminClient client;
+
+    /**
+     * Creates a new {@link AdminClientContext} instance.
+     * @param config the {@link JikkouConfig}.
+     */
+    public AdminClientContext(final @NotNull JikkouConfig config) {
+        this.config = Objects.requireNonNull(config, "'config should not be null'");
+    }
+
+    public <O> O invokeAndClose(final @NotNull KafkaFunction<O> function) {
+        try (AdminClient client = newAdminClient()) {
+            this.client = client;
             if (JikkouParams.KAFKA_BROKERS_WAIT_FOR_ENABLED.get(config)) {
                 final boolean isReady = KafkaUtils.waitForKafkaBrokers(
                         client,
@@ -45,13 +59,36 @@ public class WithAdminClientCommand {
                 );
                 if (!isReady) {
                     throw new JikkouException(
-                        "Timeout expired. The timeout period elapsed prior to " +
-                        "the requested number of kafka brokers is available."
+                            "Timeout expired. The timeout period elapsed prior to " +
+                            "the requested number of kafka brokers is available."
                     );
                 }
 
             }
             return function.apply(client);
+        } finally {
+            client = null;
         }
+    }
+
+    public boolean isInitialized() {
+        return client != null;
+    }
+
+    /**
+     * Retrieve the current {@link AdminClient} instance.
+     *
+     * @return  the {@link AdminClient}.
+     * @throws  IllegalStateException if not adminClient is currently created.
+     */
+    public AdminClient current() {
+        if (!isInitialized()) {
+            throw new IllegalStateException("No current AdminClient created");
+        }
+        return client;
+    }
+
+    private AdminClient newAdminClient() {
+        return KafkaUtils.newAdminClient(JikkouParams.ADMIN_CLIENT_CONFIG.get(config));
     }
 }

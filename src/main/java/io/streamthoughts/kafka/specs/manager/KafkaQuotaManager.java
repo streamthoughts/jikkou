@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,21 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.operation;
+package io.streamthoughts.kafka.specs.manager;
 
-public class DescribeOperationOptions implements ResourceOperationOptions {
+import io.streamthoughts.kafka.specs.change.QuotaChange;
+import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
+import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 
-    private final boolean describeDefaultConfigs;
+/**
+ * Base interface for managing Kafka quotas.
+ */
+public interface KafkaQuotaManager extends
+        KafkaResourceManager<V1QuotaObject, QuotaChange, QuotaChangeOptions, DescribeOptions> {
 
-    public static DescribeOperationOptions withDescribeDefaultConfigs(final boolean describeDefaultConfigs) {
-        return new DescribeOperationOptions(describeDefaultConfigs);
-    }
-
-    private DescribeOperationOptions(boolean describeDefaultConfigs) {
-        this.describeDefaultConfigs = describeDefaultConfigs;
-    }
-
-    public boolean describeDefaultConfigs() {
-        return describeDefaultConfigs;
-    }
 }

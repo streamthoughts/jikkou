@@ -18,15 +18,16 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.command.topic.subcommands.internal.DescribeTopics;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
+import io.streamthoughts.kafka.specs.manager.KafkaTopicManager;
+import io.streamthoughts.kafka.specs.manager.TopicDescribeOptions;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaTopicManager;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.ConfigEntry;
+import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -35,13 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
-
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_BROKER_CONFIG;
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_DEFAULT_BROKER_CONFIG;
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.STATIC_BROKER_CONFIG;
 
 @Command(name = "describe",
         description = "Describe all the topics that currently exist on the remote Kafka cluster."
@@ -74,28 +69,20 @@ public class Describe extends BaseCommand {
      * {@inheritDoc}
      */
     @Override
-    public Integer call(final AdminClient client) {
-
-        DescribeTopics describeTopics = new DescribeTopics(
-                client,
-                DescribeOperationOptions.withDescribeDefaultConfigs(describeDefaultConfigs)
-        );
-
-        if (!describeStaticBrokerConfigs) {
-            describeTopics.addConfigEntryPredicate(config -> config.source() != STATIC_BROKER_CONFIG);
-        }
-
-        if (!describeDynamicBrokerConfigs) {
-            List<ConfigEntry.ConfigSource> excludeSources = Arrays.asList(
-                    DYNAMIC_BROKER_CONFIG,
-                    DYNAMIC_DEFAULT_BROKER_CONFIG
-            );
-            describeTopics.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
-        }
-
-        var topics = describeTopics.describe(this::isResourceCandidate);
+    public Integer call() {
 
         try {
+            final KafkaTopicManager manager = new AdminClientKafkaTopicManager();
+            manager.configure(JikkouConfig.get());
+
+            TopicDescribeOptions options = new TopicDescribeOptions()
+                    .withTopicPredicate(this::isResourceCandidate)
+                    .withDescribeDefaultConfigs(describeDefaultConfigs)
+                    .withDescribeDynamicBrokerConfigs(describeDynamicBrokerConfigs)
+                    .withDescribeStaticBrokerConfigs(describeStaticBrokerConfigs);
+
+            List<V1TopicObject> topics = manager.describe(options);
+
             OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
 
             final V1SpecsObject specsObject = V1SpecsObject.withTopics(topics);

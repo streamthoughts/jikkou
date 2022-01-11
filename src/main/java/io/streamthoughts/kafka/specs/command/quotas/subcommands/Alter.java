@@ -20,11 +20,7 @@ package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
 import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
-import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -44,15 +40,15 @@ public class Alter extends QuotasCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public QuotaOperation getOperation(@NotNull final AdminClient client) {
-        return new AlterQuotasOperation(client, deleteOrphans);
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.ALTER;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public QuotaChangeOptions getOptions() {
+    public QuotaChangeOptions getChangeOptions() {
         return new QuotaChangeOptions().withDeleteConfigOrphans(deleteOrphans);
     }
 }

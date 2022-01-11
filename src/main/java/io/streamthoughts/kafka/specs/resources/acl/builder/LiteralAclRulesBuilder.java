@@ -48,7 +48,7 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
      * {@inheritDoc}
      */
     @Override
-    public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+    public List<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
                                                                  final V1AccessUserObject user) {
         Objects.requireNonNull(groups, "groups cannot be null");
         Objects.requireNonNull(user, "user cannot be null");
@@ -62,7 +62,7 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
      * {@inheritDoc}
      */
     @Override
-    public Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
+    public List<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
 
         return rules
                 .stream()
@@ -106,7 +106,7 @@ public class LiteralAclRulesBuilder extends AbstractAclRulesBuilder implements A
         return builder.build();
     }
 
-    private Collection<AccessControlPolicy> createAclsForLiteralOrPrefixPermissions(final V1AccessUserObject user,
+    private List<AccessControlPolicy> createAclsForLiteralOrPrefixPermissions(final V1AccessUserObject user,
                                                                                     final List<V1AccessRoleObject> groups) {
 
         final Stream<V1AccessPermission> userPermissions = user.permissions().stream();

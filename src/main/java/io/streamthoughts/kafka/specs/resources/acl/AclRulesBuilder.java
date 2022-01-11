@@ -23,16 +23,17 @@ import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Default interface to convert from and to {@link AclRulesBuilder} instance.
  */
 public interface AclRulesBuilder {
 
-    Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
-                                                          final V1AccessUserObject user);
+    List<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+                                                    final V1AccessUserObject user);
 
-    Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules);
+    List<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules);
 
     default boolean canBuildAclUserPolicy() {
         return true;
@@ -46,10 +47,10 @@ public interface AclRulesBuilder {
              * {@inheritDoc}
              */
             @Override
-            public Collection<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
+            public List<AccessControlPolicy> toAccessControlPolicy(final Collection<V1AccessRoleObject> groups,
                                                                          final V1AccessUserObject user) {
 
-                Collection<AccessControlPolicy> rules = new LinkedList<>();
+                List<AccessControlPolicy> rules = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {
                     rules.addAll(b.toAccessControlPolicy(groups, user));
                 }
@@ -60,8 +61,8 @@ public interface AclRulesBuilder {
              * {@inheritDoc}
              */
             @Override
-            public Collection<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
-                Collection<V1AccessUserObject> policies = new LinkedList<>();
+            public List<V1AccessUserObject> toAccessUserObjects(final Collection<AccessControlPolicy> rules) {
+                List<V1AccessUserObject> policies = new LinkedList<>();
                 for (AclRulesBuilder b : builders) {
                     if (b.canBuildAclUserPolicy()) {
                         policies.addAll(b.toAccessUserObjects(rules));

@@ -19,30 +19,13 @@
 package io.streamthoughts.kafka.specs.command.quotas.subcommands;
 
 import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
 import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
-import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.DeleteQuotasOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
-import io.vavr.concurrent.Future;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.common.quota.ClientQuotaEntity;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.ADD;
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.DELETE;
-import static io.streamthoughts.kafka.specs.change.Change.OperationType.UPDATE;
 
 @Command(name = "apply",
          description = "Apply all changes to the Kafka client quotas."
@@ -74,54 +57,17 @@ public class Apply extends QuotasCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public QuotaChangeOptions getOptions() {
-        return new QuotaChangeOptions()
-                .withDeleteConfigOrphans(deleteConfigOrphans)
-                .withDeleteQuotaOrphans(deleteQuotaOrphans);
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.APPLY;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public QuotaOperation getOperation(@NotNull final AdminClient client) {
-        return new QuotaOperation() {
-            final CreateQuotasOperation create = new CreateQuotasOperation(client);
-            final AlterQuotasOperation alter = new AlterQuotasOperation(client, deleteConfigOrphans);
-            final DeleteQuotasOperation delete = new DeleteQuotasOperation(client);
-
-            @Override
-            public Description getDescriptionFor(final @NotNull QuotaChange change) {
-                switch (change.getOperation()) {
-                    case ADD:
-                        return create.getDescriptionFor(change);
-                    case UPDATE:
-                        return alter.getDescriptionFor(change);
-                    case DELETE:
-                        return delete.getDescriptionFor(change);
-                    case NONE:
-                        return DESCRIPTION.getForResource(change);
-                    default:
-                        throw new UnsupportedOperationException("Unsupported operation type: " + change.getOperation());
-                }
-            }
-
-            @Override
-            public boolean test(@NotNull final QuotaChange change) {
-                Change.OperationType operation = change.getOperation();
-                return (operation == DELETE && deleteQuotaOrphans) || List.of(ADD, UPDATE).contains(operation);
-            }
-
-            @Override
-            public @NotNull Map<ClientQuotaEntity, List<Future<Void>>> doApply(@NotNull final Collection<QuotaChange> changes) {
-                HashMap<ClientQuotaEntity, List<Future<Void>>> results = new HashMap<>();
-                if (deleteQuotaOrphans) {
-                    results.putAll(delete.apply(changes));
-                }
-                results.putAll(create.apply(changes));
-                results.putAll(alter.apply(changes));
-                return results;
-            }
-        };
+    public QuotaChangeOptions getChangeOptions() {
+        return new QuotaChangeOptions()
+            .withDeleteConfigOrphans(deleteConfigOrphans)
+            .withDeleteQuotaOrphans(deleteQuotaOrphans);
     }
 }

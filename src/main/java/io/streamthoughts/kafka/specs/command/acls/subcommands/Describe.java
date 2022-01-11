@@ -18,19 +18,16 @@
  */
 package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
-import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
-import io.streamthoughts.kafka.specs.resources.acl.AccessControlPolicy;
-import io.streamthoughts.kafka.specs.resources.acl.AclRulesBuilder;
-import io.streamthoughts.kafka.specs.resources.acl.builder.LiteralAclRulesBuilder;
-import io.streamthoughts.kafka.specs.resources.acl.builder.TopicMatchingAclRulesBuilder;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.command.acls.subcommands.internal.DescribeACLs;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
+import io.streamthoughts.kafka.specs.manager.AclDescribeOptions;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaAclsManager;
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -55,11 +52,12 @@ public class Describe extends BaseCommand {
      * {@inheritDoc}
      */
     @Override
-    public Integer call(final AdminClient client) {
+    public Integer call() throws Exception {
 
-        final AclRulesBuilder builder = getAclRulesBuilder(client);
-        Collection<AccessControlPolicy> rules = new DescribeACLs(client).describe();
-        final Collection<V1AccessUserObject> users = builder.toAccessUserObjects(rules);
+        AdminClientKafkaAclsManager manager = new AdminClientKafkaAclsManager();
+        manager.configure(JikkouConfig.get());
+
+        final Collection<V1AccessUserObject> users = manager.describe(new AclDescribeOptions());
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
@@ -69,11 +67,5 @@ public class Describe extends BaseCommand {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private AclRulesBuilder getAclRulesBuilder(final AdminClient client) {
-        return AclRulesBuilder.combines(
-                new LiteralAclRulesBuilder(),
-                new TopicMatchingAclRulesBuilder(client));
     }
 }

@@ -18,30 +18,27 @@
  */
 package io.streamthoughts.kafka.specs.command.quotas;
 
-import io.streamthoughts.kafka.specs.change.ChangeExecutor;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
-import io.streamthoughts.kafka.specs.change.QuotaChangeComputer;
 import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
-import io.streamthoughts.kafka.specs.command.WithAdminClientCommand;
 import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.Alter;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.Apply;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.Create;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.quotas.subcommands.Describe;
-import io.streamthoughts.kafka.specs.command.quotas.subcommands.internal.DescribeQuotas;
-import io.streamthoughts.kafka.specs.model.V1QuotaObject;
-import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
-import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
-import org.apache.kafka.clients.admin.AdminClient;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.manager.KafkaQuotaManager;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaQuotaManager;
+import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 @CommandLine.Command(name = "quotas",
         headerHeading = "Usage:%n%n",
@@ -61,44 +58,42 @@ import java.util.stream.Collectors;
                 CommandLine.HelpCommand.class
         },
         mixinStandardHelpOptions = true)
-public class QuotasCommand extends WithAdminClientCommand {
+public class QuotasCommand {
 
     public static abstract class Base extends WithSpecificationCommand<QuotaChange> {
 
-        /**
-         * Gets the operation to execute.
-         *
-         * @param client the {@link AdminClient}.
-         * @return a new {@link AclOperation}.
-         */
-        public abstract QuotaOperation getOperation(@NotNull final AdminClient client);
+        public abstract KafkaResourceManager.UpdateMode getUpdateMode();
 
-        public abstract QuotaChangeOptions getOptions();
+        public abstract QuotaChangeOptions getChangeOptions();
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Collection<ChangeResult<QuotaChange>> executeCommand(final AdminClient client) {
+        public Collection<ChangeResult<QuotaChange>> execute(final @NotNull List<V1SpecsObject> objects) {
+            final KafkaQuotaManager manager = new AdminClientKafkaQuotaManager();
+            manager.configure(JikkouConfig.get());
 
-            return loadSpecObjects()
-                .stream()
-                .flatMap(spec -> {
-                    // Get the list of quotas, that are candidates for this execution, from the SpecsFile.
-                    final List<V1QuotaObject> expectedStates = spec.quotas();
+            return manager.update(
+                    getUpdateMode(),
+                    objects,
+                    new KafkaResourceOperationContext<>() {
+                        @Override
+                        public Predicate<String> getResourcePredicate() {
+                            return QuotasCommand.Base.this::isResourceCandidate;
+                        }
 
-                    // Get the list of quotas, that are candidates for this execution, from the remote Kafka cluster
-                    final Collection<V1QuotaObject> actualStates = new DescribeQuotas(client).describe();
+                        @Override
+                        public QuotaChangeOptions getOptions() {
+                            return QuotasCommand.Base.this.getChangeOptions();
+                        }
 
-                    // Compute state changes
-                    Supplier<List<QuotaChange>> supplier = () -> new QuotaChangeComputer().
-                            computeChanges(actualStates, expectedStates, getOptions());
-
-                    return ChangeExecutor.ofSupplier(supplier)
-                            .execute(getOperation(client), isDryRun())
-                            .stream();
-                })
-                .collect(Collectors.toList());
+                        @Override
+                        public boolean isDryRun() {
+                            return QuotasCommand.Base.this.isDryRun();
+                        }
+                    }
+            );
         }
     }
 }

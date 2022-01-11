@@ -18,17 +18,18 @@
  */
 package io.streamthoughts.kafka.specs.command.broker.subcommands;
 
-import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
 import io.streamthoughts.kafka.specs.command.BaseCommand;
-import io.streamthoughts.kafka.specs.command.broker.subcommands.internal.DescribeBrokers;
+import io.streamthoughts.kafka.specs.config.JikkouConfig;
+import io.streamthoughts.kafka.specs.internal.KafkaUtils;
+import io.streamthoughts.kafka.specs.io.YAMLSpecWriter;
+import io.streamthoughts.kafka.specs.manager.BrokerDescribeOptions;
+import io.streamthoughts.kafka.specs.manager.KafkaBrokerManager;
+import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaBrokerManager;
 import io.streamthoughts.kafka.specs.model.MetaObject;
+import io.streamthoughts.kafka.specs.model.V1BrokerObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import io.streamthoughts.kafka.specs.internal.KafkaUtils;
-import io.streamthoughts.kafka.specs.operation.DescribeOperationOptions;
-import io.streamthoughts.kafka.specs.model.V1BrokerObject;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.Node;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -38,16 +39,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_BROKER_CONFIG;
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_DEFAULT_BROKER_CONFIG;
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.STATIC_BROKER_CONFIG;
 
 @Command(name = "describe",
         description = "Describe all the Broker's configuration on remote cluster."
@@ -80,27 +75,17 @@ public class Describe extends BaseCommand {
      * {@inheritDoc}
      */
     @Override
-    public Integer call(final AdminClient client) {
-        var brokerIds = loadClusterBrokerIds(client);
+    public Integer call() {
 
-        DescribeBrokers describeBrokers = new DescribeBrokers(
-                client,
-                DescribeOperationOptions.withDescribeDefaultConfigs(describeDefaultConfigs)
-        );
+        final KafkaBrokerManager manager = new AdminClientKafkaBrokerManager();
+        manager.configure(JikkouConfig.get());
 
-        if (!describeStaticBrokerConfigs) {
-            describeBrokers.addConfigEntryPredicate(config -> config.source() != STATIC_BROKER_CONFIG);
-        }
+        final BrokerDescribeOptions options = new BrokerDescribeOptions()
+                .withDescribeDefaultConfigs(describeDefaultConfigs)
+                .withDescribeDynamicBrokerConfigs(describeDynamicBrokerConfigs)
+                .withDescribeStaticBrokerConfigs(describeStaticBrokerConfigs);
 
-        if (!describeDynamicBrokerConfigs) {
-            List<ConfigEntry.ConfigSource> excludeSources = Arrays.asList(
-                    DYNAMIC_BROKER_CONFIG,
-                    DYNAMIC_DEFAULT_BROKER_CONFIG
-            );
-            describeBrokers.addConfigEntryPredicate(Predicate.not(config -> excludeSources.contains(config.source())));
-        }
-
-        List<V1BrokerObject> resources = describeBrokers.describe(brokerIds);
+        List<V1BrokerObject> resources = manager.describe(options);
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;

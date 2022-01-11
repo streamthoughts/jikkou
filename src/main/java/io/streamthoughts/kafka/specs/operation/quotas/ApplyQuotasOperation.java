@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.specs.operation.quotas;
 
 import io.streamthoughts.kafka.specs.Description;
-import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.QuotaChange;
 import io.streamthoughts.kafka.specs.internal.DescriptionProvider;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -28,22 +27,37 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Operation to create client quotas.
  */
-public class CreateQuotasOperation extends AbstractQuotaOperation {
+public class ApplyQuotasOperation extends AbstractQuotaOperation {
 
     public static DescriptionProvider<QuotaChange> DESCRIPTION = (resource -> {
-        return (Description.Create) () -> String.format("Create a new quotas %s %s",
+        return (Description.Create) () -> String.format("Unchanged client-quotas %s %s",
                 resource.getType(),
                 resource.getType().toPettyString(resource.getEntity())
         );
     });
 
+    public final CreateQuotasOperation create;
+    public final AlterQuotasOperation alter;
+    public final DeleteQuotasOperation delete;
+
+    public ApplyQuotasOperation(@NotNull final AdminClient client) {
+        super(client);
+        this.create = new CreateQuotasOperation(client);
+        this.alter = new AlterQuotasOperation(client);
+        this.delete = new DeleteQuotasOperation(client);
+    }
+
     /**
-     * Creates a new {@link CreateQuotasOperation} instance.
-     *
-     * @param client    the {@link AdminClient}.
+     * {@inheritDoc}
      */
-    public CreateQuotasOperation(@NotNull final AdminClient client) {
-       super(client);
+    @Override
+    public Description getDescriptionFor(final @NotNull QuotaChange change) {
+        return switch (change.getOperation()) {
+            case ADD -> create.getDescriptionFor(change);
+            case UPDATE -> alter.getDescriptionFor(change);
+            case DELETE -> delete.getDescriptionFor(change);
+            case NONE -> DESCRIPTION.getForResource(change);
+        };
     }
 
     /**
@@ -51,14 +65,6 @@ public class CreateQuotasOperation extends AbstractQuotaOperation {
      */
     @Override
     public boolean test(@NotNull final QuotaChange change) {
-        return change.getOperation() == Change.OperationType.ADD;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Description getDescriptionFor(@NotNull final QuotaChange change) {
-        return DESCRIPTION.getForResource(change);
+        return delete.test(change) || create.test(change) || alter.test(change);
     }
 }

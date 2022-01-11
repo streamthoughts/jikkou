@@ -19,10 +19,7 @@
 package io.streamthoughts.kafka.specs.command.acls.subcommands;
 
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
-import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
-import io.streamthoughts.kafka.specs.operation.acls.DeleteAclsOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine.Command;
 
 @Command(name = "delete",
@@ -34,7 +31,7 @@ public class Delete extends AclsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public AclOperation getOperation(@NotNull final AdminClient client) {
-        return new DeleteAclsOperation(client);
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.DELETE;
     }
 }

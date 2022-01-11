@@ -47,19 +47,6 @@ public abstract class BaseCommand implements Callable<Integer> {
     @Mixin
     ExecOptionsMixin execOptions;
 
-    @ParentCommand
-    WithAdminClientCommand command;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer call() {
-        return command.withAdminClient(this::call);
-    }
-
-    public abstract Integer call(final AdminClient client);
-
     public final boolean isResourceCandidate(final Named resourceName) {
         final boolean candidate = isResourceCandidate(resourceName.name());
         if (!candidate) {

@@ -20,10 +20,7 @@ package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
 import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.operation.topics.CreateTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import picocli.CommandLine.Command;
 
 @Command(name = "create",
@@ -31,19 +28,17 @@ import picocli.CommandLine.Command;
 )
 public class Create extends TopicsCommand.Base {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public TopicOperation getOperation(@NotNull final AdminClient client) {
-        return new CreateTopicOperation(client);
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.CREATE;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TopicChangeOptions getOptions() {
+    public TopicChangeOptions getChangeOptions() {
         return new TopicChangeOptions();
     }
+
 }

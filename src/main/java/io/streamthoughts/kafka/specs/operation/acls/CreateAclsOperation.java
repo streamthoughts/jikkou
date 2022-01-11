@@ -88,6 +88,7 @@ public class CreateAclsOperation implements AclOperation {
     public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes) {
         List<AclBinding> bindings = changes
                 .stream()
+                .peek(this::verify)
                 .map(AclChange::getAccessControlPolicy)
                 .map(converter::toAclBinding)
                 .collect(Collectors.toList());
@@ -102,6 +103,12 @@ public class CreateAclsOperation implements AclOperation {
                 .map(t -> t.map2(Future::fromJavaFuture))
                 .map(t -> t.map2(List::of))
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
+    }
+
+    private void verify(final @NotNull AclChange change) {
+        if (!test(change)) {
+            throw new IllegalArgumentException("This operation does not support the passed change: " + change);
+        }
     }
 
     private static class AclBindingConverter {
