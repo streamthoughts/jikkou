@@ -48,7 +48,7 @@ public class AdminClientContext {
     public <O> O invokeAndClose(final @NotNull KafkaFunction<O> function) {
         try (AdminClient client = newAdminClient()) {
             this.client = client;
-            if (JikkouParams.KAFKA_BROKERS_WAIT_FOR_ENABLED.get(config)) {
+            if (JikkouParams.KAFKA_BROKERS_WAIT_FOR_ENABLED.orElseGet(config, () -> true)) {
                 final boolean isReady = KafkaUtils.waitForKafkaBrokers(
                         client,
                         KafkaBrokersReady.Options

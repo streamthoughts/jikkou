@@ -83,19 +83,39 @@ public class SpecFileLoader {
         return this;
     }
 
-    public List<V1SpecFile> loadFromPath(final @NotNull List<String> files) {
-        if (files.isEmpty()) {
+    /**
+     * Loads specifications  for Kafka resources from the given file.
+     *
+     * @param file  the input stream.
+     * @return      a new {@link V1SpecFile}.
+     */
+    public V1SpecFile load(@NotNull final InputStream file) {
+        Map<String, Object> templatingVars = JikkouParams.TEMPLATING_VARS_CONFIG.get(JikkouConfig.get());
+        templatingVars.putAll(vars);
+        return reader.read(file, templatingVars, labels);
+    }
+
+    /**
+     * Loads specifications for Kafka resources from YAML files, directories or URLs.
+     *
+     * @param locations locations from which to load specifications.
+     * @return          a list of {@link V1SpecFile}.
+     */
+    public List<V1SpecFile> load(final @NotNull List<String> locations) {
+        if (locations.isEmpty()) {
             throw new JikkouException("No specification file loaded");
         }
 
-        List<V1SpecFile> loaded = files.stream()
+        List<V1SpecFile> loaded = locations.stream()
                 .flatMap(file -> {
                     try {
                         if (file.startsWith("http://") || file.startsWith("https://")) {
                             InputStream is = new URL(file).openStream();
-                            return Stream.of(parse(is, file));
+                            V1SpecFile spec = load(is);
+                            spec.metadata().setAnnotation(MetaObject.ANNOT_RESOURCE, file);
+                            return Stream.of(spec);
                         }
-                        return loadFromPath(Path.of(file));
+                        return load(Path.of(file));
                     } catch (Exception e) {
                         throw new JikkouException(
                                 "Failed to read specification from '" + file + "'. " +
@@ -112,7 +132,7 @@ public class SpecFileLoader {
     }
 
     @NotNull
-    private Stream<V1SpecFile> loadFromPath(final Path path) {
+    private Stream<V1SpecFile> load(final Path path) {
         List<Path> matching = Files.isDirectory(path) ?
                 IOUtils.findMatching(path, pattern) :
                 List.of(path);
@@ -122,7 +142,9 @@ public class SpecFileLoader {
                     LOG.info("Loading specification file from '{}'", p);
                     try {
                         InputStream is = Files.newInputStream(p);
-                        return parse(is, p.toAbsolutePath().toString());
+                        V1SpecFile spec = load(is);
+                        spec.metadata().setAnnotation(MetaObject.ANNOT_RESOURCE, p.toAbsolutePath().toString());
+                        return spec;
                     } catch (IOException e) {
                         throw new JikkouException(
                                 "Failed to read specification from '" + p + "'. " +
@@ -132,11 +154,4 @@ public class SpecFileLoader {
                 });
     }
 
-    private V1SpecFile parse(@NotNull final InputStream is, @NotNull final String file) {
-        Map<String, Object> templatingVars = JikkouParams.TEMPLATING_VARS_CONFIG.get(JikkouConfig.get());
-        templatingVars.putAll(vars);
-        V1SpecFile parsed = reader.read(is, templatingVars, labels);
-        parsed.metadata().setAnnotation(MetaObject.ANNOT_RESOURCE, file);
-        return parsed;
-    }
 }

@@ -28,7 +28,6 @@ import io.streamthoughts.kafka.specs.model.V1SpecFile;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.vavr.Lazy;
-import org.apache.kafka.clients.admin.AdminClient;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Model.CommandSpec;
@@ -55,7 +54,7 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
                 .withPattern(specOptions.pattern)
                 .withLabels(options.clientLabels)
                 .withVars(options.clientVars)
-                .loadFromPath(specOptions.files);
+                .load(specOptions.files);
         return specFiles.stream().map(processor::apply).map(V1SpecFile::specs).collect(Collectors.toList());
     });
 
