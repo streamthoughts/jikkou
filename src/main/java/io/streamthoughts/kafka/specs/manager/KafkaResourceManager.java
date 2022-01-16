@@ -41,9 +41,32 @@ public interface KafkaResourceManager<R, C extends Change<?>, OP extends ChangeC
                 Configurable {
 
     enum UpdateMode {
-        CREATE, ALTER, DELETE, APPLY;
+        /**
+         * Create only new resources.
+         */
+        CREATE_ONLY,
+        /**
+         * Alter only existing resources.
+         */
+        ALTER_ONLY,
+        /**
+         * Delete only orphan resources.
+         */
+        DELETE_ONLY,
+        /**
+         * Apply all resources changes (i.e., create, alter and delete).
+         */
+        APPLY;
     }
 
+    /**
+     * Updates the Kafka cluster resources using the given {@link V1SpecsObject} list.
+     *
+     * @param mode          the update-mode to execute.
+     * @param specObjects   the {@link V1SpecsObject} list.
+     * @param context       the {@link KafkaResourceOperationContext}.
+     * @return              the list of {@link ChangeResult}.
+     */
     Collection<ChangeResult<C>> update(UpdateMode mode,
                                        List<V1SpecsObject> specObjects,
                                        KafkaResourceOperationContext<OP> context);

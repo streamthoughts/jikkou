@@ -41,7 +41,7 @@ public class Alter extends TopicsCommand.Base {
      */
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.ALTER;
+        return KafkaResourceManager.UpdateMode.ALTER_ONLY;
     }
 
     /**
@@ -49,7 +49,9 @@ public class Alter extends TopicsCommand.Base {
      */
     @Override
     public TopicChangeOptions getChangeOptions() {
-        return new TopicChangeOptions().withDeleteConfigOrphans(deleteOrphans);
+        return new TopicChangeOptions()
+                .withDeleteTopicOrphans(false)
+                .withDeleteConfigOrphans(deleteOrphans);
     }
 
 }

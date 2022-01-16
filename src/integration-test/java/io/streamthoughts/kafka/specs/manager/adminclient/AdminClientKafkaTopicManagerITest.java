@@ -80,7 +80,7 @@ public class AdminClientKafkaTopicManagerITest {
 
         // When
         manager.update(
-                KafkaResourceManager.UpdateMode.CREATE,
+                KafkaResourceManager.UpdateMode.CREATE_ONLY,
                 List.of(file.specs()),
                 KafkaResourceOperationContext.with(new TopicChangeOptions(), false)
         );
@@ -125,7 +125,7 @@ public class AdminClientKafkaTopicManagerITest {
 
         // When
         Collection<ChangeResult<TopicChange>> results = manager.update(
-                KafkaResourceManager.UpdateMode.DELETE,
+                KafkaResourceManager.UpdateMode.DELETE_ONLY,
                 List.of(new V1SpecsObject()),
                 KafkaResourceOperationContext.with(options, false)
         );

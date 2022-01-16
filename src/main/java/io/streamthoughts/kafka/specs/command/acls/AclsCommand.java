@@ -37,7 +37,6 @@ import picocli.CommandLine.Command;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Command(name = "acls",
         descriptionHeading = "%nDescription:%n%n",
@@ -78,22 +77,11 @@ public class AclsCommand {
             return manager.update(
                     getUpdateMode(),
                     objects,
-                    new KafkaResourceOperationContext<>() {
-                        @Override
-                        public Predicate<String> getResourcePredicate() {
-                            return AclsCommand.Base.this::isResourceCandidate;
-                        }
-
-                        @Override
-                        public AclChangeOptions getOptions() {
-                            return new AclChangeOptions().withDeleteOrphans(deleteOrphans);
-                        }
-
-                        @Override
-                        public boolean isDryRun() {
-                            return AclsCommand.Base.this.isDryRun();
-                        }
-                    }
+                    KafkaResourceOperationContext.with(
+                            AclsCommand.Base.this::isResourceCandidate,
+                            new AclChangeOptions().withDeleteOrphans(deleteOrphans),
+                            isDryRun()
+                    )
             );
         }
     }

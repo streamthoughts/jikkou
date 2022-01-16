@@ -38,7 +38,6 @@ import picocli.CommandLine;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 
 @CommandLine.Command(name = "quotas",
         headerHeading = "Usage:%n%n",
@@ -77,22 +76,11 @@ public class QuotasCommand {
             return manager.update(
                     getUpdateMode(),
                     objects,
-                    new KafkaResourceOperationContext<>() {
-                        @Override
-                        public Predicate<String> getResourcePredicate() {
-                            return QuotasCommand.Base.this::isResourceCandidate;
-                        }
-
-                        @Override
-                        public QuotaChangeOptions getOptions() {
-                            return QuotasCommand.Base.this.getChangeOptions();
-                        }
-
-                        @Override
-                        public boolean isDryRun() {
-                            return QuotasCommand.Base.this.isDryRun();
-                        }
-                    }
+                    KafkaResourceOperationContext.with(
+                            QuotasCommand.Base.this::isResourceCandidate,
+                            getChangeOptions(),
+                            isDryRun()
+                    )
             );
         }
     }

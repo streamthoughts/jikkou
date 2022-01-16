@@ -18,31 +18,16 @@
  */
 package io.streamthoughts.kafka.specs.command.topic.subcommands;
 
-import io.streamthoughts.kafka.specs.change.ChangeResult;
-import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
-import io.streamthoughts.kafka.specs.command.WithSpecificationCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
-import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
-import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaTopicManager;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
-import io.streamthoughts.kafka.specs.operation.topics.DeleteTopicOperation;
-import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
 
 @Command(name = "delete",
         description = "Delete all topics not described in the specification file."
 )
-public class Delete extends WithSpecificationCommand<TopicChange> {
+public class Delete extends TopicsCommand.Base {
 
     @Option(names = "--exclude-internals",
             description = "Exclude internal topics (i.e.: __consumer_offset, __transaction_state, connect-[offsets|status|configs], _schemas.)"
@@ -53,30 +38,17 @@ public class Delete extends WithSpecificationCommand<TopicChange> {
      * {@inheritDoc}
      */
     @Override
-    public Collection<ChangeResult<TopicChange>> execute(List<V1SpecsObject> objects) {
-        final AdminClientKafkaTopicManager manager = new AdminClientKafkaTopicManager();
-        manager.configure(JikkouConfig.get());
+    public KafkaResourceManager.UpdateMode getUpdateMode() {
+        return KafkaResourceManager.UpdateMode.DELETE_ONLY;
+    }
 
-        return manager.update(
-                KafkaResourceManager.UpdateMode.DELETE,
-                objects,
-                new KafkaResourceOperationContext<>() {
-                    @Override
-                    public Predicate<String> getResourcePredicate() {
-                        return Delete.this::isResourceCandidate;
-                    }
-
-                    @Override
-                    public TopicChangeOptions getOptions() {
-                        return new TopicChangeOptions()
-                                .withExcludeInternalTopics(excludeInternalTopics);
-                    }
-
-                    @Override
-                    public boolean isDryRun() {
-                        return Delete.this.isDryRun();
-                    }
-                }
-        );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TopicChangeOptions getChangeOptions() {
+        return new TopicChangeOptions()
+                .withExcludeInternalTopics(excludeInternalTopics)
+                .withDeleteTopicOrphans(true);
     }
 }

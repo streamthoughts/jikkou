@@ -33,7 +33,7 @@ public class Delete extends QuotasCommand.Base {
      */
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.DELETE;
+        return KafkaResourceManager.UpdateMode.DELETE_ONLY;
     }
 
     /**
@@ -41,6 +41,8 @@ public class Delete extends QuotasCommand.Base {
      */
     @Override
     public QuotaChangeOptions getChangeOptions() {
-        return new QuotaChangeOptions();
+        return new QuotaChangeOptions()
+                .withDeleteQuotaOrphans(true)
+                .withDeleteConfigOrphans(false);
     }
 }

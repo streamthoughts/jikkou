@@ -41,7 +41,7 @@ public class Alter extends QuotasCommand.Base {
      */
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.ALTER;
+        return KafkaResourceManager.UpdateMode.ALTER_ONLY;
     }
 
     /**
@@ -49,6 +49,8 @@ public class Alter extends QuotasCommand.Base {
      */
     @Override
     public QuotaChangeOptions getChangeOptions() {
-        return new QuotaChangeOptions().withDeleteConfigOrphans(deleteOrphans);
+        return new QuotaChangeOptions()
+                .withDeleteConfigOrphans(deleteOrphans)
+                .withDeleteQuotaOrphans(false);
     }
 }

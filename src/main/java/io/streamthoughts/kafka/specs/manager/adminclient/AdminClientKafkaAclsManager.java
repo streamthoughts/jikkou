@@ -128,8 +128,8 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
 
     public AclOperation getOperationFor(@NotNull final UpdateMode mode) {
         return switch (mode) {
-            case CREATE -> new CreateAclsOperation(adminClientContext.current());
-            case DELETE -> new DeleteAclsOperation(adminClientContext.current());
+            case CREATE_ONLY -> new CreateAclsOperation(adminClientContext.current());
+            case DELETE_ONLY -> new DeleteAclsOperation(adminClientContext.current());
             case APPLY -> new ApplyAclsOperation(adminClientContext.current());
             default -> throw new UnsupportedOperationException();
         };

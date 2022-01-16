@@ -88,9 +88,9 @@ public final class AdminClientKafkaQuotaManager extends AbstractKafkaQuotaManage
     @Override
     public QuotaOperation getOperationFor(@NotNull final UpdateMode mode) {
         return switch (mode) {
-            case CREATE -> new CreateQuotasOperation(adminClientContext.current());
-            case ALTER -> new AlterQuotasOperation(adminClientContext.current());
-            case DELETE -> new DeleteQuotasOperation(adminClientContext.current());
+            case CREATE_ONLY -> new CreateQuotasOperation(adminClientContext.current());
+            case ALTER_ONLY -> new AlterQuotasOperation(adminClientContext.current());
+            case DELETE_ONLY -> new DeleteQuotasOperation(adminClientContext.current());
             case APPLY -> new ApplyQuotasOperation(adminClientContext.current());
         };
     }

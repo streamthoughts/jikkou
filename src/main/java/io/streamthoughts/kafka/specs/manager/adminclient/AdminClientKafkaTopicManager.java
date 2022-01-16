@@ -92,9 +92,9 @@ public final class AdminClientKafkaTopicManager extends AbstractKafkaTopicManage
     @Override
     protected TopicOperation getOperationFor(@NotNull final UpdateMode mode) {
         return switch (mode) {
-            case CREATE -> new CreateTopicOperation(adminClientContext.current());
-            case ALTER -> new AlterTopicOperation(adminClientContext.current());
-            case DELETE -> new DeleteTopicOperation(adminClientContext.current());
+            case CREATE_ONLY -> new CreateTopicOperation(adminClientContext.current());
+            case ALTER_ONLY -> new AlterTopicOperation(adminClientContext.current());
+            case DELETE_ONLY -> new DeleteTopicOperation(adminClientContext.current());
             case APPLY -> new ApplyTopicOperation(adminClientContext.current());
         };
     }

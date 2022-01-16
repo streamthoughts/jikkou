@@ -32,6 +32,6 @@ public class Delete extends AclsCommand.Base {
      */
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.DELETE;
+        return KafkaResourceManager.UpdateMode.DELETE_ONLY;
     }
 }

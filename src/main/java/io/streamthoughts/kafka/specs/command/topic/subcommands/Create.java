@@ -30,7 +30,7 @@ public class Create extends TopicsCommand.Base {
 
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.CREATE;
+        return KafkaResourceManager.UpdateMode.CREATE_ONLY;
     }
 
     /**
@@ -38,7 +38,9 @@ public class Create extends TopicsCommand.Base {
      */
     @Override
     public TopicChangeOptions getChangeOptions() {
-        return new TopicChangeOptions();
+        return new TopicChangeOptions()
+                .withDeleteTopicOrphans(false)
+                .withDeleteConfigOrphans(false);
     }
 
 }

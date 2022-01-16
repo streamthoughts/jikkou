@@ -30,6 +30,7 @@ import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaTopicManager;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaTopicManager;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import picocli.CommandLine;
@@ -37,7 +38,6 @@ import picocli.CommandLine.Command;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Command(name = "topics",
         headerHeading = "Usage:%n%n",
@@ -70,28 +70,17 @@ public class TopicsCommand {
          */
         @Override
         public Collection<ChangeResult<TopicChange>> execute(List<V1SpecsObject> objects) {
-            AdminClientKafkaTopicManager manager = new AdminClientKafkaTopicManager();
+            final KafkaTopicManager manager = new AdminClientKafkaTopicManager();
             manager.configure(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),
                     objects,
-                    new KafkaResourceOperationContext<>() {
-                        @Override
-                        public Predicate<String> getResourcePredicate() {
-                            return Base.this::isResourceCandidate;
-                        }
-
-                        @Override
-                        public TopicChangeOptions getOptions() {
-                            return getChangeOptions();
-                        }
-
-                        @Override
-                        public boolean isDryRun() {
-                            return Base.this.isDryRun();
-                        }
-                    }
+                    KafkaResourceOperationContext.with(
+                            Base.this::isResourceCandidate,
+                            getChangeOptions(),
+                            isDryRun()
+                    )
             );
         }
     }

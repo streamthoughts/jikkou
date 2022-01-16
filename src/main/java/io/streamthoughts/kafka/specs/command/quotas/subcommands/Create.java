@@ -33,7 +33,7 @@ public class Create extends QuotasCommand.Base {
      */
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.CREATE;
+        return KafkaResourceManager.UpdateMode.CREATE_ONLY;
     }
 
     /**
@@ -41,6 +41,8 @@ public class Create extends QuotasCommand.Base {
      */
     @Override
     public QuotaChangeOptions getChangeOptions() {
-        return new QuotaChangeOptions();
+        return new QuotaChangeOptions()
+                .withDeleteQuotaOrphans(false)
+                .withDeleteConfigOrphans(false);
     }
 }

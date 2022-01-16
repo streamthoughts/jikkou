@@ -38,7 +38,7 @@ public interface KafkaResourceOperationContext<OP extends ChangeComputer.Options
     static <OP extends ChangeComputer.Options> KafkaResourceOperationContext<OP> with(final Predicate<String> resourcePredicate,
                                                                                       final OP options,
                                                                                       final boolean isDryRun) {
-        return new KafkaResourceOperationContext<OP>() {
+        return new KafkaResourceOperationContext<>() {
             @Override
             public Predicate<String> getResourcePredicate() {
                 return resourcePredicate;

@@ -52,7 +52,7 @@ public class Describe extends BaseCommand {
      * {@inheritDoc}
      */
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
 
         AdminClientKafkaAclsManager manager = new AdminClientKafkaAclsManager();
         manager.configure(JikkouConfig.get());

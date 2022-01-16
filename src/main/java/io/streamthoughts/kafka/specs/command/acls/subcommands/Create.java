@@ -29,6 +29,6 @@ public class Create extends AclsCommand.Base {
 
     @Override
     public KafkaResourceManager.UpdateMode getUpdateMode() {
-        return KafkaResourceManager.UpdateMode.CREATE;
+        return KafkaResourceManager.UpdateMode.CREATE_ONLY;
     }
 }
