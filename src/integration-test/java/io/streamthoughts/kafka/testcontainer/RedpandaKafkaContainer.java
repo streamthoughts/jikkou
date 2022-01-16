@@ -29,6 +29,7 @@ import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
@@ -49,32 +50,37 @@ public final class RedpandaKafkaContainer extends GenericContainer<RedpandaKafka
 
     private static final String STARTER_SCRIPT = "/var/lib/redpanda/redpanda.sh";
 
-    private final RedpandaContainerConfig redpandaConfig;
+    private final RedpandaContainerConfig config;
 
     private String hostName = null;
 
     private Network network;
 
-    public RedpandaKafkaContainer(final RedpandaContainerConfig redpandaConfig) {
-        this(DockerImageName.parse(VECTORIZED_REDPANDA_LATEST), redpandaConfig);
+    /**
+     * Creates a new {@link RedpandaKafkaContainer} instance.
+     *
+     * @param config    the {@link RedpandaContainerConfig}.
+     */
+    public RedpandaKafkaContainer(final RedpandaContainerConfig config) {
+        this(DockerImageName.parse(VECTORIZED_REDPANDA_LATEST), config);
     }
 
     private RedpandaKafkaContainer(final DockerImageName dockerImageName,
-                                   final RedpandaContainerConfig redpandaConfig) {
+                                   final RedpandaContainerConfig config) {
         super(dockerImageName);
-        this.redpandaConfig = redpandaConfig;
+        this.config = config;
 
-        withCreateContainerCmdModifier(cmd -> {
-            cmd.withEntrypoint("sh");
-        });
+        withCreateContainerCmdModifier(cmd -> cmd.withEntrypoint("sh"));
         withCommand("-c", "while [ ! -f " + STARTER_SCRIPT + " ]; do sleep 0.1; done; " + STARTER_SCRIPT);
         waitingFor(Wait.forLogMessage(".*Started Kafka API server listening at.*", 1));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void containerIsStarting(InspectContainerResponse containerInfo, boolean reused) {
         super.containerIsStarting(containerInfo, reused);
-
         copyFileToContainer(Transferable.of( buildStartingScript(), 0777), STARTER_SCRIPT);
     }
 
@@ -93,7 +99,7 @@ public final class RedpandaKafkaContainer extends GenericContainer<RedpandaKafka
         command += String.format(" --kafka-addr %s", getKafkaAddresses());
         command += String.format(" --advertise-kafka-addr %s", getKafkaAdvertisedAddresses());
 
-        if (redpandaConfig.isTransactionEnabled()) {
+        if (config.isTransactionEnabled()) {
             command += " --set redpanda.enable_idempotence=true";
             command += " --set redpanda.enable_transactions=true";
         }
@@ -126,8 +132,11 @@ public final class RedpandaKafkaContainer extends GenericContainer<RedpandaKafka
         setNetwork(network);
         setNetworkAliases(Collections.singletonList(hostName));
         addExposedPorts(DEFAULT_KAFKA_API_PORT, DEFAULT_PROXY_API_PORT, DEFAULT_ADMIN_API_PORT);
-        addFixedExposedPort(DEFAULT_KAFKA_API_PORT, redpandaConfig.getKafkaApiFixedExposedPort());
-        withLogConsumer(new Slf4jLogConsumer(LOG));
+        addFixedExposedPort(DEFAULT_KAFKA_API_PORT, config.getKafkaApiFixedExposedPort());
+
+        if (config.isAttachContainerOutputLog()) {
+            withLogConsumer(new Slf4jLogConsumer(LOG));
+        }
     }
 
     public Network getKafkaNetwork() {
@@ -138,4 +147,27 @@ public final class RedpandaKafkaContainer extends GenericContainer<RedpandaKafka
         return getKafkaAdvertisedAddresses();
     }
 
+    public void createTopic(final String topicName) {
+        try {
+            ExecResult execResult = execInContainer(
+                    "rpk",
+                    "topic",
+                    "create",
+                    topicName,
+                    "--brokers=localhost:9092"
+            );
+            if (execResult.getExitCode() != 0) {
+                throw new RuntimeException(String.format(
+                    "Failed to create topic. Command exists with code %d. \n \nStderr: %s\nStdout: %s",
+                        execResult.getExitCode(),
+                        execResult.getStderr(),
+                        execResult.getStdout()
+                ));
+            } else {
+                LOG.info("Created Kafka Topic '{}'. Container Stdout: \n{}", topicName, execResult.getStdout());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
