@@ -32,7 +32,7 @@ It will then take care of computing and applying the necessary changes directly 
 [source, bash]
 ----
 $ jikkou --bootstrap-servers localhost:9092 topics apply \
-    --file-path topics-specs.yml \
+    --file topics-specs.yml \
     --yes
 ----
 
@@ -199,7 +199,7 @@ Additionally, Jikkou can be used to create, delete or alter topics: ::
 [source,bash]
 ----
 $ jikkou --bootstrap-servers localhost:9092 topics create \
---file-path topics-specs.yml \
+--files topics-specs.yml \
 --set-label topic_prefix=dev- \
 --verbose \
 --yes
@@ -331,7 +331,7 @@ specs:
 [source,bash]
 ----
 $ jikkou --bootstrap-servers localhost:9092 acls apply \
-    --file-path security-specs.yml \
+    --files security-specs.yml \
     --verbose \
     --yes
 ----
@@ -430,7 +430,7 @@ specs:
 $ jikkou --bootstrap-servers localhost:9092 \
     acls \
     apply \
-    --file-path security-specs.yml \
+    --files security-specs.yml \
     --verbose \
     --yes
 ----
@@ -699,14 +699,16 @@ For Maven::
 <dependency>
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
-    <version>0.7.0</version>
+    <version>0.9.0</version>
 </dependency>
 ----
+
+NOTE: The Jikkou API is still evolving. Future releases may introduce minor breaking changes.
 
 For Gradle::
 [source]
 ----
-implementation group: 'io.streamthoughts', name: 'jikkou', version: '0.7.0'
+implementation group: 'io.streamthoughts', name: 'jikkou', version: '0.9.0'
 ----
 
 To make your extensions available to Jikkou, install them into one or many local directories.
@@ -717,6 +719,38 @@ Each configured directories may contain:
 * an uber JAR containing all of the classes and third-party dependencies for the extensions.
 * a directory containing all JARs for the extensions.
 
+== Using Jikkou for Integration Tests
+
+Jikkou can also be used for creating all your Kafka Topics for integration test.
+
+Below is a simple code example to illustrate the Jikkou API.
+
+[source,java]
+----
+@BeforeEach
+public void setUp() {
+    // (1) Load specification from classpath (e.g. test/resources)
+    InputStream topicSpecsInputStream = getClass().getClassLoader().getResourceAsStream("./topics-test.yaml");
+    V1SpecFile file = SpecFileLoader.newForYaml().load(topicSpecsInputStream);
+
+    // (2) Create configuration
+    var config = JikkouConfig
+            .builder()
+            .withCLIConfigParams(Map.of("adminClient.bootstrap.servers", getTestingBootstrapServers()))
+            .getOrCreate();
+
+    // (3) Create and configure Adminclient-based ClientKafkaTopicManager
+    var manager = new AdminClientKafkaTopicManager();
+    manager.configure(config);
+
+    // (4) Create Kafka Topics
+    manager.update(
+            KafkaResourceManager.UpdateMode.CREATE_ONLY,
+            List.of(file.specs()),
+            KafkaResourceUpdateContext.with(new TopicChangeOptions(), false)
+    );
+}
+----
 
 == 🏭 How to build project ?
 
