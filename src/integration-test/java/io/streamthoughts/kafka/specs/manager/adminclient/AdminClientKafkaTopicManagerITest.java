@@ -73,7 +73,7 @@ public class AdminClientKafkaTopicManagerITest {
 
 
     @Test
-    public void should_create_kafka_topic_using_admin_client() {
+    public void should_update_kafka_topic_using_admin_client_given_create_only() {
         // Given
         InputStream topics = getTopicSpecFileInputStream();
         V1SpecFile file = SpecFileLoader.newForYaml().load(topics);
@@ -111,7 +111,7 @@ public class AdminClientKafkaTopicManagerITest {
     }
 
     @Test
-    public void should_delete_kafka_topic_using_admin_client() {
+    public void should_update_kafka_topic_using_admin_client_given_delete_only() {
 
         // Given
         kafka.createTopic("to-delete");
@@ -138,6 +138,100 @@ public class AdminClientKafkaTopicManagerITest {
         Assertions.assertEquals(Description.OperationType.DELETE, change.description().operation());
 
         Assertions.assertEquals(0, describeActualKafka().size());
+    }
+
+    @Test
+    public void should_update_kafka_topic_using_admin_client_given_alter_only() {
+
+        // Given
+        kafka.createTopic("topic-test-A");
+
+        List<V1TopicObject> actualTopics = describeActualKafka();
+        Assertions.assertEquals(1, actualTopics.size());
+
+        InputStream topics = getTopicSpecFileInputStream();
+        List<V1SpecsObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+
+        TopicChangeOptions options = new TopicChangeOptions();
+
+        // When
+        Collection<ChangeResult<TopicChange>> results = manager.update(
+                KafkaResourceManager.UpdateMode.ALTER_ONLY,
+                objects,
+                KafkaResourceOperationContext.with(options, false)
+        );
+
+        // Then
+        Assertions.assertEquals(1, results.size());
+
+        ChangeResult<TopicChange> change = results.iterator().next();
+        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
+        Assertions.assertEquals("topic-test-A", change.resource().name());
+        Assertions.assertEquals(Description.OperationType.ALTER, change.description().operation());
+    }
+
+    @Test
+    public void should_not_delete_kafka_topic_using_admin_client_given_apply_delete_orphans_false() {
+
+        // Given
+        kafka.createTopic("orphan-topic");
+
+        List<V1TopicObject> actualTopics = describeActualKafka();
+        Assertions.assertEquals(1, actualTopics.size());
+
+        InputStream topics = getTopicSpecFileInputStream();
+        List<V1SpecsObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+
+        TopicChangeOptions options = new TopicChangeOptions()
+                .withDeleteTopicOrphans(false);
+
+        // When
+        Collection<ChangeResult<TopicChange>> results = manager.update(
+                KafkaResourceManager.UpdateMode.APPLY,
+                objects,
+                KafkaResourceOperationContext.with(options, false)
+        );
+
+        // Then
+        Assertions.assertEquals(2, results.size());
+
+        boolean delete = results.stream()
+                .map(it -> it.description().operation())
+                .anyMatch(it -> it.equals(Description.OperationType.DELETE));
+
+        Assertions.assertFalse(delete);
+    }
+
+    @Test
+    public void should_delete_kafka_topic_using_admin_client_given_apply_delete_orphans_true() {
+
+        // Given
+        kafka.createTopic("orphan-topic");
+
+        List<V1TopicObject> actualTopics = describeActualKafka();
+        Assertions.assertEquals(1, actualTopics.size());
+
+        InputStream topics = getTopicSpecFileInputStream();
+        List<V1SpecsObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+
+        TopicChangeOptions options = new TopicChangeOptions()
+                .withDeleteTopicOrphans(true);
+
+        // When
+        Collection<ChangeResult<TopicChange>> results = manager.update(
+                KafkaResourceManager.UpdateMode.APPLY,
+                objects,
+                KafkaResourceOperationContext.with(options, false)
+        );
+
+        // Then
+        Assertions.assertEquals(3, results.size());
+
+        boolean delete = results.stream()
+                .map(it -> it.description().operation())
+                .anyMatch(it -> it.equals(Description.OperationType.DELETE));
+
+        Assertions.assertTrue(delete);
     }
 
     private List<V1TopicObject> describeActualKafka() {
