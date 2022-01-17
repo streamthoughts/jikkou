@@ -25,7 +25,7 @@ import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.io.SpecFileLoader;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.KafkaTopicManager;
 import io.streamthoughts.kafka.specs.manager.TopicDescribeOptions;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
@@ -57,6 +57,7 @@ public class AdminClientKafkaTopicManagerITest {
             new RedpandaContainerConfig()
                     .withKafkaApiFixedExposedPort(9092)
                     .withAttachContainerOutputLog(true)
+                    .withTransactionEnabled(false)
     );
 
     private KafkaTopicManager manager;
@@ -82,7 +83,7 @@ public class AdminClientKafkaTopicManagerITest {
         manager.update(
                 KafkaResourceManager.UpdateMode.CREATE_ONLY,
                 List.of(file.specs()),
-                KafkaResourceOperationContext.with(new TopicChangeOptions(), false)
+                KafkaResourceUpdateContext.with(new TopicChangeOptions(), false)
         );
 
         // Then
@@ -127,7 +128,7 @@ public class AdminClientKafkaTopicManagerITest {
         Collection<ChangeResult<TopicChange>> results = manager.update(
                 KafkaResourceManager.UpdateMode.DELETE_ONLY,
                 List.of(new V1SpecsObject()),
-                KafkaResourceOperationContext.with(options, false)
+                KafkaResourceUpdateContext.with(options, false)
         );
 
         // Then
@@ -158,7 +159,7 @@ public class AdminClientKafkaTopicManagerITest {
         Collection<ChangeResult<TopicChange>> results = manager.update(
                 KafkaResourceManager.UpdateMode.ALTER_ONLY,
                 objects,
-                KafkaResourceOperationContext.with(options, false)
+                KafkaResourceUpdateContext.with(options, false)
         );
 
         // Then
@@ -189,7 +190,7 @@ public class AdminClientKafkaTopicManagerITest {
         Collection<ChangeResult<TopicChange>> results = manager.update(
                 KafkaResourceManager.UpdateMode.APPLY,
                 objects,
-                KafkaResourceOperationContext.with(options, false)
+                KafkaResourceUpdateContext.with(options, false)
         );
 
         // Then
@@ -221,7 +222,7 @@ public class AdminClientKafkaTopicManagerITest {
         Collection<ChangeResult<TopicChange>> results = manager.update(
                 KafkaResourceManager.UpdateMode.APPLY,
                 objects,
-                KafkaResourceOperationContext.with(options, false)
+                KafkaResourceUpdateContext.with(options, false)
         );
 
         // Then
