@@ -39,7 +39,7 @@ public abstract class AbstractKafkaQuotaManager implements KafkaQuotaManager {
     @Override
     public Collection<ChangeResult<QuotaChange>> update(final UpdateMode mode,
                                                         final List<V1SpecsObject> objects,
-                                                        final KafkaResourceOperationContext<QuotaChangeOptions> context) {
+                                                        final KafkaResourceUpdateContext<QuotaChangeOptions> context) {
 
         return objects.stream()
             .flatMap(spec -> {

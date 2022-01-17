@@ -26,7 +26,7 @@ import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.error.ExecutionException;
 import io.streamthoughts.kafka.specs.manager.AbstractKafkaQuotaManager;
 import io.streamthoughts.kafka.specs.manager.DescribeOptions;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.model.V1QuotaEntityObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaLimitsObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
@@ -67,7 +67,7 @@ public final class AdminClientKafkaQuotaManager extends AbstractKafkaQuotaManage
     @Override
     public Collection<ChangeResult<QuotaChange>> update(final UpdateMode mode,
                                                         final List<V1SpecsObject> objects,
-                                                        final KafkaResourceOperationContext<QuotaChangeOptions> context) {
+                                                        final KafkaResourceUpdateContext<QuotaChangeOptions> context) {
         return adminClientContext.invokeAndClose((adminClient) -> super.update(mode, objects, context));
     }
 

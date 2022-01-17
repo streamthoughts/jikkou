@@ -39,14 +39,14 @@ public abstract class AbstractKafkaTopicManager implements KafkaTopicManager {
     @Override
     public Collection<ChangeResult<TopicChange>> update(final UpdateMode mode,
                                                         final List<V1SpecsObject> objects,
-                                                        final KafkaResourceOperationContext<TopicChangeOptions> context) {
+                                                        final KafkaResourceUpdateContext<TopicChangeOptions> context) {
 
         return objects.stream()
             .flatMap(spec -> {
                 // Get the list of topics, that are candidates for this execution, from the SpecsFile.
                 final Collection<V1TopicObject> expectedStates = spec.topics()
                         .stream()
-                        .filter(it -> context.getResourcePredicate().test(it.name()))
+                        .filter(it -> context.getPredicate().test(it.name()))
                         .toList();
 
                 // Compute state changes
@@ -55,7 +55,7 @@ public abstract class AbstractKafkaTopicManager implements KafkaTopicManager {
                     // Get the list of topics, that are candidates for this execution, from the remote Kafka cluster
                     TopicDescribeOptions options = new TopicDescribeOptions()
                             .withDescribeDefaultConfigs(true)
-                            .withTopicPredicate(context.getResourcePredicate());
+                            .withTopicPredicate(context.getPredicate());
 
                     final Collection<V1TopicObject> actualStates = describe(options);
 

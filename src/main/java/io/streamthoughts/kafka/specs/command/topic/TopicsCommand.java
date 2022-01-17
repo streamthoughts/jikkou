@@ -29,7 +29,7 @@ import io.streamthoughts.kafka.specs.command.topic.subcommands.Delete;
 import io.streamthoughts.kafka.specs.command.topic.subcommands.Describe;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.KafkaTopicManager;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaTopicManager;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
@@ -76,7 +76,7 @@ public class TopicsCommand {
             return manager.update(
                     getUpdateMode(),
                     objects,
-                    KafkaResourceOperationContext.with(
+                    KafkaResourceUpdateContext.with(
                             Base.this::isResourceCandidate,
                             getChangeOptions(),
                             isDryRun()

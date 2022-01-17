@@ -29,7 +29,7 @@ import io.streamthoughts.kafka.specs.command.acls.subcommands.Describe;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.manager.KafkaAclsManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaAclsManager;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import picocli.CommandLine;
@@ -77,7 +77,7 @@ public class AclsCommand {
             return manager.update(
                     getUpdateMode(),
                     objects,
-                    KafkaResourceOperationContext.with(
+                    KafkaResourceUpdateContext.with(
                             AclsCommand.Base.this::isResourceCandidate,
                             new AclChangeOptions().withDeleteOrphans(deleteOrphans),
                             isDryRun()

@@ -30,7 +30,7 @@ import io.streamthoughts.kafka.specs.command.quotas.subcommands.Describe;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.manager.KafkaQuotaManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaQuotaManager;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +76,7 @@ public class QuotasCommand {
             return manager.update(
                     getUpdateMode(),
                     objects,
-                    KafkaResourceOperationContext.with(
+                    KafkaResourceUpdateContext.with(
                             QuotasCommand.Base.this::isResourceCandidate,
                             getChangeOptions(),
                             isDryRun()

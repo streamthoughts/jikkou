@@ -38,8 +38,8 @@ public interface KafkaBrokerManager extends
      */
     @Override
     default Collection<ChangeResult<Change<?>>> update(UpdateMode mode,
-                                                       List<V1SpecsObject> specObjects,
-                                                       KafkaResourceOperationContext<ChangeComputer.Options> context) {
+                                                       List<V1SpecsObject> objects,
+                                                       KafkaResourceUpdateContext<ChangeComputer.Options> context) {
         throw new UnsupportedOperationException();
     }
 

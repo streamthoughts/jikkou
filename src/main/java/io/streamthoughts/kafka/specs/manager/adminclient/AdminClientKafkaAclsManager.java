@@ -27,7 +27,7 @@ import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.manager.AclDescribeOptions;
 import io.streamthoughts.kafka.specs.manager.KafkaAclsManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
@@ -73,7 +73,7 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
     @Override
     public Collection<ChangeResult<AclChange>> update(final UpdateMode mode,
                                                       final List<V1SpecsObject> objects,
-                                                      final KafkaResourceOperationContext<AclChangeOptions> context) {
+                                                      final KafkaResourceUpdateContext<AclChangeOptions> context) {
 
         return adminClientContext.invokeAndClose((adminClient) -> objects
                 .stream()
@@ -95,11 +95,11 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
                     List<AccessControlPolicy> expectedStates = users
                             .stream()
                             .flatMap(user -> builder.toAccessControlPolicy(groups.values(), user).stream())
-                            .filter(it -> context.getResourcePredicate().test(it.name()))
+                            .filter(it -> context.getPredicate().test(it.name()))
                             .collect(Collectors.toList());
 
                     // Get the actual state from the cluster.
-                    AclDescribeOptions options = new AclDescribeOptions().withResourcePredicate(context.getResourcePredicate());
+                    AclDescribeOptions options = new AclDescribeOptions().withResourcePredicate(context.getPredicate());
                     List<AccessControlPolicy> actualStates = doDescribe(adminClient, options);
 
                     // Compute state changes

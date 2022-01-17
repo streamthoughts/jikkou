@@ -25,7 +25,7 @@ import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.error.ConfigException;
 import io.streamthoughts.kafka.specs.internal.ConfigsBuilder;
 import io.streamthoughts.kafka.specs.manager.AbstractKafkaTopicManager;
-import io.streamthoughts.kafka.specs.manager.KafkaResourceOperationContext;
+import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.TopicDescribeOptions;
 import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
@@ -71,9 +71,9 @@ public final class AdminClientKafkaTopicManager extends AbstractKafkaTopicManage
      */
     @Override
     public Collection<ChangeResult<TopicChange>> update(UpdateMode mode,
-                                                        List<V1SpecsObject> specObjects,
-                                                        KafkaResourceOperationContext<TopicChangeOptions> context) {
-        return adminClientContext.invokeAndClose(adminClient -> super.update(mode, specObjects, context));
+                                                        List<V1SpecsObject> objects,
+                                                        KafkaResourceUpdateContext<TopicChangeOptions> context) {
+        return adminClientContext.invokeAndClose(adminClient -> super.update(mode, objects, context));
     }
 
     @Override
