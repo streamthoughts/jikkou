@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.specs;
 import io.streamthoughts.kafka.specs.command.CLIOptionsMixin;
 import io.streamthoughts.kafka.specs.command.acls.AclsCommand;
 import io.streamthoughts.kafka.specs.command.broker.BrokerCommand;
+import io.streamthoughts.kafka.specs.command.extensions.ExtensionCommand;
 import io.streamthoughts.kafka.specs.command.quotas.QuotasCommand;
 import io.streamthoughts.kafka.specs.command.topic.TopicsCommand;
 import io.streamthoughts.kafka.specs.command.validate.ValidateCommand;
@@ -67,6 +68,7 @@ import static picocli.CommandLine.Model.CommandSpec;
             AclsCommand.class,
             BrokerCommand.class,
             QuotasCommand.class,
+            ExtensionCommand.class,
             CommandLine.HelpCommand.class,
         }
 )

@@ -19,11 +19,13 @@
 package io.streamthoughts.kafka.specs.extensions;
 
 import io.streamthoughts.kafka.specs.internal.ClassUtils;
-import io.vavr.Lazy;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ExtensionRegistry {
 
@@ -39,6 +41,13 @@ public class ExtensionRegistry {
     public void register(final String extensionClass,
                          final Supplier<? extends Extension> supplier) {
         this.extensions.put(extensionClass, supplier);
+    }
+
+    public Collection<ExtensionDescription> allRegisteredExtensions() {
+        return extensions.keySet()
+                .stream()
+                .map(ExtensionDescription::new)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     public <T extends Extension> T getExtensionForClass(final String extensionClass) {
