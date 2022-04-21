@@ -54,8 +54,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call() {
 
-        AdminClientKafkaAclsManager manager = new AdminClientKafkaAclsManager();
-        manager.configure(JikkouConfig.get());
+        AdminClientKafkaAclsManager manager = new AdminClientKafkaAclsManager(JikkouConfig.get());
 
         final Collection<V1AccessUserObject> users = manager.describe(new AclDescribeOptions());
 

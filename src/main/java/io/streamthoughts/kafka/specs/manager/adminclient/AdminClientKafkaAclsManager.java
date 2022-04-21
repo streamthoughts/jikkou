@@ -63,6 +63,30 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
     private AdminClientContext adminClientContext;
 
     /**
+     * Creates a new {@link AdminClientKafkaAclsManager} instance.
+     */
+    public AdminClientKafkaAclsManager() {
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaAclsManager} instance.
+     *
+     * @param config the application's configuration.
+     */
+    public AdminClientKafkaAclsManager(final @NotNull JikkouConfig config) {
+        configure(config);
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaAclsManager} instance.
+     *
+     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     */
+    public AdminClientKafkaAclsManager(final @NotNull AdminClientContext adminClientContext) {
+        this.adminClientContext = adminClientContext;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -151,7 +175,7 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
     /**
      * {@link Function} to list all ACLs rules.
      */
-    public final class DescribeACLs {
+    public static final class DescribeACLs {
 
         private final AdminClient client;
 
@@ -160,7 +184,7 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
          *
          * @param client the {@link AdminClient}.
          */
-        public DescribeACLs(final AdminClient client) {
+        public DescribeACLs(@NotNull final AdminClient client) {
             this.client = client;
         }
 

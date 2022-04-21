@@ -70,8 +70,7 @@ public class QuotasCommand {
          */
         @Override
         public Collection<ChangeResult<QuotaChange>> execute(final @NotNull List<V1SpecsObject> objects) {
-            final KafkaQuotaManager manager = new AdminClientKafkaQuotaManager();
-            manager.configure(JikkouConfig.get());
+            final KafkaQuotaManager manager = new AdminClientKafkaQuotaManager(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),

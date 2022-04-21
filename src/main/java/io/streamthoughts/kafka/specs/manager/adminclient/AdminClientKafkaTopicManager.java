@@ -59,6 +59,31 @@ public final class AdminClientKafkaTopicManager extends AbstractKafkaTopicManage
     private AdminClientContext adminClientContext;
 
     /**
+     * Creates a new {@link AdminClientKafkaTopicManager} instance.
+     */
+    public AdminClientKafkaTopicManager() {
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaTopicManager} instance with the specified
+     * application's configuration.
+     *
+     * @param config the application's configuration.
+     */
+    public AdminClientKafkaTopicManager(final @NotNull JikkouConfig config) {
+        configure(config);
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaTopicManager} instance with the specified {@link AdminClientContext}.
+     *
+     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     */
+    public AdminClientKafkaTopicManager(final @NotNull AdminClientContext adminClientContext) {
+        this.adminClientContext = adminClientContext;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -102,7 +127,7 @@ public final class AdminClientKafkaTopicManager extends AbstractKafkaTopicManage
     /**
      * Function to list all topics on Kafka Cluster matching a given predicate.
      */
-    public final class DescribeTopics {
+    public static final class DescribeTopics {
 
         private final AdminClient client;
 

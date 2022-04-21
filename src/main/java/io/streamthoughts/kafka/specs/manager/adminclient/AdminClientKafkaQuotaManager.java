@@ -54,6 +54,31 @@ public final class AdminClientKafkaQuotaManager extends AbstractKafkaQuotaManage
     private AdminClientContext adminClientContext;
 
     /**
+     * Creates a new {@link AdminClientKafkaQuotaManager} instance.
+     */
+    public AdminClientKafkaQuotaManager() {
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaQuotaManager} instance with the specified
+     * application's configuration.
+     *
+     * @param config the application's configuration.
+     */
+    public AdminClientKafkaQuotaManager(final @NotNull JikkouConfig config) {
+        configure(config);
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaQuotaManager} instance with the specified {@link AdminClientContext}.
+     *
+     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     */
+    public AdminClientKafkaQuotaManager(final @NotNull AdminClientContext adminClientContext) {
+        this.adminClientContext = adminClientContext;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -95,7 +120,7 @@ public final class AdminClientKafkaQuotaManager extends AbstractKafkaQuotaManage
         };
     }
 
-    public final class DescribeQuotas {
+    public static final class DescribeQuotas {
 
         private final AdminClient client;
 

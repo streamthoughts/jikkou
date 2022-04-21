@@ -71,8 +71,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call() {
 
-        final KafkaBrokerManager manager = new AdminClientKafkaBrokerManager();
-        manager.configure(JikkouConfig.get());
+        final KafkaBrokerManager manager = new AdminClientKafkaBrokerManager(JikkouConfig.get());
 
         final BrokerDescribeOptions options = new BrokerDescribeOptions()
                 .withDescribeDefaultConfigs(describeDefaultConfigs)

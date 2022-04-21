@@ -71,8 +71,7 @@ public class AclsCommand {
         @Override
         public Collection<ChangeResult<AclChange>> execute(List<V1SpecsObject> objects) {
 
-            final KafkaAclsManager manager = new AdminClientKafkaAclsManager();
-            manager.configure(JikkouConfig.get());
+            final KafkaAclsManager manager = new AdminClientKafkaAclsManager(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),

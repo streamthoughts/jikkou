@@ -68,8 +68,7 @@ public class AdminClientKafkaTopicManagerITest {
                 .builder()
                 .withConfigOverrides(Map.of("adminClient.bootstrap.servers", kafka.getBootstrapServers()))
                 .getOrCreate();
-        manager = new AdminClientKafkaTopicManager();
-        manager.configure(config);
+        manager = new AdminClientKafkaTopicManager(config);
     }
 
 

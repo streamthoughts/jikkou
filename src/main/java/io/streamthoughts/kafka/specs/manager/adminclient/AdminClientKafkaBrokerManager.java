@@ -48,6 +48,30 @@ public final class AdminClientKafkaBrokerManager implements KafkaBrokerManager {
     private AdminClientContext adminClientContext;
 
     /**
+     * Creates a new {@link AdminClientKafkaBrokerManager} instance.
+     */
+    public AdminClientKafkaBrokerManager() {
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaBrokerManager} instance.
+     *
+     * @param config the application's configuration.
+     */
+    public AdminClientKafkaBrokerManager(final @NotNull JikkouConfig config) {
+        configure(config);
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaBrokerManager} instance.
+     *
+     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     */
+    public AdminClientKafkaBrokerManager(final @NotNull AdminClientContext adminClientContext) {
+        this.adminClientContext = adminClientContext;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -76,7 +100,7 @@ public final class AdminClientKafkaBrokerManager implements KafkaBrokerManager {
     /**
      * Class that can be used to describe topic resources.
      */
-    public class DescribeBrokers {
+    public final class DescribeBrokers {
 
         private final AdminClient client;
 
