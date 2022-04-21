@@ -101,15 +101,15 @@ public final class JikkouConfig {
      * <p>
      * This method loads the following (first-listed are higher priority):
      * <ul>
-     *     <li>system properties</li>
-     *     <li>./application.config</li>
-     *     <li>$USER_HOME/./jikkou/application.config</li>
-     *     <li>application.conf (all resources on classpath with this name)</li>
-     *     <li>application.json (all resources on classpath with this name)</li>
-     *     <li>application.properties (all resources on classpath with this name)</li>
-     *     <li>reference.conf (all resources on classpath with this name)</li>
+     * <li>system properties
+     * <li>./application.config
+     * <li>$USER_HOME/./jikkou/application.config
+     * <li>application.conf (all resources on classpath with this name)
+     * <li>application.json (all resources on classpath with this name)
+     * <li>application.properties (all resources on classpath with this name)
+     * <li>reference.conf (all resources on classpath with this name)
      * </ul>
-     * </p>
+     *
      * @return a new {@link JikkouConfig}
      */
     public static JikkouConfig load() {
