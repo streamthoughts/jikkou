@@ -20,19 +20,12 @@ package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.config.JikkouParams;
-import io.streamthoughts.kafka.specs.resources.Named;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.streamthoughts.kafka.specs.predicate.KafkaResourcePredicate;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
-import picocli.CommandLine.ParentCommand;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.function.Predicate;
-
-import static java.util.Arrays.stream;
 
 @Command(synopsisHeading      = "%nUsage:%n%n",
          descriptionHeading   = "%nDescription:%n%n",
@@ -42,38 +35,15 @@ import static java.util.Arrays.stream;
          mixinStandardHelpOptions = true)
 public abstract class BaseCommand implements Callable<Integer> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseCommand.class);
-
     @Mixin
     ExecOptionsMixin execOptions;
 
-    public final boolean isResourceCandidate(final Named resourceName) {
-        final boolean candidate = isResourceCandidate(resourceName.name());
-        if (!candidate) {
-            LOG.info("Excluded resource with name '{}'.", resourceName);
-        }
-        return candidate;
-    }
-
     public final boolean isResourceCandidate(final String resourceName) {
-        final boolean candidate = includePredicate().test(resourceName) && !excludePredicate().test(resourceName);
-        if (!candidate) {
-            LOG.info("Excluded resource with name '{}'.", resourceName);
-        }
-        return candidate;
-    }
-
-    private Predicate<String> includePredicate() {
-        return s -> Optional.ofNullable(execOptions.include)
-                .or(() -> JikkouParams.INCLUDE_RESOURCES.getOption(JikkouConfig.get()).toJavaOptional())
-                .map(patterns -> patterns.length == 0 || stream(patterns).anyMatch(m -> m.matcher(s).matches()))
-                .orElse(true);
-    }
-
-    private Predicate<String> excludePredicate() {
-        return s -> Optional.ofNullable(execOptions.exclude)
-                .or(() -> JikkouParams.EXCLUDE_RESOURCES.getOption(JikkouConfig.get()).toJavaOptional())
-                .map(patterns -> patterns.length != 0 && stream(patterns).anyMatch(m -> m.matcher(s).matches()))
-                .orElse(false);
+        return new KafkaResourcePredicate()
+                .withExcludes(Optional.ofNullable(execOptions.exclude)
+                        .or(() -> JikkouParams.EXCLUDE_RESOURCES.getOption(JikkouConfig.get()).toJavaOptional()).orElse(null))
+                .withIncludes(Optional.ofNullable(execOptions.include)
+                        .or(() -> JikkouParams.INCLUDE_RESOURCES.getOption(JikkouConfig.get()).toJavaOptional()).orElse(null))
+                .test(resourceName);
     }
 }

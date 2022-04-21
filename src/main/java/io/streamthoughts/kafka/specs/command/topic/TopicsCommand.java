@@ -70,8 +70,7 @@ public class TopicsCommand {
          */
         @Override
         public Collection<ChangeResult<TopicChange>> execute(List<V1SpecsObject> objects) {
-            final KafkaTopicManager manager = new AdminClientKafkaTopicManager();
-            manager.configure(JikkouConfig.get());
+            final KafkaTopicManager manager = new AdminClientKafkaTopicManager(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),
