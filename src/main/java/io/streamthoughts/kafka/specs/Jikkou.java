@@ -129,8 +129,8 @@ public class Jikkou {
         cliConfigParams.put(JikkouParams.ADMIN_CLIENT_CONFIG_NAME, adminClientParams);
 
         JikkouConfig.builder()
-                .withCLIConfigFile(options.configFile)
-                .withCLIConfigParams(cliConfigParams)
+                .withConfigFile(options.configFile)
+                .withConfigOverrides(cliConfigParams)
                 .getOrCreate();
     }
 

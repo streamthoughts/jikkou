@@ -66,7 +66,7 @@ public class AdminClientKafkaTopicManagerITest {
     public void setUp() {
         var config = JikkouConfig
                 .builder()
-                .withCLIConfigParams(Map.of("adminClient.bootstrap.servers", kafka.getBootstrapServers()))
+                .withConfigOverrides(Map.of("adminClient.bootstrap.servers", kafka.getBootstrapServers()))
                 .getOrCreate();
         manager = new AdminClientKafkaTopicManager();
         manager.configure(config);

@@ -87,8 +87,8 @@ public final class JikkouConfig {
     /**
      * Retrieves the global static configuration.
      *
+     * @return the {@link JikkouConfig} configuration object.
      * @throws IllegalStateException if no configuration was initialized.
-     * @return  the {@link JikkouConfig} configuration object.
      */
     public static @NotNull JikkouConfig get() {
         if (CACHED != null) return CACHED;
@@ -96,16 +96,51 @@ public final class JikkouConfig {
     }
 
     /**
-     * Helper method to get or create a new {@link JikkouConfig} instance.
+     * Static helper method to load the default application's configuration.
      *
-     * @param cliConfigParams the config params passed through the command-mine arguments.
-     * @param cliConfigFile   the configFile passed through the command-line arguments.
+     * <p>
+     * This method loads the following (first-listed are higher priority):
+     * <ul>
+     *     <li>system properties</li>
+     *     <li>./application.config</li>
+     *     <li>$USER_HOME/./jikkou/application.config</li>
+     *     <li>application.conf (all resources on classpath with this name)</li>
+     *     <li>application.json (all resources on classpath with this name)</li>
+     *     <li>application.properties (all resources on classpath with this name)</li>
+     *     <li>reference.conf (all resources on classpath with this name)</li>
+     * </ul>
+     * </p>
      * @return a new {@link JikkouConfig}
      */
-    private static JikkouConfig create(final @Nullable Map<String, Object> cliConfigParams,
-                                       final @Nullable String cliConfigFile) {
+    public static JikkouConfig load() {
+        return load(null, null);
+    }
 
-        getConfigFile(cliConfigFile).ifPresentOrElse(configFile -> {
+    /**
+     * Like {@link #load()} but allows overriding some config properties.
+     *
+     * @param configOverrides the application's configuration properties to override.
+     *
+     * @return a new {@link JikkouConfig}
+     */
+    public static JikkouConfig load(final @Nullable Map<String, Object> configOverrides) {
+
+        return load(configOverrides, null);
+    }
+
+    /**
+     * Like {@link #load()} but allows specifying the application's configuration file to load,
+     * and overriding some config properties
+     *
+     * @param configOverrides   the application's configuration properties to override.
+     * @param configFilePath    the application's configuration file to load
+     *
+     * @return a new {@link JikkouConfig}
+     */
+    public static JikkouConfig load(final @Nullable Map<String, Object> configOverrides,
+                                    final @Nullable String configFilePath) {
+
+        getConfigFile(configFilePath).ifPresentOrElse(configFile -> {
             LOG.info("Loading configuration from: '{}'", configFile);
             System.setProperty("config.file", configFile);
         }, () -> LOG.info("No configuration file was found"));
@@ -113,16 +148,16 @@ public final class JikkouConfig {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig(ROOT_CONFIG_KEY);
 
-        if (cliConfigParams != null && !cliConfigParams.isEmpty()) {
-            final Config overridingConfig = ConfigFactory.parseMap(cliConfigParams);
+        if (configOverrides != null && !configOverrides.isEmpty()) {
+            final Config overridingConfig = ConfigFactory.parseMap(configOverrides);
             config = overridingConfig.withFallback(config);
         }
         return new JikkouConfig(config);
     }
 
-    private static Optional<String> getConfigFile(@Nullable final String clientConfigFile) {
-        if (clientConfigFile != null && !clientConfigFile.isEmpty())
-            return Optional.of(clientConfigFile);
+    private static Optional<String> getConfigFile(@Nullable final String configFilePath) {
+        if (configFilePath != null && !configFilePath.isEmpty())
+            return Optional.of(configFilePath);
 
         Path configFromCurrentRelative = Paths.get(DEFAULT_CONFIG);
         if (Files.exists(configFromCurrentRelative)) {
@@ -165,7 +200,7 @@ public final class JikkouConfig {
     }
 
     /**
-     * @return  the underlying {@link Config} object.
+     * @return the underlying {@link Config} object.
      */
     public Config unwrap() {
         return config;
@@ -245,8 +280,8 @@ public final class JikkouConfig {
     public <T> Option<List<Class<T>>> findClassList(@NotNull final String path) {
         return findStringList(path).flatMap(classes -> {
             var l = classes.stream()
-                .map(it -> (Class<T>) ClassUtils.forName(it))
-                .collect(Collectors.toList());
+                    .map(it -> (Class<T>) ClassUtils.forName(it))
+                    .collect(Collectors.toList());
             return Option.of(l);
         });
     }
@@ -286,23 +321,28 @@ public final class JikkouConfig {
         return new Builder();
     }
 
-    public static class Builder {
+    public static final class Builder {
 
-        private String cliConfigFile;
-        private Map<String, Object> cliConfigParams;
+        private String configFile;
+        private final Map<String, Object> cliConfigParams = new HashMap<>();
 
-        public Builder withCLIConfigFile(final @NotNull String cliConfigFile) {
-            this.cliConfigFile = cliConfigFile;
+        public Builder withConfigFile(final @NotNull String configFile) {
+            this.configFile = configFile;
             return this;
         }
 
-        public Builder withCLIConfigParams(final @NotNull Map<String, Object> cliConfigParams) {
-            this.cliConfigParams = cliConfigParams;
+        public Builder withConfigOverrides(final @NotNull Map<String, Object> configOverrides) {
+            this.cliConfigParams.putAll(configOverrides);
+            return this;
+        }
+
+        public Builder withConfigOverrides(final @NotNull String configKey, final @NotNull Object configValue) {
+            this.cliConfigParams.put(configKey, configValue);
             return this;
         }
 
         public JikkouConfig getOrCreate() {
-            Option.of(CACHED).onEmpty(() -> CACHED = create(cliConfigParams, cliConfigFile));
+            Option.of(CACHED).onEmpty(() -> CACHED = load(cliConfigParams, configFile));
             return CACHED;
         }
     }
