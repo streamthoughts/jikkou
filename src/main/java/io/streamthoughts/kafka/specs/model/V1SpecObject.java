@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class V1SpecsObject implements Serializable {
+public class V1SpecObject implements Serializable {
 
     private final V1ConfigMaps configMaps;
 
@@ -46,8 +46,8 @@ public class V1SpecsObject implements Serializable {
      *
      * @return a new {@link V1SpecFile} instance.
      */
-    public static V1SpecsObject withTopics(final List<V1TopicObject> topics) {
-        return new V1SpecsObject(
+    public static V1SpecObject withTopics(final List<V1TopicObject> topics) {
+        return new V1SpecObject(
             Collections.emptyList(),
             topics,
             null,
@@ -61,8 +61,8 @@ public class V1SpecsObject implements Serializable {
      *
      * @return a new {@link V1SpecFile} instance.
      */
-    public static V1SpecsObject withBrokers(final List<V1BrokerObject> brokers) {
-        return new V1SpecsObject(
+    public static V1SpecObject withBrokers(final List<V1BrokerObject> brokers) {
+        return new V1SpecObject(
                 brokers,
                 Collections.emptyList(),
                 null,
@@ -76,8 +76,8 @@ public class V1SpecsObject implements Serializable {
      *
      * @return a new {@link V1SpecFile} instance.
      */
-    public static V1SpecsObject withSecurity(final V1SecurityObject security) {
-        return new V1SpecsObject(
+    public static V1SpecObject withSecurity(final V1SecurityObject security) {
+        return new V1SpecObject(
                 Collections.emptyList(),
                 Collections.emptyList(),
                 security,
@@ -91,8 +91,8 @@ public class V1SpecsObject implements Serializable {
      *
      * @return a new {@link V1SpecFile} instance.
      */
-    public static V1SpecsObject withQuotas(final List<V1QuotaObject> quotas) {
-        return new V1SpecsObject(
+    public static V1SpecObject withQuotas(final List<V1QuotaObject> quotas) {
+        return new V1SpecObject(
                 Collections.emptyList(),
                 Collections.emptyList(),
                 null,
@@ -104,7 +104,7 @@ public class V1SpecsObject implements Serializable {
     /**
      * Creates a new {@link V1SpecFile} instance.
      */
-    public V1SpecsObject() {
+    public V1SpecObject() {
         this(null, null, null, null, null);
     }
 
@@ -118,11 +118,11 @@ public class V1SpecsObject implements Serializable {
      * @param quotas     the {@link V1QuotaObject}.
      */
     @JsonCreator
-    public V1SpecsObject(@JsonProperty("brokers") final List<V1BrokerObject> brokers,
-                         @JsonProperty("topics") final List<V1TopicObject> topics,
-                         @JsonProperty("security") final V1SecurityObject security,
-                         @JsonProperty("config_maps") final List<V1ConfigMap> configMaps,
-                         @JsonProperty("quotas") final List<V1QuotaObject> quotas) {
+    public V1SpecObject(@JsonProperty("brokers") final List<V1BrokerObject> brokers,
+                        @JsonProperty("topics") final List<V1TopicObject> topics,
+                        @JsonProperty("security") final V1SecurityObject security,
+                        @JsonProperty("config_maps") final List<V1ConfigMap> configMaps,
+                        @JsonProperty("quotas") final List<V1QuotaObject> quotas) {
         this.brokers = Optional.ofNullable(brokers).orElse(Collections.emptyList());
         this.topics = Optional.ofNullable(topics).orElse(Collections.emptyList());
         this.quotas = Optional.ofNullable(quotas).orElse(Collections.emptyList());
@@ -135,8 +135,8 @@ public class V1SpecsObject implements Serializable {
         return topics;
     }
 
-    public V1SpecsObject topics(final List<V1TopicObject> topics) {
-        return new V1SpecsObject(brokers, topics, security, configMaps.all(), quotas);
+    public V1SpecObject topics(final List<V1TopicObject> topics) {
+        return new V1SpecObject(brokers, topics, security, configMaps.all(), quotas);
     }
 
     @JsonProperty
@@ -149,8 +149,8 @@ public class V1SpecsObject implements Serializable {
         return Optional.ofNullable(security);
     }
 
-    public V1SpecsObject quotas(final List<V1QuotaObject> quotas) {
-        return new V1SpecsObject(brokers, topics, security, configMaps.all(), quotas);
+    public V1SpecObject quotas(final List<V1QuotaObject> quotas) {
+        return new V1SpecObject(brokers, topics, security, configMaps.all(), quotas);
     }
 
     @JsonProperty
@@ -164,15 +164,15 @@ public class V1SpecsObject implements Serializable {
     }
 
     @JsonIgnore
-    public V1SpecsObject configMaps(final List<V1ConfigMap> configMaps) {
-        return new V1SpecsObject(brokers, topics, security, configMaps, quotas);
+    public V1SpecObject configMaps(final List<V1ConfigMap> configMaps) {
+        return new V1SpecObject(brokers, topics, security, configMaps, quotas);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        V1SpecsObject that = (V1SpecsObject) o;
+        V1SpecObject that = (V1SpecObject) o;
         return Objects.equals(configMaps, that.configMaps) &&
                Objects.equals(topics, that.topics) &&
                Objects.equals(security, that.security) &&

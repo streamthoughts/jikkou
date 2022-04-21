@@ -27,7 +27,7 @@ import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaBrokerM
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1BrokerObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -83,7 +83,7 @@ public class Describe extends BaseCommand {
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
 
-            final V1SpecsObject specsObject = V1SpecsObject.withBrokers(resources);
+            final V1SpecObject specsObject = V1SpecObject.withBrokers(resources);
             YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {

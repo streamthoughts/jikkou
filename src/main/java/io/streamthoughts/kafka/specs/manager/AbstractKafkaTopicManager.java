@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.change.TopicChange;
 import io.streamthoughts.kafka.specs.change.TopicChangeComputer;
 import io.streamthoughts.kafka.specs.change.TopicChangeOptions;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.operation.topics.TopicOperation;
 
@@ -38,7 +38,7 @@ public abstract class AbstractKafkaTopicManager implements KafkaTopicManager {
      */
     @Override
     public Collection<ChangeResult<TopicChange>> update(final UpdateMode mode,
-                                                        final List<V1SpecsObject> objects,
+                                                        final List<V1SpecObject> objects,
                                                         final KafkaResourceUpdateContext<TopicChangeOptions> context) {
 
         return objects.stream()

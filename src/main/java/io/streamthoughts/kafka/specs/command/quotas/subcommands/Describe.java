@@ -27,7 +27,7 @@ import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaQuotaMa
 import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -57,7 +57,7 @@ public class Describe extends BaseCommand {
 
             final OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
             final List<V1QuotaObject> quotas = manager.describe(new DescribeOptions() {});
-            final V1SpecsObject specsObject = V1SpecsObject.withQuotas(quotas);
+            final V1SpecObject specsObject = V1SpecObject.withQuotas(quotas);
             YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {

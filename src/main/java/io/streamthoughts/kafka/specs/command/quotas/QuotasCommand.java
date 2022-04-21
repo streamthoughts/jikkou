@@ -32,7 +32,7 @@ import io.streamthoughts.kafka.specs.manager.KafkaQuotaManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaQuotaManager;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -69,7 +69,7 @@ public class QuotasCommand {
          * {@inheritDoc}
          */
         @Override
-        public Collection<ChangeResult<QuotaChange>> execute(final @NotNull List<V1SpecsObject> objects) {
+        public Collection<ChangeResult<QuotaChange>> execute(final @NotNull List<V1SpecObject> objects) {
             final KafkaQuotaManager manager = new AdminClientKafkaQuotaManager(JikkouConfig.get());
 
             return manager.update(

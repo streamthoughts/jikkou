@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class NoDuplicateUsersAllowedValidationTest {
     @Test
     public void should_throw_validation_exception_given_duplicate() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            final V1SpecsObject object = V1SpecsObject.withSecurity(
+            final V1SpecObject object = V1SpecObject.withSecurity(
                     V1SecurityObject.withUsers(List.of(TEST_USER, TEST_USER))
             );
             validation.validate(object);
@@ -48,7 +48,7 @@ public class NoDuplicateUsersAllowedValidationTest {
     @Test
     public void should_not_throw_validation_exception_given_duplicate() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            final V1SpecsObject object = V1SpecsObject.withSecurity(
+            final V1SpecObject object = V1SpecObject.withSecurity(
                     V1SecurityObject.withUsers(List.of(TEST_USER, TEST_USER))
             );
             validation.validate(object);

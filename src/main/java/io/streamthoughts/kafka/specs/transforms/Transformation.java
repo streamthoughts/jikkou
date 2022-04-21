@@ -21,11 +21,11 @@ package io.streamthoughts.kafka.specs.transforms;
 import io.streamthoughts.kafka.specs.config.Configurable;
 import io.streamthoughts.kafka.specs.extensions.Extension;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Transform an input {@link V1SpecsObject}.
+ * Transform an input {@link V1SpecObject}.
  */
 @FunctionalInterface
 public interface Transformation extends Extension, Configurable {
@@ -33,9 +33,9 @@ public interface Transformation extends Extension, Configurable {
     /**
      * Applies the transformation on the given {@link V1SpecFile} object.
      *
-     * @param V1SpecsObject    the {@link V1SpecsObject} object to transform.
-     * @return                 a {@link V1SpecsObject}.
+     * @param V1SpecsObject    the {@link V1SpecObject} object to transform.
+     * @return                 a {@link V1SpecObject}.
      */
-    @NotNull V1SpecsObject transform(@NotNull final V1SpecsObject V1SpecsObject);
+    @NotNull V1SpecObject transform(@NotNull final V1SpecObject V1SpecsObject);
 
 }

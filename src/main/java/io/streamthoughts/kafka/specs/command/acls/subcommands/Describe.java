@@ -27,7 +27,7 @@ import io.streamthoughts.kafka.specs.model.MetaObject;
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -60,7 +60,7 @@ public class Describe extends BaseCommand {
 
         try {
             OutputStream os = (filePath != null) ? new FileOutputStream(filePath) : System.out;
-            final V1SpecsObject specsObject = V1SpecsObject.withSecurity(new V1SecurityObject(users, null));
+            final V1SpecObject specsObject = V1SpecObject.withSecurity(new V1SecurityObject(users, null));
             YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), specsObject), os);
             return CommandLine.ExitCode.OK;
         } catch (FileNotFoundException e) {

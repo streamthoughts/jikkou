@@ -31,7 +31,7 @@ import io.streamthoughts.kafka.specs.manager.KafkaAclsManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaAclsManager;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -69,7 +69,7 @@ public class AclsCommand {
         public abstract KafkaResourceManager.UpdateMode getUpdateMode();
 
         @Override
-        public Collection<ChangeResult<AclChange>> execute(List<V1SpecsObject> objects) {
+        public Collection<ChangeResult<AclChange>> execute(List<V1SpecObject> objects) {
 
             final KafkaAclsManager manager = new AdminClientKafkaAclsManager(JikkouConfig.get());
 

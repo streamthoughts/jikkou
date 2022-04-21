@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.transforms;
 
 import io.streamthoughts.kafka.specs.model.ConfigMapRefs;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 public class ApplyConfigMapsTransformation implements Transformation {
 
     @Override
-    public @NotNull V1SpecsObject transform(@NotNull final V1SpecsObject specs) {
+    public @NotNull V1SpecObject transform(@NotNull final V1SpecObject specs) {
         return specs
                 .topics(transform(specs, specs.topics()))
                 .quotas(transform(specs, specs.quotas()));
     }
 
-    private <T extends ConfigMapRefs<T>> List<T> transform(@NotNull final V1SpecsObject specs,
+    private <T extends ConfigMapRefs<T>> List<T> transform(@NotNull final V1SpecObject specs,
                                                            @NotNull final List<T> configMapRefs) {
 
         return configMapRefs.stream()

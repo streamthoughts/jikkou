@@ -19,11 +19,7 @@
 package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Validation for {@link V1QuotaObject}.

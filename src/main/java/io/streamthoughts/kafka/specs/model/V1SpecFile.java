@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Nullable;
@@ -32,19 +33,19 @@ public class V1SpecFile extends V1MetadataObjects implements Serializable {
 
     public static final String VERSION = "1";
 
-    private final V1SpecsObject specs;
+    private final V1SpecObject spec;
 
     /**
      * Creates a new {@link V1SpecFile} instance.
      *
      * @param metadata  the {@link MetaObject}.
-     * @param specs     the {@link V1SpecsObject}.
+     * @param specs     the {@link V1SpecObject}.
      */
     @JsonCreator
     public V1SpecFile(@Nullable @JsonProperty("metadata") final MetaObject metadata,
-                      @Nullable @JsonProperty("specs") final V1SpecsObject specs) {
+                      @Nullable @JsonProperty("spec") @JsonAlias("specs") final V1SpecObject specs) {
         super(metadata);
-        this.specs = Optional.ofNullable(specs).orElse(new V1SpecsObject());
+        this.spec = Optional.ofNullable(specs).orElse(new V1SpecObject());
     }
 
     @JsonProperty(index = 0)
@@ -53,15 +54,14 @@ public class V1SpecFile extends V1MetadataObjects implements Serializable {
     }
 
     @JsonProperty
-    public V1SpecsObject specs() {
-        return specs;
+    public V1SpecObject specs() {
+        return spec;
     }
-
-
+    
     @Override
     public String toString() {
         return "V1SpecFile{" +
-                "specs=" + specs +
+                "spec=" + spec +
                 '}';
     }
 }

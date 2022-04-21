@@ -31,7 +31,7 @@ import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.operation.acls.AclOperation;
 import io.streamthoughts.kafka.specs.operation.acls.ApplyAclsOperation;
 import io.streamthoughts.kafka.specs.operation.acls.CreateAclsOperation;
@@ -96,7 +96,7 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
 
     @Override
     public Collection<ChangeResult<AclChange>> update(final UpdateMode mode,
-                                                      final List<V1SpecsObject> objects,
+                                                      final List<V1SpecObject> objects,
                                                       final KafkaResourceUpdateContext<AclChangeOptions> context) {
 
         return adminClientContext.invokeAndClose((adminClient) -> objects

@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.io;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.kafka.specs.Jackson;
@@ -78,7 +79,10 @@ public class YAMLSpecReader implements SpecFileReader {
             return version;
         }
 
-        public static Optional<VersionedSpecReader> getReaderForVersion(final String version) {
+        public static Optional<VersionedSpecReader> getReaderForVersion(String version) {
+            if (version.startsWith("v") || version.startsWith("V")) {
+                version = version.replaceFirst("[v|V]", "");
+            }
             for (VersionedSpecReader e : VersionedSpecReader.values()) {
                 if (e.version().startsWith(version)) {
                     return Optional.of(e);
@@ -186,7 +190,7 @@ public class YAMLSpecReader implements SpecFileReader {
         private final String version;
 
         @JsonCreator
-        public Versioned(@JsonProperty("version") final String version) {
+        public Versioned(@JsonProperty("apiVersion") @JsonAlias("version") final String version) {
             this.version = version;
         }
 

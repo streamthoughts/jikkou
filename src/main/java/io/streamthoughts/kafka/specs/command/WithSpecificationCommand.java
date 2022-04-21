@@ -25,7 +25,7 @@ import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.processor.V1SpecFileProcessor;
 import io.vavr.Lazy;
 import picocli.CommandLine;
@@ -48,7 +48,7 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
     @Mixin
     SetOptionsMixin options;
 
-    private final Lazy<List<V1SpecsObject>> object = Lazy.of(() -> {
+    private final Lazy<List<V1SpecObject>> object = Lazy.of(() -> {
         V1SpecFileProcessor processor = V1SpecFileProcessor.create(JikkouConfig.get());
         List<V1SpecFile> specFiles = SpecFileLoader.newForYaml()
                 .withPattern(specOptions.pattern)
@@ -71,7 +71,7 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
         return CommandLine.ExitCode.OK;
     }
 
-    public abstract Collection<ChangeResult<T>> execute(List<V1SpecsObject> objects);
+    public abstract Collection<ChangeResult<T>> execute(List<V1SpecObject> objects);
 
     public boolean isDryRun() {
         return execOptions.dryRun;

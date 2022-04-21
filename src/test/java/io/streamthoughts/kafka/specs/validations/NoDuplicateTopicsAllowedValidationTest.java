@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,14 +33,14 @@ public class NoDuplicateTopicsAllowedValidationTest {
     @Test
     public void should_throw_validation_exception_given_duplicate() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            validation.validate(new V1SpecsObject().topics(List.of(TEST_TOPIC, TEST_TOPIC)));
+            validation.validate(new V1SpecObject().topics(List.of(TEST_TOPIC, TEST_TOPIC)));
         });
     }
 
     @Test
     public void should_not_throw_validation_exception_given_duplicate() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            validation.validate(new V1SpecsObject().topics(List.of(TEST_TOPIC, TEST_TOPIC)));
+            validation.validate(new V1SpecObject().topics(List.of(TEST_TOPIC, TEST_TOPIC)));
         });
     }
 }

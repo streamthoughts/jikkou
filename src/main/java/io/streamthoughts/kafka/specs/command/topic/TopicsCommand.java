@@ -32,7 +32,7 @@ import io.streamthoughts.kafka.specs.manager.KafkaResourceManager;
 import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.KafkaTopicManager;
 import io.streamthoughts.kafka.specs.manager.adminclient.AdminClientKafkaTopicManager;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -69,7 +69,7 @@ public class TopicsCommand {
          * {@inheritDoc}
          */
         @Override
-        public Collection<ChangeResult<TopicChange>> execute(List<V1SpecsObject> objects) {
+        public Collection<ChangeResult<TopicChange>> execute(List<V1SpecObject> objects) {
             final KafkaTopicManager manager = new AdminClientKafkaTopicManager(JikkouConfig.get());
 
             return manager.update(

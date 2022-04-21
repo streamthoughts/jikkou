@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.config.Configurable;
 import io.streamthoughts.kafka.specs.extensions.Extension;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
@@ -35,10 +35,10 @@ public interface Validation extends Extension, Configurable {
     }
 
     /**
-     * Validates the given the {@link V1SpecsObject}.
+     * Validates the given the {@link V1SpecObject}.
      *
-     * @param specsObject             the {@link V1SpecsObject} object to validate.
-     * @throws ValidationException    if the given {@link V1SpecsObject} object is not valid.
+     * @param specsObject             the {@link V1SpecObject} object to validate.
+     * @throws ValidationException    if the given {@link V1SpecObject} object is not valid.
      */
-    void validate(@NotNull final V1SpecsObject specsObject) throws ValidationException;
+    void validate(@NotNull final V1SpecObject specsObject) throws ValidationException;
 }

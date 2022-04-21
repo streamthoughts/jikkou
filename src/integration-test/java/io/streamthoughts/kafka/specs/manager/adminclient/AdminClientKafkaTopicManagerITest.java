@@ -29,7 +29,7 @@ import io.streamthoughts.kafka.specs.manager.KafkaResourceUpdateContext;
 import io.streamthoughts.kafka.specs.manager.KafkaTopicManager;
 import io.streamthoughts.kafka.specs.manager.TopicDescribeOptions;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.resources.ConfigValue;
 import io.streamthoughts.kafka.specs.resources.Named;
@@ -126,7 +126,7 @@ public class AdminClientKafkaTopicManagerITest {
         // When
         Collection<ChangeResult<TopicChange>> results = manager.update(
                 KafkaResourceManager.UpdateMode.DELETE_ONLY,
-                List.of(new V1SpecsObject()),
+                List.of(new V1SpecObject()),
                 KafkaResourceUpdateContext.with(options, false)
         );
 
@@ -150,7 +150,7 @@ public class AdminClientKafkaTopicManagerITest {
         Assertions.assertEquals(1, actualTopics.size());
 
         InputStream topics = getTopicSpecFileInputStream();
-        List<V1SpecsObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
 
         TopicChangeOptions options = new TopicChangeOptions();
 
@@ -180,7 +180,7 @@ public class AdminClientKafkaTopicManagerITest {
         Assertions.assertEquals(1, actualTopics.size());
 
         InputStream topics = getTopicSpecFileInputStream();
-        List<V1SpecsObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
 
         TopicChangeOptions options = new TopicChangeOptions()
                 .withDeleteTopicOrphans(false);
@@ -212,7 +212,7 @@ public class AdminClientKafkaTopicManagerITest {
         Assertions.assertEquals(1, actualTopics.size());
 
         InputStream topics = getTopicSpecFileInputStream();
-        List<V1SpecsObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
 
         TopicChangeOptions options = new TopicChangeOptions()
                 .withDeleteTopicOrphans(true);

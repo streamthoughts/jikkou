@@ -49,7 +49,7 @@ public class YAMLClusterSpecWriterTest {
                                 )
                                 .build()
                 ).build();
-        V1SpecsObject v1SpecsObject = V1SpecsObject.withSecurity(V1SecurityObject.withUsers(List.of(user)));
+        V1SpecObject v1SpecsObject = V1SpecObject.withSecurity(V1SecurityObject.withUsers(List.of(user)));
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         YAMLSpecWriter.instance().write(new V1SpecFile(MetaObject.defaults(), v1SpecsObject), os);
         Assertions.assertNotNull(os.toString(StandardCharsets.UTF_8));

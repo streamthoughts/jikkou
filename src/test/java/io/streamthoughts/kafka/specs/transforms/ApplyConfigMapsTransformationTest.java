@@ -43,11 +43,11 @@ public class ApplyConfigMapsTransformationTest {
 
     @Test
     public void should_add_config_props_to_topic_given_valid_config_map() {
-        V1SpecsObject object = new V1SpecsObject()
+        V1SpecObject object = new V1SpecObject()
                 .topics(List.of(TEST_TOPIC_OBJECT))
                 .configMaps(List.of(TEST_CONFIG_MAP));
 
-        V1SpecsObject transformed = new ApplyConfigMapsTransformation().transform(object);
+        V1SpecObject transformed = new ApplyConfigMapsTransformation().transform(object);
         V1TopicObject v1TopicObject = transformed.topics().get(0);
         Assertions.assertEquals("v1", v1TopicObject.configs().get("k1").value());
     }

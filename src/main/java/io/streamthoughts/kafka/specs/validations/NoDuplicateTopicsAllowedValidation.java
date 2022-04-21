@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.specs.validations;
 
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class NoDuplicateTopicsAllowedValidation implements Validation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1SpecsObject specsObject) throws ValidationException {
+    public void validate(final @NotNull V1SpecObject specsObject) throws ValidationException {
         final List<V1TopicObject> topics = specsObject.topics();
         if (topics.isEmpty()) return;
 

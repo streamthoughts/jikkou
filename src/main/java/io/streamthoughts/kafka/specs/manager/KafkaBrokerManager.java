@@ -22,7 +22,7 @@ import io.streamthoughts.kafka.specs.change.Change;
 import io.streamthoughts.kafka.specs.change.ChangeComputer;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.model.V1BrokerObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +38,7 @@ public interface KafkaBrokerManager extends
      */
     @Override
     default Collection<ChangeResult<Change<?>>> update(UpdateMode mode,
-                                                       List<V1SpecsObject> objects,
+                                                       List<V1SpecObject> objects,
                                                        KafkaResourceUpdateContext<ChangeComputer.Options> context) {
         throw new UnsupportedOperationException();
     }

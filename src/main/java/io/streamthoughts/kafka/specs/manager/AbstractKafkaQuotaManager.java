@@ -24,7 +24,7 @@ import io.streamthoughts.kafka.specs.change.QuotaChange;
 import io.streamthoughts.kafka.specs.change.QuotaChangeComputer;
 import io.streamthoughts.kafka.specs.change.QuotaChangeOptions;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.operation.quotas.QuotaOperation;
 
 import java.util.Collection;
@@ -38,7 +38,7 @@ public abstract class AbstractKafkaQuotaManager implements KafkaQuotaManager {
      */
     @Override
     public Collection<ChangeResult<QuotaChange>> update(final UpdateMode mode,
-                                                        final List<V1SpecsObject> objects,
+                                                        final List<V1SpecObject> objects,
                                                         final KafkaResourceUpdateContext<QuotaChangeOptions> context) {
 
         return objects.stream()

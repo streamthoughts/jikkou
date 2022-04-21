@@ -31,7 +31,7 @@ import io.streamthoughts.kafka.specs.model.V1QuotaEntityObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaLimitsObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
 import io.streamthoughts.kafka.specs.model.V1QuotaType;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.operation.quotas.AlterQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.ApplyQuotasOperation;
 import io.streamthoughts.kafka.specs.operation.quotas.CreateQuotasOperation;
@@ -91,7 +91,7 @@ public final class AdminClientKafkaQuotaManager extends AbstractKafkaQuotaManage
      */
     @Override
     public Collection<ChangeResult<QuotaChange>> update(final UpdateMode mode,
-                                                        final List<V1SpecsObject> objects,
+                                                        final List<V1SpecObject> objects,
                                                         final KafkaResourceUpdateContext<QuotaChangeOptions> context) {
         return adminClientContext.invokeAndClose((adminClient) -> super.update(mode, objects, context));
     }

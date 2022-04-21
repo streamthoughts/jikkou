@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.model.V1AccessRoleObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ public class NoDuplicateRolesAllowedValidationTest {
     @Test
     public void should_throw_validation_exception_given_duplicate() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            final V1SpecsObject object = V1SpecsObject.withSecurity(
+            final V1SpecObject object = V1SpecObject.withSecurity(
                     V1SecurityObject.withRoles(List.of(TEST_ROLE, TEST_ROLE))
             );
             validation.validate(object);
@@ -46,7 +46,7 @@ public class NoDuplicateRolesAllowedValidationTest {
     @Test
     public void should_not_throw_validation_exception_given_duplicate() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            final V1SpecsObject object = V1SpecsObject.withSecurity(
+            final V1SpecObject object = V1SpecObject.withSecurity(
                     V1SecurityObject.withRoles(List.of(TEST_ROLE, TEST_ROLE))
             );
             validation.validate(object);

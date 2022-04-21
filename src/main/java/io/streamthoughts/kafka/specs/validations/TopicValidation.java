@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.error.ConfigException;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Validation for {@link V1SpecsObject}.
+ * Validation for {@link V1SpecObject}.
  */
 public abstract class TopicValidation implements Validation {
 
@@ -47,7 +47,7 @@ public abstract class TopicValidation implements Validation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(@NotNull final V1SpecsObject specsObject) throws ValidationException {
+    public void validate(@NotNull final V1SpecObject specsObject) throws ValidationException {
         final List<V1TopicObject> topics = specsObject.topics();
         if (topics.isEmpty()) return;
 

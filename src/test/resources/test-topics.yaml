@@ -1,6 +1,6 @@
-version: 1
+apiVersion: "v1"
 metadata: {}
-specs:
+spec:
   topics:
     - name: 'my-topic-p1'
       partitions: 1

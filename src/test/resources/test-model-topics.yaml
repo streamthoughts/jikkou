@@ -1,6 +1,6 @@
-version: 1
+apiVersion: "v1"
 metadata: {}
-specs:
+spec:
   config_maps:
     - name: "CleanupPolicy"
       configs:

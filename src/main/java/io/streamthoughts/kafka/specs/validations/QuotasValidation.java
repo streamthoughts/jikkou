@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.model.V1QuotaObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public abstract class QuotasValidation implements Validation {
     /**
      * {@inheritDoc}
      */
-    public void validate(@NotNull final V1SpecsObject specsObject) throws ValidationException {
+    public void validate(@NotNull final V1SpecObject specsObject) throws ValidationException {
         final List<V1QuotaObject> quotas = specsObject.quotas();
         if (quotas.isEmpty()) return;
 

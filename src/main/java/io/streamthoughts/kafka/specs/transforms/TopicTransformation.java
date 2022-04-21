@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.transforms;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.error.ConfigException;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.model.V1TopicObject;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Transform an input {@link V1SpecsObject}.
+ * Transform an input {@link V1SpecObject}.
  */
 public abstract class TopicTransformation implements Transformation {
 
@@ -47,7 +47,7 @@ public abstract class TopicTransformation implements Transformation {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull V1SpecsObject transform(@NotNull final V1SpecsObject specsObject) {
+    public @NotNull V1SpecObject transform(@NotNull final V1SpecObject specsObject) {
         final List<V1TopicObject> topics = specsObject.topics();
         if (topics.isEmpty()) return specsObject;
 

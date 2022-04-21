@@ -25,7 +25,7 @@ import io.streamthoughts.kafka.specs.error.JikkouException;
 import io.streamthoughts.kafka.specs.extensions.ExtensionRegistry;
 import io.streamthoughts.kafka.specs.extensions.ReflectiveExtensionScanner;
 import io.streamthoughts.kafka.specs.model.V1SpecFile;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import io.streamthoughts.kafka.specs.transforms.ApplyConfigMapsTransformation;
 import io.streamthoughts.kafka.specs.transforms.Transformation;
 import io.streamthoughts.kafka.specs.validations.NoDuplicateRolesAllowedValidation;
@@ -128,7 +128,7 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
     public @NotNull V1SpecFile apply(@NotNull final V1SpecFile file) {
 
         // (1) run all transformations onto the given V1SpecsObject
-        final V1SpecsObject v1SpecsObject = transformations
+        final V1SpecObject v1SpecsObject = transformations
                 .map(Lazy::get)
                 .foldLeft(file.specs(), (specsObject, transformation) -> transformation.transform(specsObject));
 

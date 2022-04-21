@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.validations;
 
 import io.streamthoughts.kafka.specs.model.V1AccessUserObject;
 import io.streamthoughts.kafka.specs.model.V1SecurityObject;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class NoDuplicateUsersAllowedValidation implements Validation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1SpecsObject specsObject) throws ValidationException {
+    public void validate(final @NotNull V1SpecObject specsObject) throws ValidationException {
         final Optional<V1SecurityObject> security = specsObject.security();
         if (security.isEmpty()) return;
 

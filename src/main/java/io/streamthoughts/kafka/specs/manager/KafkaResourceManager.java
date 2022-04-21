@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.specs.change.ChangeComputer;
 import io.streamthoughts.kafka.specs.change.ChangeResult;
 import io.streamthoughts.kafka.specs.config.Configurable;
 import io.streamthoughts.kafka.specs.extensions.Extension;
-import io.streamthoughts.kafka.specs.model.V1SpecsObject;
+import io.streamthoughts.kafka.specs.model.V1SpecObject;
 
 import java.util.Collection;
 import java.util.List;
@@ -60,15 +60,15 @@ public interface KafkaResourceManager<R, C extends Change<?>, OP extends ChangeC
     }
 
     /**
-     * Updates the Kafka cluster resources using the given {@link V1SpecsObject} list.
+     * Updates the Kafka cluster resources using the given {@link V1SpecObject} list.
      *
      * @param mode          the update-mode to execute.
-     * @param objects       the {@link V1SpecsObject} list.
+     * @param objects       the {@link V1SpecObject} list.
      * @param context       the {@link KafkaResourceUpdateContext}.
      * @return              the list of {@link ChangeResult}.
      */
     Collection<ChangeResult<C>> update(UpdateMode mode,
-                                       List<V1SpecsObject> objects,
+                                       List<V1SpecObject> objects,
                                        KafkaResourceUpdateContext<OP> context);
 
 
