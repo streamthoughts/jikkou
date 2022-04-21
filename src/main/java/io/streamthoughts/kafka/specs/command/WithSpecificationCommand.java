@@ -49,7 +49,7 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
     SetOptionsMixin options;
 
     private final Lazy<List<V1SpecObject>> object = Lazy.of(() -> {
-        V1SpecFileProcessor processor = V1SpecFileProcessor.create(JikkouConfig.get());
+        V1SpecFileProcessor processor = new V1SpecFileProcessor(JikkouConfig.get());
         List<V1SpecFile> specFiles = SpecFileLoader.newForYaml()
                 .withPattern(specOptions.pattern)
                 .withLabels(options.clientLabels)

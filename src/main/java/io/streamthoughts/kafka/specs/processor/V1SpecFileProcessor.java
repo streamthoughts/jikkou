@@ -57,15 +57,18 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
 
     private final ExtensionRegistry registry = new ExtensionRegistry();
 
-    public static V1SpecFileProcessor create(final @NotNull JikkouConfig config) {
-        var processor = new V1SpecFileProcessor()
-                .withTransformation(Lazy.of(ApplyConfigMapsTransformation::new))
-                .withValidation(Lazy.of(NoDuplicateTopicsAllowedValidation::new))
-                .withValidation(Lazy.of(NoDuplicateUsersAllowedValidation::new))
-                .withValidation(Lazy.of(NoDuplicateRolesAllowedValidation::new))
-                .withValidation(Lazy.of(QuotasEntityValidation::new));
-        processor.configure(config);
-        return processor;
+    /**
+     * Creates a new {@link V1SpecFileProcessor} instance for the specified {@code config}.
+     *
+     * @param config    the application's configuration.
+     */
+    public V1SpecFileProcessor(final @NotNull JikkouConfig config) {
+        configure(config);
+        withTransformation(Lazy.of(ApplyConfigMapsTransformation::new));
+        withValidation(Lazy.of(NoDuplicateTopicsAllowedValidation::new));
+        withValidation(Lazy.of(NoDuplicateUsersAllowedValidation::new));
+        withValidation(Lazy.of(NoDuplicateRolesAllowedValidation::new));
+        withValidation(Lazy.of(QuotasEntityValidation::new));
     }
 
     /**
@@ -140,7 +143,9 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
                 .flatMap(Try::toOption)
                 .map(throwable -> Match(throwable).of(
                         Case($(instanceOf(ValidationException.class)), t -> (ValidationException) t),
-                        Case($(), t -> { throw new JikkouException(t); })
+                        Case($(), t -> {
+                            throw new JikkouException(t);
+                        })
                 ))
                 .toJavaList();
 
