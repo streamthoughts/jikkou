@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class SpecFileLoader {
@@ -84,7 +85,21 @@ public class SpecFileLoader {
     }
 
     /**
-     * Loads specifications  for Kafka resources from the given file.
+     * Loads specifications for Kafka resources from the classpath resource.
+     *
+     * @param resourceName  name of the classpath resource to load.
+     * @return              a new {@link V1SpecFile}.
+     */
+    public V1SpecFile loadFromClasspath(@NotNull final String resourceName) {
+        return Optional.ofNullable(getClass().getClassLoader().getResourceAsStream(resourceName))
+                .map(this::load)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Failed to load resource from classpath: '%s'", resourceName))
+                );
+    }
+
+    /**
+     * Loads specifications for Kafka resources from the given {@code InputStream}.
      *
      * @param file  the input stream.
      * @return      a new {@link V1SpecFile}.

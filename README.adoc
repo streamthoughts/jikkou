@@ -730,8 +730,7 @@ Below is a simple code example to illustrate the Jikkou API.
 @BeforeEach
 public void setUp() {
     // (1) Load specification from classpath (e.g. test/resources)
-    InputStream topicSpecsInputStream = getClass().getClassLoader().getResourceAsStream("./topics-test.yaml");
-    V1SpecFile file = SpecFileLoader.newForYaml().load(topicSpecsInputStream);
+    V1SpecFile specFile = SpecFileLoader.newForYaml().loadFromClasspath("./topics-test.yaml");
 
     // (2) Create configuration
     var config = JikkouConfig
@@ -739,11 +738,15 @@ public void setUp() {
             .withCLIConfigParams(Map.of("adminClient.bootstrap.servers", getTestingBootstrapServers()))
             .getOrCreate();
 
-    // (3) Create and configure Adminclient-based ClientKafkaTopicManager
-    var manager = new AdminClientKafkaTopicManager();
-    manager.configure(config);
+    // (3) Process input SpecFile for applying variable resolutions
+    // and validating rules.
+    var processor = new V1SpecFileProcessor(config);
+    specFile = processor.apply(specFile);
 
-    // (4) Create Kafka Topics
+    // (4) Create and configure Adminclient-based ClientKafkaTopicManager
+    var manager = new AdminClientKafkaTopicManager(config);
+
+    // (5) Create Kafka Topics
     manager.update(
             KafkaResourceManager.UpdateMode.CREATE_ONLY,
             List.of(file.specs()),
