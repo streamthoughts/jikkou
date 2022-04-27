@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.specs.manager;
 
 import io.streamthoughts.kafka.specs.change.ChangeComputer;
+import io.streamthoughts.kafka.specs.filter.KafkaResourceFilter;
 
 import java.util.function.Predicate;
 
@@ -34,7 +35,7 @@ public interface KafkaResourceUpdateContext<OP extends ChangeComputer.Options> {
     /**
      * @return  the predicate to be used for filtering resources to update.
      */
-    Predicate<String> getPredicate();
+    KafkaResourceFilter getResourceFilter();
 
     /**
      * @return  the options to be used for computing resource changes.
@@ -64,19 +65,19 @@ public interface KafkaResourceUpdateContext<OP extends ChangeComputer.Options> {
     /**
      * Helper method to create a new {@link KafkaResourceUpdateContext} for the given arguments.
      *
-     * @param predicate    the predicate for filtering resource.
+     * @param filter    the predicate for filtering resource.
      * @param options      the options for computing resource changes.
      * @param isDryRun     specify if the update should be run in dry-run.
      * @param <OP>         the type of options.
      * @return             a new {@link KafkaResourceUpdateContext}
      */
-    static <OP extends ChangeComputer.Options> KafkaResourceUpdateContext<OP> with(final Predicate<String> predicate,
+    static <OP extends ChangeComputer.Options> KafkaResourceUpdateContext<OP> with(final KafkaResourceFilter filter,
                                                                                    final OP options,
                                                                                    final boolean isDryRun) {
         return new KafkaResourceUpdateContext<>() {
             @Override
-            public Predicate<String> getPredicate() {
-                return predicate;
+            public KafkaResourceFilter getResourceFilter() {
+                return filter;
             }
 
             @Override

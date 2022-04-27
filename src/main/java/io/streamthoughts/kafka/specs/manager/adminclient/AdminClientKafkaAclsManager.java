@@ -122,11 +122,11 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
                     List<AccessControlPolicy> expectedStates = users
                             .stream()
                             .flatMap(user -> builder.toAccessControlPolicy(groups.values(), user).stream())
-                            .filter(it -> context.getPredicate().test(it.name()))
+                            .filter(it -> context.getResourceFilter().test(it.name()))
                             .collect(Collectors.toList());
 
                     // Get the actual state from the cluster.
-                    AclDescribeOptions options = new AclDescribeOptions().withResourcePredicate(context.getPredicate());
+                    AclDescribeOptions options = new AclDescribeOptions().withResourcePredicate(context.getResourceFilter());
                     List<AccessControlPolicy> actualStates = doDescribe(adminClient, options);
 
                     // Compute state changes

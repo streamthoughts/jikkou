@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.specs.command;
 
 import io.streamthoughts.kafka.specs.config.JikkouConfig;
 import io.streamthoughts.kafka.specs.config.JikkouParams;
-import io.streamthoughts.kafka.specs.predicate.KafkaResourcePredicate;
+import io.streamthoughts.kafka.specs.filter.DefaultKafkaResourceFilter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
@@ -39,7 +39,7 @@ public abstract class BaseCommand implements Callable<Integer> {
     ExecOptionsMixin execOptions;
 
     public final boolean isResourceCandidate(final String resourceName) {
-        return new KafkaResourcePredicate()
+        return new DefaultKafkaResourceFilter()
                 .withExcludes(Optional.ofNullable(execOptions.exclude)
                         .or(() -> JikkouParams.EXCLUDE_RESOURCES.getOption(JikkouConfig.get()).toJavaOptional()).orElse(null))
                 .withIncludes(Optional.ofNullable(execOptions.include)

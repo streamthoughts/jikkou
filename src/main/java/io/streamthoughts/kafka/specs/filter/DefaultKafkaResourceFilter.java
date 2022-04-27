@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.specs.predicate;
+package io.streamthoughts.kafka.specs.filter;
 
 import io.streamthoughts.kafka.specs.resources.Named;
 import org.slf4j.Logger;
@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
 
 import static java.util.Arrays.stream;
 
-public class KafkaResourcePredicate implements Predicate<String> {
+public class DefaultKafkaResourceFilter implements KafkaResourceFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaResourcePredicate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultKafkaResourceFilter.class);
 
     // The regex patterns to use for excluding resources.
     private final Pattern[] excludes;
@@ -40,36 +40,36 @@ public class KafkaResourcePredicate implements Predicate<String> {
     private final Pattern[] includes;
 
     /**
-     * Creates a new {@link KafkaResourcePredicate} instance.
+     * Creates a new {@link DefaultKafkaResourceFilter} instance.
      */
-    public KafkaResourcePredicate() {
+    public DefaultKafkaResourceFilter() {
         this(null, null);
     }
 
-    private KafkaResourcePredicate(@Nullable final Pattern[] excludes,
-                                   @Nullable final Pattern[] includes) {
+    private DefaultKafkaResourceFilter(@Nullable final Pattern[] excludes,
+                                       @Nullable final Pattern[] includes) {
         this.excludes = excludes;
         this.includes = includes;
     }
 
     /**
-     * Creates a new {@link KafkaResourcePredicate} with the given excluding patterns.
+     * Creates a new {@link DefaultKafkaResourceFilter} with the given excluding patterns.
      *
      * @param excludes  list of {@link Pattern} to exclude resources.
-     * @return a new {@link KafkaResourcePredicate}.
+     * @return a new {@link DefaultKafkaResourceFilter}.
      */
-    public KafkaResourcePredicate withExcludes(@Nullable final Pattern[] excludes) {
-        return new KafkaResourcePredicate(excludes, includes);
+    public DefaultKafkaResourceFilter withExcludes(@Nullable final Pattern[] excludes) {
+        return new DefaultKafkaResourceFilter(excludes, includes);
     }
 
     /**
-     * Creates a new {@link KafkaResourcePredicate} with the given including patterns.
+     * Creates a new {@link DefaultKafkaResourceFilter} with the given including patterns.
      *
      * @param includes  list of {@link Pattern} to include resources.
-     * @return a new {@link KafkaResourcePredicate}.
+     * @return a new {@link DefaultKafkaResourceFilter}.
      */
-    public KafkaResourcePredicate withIncludes(@Nullable final Pattern[] includes) {
-        return new KafkaResourcePredicate(excludes, includes);
+    public DefaultKafkaResourceFilter withIncludes(@Nullable final Pattern[] includes) {
+        return new DefaultKafkaResourceFilter(excludes, includes);
     }
 
     public final boolean test(final Named resourceName) {
