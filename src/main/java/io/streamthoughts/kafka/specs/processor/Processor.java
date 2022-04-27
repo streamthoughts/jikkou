@@ -31,9 +31,27 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Processor<T extends Processor<T>> extends Configurable {
 
+    /**
+     * Creates a new {@link Processor} from this one and register the specified {@code transformation} into it.
+     *
+     * @param transformation  the {@link Transformation} to register.
+     * @return  a new immutable {@link Processor}.
+     */
     @NotNull T withTransformation(@NotNull final Lazy<Transformation> transformation);
 
+    /**
+     * Creates a new {@link Processor} from this one and register the specified {@code validation} into it.
+     *
+     * @param validation  the {@link Validation} to register .
+     * @return  a new immutable {@link Processor}.
+     */
     @NotNull T withValidation(@NotNull final Lazy<Validation> validation);
 
-    @NotNull V1SpecFile apply(@NotNull final V1SpecFile spec);
+    /**
+     * Applies this processor to the specified specification file object.
+     *
+     * @param file  the {@link V1SpecFile} to process.
+     * @return      a new {@link V1SpecFile}.
+     */
+    @NotNull V1SpecFile apply(@NotNull final V1SpecFile file);
 }

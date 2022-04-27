@@ -94,6 +94,9 @@ public final class AdminClientKafkaAclsManager implements KafkaAclsManager {
         adminClientContext = new AdminClientContext(config);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<ChangeResult<AclChange>> update(final UpdateMode mode,
                                                       final List<V1SpecObject> objects,

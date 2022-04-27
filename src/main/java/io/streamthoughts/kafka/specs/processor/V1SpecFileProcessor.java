@@ -52,8 +52,9 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
 
     private static final Logger LOG = LoggerFactory.getLogger(V1SpecFileProcessor.class);
 
-    private List<Lazy<Transformation>> transformations = List.of();
-    private List<Lazy<Validation>> validations = List.of();
+    private final List<Lazy<Transformation>> transformations;
+
+    private final List<Lazy<Validation>> validations;
 
     private final ExtensionRegistry registry = new ExtensionRegistry();
 
@@ -63,12 +64,36 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
      * @param config    the application's configuration.
      */
     public V1SpecFileProcessor(final @NotNull JikkouConfig config) {
+        this(builtInTransformations(), builtInValidations());
         configure(config);
-        withTransformation(Lazy.of(ApplyConfigMapsTransformation::new));
-        withValidation(Lazy.of(NoDuplicateTopicsAllowedValidation::new));
-        withValidation(Lazy.of(NoDuplicateUsersAllowedValidation::new));
-        withValidation(Lazy.of(NoDuplicateRolesAllowedValidation::new));
-        withValidation(Lazy.of(QuotasEntityValidation::new));
+    }
+
+    private static List<Lazy<Transformation>> builtInTransformations() {
+        return List.of(
+                Lazy.of(ApplyConfigMapsTransformation::new),
+                Lazy.of(ApplyConfigMapsTransformation::new)
+        );
+    }
+
+    private static List<Lazy<Validation>> builtInValidations() {
+        return List.of(
+                Lazy.of(NoDuplicateTopicsAllowedValidation::new),
+                Lazy.of(NoDuplicateUsersAllowedValidation::new),
+                Lazy.of(NoDuplicateRolesAllowedValidation::new),
+                Lazy.of(QuotasEntityValidation::new)
+        );
+    }
+
+    /**
+     * Creates a new {@link V1SpecFileProcessor} instance.
+     *
+     * @param transformations   the list of {@link Transformation} to register.
+     * @param validations       the list of {@link Validation} to register.
+     */
+    V1SpecFileProcessor(final @NotNull List<Lazy<Transformation>> transformations,
+                        final @NotNull List<Lazy<Validation>> validations) {
+        this.transformations = transformations;
+        this.validations = validations;
     }
 
     /**
@@ -111,8 +136,7 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
      */
     @Override
     public @NotNull V1SpecFileProcessor withTransformation(@NotNull final Lazy<Transformation> transformation) {
-        transformations = transformations.append(transformation);
-        return this;
+        return new V1SpecFileProcessor(transformations.append(transformation), validations);
     }
 
     /**
@@ -120,8 +144,7 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
      */
     @Override
     public @NotNull V1SpecFileProcessor withValidation(@NotNull final Lazy<Validation> validation) {
-        validations = validations.append(validation);
-        return this;
+        return new V1SpecFileProcessor(transformations, validations.append(validation));
     }
 
     /**
