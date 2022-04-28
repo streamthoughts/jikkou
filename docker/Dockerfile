@@ -22,8 +22,8 @@ ENV JIKKOU_VERSION="${jikkouVersion}"
 
 RUN apk update && apk --no-cache add unzip
 
-COPY ./jikkou-${JIKKOU_VERSION}.zip jikkou-${JIKKOU_VERSION}.zip
-RUN unzip jikkou-${JIKKOU_VERSION}.zip && mv jikkou-${JIKKOU_VERSION} jikkou
+COPY ./jikkou-${JIKKOU_VERSION}-runner.zip jikkou-${JIKKOU_VERSION}-runner.zip
+RUN unzip jikkou-${JIKKOU_VERSION}-runner.zip && mv jikkou-${JIKKOU_VERSION}-runner jikkou
 
 FROM azul/zulu-openjdk:17
 
