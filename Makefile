@@ -1,6 +1,6 @@
 # Makefile used to build docker images for kafka-specs
 
-PROJECT_VERSION := $(shell ./gradlew printVersion -q)
+VERSION := $(shell mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
@@ -24,7 +24,7 @@ clean-images:
 
 print-info:
 	echo "\n==========================================\n";
-	echo "CONNECT_VERSION="$(PROJECT_VERSION);
+	echo "VERSION="$(VERSION);
 	echo "GIT_COMMIT="$(GIT_COMMIT);
 	echo "GIT_BRANCH="$(GIT_BRANCH);
 	echo "\n==========================================\n";
@@ -34,21 +34,21 @@ clean-build:
 	rm -rf ./docker-build;
 
 build-dist: print-info
-	./gradlew clean distZip
+	./mvnw clean -B package -Pdist
 
 build-images: build-dist
-	cp ./build/distributions/jikkou-${PROJECT_VERSION}.zip ./docker/jikkou-${PROJECT_VERSION}.zip 
+	cp ./dist/jikkou-${VERSION}-runner.zip ./docker/jikkou-${VERSION}-runner.zip
 	docker build --compress \
-	--build-arg jikkouVersion=${PROJECT_VERSION} \
+	--build-arg jikkouVersion=${VERSION} \
 	--build-arg jikkouCommit=${GIT_COMMIT} \
 	--build-arg jikkouBranch=${GIT_BRANCH} \
 	--rm \
         -f ./docker/Dockerfile \
-	-t ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} ${DOCKER_PATH} || exit 1 ;
+	-t ${REPOSITORY}/${IMAGE}:${VERSION} ${DOCKER_PATH} || exit 1 ;
 	
-	docker tag ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} ${REPOSITORY}/${IMAGE}:${GIT_BRANCH} || exit 1 ;
+	docker tag ${REPOSITORY}/${IMAGE}:${VERSION} ${REPOSITORY}/${IMAGE}:${GIT_BRANCH} || exit 1 ;
 
 docker-tag-latest: build-images
-	docker tag ${REPOSITORY}/${IMAGE}:${PROJECT_VERSION} ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
+	docker tag ${REPOSITORY}/${IMAGE}:${VERSION} ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
 
 clean: clean-containers clean-images clean-build

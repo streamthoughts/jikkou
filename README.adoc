@@ -614,7 +614,7 @@ jikkou {
     validations = [
         {
           # The fully-qualified name of the Validation class, e.g.:
-          type = io.streamthoughts.kafka.specs.validations.TopicNameRegexValidation
+          type = TopicNameRegexValidation
           # The config values that will be passed to the Validation.
           config = {
             topic-regex = "[a-zA-Z0-9\\._\\-]+"
@@ -755,36 +755,50 @@ public void setUp() {
 }
 ----
 
-== 🏭 How to build project ?
+== 🏭 Developers
 
-You need to have http://www.gradle.org/installation[Gradle] and http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java] installed.
+You need to have  http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java] and https://www.docker.com/[Docker] installed.
 
-=== To build jar
+=== Dependencies
 
-[source,bash]
-----
-$ ./gradlew jar
-----
+**Jikkou modules are built with:**
 
-=== To package distribution
+* Java 17
+* https://docs.confluent.io/platform/current/clients/index.html[Apache Kafka Client] (3.0.x)
 
-[source,bash]
-----
-$ ./gradlew distTar
-----
+=== Build project
 
-=== Build javadoc
+This project includes https://maven.apache.org/wrapper/[Maven Wrapper].
+
+For building distribution files.
 
 [source,bash]
 ----
-$ ./gradlew javadoc
+$ ./mvnw clean package -Pdist
 ----
 
-=== Cleaning build
+=== Build Docker Images (locally)
 
 [source,bash]
 ----
-$ ./gradlew clean
+$ make
+----
+
+=== Formats
+
+This project uses the Maven plugin https://github.com/diffplug/spotless/tree/master/plugin-maven[Spotless]
+to format all Java classes and to apply some code quality checks.
+
+=== Bugs
+
+This project uses the Maven plugin https://spotbugs.github.io/[SpotBugs] and https://find-sec-bugs.github.io/[FindSecBugs]
+to run some static analysis to look for bugs in Java code.
+
+Reported bugs can be analysed using SpotBugs GUI:
+
+[source,bash]
+----
+$ ./mvnw spotbugs:gui
 ----
 
 == 💡 Contributions
