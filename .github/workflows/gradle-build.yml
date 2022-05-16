@@ -22,12 +22,9 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         check-latest: true
-        cache: gradle
+        cache: maven
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x ./mvnw
       
-    - name: Build with Gradle
-      run: ./gradlew build
-
-    - name: Run Integration Tests
-      run: ./gradlew clean integrationTest
+    - name: Build with Maven Wrapper
+      run: ./mvnw -B clean verify

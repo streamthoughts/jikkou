@@ -18,16 +18,16 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         check-latest: true
-        cache: gradle
+        cache: maven
      
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x mvnw
 
-    - name: Build with Gradle
-      run: ./gradlew build distZip
+    - name: Build with Maven Wrapper
+      run: ./mvnw -B clean package -Pdist
 
     - name: Set env PROJECT_VERSION
-      run: echo "PROJECT_VERSION=$(./gradlew printVersion -q)" >> $GITHUB_ENV
+      run: echo "PROJECT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
     - name: Check PROJECT_VERSION    
       run: echo "${{ env.PROJECT_VERSION }}"
