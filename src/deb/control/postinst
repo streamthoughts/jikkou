@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+ln -s /opt/jikkou/bin/jikkou /usr/bin/jikkou

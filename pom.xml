@@ -226,6 +226,11 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.3.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.vafer</groupId>
+                    <artifactId>jdeb</artifactId>
+                    <version>1.8</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -239,7 +244,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>${project.artifactId}-${project.version}-runner</finalName>
+                            <finalName>${project.artifactId}-runner</finalName>
                             <minimizeJar>true</minimizeJar>
                             <transformers>
                                 <transformer
@@ -386,6 +391,58 @@
                                 <descriptor>src/main/assembly/assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.vafer</groupId>
+                        <artifactId>jdeb</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                                <configuration>
+                                    <deb>${project.build.directory}/${project.artifactId}.deb</deb>
+                                    <verbose>true</verbose>
+                                    <snapshotExpand>true</snapshotExpand>
+                                    <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
+                                    <snapshotEnv>USER</snapshotEnv>
+                                    <verbose>true</verbose>
+                                    <controlDir>${basedir}/src/deb/control</controlDir>
+                                    <dataSet>
+                                        <data>
+                                            <src>${project.basedir}/target/jikkou-runner.jar</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/jikkou/lib</prefix>
+                                                <filemode>444</filemode>
+                                            </mapper>
+                                        </data>
+
+                                        <data>
+                                            <src>${project.basedir}/src/main/bin/jikkou</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/jikkou/bin</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+
+                                        <data>
+                                            <src>${project.basedir}/src/main/conf/</src>
+                                            <type>directory</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/jikkou/etc</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                    </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

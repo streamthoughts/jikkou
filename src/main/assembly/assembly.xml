@@ -49,11 +49,11 @@
         </file>
         -->
         <file>
-            <source>${project.basedir}/src/main/resources/logback.xml</source>
+            <source>${project.basedir}/src/main/conf/logback.xml</source>
             <outputDirectory>./etc/</outputDirectory>
         </file>
         <file>
-            <source>${project.build.directory}/${project.artifactId}-${project.version}-runner.jar</source>
+            <source>${project.build.directory}/${project.artifactId}-runner.jar</source>
             <outputDirectory>./lib/</outputDirectory>
             <destName>jikkou-runner.jar</destName>
         </file>
