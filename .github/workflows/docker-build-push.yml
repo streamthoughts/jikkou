@@ -1,8 +1,9 @@
-name: Docker Builds
+name: Docker Builds & Push
 on:
   push:
     branches:
       - master
+      - main
 jobs:
   build_docker_image:
     if: github.repository == 'streamthoughts/jikkou'
@@ -44,8 +45,8 @@ jobs:
     - name: Check GIT_COMMIT   
       run: echo "${{ env.GIT_COMMIT }}"
 
-    - name: Copy Gradle distribution
-      run:  cp ./build/distributions/jikkou-${{ env.PROJECT_VERSION }}.zip ./docker/jikkou-${{ env.PROJECT_VERSION }}.zip     
+    - name: Copy Assembly distribution
+      run:  cp ./dist/jikkou-${{ env.PROJECT_VERSION }}-runner.zip ./docker/jikkou-${{ env.PROJECT_VERSION }}-runner.zip
 
     - name: Login to DockerHub
       uses: docker/login-action@v1

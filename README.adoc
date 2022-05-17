@@ -4,7 +4,7 @@ image:https://img.shields.io/github/license/streamthoughts/jikkou[]
 image:https://img.shields.io/github/issues/streamthoughts/jikkou[]
 image:https://img.shields.io/github/forks/streamthoughts/jikkou[]
 image:https://img.shields.io/github/stars/streamthoughts/jikkou[]
-image:https://github.com/streamthoughts/jikkou/actions/workflows/gradle-build.yml/badge.svg[]
+image:https://github.com/streamthoughts/jikkou/actions/workflows/maven-build.yml/badge.svg[]
 
 toc::[]
 
