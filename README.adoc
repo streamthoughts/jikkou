@@ -17,8 +17,8 @@ It allows you to define the desired current state of your **Topics**, **ACLs**, 
 topics-specs.yml:::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
   topics:
   - name: 'my-first-topic-with-jikkou'
     partitions: 12
@@ -88,7 +88,7 @@ Over time, we began to refactor the solution and extend its functionality to sup
 == Requirements :
 
 1. Kafka 1.0.0 ...
-2. Java 11+
+2. Java 17+
 
 _Note: Internally, Jikkou uses the Kafka Java Admin Client API._ Depending on the Kafka Cluster version you use all features may not be supported.
 
@@ -137,13 +137,13 @@ Jikkou uses a common structure for describing the resources/configs to manipulat
 An empty Jikkou specification file::
 [source,yaml]
 ----
-version: 1
+apiVersion: 1
 metadata:
   labels: {}
   annotations: {}
 template:
   vars: {}
-specs:
+spec:
     brokers: {}
     topics: {}
     security:
@@ -184,8 +184,8 @@ Jikkou can be used to create, alter and even delete Kafka topics.
 topics-specs.yml::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
     topics:
     - name: "{{ labels.topic_prefix | default('') }}my-topic"
       partitions: 6
@@ -249,11 +249,11 @@ $ jikkou --bootstrap-servers localhost:9092 topics describe
 
 [source,yaml]
 ----
-version: 1
+apiVersion: 1
 metadata:
   annotations:
     generated: "2021-10-10T00:00:00.0Z"
-specs:
+spec:
   brokers: []
   topics:
   - name: "_schemas"
@@ -275,8 +275,8 @@ specs:
 users-specs.yml::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
   security:
     users:
     - principal : 'User:benchmark'
@@ -300,8 +300,8 @@ Jikkou will take care of creating all corresponding ACLs policies.
 security-specs.yml::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
   security:
     roles:
     - name: 'AdminTopics'
@@ -411,8 +411,8 @@ This will define ACLs with `LITERAL` pattern type for all topics matching the de
 security-specs.yml::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
   security:
     users:
     - principal : 'User:benchmark'
@@ -488,8 +488,8 @@ The below example shows you how to set default quotas for all clients, then to o
 quotas-specs.yml::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
   quotas:
   - type: CLIENTS_DEFAULT
     configs:
@@ -527,8 +527,8 @@ that can be referenced by multiple specs entities (e.g. Topics, Quotas).
 topics-specs.yml::
 [source,yaml]
 ----
-version: 1
-specs:
+apiVersion: 1
+spec:
     config_maps:
     - name: DefaultTopicConfig
       configs:
@@ -559,13 +559,13 @@ Currently, the templating mechanism supports the following scopes::
 topics-specs.yml::
 [source,yaml]
 ----
-version: 1
+apiVersion: 1
 template:
   vars:
     topic_prefix: "{{ system.env.TOPIC_PREFIX | default('', true) }}"
     default_replication_factor: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}"
     default_min_insync_replicas: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) | int | add(-1) }}"
-specs:
+spec:
     config_maps:
     - name: DefaultTopicConfig
       configs:
@@ -656,9 +656,9 @@ Validation rule violations:
 
 Additionally, you can implement and configure custom _validations_ by implementing one of the following classes:
 
-* `io.streamthoughts.kafka.specs.validations.Validation`
-* `io.streamthoughts.kafka.specs.validations.TopicValidation`
-* `io.streamthoughts.kafka.specs.validations.QuotaValidation`
+* `io.streamthoughts.jikkou.api.validations.Validation`
+* `io.streamthoughts.jikkou.api.validations.TopicValidation`
+* `io.streamthoughts.jikkou.api.validations.QuotasValidation`
 
 Custom `Validations` should be packaged as an uber JAR and then configured as a Jikkou link:#Extensions[Extension].
 
@@ -699,7 +699,7 @@ For Maven::
 <dependency>
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
 </dependency>
 ----
 
@@ -716,7 +716,7 @@ Then, use the `jikkou.extension.paths` property to configure the list of locatio
 
 Each configured directories may contain:
 
-* an uber JAR containing all of the classes and third-party dependencies for the extensions.
+* an uber JAR containing all the classes and third-party dependencies for the extensions.
 * a directory containing all JARs for the extensions.
 
 == Using Jikkou for Integration Tests
