@@ -19,13 +19,12 @@
 package io.streamthoughts.jikkou.kafka.internal;
 
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -49,5 +48,20 @@ public class KafkaUtils {
 
     public static boolean waitForKafkaBrokers(final AdminClient client, final KafkaBrokersReady.Options options) {
         return new KafkaBrokersReady(options).waitForBrokers(client);
+    }
+
+    public static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
+        return getConfigsForKeys(configs, AdminClientConfig.configNames());
+    }
+
+    private static Map<String, Object> getConfigsForKeys(final Map<String, Object> configs,
+                                                         final Set<String> keys) {
+        final Map<String, Object> parsed = new HashMap<>();
+        for (final String configName : keys) {
+            if (configs.containsKey(configName)) {
+                parsed.put(configName, configs.get(configName));
+            }
+        }
+        return parsed;
     }
 }

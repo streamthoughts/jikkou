@@ -19,20 +19,20 @@
 package io.streamthoughts.jikkou.kafka.command.quotas;
 
 import io.streamthoughts.jikkou.kafka.change.ChangeResult;
-import io.streamthoughts.jikkou.kafka.change.QuotaChangeOptions;
-import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
-import io.streamthoughts.jikkou.kafka.model.V1SpecObject;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
+import io.streamthoughts.jikkou.kafka.change.QuotaChangeOptions;
 import io.streamthoughts.jikkou.kafka.command.WithSpecificationCommand;
-import io.streamthoughts.jikkou.kafka.manager.KafkaQuotaManager;
-import io.streamthoughts.jikkou.kafka.manager.KafkaResourceManager;
-import io.streamthoughts.jikkou.kafka.manager.KafkaResourceUpdateContext;
-import io.streamthoughts.jikkou.kafka.manager.adminclient.AdminClientKafkaQuotaManager;
 import io.streamthoughts.jikkou.kafka.command.quotas.subcommands.Alter;
 import io.streamthoughts.jikkou.kafka.command.quotas.subcommands.Apply;
 import io.streamthoughts.jikkou.kafka.command.quotas.subcommands.Create;
 import io.streamthoughts.jikkou.kafka.command.quotas.subcommands.Delete;
 import io.streamthoughts.jikkou.kafka.command.quotas.subcommands.Describe;
+import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
+import io.streamthoughts.jikkou.kafka.manager.KafkaQuotaManager;
+import io.streamthoughts.jikkou.kafka.manager.KafkaResourceManager;
+import io.streamthoughts.jikkou.kafka.manager.KafkaResourceUpdateContext;
+import io.streamthoughts.jikkou.kafka.model.V1SpecObject;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -70,7 +70,7 @@ public class QuotasCommand {
          */
         @Override
         public Collection<ChangeResult<QuotaChange>> execute(final @NotNull List<V1SpecObject> objects) {
-            final KafkaQuotaManager manager = new AdminClientKafkaQuotaManager(JikkouConfig.get());
+            final KafkaQuotaManager manager = JikkouParams.KAFKA_QUOTAS_MANAGER.get(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),

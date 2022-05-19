@@ -261,12 +261,19 @@ public final class JikkouConfig {
     public Option<Integer> findInt(@NotNull final String path) {
         return config.hasPath(path) ? Option.of(config.getInt(path)) : Option.none();
     }
+    /**
+     * @see Config#getConfig(String)
+     */
+    public JikkouConfig getConfig(@NotNull final String path) {
+        return new JikkouConfig(config.getConfig(path), false);
+    }
+
 
     /**
      * @see Config#getConfig(String)
      */
     public Option<JikkouConfig> findConfig(@NotNull final String path) {
-        return config.hasPath(path) ? Option.some(new JikkouConfig(config.getConfig(path), false)) : Option.none();
+        return config.hasPath(path) ? Option.some(getConfig(path)) : Option.none();
     }
 
     /**
@@ -274,6 +281,15 @@ public final class JikkouConfig {
      */
     public Option<List<String>> findStringList(@NotNull final String path) {
         return config.hasPath(path) ? Option.some(config.getStringList(path)) : Option.none();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Class<T> getClass(@NotNull final String path) {
+        return (Class<T>) ClassUtils.forName(config.getString(path));
+    }
+
+    public <T> Option<Class<T>> findClass(@NotNull final String path) {
+        return config.hasPath(path) ? Option.some(getClass(path)) : Option.none();
     }
 
     @SuppressWarnings("unchecked")

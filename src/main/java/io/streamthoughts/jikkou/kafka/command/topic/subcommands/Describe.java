@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.kafka.command.topic.subcommands;
 
 import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.manager.KafkaTopicManager;
 import io.streamthoughts.jikkou.kafka.manager.TopicDescribeOptions;
 import io.streamthoughts.jikkou.kafka.model.MetaObject;
@@ -72,8 +73,7 @@ public class Describe extends BaseCommand {
     public Integer call() {
 
         try {
-            final KafkaTopicManager manager = new AdminClientKafkaTopicManager();
-            manager.configure(JikkouConfig.get());
+            final KafkaTopicManager manager = JikkouParams.KAFKA_TOPICS_MANAGER.get(JikkouConfig.get());
 
             TopicDescribeOptions options = new TopicDescribeOptions()
                     .withTopicPredicate(this::isResourceCandidate)

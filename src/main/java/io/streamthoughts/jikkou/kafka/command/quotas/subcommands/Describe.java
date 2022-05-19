@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.command.quotas.subcommands;
 
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.model.V1SpecObject;
 import io.streamthoughts.jikkou.kafka.command.BaseCommand;
 import io.streamthoughts.jikkou.kafka.io.YAMLSpecWriter;
@@ -52,8 +53,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call() {
         try {
-            KafkaQuotaManager manager = new AdminClientKafkaQuotaManager();
-            manager.configure(JikkouConfig.get());
+            final KafkaQuotaManager manager = JikkouParams.KAFKA_QUOTAS_MANAGER.get(JikkouConfig.get());
 
             final OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
             final List<V1QuotaObject> quotas = manager.describe(new DescribeOptions() {});

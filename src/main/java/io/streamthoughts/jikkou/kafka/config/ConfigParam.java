@@ -121,6 +121,18 @@ public class ConfigParam<T> {
         );
     }
 
+    /**
+     * Static helper method to create a new {@link ConfigParam} with an expected {@link List} of {@link Config}.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigParam}.
+     */
+    public static ConfigParam<? extends Config> ofConfig(final @NotNull String path) {
+        return new ConfigParam<>(path, (p, config) ->
+                config.unwrap().hasPath(p) ? Option.of(config.unwrap().getConfig(p)) : Option.none()
+        );
+    }
+
     private final String path;
     private final Option<Lazy<T>> defaultValue;
 
@@ -180,7 +192,8 @@ public class ConfigParam<T> {
      */
     public <U> ConfigParam<U> map(Function<? super T, ? extends U> mapper) {
         return new ConfigParam<>(
-            path, defaultValue.map(it -> it.map(mapper)),
+            path,
+            defaultValue.map(it -> it.map(mapper)),
             (p, config) -> supplier.apply(p, config).map(mapper)
         );
     }

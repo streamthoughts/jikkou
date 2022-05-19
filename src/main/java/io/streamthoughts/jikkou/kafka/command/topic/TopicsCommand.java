@@ -19,20 +19,20 @@
 package io.streamthoughts.jikkou.kafka.command.topic;
 
 import io.streamthoughts.jikkou.kafka.change.ChangeResult;
-import io.streamthoughts.jikkou.kafka.change.TopicChangeOptions;
-import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
-import io.streamthoughts.jikkou.kafka.manager.KafkaResourceManager;
-import io.streamthoughts.jikkou.kafka.manager.KafkaResourceUpdateContext;
-import io.streamthoughts.jikkou.kafka.manager.KafkaTopicManager;
-import io.streamthoughts.jikkou.kafka.model.V1SpecObject;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.change.TopicChangeOptions;
 import io.streamthoughts.jikkou.kafka.command.WithSpecificationCommand;
-import io.streamthoughts.jikkou.kafka.manager.adminclient.AdminClientKafkaTopicManager;
 import io.streamthoughts.jikkou.kafka.command.topic.subcommands.Alter;
 import io.streamthoughts.jikkou.kafka.command.topic.subcommands.Apply;
 import io.streamthoughts.jikkou.kafka.command.topic.subcommands.Create;
 import io.streamthoughts.jikkou.kafka.command.topic.subcommands.Delete;
 import io.streamthoughts.jikkou.kafka.command.topic.subcommands.Describe;
+import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
+import io.streamthoughts.jikkou.kafka.manager.KafkaResourceManager;
+import io.streamthoughts.jikkou.kafka.manager.KafkaResourceUpdateContext;
+import io.streamthoughts.jikkou.kafka.manager.KafkaTopicManager;
+import io.streamthoughts.jikkou.kafka.model.V1SpecObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -70,7 +70,7 @@ public class TopicsCommand {
          */
         @Override
         public Collection<ChangeResult<TopicChange>> execute(List<V1SpecObject> objects) {
-            final KafkaTopicManager manager = new AdminClientKafkaTopicManager(JikkouConfig.get());
+            final KafkaTopicManager manager = JikkouParams.KAFKA_TOPICS_MANAGER.get(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),

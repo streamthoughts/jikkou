@@ -19,7 +19,9 @@
 package io.streamthoughts.jikkou.kafka.command.acls.subcommands;
 
 import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.manager.AclDescribeOptions;
+import io.streamthoughts.jikkou.kafka.manager.KafkaAclsManager;
 import io.streamthoughts.jikkou.kafka.manager.adminclient.AdminClientKafkaAclsManager;
 import io.streamthoughts.jikkou.kafka.command.BaseCommand;
 import io.streamthoughts.jikkou.kafka.io.YAMLSpecWriter;
@@ -54,7 +56,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call() {
 
-        AdminClientKafkaAclsManager manager = new AdminClientKafkaAclsManager(JikkouConfig.get());
+        final KafkaAclsManager manager = JikkouParams.KAFKA_ACLS_MANAGER.get(JikkouConfig.get());
 
         final Collection<V1AccessUserObject> users = manager.describe(new AclDescribeOptions());
 

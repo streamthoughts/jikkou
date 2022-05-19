@@ -27,7 +27,7 @@ import java.util.Map;
 public class CLIOptionsMixin {
 
     @Option(names = "--bootstrap-servers",
-            defaultValue = "",
+            defaultValue = "localhost:9092",
             description = "A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.")
     public String bootstrapServer;
 

@@ -19,12 +19,12 @@
 package io.streamthoughts.jikkou.kafka.command.broker.subcommands;
 
 import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.model.V1SpecObject;
 import io.streamthoughts.jikkou.kafka.command.BaseCommand;
 import io.streamthoughts.jikkou.kafka.io.YAMLSpecWriter;
 import io.streamthoughts.jikkou.kafka.manager.BrokerDescribeOptions;
 import io.streamthoughts.jikkou.kafka.manager.KafkaBrokerManager;
-import io.streamthoughts.jikkou.kafka.manager.adminclient.AdminClientKafkaBrokerManager;
 import io.streamthoughts.jikkou.kafka.model.MetaObject;
 import io.streamthoughts.jikkou.kafka.model.V1BrokerObject;
 import io.streamthoughts.jikkou.kafka.model.V1SpecFile;
@@ -71,7 +71,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call() {
 
-        final KafkaBrokerManager manager = new AdminClientKafkaBrokerManager(JikkouConfig.get());
+        final KafkaBrokerManager manager = JikkouParams.KAFKA_BROKERS_MANAGER.get(JikkouConfig.get());
 
         final BrokerDescribeOptions options = new BrokerDescribeOptions()
                 .withDescribeDefaultConfigs(describeDefaultConfigs)

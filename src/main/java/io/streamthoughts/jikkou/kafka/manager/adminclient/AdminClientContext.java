@@ -18,14 +18,17 @@
  */
 package io.streamthoughts.jikkou.kafka.manager.adminclient;
 
+import io.streamthoughts.jikkou.kafka.config.ConfigParam;
 import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
 import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.error.JikkouException;
 import io.streamthoughts.jikkou.kafka.internal.KafkaBrokersReady;
 import io.streamthoughts.jikkou.kafka.internal.KafkaUtils;
+import io.streamthoughts.jikkou.kafka.internal.PropertiesUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
@@ -39,6 +42,31 @@ public class AdminClientContext {
     private static final int DEFAULT_MIN_AVAILABLE_BROKERS = 1;
     private static final long DEFAULT_TIMEOUT_MS = 60000L;
     private static final long DEFAULT_RETRY_BACKOFF_MS = 1000L;
+
+    public static final String ADMIN_CLIENT_CONFIG_NAME = "adminClient";
+
+    public static final ConfigParam<Properties> ADMIN_CLIENT_CONFIG = ConfigParam
+            .ofMap(ADMIN_CLIENT_CONFIG_NAME)
+            .orElse(HashMap::new)
+            .map(KafkaUtils::getAdminClientConfigs)
+            .map(PropertiesUtils::fromMap);
+
+    public static final ConfigParam<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigParam
+            .ofBoolean("kafka.brokers.wait-for-enabled")
+            .orElse(true);
+
+    public static final ConfigParam<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigParam
+            .ofInt("kafka.brokers.wait-for-min-available")
+            .orElse(DEFAULT_MIN_AVAILABLE_BROKERS);
+
+    public static final ConfigParam<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigParam
+            .ofLong("kafka.brokers.wait-for-retry-backoff-ms")
+            .orElse(DEFAULT_RETRY_BACKOFF_MS);
+
+    public static final ConfigParam<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigParam
+            .ofLong("kafka.brokers.wait-for-timeout-ms")
+            .orElse(DEFAULT_TIMEOUT_MS);
+
 
     public interface KafkaFunction<O> extends Function<AdminClient, O> { }
 
@@ -80,21 +108,12 @@ public class AdminClientContext {
      * @param config the {@link JikkouConfig}.
      */
     public AdminClientContext(final @NotNull JikkouConfig config) {
-        this(JikkouParams.ADMIN_CLIENT_CONFIG.get(config));
-        withWaitForKafkaBrokersEnabled(JikkouParams.KAFKA_BROKERS_WAIT_FOR_ENABLED.orElseGet(config, () -> true));
+        this(ADMIN_CLIENT_CONFIG.get(config));
+        withWaitForKafkaBrokersEnabled(KAFKA_BROKERS_WAIT_FOR_ENABLED.get(config));
         if (isWaitForKafkaBrokersEnabled) {
-            withWaitForRetryBackoff(JikkouParams.KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.orElseGet(
-                    config,
-                    () -> DEFAULT_RETRY_BACKOFF_MS)
-            );
-            withWaitForMinAvailableBrokers(JikkouParams.KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.orElseGet(
-                    config,
-                    () -> DEFAULT_MIN_AVAILABLE_BROKERS)
-            );
-            withWaitTimeoutMs(JikkouParams.KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.orElseGet(
-                    config,
-                    () -> DEFAULT_TIMEOUT_MS)
-            );
+            withWaitForRetryBackoff(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.get(config));
+            withWaitForMinAvailableBrokers(KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.get(config));
+            withWaitTimeoutMs(KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.get(config));
         }
     }
 

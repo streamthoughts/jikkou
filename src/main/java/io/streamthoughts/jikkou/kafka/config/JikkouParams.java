@@ -18,16 +18,19 @@
  */
 package io.streamthoughts.jikkou.kafka.config;
 
-import io.streamthoughts.jikkou.kafka.internal.PropertiesUtils;
+import com.typesafe.config.Config;
+import io.streamthoughts.jikkou.kafka.internal.ClassUtils;
+import io.streamthoughts.jikkou.kafka.manager.KafkaAclsManager;
+import io.streamthoughts.jikkou.kafka.manager.KafkaBrokerManager;
+import io.streamthoughts.jikkou.kafka.manager.KafkaQuotaManager;
+import io.streamthoughts.jikkou.kafka.manager.KafkaTopicManager;
 import io.vavr.Tuple2;
-import org.apache.kafka.clients.admin.AdminClientConfig;
+import io.vavr.control.Option;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,14 +38,6 @@ import java.util.stream.Collectors;
  * The list of configuration parameters.
  */
 public final class JikkouParams {
-
-    public static final String ADMIN_CLIENT_CONFIG_NAME = "adminClient";
-
-    public static final ConfigParam<Properties> ADMIN_CLIENT_CONFIG = ConfigParam
-            .ofMap(ADMIN_CLIENT_CONFIG_NAME)
-            .orElse(HashMap::new)
-            .map(JikkouParams::getAdminClientConfigs)
-            .map(PropertiesUtils::fromMap);
 
     public static final ConfigParam<Map<String, Object>> TEMPLATING_VARS_CONFIG = ConfigParam
             .ofMap("templating.vars").orElse(HashMap::new);
@@ -98,30 +93,29 @@ public final class JikkouParams {
             .orElse(Collections::emptyList)
             .map(l -> l.toArray(Pattern[]::new));
 
-    public static final ConfigParam<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigParam
-            .ofBoolean("kafka.brokers.wait-for-enabled");
+    public static final ConfigParam<KafkaBrokerManager> KAFKA_BROKERS_MANAGER = getConfigurableInstance("managers.kafka.brokers");
 
-    public static final ConfigParam<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigParam
-            .ofInt("kafka.brokers.wait-for-min-available");
+    public static final ConfigParam<KafkaTopicManager> KAFKA_TOPICS_MANAGER = getConfigurableInstance("managers.kafka.topics");
 
-    public static final ConfigParam<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigParam
-            .ofLong("kafka.brokers.wait-for-retry-backoff-ms");
+    public static final ConfigParam<KafkaAclsManager> KAFKA_ACLS_MANAGER = getConfigurableInstance("managers.kafka.acls");
 
-    public static final ConfigParam<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigParam
-            .ofLong("kafka.brokers.wait-for-timeout-ms");
+    public static final ConfigParam<KafkaQuotaManager> KAFKA_QUOTAS_MANAGER = getConfigurableInstance("managers.kafka.quotas");
 
-    private static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
-        return getConfigsForKeys(configs, AdminClientConfig.configNames());
-    }
+    private static <T extends Configurable> ConfigParam<T> getConfigurableInstance(final String key) {
+        return new ConfigParam<>(
+                key,
+                (path, rootConfig) -> {
+                    if (!rootConfig.unwrap().hasPath(path)) return Option.none();
+                    Config innerConfig = rootConfig.unwrap().getConfig(path);
 
-    private static Map<String, Object> getConfigsForKeys(final Map<String, Object> configs,
-                                                         final Set<String> keys) {
-        final Map<String, Object> parsed = new HashMap<>();
-        for (final String configName : keys) {
-            if (configs.containsKey(configName)) {
-                parsed.put(configName, configs.get(configName));
-            }
-        }
-        return parsed;
+                    JikkouConfig instanceConfig = new JikkouConfig(innerConfig, false);
+                    Class<T> managerClass = instanceConfig.getClass("type");
+                    Option<JikkouConfig> managerConfig = instanceConfig.findConfig("config");
+
+                    T manager = ClassUtils.newInstance(managerClass);
+                    manager.configure(managerConfig.getOrElse(JikkouConfig.empty()).withFallback(rootConfig));
+                    return Option.of(manager);
+                }
+        );
     }
 }

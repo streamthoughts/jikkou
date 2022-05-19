@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.kafka.command.acls.subcommands.Create;
 import io.streamthoughts.jikkou.kafka.command.acls.subcommands.Delete;
 import io.streamthoughts.jikkou.kafka.command.acls.subcommands.Describe;
 import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
+import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.manager.KafkaAclsManager;
 import io.streamthoughts.jikkou.kafka.manager.KafkaResourceManager;
 import io.streamthoughts.jikkou.kafka.manager.KafkaResourceUpdateContext;
@@ -71,7 +72,7 @@ public class AclsCommand {
         @Override
         public Collection<ChangeResult<AclChange>> execute(List<V1SpecObject> objects) {
 
-            final KafkaAclsManager manager = new AdminClientKafkaAclsManager(JikkouConfig.get());
+            final KafkaAclsManager manager = JikkouParams.KAFKA_ACLS_MANAGER.get(JikkouConfig.get());
 
             return manager.update(
                     getUpdateMode(),

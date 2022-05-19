@@ -30,6 +30,7 @@ import io.streamthoughts.jikkou.kafka.command.topic.TopicsCommand;
 import io.streamthoughts.jikkou.kafka.config.JikkouConfig;
 import io.streamthoughts.jikkou.kafka.config.JikkouParams;
 import io.streamthoughts.jikkou.kafka.internal.PropertiesUtils;
+import io.streamthoughts.jikkou.kafka.manager.adminclient.AdminClientContext;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -128,7 +129,7 @@ public class Jikkou {
         }
 
         Map<String, Object> cliConfigParams = new HashMap<>();
-        cliConfigParams.put(JikkouParams.ADMIN_CLIENT_CONFIG_NAME, adminClientParams);
+        cliConfigParams.put(AdminClientContext.ADMIN_CLIENT_CONFIG_NAME, adminClientParams);
 
         JikkouConfig.builder()
                 .withConfigFile(options.configFile)
