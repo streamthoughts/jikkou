@@ -89,7 +89,7 @@ set CLASSPATH=%CLASSPATH%:%APP_HOME%\lib\jikkou-runnner.jar;
 
 :java
 @rem Execute jikkou
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %JIKKOU_OPTS%  -classpath "%CLASSPATH%" io.streamthoughts.jikkou.kafka.Jikkou %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %JIKKOU_OPTS%  -classpath "%CLASSPATH%" io.streamthoughts.jikkou.cli.Jikkou %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell

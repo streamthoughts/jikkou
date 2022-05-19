@@ -249,7 +249,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>io.streamthoughts.jikkou.kafka.Jikkou</mainClass>
+                                    <mainClass>io.streamthoughts.jikkou.cli.Jikkou</mainClass>
                                     <manifestEntries>
                                         <Implementation-Title>Jikkou</Implementation-Title>
                                         <Implementation-Version>${project.version}</Implementation-Version>
