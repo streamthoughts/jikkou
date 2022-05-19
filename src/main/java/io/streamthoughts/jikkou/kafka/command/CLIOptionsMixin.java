@@ -32,12 +32,12 @@ public class CLIOptionsMixin {
     public String bootstrapServer;
 
     @Option(names = "--command-config",
-            description = "A property file containing configs to be passed to Admin Client."
+            description = "A property file containing configs to be passed to Admin Client (warning: this option is only relevant if your are using the AdminClient based KafkaResourceManager)."
     )
     public File clientCommandConfig;
 
     @Option(names = "--command-property",
-            description = "A property file containing configs to be passed to Admin Client."
+            description = "A KEY=VALUE property to be passed to the Admin Client (warning: this option is only relevant if your are using the AdminClient based KafkaResourceManager)."
     )
     public Map<String, String> clientCommandProperties = new HashMap<>();
 
