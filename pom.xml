@@ -402,7 +402,7 @@
                                     <goal>jdeb</goal>
                                 </goals>
                                 <configuration>
-                                    <deb>${project.build.directory}/${project.artifactId}.deb</deb>
+                                    <deb>${project.basedir}/dist/${project.artifactId}.deb</deb>
                                     <verbose>true</verbose>
                                     <snapshotExpand>true</snapshotExpand>
                                     <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
