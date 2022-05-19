@@ -23,7 +23,7 @@ public class V1AccessResourceMatcherTest {
         final V1SpecFile specFile = reader.read(getResourceAsStream(TEST_MODEL_ROLES_YAML), Collections.emptyMap(), Collections.emptyMap());
         assertNotNull(specFile);
 
-        final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());
+        final Map<String, V1AccessRoleObject> roles = keyByName(specFile.spec().security().get().roles());
         assertEquals(2, roles.size());
         V1AccessRoleObject roleOne = roles.get("role_one");
         assertNotNull(roleOne);
@@ -40,7 +40,7 @@ public class V1AccessResourceMatcherTest {
 
         assertNotNull(specFile);
 
-        final Map<String, V1AccessRoleObject> roles = keyByName(specFile.specs().security().get().roles());
+        final Map<String, V1AccessRoleObject> roles = keyByName(specFile.spec().security().get().roles());
         assertEquals(2, roles.size());
         V1AccessRoleObject roleTwo = roles.get("role_two");
         assertNotNull(roleTwo);

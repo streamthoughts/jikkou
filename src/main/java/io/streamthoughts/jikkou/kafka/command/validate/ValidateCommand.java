@@ -69,7 +69,7 @@ public class ValidateCommand implements Callable<Integer> {
             MetaObject metaObject = MetaObject.defaults()
                     .setAnnotations(validate.metadata().getAnnotations())
                     .setLabels(validate.metadata().getLabels());
-            V1SpecFile validated = new V1SpecFile(metaObject, validate.specs());
+            V1SpecFile validated = new V1SpecFile(metaObject, validate.spec());
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             YAMLSpecWriter.instance().write(validated, baos);

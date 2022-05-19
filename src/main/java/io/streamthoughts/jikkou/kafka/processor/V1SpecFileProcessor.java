@@ -156,7 +156,7 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
         // (1) run all transformations onto the given V1SpecsObject
         final V1SpecObject v1SpecsObject = transformations
                 .map(Lazy::get)
-                .foldLeft(file.specs(), (specsObject, transformation) -> transformation.transform(specsObject));
+                .foldLeft(file.spec(), (specsObject, transformation) -> transformation.transform(specsObject));
 
         // (2) run all validations and get all ValidationExceptions
         final java.util.List<ValidationException> errors = validations

@@ -81,14 +81,14 @@ public class AdminClientKafkaTopicManagerIT {
         // When
         manager.update(
                 KafkaResourceManager.UpdateMode.CREATE_ONLY,
-                List.of(file.specs()),
+                List.of(file.spec()),
                 KafkaResourceUpdateContext.with(new TopicChangeOptions(), false)
         );
 
         // Then
         List<V1TopicObject> actualTopics = describeActualKafka();
 
-        List<V1TopicObject> expectedTopics = file.specs().topics();
+        List<V1TopicObject> expectedTopics = file.spec().topics();
         Assertions.assertEquals(expectedTopics.size(), actualTopics.size());
 
         Map<String, V1TopicObject> actualByTopicName = Named.keyByName(actualTopics);
@@ -150,7 +150,7 @@ public class AdminClientKafkaTopicManagerIT {
         Assertions.assertEquals(1, actualTopics.size());
 
         InputStream topics = getTopicSpecFileInputStream();
-        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).spec());
 
         TopicChangeOptions options = new TopicChangeOptions();
 
@@ -180,7 +180,7 @@ public class AdminClientKafkaTopicManagerIT {
         Assertions.assertEquals(1, actualTopics.size());
 
         InputStream topics = getTopicSpecFileInputStream();
-        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).spec());
 
         TopicChangeOptions options = new TopicChangeOptions()
                 .withDeleteTopicOrphans(false);
@@ -212,7 +212,7 @@ public class AdminClientKafkaTopicManagerIT {
         Assertions.assertEquals(1, actualTopics.size());
 
         InputStream topics = getTopicSpecFileInputStream();
-        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).specs());
+        List<V1SpecObject> objects = List.of(SpecFileLoader.newForYaml().load(topics).spec());
 
         TopicChangeOptions options = new TopicChangeOptions()
                 .withDeleteTopicOrphans(true);

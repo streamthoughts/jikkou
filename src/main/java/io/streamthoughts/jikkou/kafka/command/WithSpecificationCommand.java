@@ -55,7 +55,7 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
                 .withLabels(options.clientLabels)
                 .withVars(options.clientVars)
                 .load(specOptions.files);
-        return specFiles.stream().map(processor::apply).map(V1SpecFile::specs).collect(Collectors.toList());
+        return specFiles.stream().map(processor::apply).map(V1SpecFile::spec).collect(Collectors.toList());
     });
 
     /**

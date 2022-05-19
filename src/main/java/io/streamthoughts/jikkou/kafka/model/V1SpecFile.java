@@ -39,22 +39,22 @@ public class V1SpecFile extends V1MetadataObjects implements Serializable {
      * Creates a new {@link V1SpecFile} instance.
      *
      * @param metadata  the {@link MetaObject}.
-     * @param specs     the {@link V1SpecObject}.
+     * @param spec     the {@link V1SpecObject}.
      */
     @JsonCreator
     public V1SpecFile(@Nullable @JsonProperty("metadata") final MetaObject metadata,
-                      @Nullable @JsonProperty("spec") @JsonAlias("specs") final V1SpecObject specs) {
+                      @Nullable @JsonProperty("spec") @JsonAlias("specs") final V1SpecObject spec) {
         super(metadata);
-        this.spec = Optional.ofNullable(specs).orElse(new V1SpecObject());
+        this.spec = Optional.ofNullable(spec).orElse(new V1SpecObject());
     }
 
     @JsonProperty(index = 0)
-    public String version() {
+    public String apiVersion() {
         return VERSION;
     }
 
     @JsonProperty
-    public V1SpecObject specs() {
+    public V1SpecObject spec() {
         return spec;
     }
     
