@@ -44,6 +44,13 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true)
 public class ExtensionCommand implements Callable<Integer> {
 
+    private static final String JIKKOU_ROOT_API_PACKAGE = "io.streamthoughts.jikkou.api";
+
+    @CommandLine.Option(names = "--built-in",
+            defaultValue = "false",
+            description = "List of available extensions, including those that are built-in.")
+    public boolean builtIn;
+
     /**
      * {@inheritDoc}
      */
@@ -54,9 +61,14 @@ public class ExtensionCommand implements Callable<Integer> {
                 .getOrElse(Collections.emptyList());
 
         ExtensionRegistry registry = new ExtensionRegistry();
+        ReflectiveExtensionScanner scanner = new ReflectiveExtensionScanner(registry);
         if (!extensionPaths.isEmpty()) {
-            new ReflectiveExtensionScanner(registry)
-                    .scan(extensionPaths);
+            scanner.scan(extensionPaths);
+        }
+
+        if (builtIn) {
+            // Scan all sub-packages of the root package of Jikkou API for declared extensions.
+            scanner.scanForPackage(JIKKOU_ROOT_API_PACKAGE);
         }
 
         try {

@@ -111,19 +111,19 @@ public class ExtensionResolver {
                 ) {
                     for (Path entry : stream) {
                         if (isArchiveFile(entry)) {
-                            LOG.debug("Detected component jar: {}", entry);
+                            LOG.debug("Detected Extension jar: {}", entry);
                             archives.add(entry);
                         } else if (isClassFile(entry)) {
-                            LOG.debug("Detected component class file: {}", entry);
+                            LOG.debug("Detected Extension class file: {}", entry);
                             containsClassFiles = true;
                         } else {
                             directories.add(entry);
                         }
                     }
                 } catch (final InvalidPathException e) {
-                    LOG.error("Invalid component path '{}', path ignored.", directory, e);
+                    LOG.error("Invalid extension path '{}', path ignored.", directory, e);
                 } catch (IOException e) {
-                    LOG.error("Error while listing component path '{}' path ignored.", directory, e);
+                    LOG.error("Error while listing extension path '{}' path ignored.", directory, e);
                 }
             }
         }
@@ -133,8 +133,8 @@ public class ExtensionResolver {
                 return Collections.singletonList(path.toUri().toURL());
             }
             LOG.error(
-                    "Component path '{}' contains both java class files and JARs, " +
-                            "class files will be ignored and only archives will be scanned.", path);
+                    "Extension path '{}' contains both java class files and JARs, " +
+                     "class files will be ignored and only archives will be scanned.", path);
         }
 
         List<URL> urls = new ArrayList<>(archives.size());

@@ -30,8 +30,8 @@ public class ExternalExtension {
     /**
      * Creates a new {@link ExternalExtension} instance.
      *
-     * @param location  the component top-level location.
-     * @param resources the component resources.
+     * @param location  the extension top-level location.
+     * @param resources the extension resources.
      */
     ExternalExtension(final URL location, final URL[] resources) {
         this.location = location;
