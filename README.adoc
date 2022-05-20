@@ -128,7 +128,7 @@ source <(jikkou generate-completion)
 
 [source,bash]
 ----
-$ docker run -it streamthoughts/jikkou:latest --help
+docker run -it streamthoughts/jikkou:latest --help
 Usage:
 Jikkou [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--config-file=<configFile>]
        [--command-property=<String=String>]... [COMMAND]
@@ -226,7 +226,7 @@ Additionally, Jikkou can be used to create, delete or alter topics: ::
 
 [source,bash]
 ----
-$ jikkou --bootstrap-servers localhost:9092 topics create \
+jikkou --bootstrap-servers localhost:9092 topics create \
 --files kafka-topics.yml \
 --set-label topic_prefix=dev- \
 --verbose \
@@ -270,7 +270,7 @@ It can be used describe existing topics: ::
 
 [source,bash]
 ----
-$ jikkou --bootstrap-servers localhost:9092 topics describe
+jikkou --bootstrap-servers localhost:9092 topics describe
 ----
 
 (output)
@@ -325,7 +325,7 @@ spec:
 You can also define *roles* to be applied to one or more _principals_.
 Jikkou will take care of creating all corresponding ACLs policies.
 
-security-specs.yml::
+kafka-security.yml::
 [source,yaml]
 ----
 apiVersion: 1
@@ -358,8 +358,8 @@ spec:
 
 [source,bash]
 ----
-$ jikkou --bootstrap-servers localhost:9092 acls apply \
-    --files security-specs.yml \
+jikkou --bootstrap-servers localhost:9092 acls apply \
+    --files kafka-security.yml \
     --verbose \
     --yes
 ----
@@ -436,7 +436,7 @@ As of Kafka 2.0.0, you can use `LITERAL` and `PREFIXED` pattern-type to define n
 With Jikkou you can use the pattern-type `MATCH` to create ACLs.
 This will define ACLs with `LITERAL` pattern type for all topics matching the defined regex.
 
-security-specs.yml::
+kafka-security.yml::
 [source,yaml]
 ----
 apiVersion: 1
@@ -455,10 +455,10 @@ spec:
 
 [source,bash]
 ----
-$ jikkou --bootstrap-servers localhost:9092 \
+jikkou --bootstrap-servers localhost:9092 \
     acls \
     apply \
-    --files security-specs.yml \
+    --files kafka-security.yml \
     --verbose \
     --yes
 ----
@@ -513,7 +513,7 @@ Jikkou allows you to define the quotas to apply to consumers or producers identi
 
 The below example shows you how to set default quotas for all clients, then to override that quotas for a specific client and user.
 
-quotas-specs.yml::
+kafka-quotas.yml::
 [source,yaml]
 ----
 apiVersion: 1
@@ -550,7 +550,7 @@ Supported quota types are::
 == ConfigMaps
 
 In Jikkou, `ConfigMaps` allows you to define configuration maps
-that can be referenced by multiple specs entities (e.g. Topics, Quotas).
+that can be referenced by multiple _spec_ entities (e.g. Topics, Quotas).
 
 kafka-topics.yml::
 [source,yaml]
@@ -611,7 +611,7 @@ spec:
       config_map_refs: [ 'DefaultTopicConfig' ]
 ----
 
-NOTE: Jinja templating was introduced to allow you to reuse the same _specs-files_ for multiple target environments.
+NOTE: Jinja templating was introduced to allow you to reuse the same _resource files_ for multiple target environments.
 
 == Configuration
 
@@ -715,6 +715,47 @@ NOTE: The `config` object of a validation will fallback on the top-level Jikkou 
 
 Custom `Transformations` should be packaged as an uber JAR and then configured as a Jikkou link:#Extensions[Extension].
 
+== Managing Kafka Resource
+
+Internally, the Jikkou's API defined various `KafkaResourceManager` sub-interfaces for managing each type of Kafka resources
+
+* link:src/main/java/io/streamthoughts/jikkou/api/manager/KafkaTopicManager.java[`KafkaTopicManager`]
+* link:src/main/java/io/streamthoughts/jikkou/api/manager/KafkaBrokerManager.java[`KafkaBrokerManager`]
+* link:src/main/java/io/streamthoughts/jikkou/api/manager/KafkaAclsManager.java[`KafkaAclsManager`]
+* link:src/main/java/io/streamthoughts/jikkou/api/manager/KafkaQuotaManager.java[`KafkaQuotaManager`]
+
+Currently, Jikkou provides built-in implementations for each of these interface based on the Kafka's AdminClient.
+Thus, depending on the Kafka service manager you use, you may need to implement custom managers for supporting more features.
+
+Finally, the implementations to be used the Jikkou can be configured directly in your `application.conf` file.
+
+[source, hocon]
+----
+jikkou {
+  # The KafkaResourceManager classes and configurations used for managing kafka resources
+  managers {
+    kafka {
+      brokers {
+        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaBrokerManager
+        config = {}
+      }
+      topics {
+        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaTopicManager
+        config = {}
+      }
+      acls {
+        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaAclsManager
+        config = {}
+      }
+      quotas {
+        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaQuotasManager
+        config = {}
+      }
+    }
+  }
+}
+----
+
 == Extensions
 
 Jikkou allows implementing and configuring extensions, i.e., _Validation_ and _Transformer_.
@@ -731,12 +772,12 @@ For Maven::
 </dependency>
 ----
 
-NOTE: The Jikkou API is still evolving. Future releases may introduce minor breaking changes.
+IMPORTANT: The Jikkou API is still evolving. Future releases may introduce minor breaking changes.
 
 For Gradle::
 [source]
 ----
-implementation group: 'io.streamthoughts', name: 'jikkou', version: '0.10.0'
+implementation group: 'io.streamthoughts', name: 'jikkou', version: ${jikkou.version}
 ----
 
 To make your extensions available to Jikkou, install them into one or many local directories.
@@ -782,8 +823,6 @@ public void setUp() {
     );
 }
 ----
-
-==
 
 == 🏭 Developers
 
