@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.extensions;
 import io.streamthoughts.jikkou.internal.ClassUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
@@ -50,6 +51,9 @@ public class ReflectiveExtensionScanner {
 
     private final ExtensionRegistry registry;
 
+    public static void main(String[] args) {
+
+    }
     /**
      * Creates a new {@link ReflectiveExtensionScanner} instance.
      *
@@ -58,6 +62,14 @@ public class ReflectiveExtensionScanner {
     public ReflectiveExtensionScanner(final ExtensionRegistry registry) {
         Objects.requireNonNull(registry, "registry cannot be null");
         this.registry = registry;
+    }
+
+    public void scanForPackage(final String source) {
+        Objects.requireNonNull(source, "source package cannot be null");
+        LOG.info("Looking for paths to scan from source package {}", source);
+        final URL[] urls = ClasspathHelper.forPackage(source).toArray(new URL[0]);
+        final FilterBuilder filterBy = new FilterBuilder().includePackage(source);
+        scanUrlsForComponents(urls, ReflectiveExtensionScanner.class.getClassLoader(), filterBy);
     }
 
     public void scanExtensionPath(final Path extensionPath) {
