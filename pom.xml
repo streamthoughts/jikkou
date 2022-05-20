@@ -246,6 +246,8 @@
                         <configuration>
                             <finalName>${project.artifactId}-runner</finalName>
                             <minimizeJar>true</minimizeJar>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>runner</shadedClassifierName>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -468,7 +470,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
+                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -495,7 +497,7 @@
                         <version>3.4.0</version>
                         <configuration>
                             <doclint>none</doclint><!-- Turnoff all checks -->
-                            <source>11</source>
+                            <source>17</source>
                         </configuration>
                         <executions>
                             <execution>
