@@ -31,6 +31,7 @@ import io.streamthoughts.jikkou.cli.command.topic.TopicsCommand;
 import io.streamthoughts.jikkou.cli.command.validate.ValidateCommand;
 import io.streamthoughts.jikkou.internal.PropertiesUtils;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import picocli.AutoComplete;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -53,7 +54,7 @@ import static picocli.CommandLine.Model.CommandSpec;
 /**
  * The main-class
  */
-@Command(name = "Jikkou",
+@Command(name = "jikkou",
         descriptionHeading   = "%nDescription:%n%n",
         parameterListHeading = "%nParameters:%n%n",
         optionListHeading    = "%nOptions:%n%n",
@@ -72,6 +73,7 @@ import static picocli.CommandLine.Model.CommandSpec;
             ExtensionCommand.class,
             ConfigCommand.class,
             CommandLine.HelpCommand.class,
+            AutoComplete.GenerateCompletion.class
         }
 )
 public class Jikkou {
@@ -103,6 +105,9 @@ public class Jikkou {
                     return cmd.getCommandSpec().exitCodeOnExecutionException();
                 })
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
+
+        CommandLine gen = commandLine.getSubcommands().get("generate-completion");
+        gen.getCommandSpec().usageMessage().hidden(true);
 
         if (args.length > 0) {
             final int exitCode = commandLine.execute(args);

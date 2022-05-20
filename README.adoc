@@ -12,9 +12,11 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 
 **Jikkou** (jikkō / 実行) is a command-line tool to help you automate the management of the configurations that live on your http://kafka.apache.org/[Apache Kafka] clusters.
 
-It allows you to define the desired current state of your **Topics**, **ACLs**, or **Quotas**, using one or more YAML specification files (called _kafka-specs_ files):
+== Overview
 
-topics-specs.yml:::
+It allows you to define the desired current state of your **Topics**, **ACLs**, or **Quotas**, using one or more YAML resource specification files :
+
+kafka-topics.yml:::
 [source,yaml]
 ----
 apiVersion: 1
@@ -32,7 +34,7 @@ It will then take care of computing and applying the necessary changes directly 
 [source, bash]
 ----
 $ jikkou --bootstrap-servers localhost:9092 topics apply \
-    --file topics-specs.yml \
+    --file kafka-topics.yml \
     --yes
 ----
 
@@ -92,7 +94,37 @@ Over time, we began to refactor the solution and extend its functionality to sup
 
 _Note: Internally, Jikkou uses the Kafka Java Admin Client API._ Depending on the Kafka Cluster version you use all features may not be supported.
 
-== Usages
+== Getting Started
+
+=== Installation
+
+Jikkou is available:
+
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.10.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.10.0/[Maven Central]
+* As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.10.0[GitHub Releases]
+
+```bash
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.10.0/jikkou.deb
+sudo dpkg -i jikkou.deb
+```
+
+NOTE: Jikkou will install itself in the directory :  `/opt/jikkou`
+
+It is recommended to install the bash/zsh completion script `jikkou_completion`:
+
+```bash
+wget https://raw.githubusercontent.com/streamthoughts/jikkou/master/jikkou_completion . jikkou_completion
+```
+
+or alternatively, run the following command for generation the completion script.
+
+```
+source <(jikkou generate-completion)
+```
+
+=== Jikkou CLI
 
 [source,bash]
 ----
@@ -132,7 +164,7 @@ Commands:
 See 'Jikkou --help' for more information about a command.
 ----
 
-== 🚀 Getting Started
+== 🚀 User Guide
 
 === The File format
 
@@ -168,24 +200,16 @@ spec:
 
 **Specs**
 
-* `specs.brokers`: the configuration state of Kafka brokers.
-* `specs.security.users`: the description of your ACLs grouped per user (i.e. _principal_).
-* `specs.security.roles`: the description of your ACLs roles that you can reference in the `users` section.
-* `specs.topics`:  the description of your Kafka Topics.
-
-=== How to use it ?
-
-Jikkou is available:
-
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.6.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.6.0/[Maven Central]
-* As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
+* `spec.brokers`: the configuration state of Kafka brokers.
+* `spec.security.users`: the description of your ACLs grouped per user (i.e. _principal_).
+* `spec.security.roles`: the description of your ACLs roles that you can reference in the `users` section.
+* `spec.topics`:  the description of your Kafka Topics.
 
 === How to Manage Topics ?
 
 Jikkou can be used to create, alter and even delete Kafka topics.
 
-topics-specs.yml::
+kafka-topics.yml::
 [source,yaml]
 ----
 apiVersion: 1
@@ -203,7 +227,7 @@ Additionally, Jikkou can be used to create, delete or alter topics: ::
 [source,bash]
 ----
 $ jikkou --bootstrap-servers localhost:9092 topics create \
---files topics-specs.yml \
+--files kafka-topics.yml \
 --set-label topic_prefix=dev- \
 --verbose \
 --yes
@@ -528,7 +552,7 @@ Supported quota types are::
 In Jikkou, `ConfigMaps` allows you to define configuration maps
 that can be referenced by multiple specs entities (e.g. Topics, Quotas).
 
-topics-specs.yml::
+kafka-topics.yml::
 [source,yaml]
 ----
 apiVersion: 1
@@ -560,7 +584,7 @@ Currently, the templating mechanism supports the following scopes::
 * `system.env`: uses to reference an environment variable.
 * `system.props`: uses to reference a system property.
 
-topics-specs.yml::
+kafka-topics.yml::
 [source,yaml]
 ----
 apiVersion: 1
