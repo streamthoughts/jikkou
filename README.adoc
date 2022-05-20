@@ -545,7 +545,7 @@ Supported quota types are::
 * `CLIENT`: Set default quotas for a specific client.
 * `CLIENTS_DEFAULT`: Set default quotas for all clients.
 
-== ConfigMaps
+=== ConfigMaps
 
 In Jikkou, `ConfigMaps` allows you to define configuration maps
 that can be referenced by multiple _spec_ entities (e.g. Topics, Quotas).
@@ -628,7 +628,7 @@ see https://github.com/streamthoughts/jikkou/blob/master/src/main/resources/refe
 include::https://github.com/streamthoughts/jikkou/blob/master/src/main/resources/reference.conf[]
 ----
 
-== Validating Kafka Resources
+=== Validating Kafka Resources
 
 Jikkou allows you to run validation rules on declared resources (i.e. _Topics_, _Quotas_, _ACLs_, etc) before executing any action on your Kafka cluster.
 
