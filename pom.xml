@@ -79,7 +79,7 @@
         <junit.version>5.8.2</junit.version>
         <maven.surefire.plugin.version>3.0.0-M6</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.0.0-M6</maven.failsafe.plugin.version>
-        <testcontainer.version>1.17.1</testcontainer.version>
+        <testcontainer.version>1.17.2</testcontainer.version>
         <app.distribution.directory>${project.basedir}/dist</app.distribution.directory>
     </properties>
 
