@@ -120,12 +120,16 @@ Options:
 
 Commands:
 
-  validate  Validate your specification file.
-  topics    Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  acls      Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  brokers   Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  quotas    Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  help      Displays help information about the specified command
+  validate    Validate your specification file.
+  topics      Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  acls        Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  brokers     Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  quotas      Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  extensions  List all extensions available.
+  config      Sets or retrieves the configuration of this client.
+  help        Displays help information about the specified command
+
+See 'Jikkou --help' for more information about a command.
 ----
 
 == 🚀 Getting Started
@@ -606,7 +610,7 @@ include::https://github.com/streamthoughts/jikkou/blob/master/src/main/resources
 
 Jikkou allows you to run validation rules on declared resources (i.e. _Topics_, _Quotas_, _ACLs_, etc) before executing any action on your Kafka cluster.
 
-To do that, the validations to be applied must configured in your `application.conf` file as follows:
+To do that, the validations to be applied must be configured in your `application.conf` file as follows:
 
 [source, hocon]
 ----
@@ -699,7 +703,7 @@ For Maven::
 <dependency>
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
-    <version>0.10.0</version>
+    <version>${jikkou.version}</version>
 </dependency>
 ----
 
@@ -708,7 +712,7 @@ NOTE: The Jikkou API is still evolving. Future releases may introduce minor brea
 For Gradle::
 [source]
 ----
-implementation group: 'io.streamthoughts', name: 'jikkou', version: '0.9.0'
+implementation group: 'io.streamthoughts', name: 'jikkou', version: '0.10.0'
 ----
 
 To make your extensions available to Jikkou, install them into one or many local directories.
@@ -754,6 +758,8 @@ public void setUp() {
     );
 }
 ----
+
+==
 
 == 🏭 Developers
 
