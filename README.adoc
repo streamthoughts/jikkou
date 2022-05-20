@@ -94,9 +94,7 @@ Over time, we began to refactor the solution and extend its functionality to sup
 
 _Note: Internally, Jikkou uses the Kafka Java Admin Client API._ Depending on the Kafka Cluster version you use all features may not be supported.
 
-== Getting Started
-
-=== Installation
+== Installation
 
 Jikkou is available:
 
@@ -124,7 +122,7 @@ or alternatively, run the following command for generation the completion script
 source <(jikkou generate-completion)
 ```
 
-=== Jikkou CLI
+== Jikkou CLI
 
 [source,bash]
 ----
@@ -574,7 +572,7 @@ spec:
       config_map_refs: [ 'DefaultTopicConfig' ]
 ----
 
-== Templating
+=== Templating
 
 Jikkou provides a basic templating mechanism to dynamically set any entity values using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
 
@@ -613,7 +611,7 @@ spec:
 
 NOTE: Jinja templating was introduced to allow you to reuse the same _resource files_ for multiple target environments.
 
-== Configuration
+=== Configuration
 
 Internally, Jikkou uses the Java Admin client API for interacting with Kafka.
 You can set the configs to be passed to Admin Client using either the command-line arguments `command-config` and `command-property`.
@@ -690,7 +688,7 @@ Additionally, you can implement and configure custom _validations_ by implementi
 
 Custom `Validations` should be packaged as an uber JAR and then configured as a Jikkou link:#Extensions[Extension].
 
-== Transforming Kafka Resources
+=== Transforming Kafka Resources
 
 Jikkou allows you to plug custom transformations on declared resources (i.e. _Topics_, _Quotas_, _ACLs_, etc) before executing any action on your Kafka cluster and before executing validation rules.
 
@@ -715,7 +713,7 @@ NOTE: The `config` object of a validation will fallback on the top-level Jikkou 
 
 Custom `Transformations` should be packaged as an uber JAR and then configured as a Jikkou link:#Extensions[Extension].
 
-== Managing Kafka Resource
+=== Managing Kafka Resource
 
 Internally, the Jikkou's API defined various `KafkaResourceManager` sub-interfaces for managing each type of Kafka resources
 
@@ -756,7 +754,7 @@ jikkou {
 }
 ----
 
-== Extensions
+=== Extensions
 
 Jikkou allows implementing and configuring extensions, i.e., _Validation_ and _Transformer_.
 
@@ -788,7 +786,7 @@ Each configured directories may contain:
 * an uber JAR containing all the classes and third-party dependencies for the extensions.
 * a directory containing all JARs for the extensions.
 
-== Using Jikkou for Integration Tests
+=== Using Jikkou for Integration Tests
 
 Jikkou can also be used for creating all your Kafka Topics for integration test.
 
