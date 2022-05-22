@@ -42,12 +42,10 @@
         </fileSet>
     </fileSets>
     <files>
-        <!--
         <file>
-            <source>jikkou_completion</source>
+            <source>${project.basedir}/jikkou_completion</source>
             <outputDirectory>./</outputDirectory>
         </file>
-        -->
         <file>
             <source>${project.basedir}/src/main/conf/logback.xml</source>
             <outputDirectory>./etc/</outputDirectory>
