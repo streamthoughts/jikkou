@@ -82,6 +82,7 @@
         <testcontainer.version>1.17.2</testcontainer.version>
         <app.distribution.directory>${project.basedir}/dist</app.distribution.directory>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+        <vavr.version>0.10.4</vavr.version>
     </properties>
 
     <dependencies>
@@ -93,12 +94,12 @@
         <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
-            <version>1.0.0-alpha-4</version>
+            <version>${vavr.version}</version>
         </dependency>
         <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr-jackson</artifactId>
-            <version>1.0.0-alpha-3</version>
+            <version>0.10.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
