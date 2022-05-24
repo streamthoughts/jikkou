@@ -25,9 +25,12 @@ import java.util.Map;
 
 public class TemplateRendererTest {
 
+    TemplateRenderer templateRenderer = new TemplateRenderer();
+
     @Test
     public void should_render_template_given_simple_key() {
-        var result = TemplateRenderer.compile(
+
+        var result = templateRenderer.render(
                 "{{ labels.my_var }}",
                 TemplateBindings.defaults().withLabels(Map.of("my_var", "test"))
         );
@@ -42,17 +45,17 @@ public class TemplateRendererTest {
         ));
 
         Assertions.assertEquals("val1",
-                TemplateRenderer.compile("{{ labels.my.var1 }}", binding));
+                templateRenderer.render("{{ labels.my.var1 }}", binding));
         Assertions.assertEquals("val1",
-                TemplateRenderer.compile("{{ labels['my.var1'] }}", binding));
+                templateRenderer.render("{{ labels['my.var1'] }}", binding));
         Assertions.assertEquals("val1",
-                TemplateRenderer.compile("{{ labels['my'].var1 }}", binding));
+                templateRenderer.render("{{ labels['my'].var1 }}", binding));
 
         Assertions.assertEquals("val2",
-                TemplateRenderer.compile("{{ labels.my.var2 }}", binding));
+                templateRenderer.render("{{ labels.my.var2 }}", binding));
         Assertions.assertEquals("val2",
-                TemplateRenderer.compile("{{ labels['my.var2'] }}", binding));
+                templateRenderer.render("{{ labels['my.var2'] }}", binding));
         Assertions.assertEquals("val2",
-                TemplateRenderer.compile("{{ labels['my'].var2 }}", binding));
+                templateRenderer.render("{{ labels['my'].var2 }}", binding));
     }
 }

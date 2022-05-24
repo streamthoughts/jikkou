@@ -1,6 +1,6 @@
-version: 1
+apiVersion: 1
 metadata: {}
-specs:
+spec:
   topics:
     - name: 'bench-p3-r1'
       partitions: 3

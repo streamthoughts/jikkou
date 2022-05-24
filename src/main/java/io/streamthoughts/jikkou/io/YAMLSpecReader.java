@@ -96,17 +96,25 @@ public class YAMLSpecReader implements SpecFileReader {
      */
     @Override
     public V1SpecFile read(@NotNull final InputStream stream,
-                           @NotNull final Map<String, Object> overrideVars,
+                           @NotNull final Map<String, Object> overrideValues,
                            @NotNull final Map<String, Object> overrideLabels) {
         try {
-            final String specification = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            final TemplateBindings context = TemplateBindings.defaults()
+                    .withLabels(overrideLabels)
+                    .withValues(overrideValues);
 
+            final String specification = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             if (specification.isEmpty()) {
                 throw new InvalidSpecsFileException("Empty specification file");
             }
 
+            final String rendered = new TemplateRenderer()
+                    .withPreserveRawTags(false)
+                    .withFailOnUnknownTokens(false)
+                    .render(specification, context);
+
             final Versioned versioned = Jackson.YAML_OBJECT_MAPPER.readValue(
-                    newInputStream(specification),
+                    newInputStream(rendered),
                     Versioned.class
             );
 
@@ -130,7 +138,7 @@ public class YAMLSpecReader implements SpecFileReader {
                         });
             }
 
-            return read(reader, specification, overrideVars, overrideLabels);
+            return read(reader, rendered, overrideValues, overrideLabels);
 
         } catch (IOException e) {
             throw new InvalidSpecsFileException(e.getLocalizedMessage());
@@ -153,11 +161,15 @@ public class YAMLSpecReader implements SpecFileReader {
 
             final TemplateBindings context = TemplateBindings.defaults()
                     .withLabels(labels)
-                    .withVars(vars);
+                    .withValues(vars);
 
-            final String compiled = TemplateRenderer.compile(specification, context);
+            final String rendered = new TemplateRenderer()
+                    .withPreserveRawTags(false)
+                    .withFailOnUnknownTokens(true)
+                    .render(specification, context);
 
-            V1SpecFile file = reader.read(newInputStream(compiled), vars, labels);
+
+            V1SpecFile file = reader.read(newInputStream(rendered), vars, labels);
             file.metadata().setLabels(overrideLabels);
             return file;
 

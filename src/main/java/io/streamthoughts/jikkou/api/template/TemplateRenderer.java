@@ -22,6 +22,7 @@ import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.RenderResult;
 import com.hubspot.jinjava.interpret.TemplateError;
+import com.hubspot.jinjava.mode.ExecutionMode;
 import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.internal.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -39,24 +40,37 @@ import java.util.regex.Pattern;
 public class TemplateRenderer {
 
     // list of scopes for bindings
-    public static final String SCOPE_LABELS             = "labels";
-    public static final String SCOPE_VARS               = "vars";
-    public static final String SCOPE_SYSTEM             = "system";
-    public static final String SCOPE_SYSTEM_ENV         = "env";
-    public static final String SCOPE_SYSTEM_PROPS       = "props";
+    public static final String SCOPE_LABELS = "labels";
+    public static final String SCOPE_VALUES = "values";
+    public static final String SCOPE_SYSTEM = "system";
+    public static final String SCOPE_SYSTEM_ENV = "env";
+    public static final String SCOPE_SYSTEM_PROPS = "props";
 
-    public static String compile(@NotNull final String template,
-                                 @NotNull final TemplateBindings bindings) {
+    private boolean failOnUnknownTokens = true;
+
+    private boolean preserveRawTags = false;
+
+    public TemplateRenderer withFailOnUnknownTokens(final boolean failOnUnknownTokens) {
+        this.failOnUnknownTokens = failOnUnknownTokens;
+        return this;
+    }
+
+    public TemplateRenderer withPreserveRawTags(final boolean preserveRawTags) {
+        this.preserveRawTags = preserveRawTags;
+        return this;
+    }
+
+    public String render(@NotNull final String template,
+                         @NotNull final TemplateBindings bindings) {
 
         JinjavaConfig config = JinjavaConfig.newBuilder()
                 .withCharset(StandardCharsets.UTF_8)
-                .withFailOnUnknownTokens(true)
+                .withFailOnUnknownTokens(failOnUnknownTokens)
+                .withExecutionMode(new PreserveRawExecutionMode(preserveRawTags))
                 .build();
 
         Jinjava jinjava = new Jinjava(config);
-
         Map<String, Object> bindingsMap = buildBindingsMapFrom(bindings);
-
         RenderResult result = jinjava.renderForResult(template, bindingsMap);
 
         List<TemplateError> errors = result.getErrors();
@@ -79,10 +93,10 @@ public class TemplateRenderer {
     static Map<String, Object> buildBindingsMapFrom(final TemplateBindings bindings) {
         HashMap<String, Object> bindingsMap = new HashMap<>();
 
-        Map<String, Object> vars = new HashMap<>();
-        CollectionUtils.toNestedMap(bindings.getVars(), vars, null);
-        CollectionUtils.toFlattenMap(bindings.getVars(), vars, null);
-        bindingsMap.put(SCOPE_VARS, vars);
+        Map<String, Object> values = new HashMap<>();
+        CollectionUtils.toNestedMap(bindings.getValues(), values, null);
+        CollectionUtils.toFlattenMap(bindings.getValues(), values, null);
+        bindingsMap.put(SCOPE_VALUES, values);
 
         Map<String, Object> labels = new HashMap<>();
         CollectionUtils.toNestedMap(bindings.getLabels(), labels, null);
@@ -104,5 +118,18 @@ public class TemplateRenderer {
                 .matcher(s.toLowerCase())
                 .replaceAll(m -> m.group(1).toUpperCase());
         return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+    }
+
+    static class PreserveRawExecutionMode implements ExecutionMode {
+        private final boolean preserveRaw;
+
+        public PreserveRawExecutionMode(final boolean preserveRaw) {
+            this.preserveRaw = preserveRaw;
+        }
+
+        @Override
+        public boolean isPreserveRawTags() {
+            return preserveRaw;
+        }
     }
 }

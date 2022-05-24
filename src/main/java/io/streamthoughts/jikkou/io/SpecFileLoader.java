@@ -20,9 +20,9 @@ package io.streamthoughts.jikkou.io;
 
 import io.streamthoughts.jikkou.api.config.JikkouConfig;
 import io.streamthoughts.jikkou.api.config.JikkouParams;
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.model.MetaObject;
 import io.streamthoughts.jikkou.api.model.V1SpecFile;
-import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.internal.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -34,6 +34,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,8 +49,9 @@ public class SpecFileLoader {
 
     private final SpecFileReader reader;
 
-    private Map<String, Object> vars = new HashMap<>();
+    private Map<String, Object> values = new HashMap<>();
     private Map<String, Object> labels = new HashMap<>();
+    private List<String> valuesFiles = new LinkedList<>();
 
     /**
      * Helper method to create a default {@link SpecFileLoader} for reading specification in YAML files.
@@ -79,8 +81,13 @@ public class SpecFileLoader {
         return this;
     }
 
-    public SpecFileLoader withVars(@NotNull final Map<String, Object> vars) {
-        this.vars = vars;
+    public SpecFileLoader withValues(@NotNull final Map<String, Object> values) {
+        this.values = values;
+        return this;
+    }
+
+    public SpecFileLoader withValuesFiles(@NotNull final List<String> values) {
+        this.valuesFiles = values;
         return this;
     }
 
@@ -105,9 +112,20 @@ public class SpecFileLoader {
      * @return      a new {@link V1SpecFile}.
      */
     public V1SpecFile load(@NotNull final InputStream file) {
-        Map<String, Object> templatingVars = JikkouParams.TEMPLATING_VARS_CONFIG.get(JikkouConfig.get());
-        templatingVars.putAll(vars);
-        return reader.read(file, templatingVars, labels);
+        Map<String, Object> templatingValues = JikkouParams.TEMPLATE_VALUES_CONFIG.get(JikkouConfig.get());
+
+        for (String valuesFile : valuesFiles) {
+            try {
+                Map<String, Object> val = Jackson.YAML_OBJECT_MAPPER.readValue(Files.newInputStream(Path.of(valuesFile)), Map.class);
+                templatingValues.putAll(val);
+            } catch (IOException e) {
+                throw new JikkouException(
+                    String.format("Failed to load values-file '%s': %s", valuesFile, e.getLocalizedMessage())
+                );
+            }
+        }
+        templatingValues.putAll(values);
+        return reader.read(file, templatingValues, labels);
     }
 
     /**

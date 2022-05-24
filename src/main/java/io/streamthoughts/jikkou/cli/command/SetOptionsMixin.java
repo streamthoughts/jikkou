@@ -21,6 +21,8 @@ package io.streamthoughts.jikkou.cli.command;
 import picocli.CommandLine;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class SetOptionsMixin {
@@ -31,17 +33,15 @@ public class SetOptionsMixin {
     public Map<String, Object> clientLabels = new HashMap<>();
 
 
-    @CommandLine.Option(names = { "--set-var", "-v" },
-            description = "Set variables on the command line (can specify multiple values: -v key1=val1 -v key2=val2)"
+    @CommandLine.Option(names = { "--set-value", "-v" },
+            description = "Set variables on the command line to pass into the template engine built-in object 'Values' (can specify multiple values: -v key1=val1 -v key2=val2)"
     )
     public Map<String, Object> clientVars = new HashMap<>();
 
-
-    public Map<String, Object> getClientLabels() {
-        return clientLabels;
-    }
-
-    public Map<String, Object> getClientVars() {
-        return clientVars;
-    }
+    @CommandLine.Option(
+            names = {"--values-files"},
+            arity = "1..*",
+            description = "Specify the values-files containing the variables to pass into the template engine built-in object 'Values' (can specify multiple)."
+    )
+    public List<String> values = new LinkedList<>();
 }

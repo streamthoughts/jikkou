@@ -36,7 +36,7 @@ public class TemplateBindings {
 
     private final Map<String, String> systemProps;
 
-    private final Map<String, Object> vars;
+    private final Map<String, Object> values;
 
     private final Map<String, Object> labels;
 
@@ -51,19 +51,19 @@ public class TemplateBindings {
 
     private TemplateBindings(@NotNull final Map<String, String> systemEnv,
                              @NotNull final Map<String, String> systemProps,
-                             @NotNull final Map<String, Object> vars,
+                             @NotNull final Map<String, Object> values,
                              @NotNull final Map<String, Object> labels) {
         this.systemEnv = systemEnv;
         this.systemProps = systemProps;
         this.labels = labels;
-        this.vars = vars;
+        this.values = values;
     }
 
     public TemplateBindings withLabels(@NotNull final Map<String, Object> labels) {
-        return new TemplateBindings(systemEnv, systemProps, vars, labels);
+        return new TemplateBindings(systemEnv, systemProps, values, labels);
     }
 
-    public TemplateBindings withVars(@NotNull final Map<String, Object> vars) {
+    public TemplateBindings withValues(@NotNull final Map<String, Object> vars) {
         return new TemplateBindings(systemEnv, systemProps, vars, labels);
     }
 
@@ -79,8 +79,8 @@ public class TemplateBindings {
         return systemProps;
     }
 
-    public Map<String, Object> getVars() {
-        return vars;
+    public Map<String, Object> getValues() {
+        return values;
     }
 
     @Override
@@ -89,6 +89,7 @@ public class TemplateBindings {
                 ", systemEnv=" + systemEnv +
                 ", systemProps=" + systemProps +
                 ", labels=" + labels +
+                ", values=" + values +
                 ']';
     }
 

@@ -60,7 +60,8 @@ public class ValidateCommand implements Callable<Integer> {
         List<V1SpecFile> files = SpecFileLoader.newForYaml()
                 .withPattern(specOptions.pattern)
                 .withLabels(setOptions.clientLabels)
-                .withVars(setOptions.clientVars)
+                .withValues(setOptions.clientVars)
+                .withValuesFiles(setOptions.values)
                 .load(specOptions.files);
 
         V1SpecFileProcessor processor = new V1SpecFileProcessor(JikkouConfig.get());

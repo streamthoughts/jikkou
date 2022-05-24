@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
  */
 public final class JikkouParams {
 
-    public static final ConfigParam<Map<String, Object>> TEMPLATING_VARS_CONFIG = ConfigParam
-            .ofMap("templating.vars").orElse(HashMap::new);
+    public static final ConfigParam<Map<String, Object>> TEMPLATE_VALUES_CONFIG = ConfigParam
+            .ofMap("template.values").orElse(HashMap::new);
 
     public static final ConfigParam<Integer> VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG = ConfigParam
             .ofInt("topic-min-replication-factor");

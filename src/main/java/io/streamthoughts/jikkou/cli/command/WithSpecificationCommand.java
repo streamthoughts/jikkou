@@ -53,7 +53,8 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
         List<V1SpecFile> specFiles = SpecFileLoader.newForYaml()
                 .withPattern(specOptions.pattern)
                 .withLabels(options.clientLabels)
-                .withVars(options.clientVars)
+                .withValues(options.clientVars)
+                .withValuesFiles(options.values)
                 .load(specOptions.files);
         return specFiles.stream().map(processor::apply).map(V1SpecFile::spec).collect(Collectors.toList());
     });

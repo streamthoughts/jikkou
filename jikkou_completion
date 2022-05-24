@@ -260,7 +260,7 @@ function _picocli_jikkou_validate() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -274,7 +274,10 @@ function _picocli_jikkou_validate() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -361,7 +364,7 @@ function _picocli_jikkou_extensions() {
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
   local commands=""
-  local flag_opts="-h --help -V --version"
+  local flag_opts="--built-in -h --help -V --version"
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
@@ -431,7 +434,7 @@ function _picocli_jikkou_topics_alter() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -451,7 +454,10 @@ function _picocli_jikkou_topics_alter() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -472,7 +478,7 @@ function _picocli_jikkou_topics_apply() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-config-orphans --delete-topic-orphans --exclude-internals -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -492,7 +498,10 @@ function _picocli_jikkou_topics_apply() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -513,7 +522,7 @@ function _picocli_jikkou_topics_create() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -533,7 +542,10 @@ function _picocli_jikkou_topics_create() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -554,7 +566,7 @@ function _picocli_jikkou_topics_delete() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --exclude-internals -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -574,7 +586,10 @@ function _picocli_jikkou_topics_delete() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -647,7 +662,7 @@ function _picocli_jikkou_acls_apply() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -667,7 +682,10 @@ function _picocli_jikkou_acls_apply() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -688,7 +706,7 @@ function _picocli_jikkou_acls_create() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -708,7 +726,10 @@ function _picocli_jikkou_acls_create() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -729,7 +750,7 @@ function _picocli_jikkou_acls_delete() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -749,7 +770,10 @@ function _picocli_jikkou_acls_delete() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -874,7 +898,7 @@ function _picocli_jikkou_quotas_alter() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -894,7 +918,10 @@ function _picocli_jikkou_quotas_alter() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -915,7 +942,7 @@ function _picocli_jikkou_quotas_apply() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run --delete-config-orphans --delete-quota-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -935,7 +962,10 @@ function _picocli_jikkou_quotas_apply() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -956,7 +986,7 @@ function _picocli_jikkou_quotas_create() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -976,7 +1006,10 @@ function _picocli_jikkou_quotas_create() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac
@@ -997,7 +1030,7 @@ function _picocli_jikkou_quotas_delete() {
 
   local commands=""
   local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-var -v"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -1017,7 +1050,10 @@ function _picocli_jikkou_quotas_delete() {
     --set-label|-s)
       return
       ;;
-    --set-var|-v)
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
       return
       ;;
   esac

@@ -175,8 +175,6 @@ apiVersion: 1
 metadata:
   labels: {}
   annotations: {}
-template:
-  vars: {}
 spec:
     brokers: {}
     topics: {}
@@ -185,7 +183,7 @@ spec:
       roles: {}
 ----
 
-* `version`: the version of the Jikkou's API (default is `1`).
+* `apiVersion`: the version of the Jikkou's API (default is `1`).
 
 **Metadata**
 
@@ -194,9 +192,9 @@ spec:
 
 **Template**
 
-* `template.vars`: a set of key/value pairs that
+* `template.values`: a set of key/value pairs that
 
-**Specs**
+**Spec**
 
 * `spec.brokers`: the configuration state of Kafka brokers.
 * `spec.security.users`: the description of your ACLs grouped per user (i.e. _principal_).
@@ -213,7 +211,7 @@ kafka-topics.yml::
 apiVersion: 1
 spec:
     topics:
-    - name: "{{ labels.topic_prefix | default('') }}my-topic"
+    - name: "{{ Values.topic_prefix | default('') }}my-topic"
       partitions: 6
       replication_factor: 3
       configs:
@@ -226,7 +224,7 @@ Additionally, Jikkou can be used to create, delete or alter topics: ::
 ----
 jikkou --bootstrap-servers localhost:9092 topics create \
 --files kafka-topics.yml \
---set-label topic_prefix=dev- \
+--set-value topic_prefix=dev- \
 --verbose \
 --yes
 ----
@@ -572,44 +570,63 @@ spec:
       config_map_refs: [ 'DefaultTopicConfig' ]
 ----
 
-=== Templating
+=== Template Engine
 
-Jikkou provides a basic templating mechanism to dynamically set any entity values using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
+Jikkou supports a simple templating mechanism using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation for allowing you to reuse the same _resource files_ for multiple target environments.
 
-Currently, the templating mechanism supports the following scopes::
-* `vars`: uses to reference any key/value pairs from the `template.vars` sections or pass through the command arguments.
-* `labels`: uses to reference any key/value pairs from the `metadata.labels` sections or pass through the command arguments.
-* `system.env`: uses to reference an environment variable.
-* `system.props`: uses to reference a system property.
+Jikkou defines a number of top-level objects that are passed to the template engine and that you can access in your templates.
+
+* `values`: Values passed into the template through the command-line arguments `--values-files` or `--set-value`. By default, `Values` is empty.
+    * In addition, values can be defined into the `application.conf` file and directly into the template file using the property `template.values`.
+* `labels`: Labels passed into the template through the command-line argument: `--set-label`. By default, `Labels` is empty.
+    * In addition, values can be directly into the template file using the property `metadata.labels`.
+* `system.env`: This provides access to all environment variables.
+* `system.props`: This provides access to all system properties.
+
+**Example**
+
+[source, bash]
+----
+jikkou validate --files kafka-topics.yml --values-files=values.yml
+----
+
+values.yml::
+[source,yaml]
+----
+topic_prefix: "{{ system.env.TOPIC_PREFIX | default('', true) }}"
+default_replication_factor: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}"
+----
 
 kafka-topics.yml::
 [source,yaml]
 ----
 apiVersion: 1
 template:
-  vars:
-    topic_prefix: "{{ system.env.TOPIC_PREFIX | default('', true) }}"
-    default_replication_factor: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}"
+  values:
     default_min_insync_replicas: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) | int | add(-1) }}"
 spec:
     config_maps:
     - name: DefaultTopicConfig
       configs:
         log.retention.hours: 72
-        min.insync.replicas: "{{ vars.default_min_insync_replicas }}"
+        min.insync.replicas: "{% raw %}{{ values.default_min_insync_replicas }}{% endraw %}"
     topics:
-    - name: "{{ vars.topic_prefix }}my-first-topic"
+    - name: "{{ values.topic_prefix }}my-first-topic"
       partitions: 6
-      replication_factor: "{{ vars.default_replication_factor }}"
+      replication_factor: "{{ values.default_replication_factor }}"
       config_map_refs: [ 'DefaultTopicConfig' ]
 
-    - name: "{{ vars.topic_prefix }}my-second-topic"
+    - name: "{{ values.topic_prefix }}my-second-topic"
       partitions: 12
-      replication_factor: "{{ vars.default_replication_factor }}"
+      replication_factor: "{{ values.default_replication_factor }}"
       config_map_refs: [ 'DefaultTopicConfig' ]
 ----
 
-NOTE: Jinja templating was introduced to allow you to reuse the same _resource files_ for multiple target environments.
+Jikkou will perform two rendering of your template.
+A first time using only the `values` and `labels` passed through the command-lines arguments. Then, a second time after parsing the YAML resource file using also the `values` and `labels` as defined into the resource file.
+Thus, it is important that, after the first rendering, your resource file is converted into a valid YAML file.
+
+In addition, you should use `{% raw %}...{% endraw %}` tags to ensure that variables defined into the template are not be interpreted during the first rendering.
 
 === Configuration
 

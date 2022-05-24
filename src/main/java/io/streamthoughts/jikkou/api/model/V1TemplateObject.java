@@ -48,7 +48,7 @@ public class V1TemplateObject {
 
     public static class V1Template {
 
-        private final Map<String, Object> vars;
+        private final Map<String, Object> values;
 
         public V1Template() {
             this(Collections.emptyMap());
@@ -60,12 +60,12 @@ public class V1TemplateObject {
          * @param vars  the variables.
          */
         @JsonCreator
-        public V1Template(@JsonProperty("vars") final Map<String, Object> vars) {
-            this.vars = Optional.ofNullable(vars).orElse(Collections.emptyMap());
+        public V1Template(@JsonProperty("values") final Map<String, Object> vars) {
+            this.values = Optional.ofNullable(vars).orElse(Collections.emptyMap());
         }
 
         public Map<String, Object> vars() {
-            return vars;
+            return values;
         }
 
     }

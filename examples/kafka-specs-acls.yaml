@@ -1,6 +1,6 @@
-version: 1
+apiVersion: 1
 metadata: {}
-specs:
+spec:
   security:
     users:
     - principal: 'User:kafka'
