@@ -18,14 +18,9 @@
  */
 package io.streamthoughts.jikkou.api.processor;
 
-import io.streamthoughts.jikkou.api.config.JikkouConfig;
-import io.streamthoughts.jikkou.api.config.JikkouParams;
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.model.V1SpecFile;
 import io.streamthoughts.jikkou.api.model.V1SpecObject;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.JikkouException;
-import io.streamthoughts.jikkou.api.extensions.ExtensionRegistry;
-import io.streamthoughts.jikkou.api.extensions.ReflectiveExtensionScanner;
 import io.streamthoughts.jikkou.api.transforms.ApplyConfigMapsTransformation;
 import io.streamthoughts.jikkou.api.transforms.Transformation;
 import io.streamthoughts.jikkou.api.validations.NoDuplicateRolesAllowedValidation;
@@ -38,45 +33,37 @@ import io.vavr.Lazy;
 import io.vavr.collection.List;
 import io.vavr.control.Try;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 
-public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor> {
+/**
+ * Default implementation for the {@link Processor}.
+ */
+public final class DefaultProcessor implements Processor<DefaultProcessor> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(V1SpecFileProcessor.class);
+    private final java.util.List<Lazy<Transformation>> transformations;
 
-    private final List<Lazy<Transformation>> transformations;
-
-    private final List<Lazy<Validation>> validations;
-
-    private final ExtensionRegistry registry = new ExtensionRegistry();
+    private final java.util.List<Lazy<Validation>> validations;
 
     /**
-     * Creates a new {@link V1SpecFileProcessor} instance for the specified {@code config}.
-     *
-     * @param config    the application's configuration.
+     * Creates a new {@link DefaultProcessor} instance for the specified {@code config}.
      */
-    public V1SpecFileProcessor(final @NotNull JikkouConfig config) {
+    public DefaultProcessor() {
         this(builtInTransformations(), builtInValidations());
-        configure(config);
     }
 
-    private static List<Lazy<Transformation>> builtInTransformations() {
-        return List.of(
+    private static java.util.List<Lazy<Transformation>> builtInTransformations() {
+        return java.util.List.of(
                 Lazy.of(ApplyConfigMapsTransformation::new),
                 Lazy.of(ApplyConfigMapsTransformation::new)
         );
     }
 
-    private static List<Lazy<Validation>> builtInValidations() {
-        return List.of(
+    private static java.util.List<Lazy<Validation>> builtInValidations() {
+        return java.util.List.of(
                 Lazy.of(NoDuplicateTopicsAllowedValidation::new),
                 Lazy.of(NoDuplicateUsersAllowedValidation::new),
                 Lazy.of(NoDuplicateRolesAllowedValidation::new),
@@ -85,13 +72,13 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
     }
 
     /**
-     * Creates a new {@link V1SpecFileProcessor} instance.
+     * Creates a new {@link DefaultProcessor} instance.
      *
-     * @param transformations   the list of {@link Transformation} to register.
-     * @param validations       the list of {@link Validation} to register.
+     * @param transformations the list of {@link Transformation} to register.
+     * @param validations     the list of {@link Validation} to register.
      */
-    V1SpecFileProcessor(final @NotNull List<Lazy<Transformation>> transformations,
-                        final @NotNull List<Lazy<Validation>> validations) {
+    private DefaultProcessor(final @NotNull java.util.List<Lazy<Transformation>> transformations,
+                             final @NotNull java.util.List<Lazy<Validation>> validations) {
         this.transformations = transformations;
         this.validations = validations;
     }
@@ -100,51 +87,22 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
      * {@inheritDoc}
      */
     @Override
-    public void configure(final @NotNull JikkouConfig config) throws ConfigException {
-        LOG.info("Configuring");
-        final java.util.List<String> extensionPaths = JikkouParams.EXTENSION_PATHS
-                .getOption(config)
-                .getOrElse(Collections.emptyList());
-
-        if (!extensionPaths.isEmpty()) {
-            new ReflectiveExtensionScanner(registry).scan(extensionPaths);
-        }
-
-        JikkouParams.TRANSFORMATIONS_CONFIG.get(config)
-                .stream()
-                .peek(tuple -> LOG.info("Added {} with values:\n\t{}", tuple._1(), tuple._2().toPrettyString()))
-                .map(tuple -> Lazy.of(() -> {
-                    var extension = (Transformation) registry.getExtensionForClass(tuple._1());
-                    extension.configure(tuple._2().withFallback(config));
-                    return extension;
-                }))
-                .forEach(this::withTransformation);
-
-        JikkouParams.VALIDATIONS_CONFIG.get(config)
-                .stream()
-                .peek(tuple -> LOG.info("Added {} with values:\n\t{}", tuple._1(), tuple._2().toPrettyString()))
-                .map(tuple -> Lazy.of(() -> {
-                    var extension = (Validation) registry.getExtensionForClass(tuple._1());
-                    extension.configure(tuple._2().withFallback(config));
-                    return extension;
-                }))
-                .forEach(this::withValidation);
+    public @NotNull DefaultProcessor withTransformation(@NotNull final Lazy<Transformation> transformation) {
+        return new DefaultProcessor(
+                List.ofAll(transformations).append(transformation).toJavaList(),
+                validations
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public @NotNull V1SpecFileProcessor withTransformation(@NotNull final Lazy<Transformation> transformation) {
-        return new V1SpecFileProcessor(transformations.append(transformation), validations);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public @NotNull V1SpecFileProcessor withValidation(@NotNull final Lazy<Validation> validation) {
-        return new V1SpecFileProcessor(transformations, validations.append(validation));
+    public @NotNull DefaultProcessor withValidation(@NotNull final Lazy<Validation> validation) {
+        return new DefaultProcessor(
+                transformations,
+                List.ofAll(validations).append(validation).toJavaList()
+        );
     }
 
     /**
@@ -154,12 +112,12 @@ public final class V1SpecFileProcessor implements Processor<V1SpecFileProcessor>
     public @NotNull V1SpecFile apply(@NotNull final V1SpecFile file) {
 
         // (1) run all transformations onto the given V1SpecsObject
-        final V1SpecObject v1SpecsObject = transformations
+        final V1SpecObject v1SpecsObject = List.ofAll(transformations)
                 .map(Lazy::get)
                 .foldLeft(file.spec(), (specsObject, transformation) -> transformation.transform(specsObject));
 
         // (2) run all validations and get all ValidationExceptions
-        final java.util.List<ValidationException> errors = validations
+        final java.util.List<ValidationException> errors = List.ofAll(validations)
                 .map(Lazy::get)
                 .map(validation -> Try.run(() -> validation.validate(v1SpecsObject)))
                 .map(Try::failed)

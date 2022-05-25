@@ -18,18 +18,20 @@
  */
 package io.streamthoughts.jikkou.api.processor;
 
-import io.streamthoughts.jikkou.api.config.Configurable;
 import io.streamthoughts.jikkou.api.model.V1SpecFile;
 import io.streamthoughts.jikkou.api.transforms.Transformation;
 import io.streamthoughts.jikkou.api.validations.Validation;
 import io.vavr.Lazy;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
+ * Immutable processor to be
  *
  * @param <T>   the processor-type.
  */
-public interface Processor<T extends Processor<T>> extends Configurable {
+public interface Processor<T extends Processor<T>> {
 
     /**
      * Creates a new {@link Processor} from this one and register the specified {@code transformation} into it.
@@ -40,12 +42,35 @@ public interface Processor<T extends Processor<T>> extends Configurable {
     @NotNull T withTransformation(@NotNull final Lazy<Transformation> transformation);
 
     /**
+     * Creates a new {@link Processor} from this one and register the specified {@code transformation}s into it.
+     *
+     * @param transformations  the list of {@link Transformation} to register.
+     * @return  a new immutable {@link Processor}.
+     */
+    @SuppressWarnings("unchecked")
+    default @NotNull T withTransformations(@NotNull final List<Lazy<Transformation>> transformations) {
+        return  (T) io.vavr.collection.List.ofAll(transformations).foldLeft(this, (Processor::withTransformation));
+    }
+
+    /**
      * Creates a new {@link Processor} from this one and register the specified {@code validation} into it.
      *
      * @param validation  the {@link Validation} to register .
      * @return  a new immutable {@link Processor}.
      */
     @NotNull T withValidation(@NotNull final Lazy<Validation> validation);
+
+    /**
+     * Creates a new {@link Processor} from this one and register the specified {@code validation} into it.
+     *
+     * @param validations  the {@link Validation} to register .
+     * @return  a new immutable {@link Processor}.
+     */
+    @SuppressWarnings("unchecked")
+    default @NotNull T withValidations(@NotNull final List<Lazy<Validation>> validations) {
+       return  (T) io.vavr.collection.List.ofAll(validations).foldLeft(this, (Processor::withValidation));
+    }
+
 
     /**
      * Applies this processor to the specified specification file object.

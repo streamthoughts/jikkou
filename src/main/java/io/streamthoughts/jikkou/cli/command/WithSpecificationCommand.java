@@ -18,13 +18,15 @@
  */
 package io.streamthoughts.jikkou.cli.command;
 
+import io.streamthoughts.jikkou.api.extensions.ExtensionRegistry;
+import io.streamthoughts.jikkou.api.processor.DefaultProcessorFactory;
 import io.streamthoughts.jikkou.cli.CLIUtils;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.JikkouConfig;
 import io.streamthoughts.jikkou.io.SpecFileLoader;
 import io.streamthoughts.jikkou.api.model.V1SpecFile;
 import io.streamthoughts.jikkou.api.model.V1SpecObject;
-import io.streamthoughts.jikkou.api.processor.V1SpecFileProcessor;
+import io.streamthoughts.jikkou.api.processor.DefaultProcessor;
 import io.streamthoughts.jikkou.cli.Printer;
 import io.streamthoughts.jikkou.api.change.Change;
 import io.vavr.Lazy;
@@ -49,7 +51,9 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
     SetOptionsMixin options;
 
     private final Lazy<List<V1SpecObject>> object = Lazy.of(() -> {
-        V1SpecFileProcessor processor = new V1SpecFileProcessor(JikkouConfig.get());
+        DefaultProcessor processor = new DefaultProcessorFactory(new ExtensionRegistry())
+                .create(JikkouConfig.get());
+
         List<V1SpecFile> specFiles = SpecFileLoader.newForYaml()
                 .withPattern(specOptions.pattern)
                 .withLabels(options.clientLabels)

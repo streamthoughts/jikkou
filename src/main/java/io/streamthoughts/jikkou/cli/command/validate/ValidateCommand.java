@@ -19,9 +19,11 @@
 package io.streamthoughts.jikkou.cli.command.validate;
 
 import io.streamthoughts.jikkou.api.config.JikkouConfig;
+import io.streamthoughts.jikkou.api.extensions.ExtensionRegistry;
 import io.streamthoughts.jikkou.api.model.MetaObject;
 import io.streamthoughts.jikkou.api.model.V1SpecFile;
-import io.streamthoughts.jikkou.api.processor.V1SpecFileProcessor;
+import io.streamthoughts.jikkou.api.processor.DefaultProcessor;
+import io.streamthoughts.jikkou.api.processor.DefaultProcessorFactory;
 import io.streamthoughts.jikkou.io.SpecFileLoader;
 import io.streamthoughts.jikkou.io.YAMLSpecWriter;
 import io.streamthoughts.jikkou.cli.command.SetOptionsMixin;
@@ -64,7 +66,9 @@ public class ValidateCommand implements Callable<Integer> {
                 .withValuesFiles(setOptions.values)
                 .load(specOptions.files);
 
-        V1SpecFileProcessor processor = new V1SpecFileProcessor(JikkouConfig.get());
+        DefaultProcessor processor = new DefaultProcessorFactory(new ExtensionRegistry())
+                .create(JikkouConfig.get());
+
         for (V1SpecFile file : files) {
             V1SpecFile validate = processor.apply(file);
             MetaObject metaObject = MetaObject.defaults()
