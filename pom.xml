@@ -24,7 +24,7 @@
 
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
-    <version>0.11.0-SNAPSHOT</version>
+    <version>0.11.0</version>
 
     <name>Jikkou</name>
     <description>A command-line tool to help you automate the management of the configurations that live on your Apache
