@@ -244,6 +244,12 @@
                         <fileset>
                             <directory>${project.basedir}/dist</directory>
                         </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/docker</directory>
+                            <includes>
+                                <include>**/*.zip</include>
+                            </includes>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
