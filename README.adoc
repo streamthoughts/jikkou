@@ -98,13 +98,13 @@ _Note: Internally, Jikkou uses the Kafka Java Admin Client API._ Depending on th
 
 Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.11.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.11.0/[Maven Central]
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.12.1[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.12.1/[Maven Central]
 * As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.11.0[GitHub Releases]
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.12.1[GitHub Releases]
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.11.0/jikkou.deb
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.12.1/jikkou.deb
 sudo dpkg -i jikkou.deb
 ```
 
