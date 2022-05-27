@@ -45,8 +45,14 @@ public final class JikkouParams {
     public static final ConfigParam<Integer> VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG = ConfigParam
             .ofInt("topic-min-replication-factor");
 
+    public static final ConfigParam<Integer> VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG = ConfigParam
+            .ofInt("topic-max-replication-factor");
+
     public static final ConfigParam<Integer> VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG = ConfigParam
             .ofInt("topic-min-num-partitions");
+
+    public static final ConfigParam<Integer> VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG = ConfigParam
+            .ofInt("topic-max-num-partitions");
 
     public static final ConfigParam<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigParam
             .ofString("topic-name-regex");

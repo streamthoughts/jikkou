@@ -23,13 +23,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TopicMinNumPartitionsValidationTest {
+public class TopicMaxNumPartitionsValidationTest {
 
-    TopicMinNumPartitionsValidation validation;
+    TopicMaxNumPartitionsValidation validation;
 
     @BeforeEach
     public void before() {
-        validation = new TopicMinNumPartitionsValidation(1);
+        validation = new TopicMaxNumPartitionsValidation(1);
+    }
+
+    @Test
+    public void should_throw_exception_when_max_num_partition_is_not_valid() {
+        Assertions.assertThrows(ValidationException.class, () ->
+                validation.validateTopic(new V1TopicObject("test", 2, (short) 1)));
     }
 
     @Test
@@ -39,7 +45,7 @@ public class TopicMinNumPartitionsValidationTest {
     }
 
     @Test
-    public void should_not_throw_exception_given_topic_valid_min_num_partition() {
+    public void should_not_throw_exception_given_topic_valid_max_num_partition() {
         Assertions.assertDoesNotThrow(() ->
                 validation.validateTopic(new V1TopicObject("test", 1, (short) 1)));
     }
