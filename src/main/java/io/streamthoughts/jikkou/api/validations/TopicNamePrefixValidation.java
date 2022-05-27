@@ -25,10 +25,24 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public class TopicNamePrefixValidation extends TopicValidation {
 
     private List<String> prefixes;
+
+    /**
+     * Empty constructor used by {@link JikkouConfig}.
+     */
+    public TopicNamePrefixValidation() {}
+
+    /**
+     * Creates a new {@link TopicNamePrefixValidation}.
+     * @param prefixes the list of prefixes.
+     */
+    public TopicNamePrefixValidation(final List<String> prefixes) {
+        configure(JikkouParams.VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.toConfig(prefixes));
+    }
 
     /**
      * {@inheritDoc}

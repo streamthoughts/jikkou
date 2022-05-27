@@ -29,6 +29,19 @@ public class TopicMinNumPartitionsValidation extends TopicValidation {
     private Integer minNumPartitions;
 
     /**
+     * Empty constructor used by {@link JikkouConfig}.
+     */
+    public TopicMinNumPartitionsValidation(){}
+
+    /**
+     * Creates a new {@link TopicMinNumPartitionsValidation}
+     * @param minNumPartitions the min number of partitions.
+     */
+    public TopicMinNumPartitionsValidation(final int minNumPartitions) {
+        configure(JikkouParams.VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.toConfig(minNumPartitions));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

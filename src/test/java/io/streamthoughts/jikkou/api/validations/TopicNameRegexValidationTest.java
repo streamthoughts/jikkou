@@ -45,14 +45,14 @@ public class TopicNameRegexValidationTest {
     @Test
     public void should_throw_exception_when_invalid_pattern_is_configured() {
         Assertions.assertThrows(ConfigException.class, () -> {
-            validation.configure(JikkouConfig.create(Map.of(JikkouParams.VALIDATION_TOPIC_NAME_REGEX_CONFIG.path(), "")));
+            new TopicNameRegexValidation("");
         });
     }
 
     @Test
     public void should_throw_exception_given_topic_not_matching() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            validation.configure(JikkouConfig.create(Map.of(JikkouParams.VALIDATION_TOPIC_NAME_REGEX_CONFIG.path(), "test-")));
+            var validation = new TopicNameRegexValidation("test-");
             validation.validateTopic(new V1TopicObject("dummy", -1, (short) 1));
         });
     }

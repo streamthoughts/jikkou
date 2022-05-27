@@ -25,12 +25,26 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class TopicNameRegexValidation extends TopicValidation {
 
     private Pattern pattern;
+
+    /**
+     * Empty constructor used by {@link JikkouConfig}.
+     */
+    public TopicNameRegexValidation() {}
+
+    /**
+     * Creates a new {@link TopicNameRegexValidation} instance.
+     * @param regex the regex.
+     */
+    public TopicNameRegexValidation(final String regex) {
+        configure(JikkouParams.VALIDATION_TOPIC_NAME_REGEX_CONFIG.toConfig(regex));
+    }
 
     /**
      * {@inheritDoc}

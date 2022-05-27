@@ -18,14 +18,10 @@
  */
 package io.streamthoughts.jikkou.api.validations;
 
-import io.streamthoughts.jikkou.api.config.JikkouConfig;
-import io.streamthoughts.jikkou.api.config.JikkouParams;
 import io.streamthoughts.jikkou.api.model.V1TopicObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 public class TopicMinReplicationFactorValidationTest {
 
@@ -33,10 +29,7 @@ public class TopicMinReplicationFactorValidationTest {
 
     @BeforeEach
     public void before() {
-        validation = new TopicMinReplicationFactorValidation();
-        validation.configure(JikkouConfig.create(
-                Map.of(JikkouParams.VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.path(), 1)
-        ));
+        validation = new TopicMinReplicationFactorValidation(1);
     }
 
     @Test

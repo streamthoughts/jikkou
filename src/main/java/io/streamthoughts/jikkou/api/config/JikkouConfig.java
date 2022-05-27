@@ -76,12 +76,38 @@ public final class JikkouConfig {
 
     /**
      * Static helper that can be used to create a new {@link JikkouConfig} instance
+     * from the specified properties.
+     *
+     * @param config the config Properties.
+     * @param doLog  should configuration be logged.
+     *
+     * @return a new {@link JikkouConfig} instance.
+     */
+    public static JikkouConfig create(final Properties config, final boolean doLog) {
+        return new JikkouConfig(ConfigFactory.parseProperties(config, ConfigParseOptions.defaults()), doLog);
+    }
+
+    /**
+     * Static helper that can be used to create a new {@link JikkouConfig} instance
      * from the specified map.
      *
+     * @param config the config Map.
      * @return a new {@link JikkouConfig} instance.
      */
     public static JikkouConfig create(final Map<String, Object> config) {
         return new JikkouConfig(ConfigFactory.parseMap(config));
+    }
+
+    /**
+     * Static helper that can be used to create a new {@link JikkouConfig} instance
+     * from the specified map.
+     *
+     * @param config the config Map.
+     * @param doLog  should configuration be logged.
+     * @return a new {@link JikkouConfig} instance.
+     */
+    public static JikkouConfig create(final Map<String, Object> config, final boolean doLog) {
+        return new JikkouConfig(ConfigFactory.parseMap(config), doLog);
     }
 
     /**

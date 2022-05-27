@@ -29,6 +29,19 @@ public class TopicMinReplicationFactorValidation extends TopicValidation {
     private Integer minReplicationFactor;
 
     /**
+     * Empty constructor used by {@link JikkouConfig}.
+     */
+    public TopicMinReplicationFactorValidation(){}
+
+    /**
+     * Creates a new {@link TopicMinReplicationFactorValidation}
+     * @param minReplicationFactor the min replication factor.
+     */
+    public TopicMinReplicationFactorValidation(final int minReplicationFactor) {
+        configure(JikkouParams.VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.toConfig(minReplicationFactor));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

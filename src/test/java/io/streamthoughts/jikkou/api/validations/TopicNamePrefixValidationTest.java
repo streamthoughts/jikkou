@@ -46,9 +46,7 @@ public class TopicNamePrefixValidationTest {
     @Test
     public void should_throw_exception_given_topic_not_starting_with() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            validation.configure(JikkouConfig.create(
-                    Map.of(JikkouParams.VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.path(), List.of("test-"))
-            ));
+            TopicNamePrefixValidation validation = new TopicNamePrefixValidation(List.of("test-"));
             validation.validateTopic(new V1TopicObject("dummy", -1, (short) 1));
         });
     }
@@ -56,9 +54,7 @@ public class TopicNamePrefixValidationTest {
     @Test
     public void should_return_given_topic_starting_with() {
         Assertions.assertDoesNotThrow( () -> {
-            validation.configure(JikkouConfig.create(
-                    Map.of(JikkouParams.VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.path(), List.of("test-"))
-            ));
+            TopicNamePrefixValidation validation = new TopicNamePrefixValidation(List.of("test-"));
             validation.validateTopic(new V1TopicObject("test-dummy", -1, (short) 1));
         });
     }

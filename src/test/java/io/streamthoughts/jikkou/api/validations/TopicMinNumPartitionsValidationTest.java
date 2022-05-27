@@ -33,10 +33,7 @@ public class TopicMinNumPartitionsValidationTest {
 
     @BeforeEach
     public void before() {
-        validation = new TopicMinNumPartitionsValidation();
-        validation.configure(JikkouConfig.create(
-                Map.of(JikkouParams.VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.path(), 1)
-        ));
+        validation = new TopicMinNumPartitionsValidation(1);
     }
 
     @Test

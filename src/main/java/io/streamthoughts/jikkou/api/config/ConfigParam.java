@@ -148,6 +148,10 @@ public class ConfigParam<T> {
         this(path, Option.none(), supplier);
     }
 
+    public JikkouConfig toConfig(final Object value) {
+        return JikkouConfig.create(Map.of(path, value), false);
+    }
+
     /**
      * Creates a new {@link ConfigParam} instance.
      *
