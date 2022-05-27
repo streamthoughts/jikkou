@@ -34,6 +34,8 @@ import io.vavr.collection.List;
 import io.vavr.control.Try;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 import static com.google.common.base.Predicates.instanceOf;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
@@ -87,9 +89,9 @@ public final class DefaultProcessor implements Processor<DefaultProcessor> {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull DefaultProcessor withTransformation(@NotNull final Lazy<Transformation> transformation) {
+    public @NotNull DefaultProcessor withTransformation(@NotNull final Supplier<Transformation> transformation) {
         return new DefaultProcessor(
-                List.ofAll(transformations).append(transformation).toJavaList(),
+                List.ofAll(transformations).append(Lazy.of(transformation)).toJavaList(),
                 validations
         );
     }
@@ -98,10 +100,10 @@ public final class DefaultProcessor implements Processor<DefaultProcessor> {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull DefaultProcessor withValidation(@NotNull final Lazy<Validation> validation) {
+    public @NotNull DefaultProcessor withValidation(@NotNull final Supplier<Validation> validation) {
         return new DefaultProcessor(
                 transformations,
-                List.ofAll(validations).append(validation).toJavaList()
+                List.ofAll(validations).append(Lazy.of(validation)).toJavaList()
         );
     }
 
