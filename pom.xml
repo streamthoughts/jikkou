@@ -83,6 +83,11 @@
         <app.distribution.directory>${project.basedir}/dist</app.distribution.directory>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <vavr.version>0.10.4</vavr.version>
+        <kafka.version>3.2.0</kafka.version>
+        <jackson-databind.version>2.13.3</jackson-databind.version>
+        <picocli.version>4.6.3</picocli.version>
+        <jinjava.version>2.6.0</jinjava.version>
+        <reflections.version>0.10.2</reflections.version>
     </properties>
 
     <dependencies>
@@ -104,7 +109,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.2.0</version>
+            <version>${kafka.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -114,32 +119,32 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.3</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.13.3</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
-            <version>2.13.3</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.6.3</version>
+            <version>${picocli.version}</version>
         </dependency>
         <dependency>
             <groupId>com.hubspot.jinjava</groupId>
             <artifactId>jinjava</artifactId>
-            <version>2.6.0</version>
+            <version>${jinjava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
+            <version>${reflections.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -265,6 +270,7 @@
                         <configuration>
                             <finalName>${project.artifactId}-runner</finalName>
                             <minimizeJar>true</minimizeJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>runner</shadedClassifierName>
                             <transformers>
