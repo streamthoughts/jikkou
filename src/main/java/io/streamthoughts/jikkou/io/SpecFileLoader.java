@@ -116,8 +116,15 @@ public class SpecFileLoader {
 
         for (String valuesFile : valuesFiles) {
             try {
-                Map<String, Object> val = Jackson.YAML_OBJECT_MAPPER.readValue(Files.newInputStream(Path.of(valuesFile)), Map.class);
-                templatingValues.putAll(val);
+                Path path = Path.of(valuesFile);
+                if (Files.size(path) > 0) {
+                    Map<String, Object> values = Jackson.YAML_OBJECT_MAPPER.readValue(Files.newInputStream(path), Map.class);
+                    if (values != null) {
+                        templatingValues.putAll(values);
+                    }
+                } else {
+                    LOG.debug("Ignore values from '{}'. File is empty.", valuesFile);
+                }
             } catch (IOException e) {
                 throw new JikkouException(
                     String.format("Failed to load values-file '%s': %s", valuesFile, e.getLocalizedMessage())
@@ -136,7 +143,7 @@ public class SpecFileLoader {
      */
     public List<V1SpecFile> load(final @NotNull List<String> locations) {
         if (locations.isEmpty()) {
-            throw new JikkouException("No specification file loaded");
+            throw new JikkouException("No resource specification file loaded");
         }
 
         List<V1SpecFile> loaded = locations.stream()
@@ -158,7 +165,7 @@ public class SpecFileLoader {
                 })
                 .toList();
         if (loaded.isEmpty()) {
-            throw new JikkouException("No specification file loaded");
+            throw new JikkouException("No resource specification file loaded");
         }
 
         return loaded;
