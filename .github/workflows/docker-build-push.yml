@@ -4,6 +4,9 @@ on:
     branches:
       - master
       - main
+  create:
+    tags:
+      - v*
 jobs:
   build_docker_image:
     if: github.repository == 'streamthoughts/jikkou'
@@ -45,6 +48,17 @@ jobs:
     - name: Check GIT_COMMIT   
       run: echo "${{ env.GIT_COMMIT }}"
 
+    - name: Set DOCKER_IMAGE_TAG
+      if: github.ref_name == 'master'
+      run: echo "DOCKER_TAG=master" >> $GITHUB_ENV
+
+    - name: Set DOCKER_IMAGE_TAG
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      run: echo "DOCKER_TAG=${{ env.PROJECT_VERSION }}" >> $GITHUB_ENV
+
+    - name: Check DOCKER_IMAGE_TAG
+      run: echo "${{ env.DOCKER_TAG }}"
+
     - name: Copy Assembly distribution
       run:  cp ./dist/jikkou-${{ env.PROJECT_VERSION }}-runner.zip ./docker/jikkou-${{ env.PROJECT_VERSION }}-runner.zip
 
@@ -61,7 +75,21 @@ jobs:
         file: docker/Dockerfile
         no-cache: true
         push: true
-        tags: streamthoughts/jikkou:master
+        tags: streamthoughts/jikkou:${{ env.DOCKER_TAG }}
+        build-args: |
+          jikkouVersion=${{ env.PROJECT_VERSION }}
+          jikkouCommit=${{ env.GIT_COMMIT }}
+          jikkouBranch=${{ env.GIT_BRANCH }}
+
+    - name: Push to Docker Hub (latest)
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      uses: docker/build-push-action@v3
+      with:
+        context: docker
+        file: docker/Dockerfile
+        no-cache: true
+        push: true
+        tags: streamthoughts/jikkou:latest
         build-args: |
           jikkouVersion=${{ env.PROJECT_VERSION }}
           jikkouCommit=${{ env.GIT_COMMIT }}
