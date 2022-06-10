@@ -1,0 +1,34 @@
+/*
+
+Add styles or override variables from the theme here.
+
+*/
+
+$primary: #16262f;
+$secondary: #BF1363;
+$primary-light: lighten($primary, 75%) !default;
+
+$yellow: #D17A22;
+$green: #339989;
+$green-light: #3fd7b0;
+
+$enable-gradients: true;
+$enable-rounded: true;
+$enable-shadows: true;
+
+
+// Custom colors
+$dark-grey: #343A40 !default;
+$green-light: #26b793;
+$indigo: #502198;
+
+$dark: #121b28 !default;
+$blue: #141440ff !default;
+$blue-light: #2880c1 !default;
+
+$gray: #6C757D !default;
+$gray-light: #F8F9FA !default;
+
+
+
+

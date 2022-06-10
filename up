@@ -1,0 +1,47 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR=$(dirname "$(readlink -f $0)")
+DOCKERDIR="$BASEDIR"
+
+DOCKER_STACK="$DOCKERDIR/docker-compose.yml"
+
+line() {
+  echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------\n"
+}
+banner() {
+    line
+    echo -e "       __   __   __  ___  __  ___   ______    __    __  "
+    echo -e "      |  | |  | |  |/  / |  |/  /  /  __  \  |  |  |  | "
+    echo -e "      |  | |  | |  '  /  |  '  /  |  |  |  | |  |  |  | "
+    echo -e ".--.  |  | |  | |    <   |    <   |  |  |  | |  |  |  | "
+    echo -e "|  \`--'  | |  | |  .  \  |  .  \  |  \`--'  | |  \`--'  | "
+    echo -e " \______/  |__| |__|\__\ |__|\__\  \______/   \______/  "
+    echo ""
+    echo " Powered by Apache Kafka!"
+    line
+}
+
+banner
+
+echo -e "\n🐳 Stopping previous Kafka Docker-Compose stacks..."
+(cd "$BASEDIR"; docker-compose -f "$DOCKER_STACK" down --remove-orphans)
+
+echo -e "\n🐳 Starting Kafka Docker-Compose stack..."
+(cd "$BASEDIR"; docker-compose -f "$DOCKER_STACK" up -d)
+
+line
+
+if ! command -v jikkou &> /dev/null
+then
+    echo "jikkou could not be found. For installation instructions: https://github.com/streamthoughts/jikkou"
+    exit
+else
+   echo -e "🚀 Woohoo! $(jikkou --version) is already installed on your machine. Enjoy!"
+fi
+
+echo -e "\n Use the below client config properties for connecting to Kafka:"
+echo -e "\tbootstrap.servers=localhost:9092"
+
+exit 0
