@@ -1,0 +1,74 @@
+footer.bg-dark {
+   background-color: #192a34 !important;
+}
+
+.td-home h2 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+#main_navbar a {
+    color: white!important;
+}
+
+p > a, li > a {
+    color: #339989;
+
+    &:hover {
+        text-decoration: underline;
+        text-decoration-color: #192A34;
+    }
+}
+
+main {
+    p > a, li > a {
+       background: #f3fafd !important;
+       transition: all .3s ease-in-out;
+
+       &:hover {
+          color: $primary !important;
+          background: lighten($green, 45%) !important;
+       }
+    }
+}
+
+.td-overlay__inner {
+    color: #ffffff;
+}
+
+.td-section-nav {
+    a {
+      color: #primary!important;
+    }
+}
+
+.td-box, .td-content {
+    a {
+        color: $green;
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+
+        &:hover {
+            color: $green;
+        }
+    }
+}
+
+.td-content p code, .td-content li > code, .td-content table code, .alert code {
+    adding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    word-break: normal;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
+    color: $secondary!important;
+}
+
+h3 > code {
+    color:$primary !important;
+    word-break: normal;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
+}

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR=$(dirname "$(readlink -f $0)")
+DOCKERDIR="$BASEDIR"
+
+DOCKER_STACK="$DOCKERDIR/docker-compose.yml"
+
+echo -e "\n🐳 Stopping previous Kafka Docker-Compose stacks..."
+(cd "$BASEDIR"; docker-compose -f "$DOCKER_STACK" down --remove-orphans -v)
+
+exit 0;

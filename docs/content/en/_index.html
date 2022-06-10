@@ -1,0 +1,64 @@
++++
+title = "Jikkou"
+linkTitle = "Jikkou"
+
++++
+
+{{< blocks/cover title="Jikkou (jikkō / 実行)!" image_anchor="top" height="max" color="white" >}}
+<div class="mx-auto">
+	<h2 class="mb-5">A tool to help you automate the management of the configurations that live on your Apache Kafka clusters</h2>
+	<a class="btn btn-lg btn-secondary mr-3 mb-4" href="{{< relref "/docs" >}}">
+	Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+	</a>
+	<a class="btn btn-lg btn-github mr-3 mb-4" href="https://github.com/streamthoughts/jikkou">
+		Download <i class="fab fa-github ml-2 "></i>
+	</a>
+</div>
+{{< /blocks/cover >}}
+
+
+{{% blocks/lead color="white" %}}
+
+<h2 class="mb-5">Why Jikkou?</h2>
+
+[Jikkou](https://github.com/streamthoughts/jikkou) is an open-source tool to help you automate the
+management of the configurations that live on your [Apache Kafka](https://kafka.apache.org/documentation/) clusters.
+It was developed by Kafka ❤️ to make daily operations on an Apache Kafka cluster simpler for both **developers** and **administrators**.
+
+It can efficiently manage configuration changes for **Topics**, **ACLs**, **Quotas** and more with the use of **_resource specification files_**.
+It is also applicable to quickly replicate the configuration of a production cluster to another with a few command lines or to initialize a new cluster for testing purpose.
+
+_Resource specifications_ are standard [YAML](https://yaml.org/) files which are easy to create, version, share, and publish.
+For this reason, Jikkou is usually used part of CI/CD pipelines allowing you to version and ship your Apache Kafka resources directly from Git (more on [GitOps](https://about.gitlab.com/topics/gitops/)).
+
+Jikkou is distributed under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0). Apache, Apache Kafka, Kafka, and associated open source project names are trademarks of the Apache Software Foundation.
+
+{{% /blocks/lead %}}
+
+{{< blocks/section color="dark" >}}
+
+{{% blocks/feature icon="fab fa-slack" title="Join us on Slack" %}}
+Join the StreamThoughts community on Slack
+
+<a class="text-white" href="https://communityinviter.com/apps/azkarra-streams/azkarra-streams-community">
+	<button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Joins Us</button>
+</a>
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fab fa-github" title="Contributions welcome" %}}
+Want to join the fun on Github? New users are always welcome!
+
+<a class="text-white" href="docs/contribution-guidelines/">
+	<button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Contribute</button>
+</a>
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fas fa-star" title="Support Jikkou Team" %}}
+Add a star to the GitHub project, it only takes 5 seconds!
+
+<a class="text-white" href="https://github.com/streamthoughts/jikkou">
+	<button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Star</button>
+</a>
+{{% /blocks/feature %}}
+
+{{< /blocks/section >}}
