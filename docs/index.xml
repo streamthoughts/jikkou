@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/</link><description>Recent content in Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Quickstart Guide</title><link>https://streamthoughts.github.io/jikkou/docs/introducion/_getting_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/introducion/_getting_started/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/</link><description>Recent content in Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Quickstart Guide</title><link>https://streamthoughts.github.io/jikkou/docs/introducion/getting_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/introducion/getting_started/</guid><description>
 &lt;h2 id="prerequisites">Prerequisites&lt;/h2>
 &lt;p>The following prerequisites are required for a successful and properly use of Jikkou.&lt;/p>
 &lt;ul>
@@ -159,7 +159,7 @@ Furthermore, always run your command in &lt;code>--dry-run&lt;/code> mode to che
 &lt;h2 id="reading-the-help">Reading the Help&lt;/h2>
 &lt;p>To learn more about the available Jikkou commands, use &lt;code>jikkou help&lt;/code> or type a command followed by the &lt;code>-h&lt;/code> flag:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou topics -h
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Installing Jikkou</title><link>https://streamthoughts.github.io/jikkou/docs/introducion/_installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/introducion/_installation/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Installing Jikkou</title><link>https://streamthoughts.github.io/jikkou/docs/introducion/installation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/introducion/installation/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Jikkou can be installed either from source, or from releases.&lt;/p>
 &lt;/div>
