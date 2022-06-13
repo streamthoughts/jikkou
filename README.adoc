@@ -8,7 +8,7 @@ image:https://github.com/streamthoughts/jikkou/actions/workflows/maven-build.yml
 
 toc::[]
 
-__Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of this project can still be found under that name.__
+See: https://streamthoughts.github.io/jikkou/[official documentation]
 
 == Introduction
 
@@ -18,6 +18,8 @@ It was developed by Kafka ❤️ to make daily operations on an Apache Kafka clu
 
 It can efficiently manage configuration changes for **Topics**, **ACLs**, **Quotas** and more with the use of **_resource specification files_**.
 It is also applicable to quickly replicate the configuration of a production cluster to another with a few command lines or to initialize a new cluster for testing purpose.
+
+__Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of this project can still be found under that name.__
 
 === The main usage scenarios
 
@@ -135,6 +137,9 @@ NOTE: you can use the environment variable `JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVE
 
 == Documentation
 
+Read the full [documentation]()
+
+Check the official https://streamthoughts.github.io/jikkou/[documentation] for further https://streamthoughts.github.io/jikkou/docs/introducion/_installation/[installation] and usage https://streamthoughts.github.io/jikkou/docs/user-guide/[instructions].
 
 == 🏭 Developers
 
