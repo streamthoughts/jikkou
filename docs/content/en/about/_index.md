@@ -51,6 +51,7 @@ It is also applicable to quickly replicate the configuration of a production clu
 Jikkou was initially created as a side project to help the development teams to quickly re-create topics on Apache Kafka clusters used for testing purpose.
 The goal was to ensure that environments was always cleanup and ready for running integration tests. Over time, new features have been added to Jikkou so that it can also be used by Kafka administrators on Kafka environments.
 
+
 Today we continue to make the tool evolve in open-source because we find that the solutions that have appeared over time in the Kafka ecosystem do not respond as well to Kafka developers and administrators.
 In addition, existing solutions are either designed to work only with Kubernetes or rely on dedicated services to manage the state of the solution.
 

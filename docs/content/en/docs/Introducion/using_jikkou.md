@@ -19,6 +19,21 @@ It assumes that you have already installed the [Jikkou](./_installation.md) clie
 
 Jikkou is a tool which is implemented into two distinct parts:
 
+* The Jikkou Client is a command-line client for end users.
+* The Jikkou Java Library provides the logic for executing all operations the Apache Kafka cluster.
+
+The Jikkou library is available on [Maven Central]( https://mvnrepository.com/artifact/io.streamthoughts/jikkou)
+
+**For Maven:**
+
+```xml
+<dependency>
+    <groupId>io.streamthoughts</groupId>
+    <artifactId>jikkou</artifactId>
+    <version>${jikkou.version}</version>
+</dependency>
+```
+
 ### Implementation
 
 The Jikkou client and library are written in the Java programming language.
