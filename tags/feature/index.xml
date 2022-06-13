@@ -1,0 +1,602 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – feature</title><link>/tags/feature/</link><description>Recent content in feature on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/feature/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Topics</title><link>/docs/user-guide/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/topics/</guid><description>
+&lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
+&lt;p>The &lt;em>resource specification file&lt;/em> for defining &lt;code>topics&lt;/code> contains the following fields:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># The jikkou API version (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">topics&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the topics to manage (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The name of the topic&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">partitions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The number of partitions&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">replication_factor&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The number of replications&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">configs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">example&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the topic config properties keyed by name to override (optional).&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">config_map_refs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">A list of configs to apply to this topic (optional).&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="usage">Usage&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou topics -h
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou topics &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Description:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>This &lt;span style="color:#204a87">command&lt;/span> can be used to create, alter, delete or describe Topics on a remote Kafka cluster
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Options:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Commands:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> alter Alter the topic configurations as describe in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Apply all changes to the Kafka topics.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> create Create the topics missing on the cluster as describe in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete all topics not described in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> describe Describe all the topics that currently exist on the remote Kafka cluster.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Displays &lt;span style="color:#204a87">help&lt;/span> information about the specified &lt;span style="color:#204a87">command&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="example">Example&lt;/h2>
+&lt;p>&lt;strong>Resource Specification File&lt;/strong>&lt;/p>
+&lt;p>Create a file named &lt;code>kafka-topics.yaml&lt;/code> with the following content:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">topics&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{{ values.topic_prefix | default(&amp;#39;&amp;#39;) }}my-topic&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">partitions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">6&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">replication_factor&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">3&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">configs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">2&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can notice that in the above file we have used variable substitution, written in double braces, to dynamically define a prefix for our topic.&lt;/p>
+&lt;p>&lt;strong>Command&lt;/strong>&lt;/p>
+&lt;p>Run the following command to create and/or update the topics declared in the resource file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou --bootstrap-servers localhost:9092 topics apply &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--files kafka-topics.yaml &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--set-value &lt;span style="color:#000">topic_prefix&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>dev- &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--verbose
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In command above, the &lt;code>--set-value&lt;/code> is used to pass the value of the &lt;code>topic_prefix&lt;/code> variable.&lt;/p>
+&lt;p>In addition, we use the &lt;code>--verbose&lt;/code> flag to display all the details about the changes that have been applied to the target cluster.&lt;/p>
+&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code>TASK [CREATE] Create a new topic dev-my-topic (partitions=6, replicas=3) - CHANGED **********************
+{
+&amp;#34;changed&amp;#34; : true,
+&amp;#34;end&amp;#34; : 1634071489773,
+&amp;#34;resource&amp;#34; : {
+&amp;#34;name&amp;#34; : &amp;#34;dev-my-topic&amp;#34;,
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;,
+&amp;#34;partitions&amp;#34; : {
+&amp;#34;after&amp;#34; : 6,
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;
+},
+&amp;#34;replication_factor&amp;#34; : {
+&amp;#34;after&amp;#34; : 3,
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;
+},
+&amp;#34;configs&amp;#34; : {
+&amp;#34;min.insync.replicas&amp;#34; : {
+&amp;#34;after&amp;#34; : &amp;#34;2&amp;#34;,
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;
+}
+}
+},
+&amp;#34;failed&amp;#34; : false,
+&amp;#34;status&amp;#34; : &amp;#34;CHANGED&amp;#34;
+}
+EXECUTION in 2s 661ms
+ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
+&lt;/code>&lt;/pre></description></item><item><title>Docs: ACLs</title><link>/docs/user-guide/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/acls/</guid><description>
+&lt;p>Jikkou can be used to describe all ACL policies that need to be created on Kafka Cluster&lt;/p>
+&lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
+&lt;p>The &lt;em>resource specification file&lt;/em> for defining &lt;code>acls&lt;/code> contains the following fields:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># The jikkou API version (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">security&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the roles that can be assigned to users (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The name of the role&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">permissions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the permissions to add to the role&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">resource&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the resources to add to the role&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The type of the resources, i.e., topic&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The pattern to be used for matching resources&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern_type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The type of the pattern&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">allow_operations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the operations allowed for this role&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">users&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the users to manage&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">principal&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The principal of the user&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the role to add to the user (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">permissions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the permissions to add to the user (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">resource&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the resources to add to the user&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The type of the resources, i.e., topic&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The pattern to be used for matching resources&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern_type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The type of the pattern&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">allow_operations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># A list of the operations allowed for this user&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="usage">Usage&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou acls -h
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Usage:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou acls &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Description:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>This &lt;span style="color:#204a87">command&lt;/span> can be used to create ACLs on a remote Kafka cluster
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Options:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Commands:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Apply all changes to the Kafka ACLs.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> create Create the ACL policies missing on the cluster as describe in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete all ACL policies not described in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> describe Describe all the ACLs that currently exist on remote cluster.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Displays &lt;span style="color:#204a87">help&lt;/span> information about the specified &lt;span style="color:#204a87">command&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>&lt;strong>Resource Specification File&lt;/strong>&lt;/p>
+&lt;p>Create a file named &lt;code>kafka-security.yaml&lt;/code> with the following content:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">security&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;AdminTopics&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">permissions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">resource&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;topic&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;*&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern_type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;LITERAL&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">allow_operations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#39;ALL:*&amp;#39;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;AdminGroups&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">permissions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">resource&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;group&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;*&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">pattern_type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;LITERAL&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">allow_operations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#39;ALL:*&amp;#39;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">users&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">principal&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;User:admin&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;AdminTopics&amp;#39;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;AdminGroups&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">principal&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;User:admin-topics&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;AdminTopics&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In the above file, we define multiple &lt;em>roles&lt;/em> to apply to our &lt;em>principals&lt;/em>. Jikkou will take care of creating all corresponding ACLs policies.&lt;/p>
+&lt;p>&lt;strong>Command&lt;/strong>&lt;/p>
+&lt;p>Run the following command to create and/or update the ACLs declared in the resource file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou --bootstrap-servers localhost:9092 acls apply --files kafka-security.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code>TASK [CREATE] Create a new ACL (ALLOW User:admin-user to ALL TOPIC:LITERAL:*) - CHANGED *****************
+{
+&amp;#34;changed&amp;#34; : true,
+&amp;#34;end&amp;#34; : 1633980549689,
+&amp;#34;resource&amp;#34; : {
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;,
+&amp;#34;principal_type&amp;#34; : &amp;#34;User&amp;#34;,
+&amp;#34;principal_name&amp;#34; : &amp;#34;admin-user&amp;#34;,
+&amp;#34;resource_pattern&amp;#34; : &amp;#34;*&amp;#34;,
+&amp;#34;pattern_type&amp;#34; : &amp;#34;LITERAL&amp;#34;,
+&amp;#34;resource_type&amp;#34; : &amp;#34;TOPIC&amp;#34;,
+&amp;#34;operation&amp;#34; : &amp;#34;ALL&amp;#34;,
+&amp;#34;permission&amp;#34; : &amp;#34;ALLOW&amp;#34;,
+&amp;#34;host&amp;#34; : &amp;#34;*&amp;#34;,
+&amp;#34;name&amp;#34; : &amp;#34;admin-user&amp;#34;,
+&amp;#34;principal&amp;#34; : &amp;#34;User:admin-user&amp;#34;
+},
+&amp;#34;failed&amp;#34; : false,
+&amp;#34;status&amp;#34; : &amp;#34;CHANGED&amp;#34;
+}
+TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL GROUP:LITERAL:*) - CHANGED *****************
+{
+&amp;#34;changed&amp;#34; : true,
+&amp;#34;end&amp;#34; : 1633980549689,
+&amp;#34;resource&amp;#34; : {
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;,
+&amp;#34;principal_type&amp;#34; : &amp;#34;User&amp;#34;,
+&amp;#34;principal_name&amp;#34; : &amp;#34;kafka-user&amp;#34;,
+&amp;#34;resource_pattern&amp;#34; : &amp;#34;*&amp;#34;,
+&amp;#34;pattern_type&amp;#34; : &amp;#34;LITERAL&amp;#34;,
+&amp;#34;resource_type&amp;#34; : &amp;#34;GROUP&amp;#34;,
+&amp;#34;operation&amp;#34; : &amp;#34;ALL&amp;#34;,
+&amp;#34;permission&amp;#34; : &amp;#34;ALLOW&amp;#34;,
+&amp;#34;host&amp;#34; : &amp;#34;*&amp;#34;,
+&amp;#34;name&amp;#34; : &amp;#34;kafka-user&amp;#34;,
+&amp;#34;principal&amp;#34; : &amp;#34;User:kafka-user&amp;#34;
+},
+&amp;#34;failed&amp;#34; : false,
+&amp;#34;status&amp;#34; : &amp;#34;CHANGED&amp;#34;
+}
+TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL TOPIC:LITERAL:*) - CHANGED *****************
+{
+&amp;#34;changed&amp;#34; : true,
+&amp;#34;end&amp;#34; : 1633980549689,
+&amp;#34;resource&amp;#34; : {
+&amp;#34;operation&amp;#34; : &amp;#34;ADD&amp;#34;,
+&amp;#34;principal_type&amp;#34; : &amp;#34;User&amp;#34;,
+&amp;#34;principal_name&amp;#34; : &amp;#34;kafka-user&amp;#34;,
+&amp;#34;resource_pattern&amp;#34; : &amp;#34;*&amp;#34;,
+&amp;#34;pattern_type&amp;#34; : &amp;#34;LITERAL&amp;#34;,
+&amp;#34;resource_type&amp;#34; : &amp;#34;TOPIC&amp;#34;,
+&amp;#34;operation&amp;#34; : &amp;#34;ALL&amp;#34;,
+&amp;#34;permission&amp;#34; : &amp;#34;ALLOW&amp;#34;,
+&amp;#34;host&amp;#34; : &amp;#34;*&amp;#34;,
+&amp;#34;name&amp;#34; : &amp;#34;kafka-user&amp;#34;,
+&amp;#34;principal&amp;#34; : &amp;#34;User:kafka-user&amp;#34;
+},
+&amp;#34;failed&amp;#34; : false,
+&amp;#34;status&amp;#34; : &amp;#34;CHANGED&amp;#34;
+}
+EXECUTION in 2s 146ms
+ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Quotas</title><link>/docs/user-guide/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/quotas/</guid><description>
+&lt;p>Jikkou allows defining the quotas to apply to consumers and/or producers identified by a &lt;code>client-id&lt;/code> or a user &lt;code>principal&lt;/code>.&lt;/p>
+&lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
+&lt;p>The &lt;em>resource specification file&lt;/em> for defining &lt;code>quotas&lt;/code> contains the following fields:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># The jikkou API version (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">quotas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The quota type (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">entity&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">client_id&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The id of the client (required depending on the quota type).&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">user&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The principal of the user (required depending on the quota type).&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">configs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">request_byte_rate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The quota in percentage (%) of total requests (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">producer_byte_rate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The quota in bytes for restricting data production (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">consumer_byte_rate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The quota in bytes for restricting data consumption (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>The list below describes the supported quota types:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>USERS_DEFAULT&lt;/code>: Set default quotas for all users.&lt;/li>
+&lt;li>&lt;code>USER&lt;/code>: Set quotas for a specific user principal.&lt;/li>
+&lt;li>&lt;code>USER_CLIENT&lt;/code>: Set quotas for a specific user principal and a specific client-id.&lt;/li>
+&lt;li>&lt;code>USER_ALL_CLIENTS&lt;/code>: Set default quotas for a specific user and all clients.&lt;/li>
+&lt;li>&lt;code>CLIENT&lt;/code>: Set default quotas for a specific client.&lt;/li>
+&lt;li>&lt;code>CLIENTS_DEFAULT&lt;/code>: Set default quotas for all clients.&lt;/li>
+&lt;/ul>
+&lt;h2 id="usage">Usage&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou quotas -h
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou quotas &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Description:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>This &lt;span style="color:#204a87">command&lt;/span> can be used to create, alter, delete or describe quotas on a remote Kafka cluster
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Options:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Commands:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> alter Update the client quotas on the cluster as describe in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Apply all changes to the Kafka client quotas.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> create Create the client quotas missing on the cluster as describe in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete all client-quotas not described in the specification file.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> describe Describe quotas that currently exist on the remote Kafka cluster.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Displays &lt;span style="color:#204a87">help&lt;/span> information about the specified &lt;span style="color:#204a87">command&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Template</title><link>/docs/user-guide/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/template/</guid><description>
+&lt;h2 id="template-engine">Template Engine&lt;/h2>
+&lt;p>Jikkou provides a simple templating mechanism based-on &lt;a href="https://github.com/HubSpot/jinjava">Jinjava&lt;/a>, a Jinja template engine for Java.
+Basically, templating helps you to reuse the same &lt;em>resource specification files&lt;/em> for multiple Apache Kafka environments by dynamically generating resource specifications and/or config properties from external data.&lt;/p>
+&lt;p>Read the official documentation of &lt;a href="https://jinja.palletsprojects.com/en/3.1.x/templates/#base-template">Jinja&lt;/a> to learn more about the syntax and semantics of the template engine.&lt;/p>
+&lt;h2 id="how-does-it-work-">How Does It Work ?&lt;/h2>
+&lt;p>Jikkou performs the rendering of your template in two phases:&lt;/p>
+&lt;ol>
+&lt;li>First, an initial rendering is performed using only the &lt;code>values&lt;/code> and &lt;code>labels&lt;/code> passed through the command-lines arguments.
+&lt;ul>
+&lt;li>Thus, it is perfectly OK if your resource file is not initially a valid YAML file.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Then, a second and final rendering is performed after parsing the YAML resource file using the additional &lt;code>values&lt;/code> and &lt;code>labels&lt;/code> as defined into the YAML resource file.
+&lt;ul>
+&lt;li>Therefore, it&amp;rsquo;s important that your resource file is converted into a valid YAML file after the first rendering.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;figure class="center">
+&lt;img src="/docs/user-guide/template/jikkou-template-how-it-work.png" width="50%"/>
+&lt;/figure>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Important&lt;/h4>
+You should use &lt;code>{% raw %}...{% endraw %}&lt;/code> tags to ensure the variables defined into the &lt;code>template&lt;/code> are not be interpreted during the first rendering.
+&lt;/div>
+&lt;h2 id="variables">Variables&lt;/h2>
+&lt;p>Jikkou defines a number of top-level variables that are passed to the template engine.&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>values&lt;/code>:&lt;/p>
+&lt;ul>
+&lt;li>The values passed into the template through the command-line &lt;code>--values-files&lt;/code> and/or &lt;code>--set-value&lt;/code> arguments&lt;/li>
+&lt;li>In addition, values can be defined into the &lt;code>application.conf&lt;/code> file and directly into the template file using the property &lt;code>template.values&lt;/code>.&lt;/li>
+&lt;li>By default, &lt;code>values&lt;/code> is empty.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>labels&lt;/code>:&lt;/p>
+&lt;ul>
+&lt;li>The labels passed into the template through the command-line argument: &lt;code>--set-label&lt;/code>.&lt;/li>
+&lt;li>In addition, labels can be defined into the template file using the property &lt;code>metadata.labels&lt;/code>.&lt;/li>
+&lt;li>By default, &lt;code>labels&lt;/code> is empty.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>system.env&lt;/code>:&lt;/p>
+&lt;ul>
+&lt;li>This provides access to all environment variables.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>system.props&lt;/code>:&lt;/p>
+&lt;ul>
+&lt;li>This provides access to all system properties.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
+&lt;p>When using templating the &lt;em>resource specification file&lt;/em> may contain the following additional &lt;code>metadata&lt;/code> and &lt;code>template&lt;/code> fields:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># The jikkou API version (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The set of key/value pairs that you can use to describe your specification file (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The set of key/value pairs automatically generated by the tool (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">template&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">values&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The set of key/value pairs to be passed to the template engine (optional)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">The specification of resources&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>&lt;strong>Template Data File&lt;/strong>&lt;/p>
+&lt;p>Create a file named &lt;code>values.yaml&lt;/code> with the following content:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">topic_prefix&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{{ system.env.TOPIC_PREFIX | default(&amp;#39;&amp;#39;, true) }}&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">default_replication_factor&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">locations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#000">fr&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#000">be&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#000">de&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#000">es&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#000">uk&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#000">us&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This file defines all the data (i.e., the variables) that will be passed to the template engine.&lt;/p>
+&lt;p>&lt;strong>Resource Specification File&lt;/strong>&lt;/p>
+&lt;p>Create a file named &lt;code>topics.tpl&lt;/code> with the following contents:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">template&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">values&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">default_min_insync_replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) | int | add(-1) }}&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">config_maps&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">DefaultTopicConfig&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">configs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">604800000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{% raw %}{{ values.default_min_insync_replicas }}{% endraw %}&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">topics&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>{&lt;span style="color:#000">% for location in values.locations %}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{{ values.topic_prefix}}-iot-events-{{ location }}&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">partitions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>{{&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">values.topic_configs.partitions }}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">replication_factor&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>{{&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">values.topic_configs.replication_factor }}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">config_map_refs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;DefaultTopicConfig&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>{&lt;span style="color:#000">% endfor %}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Command&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#000">TOPIC_PREFIX&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">local&lt;/span> jikkou validate --files topics.tpl --values-files values.yaml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>apiVersion: &amp;#34;1&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>metadata:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> annotations:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> generated: &amp;#34;2022-06-12T00:00:00.000000000Z&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> resource: &amp;#34;/tmp/topics.tpl&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> labels: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>spec:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> brokers: []
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> topics:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - name: &amp;#34;local-iot-events-fr&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - name: &amp;#34;local-iot-events-be&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - name: &amp;#34;local-iot-events-de&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - name: &amp;#34;local-iot-events-es&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - name: &amp;#34;local-iot-events-uk&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - name: &amp;#34;local-iot-events-us&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> configs:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> quotas: []
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Validations</title><link>/docs/user-guide/validation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/validation/</guid><description>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>Jikkou allows running validation rules on declared resources (i.e. &lt;em>Topics&lt;/em>, &lt;em>Quotas&lt;/em>, &lt;em>ACLs&lt;/em>, etc) before executing any action on your Kafka cluster.&lt;/p>
+&lt;p>To do that, the validations to be applied must be configured in your &lt;code>application.conf&lt;/code>.&lt;/p>
+&lt;p>For example, the below configuration shows how to use the validation &lt;code>io.streamthoughts.jikkou.api.validations.TopicNameRegexValidation&lt;/code> class
+to verify that all topic names match a given regex.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+validations = [
+{
+# The fully-qualified name of the Validation class, e.g.:
+type = io.streamthoughts.jikkou.api.validations.TopicNameRegexValidation
+# The config values that will be passed to the Validation.
+config = {
+topic-regex = &amp;#34;[a-zA-Z0-9\\._\\-]+&amp;#34;
+}
+}
+]
+}
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">About validation's configuration&lt;/h4>
+The &lt;code>config&lt;/code> object of a validation will always fallback on the top-level &lt;code>jikkou&lt;/code> config. This allowed to declare some validation config properties globally.
+&lt;/div>
+&lt;h2 id="built-in-validations">Built-in Validations&lt;/h2>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
+&lt;p>&lt;code>TopicConfigKeysValidation&lt;/code>&lt;/p>
+&lt;p>The &lt;code>TopicConfigKeysValidation&lt;/code> allows checking if the specified topic configs are all valid.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.jikkou.api.validations.TopicConfigKeysValidation&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="topicminnumpartitions">&lt;code>TopicMinNumPartitions&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicMinNumPartitions&lt;/code> allows checking if the specified number of partitions for a topic is not less than the minimum required.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.kafka.specs.validations.TopicMinNumPartitionsValidation&lt;/code>&lt;/li>
+&lt;li>&lt;code>config&lt;/code>:
+&lt;ul>
+&lt;li>&lt;code>topic-min-num-partitions&lt;/code>: (default: &lt;code>1&lt;/code>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="topicmaxnumpartitions">&lt;code>TopicMaxNumPartitions&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicMaxNumPartitions&lt;/code> allows checking if the number of partitions for a topic is not greater than the maximum configured.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.kafka.specs.validations.TopicMaxNumPartitions&lt;/code>&lt;/li>
+&lt;li>&lt;code>config&lt;/code>:
+&lt;ul>
+&lt;li>&lt;code>topic-max-num-partitions&lt;/code>:&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="topicminreplicationfactor">&lt;code>TopicMinReplicationFactor&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicMinReplicationFactor&lt;/code> allows checking if the specified replication factor for a topic is not less than the minimum required.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.kafka.specs.validations.TopicMinReplicationFactor&lt;/code>&lt;/li>
+&lt;li>&lt;code>config&lt;/code>:
+&lt;ul>
+&lt;li>&lt;code>topic-min-replication-factor&lt;/code>: (default: &lt;code>1&lt;/code>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="topicmaxreplicationfactor">&lt;code>TopicMaxReplicationFactor&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicMaxReplicationFactor&lt;/code> allows checking if the specified replication factor for a topic is not greater than the maximum configured.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.kafka.specs.validations.TopicMaxReplicationFactor&lt;/code>&lt;/li>
+&lt;li>&lt;code>config&lt;/code>:
+&lt;ul>
+&lt;li>&lt;code>topic-max-replication-factor&lt;/code>: (default: &lt;code>1&lt;/code>)&lt;/li>
+&lt;li>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="topicnameprefix">&lt;code>TopicNamePrefix&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicNamePrefix&lt;/code> allows checking if the specified name for a topic starts with one of the configured suffixes.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.kafka.specs.validations.TopicNamePrefix&lt;/code>&lt;/li>
+&lt;li>&lt;code>config&lt;/code>:
+&lt;ul>
+&lt;li>&lt;code>topic-name-prefixes-allowed&lt;/code>:&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="topicnameregex">&lt;code>TopicNameRegex&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicNameRegex&lt;/code> allows checking if the specified name for a topic matches the configured regex.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;h3 id="topicnamesuffix">&lt;code>TopicNameSuffix&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>TopicNameSuffix&lt;/code> allows checking if the specified name for a topic ends with one of the configured suffixes.&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>type&lt;/code>: &lt;code>io.streamthoughts.kafka.specs.validations.TopicNameSuffix&lt;/code>&lt;/li>
+&lt;li>&lt;code>config&lt;/code>:
+&lt;ul>
+&lt;li>&lt;code>topic-name-suffixes-allowed&lt;/code>:&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="default-configuration">Default configuration&lt;/h2>
+&lt;p>By default, Jikkou is configured with the following &lt;em>validations&lt;/em>:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>TopicConfigKeysValidation&lt;/code>&lt;/li>
+&lt;li>&lt;code>TopicMinNumPartitionsValidation&lt;/code>&lt;/li>
+&lt;li>&lt;code>TopicMinReplicationFactorValidation&lt;/code>&lt;/li>
+&lt;li>&lt;code>TopicNameRegexValidation&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>You can easily override the config values for those validations by setting the following environment variables:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>VALIDATION_DEFAULT_TOPIC_NAME_REGEX&lt;/code>&lt;/li>
+&lt;li>&lt;code>VALIDATION_DEFAULT_TOPIC_MIN_NUM_PARTITIONS&lt;/code>&lt;/li>
+&lt;li>&lt;code>VALIDATION_DEFAULT_TOPIC_MIN_REPLICATION_FACTOR&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="validation-report">Validation Report&lt;/h2>
+&lt;p>All validation rule errors are reported in the following form:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>Validation rule violations:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- [TopicNameRegex]: Name for topic &amp;#39;my_topic&amp;#39; does not match the configured regex: [a-zA-Z0-9\.\-]+
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- [TopicMinNumPartitions]: Number of partitions for topic &amp;#39;my_topic&amp;#39; is less than the minimum required: 1 &amp;lt; 3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- [TopicMinReplicationFactor]: Replication factor for topic &amp;#39;my-topic&amp;#39; is less than the minimum required: 1 &amp;lt; 3
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>/docs/user-guide/transformation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/transformation/</guid><description>
+&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>Jikkou allows you to plug custom transformations on declared resources (i.e. &lt;em>Topics&lt;/em>, &lt;em>Quotas&lt;/em>, &lt;em>ACLs&lt;/em>, etc) before executing any action on your Kafka cluster and before executing validation rules.&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>To do that, you should implement the &lt;code>io.streamthoughts.kafka.specs.transforms.Transformation&lt;/code> interface transformations.
+Then, transformation must be configured in your &lt;code>application.conf&lt;/code> file as follows:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations = [
+{
+# The fully-qualified name of the Transformation class, e.g.:
+type = ...
+# The config values that will be passed to the Transformation.
+config = {}
+}
+]
+}
+&lt;/code>&lt;/pre>&lt;h2 id="built-in-transformations">Built-in Transformations&lt;/h2></description></item><item><title>Docs: Kafka Resource Manager</title><link>/docs/user-guide/manager/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/manager/</guid><description>
+&lt;h2 id="principal">Principal&lt;/h2>
+&lt;p>Internally, the Jikkou&amp;rsquo;s API defined various &lt;code>KafkaResourceManager&lt;/code> sub-interfaces for managing each type of Kafka resources&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/jikkou/tree/master/src/main/java/io/streamthoughts/jikkou/api/manager/KafkaTopicManager.java">&lt;code>KafkaTopicManager&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/jikkou/tree/master/src/main/java/io/streamthoughts/jikkou/api/manager/KafkaBrokerManager.java">&lt;code>KafkaBrokerManager&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/jikkou/tree/master/src/main/java/io/streamthoughts/jikkou/api/manager/KafkaAclsManager.java">&lt;code>KafkaAclsManager&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/jikkou/tree/master/src/main/java/io/streamthoughts/jikkou/api/manager/KafkaQuotaManager.java">&lt;code>KafkaQuotaManager&lt;/code>&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>Currently, Jikkou provides built-in implementations for each of these interface based on the Kafka&amp;rsquo;s AdminClient.
+Thus, depending on the Kafka service manager you use, you may need to implement custom managers for supporting more features.&lt;/p>
+&lt;p>Finally, the implementations to be used the Jikkou can be configured directly in your &lt;code>application.conf&lt;/code> file.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The KafkaResourceManager classes and configurations used for managing kafka resources
+managers {
+kafka {
+brokers {
+type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaBrokerManager
+config = {}
+}
+topics {
+type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaTopicManager
+config = {}
+}
+acls {
+type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaAclsManager
+config = {}
+}
+quotas {
+type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaQuotasManager
+config = {}
+}
+}
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Extensions</title><link>/docs/user-guide/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/extensions/</guid><description>
+&lt;h2 id="extensions">Extensions&lt;/h2>
+&lt;p>Jikkou allows implementing and configuring extensions, i.e., &lt;em>&lt;code>Validation&lt;/code>&lt;/em>, and &lt;em>&lt;code>Transformer&lt;/code>&lt;/em>.&lt;/p>
+&lt;p>Jikkou&amp;rsquo;s sources are available on&lt;a href="https://mvnrepository.com/artifact/io.streamthoughts/jikkou">Maven Central&lt;/a>&lt;/p>
+&lt;p>&lt;strong>For Maven:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;groupId&amp;gt;&lt;/span>io.streamthoughts&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;artifactId&amp;gt;&lt;/span>jikkou&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;version&amp;gt;&lt;/span>${jikkou.version}&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>For Gradle:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>implementation group: &amp;#39;io.streamthoughts&amp;#39;, name: &amp;#39;jikkou&amp;#39;, version: ${jikkou.version}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="packaging">Packaging&lt;/h2>
+&lt;p>To make your extensions available to Jikkou, install them into one or many local directories.
+Then, use the &lt;code>jikkou.extension.paths&lt;/code> property to configure the list of locations from which the extensions will be loaded.&lt;/p>
+&lt;p>Each configured directories may contain:&lt;/p>
+&lt;ul>
+&lt;li>an uber JAR containing all the classes and third-party dependencies for the extensions.&lt;/li>
+&lt;li>a directory containing all JARs for the extensions.&lt;/li>
+&lt;/ul></description></item></channel></rss>

@@ -1,0 +1,26 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Community</title><link>/docs/community/</link><description>Recent content in Community on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/community/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Developer Guide</title><link>/docs/community/developer-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/community/developer-guide/</guid><description>
+&lt;h2 id="prerequisites">Prerequisites&lt;/h2>
+&lt;ul>
+&lt;li>Jdk 17 (see &lt;a href="https://sdkman.io/">https://sdkman.io/&lt;/a> for installing java locally)&lt;/li>
+&lt;li>Git&lt;/li>
+&lt;li>&lt;a href="https://docs.docker.com/get-docker/">Docker&lt;/a> and &lt;a href="https://docs.docker.com/compose/install/">Docker-Compose&lt;/a>&lt;/li>
+&lt;li>Your favorite IDE&lt;/li>
+&lt;/ul>
+&lt;h2 id="building-jikkou">Building Jikkou&lt;/h2>
+&lt;p>We use &lt;a href="https://maven.apache.org/wrapper/">Maven Wrapper&lt;/a> to build our project. The simplest way to get started is:&lt;/p>
+&lt;p>For building distribution files.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ ./mvnw clean package -Pdist -DskipTests
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alternatively, we also use Make to package and build the Docker image for Jikkou:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ make
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="running-tests">Running tests&lt;/h2>
+&lt;p>For running all tests and checks:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ ./mvnw clean verify
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Contribution Guidelines</title><link>/docs/community/contribution-guidelines/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/community/contribution-guidelines/</guid><description>
+&lt;p>Jikkou is an open source project and we love getting patches and contributions to make Jikkou and its docs even better.&lt;/p>
+&lt;h2 id="contributing-to-jikkou">Contributing to Jikkou&lt;/h2>
+&lt;p>The Jikkou project itself lives in &lt;a href="https://github.com/streamthoughts/jikkou">https://github.com/streamthoughts/jikkou&lt;/a>&lt;/p>
+&lt;h2 id="code-reviews">Code reviews&lt;/h2>
+&lt;p>All submissions, including submissions by project members, require review. We use GitHub pull requests for this purpose. Consult GitHub Help for more information on using pull requests.&lt;/p>
+&lt;h2 id="creating-issues">Creating issues&lt;/h2>
+&lt;p>Alternatively, if there’s something you’d like to see in Jikkou (or if you’ve found something that isn’t working the way you’d expect),
+but you’re not sure how to fix it yourself, please create an &lt;a href="https://github.com/streamthoughts/jikkou/issues">issue&lt;/a>.&lt;/p></description></item></channel></rss>
