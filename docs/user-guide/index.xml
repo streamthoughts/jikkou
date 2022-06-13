@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – User Guide</title><link>/docs/user-guide/</link><description>Recent content in User Guide on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Topics</title><link>/docs/user-guide/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/topics/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – User Guide</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/</link><description>Recent content in User Guide on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Topics</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/topics/</guid><description>
 &lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
 &lt;p>The &lt;em>resource specification file&lt;/em> for defining &lt;code>topics&lt;/code> contains the following fields:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># The jikkou API version (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
@@ -81,7 +81,7 @@
 }
 EXECUTION in 2s 661ms
 ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
-&lt;/code>&lt;/pre></description></item><item><title>Docs: ACLs</title><link>/docs/user-guide/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/acls/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: ACLs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/acls/</guid><description>
 &lt;p>Jikkou can be used to describe all ACL policies that need to be created on Kafka Cluster&lt;/p>
 &lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
 &lt;p>The &lt;em>resource specification file&lt;/em> for defining &lt;code>acls&lt;/code> contains the following fields:&lt;/p>
@@ -226,7 +226,7 @@ TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL TOPIC:LITERAL:*) - 
 }
 EXECUTION in 2s 146ms
 ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Quotas</title><link>/docs/user-guide/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/quotas/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Quotas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/quotas/</guid><description>
 &lt;p>Jikkou allows defining the quotas to apply to consumers and/or producers identified by a &lt;code>client-id&lt;/code> or a user &lt;code>principal&lt;/code>.&lt;/p>
 &lt;h2 id="the-resource-specification-file">The Resource Specification File&lt;/h2>
 &lt;p>The &lt;em>resource specification file&lt;/em> for defining &lt;code>quotas&lt;/code> contains the following fields:&lt;/p>
@@ -273,7 +273,7 @@ ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete all client-quotas not described in the specification file.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> describe Describe quotas that currently exist on the remote Kafka cluster.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Displays &lt;span style="color:#204a87">help&lt;/span> information about the specified &lt;span style="color:#204a87">command&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Template</title><link>/docs/user-guide/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/template/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Template</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/template/</guid><description>
 &lt;h2 id="template-engine">Template Engine&lt;/h2>
 &lt;p>Jikkou provides a simple templating mechanism based-on &lt;a href="https://github.com/HubSpot/jinjava">Jinjava&lt;/a>, a Jinja template engine for Java.
 Basically, templating helps you to reuse the same &lt;em>resource specification files&lt;/em> for multiple Apache Kafka environments by dynamically generating resource specifications and/or config properties from external data.&lt;/p>
@@ -293,7 +293,7 @@ Basically, templating helps you to reuse the same &lt;em>resource specification 
 &lt;/li>
 &lt;/ol>
 &lt;figure class="center">
-&lt;img src="/docs/user-guide/template/jikkou-template-how-it-work.png" width="50%"/>
+&lt;img src="https://streamthoughts.github.io/jikkou/jikkou/docs/user-guide/template/jikkou-template-how-it-work.png" width="50%"/>
 &lt;/figure>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Important&lt;/h4>
@@ -409,7 +409,7 @@ You should use &lt;code>{% raw %}...{% endraw %}&lt;/code> tags to ensure the va
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min.insync.replicas: &amp;#34;2&amp;#34;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> retention.ms: 604800000
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> quotas: []
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Validations</title><link>/docs/user-guide/validation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/validation/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/validation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/validation/</guid><description>
 &lt;h2 id="introduction">Introduction&lt;/h2>
 &lt;p>Jikkou allows running validation rules on declared resources (i.e. &lt;em>Topics&lt;/em>, &lt;em>Quotas&lt;/em>, &lt;em>ACLs&lt;/em>, etc) before executing any action on your Kafka cluster.&lt;/p>
 &lt;p>To do that, the validations to be applied must be configured in your &lt;code>application.conf&lt;/code>.&lt;/p>
@@ -529,7 +529,7 @@ The &lt;code>config&lt;/code> object of a validation will always fallback on the
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- [TopicNameRegex]: Name for topic &amp;#39;my_topic&amp;#39; does not match the configured regex: [a-zA-Z0-9\.\-]+
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- [TopicMinNumPartitions]: Number of partitions for topic &amp;#39;my_topic&amp;#39; is less than the minimum required: 1 &amp;lt; 3
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- [TopicMinReplicationFactor]: Replication factor for topic &amp;#39;my-topic&amp;#39; is less than the minimum required: 1 &amp;lt; 3
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>/docs/user-guide/transformation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/transformation/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/transformation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/transformation/</guid><description>
 &lt;h2 id="introduction">Introduction&lt;/h2>
 &lt;p>Jikkou allows you to plug custom transformations on declared resources (i.e. &lt;em>Topics&lt;/em>, &lt;em>Quotas&lt;/em>, &lt;em>ACLs&lt;/em>, etc) before executing any action on your Kafka cluster and before executing validation rules.&lt;/p>
 &lt;h2 id="configuration">Configuration&lt;/h2>
@@ -545,7 +545,7 @@ config = {}
 }
 ]
 }
-&lt;/code>&lt;/pre>&lt;h2 id="built-in-transformations">Built-in Transformations&lt;/h2></description></item><item><title>Docs: Kafka Resource Manager</title><link>/docs/user-guide/manager/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/manager/</guid><description>
+&lt;/code>&lt;/pre>&lt;h2 id="built-in-transformations">Built-in Transformations&lt;/h2></description></item><item><title>Docs: Kafka Resource Manager</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/manager/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/manager/</guid><description>
 &lt;h2 id="principal">Principal&lt;/h2>
 &lt;p>Internally, the Jikkou&amp;rsquo;s API defined various &lt;code>KafkaResourceManager&lt;/code> sub-interfaces for managing each type of Kafka resources&lt;/p>
 &lt;ul>
@@ -580,7 +580,7 @@ config = {}
 }
 }
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Extensions</title><link>/docs/user-guide/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/user-guide/extensions/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/extensions/</guid><description>
 &lt;h2 id="extensions">Extensions&lt;/h2>
 &lt;p>Jikkou allows implementing and configuring extensions, i.e., &lt;em>&lt;code>Validation&lt;/code>&lt;/em>, and &lt;em>&lt;code>Transformer&lt;/code>&lt;/em>.&lt;/p>
 &lt;p>Jikkou&amp;rsquo;s sources are available on&lt;a href="https://mvnrepository.com/artifact/io.streamthoughts/jikkou">Maven Central&lt;/a>&lt;/p>
