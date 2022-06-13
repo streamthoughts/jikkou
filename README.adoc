@@ -34,7 +34,7 @@ It is also applicable to quickly replicate the configuration of a production clu
 * Completely stateless and thus does not store any state (Basically: _Your kafka cluster is the state of Jikkou_).
 * Pluggable validation rules to ensure that resources meet your requirement before being created or updated ona target cluster.
 * Pluggable resource manager to extend Jikkou with cloud managed services for Apache Kafka which are supported out-of-the-box.
-* Simple templating mechanism using [Jinja](https://jinja.palletsprojects.com/en/3.0.x/) notation.
+* Simple templating mechanism using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
 
 == Installation
 
