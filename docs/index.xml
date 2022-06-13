@@ -238,7 +238,18 @@ It assumes that you have already installed the &lt;a href="./_installation.md">J
 &lt;h2 id="jikkou-architecture">Jikkou Architecture&lt;/h2>
 &lt;h3 id="components">Components&lt;/h3>
 &lt;p>Jikkou is a tool which is implemented into two distinct parts:&lt;/p>
-&lt;h3 id="implementation">Implementation&lt;/h3>
+&lt;ul>
+&lt;li>The Jikkou Client is a command-line client for end users.&lt;/li>
+&lt;li>The Jikkou Java Library provides the logic for executing all operations the Apache Kafka cluster.&lt;/li>
+&lt;/ul>
+&lt;p>The Jikkou library is available on &lt;a href="https://mvnrepository.com/artifact/io.streamthoughts/jikkou">Maven Central&lt;/a>&lt;/p>
+&lt;p>&lt;strong>For Maven:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;groupId&amp;gt;&lt;/span>io.streamthoughts&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;artifactId&amp;gt;&lt;/span>jikkou&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;version&amp;gt;&lt;/span>${jikkou.version}&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="implementation">Implementation&lt;/h3>
 &lt;p>The Jikkou client and library are written in the Java programming language.&lt;/p>
 &lt;p>It is built on top of the Kafka&amp;rsquo;s &lt;a href="https://kafka.apache.org/30/javadoc/org/apache/kafka/clients/admin/Admin.html">Java AdminClient&lt;/a>.
 Thus, it works out-of-the-box with most the Apache Kafka distributions and cloud provider managed services (e.g., &lt;a href="https://aiven.io/">Aiven&lt;/a>, &lt;a href="https://confluent.cloud/">Confluent Cloud&lt;/a>, etc).&lt;/p>
