@@ -38,7 +38,7 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 * Pluggable resource manager to extend Jikkou with cloud managed services for Apache Kafka which are supported out-of-the-box.
 * Simple templating mechanism using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
 
-== Installation
+== Quick Installation
 
 Jikkou is available:
 
@@ -136,8 +136,6 @@ Jikkou can be used with self-hosted Kafka, managed Kafka and Confluent Cloud.
 NOTE: you can use the environment variable `JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS` for connection to the Kafka cluster (instead of the CLI arg `--bootstrap-servers`)
 
 == Documentation
-
-Read the full [documentation]()
 
 Check the official https://streamthoughts.github.io/jikkou/[documentation] for further https://streamthoughts.github.io/jikkou/docs/introducion/_installation/[installation] and usage https://streamthoughts.github.io/jikkou/docs/user-guide/[instructions].
 

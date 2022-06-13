@@ -36,3 +36,19 @@ For running all tests and checks:
 ```bash
 $ ./mvnw clean verify
 ```
+
+### Code Format
+
+This project uses the Maven plugin [Spotless](https://github.com/diffplug/spotless/tree/master/plugin-maven)
+to format all Java classes and to apply some code quality checks.
+
+### Bugs & Security
+
+This project uses the Maven plugin [SpotBugs](https://spotbugs.github.io/) and [FindSecBugs](https://find-sec-bugs.github.io/)
+to run some static analysis to look for bugs in Java code.
+
+Reported bugs can be analysed using SpotBugs GUI:
+
+```bash
+$ ./mvnw spotbugs:gui
+```
