@@ -89,7 +89,8 @@ public class KafkaBrokersReady {
                 try {
                     Collection<Node> nodes = getClusterNodes(adminClient, remaining);
                     numBrokerAvailable = nodes.size();
-                    if (isReady = !nodes.isEmpty() && numBrokerAvailable >= options.minAvailableBrokers) {
+                    isReady = !nodes.isEmpty() && numBrokerAvailable >= options.minAvailableBrokers;
+                    if (isReady) {
                         break;
                     }
                 } catch (Exception e) {
