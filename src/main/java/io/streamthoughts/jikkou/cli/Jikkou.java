@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.cli.command.acls.AclsCommand;
 import io.streamthoughts.jikkou.cli.command.broker.BrokerCommand;
 import io.streamthoughts.jikkou.cli.command.config.ConfigCommand;
 import io.streamthoughts.jikkou.cli.command.extensions.ExtensionCommand;
+import io.streamthoughts.jikkou.cli.command.health.HealthCommand;
 import io.streamthoughts.jikkou.cli.command.quotas.QuotasCommand;
 import io.streamthoughts.jikkou.cli.command.topic.TopicsCommand;
 import io.streamthoughts.jikkou.cli.command.validate.ValidateCommand;
@@ -72,6 +73,7 @@ import static picocli.CommandLine.Model.CommandSpec;
             QuotasCommand.class,
             ExtensionCommand.class,
             ConfigCommand.class,
+            HealthCommand.class,
             CommandLine.HelpCommand.class,
             AutoComplete.GenerateCompletion.class
         }

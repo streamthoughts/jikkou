@@ -24,6 +24,8 @@
         </encoder>
     </appender>
 
+    <logger name="org.apache.kafka.clients.NetworkClient" level="ERROR"/>
+
     <root level="${ROOT_LOG_LEVEL:-WARN}">
         <appender-ref ref="STDOUT" />
     </root>
