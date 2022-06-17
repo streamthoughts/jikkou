@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.jikkou.cli.command.extensions;
 
-import io.streamthoughts.jikkou.io.Jackson;
 import io.streamthoughts.jikkou.api.config.JikkouConfig;
 import io.streamthoughts.jikkou.api.config.JikkouParams;
-import io.streamthoughts.jikkou.api.extensions.ExtensionRegistry;
-import io.streamthoughts.jikkou.api.extensions.ReflectiveExtensionScanner;
+import io.streamthoughts.jikkou.api.extensions.ReflectiveExtensionFactory;
+import io.streamthoughts.jikkou.io.Jackson;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -44,8 +43,6 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true)
 public class ExtensionCommand implements Callable<Integer> {
 
-    private static final String JIKKOU_ROOT_API_PACKAGE = "io.streamthoughts.jikkou.api";
-
     @CommandLine.Option(names = "--built-in",
             defaultValue = "false",
             description = "List of available extensions, including those that are built-in.")
@@ -60,20 +57,17 @@ public class ExtensionCommand implements Callable<Integer> {
                 .getOption(JikkouConfig.get())
                 .getOrElse(Collections.emptyList());
 
-        ExtensionRegistry registry = new ExtensionRegistry();
-        ReflectiveExtensionScanner scanner = new ReflectiveExtensionScanner(registry);
-        if (!extensionPaths.isEmpty()) {
-            scanner.scan(extensionPaths);
-        }
+        var registry = new ReflectiveExtensionFactory()
+                .addExtensionPaths(extensionPaths);
 
         if (builtIn) {
             // Scan all sub-packages of the root package of Jikkou API for declared extensions.
-            scanner.scanForPackage(JIKKOU_ROOT_API_PACKAGE);
+            registry.addRootApiPackage();
         }
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jackson.JSON_OBJECT_MAPPER.writeValue(baos, registry.allRegisteredExtensions());
+            Jackson.JSON_OBJECT_MAPPER.writeValue(baos, registry.allExtensionTypes());
             System.out.println(baos);
             return CommandLine.ExitCode.OK;
         } catch (IOException e) {

@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.joining;
 
 /**
  * The {@link ReflectiveExtensionScanner} class can be used to scan the classpath for automatically
- * registering declared sub-type of {@link Extension} classes.
+ * registering declared subtype of {@link Extension} classes.
  */
 public class ReflectiveExtensionScanner {
 
@@ -49,19 +49,15 @@ public class ReflectiveExtensionScanner {
 
     private static final FilterBuilder DEFAULT_FILTER_BY = new FilterBuilder();
 
-    private final ExtensionRegistry registry;
+    private final ExtensionFactory factory;
 
-    public static void main(String[] args) {
-
-    }
     /**
      * Creates a new {@link ReflectiveExtensionScanner} instance.
      *
-     * @param registry  the {@link ExtensionRegistry} used to register providers.
+     * @param factory  the {@link ExtensionFactory} used to register providers.
      */
-    public ReflectiveExtensionScanner(final ExtensionRegistry registry) {
-        Objects.requireNonNull(registry, "registry cannot be null");
-        this.registry = registry;
+    public ReflectiveExtensionScanner(final ExtensionFactory factory) {
+        this.factory = Objects.requireNonNull(factory, "factory cannot be null");;
     }
 
     public void scanForPackage(final String source) {
@@ -119,10 +115,10 @@ public class ReflectiveExtensionScanner {
     private void registerExtensionClasses(final Reflections reflections,
                                           final ClassLoader classLoader) {
         final Set<Class<? extends Extension>> extensions = reflections.getSubTypesOf(Extension.class);
-        for (Class<?> cls : extensions) {
+        for (Class<? extends Extension> cls : extensions) {
             if (ClassUtils.canBeInstantiated(cls)) {
                 LOG.info("Registering external extension: {}", cls);
-                registry.register(cls.getName(), () -> (Extension) ClassUtils.newInstance(cls, classLoader));
+                factory.register(cls, () -> ClassUtils.newInstance(cls, classLoader));
             } else {
                 LOG.debug("Scanned class is not accessible '{}'", cls);
             }

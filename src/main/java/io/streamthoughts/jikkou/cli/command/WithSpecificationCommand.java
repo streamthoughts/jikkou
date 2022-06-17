@@ -18,17 +18,18 @@
  */
 package io.streamthoughts.jikkou.cli.command;
 
-import io.streamthoughts.jikkou.api.extensions.ExtensionRegistry;
-import io.streamthoughts.jikkou.api.processor.DefaultProcessorFactory;
-import io.streamthoughts.jikkou.cli.CLIUtils;
+import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.JikkouConfig;
-import io.streamthoughts.jikkou.io.SpecFileLoader;
+import io.streamthoughts.jikkou.api.config.JikkouParams;
+import io.streamthoughts.jikkou.api.extensions.ReflectiveExtensionFactory;
 import io.streamthoughts.jikkou.api.model.V1SpecFile;
 import io.streamthoughts.jikkou.api.model.V1SpecObject;
 import io.streamthoughts.jikkou.api.processor.DefaultProcessor;
+import io.streamthoughts.jikkou.api.processor.DefaultProcessorFactory;
+import io.streamthoughts.jikkou.cli.CLIUtils;
 import io.streamthoughts.jikkou.cli.Printer;
-import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.io.SpecFileLoader;
 import io.vavr.Lazy;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
@@ -36,6 +37,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Spec;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,16 @@ public abstract class WithSpecificationCommand<T extends Change<?>> extends Base
     SetOptionsMixin options;
 
     private final Lazy<List<V1SpecObject>> object = Lazy.of(() -> {
-        DefaultProcessor processor = new DefaultProcessorFactory(new ExtensionRegistry())
+
+        List<String> extensionPaths = JikkouParams.EXTENSION_PATHS
+                .getOption(JikkouConfig.get())
+                .getOrElse(Collections.emptyList());
+
+        var factory = new ReflectiveExtensionFactory()
+                .addRootApiPackage()
+                .addExtensionPaths(extensionPaths);
+
+        DefaultProcessor processor = new DefaultProcessorFactory(factory)
                 .create(JikkouConfig.get());
 
         List<V1SpecFile> specFiles = SpecFileLoader.newForYaml()

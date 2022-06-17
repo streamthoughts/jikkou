@@ -21,13 +21,18 @@ package io.streamthoughts.jikkou.api.extensions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
-public record ExtensionDescription(@JsonProperty("type") @NotNull String type) implements Comparable<ExtensionDescription> {
+import java.util.List;
+
+public record ExtensionDescriptor(
+        @JsonProperty("class") @NotNull String classType,
+        @JsonProperty("aliases") @NotNull List<String> aliases
+        ) implements Comparable<ExtensionDescriptor> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(@NotNull ExtensionDescription that) {
-        return that.type().compareTo(this.type());
+    public int compareTo(@NotNull ExtensionDescriptor that) {
+        return that.classType().compareTo(this.classType());
     }
 }
