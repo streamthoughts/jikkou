@@ -1,0 +1,25 @@
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaCluster"
+spec:
+  security:
+    roles:
+      - name: 'group_one'
+        permissions:
+          - resource:
+              type: 'topic'
+              pattern: '/([.-])*/'
+              pattern_type: 'MATCH'
+            allow_operations: [ 'CREATE:*', 'DELETE:*', 'ALTER:*', 'ALTER_CONFIGS:*' ]
+
+      - name: 'group_two'
+        permissions:
+          - resource:
+              type: topic
+              pattern: '/public-([.-])*/'
+              pattern_type: MATCH
+            allow_operations: [ 'READ:*', 'WRITE:*' ]
+          - resource:
+              type: group
+              pattern: 'public-'
+              pattern_type: PREFIXED
+            allow_operations: [ 'READ:*' ]

@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "description": "",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "type": {
+      "existingJavaType": "io.streamthoughts.jikkou.kafka.model.QuotaType",
+      "type": "object"
+    },
+    "entity": {
+      "$ref": "#/$defs/V1QuotaEntityObject"
+    },
+    "configs": {
+      "$ref": "#/$defs/V1QuotaLimitsObject"
+    }
+  },
+  "$defs": {
+    "V1QuotaEntityObject": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      }
+    },
+    "V1QuotaLimitsObject": {
+      "type": "object",
+      "properties": {
+        "producer_byte_rate": {
+          "type": "object",
+          "existingJavaType": "java.util.OptionalDouble",
+          "description": "The quota in bytes for restricting data production."
+        },
+        "consumer_byte_rate": {
+          "type": "object",
+          "existingJavaType": "java.util.OptionalDouble",
+          "description": "The quota in bytes for restricting data consumption."
+        },
+        "request_percentage": {
+          "type": "object",
+          "existingJavaType": "java.util.OptionalDouble",
+          "description": "The quota in percentage (%) of total requests."
+        }
+      },
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      }
+    }
+  }
+}

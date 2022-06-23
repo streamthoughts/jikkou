@@ -24,9 +24,17 @@
 
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
-    <version>0.12.2</version>
+    <packaging>pom</packaging>
+    <version>0.13.0-SNAPSHOT</version>
+    <modules>
+        <module>jikkou-model-generator</module>
+        <module>jikkou-api</module>
+        <module>jikkou-cli</module>
+        <module>jikkou-extension-kafka</module>
+    </modules>
 
     <name>Jikkou</name>
+
     <description>A command-line tool to help you automate the management of the configurations that live on your Apache
         Kafka clusters.
     </description>
@@ -80,7 +88,6 @@
         <maven.surefire.plugin.version>3.0.0-M6</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.0.0-M6</maven.failsafe.plugin.version>
         <testcontainer.version>1.17.2</testcontainer.version>
-        <app.distribution.directory>${project.basedir}/dist</app.distribution.directory>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <vavr.version>0.10.4</vavr.version>
         <kafka.version>3.2.0</kafka.version>
@@ -88,118 +95,148 @@
         <picocli.version>4.6.3</picocli.version>
         <jinjava.version>2.6.0</jinjava.version>
         <reflections.version>0.10.2</reflections.version>
+        <lombok.version>1.18.24</lombok.version>
+        <spotless.version>2.28.0</spotless.version>
+        <license.header.file>${project.basedir}/license-header</license.header.file>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vavr</groupId>
-            <artifactId>vavr</artifactId>
-            <version>${vavr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vavr</groupId>
-            <artifactId>vavr-jackson</artifactId>
-            <version>0.10.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.4.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-            <version>${jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>${picocli.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hubspot.jinjava</groupId>
-            <artifactId>jinjava</artifactId>
-            <version>${jinjava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>${reflections.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
-        </dependency>
-        <!-- START dependencies for Tests -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>4.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>${testcontainer.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${testcontainer.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- END dependencies for Tests -->
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>23.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vavr</groupId>
+                <artifactId>vavr</artifactId>
+                <version>${vavr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vavr</groupId>
+                <artifactId>vavr-jackson</artifactId>
+                <version>0.10.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe</groupId>
+                <artifactId>config</artifactId>
+                <version>1.4.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>${picocli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hubspot.jinjava</groupId>
+                <artifactId>jinjava</artifactId>
+                <version>${jinjava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.11</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+            <!-- START dependencies for Tests -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>4.6.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainer.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainer.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- END dependencies for Tests -->
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
@@ -211,6 +248,13 @@
                     <version>3.10.1</version>
                     <configuration>
                         <parameters>true</parameters>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -242,6 +286,7 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
@@ -257,35 +302,6 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>${project.artifactId}-runner</finalName>
-                            <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>runner</shadedClassifierName>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>io.streamthoughts.jikkou.cli.Jikkou</mainClass>
-                                    <manifestEntries>
-                                        <Implementation-Title>Jikkou</Implementation-Title>
-                                        <Implementation-Version>${project.version}</Implementation-Version>
-                                    </manifestEntries>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -343,6 +359,60 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- optional: limit format enforcement to just the files changed by this feature branch -->
+                    <!-- <ratchetFrom>origin/main</ratchetFrom> -->
+                    <formats>
+                        <!-- you can define as many formats as you want, each is independent -->
+                        <format>
+                            <!-- define the files to apply to -->
+                            <includes>
+                                <include>*.md</include>
+                            </includes>
+                            <!-- define the steps to apply to those files -->
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <tabs>true</tabs>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <!-- define a language-specific format -->
+                    <java>
+                        <!-- These are the defaults, you can override if you want -->
+                        <includes>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
+                            <include>src/integration-test/java/**/*.java</include>
+                        </includes>
+
+                        <importOrder /> <!-- standard import order -->
+                        <removeUnusedImports /> <!-- self-explanatory -->
+                        <!-- no need to specify files, inferred automatically, but you can if you want -->
+
+                        <!-- make sure every file has the following copyright header.
+                          optionally, Spotless can set copyright years by digging
+                          through git history (see "license" section below) -->
+
+                        <licenseHeader>
+                            <file>${license.header.file}</file>
+                        </licenseHeader>
+                    </java>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.7.0.0</version>
@@ -365,8 +435,8 @@
                     <xmlOutput>true</xmlOutput>
                     <!-- Optional directory to put spotbugs xdoc xml report -->
                     <xmlOutputDirectory>target/site</xmlOutputDirectory>
-                    <includeFilterFile>spotbugs/spotbugs-security-include.xml</includeFilterFile>
-                    <excludeFilterFile>spotbugs/spotbugs-security-exclude.xml</excludeFilterFile>
+                    <includeFilterFile>.spotbugs/spotbugs-security-include.xml</includeFilterFile>
+                    <excludeFilterFile>.spotbugs/spotbugs-security-exclude.xml</excludeFilterFile>
                     <plugins>
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
@@ -376,235 +446,10 @@
                     </plugins>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <attach>false</attach>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>jikkou-${project.version}-runner</finalName>
-                    <outputDirectory>${app.distribution.directory}</outputDirectory>
-                    <skipAssembly>true</skipAssembly>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-distribution</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <profile>
-            <id>dist</id>
-            <activation>
-                <property>
-                    <name>dist</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${exec-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>generate-autocompletion-script</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <executable>java</executable>
-                            <arguments>
-                                <argument>-Dpicocli.autocomplete.systemExitOnError</argument>
-                                <argument>-cp</argument>
-                                <classpath/>
-                                <argument>picocli.AutoComplete</argument>
-                                <argument>--force</argument><!-- overwrite if exists -->
-                                <argument>--completionScript</argument>
-                                <argument>${project.basedir}/jikkou_completion</argument>
-                                <argument>io.streamthoughts.jikkou.cli.Jikkou</argument>
-                            </arguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <configuration combine.self="append">
-                            <skipAssembly>false</skipAssembly>
-                            <descriptors>
-                                <descriptor>src/main/assembly/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.vafer</groupId>
-                        <artifactId>jdeb</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jdeb</goal>
-                                </goals>
-                                <configuration>
-                                    <deb>${project.basedir}/dist/${project.artifactId}.deb</deb>
-                                    <verbose>true</verbose>
-                                    <snapshotExpand>true</snapshotExpand>
-                                    <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
-                                    <snapshotEnv>USER</snapshotEnv>
-                                    <verbose>true</verbose>
-                                    <controlDir>${basedir}/src/deb/control</controlDir>
-                                    <dataSet>
-                                        <data>
-                                            <src>${project.basedir}/target/jikkou-runner.jar</src>
-                                            <type>file</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/opt/jikkou/lib</prefix>
-                                                <filemode>444</filemode>
-                                            </mapper>
-                                        </data>
-
-                                        <data>
-                                            <src>${project.basedir}/src/main/bin/jikkou</src>
-                                            <type>file</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/opt/jikkou/bin</prefix>
-                                                <filemode>755</filemode>
-                                            </mapper>
-                                        </data>
-
-                                        <data>
-                                            <src>${project.basedir}/src/main/conf/</src>
-                                            <type>directory</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/opt/jikkou/etc</prefix>
-                                                <filemode>755</filemode>
-                                            </mapper>
-                                        </data>
-
-                                        <data>
-                                            <src>${project.basedir}/jikkou_completion</src>
-                                            <type>file</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/opt/jikkou/</prefix>
-                                                <filemode>444</filemode>
-                                            </mapper>
-                                        </data>
-                                    </dataSet>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>rpm</id>
-            <activation>
-                <file>
-                    <exists>/usr/bin/rpmbuild</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>rpm-maven-plugin</artifactId>
-                        <version>2.2.0</version>
-                        <executions>
-                            <execution>
-                                <id>generate-rpm</id>
-                                <goals>
-                                    <goal>attached-rpm</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <name>jikkou</name>
-                            <version>${project.version}</version>
-                            <license>Apache License Version 2.0</license>
-                            <group>Applications/Programming</group>
-                            <needarch>noarch</needarch>
-                            <defaultFilemode>644</defaultFilemode>
-                            <defaultUsername>root</defaultUsername>
-                            <defaultGroupname>root</defaultGroupname>
-                            <defaultDirmode>755</defaultDirmode>
-                            <packager>Streamthoughts</packager>
-                            <prefix>/opt/jikkou</prefix>
-                            <requires>
-                                <require>java</require>
-                            </requires>
-                            <mappings>
-                                <mapping>
-                                    <directory>/opt/jikkou/lib/</directory>
-                                    <filemode>444</filemode>
-                                    <sources>
-                                        <source>
-                                            <location>${project.basedir}/target/jikkou-runner.jar</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/opt/jikkou/bin/</directory>
-                                    <filemode>755</filemode>
-                                    <sources>
-                                        <source>
-                                            <location>${project.basedir}/src/main/bin/jikkou</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/opt/jikkou/etc/</directory>
-                                    <filemode>640</filemode>
-                                    <configuration>noreplace</configuration>
-                                    <sources>
-                                        <source>
-                                            <location>${project.basedir}/src/main/conf/</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/opt/jikkou/</directory>
-                                    <filemode>640</filemode>
-                                    <sources>
-                                        <source>
-                                            <location>${project.basedir}/jikkou_completion</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                            </mappings>
-                            <preinstallScriptlet>
-                                <scriptFile>src/rpm/scripts/preinstall</scriptFile>
-                                <fileEncoding>utf-8</fileEncoding>
-                                <filter>true</filter>
-                            </preinstallScriptlet>
-                            <postinstallScriptlet>
-                                <scriptFile>src/rpm/scripts/postinstall</scriptFile>
-                                <fileEncoding>utf-8</fileEncoding>
-                                <filter>true</filter>
-                            </postinstallScriptlet>
-                            <preremoveScriptlet>
-                                <scriptFile>src/rpm/scripts/preremove</scriptFile>
-                                <fileEncoding>utf-8</fileEncoding>
-                            </preremoveScriptlet>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>ossrh</id>
             <build>

@@ -1,0 +1,121 @@
+{
+  "type": "object",
+  "description": "",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "roles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/V1KafkaAccessRoleObject"
+      }
+    },
+    "users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/V1KafkaAccessUserObject"
+      }
+    }
+  },
+  "$defs": {
+    "V1KafkaAccessUserObject": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "required": ["principal"],
+      "properties": {
+        "principal": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/V1KafkaAccessPermission"
+          }
+        }
+      }
+    },
+    "V1KafkaAccessRoleObject": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "javaInterfaces": [
+        "io.streamthoughts.jikkou.api.model.Nameable"
+      ],
+      "required": ["name", "permissions"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/V1KafkaAccessPermission"
+          }
+        }
+      }
+    },
+    "V1KafkaAccessPermission" : {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "resource": {
+          "$ref": "#/$defs/V1KafkaAccessResourceMatcher"
+        },
+        "allow_operations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "existingJavaType": "io.streamthoughts.jikkou.kafka.model.AccessOperationPolicy",
+            "default": "LITERAL"
+          }
+        }
+      }
+    },
+    "V1KafkaAccessResourceMatcher": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "pattern"
+      ],
+      "properties": {
+        "pattern": {
+          "type": "string"
+        },
+        "pattern_type": {
+          "type": "string",
+          "existingJavaType": "org.apache.kafka.common.resource.PatternType",
+          "default": "LITERAL"
+        },
+        "type": {
+          "type": "enum",
+          "existingJavaType": "org.apache.kafka.common.resource.ResourceType"
+        }
+      }
+    }
+  }
+}

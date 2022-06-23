@@ -120,12 +120,14 @@ function currentPositionalIndex() {
 function _complete_jikkou() {
   # Edge case: if command line has no space after subcommand, then don't assume this subcommand is selected (remkop/picocli#1468).
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} validate" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} apply" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} brokers" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} extensions" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} help" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} generate-completion" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics alter" ];    then _picocli_jikkou_topics; return $?; fi
@@ -151,63 +153,67 @@ function _complete_jikkou() {
 
   # Find the longest sequence of subcommands and call the bash function for that subcommand.
   local cmds0=(validate)
-  local cmds1=(topics)
-  local cmds2=(acls)
-  local cmds3=(brokers)
-  local cmds4=(quotas)
-  local cmds5=(extensions)
-  local cmds6=(config)
-  local cmds7=(help)
-  local cmds8=(generate-completion)
-  local cmds9=(topics alter)
-  local cmds10=(topics apply)
-  local cmds11=(topics create)
-  local cmds12=(topics delete)
-  local cmds13=(topics describe)
-  local cmds14=(topics help)
-  local cmds15=(acls apply)
-  local cmds16=(acls create)
-  local cmds17=(acls delete)
-  local cmds18=(acls describe)
-  local cmds19=(acls help)
-  local cmds20=(brokers describe)
-  local cmds21=(brokers help)
-  local cmds22=(quotas alter)
-  local cmds23=(quotas apply)
-  local cmds24=(quotas create)
-  local cmds25=(quotas delete)
-  local cmds26=(quotas describe)
-  local cmds27=(quotas help)
-  local cmds28=(config get)
+  local cmds1=(apply)
+  local cmds2=(topics)
+  local cmds3=(acls)
+  local cmds4=(brokers)
+  local cmds5=(quotas)
+  local cmds6=(extensions)
+  local cmds7=(config)
+  local cmds8=(health)
+  local cmds9=(help)
+  local cmds10=(generate-completion)
+  local cmds11=(topics alter)
+  local cmds12=(topics apply)
+  local cmds13=(topics create)
+  local cmds14=(topics delete)
+  local cmds15=(topics describe)
+  local cmds16=(topics help)
+  local cmds17=(acls apply)
+  local cmds18=(acls create)
+  local cmds19=(acls delete)
+  local cmds20=(acls describe)
+  local cmds21=(acls help)
+  local cmds22=(brokers describe)
+  local cmds23=(brokers help)
+  local cmds24=(quotas alter)
+  local cmds25=(quotas apply)
+  local cmds26=(quotas create)
+  local cmds27=(quotas delete)
+  local cmds28=(quotas describe)
+  local cmds29=(quotas help)
+  local cmds30=(config get)
 
-  if CompWordsContainsArray "${cmds28[@]}"; then _picocli_jikkou_config_get; return $?; fi
-  if CompWordsContainsArray "${cmds27[@]}"; then _picocli_jikkou_quotas_help; return $?; fi
-  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_quotas_describe; return $?; fi
-  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_quotas_delete; return $?; fi
-  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_quotas_create; return $?; fi
-  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_quotas_apply; return $?; fi
-  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_quotas_alter; return $?; fi
-  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_brokers_help; return $?; fi
-  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_brokers_describe; return $?; fi
-  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_acls_help; return $?; fi
-  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_acls_describe; return $?; fi
-  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_acls_delete; return $?; fi
-  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_acls_create; return $?; fi
-  if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_acls_apply; return $?; fi
-  if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_topics_help; return $?; fi
-  if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_topics_describe; return $?; fi
-  if CompWordsContainsArray "${cmds12[@]}"; then _picocli_jikkou_topics_delete; return $?; fi
-  if CompWordsContainsArray "${cmds11[@]}"; then _picocli_jikkou_topics_create; return $?; fi
-  if CompWordsContainsArray "${cmds10[@]}"; then _picocli_jikkou_topics_apply; return $?; fi
-  if CompWordsContainsArray "${cmds9[@]}"; then _picocli_jikkou_topics_alter; return $?; fi
-  if CompWordsContainsArray "${cmds8[@]}"; then _picocli_jikkou_generatecompletion; return $?; fi
-  if CompWordsContainsArray "${cmds7[@]}"; then _picocli_jikkou_help; return $?; fi
-  if CompWordsContainsArray "${cmds6[@]}"; then _picocli_jikkou_config; return $?; fi
-  if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_extensions; return $?; fi
-  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_quotas; return $?; fi
-  if CompWordsContainsArray "${cmds3[@]}"; then _picocli_jikkou_brokers; return $?; fi
-  if CompWordsContainsArray "${cmds2[@]}"; then _picocli_jikkou_acls; return $?; fi
-  if CompWordsContainsArray "${cmds1[@]}"; then _picocli_jikkou_topics; return $?; fi
+  if CompWordsContainsArray "${cmds30[@]}"; then _picocli_jikkou_config_get; return $?; fi
+  if CompWordsContainsArray "${cmds29[@]}"; then _picocli_jikkou_quotas_help; return $?; fi
+  if CompWordsContainsArray "${cmds28[@]}"; then _picocli_jikkou_quotas_describe; return $?; fi
+  if CompWordsContainsArray "${cmds27[@]}"; then _picocli_jikkou_quotas_delete; return $?; fi
+  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_quotas_create; return $?; fi
+  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_quotas_apply; return $?; fi
+  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_quotas_alter; return $?; fi
+  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_brokers_help; return $?; fi
+  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_brokers_describe; return $?; fi
+  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_acls_help; return $?; fi
+  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_acls_describe; return $?; fi
+  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_acls_delete; return $?; fi
+  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_acls_create; return $?; fi
+  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_acls_apply; return $?; fi
+  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_topics_help; return $?; fi
+  if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_topics_describe; return $?; fi
+  if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_topics_delete; return $?; fi
+  if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_topics_create; return $?; fi
+  if CompWordsContainsArray "${cmds12[@]}"; then _picocli_jikkou_topics_apply; return $?; fi
+  if CompWordsContainsArray "${cmds11[@]}"; then _picocli_jikkou_topics_alter; return $?; fi
+  if CompWordsContainsArray "${cmds10[@]}"; then _picocli_jikkou_generatecompletion; return $?; fi
+  if CompWordsContainsArray "${cmds9[@]}"; then _picocli_jikkou_help; return $?; fi
+  if CompWordsContainsArray "${cmds8[@]}"; then _picocli_jikkou_health; return $?; fi
+  if CompWordsContainsArray "${cmds7[@]}"; then _picocli_jikkou_config; return $?; fi
+  if CompWordsContainsArray "${cmds6[@]}"; then _picocli_jikkou_extensions; return $?; fi
+  if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_quotas; return $?; fi
+  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_brokers; return $?; fi
+  if CompWordsContainsArray "${cmds3[@]}"; then _picocli_jikkou_acls; return $?; fi
+  if CompWordsContainsArray "${cmds2[@]}"; then _picocli_jikkou_topics; return $?; fi
+  if CompWordsContainsArray "${cmds1[@]}"; then _picocli_jikkou_apply; return $?; fi
   if CompWordsContainsArray "${cmds0[@]}"; then _picocli_jikkou_validate; return $?; fi
 
   # No subcommands were specified; generate completions for the top-level command.
@@ -220,7 +226,7 @@ function _picocli_jikkou() {
   local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands="validate topics acls brokers quotas extensions config help generate-completion"
+  local commands="validate apply topics acls brokers quotas extensions config health help generate-completion"
   local flag_opts="-h --help -V --version"
   local arg_opts="--bootstrap-servers --command-config --command-property --config-file"
 
@@ -278,6 +284,56 @@ function _picocli_jikkou_validate() {
       return
       ;;
     --values-files)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    COMPREPLY=( $(compgen -W "${commands} ${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `apply` subcommand.
+function _picocli_jikkou_apply() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
+  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files --options o --kind k"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --exclude)
+      return
+      ;;
+    --include)
+      return
+      ;;
+    --files|-f)
+      return
+      ;;
+    --file-name|-n)
+      return
+      ;;
+    --set-label|-s)
+      return
+      ;;
+    --set-value|-v)
+      return
+      ;;
+    --values-files)
+      return
+      ;;
+    --options|o)
+      return
+      ;;
+    --kind|k)
       return
       ;;
   esac
@@ -392,12 +448,38 @@ function _picocli_jikkou_config() {
   fi
 }
 
+# Generates completions for the options and subcommands of the `health` subcommand.
+function _picocli_jikkou_health() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="-h --help -V --version"
+  local arg_opts="--timeout-ms"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --timeout-ms)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    COMPREPLY=( $(compgen -W "${commands} ${positionals}" -- "${curr_word}") )
+  fi
+}
+
 # Generates completions for the options and subcommands of the `help` subcommand.
 function _picocli_jikkou_help() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="validate topics acls brokers quotas extensions config generate-completion"
+  local commands="validate apply topics acls brokers quotas extensions config health generate-completion"
   local flag_opts="-h --help"
   local arg_opts=""
 

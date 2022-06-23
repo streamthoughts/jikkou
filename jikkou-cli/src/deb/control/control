@@ -1,0 +1,8 @@
+Package: jikkou
+Version: [[version]]
+Section: misc
+Priority: low
+Architecture: all
+Depends:
+Description: [[description]]
+Maintainer: StreamThoughts.io <contact@streamthoughts.io>
