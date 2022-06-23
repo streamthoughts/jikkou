@@ -1,0 +1,27 @@
+{
+  "title": "KafkaClusterSpec",
+  "description": "",
+  "type": "object",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "topics": {
+      "type": "array",
+      "items": {
+        "$ref": "V1KafkaTopicObject.json"
+      }
+    },
+    "quotas": {
+      "type": "array",
+      "items": {
+        "$ref": "V1KafkaQuotaObject.json"
+      }
+    },
+    "security": {
+      "$ref": "V1KafkaAuthorizationSpec.json"
+    }
+  }
+}

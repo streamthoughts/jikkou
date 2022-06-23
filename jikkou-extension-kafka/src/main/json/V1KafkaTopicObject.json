@@ -1,0 +1,36 @@
+{
+  "title": "KafkaTopicObject",
+  "description": "",
+  "javaInterfaces" : ["io.streamthoughts.jikkou.api.model.Nameable", "io.streamthoughts.jikkou.api.model.HasConfigs"],
+  "type": "object",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "partitions": {
+      "type": "integer",
+      "default": -1
+    },
+    "replication_factor": {
+      "type": "object",
+      "existingJavaType": "Short",
+      "default": -1
+    },
+    "configs": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
+      "type": "object"
+    },
+    "config_map_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "title": "ConfigMap",
+  "description": "",
+  "type": "object",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default":"kafka.jikkou.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "ConfigMap"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "data": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
+      "type": "object"
+    }
+  }
+}

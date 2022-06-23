@@ -1,0 +1,16 @@
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaTopicList'
+metadata:
+  labels: {}
+  annotations: {}
+spec:
+  topics:
+{% for country in values.countries %}
+    - name: 'sales-transactions-{{ country }}'
+      partitions: {{ values.configs.partitions }}
+      replication_factor: {{ values.configs.replication_factor }}
+      configs:
+        cleanup.policy: 'delete'
+        retention.ms: {{ values.configs.retention_ms }}
+        min.insync.replicas: {{ values.configs.min_insync_replicas }}
+{% endfor %}

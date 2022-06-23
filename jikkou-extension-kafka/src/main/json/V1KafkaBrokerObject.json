@@ -1,0 +1,28 @@
+{
+  "title": "KafkaBrokerObject",
+  "description": "",
+  "type": "object",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "host": {
+      "type": "string"
+    },
+    "port": {
+      "type": "integer"
+    },
+    "rack": {
+      "type": "string"
+    },
+    "configs": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
+      "type": "object"
+    }
+  }
+}

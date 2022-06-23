@@ -3,7 +3,7 @@ Contributing to Kafka Specs
 
 # Found a bug ?
 
-If you found a bug in the source code you can help us by submitting an issue or even a Pull Request to our GitHub Repository. 
+If you found a bug in the source code you can help us by submitting an issue or even a Pull Request to our GitHub Repository.
 
 # Got a new idea ?
 
@@ -48,7 +48,7 @@ Must be one of the following:
 * **specs** : Changes that affect the specification definition
 * **acls** : A code change that affect the acls feature
 * **topics** : A code change that affect the topics feature
-* **reader** : A code change that affect 
+* **reader** : A code change that affect
 * **readme** : Changes to README.md
 * **changelogs** : Changes to CHANGELOG.md
 * **contributing** : Changes to CONTRIBUTING.md
@@ -67,4 +67,3 @@ Just as in the subject, use the imperative, present tense: "change" not "changed
 ##Footer
 
 Should contain the reference to the GitHub issue that this commis **Resolves**.
-

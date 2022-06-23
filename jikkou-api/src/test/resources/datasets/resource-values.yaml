@@ -1,0 +1,11 @@
+countries:
+  - fr
+  - uk
+  - be
+  - it
+  - de
+configs:
+  partitions: 3
+  retention_ms: 86400000
+  replication_factor: 3
+  min_insync_replicas: 2

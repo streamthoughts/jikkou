@@ -1,0 +1,93 @@
+/*
+ * Copyright 2021 StreamThoughts.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.streamthoughts.jikkou.api.error;
+
+import io.streamthoughts.jikkou.api.model.ResourceValidation;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+/**
+ * The top-level validation exception.
+ *
+ * @see ResourceValidation
+ */
+public class ValidationException extends JikkouException {
+
+    private final ResourceValidation validation;
+    private final List<ValidationException> errors;
+    private String suffixMessage = "";
+
+    public ValidationException(final List<ValidationException> errors) {
+        this(null, null, errors);
+    }
+
+    public ValidationException(final String message, final ResourceValidation validation) {
+        this(message, validation, null);
+    }
+
+    private ValidationException(final String message,
+                                final ResourceValidation validation,
+                                final List<ValidationException> errors) {
+        super(message);
+        this.validation = validation;
+        this.errors = Optional.ofNullable(errors).orElse(Collections.emptyList());
+    }
+
+    public Optional<ResourceValidation> getValidation() {
+        return Optional.ofNullable(validation);
+    }
+
+    public List<ValidationException> getErrors() {
+        return errors;
+    }
+
+    /**
+     * Sets the suffix to be used for formatting the returned message.
+     *
+     * @param suffixMessage     the suffix to set.
+     * @return                  {@code this}.
+     */
+    public ValidationException withSuffixMessage(final String suffixMessage) {
+        this.suffixMessage = suffixMessage;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMessage() {
+        final String message;
+        if (!errors.isEmpty()) {
+            message = errors.stream().map(ValidationException::getMessage).collect(Collectors.joining());
+        } else {
+            message = getFormattedMessage();
+        }
+        return String.format("%s%s", suffixMessage, message);
+    }
+
+    private String getFormattedMessage() {
+        final String message = super.getMessage();
+        return Optional.ofNullable(validation)
+        .map(ResourceValidation::name).map(s -> String.format("\n\t - [%s]: %s", s, message))
+        .orElse(message);
+    }
+}

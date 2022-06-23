@@ -1,0 +1,7 @@
+apiVersion: "kafka.jikkou.io/v1beta2"
+metadata:
+  name: "test"
+kind: "ConfigMap"
+data:
+  retention.ms: 10000
+

@@ -1,0 +1,139 @@
+/*
+ * Copyright 2022 StreamThoughts.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.streamthoughts.jikkou.kafka.models;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.streamthoughts.jikkou.kafka.model.QuotaType;
+import java.beans.ConstructorProperties;
+import javax.annotation.processing.Generated;
+import lombok.Builder;
+import lombok.With;
+
+
+/**
+ * 
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
+@With
+@JsonPropertyOrder({
+    "type",
+    "entity",
+    "configs"
+})
+@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Generated("jsonschema2pojo")
+public class V1KafkaQuotaObject {
+
+    @JsonProperty("type")
+    private QuotaType type;
+    @JsonProperty("entity")
+    private V1QuotaEntityObject entity;
+    @JsonProperty("configs")
+    private V1QuotaLimitsObject configs;
+
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public V1KafkaQuotaObject() {
+    }
+
+    /**
+     * 
+     * @param configs
+     * @param type
+     * @param entity
+     */
+    @ConstructorProperties({
+        "type",
+        "entity",
+        "configs"
+    })
+    public V1KafkaQuotaObject(QuotaType type, V1QuotaEntityObject entity, V1QuotaLimitsObject configs) {
+        super();
+        this.type = type;
+        this.entity = entity;
+        this.configs = configs;
+    }
+
+    @JsonProperty("type")
+    public QuotaType getType() {
+        return type;
+    }
+
+    @JsonProperty("entity")
+    public V1QuotaEntityObject getEntity() {
+        return entity;
+    }
+
+    @JsonProperty("configs")
+    public V1QuotaLimitsObject getConfigs() {
+        return configs;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(V1KafkaQuotaObject.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append("type");
+        sb.append('=');
+        sb.append(((this.type == null)?"<null>":this.type));
+        sb.append(',');
+        sb.append("entity");
+        sb.append('=');
+        sb.append(((this.entity == null)?"<null>":this.entity));
+        sb.append(',');
+        sb.append("configs");
+        sb.append('=');
+        sb.append(((this.configs == null)?"<null>":this.configs));
+        sb.append(',');
+        if (sb.charAt((sb.length()- 1)) == ',') {
+            sb.setCharAt((sb.length()- 1), ']');
+        } else {
+            sb.append(']');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = ((result* 31)+((this.configs == null)? 0 :this.configs.hashCode()));
+        result = ((result* 31)+((this.type == null)? 0 :this.type.hashCode()));
+        result = ((result* 31)+((this.entity == null)? 0 :this.entity.hashCode()));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if ((other instanceof V1KafkaQuotaObject) == false) {
+            return false;
+        }
+        V1KafkaQuotaObject rhs = ((V1KafkaQuotaObject) other);
+        return ((((this.configs == rhs.configs)||((this.configs!= null)&&this.configs.equals(rhs.configs)))&&((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type))))&&((this.entity == rhs.entity)||((this.entity!= null)&&this.entity.equals(rhs.entity))));
+    }
+
+}

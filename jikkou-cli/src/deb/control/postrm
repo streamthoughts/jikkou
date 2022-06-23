@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+BIN=/usr/bin/jikkou
+if [ -f "$BIN" ]; then
+    rm -rf $BIN
+fi
