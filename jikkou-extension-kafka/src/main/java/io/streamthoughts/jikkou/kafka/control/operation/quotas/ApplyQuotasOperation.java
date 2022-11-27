@@ -52,6 +52,8 @@ public class ApplyQuotasOperation extends AbstractQuotaOperation {
      */
     @Override
     public Description getDescriptionFor(final @NotNull QuotaChange change) {
+        if (change == null)
+            throw new IllegalArgumentException("change cannot null");
         return switch (change.getChange()) {
             case ADD -> create.getDescriptionFor(change);
             case UPDATE -> alter.getDescriptionFor(change);

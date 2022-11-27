@@ -45,6 +45,7 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
     /**
      * Creates a new {@link QuotaChange} instance.
      *
+     * @param operation     the type of the change.
      * @param type          the quota type.
      * @param entity        the quota entity.
      * @param configs       the quota configuration.
@@ -53,10 +54,10 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
                        @NotNull final QuotaType type,
                        @NotNull final V1QuotaEntityObject entity,
                        @NotNull final List<ConfigEntryChange> configs) {
-        this.operation = operation;
-        this.entity = entity;
-        this.configs = configs;
-        this.type = type;
+        this.operation = Objects.requireNonNull(operation, "operation cannot be null");
+        this.entity = Objects.requireNonNull(entity, "entity cannot be null");;
+        this.configs = Objects.requireNonNull(configs, "configs cannot be null");
+        this.type = Objects.requireNonNull(type, "type cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -68,7 +69,7 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
     /** {@inheritDoc} */
     @Override
     public ClientQuotaEntity getKey() {
-        return null;
+        return new ClientQuotaEntity(type.toEntities(entity));
     }
 
     @JsonProperty
