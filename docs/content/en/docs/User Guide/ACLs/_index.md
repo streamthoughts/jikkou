@@ -15,7 +15,11 @@ Jikkou can be used to describe all ACL policies that need to be created on Kafka
 The _resource specification file_ for defining `acls` contains the following fields:
 
 ```yaml
-apiVersion: 1 # The jikkou API version (required)
+apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)
+kind: KafkaAuthorizationList # The resource kind (required)
+metadata: # (optional)
+  labels: {}
+  annotations: {}
 spec:
   security:
     roles: # A list of the roles that can be assigned to users (optional)

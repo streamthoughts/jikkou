@@ -42,13 +42,13 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 
 Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.12.2[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.12.2/[Maven Central]
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.13.0/[Maven Central]
 * As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.12.2[GitHub Releases]
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0[GitHub Releases]
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.12.2/jikkou.deb
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.13.0/jikkou.deb
 sudo dpkg -i jikkou.deb
 ```
 
@@ -73,7 +73,11 @@ It allows you to define the desired current state of your **Topics**, **ACLs**, 
 kafka-topics.yml:::
 [source,yaml]
 ----
-apiVersion: 1
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaTopicList'
+metadata:
+  labels: {}
+  annotations: {}
 spec:
   topics:
   - name: 'my-first-topic-with-jikkou'
@@ -201,7 +205,7 @@ Please ⭐ this repository to support us!
 
 == Licence
 
-Copyright 2021 StreamThoughts.
+Copyright 2022 StreamThoughts.
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.See the NOTICE file distributed with this work for additional information regarding copyright ownership.The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.You may obtain a copy of the License at
 

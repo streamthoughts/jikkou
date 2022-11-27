@@ -14,7 +14,7 @@ Jikkou allows running validation rules on declared resources (i.e. _Topics_, _Qu
 
 To do that, the validations to be applied must be configured in your `application.conf`.
 
-For example, the below configuration shows how to use the validation `io.streamthoughts.jikkou.api.validations.TopicNameRegexValidation` class 
+For example, the below configuration shows how to use the validation `io.streamthoughts.jikkou.kafka.validations.TopicNameRegexValidation` class 
 to verify that all topic names match a given regex.
 
 ```hocon
@@ -22,7 +22,7 @@ jikkou {
     validations = [
         {
           # The fully-qualified name of the Validation class, e.g.:
-          type = io.streamthoughts.jikkou.api.validations.TopicNameRegexValidation
+          type = io.streamthoughts.jikkou.kafka.validations.TopicNameRegexValidation
           # The config values that will be passed to the Validation.
           config = {
             topic-regex = "[a-zA-Z0-9\\._\\-]+"
@@ -40,79 +40,91 @@ The `config` object of a validation will always fallback on the top-level `jikko
 
 Jikkou ships with the following built-in _validations_:
 
-`TopicConfigKeysValidation`
+### Topics
+
+#### `NoDuplicateTopicsAllowedValidation`
+
+#### `TopicConfigKeysValidation`
 
 The `TopicConfigKeysValidation` allows checking if the specified topic configs are all valid.
 
 **Configuration**
 
-* `type`: `io.streamthoughts.jikkou.api.validations.TopicConfigKeysValidation`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicConfigKeysValidation`
 
-### `TopicMinNumPartitions`
+#### `TopicMinNumPartitions`
 
 The `TopicMinNumPartitions` allows checking if the specified number of partitions for a topic is not less than the minimum required.
 
 **Configuration**
 
-* `type`: `io.streamthoughts.kafka.specs.validations.TopicMinNumPartitionsValidation`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicMinNumPartitionsValidation`
 * `config`:
   *  `topic-min-num-partitions`: (default: `1`)
 
-### `TopicMaxNumPartitions`
+#### `TopicMaxNumPartitions`
 
 The `TopicMaxNumPartitions` allows checking if the number of partitions for a topic is not greater than the maximum configured.
 
 **Configuration**
 
-* `type`: `io.streamthoughts.kafka.specs.validations.TopicMaxNumPartitions`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicMaxNumPartitions`
 * `config`:
   *  `topic-max-num-partitions`:
-  
-### `TopicMinReplicationFactor`
+
+#### `TopicMinReplicationFactor`
 
 The `TopicMinReplicationFactor` allows checking if the specified replication factor for a topic is not less than the minimum required.
 
 **Configuration**
 
-* `type`: `io.streamthoughts.kafka.specs.validations.TopicMinReplicationFactor`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicMinReplicationFactor`
 * `config`:
   * `topic-min-replication-factor`: (default: `1`)
 
-### `TopicMaxReplicationFactor`
+#### `TopicMaxReplicationFactor`
 
 The `TopicMaxReplicationFactor` allows checking if the specified replication factor for a topic is not greater than the maximum configured.
 
 **Configuration**
 
-* `type`: `io.streamthoughts.kafka.specs.validations.TopicMaxReplicationFactor`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicMaxReplicationFactor`
 * `config`:
   * `topic-max-replication-factor`: (default: `1`)
-  * 
-### `TopicNamePrefix`
+
+#### `TopicNamePrefix`
 
 The `TopicNamePrefix` allows checking if the specified name for a topic starts with one of the configured suffixes.
 
 **Configuration**
 
-* `type`: `io.streamthoughts.kafka.specs.validations.TopicNamePrefix`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicNamePrefix`
 * `config`:
   * `topic-name-prefixes-allowed`: 
-  
-### `TopicNameRegex`
+
+#### `TopicNameRegex`
 
 The `TopicNameRegex` allows checking if the specified name for a topic matches the configured regex.
 
 **Configuration**
 
-
-### `TopicNameSuffix`
+#### `TopicNameSuffix`
 
 The `TopicNameSuffix` allows checking  if the specified name for a topic ends with one of the configured suffixes.
 
 
-* `type`: `io.streamthoughts.kafka.specs.validations.TopicNameSuffix`
+* `type`: `io.streamthoughts.jikkou.kafka.validations.TopicNameSuffix`
 * `config`:
   * `topic-name-suffixes-allowed`:
+
+### ACLs
+
+#### `NoDuplicateUsersAllowedValidation`
+#### `NoDuplicateRolesAllowedValidation`
+
+### Quotas
+
+#### `QuotasEntityValidation`
 
 ## Default configuration
 

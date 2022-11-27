@@ -16,7 +16,11 @@ Jikkou allows defining the quotas to apply to consumers and/or producers identif
 The _resource specification file_ for defining `quotas` contains the following fields:
 
 ```yaml
-apiVersion: 1 # The jikkou API version (required)
+apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)
+kind: KafkaQuotaList # The resource kind (required)
+metadata: # (optional)
+  labels: {}
+  annotations: {}
 spec:
   quotas:
   - type: The quota type (required)

@@ -46,35 +46,39 @@ __(output)__
 
 ```yaml
 ---
-apiVersion: "1"
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaBrokerList"
 metadata:
-  annotations:
-    generated: "2022-06-12T00:00:00.000000000Z"
   labels: {}
+  annotations:
+    jikkou.io/kafka-cluster-id: "w1D7-dwKQIC5xb21CSSD3g"
+    jikkou.io/resource-generated: "2022-01-01T00:00:00.463931011Z"
 spec:
   brokers:
-  - id: "1"
-    host: "localhost"
-    port: 9092
-    configs:
-      advertised.listeners: "PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092"
-      broker.id: "1"
-      group.initial.rebalance.delay.ms: "0"
-      listener.security.protocol.map: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
-      listeners: "PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092"
-      log.dirs: "/var/lib/kafka/data"
-      offsets.topic.replication.factor: "1"
-      zookeeper.connect: "zookeeper:2181"
-  topics: []
-  quotas: []
+    - id: "1"
+      host: "localhost"
+      port: 9092
+      configs:
+        advertised.listeners: "PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092"
+        authorizer.class.name: "kafka.security.authorizer.AclAuthorizer"
+        broker.id: "1"
+        group.initial.rebalance.delay.ms: "0"
+        listener.security.protocol.map: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+        listeners: "PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092"
+        log.dirs: "/var/lib/kafka/data"
+        offsets.topic.replication.factor: "1"
+        zookeeper.connect: "zookeeper:2181"
+
 ```
 
-## Add Topics
+## Create Topics
 
 Now, let's create some topics on our Apache Kafka cluster. To do this, create a `topics.yaml` file with the following content:
 
 ```yaml
-apiVersion: 1
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaTopicList"
+metadata: {}
 spec:
   topics:
   - name: 'jikkou-demo-my-first-topic'
@@ -183,9 +187,12 @@ In the command above, we use the `-default-configs` to export built-in default c
 Finally, let's empty the `topics.yaml` file to remove all the topics previously created :
 
 ```yaml
-apiVersion: 1
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaTopicList"
+metadata: {}
 spec:
-  topics:
+  topics: []
+
 ```
 
 And run the following command using `dry-run`: 

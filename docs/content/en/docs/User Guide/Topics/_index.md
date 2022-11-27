@@ -13,7 +13,11 @@ description: >
 The _resource specification file_ for defining `topics` contains the following fields:
 
 ```yaml
-apiVersion: 1 # The jikkou API version (required)
+apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)
+kind: "KafkaTopicList"  # The resource kind (required)
+metadata: # (optional)
+  labels: {}
+  annotations: {}
 spec:
     topics:  # A list of the topics to manage (optional)
     - name: The name of the topic

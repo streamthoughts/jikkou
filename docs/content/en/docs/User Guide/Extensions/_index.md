@@ -19,7 +19,7 @@ Jikkou's sources are available on[Maven Central]( https://mvnrepository.com/arti
 ```xml
 <dependency>
     <groupId>io.streamthoughts</groupId>
-    <artifactId>jikkou</artifactId>
+    <artifactId>jikkou-api</artifactId>
     <version>${jikkou.version}</version>
 </dependency>
 ```
