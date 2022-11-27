@@ -20,6 +20,7 @@ package io.streamthoughts.jikkou.kafka.validations;
 
 import io.streamthoughts.jikkou.api.AcceptResource;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.extensions.annotations.EnableAutoConfigure;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ResourceValidation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaAccessUserObject;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptResource(type = V1KafkaAuthorizationList.class)
+@EnableAutoConfigure
 public class NoDuplicateUsersAllowedValidation implements ResourceValidation {
 
     /**

@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.kafka.validations;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.extensions.annotations.EnableAutoConfigure;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
 import io.vavr.collection.Array;
 import io.vavr.collection.List;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see TopicConfig
  */
+@EnableAutoConfigure
 public class TopicConfigKeysValidation extends TopicValidation {
 
     /** {@inheritDoc} */

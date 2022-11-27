@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.kafka.validations;
 
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.extensions.annotations.EnableAutoConfigure;
 import io.streamthoughts.jikkou.kafka.model.QuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaQuotaObject;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Validation for {@link V1KafkaQuotaObject}.
  */
+@EnableAutoConfigure
 public class QuotasEntityValidation extends QuotasValidation {
 
     /**
