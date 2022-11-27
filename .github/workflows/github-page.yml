@@ -5,8 +5,6 @@ on:
     branches:
       - master
       - main
-  pull_request:
-
 jobs:
   deploy:
     runs-on: ubuntu-20.04
