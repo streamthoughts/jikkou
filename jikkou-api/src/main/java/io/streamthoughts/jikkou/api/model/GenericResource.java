@@ -39,7 +39,8 @@ import lombok.Builder;
 @JsonPropertyOrder({
     "apiVersion",
     "kind",
-    "metadata"
+    "metadata",
+    "template"
 })
 @Builder(builderMethodName = "builder", builderClassName = "Builder", toBuilder = true)
 public class GenericResource implements HasMetadata {
@@ -50,6 +51,8 @@ public class GenericResource implements HasMetadata {
     private String kind;
     @JsonProperty("metadata")
     private ObjectMeta metadata;
+    @JsonProperty("template")
+    private ObjectTemplate template;
     @JsonIgnore
     private Map<String, Object> additionalProperties;
 
@@ -59,25 +62,30 @@ public class GenericResource implements HasMetadata {
      * @param apiVersion    the apiVersion.
      * @param kind          the resource kind.
      * @param metadata      the resource metadata.
+     * @param template      the resource template.
      */
     @ConstructorProperties({
         "apiVersion",
         "kind",
-        "metadata"
+        "metadata",
+        "template"
     })
     public GenericResource(final String apiVersion,
                            final String kind,
-                           final ObjectMeta metadata) {
-        this(apiVersion, kind, metadata, new LinkedHashMap<>());
+                           final ObjectMeta metadata,
+                           final ObjectTemplate template) {
+        this(apiVersion, kind, metadata, template, new LinkedHashMap<>());
     }
 
     public GenericResource(final String apiVersion,
                            final String kind,
                            final ObjectMeta metadata,
+                           final ObjectTemplate template,
                            final Map<String, Object> additionalProperties) {
         this.apiVersion = apiVersion;
         this.kind = kind;
         this.metadata = metadata;
+        this.template = template;
         this.additionalProperties = additionalProperties;
     }
 
@@ -132,8 +140,28 @@ public class GenericResource implements HasMetadata {
      */
     @Override
     public HasMetadata withMetadata(final ObjectMeta objectMeta) {
-        return new GenericResource(apiVersion, kind, objectMeta);
+        return new GenericResource(apiVersion, kind, objectMeta, template);
     }
+
+    /**
+     *
+     * (Required)
+     *
+     */
+    @JsonProperty("template")
+    public void setTemplate(ObjectTemplate template) {
+        this.template = template;
+    }
+
+    @JsonProperty("template")
+    public ObjectTemplate getObjectTemplate() {
+        return template;
+    }
+
+    public HasMetadata withObjectTemplate(final ObjectTemplate objectTemplate) {
+        return new GenericResource(apiVersion, kind, metadata, objectTemplate);
+    }
+
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {

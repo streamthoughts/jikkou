@@ -29,6 +29,10 @@
       "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
       "type": "object"
     },
+    "template": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "type": "object"
+    },
     "data": {
       "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
       "type": "object"

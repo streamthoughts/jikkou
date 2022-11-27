@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.model.ObjectTemplate;
 import io.streamthoughts.jikkou.api.model.Resource;
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
@@ -47,6 +48,7 @@ import lombok.With;
     "apiVersion",
     "kind",
     "metadata",
+    "template",
     "data"
 })
 @ApiVersion("kafka.jikkou.io/v1beta2")
@@ -72,6 +74,8 @@ public class ConfigMap implements HasMetadata, Resource
     private String kind = "ConfigMap";
     @JsonProperty("metadata")
     private ObjectMeta metadata;
+    @JsonProperty("template")
+    private ObjectTemplate template;
     @JsonProperty("data")
     private Configs data;
 
@@ -84,6 +88,7 @@ public class ConfigMap implements HasMetadata, Resource
 
     /**
      * 
+     * @param template
      * @param metadata
      * @param apiVersion
      * @param data
@@ -93,13 +98,15 @@ public class ConfigMap implements HasMetadata, Resource
         "apiVersion",
         "kind",
         "metadata",
+        "template",
         "data"
     })
-    public ConfigMap(String apiVersion, String kind, ObjectMeta metadata, Configs data) {
+    public ConfigMap(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, Configs data) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
         this.metadata = metadata;
+        this.template = template;
         this.data = data;
     }
 
@@ -128,6 +135,11 @@ public class ConfigMap implements HasMetadata, Resource
         return metadata;
     }
 
+    @JsonProperty("template")
+    public ObjectTemplate getTemplate() {
+        return template;
+    }
+
     @JsonProperty("data")
     public Configs getData() {
         return data;
@@ -149,6 +161,10 @@ public class ConfigMap implements HasMetadata, Resource
         sb.append('=');
         sb.append(((this.metadata == null)?"<null>":this.metadata));
         sb.append(',');
+        sb.append("template");
+        sb.append('=');
+        sb.append(((this.template == null)?"<null>":this.template));
+        sb.append(',');
         sb.append("data");
         sb.append('=');
         sb.append(((this.data == null)?"<null>":this.data));
@@ -164,6 +180,7 @@ public class ConfigMap implements HasMetadata, Resource
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.template == null)? 0 :this.template.hashCode()));
         result = ((result* 31)+((this.metadata == null)? 0 :this.metadata.hashCode()));
         result = ((result* 31)+((this.apiVersion == null)? 0 :this.apiVersion.hashCode()));
         result = ((result* 31)+((this.data == null)? 0 :this.data.hashCode()));
@@ -180,7 +197,7 @@ public class ConfigMap implements HasMetadata, Resource
             return false;
         }
         ConfigMap rhs = ((ConfigMap) other);
-        return (((((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata)))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.data == rhs.data)||((this.data!= null)&&this.data.equals(rhs.data))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))));
+        return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.data == rhs.data)||((this.data!= null)&&this.data.equals(rhs.data))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))));
     }
 
 }

@@ -31,6 +31,7 @@ import io.streamthoughts.jikkou.api.io.ResourceReader;
 import io.streamthoughts.jikkou.api.model.GenericResource;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.model.ObjectTemplate;
 import io.streamthoughts.jikkou.api.model.Resource;
 import io.streamthoughts.jikkou.api.template.TemplateBindings;
 import io.streamthoughts.jikkou.api.template.TemplateRenderer;
@@ -144,11 +145,16 @@ public final class TemplateResourceReader implements ResourceReader {
                 .flatMap(m -> Optional.ofNullable(m.getLabels()))
                 .orElse(Collections.emptyMap());
 
+        var localValues = Optional
+                .ofNullable(resource.getObjectTemplate())
+                .flatMap(ObjectTemplate::optionalValues)
+                .orElse(Collections.emptyMap());
+
         var localBindings = TemplateBindings.defaults()
                 .addLabels(options.labels().asMap())
                 .addLabels(localLabels)
                 .addValues(options.values().asMap())
-                .addValues(Collections.emptyMap());
+                .addValues(localValues);
 
         try (var objectNodeInputStream = objectNodeToInputStreams(mapper, objectNode);
              var renderedInputStream = renderTemplate(objectNodeInputStream, localBindings)) {
