@@ -1,0 +1,9 @@
+topic_prefix: "{{ system.env.TOPIC_PREFIX | default('local', true) }}"
+default_replication_factor: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}"
+locations:
+  - fr
+  - be
+  - de
+  - es
+  - uk
+  - us

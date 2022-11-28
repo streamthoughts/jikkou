@@ -1,0 +1,28 @@
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaTopicList'
+spec:
+  topics:
+    - name: 'jikkou-demo-my-first-topic'
+      partitions: 1
+      replication_factor: 1
+      config_map_refs:
+        - TopicConfig
+      configs:
+        cleanup.policy: 'compact'
+
+    - name: 'jikkou-demo-my-second-topic'
+      partitions: 5
+      replication_factor: 1
+      config_map_refs:
+        - TopicConfig
+      configs:
+        cleanup.policy: 'delete'
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "ConfigMap"
+metadata:
+  name: TopicConfig
+data:
+  retention.ms: 3600000
+  max.message.bytes: 20971520
+  min.insync.replicas: 1
