@@ -49,7 +49,7 @@ jobs:
       run: echo "${{ env.GIT_COMMIT }}"
 
     - name: Set DOCKER_IMAGE_TAG
-      if: github.ref_name == 'master'
+      if: github.ref_name == 'main'
       run: echo "DOCKER_TAG=master" >> $GITHUB_ENV
 
     - name: Set DOCKER_IMAGE_TAG
