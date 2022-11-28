@@ -142,7 +142,7 @@ cat ./resources/topics-values.yaml | yq
 **Validate Resource Definition**
 ```bash
 jikkou validate \
-  --files ./resources/topics-configmap.yaml \
+  --files ./resources/topics-template.tpl \
   --values-files ./resources/topics-values.yaml | yq
 ```
 
