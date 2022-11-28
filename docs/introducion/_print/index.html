@@ -9,28 +9,31 @@ Most of the time, the latest version of Jikkou is always built for working with 
 </span></span><span style=display:flex><span>$ ./up              <span style=color:#8f5902;font-style:italic># use ./down for stopping the docker-compose stack</span>
 </span></span></code></pre></div><h2 id=install-jikkou>Install Jikkou</h2><p>Download the latest distribution version of the Jikkou client. You can look at the official <a href=https://github.com/streamthoughts/jikkou/releases>releases page</a>.</p><p>For more details, or for other options, see the <a href=./_installation.md>installation</a> guide.</p><h2 id=describe-broker-settings>Describe Broker Settings</h2><ul><li>First, let&rsquo;s run the following command to describe the configuration of brokers :</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ jikkou --bootstrap-servers localhost:9092 brokers describe
 </span></span></code></pre></div><ul><li>If you succeed to connect to your cluster, then the command should return an output similar to:</li></ul><p><strong>(output)</strong></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#000>---</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>apiVersion</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>apiVersion</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;kafka.jikkou.io/v1beta2&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>kind</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;KafkaBrokerList&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>metadata</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>annotations</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span><span style=color:#204a87;font-weight:700>generated</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;2022-06-12T00:00:00.000000000Z&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>labels</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span>{}<span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>annotations</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span><span style=color:#204a87;font-weight:700>jikkou.io/kafka-cluster-id</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;w1D7-dwKQIC5xb21CSSD3g&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span><span style=color:#204a87;font-weight:700>jikkou.io/resource-generated</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;2022-01-01T00:00:00.463931011Z&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>spec</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>brokers</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span>- <span style=color:#204a87;font-weight:700>id</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span><span style=color:#204a87;font-weight:700>host</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;localhost&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span><span style=color:#204a87;font-weight:700>port</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#0000cf;font-weight:700>9092</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span><span style=color:#204a87;font-weight:700>configs</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>advertised.listeners</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>broker.id</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>group.initial.rebalance.delay.ms</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;0&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>listener.security.protocol.map</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>listeners</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>log.dirs</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;/var/lib/kafka/data&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>offsets.topic.replication.factor</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>zookeeper.connect</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;zookeeper:2181&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>topics</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#000;font-weight:700>[]</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>quotas</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#000;font-weight:700>[]</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span></code></pre></div><h2 id=add-topics>Add Topics</h2><p>Now, let&rsquo;s create some topics on our Apache Kafka cluster. To do this, create a <code>topics.yaml</code> file with the following content:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#204a87;font-weight:700>apiVersion</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#0000cf;font-weight:700>1</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>    </span>- <span style=color:#204a87;font-weight:700>id</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>host</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;localhost&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>port</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#0000cf;font-weight:700>9092</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>      </span><span style=color:#204a87;font-weight:700>configs</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>advertised.listeners</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>authorizer.class.name</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;kafka.security.authorizer.AclAuthorizer&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>broker.id</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>group.initial.rebalance.delay.ms</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;0&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>listener.security.protocol.map</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>listeners</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>log.dirs</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;/var/lib/kafka/data&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>offsets.topic.replication.factor</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;1&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>        </span><span style=color:#204a87;font-weight:700>zookeeper.connect</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;zookeeper:2181&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span></code></pre></div><h2 id=create-topics>Create Topics</h2><p>Now, let&rsquo;s create some topics on our Apache Kafka cluster. To do this, create a <code>topics.yaml</code> file with the following content:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#204a87;font-weight:700>apiVersion</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;kafka.jikkou.io/v1beta2&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>kind</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;KafkaTopicList&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>metadata</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span>{}<span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>spec</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>topics</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span>- <span style=color:#204a87;font-weight:700>name</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#39;jikkou-demo-my-first-topic&#39;</span><span style=color:#f8f8f8;text-decoration:underline>
@@ -109,9 +112,11 @@ But we could just as well use the <code>apply</code> subcommand to obtain the sa
 </span></span></span><span style=display:flex><span><span style=color:#4e9a06></span>  describe <span style=color:#4e9a06>\
 </span></span></span><span style=display:flex><span><span style=color:#4e9a06></span>  --include <span style=color:#4e9a06>&#34;jikkou-demo-.*&#34;</span> <span style=color:#4e9a06>\
 </span></span></span><span style=display:flex><span><span style=color:#4e9a06></span>  --default-configs
-</span></span></code></pre></div><p>In the command above, we use the <code>-default-configs</code> to export built-in default configuration for configs that have a default value.</p><h2 id=remove-topics>Remove Topics</h2><p>Finally, let&rsquo;s empty the <code>topics.yaml</code> file to remove all the topics previously created :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#204a87;font-weight:700>apiVersion</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#0000cf;font-weight:700>1</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></code></pre></div><p>In the command above, we use the <code>-default-configs</code> to export built-in default configuration for configs that have a default value.</p><h2 id=remove-topics>Remove Topics</h2><p>Finally, let&rsquo;s empty the <code>topics.yaml</code> file to remove all the topics previously created :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#204a87;font-weight:700>apiVersion</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;kafka.jikkou.io/v1beta2&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>kind</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#4e9a06>&#34;KafkaTopicList&#34;</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>metadata</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span>{}<span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline></span><span style=color:#204a87;font-weight:700>spec</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
-</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>topics</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline>
+</span></span></span><span style=display:flex><span><span style=color:#f8f8f8;text-decoration:underline>  </span><span style=color:#204a87;font-weight:700>topics</span><span style=color:#000;font-weight:700>:</span><span style=color:#f8f8f8;text-decoration:underline> </span><span style=color:#000;font-weight:700>[]</span><span style=color:#f8f8f8;text-decoration:underline>
 </span></span></span></code></pre></div><p>And run the following command using <code>dry-run</code>:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ jikkou --bootstrap-servers localhost:9092 <span style=color:#4e9a06>\
 </span></span></span><span style=display:flex><span><span style=color:#4e9a06></span>    topics <span style=color:#4e9a06>\
 </span></span></span><span style=display:flex><span><span style=color:#4e9a06></span>    apply <span style=color:#4e9a06>\
@@ -191,58 +196,38 @@ Thus, it works out-of-the-box with most the Apache Kafka distributions and cloud
 </span></span><span style=display:flex><span>  extensions  List all extensions available.
 </span></span><span style=display:flex><span>  config      Sets or retrieves the configuration of this client.
 </span></span><span style=display:flex><span>  <span style=color:#204a87>help</span>        Displays <span style=color:#204a87>help</span> information about the specified <span style=color:#204a87>command</span>
-</span></span></code></pre></div><h2 id=configuration>Configuration</h2><p>Jikkou uses the Java Admin client API for interacting with the target Apache Kafka cluster.</p><p>You can set the configs to be passed to Admin Client using the command-line arguments:</p><ul><li><code>--command-config</code>: A property file containing configs to be passed to Admin Client</li><li><code>--command-property</code>: A KEY=VALUE property to be passed to the Admin Client.</li></ul><p>Additionally, Jikkou will lookup for an <a href=https://github.com/lightbend/config>HOCON (Human-Optimized Config Object Notation)</a> file named <code>application.conf</code> in the following locations:</p><ul><li><code>./application.conf</code></li><li><code>$HOME/.jikkou/application.conf</code></li></ul><p>Depending on the configuration properties you will override, Jikkou will always fallback to its reference default configuration (see <a href=https://github.com/streamthoughts/jikkou/blob/master/src/main/resources/reference.conf>reference.conf</a>).</p><pre tabindex=0><code class=language-hocon data-lang=hocon>jikkou {
+</span></span></code></pre></div><h2 id=configuration>Configuration</h2><p>Jikkou uses the Java Admin client API for interacting with the target Apache Kafka cluster.</p><p>You can set the configs to be passed to Admin Client using the command-line arguments:</p><ul><li><code>--command-config</code>: A property file containing configs to be passed to Admin Client</li><li><code>--command-property</code>: A KEY=VALUE property to be passed to the Admin Client.</li></ul><p>Additionally, Jikkou will lookup for an <a href=https://github.com/lightbend/config>HOCON (Human-Optimized Config Object Notation)</a> file named <code>application.conf</code> in the following locations:</p><ul><li><code>./application.conf</code></li><li><code>$HOME/.jikkou/application.conf</code></li></ul><p>Depending on the configuration properties you will override, Jikkou will always fallback to its reference default configuration (see <a href=https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf>reference.conf</a>).</p><pre tabindex=0><code class=language-hocon data-lang=hocon>jikkou {
 
-  # The KafkaResourceManager classes and configurations used for managing kafka resources
-  managers {
-    kafka {
-      brokers {
-        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaBrokerManager
-        config = {
-            adminClient = ${jikkou.adminClient}
-            kafka.brokers = ${jikkou.kafka.brokers}
-        }
-      }
-      topics {
-        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaTopicManager
-        config = {
-            adminClient = ${jikkou.adminClient}
-            kafka.brokers = ${jikkou.kafka.brokers}
-        }
-      }
-
-      acls {
-        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaAclsManager
-        config = {
-            adminClient = ${jikkou.adminClient}
-            kafka.brokers = ${jikkou.kafka.brokers}
-        }
-      }
-
-      quotas {
-        type = io.streamthoughts.jikkou.api.manager.kafka.AdminClientKafkaQuotasManager
-        config = {
-            adminClient = ${jikkou.adminClient}
-            kafka.brokers = ${jikkou.kafka.brokers}
-        }
-      }
-    }
+  # Set what resource controllers are active (i.e., the fully class names)
+  controllers {
+    active: [
+      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController
+      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaController
+      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaAuthorizationController
+    ]
   }
 
-  # The default Kafka AdminClient configuration
-  adminClient {
-    bootstrap.servers = ${?JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS}
+  # Set what resource descriptors are active (i.e., the fully class names)
+  descriptors {
+    active: [
+      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaBrokerDescriptor
+    ]
   }
 
   # The paths from which to load extensions
   extension.paths = [${?JIKKOU_EXTENSION_PATH}]
 
   kafka {
+    # The default Kafka AdminClient configuration
+    client  {
+      bootstrap.servers = &#34;localhost:9092&#34;
+      bootstrap.servers = ${?JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS}
+    }
     brokers {
       # If &#39;True&#39; 
       wait-for-enabled = true
       wait-for-enabled = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_ENABLED}
-      # The minimal number of broker that should be alive for the interceptor stops waiting.
+      # The minimal number of brokers that should be alive for the CLI stops waiting.
       wait-for-min-available = 1
       wait-for-min-available = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE}
       # The amount of time to wait before verifying that brokers are available.
@@ -259,34 +244,28 @@ Thus, it works out-of-the-box with most the Apache Kafka distributions and cloud
   # The regex patterns to use for excluding resources.
   exclude-resources = []
 
-  template {
-    values {
-
-    }
-  }
-
   # The default validation rules to apply on any specification files.
   validations = [
     {
-        type = io.streamthoughts.jikkou.api.validations.TopicConfigKeysValidation
-        config = {}
+      type = TopicConfigKeysValidation
+      config = {}
     },
     {
-      type = io.streamthoughts.jikkou.api.validations.TopicNameRegexValidation
+      type = TopicNameRegexValidation
       config = {
         topic-name-regex = &#34;[a-zA-Z0-9\\._\\-]+&#34;
         topic-name-regex = ${?VALIDATION_DEFAULT_TOPIC_NAME_REGEX}
       }
     },
     {
-      type = io.streamthoughts.jikkou.api.validations.TopicMinNumPartitionsValidation
+      type = TopicMinNumPartitionsValidation
       config = {
         topic-min-num-partitions = 1
         topic-min-num-partitions = ${?VALIDATION_DEFAULT_TOPIC_MIN_NUM_PARTITIONS}
       }
     },
     {
-      type = io.streamthoughts.jikkou.api.validations.TopicMinReplicationFactorValidation
+      type = TopicMinReplicationFactorValidation
       config = {
         topic-min-replication-factor = 1
         topic-min-replication-factor = ${?VALIDATION_DEFAULT_TOPIC_MIN_REPLICATION_FACTOR}
