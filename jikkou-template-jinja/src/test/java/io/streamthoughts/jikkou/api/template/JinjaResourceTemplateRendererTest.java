@@ -16,9 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.api.io.readers;
+package io.streamthoughts.jikkou.api.template;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
+import io.streamthoughts.jikkou.api.io.readers.TemplateResourceReader;
 import io.streamthoughts.jikkou.api.model.GenericResource;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.NamedValue;
@@ -31,27 +34,40 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class TemplateResourceReaderTest {
+class JinjaResourceTemplateRendererTest {
+
+    private static final ObjectMapper OBJECT_MAPPER = Jackson.YAML_OBJECT_MAPPER;
 
     @Test
+    @SuppressWarnings("unchecked")
     void should_load_template_resource_given_values_file() throws IOException {
+
+        // Given
         ClassLoader classLoader = ClassUtils.getClassLoader();
         InputStream template = classLoader.getResourceAsStream("datasets/resource-template.yaml");
         InputStream values = classLoader.getResourceAsStream("datasets/resource-values.yaml");
 
-        Map<String, Object> mapValues = Jackson.YAML_OBJECT_MAPPER.readValue(values, Map.class);
-
-        TemplateResourceReader reader = new TemplateResourceReader(() -> template);
+        Map<String, Object> mapValues = OBJECT_MAPPER.readValue(values, Map.class);
         ResourceReaderOptions options = new ResourceReaderOptions()
                 .withValues(NamedValue.setOf(mapValues));
 
-        List<HasMetadata> results = reader.readAllResources(options);
-        Assertions.assertNotNull(results);
-        Assertions.assertEquals(1, results.size());
-        GenericResource resource = (GenericResource) results.get(0);
-        LinkedHashMap spec = (LinkedHashMap) resource.getAdditionalProperties().get("spec");
-        Object topics = spec.get("topics");
-        Assertions.assertNotNull(topics);
-        Assertions.assertEquals(5, ((List) topics).size());
+        try (var reader = new TemplateResourceReader(
+                new JinjaResourceTemplateRenderer(),
+                () -> template,
+                OBJECT_MAPPER
+        )) {
+
+            // When
+            List<HasMetadata> results = reader.readAllResources(options);
+
+            // Then
+            Assertions.assertNotNull(results);
+            Assertions.assertEquals(1, results.size());
+            GenericResource resource = (GenericResource) results.get(0);
+            Map<String, Object> spec = (LinkedHashMap) resource.getAdditionalProperties().get("spec");
+            Object topics = spec.get("topics");
+            Assertions.assertNotNull(topics);
+            Assertions.assertEquals(5, ((List) topics).size());
+        }
     }
 }

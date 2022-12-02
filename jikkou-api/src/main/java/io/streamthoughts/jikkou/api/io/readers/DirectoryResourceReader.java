@@ -27,27 +27,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DirectoryResourceReader implements ResourceReader {
 
-    public static final String DEFAULT_PATTERN = "**/*.{yaml,yml,tpl}";
-
-    private static final Logger LOG = LoggerFactory.getLogger(DirectoryResourceReader.class);
-
     private final Path directory;
 
-    private final String pattern;
-
-    /**
-     * Creates a new {@link DirectoryResourceReader} instance.
-     *
-     * @param directory the directory from which to read all resources.
-     */
-    public DirectoryResourceReader(@NotNull final Path directory) {
-        this(directory, DEFAULT_PATTERN);
-    }
+    private final ResourceReaderFactory readerFactory;
 
     /**
      * Creates a new {@link DirectoryResourceReader} instance.
@@ -55,12 +40,12 @@ public class DirectoryResourceReader implements ResourceReader {
      * @param directory the directory from which to read all resources.
      */
     public DirectoryResourceReader(@NotNull final Path directory,
-                                   @NotNull final String pattern) {
-        this.directory = Objects.requireNonNull(directory, "'directory' should not be null");
+                                   @NotNull final ResourceReaderFactory readerFactory) {
+        this.directory = Objects.requireNonNull(directory, "'directory' must not be null");
+        this.readerFactory = Objects.requireNonNull(readerFactory, "'readerFactory' must not be null");
         if (!Files.isDirectory(directory)) {
             throw new IllegalArgumentException("'" + directory + "' is not a directory");
         }
-        this.pattern = Objects.requireNonNull(pattern, "'pattern' should not be null");
     }
 
     /**
@@ -71,7 +56,7 @@ public class DirectoryResourceReader implements ResourceReader {
         return IOUtils.findMatching(directory, options.pattern())
                 .parallelStream()
                 .flatMap(path -> {
-                    try (var reader = ResourceReaderFactory.INSTANCE.create(path)) {
+                    try (var reader = readerFactory.create(path)) {
                         return reader.readAllResources(options).stream();
                     }
                 }).toList();

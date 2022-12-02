@@ -24,10 +24,13 @@ import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.SimpleJikkouApi;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
+import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
+import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
 import io.streamthoughts.jikkou.api.model.NamedValue;
 import io.streamthoughts.jikkou.api.model.ResourceList;
+import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.client.CLIUtils;
 import io.streamthoughts.jikkou.client.JikkouContext;
 import io.streamthoughts.jikkou.client.Printer;
@@ -71,15 +74,24 @@ public abstract class BaseResourceCommand extends BaseCommand {
 
     @NotNull
     protected ResourceList loadResources() {
+        ResourceReaderFactory factory = new ResourceReaderFactory()
+                .setTemplateEnable(true)
+                .setTemplateRenderer(
+                        new JinjaResourceTemplateRenderer()
+                                .withPreserveRawTags(false)
+                                .withFailOnUnknownTokens(false)
+                )
+                .setObjectMapper(Jackson.YAML_OBJECT_MAPPER);
+
         ResourceList resources = ResourceLoader
                 .create()
-                .options(new ResourceReaderOptions()
+                .withResourceReaderFactory(factory)
+                .withResourceReaderOptions(new ResourceReaderOptions()
                         .withLabels(NamedValue.setOf(options.clientLabels))
                         .withValues(NamedValue.setOf(options.clientValues))
                         .withPattern(specOptions.pattern)
-                        .withTemplatingEnable(true)
                 )
-                .valuesFiles(options.valuesFiles)
+                .withValuesFiles(options.valuesFiles)
                 .load(specOptions.files);
 
         return new LegacyKafkaClusterResourceHandler().handle(resources);

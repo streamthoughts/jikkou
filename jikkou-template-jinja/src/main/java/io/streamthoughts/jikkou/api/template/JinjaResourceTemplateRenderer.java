@@ -34,31 +34,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 /**
- * Utility class for manipulating template using Jinja.
+ * A Jinja based template rendered.
  */
-public class TemplateRenderer {
+public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
 
     // list of scopes for bindings
-    public static final String SCOPE_LABELS = "labels";
-    public static final String SCOPE_VALUES = "values";
-    public static final String SCOPE_SYSTEM = "system";
-    public static final String SCOPE_SYSTEM_ENV = "env";
-    public static final String SCOPE_SYSTEM_PROPS = "props";
+    public enum Scopes {
+        LABELS, VALUES, SYSTEM, ENV, PROPS;
+
+        public String key() {
+            return name().toLowerCase();
+        }
+    }
 
     private boolean failOnUnknownTokens = true;
 
     private boolean preserveRawTags = false;
 
-    public TemplateRenderer withFailOnUnknownTokens(final boolean failOnUnknownTokens) {
+    public JinjaResourceTemplateRenderer withFailOnUnknownTokens(final boolean failOnUnknownTokens) {
         this.failOnUnknownTokens = failOnUnknownTokens;
         return this;
     }
 
-    public TemplateRenderer withPreserveRawTags(final boolean preserveRawTags) {
+    public JinjaResourceTemplateRenderer withPreserveRawTags(final boolean preserveRawTags) {
         this.preserveRawTags = preserveRawTags;
         return this;
     }
 
+    /** {@inheritDoc} **/
+    @Override
     public String render(@NotNull final String template,
                          @NotNull final TemplateBindings bindings) {
 
@@ -95,17 +99,18 @@ public class TemplateRenderer {
         Map<String, Object> values = new HashMap<>();
         CollectionUtils.toNestedMap(bindings.getValues(), values, null);
         CollectionUtils.toFlattenMap(bindings.getValues(), values, null);
-        bindingsMap.put(SCOPE_VALUES, values);
+        bindingsMap.put(Scopes.VALUES.key(), values);
 
         Map<String, Object> labels = new HashMap<>();
         CollectionUtils.toNestedMap(bindings.getLabels(), labels, null);
         CollectionUtils.toFlattenMap(bindings.getLabels(), labels, null);
-        bindingsMap.put(SCOPE_LABELS, labels);
+        bindingsMap.put(Scopes.LABELS.key(), labels);
 
-        bindingsMap.put(SCOPE_SYSTEM, Map.of(
-                SCOPE_SYSTEM_ENV, bindings.getSystemEnv(),
-                SCOPE_SYSTEM_PROPS, bindings.getSystemProps())
+        Map<String, Map<String, String>> systemValues = Map.of(
+                Scopes.ENV.key(), bindings.getSystemEnv(),
+                Scopes.PROPS.key(), bindings.getSystemProps()
         );
+        bindingsMap.put(Scopes.SYSTEM.key(), systemValues);
         return bindingsMap;
     }
 

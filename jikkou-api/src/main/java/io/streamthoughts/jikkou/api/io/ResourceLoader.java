@@ -46,6 +46,10 @@ public final class ResourceLoader {
 
     private final List<String> valuesFiles = new LinkedList<>();
 
+    private ResourceReaderFactory factory = new ResourceReaderFactory()
+            .setObjectMapper(Jackson.YAML_OBJECT_MAPPER)
+            .setTemplateEnable(false);
+
     /**
      * Helper method to create a default {@link ResourceLoader} for reading specification in YAML files.
      *
@@ -55,17 +59,22 @@ public final class ResourceLoader {
         return new ResourceLoader();
     }
 
-    public ResourceLoader valuesFile(final @NotNull String valuesFile) {
-        this.valuesFiles.add(valuesFile);
-        return this;
+    public ResourceLoader withValuesFile(final @NotNull String valuesFile) {
+        return withValuesFiles(List.of(valuesFile));
     }
-    public ResourceLoader valuesFiles(final @NotNull List<String> valuesFiles) {
+
+    public ResourceLoader withValuesFiles(final @NotNull List<String> valuesFiles) {
         this.valuesFiles.addAll(valuesFiles);
         return this;
     }
 
-    public ResourceLoader options(@NotNull final ResourceReaderOptions options) {
+    public ResourceLoader withResourceReaderOptions(@NotNull final ResourceReaderOptions options) {
         this.options = options;
+        return this;
+    }
+
+    public ResourceLoader withResourceReaderFactory(@NotNull final ResourceReaderFactory factory) {
+        this.factory = factory;
         return this;
     }
 
@@ -92,8 +101,6 @@ public final class ResourceLoader {
     public ResourceList load(@NotNull final InputStream file) {
 
         final ResourceReaderOptions newOptions = getOptionsWithAllValues();
-
-        var factory = ResourceReaderFactory.INSTANCE;
         return new ResourceList(factory.create(file).readAllResources(newOptions));
     }
 
@@ -109,8 +116,6 @@ public final class ResourceLoader {
         }
 
         final ResourceReaderOptions newOptions = getOptionsWithAllValues();
-
-        var factory = ResourceReaderFactory.INSTANCE;
         return new ResourceList(locations.stream()
                 .map(location -> factory.create(URI.create(location)))
                 .flatMap(reader -> reader.readAllResources(newOptions).stream())
