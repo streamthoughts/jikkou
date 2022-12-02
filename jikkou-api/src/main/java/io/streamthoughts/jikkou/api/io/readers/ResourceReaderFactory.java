@@ -18,8 +18,10 @@
  */
 package io.streamthoughts.jikkou.api.io.readers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.io.ResourceReader;
+import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -27,13 +29,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Default interface to read a cluster specification.
  */
 public final class ResourceReaderFactory {
 
-    public static final ResourceReaderFactory INSTANCE = new ResourceReaderFactory();
+    private ResourceTemplateRenderer templateRenderer;
+
+    private boolean isTemplateEnable = false;
+
+    private ObjectMapper objectMapper;
+
+    public ResourceReaderFactory setObjectMapper(final @NotNull ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        return this;
+    }
+
+    public ResourceReaderFactory setTemplateRenderer(final @NotNull ResourceTemplateRenderer renderer) {
+        this.templateRenderer = renderer;
+        return this;
+    }
+
+    public ResourceReaderFactory setTemplateEnable(boolean templateEnable) {
+        isTemplateEnable = templateEnable;
+        return this;
+    }
 
     /**
      * Creates a new {@link ResourceReader} to read the resource(s) at the given {@link URI}.
@@ -54,7 +76,7 @@ public final class ResourceReaderFactory {
 
         if (scheme.equalsIgnoreCase("http") ||
                 scheme.equalsIgnoreCase("https")) {
-            return new TemplateResourceReader(() -> newInputStream(location), location);
+            return createTemplateResourceLoader(newInputStream(location), location);
         }
 
         throw new JikkouException("Resource location scheme '" + scheme + "' is not supported");
@@ -68,11 +90,11 @@ public final class ResourceReaderFactory {
      */
     public ResourceReader create(final Path location) {
         return Files.isDirectory(location) ?
-                new DirectoryResourceReader(location) :
+                new DirectoryResourceReader(location, this) :
                 options -> {
-                    var reader = options.isTemplatingEnable() ?
-                            new TemplateResourceReader(() -> newInputStream(location), location.toUri()) :
-                            new InputStreamResourceReader(() -> newInputStream(location), location.toUri());
+                    var reader = isTemplateEnable ?
+                            createTemplateResourceLoader(newInputStream(location), location.toUri()) :
+                            createInputStreamResourceReader(location);
 
                     try (reader) {
                         return reader.readAllResources(options);
@@ -81,11 +103,22 @@ public final class ResourceReaderFactory {
 
     }
 
+    @NotNull
+    private InputStreamResourceReader createInputStreamResourceReader(@Nullable Path location) {
+        return new InputStreamResourceReader(() -> newInputStream(location), objectMapper, location.toUri());
+    }
+
+    @NotNull
+    private TemplateResourceReader createTemplateResourceLoader(final @NotNull InputStream is,
+                                                                final @Nullable URI location) {
+        return new TemplateResourceReader(templateRenderer, () -> is, objectMapper, location);
+    }
+
     public ResourceReader create(final InputStream inputStream) {
         return options -> {
-            var reader = options.isTemplatingEnable() ?
-                    new TemplateResourceReader(() -> inputStream) :
-                    new InputStreamResourceReader(() -> inputStream);
+            var reader = isTemplateEnable ?
+                    createTemplateResourceLoader(inputStream, null) :
+                    new InputStreamResourceReader(() -> inputStream, objectMapper);
 
             try (reader) {
                 return reader.readAllResources(options);

@@ -18,23 +18,17 @@
  */
 package io.streamthoughts.jikkou.api.io.readers;
 
-import static io.streamthoughts.jikkou.api.model.ObjectMeta.ANNOT_RESOURCE;
-
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import io.streamthoughts.jikkou.api.error.InvalidResourceFileException;
 import io.streamthoughts.jikkou.api.error.JikkouException;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.ResourceReader;
 import io.streamthoughts.jikkou.api.model.GenericResource;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.ObjectTemplate;
 import io.streamthoughts.jikkou.api.model.Resource;
+import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.template.TemplateBindings;
-import io.streamthoughts.jikkou.api.template.TemplateRenderer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,36 +39,38 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TemplateResourceReader implements ResourceReader {
+public final class TemplateResourceReader extends AbstractResourceReader {
 
-    private final ObjectMapper mapper;
-    private final URI location;
-    private final Supplier<InputStream> resourceSupplier;
+    private final ResourceTemplateRenderer renderer;
 
     /**
      * Creates a new {@link TemplateResourceReader} instance.
      *
+     * @param renderer           the render to be used for rendering resource template.
      * @param resourceSupplier   the {@link InputStream} from which to read resources.
      */
-    public TemplateResourceReader(@NotNull final Supplier<InputStream> resourceSupplier) {
-        this(resourceSupplier, null);
+    public TemplateResourceReader(@NotNull final ResourceTemplateRenderer renderer,
+                                  @NotNull final Supplier<InputStream> resourceSupplier,
+                                  @NotNull final ObjectMapper objectMapper) {
+        this(renderer, resourceSupplier, objectMapper, null);
     }
     /**
      * Creates a new {@link TemplateResourceReader} instance.
      *
+     * @param renderer           the render to be used for rendering resource template.
      * @param location the location {@link Path} of the template to read.
      */
-    public TemplateResourceReader(@NotNull final Supplier<InputStream> resourceSupplier,
+    public TemplateResourceReader(@NotNull ResourceTemplateRenderer renderer,
+                                  @NotNull final Supplier<InputStream> resourceSupplier,
+                                  @NotNull final ObjectMapper objectMapper,
                                   @Nullable final URI location) {
-        this.resourceSupplier = Objects.requireNonNull(resourceSupplier, "'resourceSupplier' should not be null");
-        this.location = location;
-        this.mapper = Jackson.YAML_OBJECT_MAPPER;
+        super(resourceSupplier, location, objectMapper);
+        this.renderer = renderer;
     }
 
     /**
@@ -83,7 +79,7 @@ public final class TemplateResourceReader implements ResourceReader {
     @Override
     public List<HasMetadata> readAllResources(@NotNull final ResourceReaderOptions options) throws JikkouException {
 
-        var factory = (YAMLFactory) Jackson.YAML_OBJECT_MAPPER.getFactory();
+        var factory =  mapper.getFactory();
         try (var rawInputStream = resourceSupplier.get()) {
 
             var bindings = TemplateBindings.defaults()
@@ -93,7 +89,7 @@ public final class TemplateResourceReader implements ResourceReader {
             // Run first template rendering
             try (var renderedInputStream = renderTemplate(rawInputStream, bindings)) {
 
-                YAMLParser parser = factory.createParser(renderedInputStream);
+                JsonParser parser = factory.createParser(renderedInputStream);
 
                 // Reads all YAML object from
                 List<ObjectNode> objects = mapper
@@ -104,33 +100,17 @@ public final class TemplateResourceReader implements ResourceReader {
                 for (ObjectNode object : objects) {
                     // Run second template rendering
                     HasMetadata resource = (HasMetadata) renderTemplate(object, options);
-                    if (location != null) {
-                        ObjectMeta om = resource
-                                .optionalMetadata()
-                                .or(() -> Optional.of(ObjectMeta.builder().build()))
-                                .map(m -> ObjectMeta
-                                        .builder()
-                                        .withName(m.getName())
-                                        .withLabels(m.getLabels())
-                                        .withAnnotations(m.getAnnotations())
-                                        .withAnnotation(ANNOT_RESOURCE, location.toString())
-                                        .build()
-                                ).get();
-                        resource = resource.withMetadata(om);
-                    }
-                    list.add(resource);
+                    list.add(mayAddResourceAnnotationForLocation(resource));
                 }
                 return list;
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new InvalidResourceFileException(String.format(
+            var message = String.format(
                     "Failed to parse and/or render resource file at location '%s'. Cause: %s",
                     location,
                     e.getLocalizedMessage()
-                    ),
-                    e
             );
+            throw new InvalidResourceFileException(message, e);
         }
     }
 
@@ -187,10 +167,7 @@ public final class TemplateResourceReader implements ResourceReader {
             );
         }
 
-        final String rendered = new TemplateRenderer()
-                .withPreserveRawTags(false)
-                .withFailOnUnknownTokens(false)
-                .render(specification, templateBindings);
+        final String rendered = renderer.render(specification, templateBindings);
 
         return newInputStream(rendered);
     }

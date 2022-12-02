@@ -33,44 +33,36 @@ public class ResourceReaderOptions {
     private final NamedValue.Set values;
     private final NamedValue.Set labels;
 
-    private final boolean isTemplatingEnable;
-
     public ResourceReaderOptions() {
-        this(NamedValue.emptySet(), NamedValue.emptySet(), DEFAULT_PATTERN, true);
+        this(NamedValue.emptySet(), NamedValue.emptySet(), DEFAULT_PATTERN);
     }
 
     private ResourceReaderOptions(final NamedValue.Set values,
                                   final NamedValue.Set labels,
-                                  final String pattern,
-                                  final boolean isTemplatingEnable) {
+                                  final String pattern) {
         this.values = values;
         this.labels = labels;
         this.pattern = pattern;
-        this.isTemplatingEnable = isTemplatingEnable;
     }
 
     public ResourceReaderOptions withValue(final NamedValue value) {
-        return new ResourceReaderOptions(values.with(value), labels, pattern, isTemplatingEnable);
+        return new ResourceReaderOptions(values.with(value), labels, pattern);
     }
 
     public ResourceReaderOptions withLabel(final NamedValue label) {
-        return new ResourceReaderOptions(values, labels.with(label), pattern, isTemplatingEnable);
+        return new ResourceReaderOptions(values, labels.with(label), pattern);
     }
 
     public ResourceReaderOptions withValues(final Iterable<NamedValue> values) {
-        return new ResourceReaderOptions(this.values.with(values), labels, pattern, isTemplatingEnable);
+        return new ResourceReaderOptions(this.values.with(values), labels, pattern);
     }
 
     public ResourceReaderOptions withLabels(final Iterable<NamedValue> labels) {
-        return new ResourceReaderOptions(values, this.labels.with(labels), pattern, isTemplatingEnable);
+        return new ResourceReaderOptions(values, this.labels.with(labels), pattern);
     }
 
     public ResourceReaderOptions withPattern(final String pattern) {
-        return new ResourceReaderOptions(values, labels, pattern, isTemplatingEnable);
-    }
-
-    public ResourceReaderOptions withTemplatingEnable(final boolean isTemplatingEnable) {
-        return new ResourceReaderOptions(values, labels, pattern, isTemplatingEnable);
+        return new ResourceReaderOptions(values, labels, pattern);
     }
 
     public String pattern() {
@@ -85,7 +77,4 @@ public class ResourceReaderOptions {
         return labels;
     }
 
-    public boolean isTemplatingEnable() {
-        return isTemplatingEnable;
-    }
 }

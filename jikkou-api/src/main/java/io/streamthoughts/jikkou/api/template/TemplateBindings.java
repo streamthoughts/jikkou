@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents objects to put into scope for rendering template.
  *
- * @see TemplateRenderer
+ * @see JinjaTemplateRenderer
  */
 public class TemplateBindings {
 
