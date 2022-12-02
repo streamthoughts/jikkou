@@ -98,6 +98,8 @@
         <lombok.version>1.18.24</lombok.version>
         <spotless.version>2.28.0</spotless.version>
         <license.header.file>${project.basedir}/license-header</license.header.file>
+        <sonar.organization>streamthoughts</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
