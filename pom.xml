@@ -105,7 +105,6 @@
         <sonar.java.binaries>target</sonar.java.binaries>
         <sonar.java.source>${java.version}</sonar.java.source>
         <sonar.language>java</sonar.language>
-        <!--<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>-->
     </properties>
 
     <dependencyManagement>
@@ -314,16 +313,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludedGroups>integration</excludedGroups>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <groups>integration</groups>
-                </configuration>
                 <executions>
                     <execution>
                         <id>integration-test</id>
@@ -458,29 +451,54 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
-                <!--
                 <configuration>
-                    <destFile>${sonar.jacoco.reportPath}</destFile>
-                    <append>true</append>
+                    <excludes>
+                        <!-- contains classes generated from JSON Schemas -->
+                        <exclude>**/models/**</exclude>
+                    </excludes>
                 </configuration>
-                -->
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.basedir}/../target/jacoco-unit.exec</destFile>
+                        </configuration>
                     </execution>
+
+                    <execution>
+                        <id>prepare-agent-integration</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.basedir}/../target/jacoco-integration.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
+                            <goal>merge</goal>
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <formats>
-                                <format>XML</format>
-                            </formats>
+                            <!-- merge config -->
+                            <destFile>${project.basedir}/../target/jacoco.exec</destFile>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.basedir}/../target/</directory>
+                                    <includes>
+                                        <include>*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <!-- report config -->
+                            <dataFile>${project.basedir}/../target/jacoco.exec</dataFile>
                         </configuration>
                     </execution>
                 </executions>
