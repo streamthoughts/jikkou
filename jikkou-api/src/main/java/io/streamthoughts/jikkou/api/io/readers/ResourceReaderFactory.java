@@ -104,8 +104,12 @@ public final class ResourceReaderFactory {
     }
 
     @NotNull
-    private InputStreamResourceReader createInputStreamResourceReader(@Nullable Path location) {
-        return new InputStreamResourceReader(() -> newInputStream(location), objectMapper, location.toUri());
+    private InputStreamResourceReader createInputStreamResourceReader(@NotNull Path location) {
+        return new InputStreamResourceReader(
+                () -> newInputStream(location),
+                objectMapper,
+                location.toUri()
+        );
     }
 
     @NotNull

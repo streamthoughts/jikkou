@@ -38,7 +38,7 @@ public final class KafkaQuotaLimitsAdapter {
      *
      * @param limits the quota limits
      */
-    public KafkaQuotaLimitsAdapter(@Nullable final Map<String, Double> limits) {
+    public KafkaQuotaLimitsAdapter(@NotNull final Map<String, Double> limits) {
         this(
                 limits.get(PRODUCER_BYTE_RATE),
                 limits.get(CONSUMER_BYTE_RATE),

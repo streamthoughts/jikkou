@@ -57,32 +57,37 @@ public class TopicNameRegexValidation extends TopicValidation {
     public void configure(@NotNull final Configuration config) throws ConfigException {
         super.configure(config);
         final Optional<String> regex = VALIDATION_TOPIC_NAME_REGEX_CONFIG.getOptional(config);
-        try {
-            pattern = regex
-                    .map(pattern -> {
-                        if (pattern.isEmpty()) {
-                            throw new ConfigException(
-                                    String.format("The '%s' configuration property is set with an empty regexp",
-                                            VALIDATION_TOPIC_NAME_REGEX_CONFIG.key()
-                                    )
-                            );
-                        }
-                        return pattern;
-                    })
-                    .map(Pattern::compile)
-                    .orElseThrow(() -> {
+        pattern = regex
+                .map(pattern -> {
+                    if (pattern.isEmpty()) {
                         throw new ConfigException(
-                                String.format("The '%s' configuration property is required for %s",
-                                        VALIDATION_TOPIC_NAME_REGEX_CONFIG.key(),
-                                        TopicNameRegexValidation.class.getSimpleName()
+                                String.format("The '%s' configuration property is set with an empty regexp",
+                                        VALIDATION_TOPIC_NAME_REGEX_CONFIG.key()
                                 )
                         );
-                    });
+                    }
+                    return pattern;
+                })
+                .map(this::compile)
+                .orElseThrow(() -> {
+                    throw new ConfigException(
+                            String.format("The '%s' configuration property is required for %s",
+                                    VALIDATION_TOPIC_NAME_REGEX_CONFIG.key(),
+                                    TopicNameRegexValidation.class.getSimpleName()
+                            )
+                    );
+                });
+
+    }
+
+    private Pattern compile(final String regex) {
+        try {
+            return Pattern.compile(regex);
         } catch (PatternSyntaxException e) {
             throw new ConfigException(
                     String.format("The '%s' configuration property is set with an invalid regexp '%s'",
                             VALIDATION_TOPIC_NAME_REGEX_CONFIG.key(),
-                            regex.get()
+                            regex
                     )
             );
         }

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -174,8 +175,12 @@ public class AdminClientContext implements AutoCloseable {
             Optional<String> optional = invoke(adminClient -> {
                 try {
                     return Optional.ofNullable(adminClient.describeCluster().clusterId().get());
-                } catch (Exception e) {
-                    LOG.error("Failed to describe cluster Id. Use default value 'unknown'", e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Failed to describe Kafka ClusterID, thread was interrupted while waiting response");
+                    return Optional.empty();
+                } catch (ExecutionException e) {
+                    LOG.error("Failed to describe Kafka ClusterID due to an unexpected error", e);
                     return Optional.empty();
                 }
             });
