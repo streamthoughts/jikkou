@@ -136,6 +136,7 @@ public class KafkaBrokersReady {
         try {
             Thread.sleep(duration.toMillis());
         } catch (InterruptedException ignore) {
+            Thread.currentThread().interrupt();
         }
     }
 }

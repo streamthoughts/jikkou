@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.api.AcceptResource;
 import io.streamthoughts.jikkou.api.ResourceFilter;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceDescriptor;
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
@@ -146,8 +147,11 @@ public final class AdminClientKafkaBrokerDescriptor extends AdminClientKafkaCont
                         );
                     }).collect(Collectors.toList());
                 }).get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JikkouException(e);
+            } catch (ExecutionException e) {
+                throw new JikkouException(e);
             }
         }
 
@@ -164,8 +168,11 @@ public final class AdminClientKafkaBrokerDescriptor extends AdminClientKafkaCont
                     return configs.entrySet()
                             .stream()
                             .collect(Collectors.toMap(entry -> entry.getKey().name(), Map.Entry::getValue));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new JikkouException(e);
+                } catch (ExecutionException e) {
+                    throw new JikkouException(e);
                 }
             });
         }
@@ -176,8 +183,11 @@ public final class AdminClientKafkaBrokerDescriptor extends AdminClientKafkaCont
                     DescribeClusterResult describeClusterResult = client.describeCluster();
                     final Collection<Node> nodes = describeClusterResult.nodes().get();
                     return nodes.stream().collect(Collectors.toMap(Node::idString, n -> n));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new JikkouException(e);
+                } catch (ExecutionException e) {
+                    throw new JikkouException(e);
                 }
             });
         }

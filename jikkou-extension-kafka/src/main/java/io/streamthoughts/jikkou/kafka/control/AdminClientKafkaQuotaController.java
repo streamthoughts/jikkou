@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ResourceController;
-import io.streamthoughts.jikkou.api.error.ExecutionException;
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaQuotaLimitsAdapter;
@@ -44,6 +44,7 @@ import io.streamthoughts.jikkou.kafka.models.V1QuotaEntityObject;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DescribeClientQuotasResult;
@@ -200,8 +201,11 @@ public final class AdminClientKafkaQuotaController extends AdminClientKafkaContr
                             return new V1KafkaQuotaObject(QuotaType.from(entries), entityObject, configsObject);
                         })
                         .collect(Collectors.toList());
-            } catch (Exception e) {
-                throw new ExecutionException(e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JikkouException(e);
+            } catch (ExecutionException e) {
+                throw new JikkouException(e);
             }
         }
     }

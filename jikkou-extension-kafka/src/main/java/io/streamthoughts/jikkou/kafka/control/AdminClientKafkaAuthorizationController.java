@@ -25,6 +25,7 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ResourceController;
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.model.Nameable;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
@@ -251,8 +252,11 @@ public final class AdminClientKafkaAuthorizationController extends AdminClientKa
                 try {
                     DescribeAclsResult result = this.client.describeAcls(AclBindingFilter.ANY);
                     return result.values().get();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new JikkouException(e);
+                } catch (ExecutionException e) {
+                    throw new JikkouException(e);
                 }
             });
         }

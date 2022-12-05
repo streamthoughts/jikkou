@@ -88,14 +88,6 @@ public class AdminClientContext implements AutoCloseable {
 
     private boolean isWaitForKafkaBrokersEnabled = true;
 
-    /**
-     * Creates a new {@link AdminClientContext} instance with the specified {@link AdminClient} configuration.
-     *
-     * @param adminClientConfig   the {@link AdminClient} supplier.
-     */
-    public AdminClientContext(final @NotNull Properties adminClientConfig) {
-        this(() -> KafkaUtils.newAdminClient(adminClientConfig));
-    }
 
     /**
      * Creates a new {@link AdminClientContext} instance with the specified {@link AdminClient} supplier.
@@ -115,7 +107,7 @@ public class AdminClientContext implements AutoCloseable {
      * @param config the {@link Configuration}.
      */
     public AdminClientContext(final @NotNull Configuration config) {
-        this(ADMIN_CLIENT_CONFIG.evaluate(config));
+        adminClientSupplier = () -> KafkaUtils.newAdminClient(ADMIN_CLIENT_CONFIG.evaluate(config));
         withWaitForKafkaBrokersEnabled(KAFKA_BROKERS_WAIT_FOR_ENABLED.evaluate(config));
         if (isWaitForKafkaBrokersEnabled) {
             withWaitForRetryBackoff(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.evaluate(config));
