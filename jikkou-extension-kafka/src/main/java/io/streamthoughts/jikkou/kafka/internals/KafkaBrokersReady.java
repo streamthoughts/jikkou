@@ -93,8 +93,11 @@ public class KafkaBrokersReady {
                     if (isReady) {
                         break;
                     }
-                } catch (Exception e) {
+                } catch (ExecutionException | InterruptedException e) {
                     LOG.error("Error while listing Kafka nodes: {}", e.getMessage());
+                    if (e instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
                 sleep(Duration.ofMillis(Math.min(options.retryBackoffMs, remaining(start, options.timeoutMs))));
 

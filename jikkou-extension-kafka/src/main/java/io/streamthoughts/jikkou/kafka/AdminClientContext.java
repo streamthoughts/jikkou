@@ -30,7 +30,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +49,6 @@ public class AdminClientContext implements AutoCloseable {
     private static final long DEFAULT_TIMEOUT_MS = 60000L;
     private static final long DEFAULT_RETRY_BACKOFF_MS = 1000L;
     public static final String ADMIN_CLIENT_CONFIG_NAME = "client";
-
-    private final AtomicBoolean closed = new AtomicBoolean(false);
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     public static final ConfigProperty<Properties> ADMIN_CLIENT_CONFIG = ConfigProperty
             .ofMap(ADMIN_CLIENT_CONFIG_NAME)
@@ -77,9 +75,9 @@ public class AdminClientContext implements AutoCloseable {
 
     private final Supplier<AdminClient> adminClientSupplier;
 
-    private volatile String clusterId;
+    private String clusterId;
 
-    private volatile AdminClient client;
+    private AdminClient client;
 
     private KafkaBrokersReady.Options options = KafkaBrokersReady.Options.withDefaults()
             .withTimeoutMs(DEFAULT_TIMEOUT_MS)
@@ -88,6 +86,11 @@ public class AdminClientContext implements AutoCloseable {
 
     private boolean isWaitForKafkaBrokersEnabled = true;
 
+    private final ReentrantLock stateLock = new ReentrantLock();
+
+    protected enum State {CREATED, CLOSED}
+
+    private final AtomicReference<State> state = new AtomicReference<>(State.CLOSED);
 
     /**
      * Creates a new {@link AdminClientContext} instance with the specified {@link AdminClient} supplier.
@@ -182,7 +185,13 @@ public class AdminClientContext implements AutoCloseable {
     }
 
     public boolean isInitialized() {
-        return initialized.get();
+        stateLock.lock();
+        try {
+            return state.get() == State.CREATED;
+        }
+        finally {
+            stateLock.unlock();
+        }
     }
 
     /**
@@ -192,8 +201,12 @@ public class AdminClientContext implements AutoCloseable {
      * @throws  IllegalStateException if no AdminClient is currently created.
      */
     public AdminClient client() {
-        if (initialized.compareAndSet(false, true)) {
-            LOG.info("Initializing context for Kafka AdminClient");
+        stateLock.lock();
+        try {
+            if (!state.compareAndSet(State.CLOSED, State.CREATED)) {
+                LOG.debug("AdminClient has already been created");
+                return client;
+            }
             client = adminClientSupplier.get();
             if (isWaitForKafkaBrokersEnabled) {
                 final boolean isReady = KafkaUtils.waitForKafkaBrokers(client, options);
@@ -204,24 +217,29 @@ public class AdminClientContext implements AutoCloseable {
                     );
                 }
             }
+            return client;
+        } finally {
+            stateLock.unlock();
         }
-        return client;
     }
 
     /** {@inheritDoc} **/
     @Override
     public void close() {
-        if (closed.compareAndSet(false, true)) {
-            LOG.info("Closing context for Kafka AdminClient");
-            try {
-                if (client != null) {
-                    client.close();
-                    client = null;
-                }
-            } finally {
-                closed.set(false);
-                initialized.set(false);
+        stateLock.lock();
+
+        try {
+            if (!state.compareAndSet(State.CREATED, State.CLOSED)) {
+                LOG.info("AdminClient has already been closed");
+                return;
             }
+            LOG.info("Closing context for Kafka AdminClient");
+            if (client != null) {
+                client.close();
+                client = null;
+            }
+        } finally {
+            stateLock.unlock();
         }
     }
 }
