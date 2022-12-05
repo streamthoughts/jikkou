@@ -84,6 +84,9 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
 
             return builder.build();
         } catch (InterruptedException | ExecutionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();;
+            }
             return new Health.Builder()
                     .unknown()
                     .withName(HEALTH_NAME)

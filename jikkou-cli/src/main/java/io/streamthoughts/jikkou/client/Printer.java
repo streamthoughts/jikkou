@@ -95,19 +95,19 @@ public class Printer {
 
             printTask(r.description(), r.status().name());
             if (verbose) {
-                PS.printf("%s%s\n", isColor() ? color : "", json);
+                PS.printf("%s%s%n", isColor() ? color : "", json);
             }
         }
 
-        PS.printf("%sEXECUTION in %s %s\n", isColor() ? ANSI_WHITE : "", Jikkou.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
-        PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d\n", isColor() ? ANSI_WHITE : "", ok, created, changed, deleted, failed);
+        PS.printf("%sEXECUTION in %s %s%n", isColor() ? ANSI_WHITE : "", Jikkou.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
+        PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", isColor() ? ANSI_WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }
 
     private static void printTask(final Description description, final String status) {
         String text = description.textDescription();
         String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
-        PS.printf("%sTASK [%s] %s - %s %s\n", isColor() ? ANSI_WHITE : "", description.operation(), text, status, padding);
+        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? ANSI_WHITE : "", description.operation(), text, status, padding);
     }
 
     private static boolean isColor() {

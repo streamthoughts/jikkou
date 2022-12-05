@@ -234,8 +234,11 @@ public final class AdminClientKafkaTopicController extends AdminClientKafkaContr
                         .stream()
                         .filter(topicPredicate)
                         .collect(Collectors.toList());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JikkouException(e);
+            } catch (ExecutionException e) {
+                throw new JikkouException(e);
             }
 
             final CompletableFuture<Map<String, TopicDescription>> futureTopicDesc = describeTopics(topicNames);

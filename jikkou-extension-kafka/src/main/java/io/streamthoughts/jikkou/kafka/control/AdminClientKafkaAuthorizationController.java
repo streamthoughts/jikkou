@@ -228,8 +228,11 @@ public final class AdminClientKafkaAuthorizationController extends AdminClientKa
         public Collection<AccessControlPolicy> describe() {
             try {
                 return describeAcls().thenApply(this::toAccessControlPolicy).get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException("Failed to describe ACLs", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JikkouException("Failed to describe ACL due to thread-interruption", e);
+            } catch (ExecutionException e) {
+                throw new JikkouException("Failed to describe ACL due to execution error", e);
             }
         }
 

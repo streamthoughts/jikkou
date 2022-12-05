@@ -67,9 +67,9 @@ public enum QuotaType {
 
         @Override
         public Map<String, String> toEntities(@NotNull final V1QuotaEntityObject entityObject) {
-            return new HashMap<>() {{
-                put(ClientQuotaEntity.USER, DEFAULT);
-            }};
+            Map<String, String> entities = new HashMap<>();
+            entities.put(ClientQuotaEntity.USER, DEFAULT);
+            return entities;
         }
 
         @Override
@@ -107,9 +107,9 @@ public enum QuotaType {
 
         @Override
         public Map<String, String> toEntities(@NotNull final V1QuotaEntityObject entityObject) {
-            return new HashMap<>() {{
-                put(ClientQuotaEntity.USER, entityObject.getUser());
-            }};
+            Map<String, String> entities = new HashMap<>();
+            entities.put(ClientQuotaEntity.USER, entityObject.getUser());
+            return entities;
         }
 
         @Override
@@ -148,10 +148,10 @@ public enum QuotaType {
 
         @Override
         public Map<String, String> toEntities(@NotNull final V1QuotaEntityObject entityObject) {
-            return new HashMap<>() {{
-                put(ClientQuotaEntity.USER, entityObject.getUser());
-                put(ClientQuotaEntity.CLIENT_ID, entityObject.getClientId());
-            }};
+            Map<String, String> entities = new HashMap<>();
+            entities.put(ClientQuotaEntity.USER, entityObject.getUser());
+            entities.put(ClientQuotaEntity.CLIENT_ID, entityObject.getClientId());
+            return entities;
         }
 
         @Override
@@ -192,10 +192,10 @@ public enum QuotaType {
 
         @Override
         public Map<String, String> toEntities(@NotNull final V1QuotaEntityObject entityObject) {
-            return new HashMap<>() {{
-                put(ClientQuotaEntity.USER, entityObject.getUser());
-                put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
-            }};
+            Map<String, String> entities = new HashMap<>();
+            entities.put(ClientQuotaEntity.USER, entityObject.getUser());
+            entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
+            return entities;
         }
 
         @Override
@@ -235,9 +235,9 @@ public enum QuotaType {
 
         @Override
         public Map<String, String> toEntities(final V1QuotaEntityObject entityObject) {
-            return new HashMap<>() {{
-                put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
-            }};
+            Map<String, String> entities = new HashMap<>();
+            entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
+            return entities;
         }
 
         @Override
@@ -271,9 +271,9 @@ public enum QuotaType {
 
         @Override
         public Map<String, String> toEntities(final @NotNull V1QuotaEntityObject entityObject) {
-            return new HashMap<>() {{
-                put(ClientQuotaEntity.CLIENT_ID, entityObject.getClientId());
-            }};
+            Map<String, String> entities = new HashMap<>();
+            entities.put(ClientQuotaEntity.CLIENT_ID, entityObject.getClientId());
+            return entities;
         }
 
         @Override
