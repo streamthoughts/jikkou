@@ -172,24 +172,24 @@ Furthermore, always run your command in &lt;code>--dry-run&lt;/code> mode to che
 &lt;h3 id="releases">Releases&lt;/h3>
 &lt;p>Every &lt;a href="https://github.com/streamthoughts/jikkou/releases">&lt;code>release&lt;/code>&lt;/a> released versions of Jikkou is available:&lt;/p>
 &lt;ul>
-&lt;li>As a zip/tar.gz package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.12.2">GitHub Releases&lt;/a>&lt;/li>
-&lt;li>As a fatJar available from &lt;a href="https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.12.2/">Maven Central&lt;/a>&lt;/li>
+&lt;li>As a zip/tar.gz package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0">GitHub Releases&lt;/a>&lt;/li>
+&lt;li>As a fatJar available from &lt;a href="https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.13.0/">Maven Central&lt;/a>&lt;/li>
 &lt;li>As a docker image available from &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a>.&lt;/li>
-&lt;li>As a Debian package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.12.2">GitHub Releases&lt;/a>&lt;/li>
+&lt;li>As a Debian package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0">GitHub Releases&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;p>These are the official ways to get Jikkou releases that you manually downloaded and installed.&lt;/p>
 &lt;h4 id="install-from-tarball-distribution">Install From Tarball distribution&lt;/h4>
 &lt;ol>
 &lt;li>Download your desired &lt;a href="https://github.com/streamthoughts/jikkou/releases">version&lt;/a>&lt;/li>
-&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.12.2-runner.tar.gz&lt;/code>)&lt;/li>
-&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.12.2-runner /opt&lt;/code>)&lt;/li>
+&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.13.0-runner.tar.gz&lt;/code>)&lt;/li>
+&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.13.0-runner /opt&lt;/code>)&lt;/li>
 &lt;li>Add the executable to your PATH (&lt;code>export PATH=$PATH:/opt/jikkou/bin&lt;/code>)&lt;/li>
 &lt;/ol>
 &lt;h4 id="install-from-debian-distribution">Install From Debian distribution&lt;/h4>
 &lt;ol>
 &lt;li>Download your desired &lt;a href="https://github.com/streamthoughts/jikkou/releases">version&lt;/a>&lt;/li>
 &lt;/ol>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ wget https://github.com/streamthoughts/jikkou/releases/download/0.12.2/jikkou.deb
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ wget https://github.com/streamthoughts/jikkou/releases/download/0.13.0/jikkou.deb
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ sudo dpkg -i jikkou.deb
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>From there, you should be able to run the client: &lt;code>jikkou help&lt;/code>.&lt;/p>
 &lt;div class="alert alert-info" role="alert">
