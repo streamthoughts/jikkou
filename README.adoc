@@ -6,6 +6,11 @@ image:https://img.shields.io/github/forks/streamthoughts/jikkou[]
 image:https://img.shields.io/github/stars/streamthoughts/jikkou[]
 image:https://github.com/streamthoughts/jikkou/actions/workflows/maven-build.yml/badge.svg[]
 
+image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=reliability_rating[Reliability_rating]
+image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=sqale_rating[Maintainability Rating]
+image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=vulnerabilities[Vulnerabilities]
+image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=coverage[Coverage]
+
 toc::[]
 
 See: https://streamthoughts.github.io/jikkou/[official documentation]
@@ -68,7 +73,7 @@ source <(jikkou generate-completion)
 
 == Overview
 
-It allows you to define the desired current state of your **Topics**, **ACLs**, or **Quotas**, using one or more YAML resource specification files :
+It allows you to define the desired current state of your **Topics**, **ACLs**, or **Quotas**, using one or more YAML resource definition files :
 
 kafka-topics.yml:::
 [source,yaml]

@@ -11,9 +11,9 @@ description: >
 
 Jikkou allows defining the quotas to apply to consumers and/or producers identified by a `client-id` or a user `principal`.
 
-## The Resource Specification File
+## The Resource Definition File
 
-The _resource specification file_ for defining `quotas` contains the following fields:
+The _resource definition file_ for defining `quotas` contains the following fields:
 
 ```yaml
 apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)

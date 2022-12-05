@@ -10,9 +10,9 @@ description: >
 
 Jikkou can be used to describe all ACL policies that need to be created on Kafka Cluster
 
-## The Resource Specification File
+## The Resource Definition File
 
-The _resource specification file_ for defining `acls` contains the following fields:
+The _resource definition file_ for defining `acls` contains the following fields:
 
 ```yaml
 apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)

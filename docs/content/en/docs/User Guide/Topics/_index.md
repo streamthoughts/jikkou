@@ -8,9 +8,9 @@ description: >
   Learn how to use validation rules for ensuring resource entity configurations meets your requirements before being created and/or updated.
 ---
 
-## The Resource Specification File
+## The Resource Definition File
 
-The _resource specification file_ for defining `topics` contains the following fields:
+The _resource definition file_ for defining `topics` contains the following fields:
 
 ```yaml
 apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)
