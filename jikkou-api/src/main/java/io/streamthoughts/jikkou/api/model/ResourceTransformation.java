@@ -36,7 +36,7 @@ public interface ResourceTransformation extends
 
     default String name() {
         final String className = this.getClass().getSimpleName();
-        return className.replaceAll("Validation", "");
+        return className.replaceAll("Transformation", "");
     }
 
     /**
