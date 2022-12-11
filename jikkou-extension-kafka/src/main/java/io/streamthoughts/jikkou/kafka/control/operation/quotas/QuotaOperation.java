@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.quotas;
 
-import io.streamthoughts.jikkou.api.control.Description;
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ExecutableOperation;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
 import io.vavr.concurrent.Future;
@@ -37,7 +37,7 @@ public interface QuotaOperation extends ExecutableOperation<QuotaChange, ClientQ
      * {@inheritDoc}
      */
     @Override
-    Description getDescriptionFor(@NotNull final QuotaChange change);
+    ChangeDescription getDescriptionFor(@NotNull final QuotaChange change);
 
     /**
      * {@inheritDoc}

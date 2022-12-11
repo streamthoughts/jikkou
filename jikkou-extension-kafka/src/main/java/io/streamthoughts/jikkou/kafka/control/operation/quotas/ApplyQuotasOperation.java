@@ -18,9 +18,8 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.quotas;
 
-import io.streamthoughts.jikkou.api.control.Description;
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,13 +27,6 @@ import org.jetbrains.annotations.NotNull;
  * Operation to create client quotas.
  */
 public class ApplyQuotasOperation extends AbstractQuotaOperation {
-
-    public static DescriptionProvider<QuotaChange> DESCRIPTION = (resource -> {
-        return (Description.Create) () -> String.format("Unchanged client-quotas %s %s",
-                resource.getType(),
-                resource.getType().toPettyString(resource.getEntity())
-        );
-    });
 
     public final CreateQuotasOperation create;
     public final AlterQuotasOperation alter;
@@ -51,14 +43,12 @@ public class ApplyQuotasOperation extends AbstractQuotaOperation {
      * {@inheritDoc}
      */
     @Override
-    public Description getDescriptionFor(final @NotNull QuotaChange change) {
-        if (change == null)
-            throw new IllegalArgumentException("change cannot null");
+    public ChangeDescription getDescriptionFor(final @NotNull QuotaChange change) {
         return switch (change.getChange()) {
             case ADD -> create.getDescriptionFor(change);
             case UPDATE -> alter.getDescriptionFor(change);
             case DELETE -> delete.getDescriptionFor(change);
-            case NONE -> DESCRIPTION.getForResource(change);
+            case NONE -> new QuotaChangeDescription(change);
         };
     }
 

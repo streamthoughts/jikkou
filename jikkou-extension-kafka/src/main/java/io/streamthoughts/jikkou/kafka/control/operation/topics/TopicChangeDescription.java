@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -19,22 +19,33 @@
 package io.streamthoughts.jikkou.kafka.control.operation.topics;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ExecutableOperation;
+import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import org.jetbrains.annotations.NotNull;
+import java.util.stream.Collectors;
 
-public interface TopicOperation extends ExecutableOperation<TopicChange, String, Void> {
+public class TopicChangeDescription implements ChangeDescription {
 
-    /**
-     * {@inheritDoc}
-     */
+    private final TopicChange change;
+
+    public TopicChangeDescription(TopicChange change) {
+        this.change = change;
+    }
+
+    /** {@inheritDoc} **/
     @Override
-    ChangeDescription getDescriptionFor(@NotNull final TopicChange change);
+    public ChangeType type() {
+        return change.getChange();
+    }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} **/
     @Override
-    boolean test(final TopicChange change);
-
+    public String textual() {
+        return String.format("%s topic '%s' (partitions=%d, replicas=%d, configs=[%s])",
+                ChangeDescription.humanize(type()),
+                change.getName(),
+                change.getPartitions().get().getAfter(),
+                change.getReplicationFactor().get().getAfter(),
+                change.getConfigEntryChanges().stream().map(s -> s.getName() + "=" + s.getValueChange().getAfter()).collect( Collectors.joining( "," ) )
+        );
+    }
 }

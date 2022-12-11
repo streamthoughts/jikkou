@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.acls;
 
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.Description;
 import io.streamthoughts.jikkou.kafka.control.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import io.vavr.concurrent.Future;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,23 +33,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class ApplyAclsOperation implements AclOperation {
 
-    public static final DescriptionProvider<AccessControlPolicy> DESCRIPTION = (r) -> (Description.None) () -> {
-        return String.format("Unchanged ACL (%s %s to %s %s:%s:%s)",
-                r.permission(),
-                r.principal(),
-                r.operation(),
-                r.resourceType(),
-                r.patternType(),
-                r.resourcePattern());
-    };
-
     final CreateAclsOperation create;
     final DeleteAclsOperation delete;
 
     /**
      * Creates a new {@link ApplyAclsOperation} instance.
      *
-     * @param adminClient   the {@link AdminClient}.
+     * @param adminClient the {@link AdminClient}.
      */
     public ApplyAclsOperation(@NotNull final AdminClient adminClient) {
         Objects.requireNonNull(adminClient, "'adminClient should not be null'");
@@ -58,30 +47,24 @@ public class ApplyAclsOperation implements AclOperation {
         this.delete = new DeleteAclsOperation(adminClient);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Description getDescriptionFor(final @NotNull AclChange change) {
+    public ChangeDescription getDescriptionFor(final @NotNull AclChange change) {
         return switch (change.getChange()) {
             case ADD -> create.getDescriptionFor(change);
             case DELETE -> delete.getDescriptionFor(change);
-            case NONE -> DESCRIPTION.getForResource(change.getAccessControlPolicy());
+            case NONE -> new AclChangeDescription(change);
             default -> throw new UnsupportedOperationException("Unsupported operation type: " + change.getChange());
         };
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean test(final AclChange change) {
         return List.of(ChangeType.ADD, ChangeType.DELETE).contains(change.getChange());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull Collection<AclChange> changes) {
         HashMap<AccessControlPolicy, List<Future<Void>>> results = new HashMap<>();

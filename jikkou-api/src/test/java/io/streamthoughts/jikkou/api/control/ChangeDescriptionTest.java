@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,25 +16,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.utils;
+package io.streamthoughts.jikkou.api.control;
 
-import io.streamthoughts.jikkou.api.control.Description;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/**
- * Simple interface to provide a description object.
- *
- * @param <T>   the resource type.
- */
-@FunctionalInterface
-public interface DescriptionProvider<T> {
+class ChangeDescriptionTest {
 
-    /**
-     * Get a description for the specified resource.
-     *
-     * @param resource the resource to be used
-     *
-     * @return a new {@link Description} instance.
-     */
-    Description getForResource(T resource);
-
+    @Test
+    void should_humanize_change_type() {
+        Assertions.assertEquals("Add", ChangeDescription.humanize(ChangeType.ADD));
+        Assertions.assertEquals("Delete", ChangeDescription.humanize(ChangeType.DELETE));
+        Assertions.assertEquals("Update", ChangeDescription.humanize(ChangeType.UPDATE));
+        Assertions.assertEquals("Unchanged", ChangeDescription.humanize(ChangeType.NONE));
+    }
 }

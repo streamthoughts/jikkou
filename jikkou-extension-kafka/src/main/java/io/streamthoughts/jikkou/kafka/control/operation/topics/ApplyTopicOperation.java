@@ -18,9 +18,8 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.topics;
 
-import io.streamthoughts.jikkou.api.control.Description;
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import io.vavr.concurrent.Future;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,9 +29,6 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
 public class ApplyTopicOperation implements TopicOperation{
-
-    public static DescriptionProvider<TopicChange> DESCRIPTION = resource ->
-            (Description.None) () -> String.format("Unchanged topic %s ", resource.getName());
 
     private final CreateTopicOperation create;
     private final AlterTopicOperation alter;
@@ -49,30 +45,24 @@ public class ApplyTopicOperation implements TopicOperation{
         this.delete = new DeleteTopicOperation(client);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Description getDescriptionFor(final @NotNull TopicChange change) {
+    public ChangeDescription getDescriptionFor(final @NotNull TopicChange change) {
         return switch (change.getChange()) {
             case ADD -> create.getDescriptionFor(change);
             case UPDATE -> alter.getDescriptionFor(change);
             case DELETE -> delete.getDescriptionFor(change);
-            case NONE -> DESCRIPTION.getForResource(change);
+            case NONE ->  new TopicChangeDescription(change);
         };
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean test(final TopicChange change) {
         return delete.test(change) || create.test(change) || alter.test(change);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public @NotNull Map<String, List<Future<Void>>> doApply(final @NotNull Collection<TopicChange> changes) {
         HashMap<String, List<Future<Void>>> results = new HashMap<>();

@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.topics;
 
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.control.Description;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import io.vavr.concurrent.Future;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,10 +42,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class AlterTopicOperation implements TopicOperation {
 
-    public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
-        return (Description.Alter) () -> String.format("Alter topic %s", resource.getName());
-    });
-
     private final AdminClient client;
 
     /**
@@ -62,8 +57,8 @@ public final class AlterTopicOperation implements TopicOperation {
      * {@inheritDoc}
      */
     @Override
-    public Description getDescriptionFor(@NotNull final TopicChange change) {
-        return DESCRIPTION.getForResource(change);
+    public ChangeDescription getDescriptionFor(@NotNull final TopicChange change) {
+        return new TopicChangeDescription(change);
     }
 
     /**

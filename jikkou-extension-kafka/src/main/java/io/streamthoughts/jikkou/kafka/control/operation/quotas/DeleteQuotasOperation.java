@@ -18,10 +18,9 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.quotas;
 
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.Description;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,13 +28,6 @@ import org.jetbrains.annotations.NotNull;
  * Operation to create client quotas.
  */
 public class DeleteQuotasOperation extends AbstractQuotaOperation {
-
-    public static DescriptionProvider<QuotaChange> DESCRIPTION = (resource -> {
-        return (Description.Create) () -> String.format("Delete Quotas %s %s",
-                resource.getType(),
-                resource.getType().toPettyString(resource.getEntity())
-        );
-    });
 
     /**
      * Creates a new {@link DeleteQuotasOperation} instance.
@@ -46,19 +38,15 @@ public class DeleteQuotasOperation extends AbstractQuotaOperation {
        super(client);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean test(@NotNull final QuotaChange change) {
         return change.getChange() == ChangeType.DELETE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Description getDescriptionFor(@NotNull final QuotaChange change) {
-        return DESCRIPTION.getForResource(change);
+    public ChangeDescription getDescriptionFor(@NotNull final QuotaChange change) {
+        return new QuotaChangeDescription(change);
     }
 }

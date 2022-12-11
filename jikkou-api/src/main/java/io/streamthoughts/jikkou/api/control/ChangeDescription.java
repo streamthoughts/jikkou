@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2020 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,26 +18,24 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
-import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
-
-@InterfaceStability.Evolving
-public interface Operation<K, T extends Change<K>> extends Predicate<T>{
+/**
+ * Simple interface to get a human-readable description of an executed operation.
+ */
+public interface ChangeDescription {
 
     /**
-     * Checks whether the given change is supported by this operation.
-     * @return {@code true} if the change can be accepted by this operation, {@code false} otherwise.
+     * @return the type of the change.
      */
-    @Override
-    boolean test(final T change);
+    ChangeType type();
 
     /**
-     * Returns a textual description for the given {@link Change}.
-     *
-     * @param change    the {@link Change}.
-     * @return          the textual description for this change.
+     * @return a textual description of the operation.
      */
-    ChangeDescription getDescriptionFor(@NotNull final T change);
+    String textual();
+
+    static String humanize(final ChangeType type) {
+        var str = type.equals(ChangeType.NONE) ? "unchanged" : type.name().toLowerCase();
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 
 }

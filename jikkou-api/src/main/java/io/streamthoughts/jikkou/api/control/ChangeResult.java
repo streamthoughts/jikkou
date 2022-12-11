@@ -42,7 +42,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
     private final boolean failed;
     private final List<String> errors;
     private final Status status;
-    private transient final Description description;
+    private transient final ChangeDescription description;
 
     /**
      * Static method to build a new {@link ChangeResult} that doesn't result in cluster resource changes.
@@ -53,7 +53,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
      * @return a new {@link ChangeResult}.
      */
     public static <T extends Change<?>> ChangeResult<T> ok(final T resource,
-                                                           final Description description) {
+                                                           final ChangeDescription description) {
         return new ChangeResult<>(Status.OK, false, resource, description);
     }
 
@@ -66,7 +66,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
      * @return a new {@link ChangeResult}.
      */
     public static <T extends Change<?>> ChangeResult<T> changed(final T resource,
-                                                                final Description description) {
+                                                                final ChangeDescription description) {
         return new ChangeResult<>(Status.CHANGED, true, resource, description);
     }
 
@@ -80,7 +80,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
      * @return a new {@link ChangeResult}.
      */
     public static <T extends Change<?>> ChangeResult<T> failed(final T resource,
-                                                               final Description description,
+                                                               final ChangeDescription description,
                                                                final List<Throwable> exceptions) {
         return new ChangeResult<>(
                 Status.FAILED,
@@ -98,7 +98,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
     private ChangeResult(final Status status,
                          final boolean changed,
                          final T resource,
-                         final Description description) {
+                         final ChangeDescription description) {
         this(status, changed, resource, description, false, null);
     }
 
@@ -108,7 +108,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
     private ChangeResult(final Status status,
                          final boolean changed,
                          final T resource,
-                         final Description description,
+                         final ChangeDescription description,
                          final boolean failed,
                          final List<String> errors) {
         this(status, changed, resource, description, failed, errors, Time.SYSTEM.milliseconds());
@@ -120,7 +120,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
     private ChangeResult(final Status status,
                          final boolean changed,
                          final T resource,
-                         final Description description,
+                         final ChangeDescription description,
                          final boolean failed,
                          final List<String> errors,
                          final long end) {
@@ -164,7 +164,7 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
     }
 
     @JsonIgnore
-    public Description description() {
+    public ChangeDescription description() {
         return this.description;
     }
 

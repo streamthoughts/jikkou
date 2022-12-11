@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -19,33 +19,36 @@
 package io.streamthoughts.jikkou.kafka.control.operation.acls;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ExecutableOperation;
+import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.control.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
-import io.vavr.concurrent.Future;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
 
-public interface AclOperation extends ExecutableOperation<AclChange, AccessControlPolicy, Void> {
+public class AclChangeDescription implements ChangeDescription {
 
-    /**
-     * {@inheritDoc}
-     */
+    private final AclChange change;
+
+    public AclChangeDescription(AclChange change) {
+        this.change = change;
+    }
+
+    /** {@inheritDoc} **/
     @Override
-    ChangeDescription getDescriptionFor(@NotNull final AclChange change);
+    public ChangeType type() {
+        return change.getChange();
+    }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} **/
     @Override
-    boolean test(final AclChange change);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes);
-
+    public String textual() {
+        AccessControlPolicy policy = change.getAccessControlPolicy();
+        return String.format("%s ACL to %s '%s' to execute operation(s) '%s' on resource(s) '%s:%s:%s'",
+                ChangeDescription.humanize(type()),
+                policy.permission(),
+                policy.principal(),
+                policy.operation(),
+                policy.resourceType(),
+                policy.patternType(),
+                policy.resourcePattern()
+        );
+    }
 }

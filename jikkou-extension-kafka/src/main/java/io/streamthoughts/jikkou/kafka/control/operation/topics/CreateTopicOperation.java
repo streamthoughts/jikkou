@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.topics;
 
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.control.Description;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import io.vavr.Tuple2;
 import io.vavr.concurrent.Future;
 import java.util.Collection;
@@ -45,14 +44,6 @@ public final class CreateTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTopicOperation.class);
 
-    public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
-        return (Description.Create) () -> String.format("Create a new topic %s (partitions=%d, replicas=%d)",
-                resource.getName(),
-                resource.getPartitions().get().getAfter(),
-                resource.getReplicationFactor().get().getAfter()
-        );
-    });
-
     private final AdminClient client;
 
     /**
@@ -68,8 +59,8 @@ public final class CreateTopicOperation implements TopicOperation {
      * {@inheritDoc}
      */
     @Override
-    public Description getDescriptionFor(@NotNull final TopicChange topicChange) {
-        return DESCRIPTION.getForResource(topicChange);
+    public ChangeDescription getDescriptionFor(@NotNull final TopicChange topicChange) {
+        return new TopicChangeDescription(topicChange);
     }
 
     /**

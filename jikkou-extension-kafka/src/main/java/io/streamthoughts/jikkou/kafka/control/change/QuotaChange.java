@@ -28,19 +28,21 @@ import io.streamthoughts.jikkou.kafka.model.QuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1QuotaEntityObject;
 import java.util.List;
 import java.util.Objects;
+import lombok.Builder;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
+@Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public final class QuotaChange implements Change<ClientQuotaEntity> {
-
-    private final V1QuotaEntityObject entity;
-
-    private final List<ConfigEntryChange> configs;
 
     private final ChangeType operation;
 
     private final QuotaType type;
+
+    private final V1QuotaEntityObject entity;
+
+    private final List<ConfigEntryChange> configs;
 
     /**
      * Creates a new {@link QuotaChange} instance.
@@ -91,8 +93,7 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof QuotaChange)) return false;
-        QuotaChange that = (QuotaChange) o;
+        if (!(o instanceof QuotaChange that)) return false;
         return Objects.equals(entity, that.entity) &&
                 Objects.equals(configs, that.configs) &&
                 operation == that.operation &&

@@ -75,7 +75,7 @@ public enum QuotaType {
         @Override
         public String toPettyString(final @NotNull Map<String, String> entities) {
             return String.format(
-                    "(%s=%s)",
+                    "%s=%s",
                     ClientQuotaEntity.USER,
                     "<default>"
             );
@@ -115,7 +115,7 @@ public enum QuotaType {
         @Override
         public String toPettyString(final @NotNull Map<String, String> entities) {
             return String.format(
-                    "(%s=%s)",
+                    "%s=%s",
                     ClientQuotaEntity.USER,
                     entities.get(ClientQuotaEntity.USER)
             );
@@ -157,7 +157,7 @@ public enum QuotaType {
         @Override
         public String toPettyString(final @NotNull Map<String, String> entities) {
             return String.format(
-                    "(%s=%s, %s=%s)",
+                    "%s=%s, %s=%s",
                     ClientQuotaEntity.USER,
                     entities.get(ClientQuotaEntity.USER),
                     ClientQuotaEntity.CLIENT_ID,
@@ -201,7 +201,7 @@ public enum QuotaType {
         @Override
         public String toPettyString(final @NotNull Map<String, String> entities) {
             return String.format(
-                    "(%s=%s, %s=%s)",
+                    "%s=%s, %s=%s",
                     ClientQuotaEntity.USER,
                     entities.get(ClientQuotaEntity.USER),
                     ClientQuotaEntity.CLIENT_ID,
@@ -242,7 +242,7 @@ public enum QuotaType {
 
         @Override
         public String toPettyString(final @NotNull Map<String, String> entities) {
-            return String.format("(%s=%s)", ClientQuotaEntity.CLIENT_ID, "<default>");
+            return String.format("%s=%s", ClientQuotaEntity.CLIENT_ID, "<default>");
         }
     },
 
@@ -278,7 +278,7 @@ public enum QuotaType {
 
         @Override
         public String toPettyString(final @NotNull Map<String, String> entities) {
-            return String.format("(%s=%s)", ClientQuotaEntity.CLIENT_ID, entities.get(ClientQuotaEntity.CLIENT_ID));
+            return String.format("%s=%s", ClientQuotaEntity.CLIENT_ID, entities.get(ClientQuotaEntity.CLIENT_ID));
         }
     };
 

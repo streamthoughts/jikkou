@@ -45,7 +45,7 @@ public class AccessControlPolicy implements Serializable, Nameable {
 
     private final String host;
 
-    public static AccessControlPolicyBuilder newBuilder() {
+    public static AccessControlPolicyBuilder builder() {
         return new AccessControlPolicyBuilder();
     }
 
@@ -60,7 +60,7 @@ public class AccessControlPolicy implements Serializable, Nameable {
                         @NotNull final AclPermissionType permission,
                         @NotNull final AclOperation operation,
                         @NotNull final String host) {
-        this.principalType = principalType;
+        this.principalType = Objects.requireNonNull(principalType, "'principalType' cannot be null");
         this.principalName = Objects.requireNonNull(principalName, "'principalName' cannot be null");
         this.permission = Objects.requireNonNull(permission, "'permission' cannot be null");
         this.operation = Objects.requireNonNull(operation, "'operation' cannot be null");

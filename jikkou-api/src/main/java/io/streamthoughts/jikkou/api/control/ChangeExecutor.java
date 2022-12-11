@@ -70,7 +70,7 @@ public final class ChangeExecutor<K, C extends Change<K>> {
             return changes.stream()
                     .filter(it -> operation.test(it) || it.getChange() == ChangeType.NONE)
                     .map(change -> {
-                        Description description = operation.getDescriptionFor(change);
+                        ChangeDescription description = operation.getDescriptionFor(change);
                         return change.getChange() == ChangeType.NONE ?
                                 ChangeResult.ok(change, description) :
                                 ChangeResult.changed(change, description);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -21,32 +21,30 @@ package io.streamthoughts.jikkou.kafka.control.operation.quotas;
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.jetbrains.annotations.NotNull;
+import java.util.stream.Collectors;
 
-/**
- * Operation to create client quotas.
- */
-public class CreateQuotasOperation extends AbstractQuotaOperation {
+public class QuotaChangeDescription implements ChangeDescription {
 
-    /**
-     * Creates a new {@link CreateQuotasOperation} instance.
-     *
-     * @param client    the {@link AdminClient}.
-     */
-    public CreateQuotasOperation(@NotNull final AdminClient client) {
-       super(client);
+    private final QuotaChange change;
+
+    public QuotaChangeDescription(QuotaChange change) {
+        this.change = change;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} **/
     @Override
-    public boolean test(@NotNull final QuotaChange change) {
-        return change.getChange() == ChangeType.ADD;
+    public ChangeType type() {
+        return change.getChange();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} **/
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull final QuotaChange change) {
-        return new QuotaChangeDescription(change);
+    public String textual() {
+        return  String.format("%s quotas %s with entity=[%s], constraints=[%s])",
+                ChangeDescription.humanize(type()),
+                change.getType(),
+                change.getType().toPettyString(change.getEntity()),
+                change.getConfigs().stream().map(s -> s.getName() + "=" + s.getValueChange().getAfter()).collect( Collectors.joining( "," ) )
+        );
     }
 }

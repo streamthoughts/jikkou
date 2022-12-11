@@ -93,7 +93,7 @@ abstract class AbstractAclRulesBuilder implements AclRulesBuilder {
                                                        final PatternType patternType,
                                                        final ResourceType resourceType,
                                                        final AccessOperationPolicy operation) {
-        return AccessControlPolicy.newBuilder()
+        return AccessControlPolicy.builder()
                 .withPrincipal(principal)
                 .withResourcePattern(resourcePattern)
                 .withPatternType(patternType)

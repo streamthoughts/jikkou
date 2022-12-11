@@ -18,10 +18,9 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.topics;
 
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.Description;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import io.vavr.Tuple2;
 import io.vavr.concurrent.Future;
 import java.util.Collection;
@@ -41,10 +40,6 @@ public final class DeleteTopicOperation implements TopicOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteTopicOperation.class);
 
-    public static DescriptionProvider<TopicChange> DESCRIPTION = (resource -> {
-        return (Description.Delete) () -> String.format("Delete topic %s ", resource.getName());
-    });
-
     private final AdminClient client;
 
     /**
@@ -60,8 +55,8 @@ public final class DeleteTopicOperation implements TopicOperation {
      * {@inheritDoc}
      */
     @Override
-    public Description getDescriptionFor(@NotNull final TopicChange topicChange) {
-        return DESCRIPTION.getForResource(topicChange);
+    public ChangeDescription getDescriptionFor(@NotNull final TopicChange topicChange) {
+        return new TopicChangeDescription(topicChange);
     }
 
     /**

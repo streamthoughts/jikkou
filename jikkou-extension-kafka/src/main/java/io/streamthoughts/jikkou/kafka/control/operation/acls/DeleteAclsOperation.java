@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.jikkou.kafka.control.operation.acls;
 
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.Description;
 import io.streamthoughts.jikkou.kafka.control.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
-import io.streamthoughts.jikkou.utils.DescriptionProvider;
 import io.vavr.Tuple2;
 import io.vavr.concurrent.Future;
 import java.util.Collection;
@@ -39,16 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class DeleteAclsOperation implements AclOperation {
 
-    public static final DescriptionProvider<AccessControlPolicy> DESCRIPTION = (r) -> (Description.Create) () -> {
-        return String.format("Delete ACL (%s %s to %s %s:%s:%s)",
-                r.permission(),
-                r.principal(),
-                r.operation(),
-                r.resourceType(),
-                r.patternType(),
-                r.resourcePattern());
-    };
-
     private final AclBindingConverter converter = new AclBindingConverter();
 
     private final AdminClient adminClient;
@@ -62,25 +51,19 @@ public class DeleteAclsOperation implements AclOperation {
         this.adminClient = Objects.requireNonNull(adminClient, "'adminClient should not be null'");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Description getDescriptionFor(@NotNull final AclChange change) {
-        return DESCRIPTION.getForResource(change.getAccessControlPolicy());
+    public ChangeDescription getDescriptionFor(@NotNull final AclChange change) {
+        return new AclChangeDescription(change);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean test(final AclChange change) {
         return change.getChange() == ChangeType.DELETE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public @NotNull Map<AccessControlPolicy, List<Future<Void>>> doApply(@NotNull final Collection<AclChange> changes) {
         List<AclBindingFilter> bindings = changes
@@ -120,7 +103,7 @@ public class DeleteAclsOperation implements AclOperation {
 
             String principal = entryFilter.principal();
             String[] principalTypeAndName = principal.split(":");
-            return AccessControlPolicy.newBuilder()
+            return AccessControlPolicy.builder()
                     .withResourcePattern(pattern.name())
                     .withPatternType(pattern.patternType())
                     .withResourceType(pattern.resourceType())

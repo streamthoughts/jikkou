@@ -24,7 +24,7 @@ import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.SimpleJikkouApi;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.Description;
+import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
@@ -177,7 +177,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         ChangeResult<?> change = results.iterator().next();
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(Description.OperationType.DELETE, change.description().operation());
+        Assertions.assertEquals(ChangeType.DELETE, change.description().type());
     }
 
     @Test
@@ -214,7 +214,7 @@ public class AdminClientKafkaTopicControllerIT {
         ChangeResult<?> change = results.iterator().next();
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status(), change.toString());
         Assertions.assertEquals(TOPIC_TEST_A, ((TopicChange) change.resource()).getName());
-        Assertions.assertEquals(Description.OperationType.ALTER, change.description().operation());
+        Assertions.assertEquals(ChangeType.UPDATE, change.description().type());
     }
 
     @Test
@@ -252,8 +252,8 @@ public class AdminClientKafkaTopicControllerIT {
                 "Invalid number of changes");
 
         boolean delete = results.stream()
-                .map(it -> it.description().operation())
-                .anyMatch(it -> it.equals(Description.OperationType.DELETE));
+                .map(it -> it.description().type())
+                .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertFalse(delete);
     }
@@ -294,8 +294,8 @@ public class AdminClientKafkaTopicControllerIT {
 
         Assertions.assertEquals(1, initialTopicList.getSpec().getTopics().size());
         boolean delete = results.stream()
-                .map(it -> it.description().operation())
-                .anyMatch(it -> it.equals(Description.OperationType.DELETE));
+                .map(it -> it.description().type())
+                .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertTrue(delete);
     }

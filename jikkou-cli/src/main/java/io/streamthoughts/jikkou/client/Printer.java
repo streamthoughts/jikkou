@@ -19,9 +19,9 @@
 package io.streamthoughts.jikkou.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.Description;
-import io.streamthoughts.jikkou.api.control.Description.OperationType;
+import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -70,14 +70,14 @@ public class Printer {
             }
 
             String color = ANSI_WHITE;
-            OperationType operation = r.description().operation();
+            ChangeType changeType = r.description().type();
             if (r.isChanged()) {
-                switch (operation) {
-                    case CREATE -> {
+                switch (changeType) {
+                    case ADD -> {
                         color = ANSI_GREEN;
                         created++;
                     }
-                    case ALTER -> {
+                    case UPDATE -> {
                         color = ANSI_YELLOW;
                         changed++;
                     }
@@ -104,10 +104,10 @@ public class Printer {
         return failed > 0 ? 1 : 0;
     }
 
-    private static void printTask(final Description description, final String status) {
-        String text = description.textDescription();
+    private static void printTask(final ChangeDescription description, final String status) {
+        String text = description.textual();
         String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
-        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? ANSI_WHITE : "", description.operation(), text, status, padding);
+        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? ANSI_WHITE : "", description.type(), text, status, padding);
     }
 
     private static boolean isColor() {

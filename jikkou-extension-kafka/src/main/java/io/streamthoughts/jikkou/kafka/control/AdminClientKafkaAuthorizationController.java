@@ -238,7 +238,7 @@ public final class AdminClientKafkaAuthorizationController extends AdminClientKa
 
         private List<AccessControlPolicy> toAccessControlPolicy(final Collection<AclBinding> bindings) {
             return bindings.stream()
-                    .map(binding -> AccessControlPolicy.newBuilder()
+                    .map(binding -> AccessControlPolicy.builder()
                             .withPrincipal(binding.entry().principal())
                             .withPermission(binding.entry().permissionType())
                             .withHost(binding.entry().host())

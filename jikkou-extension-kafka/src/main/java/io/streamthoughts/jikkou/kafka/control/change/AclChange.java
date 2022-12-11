@@ -24,7 +24,9 @@ import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
 import java.util.Objects;
+import lombok.Builder;
 
+@Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 public final class AclChange implements Change<AccessControlPolicy> {
 
     private final ChangeType operation;

@@ -38,7 +38,7 @@ public class AclChangeComputerTest {
     public static final KafkaAclReconciliationConfig DEFAULT_ACL_CHANGE_OPTIONS = new KafkaAclReconciliationConfig();
 
     private static AccessControlPolicy makeAclPolicy(final String topicName) {
-        return AccessControlPolicy.newBuilder()
+        return AccessControlPolicy.builder()
                 .withPrincipal("User:test")
                 .withPatternType(PatternType.LITERAL)
                 .withOperation(AclOperation.ALL)
