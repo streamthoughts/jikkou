@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.jikkou.common.utils;
 
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -39,7 +40,7 @@ public class ClassUtils {
         try {
             return Class.forName(cls);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Failed to get class for name '" + cls + "'", e);
+            throw new JikkouException("Failed to get class for name '" + cls + "'", e);
         }
     }
 
@@ -49,9 +50,9 @@ public class ClassUtils {
         try {
             return c.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Could not find a public no-argument constructor for " + c.getName(), e);
+            throw new JikkouException("Could not find a public no-argument constructor for " + c.getName(), e);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new RuntimeException("Could not instantiate class " + c.getName(), e);
+            throw new JikkouException("Could not instantiate class " + c.getName(), e);
         }
     }
 

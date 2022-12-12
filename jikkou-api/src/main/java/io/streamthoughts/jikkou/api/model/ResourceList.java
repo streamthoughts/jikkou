@@ -26,6 +26,10 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ResourceList implements Listeable<HasMetadata> {
 
+    public static ResourceList of(final HasMetadata... resources) {
+        return new ResourceList(Arrays.asList(resources));
+    }
+
     private final List<HasMetadata> items;
 
     /**

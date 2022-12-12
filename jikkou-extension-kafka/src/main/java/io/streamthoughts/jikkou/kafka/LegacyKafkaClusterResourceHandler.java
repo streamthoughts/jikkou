@@ -55,7 +55,7 @@ public final class LegacyKafkaClusterResourceHandler implements ResourceListHand
         List<HasMetadata> resources = new LinkedList<>();
         V1KafkaClusterSpec spec = cluster.getSpec();
         List<V1KafkaTopicObject> topics = spec.getTopics();
-        if (topics != null) {
+        if (topics != null && topics.size() > 0) {
             V1KafkaTopicList kafkaTopicList = new V1KafkaTopicList().toBuilder()
                     .withSpec(V1KafkaTopicSpec.builder()
                             .withTopics(topics)
@@ -65,7 +65,7 @@ public final class LegacyKafkaClusterResourceHandler implements ResourceListHand
         }
 
         List<V1KafkaQuotaObject> quotas = spec.getQuotas();
-        if (quotas != null) {
+        if (quotas != null && quotas.size() > 0) {
             V1KafkaQuotaList kafkaQuotaList = new V1KafkaQuotaList().toBuilder()
                     .withSpec(V1KafkaQuotaSpec
                             .builder()
@@ -77,15 +77,18 @@ public final class LegacyKafkaClusterResourceHandler implements ResourceListHand
         }
 
         V1KafkaAuthorizationSpec security = spec.getSecurity();
-        V1KafkaAuthorizationSpec.V1KafkaAuthorizationSpecBuilder securitySpecBuilder = V1KafkaAuthorizationSpec.builder();
-        if (security != null) {
-            securitySpecBuilder
+        if (security != null && (security.getRoles().size() > 0 || security.getUsers().size() > 0 )) {
+            var authorizationSpecBuilder = V1KafkaAuthorizationSpec.builder();
+            authorizationSpecBuilder
                     .withRoles(security.getRoles())
                     .withUsers(security.getUsers());
+            var authorizationList = new V1KafkaAuthorizationList()
+                    .toBuilder()
+                    .withSpec(authorizationSpecBuilder.build())
+                    .build();
+            resources.add(authorizationList);
 
         }
-        resources.add(new V1KafkaAuthorizationList().toBuilder().withSpec(securitySpecBuilder.build()).build());
-
         return resources.stream();
     }
 }

@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.api.health.HealthIndicator;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -42,6 +43,21 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
     private AdminClientContext adminClientContext;
 
     private Duration timeout;
+
+    /**
+     * Creates a new {@link KafkaBrokerHealthIndicator} instance.
+     * Empty constructor required for CLI.
+     */
+    public KafkaBrokerHealthIndicator() {
+    }
+
+    /**
+     * Creates a new {@link KafkaBrokerHealthIndicator} instance.
+     * @param adminClientContext the context used to get an AdminClient instance.
+     */
+    public KafkaBrokerHealthIndicator(@NotNull AdminClientContext adminClientContext) {
+        this.adminClientContext = adminClientContext;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -72,12 +88,15 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
                     .up()
                     .withName(HEALTH_NAME);
 
-            List<Map<String, Object>> brokers = nodes.stream()
-                    .map(node -> Map.<String, Object>of(
-                            "id", node.idString(),
-                            "host", node.host(),
-                            "port", node.port()
-                    )).toList();
+            List<Map<String, Object>> brokers = nodes
+                    .stream()
+                    .map(node -> {
+                        Map<String, Object> details = new LinkedHashMap<>();
+                        details.put("id", node.idString());
+                        details.put("host", node.host());
+                        details.put("port", node.port());
+                        return details;
+                    }).toList();
             builder
                 .withDetails("resource", "urn:kafka:cluster:id:" + clusterId )
                 .withDetails("brokers", brokers);

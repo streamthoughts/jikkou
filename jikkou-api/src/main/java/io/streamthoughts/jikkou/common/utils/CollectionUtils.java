@@ -22,13 +22,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CollectionUtils {
+public final class CollectionUtils {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T extends E, E> List<T> cast(List<E> list) {
         return (List) list;
     }
 
+    public static void toFlattenMap(final Map<String, Object> source,
+                                    final Map<String, Object> result) {
+        toFlattenMap(source, result, null);
+    }
     @SuppressWarnings("unchecked")
     public static void toFlattenMap(final Map<String, Object> source,
                                      final Map<String, Object> result,

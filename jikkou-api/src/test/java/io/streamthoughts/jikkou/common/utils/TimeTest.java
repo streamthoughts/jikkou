@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,25 +18,14 @@
  */
 package io.streamthoughts.jikkou.common.utils;
 
-public interface Time {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    Time SYSTEM = new SystemTime();
+class TimeTest {
 
-    /**
-     * @return the current time in milliseconds.
-     */
-    long milliseconds();
-
-    /**
-     * A time implementation that uses the system clock and sleep call. Use `Time.SYSTEM` instead of creating an instance
-     * of this class.
-     */
-    class SystemTime implements Time {
-
-        /** {@inheritDoc} **/
-        @Override
-        public long milliseconds() {
-            return System.currentTimeMillis();
-        }
+    @Test
+    void should_get_current_time() {
+        long milliseconds = Time.SYSTEM.milliseconds();
+        Assertions.assertTrue(milliseconds > 0);
     }
 }

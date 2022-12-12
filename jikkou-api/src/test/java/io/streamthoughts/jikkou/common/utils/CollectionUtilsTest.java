@@ -16,9 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.utils;
+package io.streamthoughts.jikkou.common.utils;
 
-import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,19 +28,37 @@ import org.junit.jupiter.api.Test;
 public class CollectionUtilsTest {
 
     @Test
-    public void test_should_return_nested_map() {
+    void should_return_flatten_map() {
+        // Given
+        Map<String, Object> nestedMap = Map.of("k1", Map.of("k2", "value2"), "k3", "value3");
 
+        // When
         Map<String, Object> result = new HashMap<>();
+        CollectionUtils.toFlattenMap(nestedMap, result);
 
-        CollectionUtils.toNestedMap(
-                Map.of(
+        // Then
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals("value2", result.get("k1.k2"));
+        Assertions.assertEquals("value3", result.get("k3"));
+    }
+
+    @Test
+    void should_return_nested_map() {
+        // Given
+        Map<String, Object> map = Map.of(
                 "key1.key2.key3", "value1",
                 "key1.key2.key4", "value2"
-                ),
+        );
+
+        // When
+        Map<String, Object> result = new HashMap<>();
+        CollectionUtils.toNestedMap(
+                map,
                 result,
                 null
         );
 
+        // Then
         Assertions.assertNotNull(getValue("key1", result));
         Assertions.assertNotNull(getValue("key1.key2", result));
         Assertions.assertEquals("value1", getValue("key1.key2.key3", result).toString());
@@ -49,15 +66,18 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void test_should_fail_return_nested_map_given_duplicate_key() {
+    void should_fail_return_nested_map_given_duplicate_key() {
+        // Given
+        Map<String, Object> map = Map.of(
+                "key1.key2", "value1",
+                "key1.key2.key3", "value2"
+        );
+
+        // When - Then
         Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> {
             Map<String, Object> result = new HashMap<>();
-
             CollectionUtils.toNestedMap(
-                    Map.of(
-                            "key1.key2", "value1",
-                            "key1.key2.key3", "value2"
-                    ),
+                    map,
                     result,
                     null
             );
