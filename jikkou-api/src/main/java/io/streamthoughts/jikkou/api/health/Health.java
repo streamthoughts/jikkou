@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The {@link Health} wraps information about a service or sub-system.
@@ -37,6 +39,10 @@ public final class Health {
     private final Status status;
     private final Map<String, Object> details;
 
+    public static @NotNull Builder builder() {
+        return new Builder();
+    }
+
     /**
      * Creates a new {@link Health} instance.
      *
@@ -44,9 +50,9 @@ public final class Health {
      * @param status    the {@link Status} instance (cannot be {@code null}).
      * @param details   the status indicator details (cannot be {@code null}).
      */
-    private Health(final String name,
-                   final Status status,
-                   final Map<String, Object> details) {
+    private Health(@Nullable final String name,
+                   @Nullable final Status status,
+                   @Nullable final Map<String, Object> details) {
         Objects.requireNonNull(status);
         Objects.requireNonNull(details);
         this.name = name;
@@ -83,27 +89,23 @@ public final class Health {
         return details;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Health)) return false;
-        Health health = (Health) o;
+        if (!(o instanceof Health health)) return false;
         return Objects.equals(name, health.name) &&
                 Objects.equals(status, health.status) &&
                 Objects.equals(details, health.details);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(name, status, details);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Health{" +

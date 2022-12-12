@@ -18,34 +18,29 @@
  */
 package io.streamthoughts.jikkou.api.health;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/**
- * The {@link StatusAggregator} is used to aggregate multiple {@link Status} instance.
- *
- * @see HealthAggregator
- */
-public interface StatusAggregator {
+class DefaultStatusAggregatorTest {
 
-    /**
-     * Aggregates the specified list of status.
-     *
-     * @param allStatus the list of {@link Status} to be aggregate.
-     *
-     * @return          the aggregated {@link Status} instance.
-     */
-    Status aggregateStatus(final List<Status> allStatus);
+    private final DefaultStatusAggregator aggregator = new DefaultStatusAggregator();
 
+    @Test
+    void should_aggregate_status_given_up_and_unknown() {
+        Status status = aggregator.aggregateStatus(List.of(Status.UP, Status.UNKNOWN));
+        Assertions.assertEquals(Status.UP, status);
+    }
 
-    /**
-     * Static helper that can be used for retrieving only status from a list of {@link Health} instances.
-     *
-     * @param healths   the list of {@link Health}.
-     * @return          the corresponding list of {@link Status}.
-     */
-    static List<Status> getAllStatus(final Collection<Health> healths) {
-        return healths.stream().map(Health::getStatus).collect(Collectors.toList());
+    @Test
+    void should_aggregate_status_given_up_and_down() {
+        Status status = aggregator.aggregateStatus(List.of(Status.UP, Status.DOWN));
+        Assertions.assertEquals(Status.DOWN, status);
+    }
+
+    @Test
+    void should_aggregate_status_given_down_and_unknown() {
+        Status status = aggregator.aggregateStatus(List.of(Status.DOWN, Status.UNKNOWN));
+        Assertions.assertEquals(Status.DOWN, status);
     }
 }

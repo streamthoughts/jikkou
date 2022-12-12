@@ -32,11 +32,11 @@ public class DefaultStatusAggregator implements StatusAggregator {
         DEFAULT_ORDERED_STATUS = new String[] {
                 Status.DOWN.code(),
                 Status.UP.code(),
-                Status.UNKNOWN.code()};
+                Status.UNKNOWN.code()
+        };
     }
 
     private final List<String> statusOrder;
-
 
     /**
      * Creates a new {@link DefaultStatusAggregator} instance.
@@ -50,7 +50,7 @@ public class DefaultStatusAggregator implements StatusAggregator {
      *
      * @param statusOrder   the {@link Status} to order to be used for aggregating {@link Status}.
      */
-    public DefaultStatusAggregator(final List<Status> statusOrder) {
+    private DefaultStatusAggregator(final List<Status> statusOrder) {
         Objects.requireNonNull(statusOrder, "statusOrder cannot be null");
         this.statusOrder = statusOrder.stream().map(Status::code).collect(Collectors.toList());
     }

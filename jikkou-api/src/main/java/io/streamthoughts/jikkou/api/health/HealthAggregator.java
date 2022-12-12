@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.jikkou.api.health;
 
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -58,14 +57,19 @@ public final class HealthAggregator {
         final Health.Builder builder = new Health.Builder().up();
         Optional.ofNullable(name).ifPresent(builder::withName);
         if (!healths.isEmpty()) {
-            healths.forEach(h -> builder.withDetails(
-                            h.getName(),
-                            // avoid redundancy by removing the health name
-                            new Health.Builder()
-                                    .withStatus(h.getStatus())
-                                    .withDetails(h.getDetails())
-                                    .build()
-                    )
+            healths.forEach(h -> {
+                if (h.getName() == null || h.getName().isBlank()) {
+                    throw new IllegalArgumentException("Cannot aggregate metric with empty name");
+                }
+                builder.withDetails(
+                                h.getName(),
+                                // avoid redundancy by removing the health name
+                                new Health.Builder()
+                                        .withStatus(h.getStatus())
+                                        .withDetails(h.getDetails())
+                                        .build()
+                        );
+                    }
             );
             final Status status = statusAggregator.aggregateStatus(StatusAggregator.getAllStatus(healths));
             builder.withStatus(status);
