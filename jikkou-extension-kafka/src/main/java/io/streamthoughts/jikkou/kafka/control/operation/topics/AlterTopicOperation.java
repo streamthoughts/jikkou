@@ -102,7 +102,7 @@ public final class AlterTopicOperation implements TopicOperation {
             }
 
             change.getPartitions()
-                  .flatMap(ValueChange::tOption)
+                  .flatMap(ValueChange::toOption)
                   .forEach(newValue -> newPartitions.put(change.getName(), NewPartitions.increaseTo(newValue)));
 
         }

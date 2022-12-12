@@ -33,6 +33,10 @@ import java.util.stream.StreamSupport;
 @InterfaceStability.Evolving
 public interface Nameable {
 
+    static Nameable of(final String name) {
+        return () -> name;
+    }
+
     /**
      * @return the name of the entity.
      */

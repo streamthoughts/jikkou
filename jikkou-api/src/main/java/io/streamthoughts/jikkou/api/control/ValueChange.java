@@ -124,7 +124,7 @@ public class ValueChange<T> {
         return before;
     }
 
-    public Option<T> tOption() {
+    public Option<T> toOption() {
         return type == ChangeType.NONE ? Option.none() : Option.of(after);
     }
 
