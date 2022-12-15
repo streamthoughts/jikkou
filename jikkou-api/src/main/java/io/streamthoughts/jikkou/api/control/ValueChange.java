@@ -32,9 +32,20 @@ public class ValueChange<T> {
     /**
      * Static helper method to create a new {@link ValueChange} instance.
      *
-     * @param value   the target value.
-     * @param <T>     the value type.
-     * @return        a new {@link ValueChange}
+     * @param value the before/after value.
+     * @param <T>   the value type.
+     * @return a new {@link ValueChange}
+     */
+    public static <T> ValueChange<T> none(@Nullable T value) {
+        return new ValueChange<>(value, value, ChangeType.NONE);
+    }
+
+    /**
+     * Static helper method to create a new {@link ValueChange} instance.
+     *
+     * @param value the target value.
+     * @param <T>   the value type.
+     * @return a new {@link ValueChange}
      */
     public static <T> ValueChange<T> withAfterValue(@Nullable final T value) {
         return with(value, null);
@@ -43,9 +54,9 @@ public class ValueChange<T> {
     /**
      * Static helper method to create a new {@link ValueChange} instance.
      *
-     * @param value    the previous value.
-     * @param <T>      the value type.
-     * @return         a new {@link ValueChange}
+     * @param value the previous value.
+     * @param <T>   the value type.
+     * @return a new {@link ValueChange}
      */
     public static <T> ValueChange<T> withBeforeValue(@Nullable final T value) {
         return with(null, value);
@@ -54,10 +65,10 @@ public class ValueChange<T> {
     /**
      * Static helper method to create a new {@link ValueChange} instance.
      *
-     * @param after   the target value.
-     * @param before  the previous value.
-     * @param <T>     the value type.
-     * @return        a new {@link ValueChange}
+     * @param after  the target value.
+     * @param before the previous value.
+     * @param <T>    the value type.
+     * @return a new {@link ValueChange}
      */
     public static <T> ValueChange<T> with(@Nullable final T after,
                                           @Nullable final T before) {
@@ -93,13 +104,13 @@ public class ValueChange<T> {
     /**
      * Creates a new {@link ValueChange} instance.
      *
-     * @param after      the target value.
-     * @param before     the previous value.
-     * @param type         the change type.
+     * @param after  the target value.
+     * @param before the previous value.
+     * @param type   the change type.
      */
     private ValueChange(@Nullable final T after,
-                        @Nullable final T before,
-                        @NotNull final ChangeType type) {
+                       @Nullable final T before,
+                       @NotNull final ChangeType type) {
         this.after = after;
         this.before = before;
         this.type = type;
@@ -108,7 +119,7 @@ public class ValueChange<T> {
     /**
      * Creates a new {@link ValueChange} instance.
      *
-     * @param change    the {@link ValueChange} to copy.
+     * @param change the {@link ValueChange} to copy.
      */
     protected ValueChange(@NotNull final ValueChange<T> change) {
         this.after = change.after;
@@ -132,7 +143,9 @@ public class ValueChange<T> {
         return type;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -141,13 +154,17 @@ public class ValueChange<T> {
         return Objects.equals(after, that.after) && Objects.equals(before, that.before) && type == that.type;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(after, before, type);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "{" +

@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.api.control.ConfigEntryReconciliationConfig;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.Nameable;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaTopicObjectAdapter;
+import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
 import io.vavr.control.Option;
@@ -95,21 +96,36 @@ public class TopicChangeComputer implements ChangeComputer<V1KafkaTopicObject, S
         var actualObjectTopic = new KafkaTopicObjectAdapter(actualState);
         var expectedObjectTopic = new KafkaTopicObjectAdapter(expectedState);
 
-        var partitions = ValueChange.with(
-                expectedObjectTopic.getPartitionsOrDefault(),
-                actualObjectTopic.getPartitionsOrDefault()
-        );
+        ValueChange<Integer> partitions;
+        // Do not compute change when described partition is equals to default.
+        if (expectedObjectTopic.getPartitionsOrDefault() == KafkaConstants.NO_NUM_PARTITIONS) {
+            partitions = ValueChange.none(actualObjectTopic.getPartitionsOrDefault());
+        } else {
+            partitions = ValueChange.with(
+                    expectedObjectTopic.getPartitionsOrDefault(),
+                    actualObjectTopic.getPartitionsOrDefault()
+            );
+        }
 
-        var replication = ValueChange.with(
-                expectedObjectTopic.getReplicationFactorOrDefault(),
-                actualObjectTopic.getReplicationFactorOrDefault()
-        );
+        ValueChange<Short> replication;
+        // Do not compute change when describe replication-factor is equals to default.
+        if (expectedObjectTopic.getReplicationFactorOrDefault() == KafkaConstants.NO_REPLICATION_FACTOR) {
+            replication = ValueChange.none(actualObjectTopic.getReplicationFactorOrDefault());
+        } else {
+            replication = ValueChange.with(
+                    expectedObjectTopic.getReplicationFactorOrDefault(),
+                    actualObjectTopic.getReplicationFactorOrDefault()
+            );
+        }
 
         final ConfigEntryReconciliationConfig configEntryReconciliationConfig = new ConfigEntryReconciliationConfig()
                 .withDeleteConfigOrphans(options.isDeleteConfigOrphans());
 
-        var configEntryChanges = new ConfigEntryChangeComputer()
-                .computeChanges(actualState.getConfigs(), expectedState.getConfigs(), configEntryReconciliationConfig);
+        var configEntryChanges = new ConfigEntryChangeComputer().computeChanges(
+                        actualObjectTopic.getConfigs(),
+                        expectedObjectTopic.getConfigs(),
+                        configEntryReconciliationConfig
+                );
 
         boolean hasChanged = configEntryChanges.stream()
                 .anyMatch(configEntryChange -> configEntryChange.getChange() != ChangeType.NONE);

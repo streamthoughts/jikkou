@@ -26,6 +26,7 @@ import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
+import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
 import java.util.Collections;
 import java.util.List;
@@ -376,5 +377,67 @@ public class TopicChangeComputerTest {
         TopicChange change = changes.get(TEST_TOPIC);
         Assertions.assertEquals(NONE, change.getChange());
         Assertions.assertFalse(change.hasConfigEntryChanges());
+    }
+
+    @Test
+    public void should_return_none_changes_given_topic_with_default_partitions() {
+        // Given
+        var topicBefore = V1KafkaTopicObject.builder()
+                .withName(TEST_TOPIC)
+                .withPartitions(1)
+                .withReplicationFactor((short)1)
+                .build();
+
+        List<V1KafkaTopicObject> actualState = List.of(topicBefore);
+
+        var topicAfter = V1KafkaTopicObject.builder()
+                .withName(TEST_TOPIC)
+                .withPartitions(KafkaConstants.NO_NUM_PARTITIONS)
+                .withReplicationFactor((short)1)
+                .build();
+
+        List<V1KafkaTopicObject> expectedState  = List.of(topicAfter);
+
+        // When
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, DEFAULT_TOPIC_CHANGE_OPTIONS.withDeleteConfigOrphans(false))
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
+
+        // Then
+        TopicChange change = changes.get(TEST_TOPIC);
+        Assertions.assertEquals(NONE, change.getChange());
+        Assertions.assertEquals(NONE, change.getPartitions().get().type());
+    }
+
+    @Test
+    public void should_return_none_changes_given_topic_with_default_replication() {
+        // Given
+        var topicBefore = V1KafkaTopicObject.builder()
+                .withName(TEST_TOPIC)
+                .withPartitions(1)
+                .withReplicationFactor((short)1)
+                .build();
+
+        List<V1KafkaTopicObject> actualState = List.of(topicBefore);
+
+        var topicAfter = V1KafkaTopicObject.builder()
+                .withName(TEST_TOPIC)
+                .withPartitions(1)
+                .withReplicationFactor(KafkaConstants.NO_REPLICATION_FACTOR)
+                .build();
+
+        List<V1KafkaTopicObject> expectedState  = List.of(topicAfter);
+
+        // When
+        Map<String, TopicChange> changes = new TopicChangeComputer()
+                .computeChanges(actualState, expectedState, DEFAULT_TOPIC_CHANGE_OPTIONS.withDeleteConfigOrphans(false))
+                .stream()
+                .collect(Collectors.toMap(TopicChange::getKey, it -> it));
+
+        // Then
+        TopicChange change = changes.get(TEST_TOPIC);
+        Assertions.assertEquals(NONE, change.getChange());
+        Assertions.assertEquals(NONE, change.getReplicationFactor().get().type());
     }
 }
