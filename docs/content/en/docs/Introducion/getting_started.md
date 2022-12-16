@@ -102,7 +102,6 @@ $ jikkou --bootstrap-servers localhost:9092 \
   create \
   --files ./topics.yaml \
   --include "jikkou-demo-.*" \
-  --verbose \
   --yes
 ```
 
@@ -203,7 +202,6 @@ $ jikkou --bootstrap-servers localhost:9092 \
     apply \
     --files ./topics.yaml \
     --include "jikkou-demo-.*" \
-    --verbose \
     --delete-topic-orphans \
     --dry-run
 ```

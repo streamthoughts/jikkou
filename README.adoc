@@ -47,13 +47,13 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 
 Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.13.0/[Maven Central]
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.14.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.14.0/[Maven Central]
 * As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0[GitHub Releases]
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.14.0[GitHub Releases]
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.13.0/jikkou.deb
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.14.0/jikkou.deb
 sudo dpkg -i jikkou.deb
 ```
 
