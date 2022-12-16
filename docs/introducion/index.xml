@@ -72,7 +72,6 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> create &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --files ./topics.yaml &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --include &lt;span style="color:#4e9a06">&amp;#34;jikkou-demo-.*&amp;#34;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --verbose &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --yes
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In the above command, we choose to use the &lt;code>create&lt;/code> subcommand to create the new topics.
 But we could just as well use the &lt;code>apply&lt;/code> subcommand to obtain the same result.&lt;/p>
@@ -151,7 +150,6 @@ But we could just as well use the &lt;code>apply&lt;/code> subcommand to obtain 
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> apply &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --files ./topics.yaml &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --include &lt;span style="color:#4e9a06">&amp;#34;jikkou-demo-.*&amp;#34;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --verbose &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --delete-topic-orphans &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --dry-run
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The command should prompt that the previously created topics should be deleted. Indeed, Jikkou will detect that some topics that exist on our cluster and that match our predicate are no longer defined in our input files.&lt;/p>
@@ -172,17 +170,17 @@ Furthermore, always run your command in &lt;code>--dry-run&lt;/code> mode to che
 &lt;h3 id="releases">Releases&lt;/h3>
 &lt;p>Every &lt;a href="https://github.com/streamthoughts/jikkou/releases">&lt;code>release&lt;/code>&lt;/a> released versions of Jikkou is available:&lt;/p>
 &lt;ul>
-&lt;li>As a zip/tar.gz package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0">GitHub Releases&lt;/a>&lt;/li>
-&lt;li>As a fatJar available from &lt;a href="https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.13.0/">Maven Central&lt;/a>&lt;/li>
+&lt;li>As a zip/tar.gz package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.14.0">GitHub Releases&lt;/a>&lt;/li>
+&lt;li>As a fatJar available from &lt;a href="https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.14.0/">Maven Central&lt;/a>&lt;/li>
 &lt;li>As a docker image available from &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a>.&lt;/li>
-&lt;li>As a Debian package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.13.0">GitHub Releases&lt;/a>&lt;/li>
+&lt;li>As a Debian package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.14.0">GitHub Releases&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;p>These are the official ways to get Jikkou releases that you manually downloaded and installed.&lt;/p>
 &lt;h4 id="install-from-tarball-distribution">Install From Tarball distribution&lt;/h4>
 &lt;ol>
 &lt;li>Download your desired &lt;a href="https://github.com/streamthoughts/jikkou/releases">version&lt;/a>&lt;/li>
-&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.13.0-runner.tar.gz&lt;/code>)&lt;/li>
-&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.13.0-runner /opt&lt;/code>)&lt;/li>
+&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.14.0-runner.tar.gz&lt;/code>)&lt;/li>
+&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.14.0-runner /opt&lt;/code>)&lt;/li>
 &lt;li>Add the executable to your PATH (&lt;code>export PATH=$PATH:/opt/jikkou/bin&lt;/code>)&lt;/li>
 &lt;/ol>
 &lt;h4 id="install-from-debian-distribution">Install From Debian distribution&lt;/h4>
