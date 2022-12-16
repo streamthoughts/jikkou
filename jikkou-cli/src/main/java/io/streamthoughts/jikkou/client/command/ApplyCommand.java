@@ -39,13 +39,13 @@ import picocli.CommandLine;
 public class ApplyCommand extends BaseResourceCommand {
 
     @CommandLine.Option(
-            names = { "--options", "o" },
+            names = { "--set-option"},
             description = "Set the options to be used for computing resource reconciliation (can specify multiple values: -o key1=val1 -o key2=val2)"
     )
     Map<String, Object> options = new HashMap<>();
 
     @CommandLine.Option(
-            names = { "--kind", "k" },
+            names = { "--kind"},
             defaultValue = "",
             description = "Apply the reconciliation only for the specified kind of resources."
     )

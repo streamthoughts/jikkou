@@ -16,20 +16,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client;
+package io.streamthoughts.jikkou.client.printer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.client.Jikkou;
 import java.io.PrintStream;
 import java.util.Collection;
 
 /**
  * Helper class pretty print execution results.
  */
-public class Printer {
+public class TextPrinter implements Printer {
 
     private static final String PADDING = "********************************************************************************";
 
@@ -43,17 +45,21 @@ public class Printer {
     private static final String ANSI_YELLOW = "\u001B[33m";
     private static final String ANSI_BLUE = "\u001B[36m";
 
+    private final boolean printChangeDetail;
+
     /**
-     * Print the specified execution results to stdout and terminate the application with the appropriate exit code.
+     * Creates a new {@link TextPrinter} instance.
      *
-     * @param results the execution results to print.
-     * @param verbose print details.
-     * @param dryRun  is dry-run enabled.
-     * @return the exit code.
+     * @param printChangeDetail  {@code true} if details should be print
      */
-    public static int print(final Collection<ChangeResult<?>> results,
-                            final boolean verbose,
-                            final boolean dryRun) {
+    public TextPrinter(boolean printChangeDetail) {
+        this.printChangeDetail = printChangeDetail;
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public int print(Collection<ChangeResult<?>> results,
+                     boolean dryRun) {
         int ok = 0;
         int created = 0;
         int changed = 0;
@@ -66,41 +72,41 @@ public class Printer {
                         .writerWithDefaultPrettyPrinter()
                         .writeValueAsString(r);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                throw new JikkouException(e);
             }
 
-            String color = ANSI_WHITE;
+            String color = TextPrinter.ANSI_WHITE;
             ChangeType changeType = r.description().type();
             if (r.isChanged()) {
                 switch (changeType) {
                     case ADD -> {
-                        color = ANSI_GREEN;
+                        color = TextPrinter.ANSI_GREEN;
                         created++;
                     }
                     case UPDATE -> {
-                        color = ANSI_YELLOW;
+                        color = TextPrinter.ANSI_YELLOW;
                         changed++;
                     }
                     case DELETE -> {
-                        color = ANSI_RED;
+                        color = TextPrinter.ANSI_RED;
                         deleted++;
                     }
                 }
             } else if (r.isFailed()) {
                 failed++;
             } else {
-                color = ANSI_BLUE;
+                color = TextPrinter.ANSI_BLUE;
                 ok++;
             }
 
-            printTask(r.description(), r.status().name());
-            if (verbose) {
-                PS.printf("%s%s%n", isColor() ? color : "", json);
+            TextPrinter.printTask(r.description(), r.status().name());
+            if (printChangeDetail) {
+                TextPrinter.PS.printf("%s%s%n", TextPrinter.isColor() ? color : "", json);
             }
         }
 
-        PS.printf("%sEXECUTION in %s %s%n", isColor() ? ANSI_WHITE : "", Jikkou.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
-        PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", isColor() ? ANSI_WHITE : "", ok, created, changed, deleted, failed);
+        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", Jikkou.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
+        TextPrinter.PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }
 
@@ -114,5 +120,4 @@ public class Printer {
         String enabled = System.getenv(KAFKA_SPECS_COLOR_ENABLED);
         return enabled == null || "true".equalsIgnoreCase(enabled);
     }
-
 }

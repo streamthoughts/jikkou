@@ -67,7 +67,7 @@ import picocli.CommandLine.Mixin;
         commandListHeading   = "%nCommands:%n%n",
         headerHeading = "Usage: ",
         synopsisHeading = "%n",
-        description = "CLI to ease and automate Apache Kafka cluster configuration management.",
+        description = "A CLI to help you automate the management of the configurations that live on your Apache Kafka clusters.",
         mixinStandardHelpOptions = true,
         versionProvider = Jikkou.ManifestVersionProvider.class,
         subcommands = {
@@ -104,6 +104,7 @@ public final class Jikkou {
 
         final Jikkou command = new Jikkou();
         final CommandLine commandLine = new CommandLine(command)
+                .setCaseInsensitiveEnumValuesAllowed(true)
                 .setUsageHelpWidth(160)
                 .setExecutionStrategy(new CommandLine.RunLast(){
                     @Override
@@ -187,7 +188,7 @@ public final class Jikkou {
         }
     }
 
-    static String getExecutionTime() {
+    public static String getExecutionTime() {
         final long execTimeInMillis = Duration.between (START_TIME, LocalDateTime.now ()).toMillis();
         long minutes = TimeUnit.MILLISECONDS.toMinutes(execTimeInMillis) % 60;
         long seconds = TimeUnit.MILLISECONDS.toSeconds(execTimeInMillis) % 60;

@@ -18,15 +18,17 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
+import io.streamthoughts.jikkou.client.printer.Printers;
 import java.util.regex.Pattern;
 import picocli.CommandLine.Option;
 
 public class ExecOptionsMixin {
 
-    @Option(names = "--verbose",
-            description = "Print resources details."
+    @Option(names = { "--output", "-o" },
+            defaultValue = "TEXT",
+            description = "prints the output in the specified format. Allowed values: text, compact, json, yaml (default text)"
     )
-    public boolean verbose;
+    public Printers format;
 
     @Option(names = "--yes",
             defaultValue = "false",

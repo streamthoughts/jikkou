@@ -303,12 +303,17 @@ function _picocli_jikkou_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files --options o --kind k"
+  local flag_opts="--yes --dry-run -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files --set-option --kind"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -330,10 +335,10 @@ function _picocli_jikkou_apply() {
     --values-files)
       return
       ;;
-    --options|o)
+    --set-option)
       return
       ;;
-    --kind|k)
+    --kind)
       return
       ;;
   esac
@@ -515,12 +520,17 @@ function _picocli_jikkou_topics_alter() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -559,12 +569,17 @@ function _picocli_jikkou_topics_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-config-orphans --delete-topic-orphans --exclude-internals -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-config-orphans --delete-topic-orphans --exclude-internals -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -603,12 +618,17 @@ function _picocli_jikkou_topics_create() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -647,12 +667,17 @@ function _picocli_jikkou_topics_delete() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --exclude-internals -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --exclude-internals -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -691,12 +716,17 @@ function _picocli_jikkou_topics_describe() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --default-configs --static-broker-configs --dynamic-broker-configs -h --help -V --version"
-  local arg_opts="--exclude --include --output-file"
+  local flag_opts="--yes --dry-run --default-configs --static-broker-configs --dynamic-broker-configs -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --output-file"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -743,12 +773,17 @@ function _picocli_jikkou_acls_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -787,12 +822,17 @@ function _picocli_jikkou_acls_create() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -831,12 +871,17 @@ function _picocli_jikkou_acls_delete() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -875,12 +920,17 @@ function _picocli_jikkou_acls_describe() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --file-path"
+  local flag_opts="--yes --dry-run -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --file-path"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -927,12 +977,17 @@ function _picocli_jikkou_brokers_describe() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --default-configs --static-broker-configs --dynamic-broker-configs -h --help -V --version"
-  local arg_opts="--exclude --include --file-path"
+  local flag_opts="--yes --dry-run --default-configs --static-broker-configs --dynamic-broker-configs -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --file-path"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -979,12 +1034,17 @@ function _picocli_jikkou_quotas_alter() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -1023,12 +1083,17 @@ function _picocli_jikkou_quotas_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run --delete-config-orphans --delete-quota-orphans -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run --delete-config-orphans --delete-quota-orphans -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -1067,12 +1132,17 @@ function _picocli_jikkou_quotas_create() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -1111,12 +1181,17 @@ function _picocli_jikkou_quotas_delete() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local flag_opts="--yes --dry-run -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --files -f --file-name -n --set-label -s --set-value -v --values-files"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;
@@ -1155,12 +1230,17 @@ function _picocli_jikkou_quotas_describe() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--verbose --yes --dry-run -h --help -V --version"
-  local arg_opts="--exclude --include --output-file"
+  local flag_opts="--yes --dry-run -h --help -V --version"
+  local arg_opts="--output -o --exclude --include --output-file"
+  local format_option_args="TEXT COMPACT JSON YAML" # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --output|-o)
+      COMPREPLY=( $( compgen -W "${format_option_args}" -- "${curr_word}" ) )
+      return $?
+      ;;
     --exclude)
       return
       ;;

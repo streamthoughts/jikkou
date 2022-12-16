@@ -49,14 +49,15 @@ Configuration files are written in [YAML](https://yaml.org/).
 
 ```bash
 $ jikkou help
+```
 
-Usage: 
+```
 jikkou [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--config-file=<configFile>]
        [--command-property=<String=String>]... [COMMAND]
 
 Description:
 
-CLI to ease and automate Apache Kafka cluster configuration management.
+A CLI to help you automate the management of the configurations that live on your Apache Kafka clusters.
 
 Options:
 
@@ -76,12 +77,14 @@ Options:
 Commands:
 
   validate    Validate your specification file.
+  apply       Apply configurations to resources by files
   topics      Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
   acls        Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
   brokers     Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
   quotas      Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
   extensions  List all extensions available.
   config      Sets or retrieves the configuration of this client.
+  health      Print health indicators about the target environment.
   help        Displays help information about the specified command
 ```
 

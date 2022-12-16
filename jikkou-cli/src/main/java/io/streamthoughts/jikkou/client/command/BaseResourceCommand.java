@@ -33,7 +33,6 @@ import io.streamthoughts.jikkou.api.model.ResourceList;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.client.CLIUtils;
 import io.streamthoughts.jikkou.client.JikkouContext;
-import io.streamthoughts.jikkou.client.Printer;
 import io.streamthoughts.jikkou.kafka.LegacyKafkaClusterResourceHandler;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +66,7 @@ public abstract class BaseResourceCommand extends BaseCommand {
             ResourceList resource = loadResources();
 
             final Collection<ChangeResult<?>> results = execute(api, resource);
-            Printer.print(results, execOptions.verbose, isDryRun());
+            execOptions.format.print(results, isDryRun());
             return CommandLine.ExitCode.OK;
         }
     }

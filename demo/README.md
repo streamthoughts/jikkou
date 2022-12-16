@@ -73,7 +73,6 @@ jikkou topics \
   apply \
   --files ./resources/initial-topics.yaml \
   --include "jikkou-demo-.*" \
-  --verbose \
   --yes
 ```
 
@@ -96,7 +95,6 @@ jikkou topics \
   --include "jikkou-demo-.*" \
   --delete-config-orphans \
   --delete-topic-orphans \
-  --verbose \
   --yes
 ```
 
@@ -123,7 +121,6 @@ jikkou topics \
   apply \
   --files ./resources/topics-configmap.yaml \
   --include "jikkou-demo-.*" \
-  --verbose \
   --yes
 ```
 
@@ -153,6 +150,5 @@ TOPIC_PREFIX=demo jikkou topics \
   --files ./resources/topics-template.tpl \
   --values-files ./resources/topics-values.yaml \
   --include ".*iot.*" \
-  --verbose \
   --yes
 ```

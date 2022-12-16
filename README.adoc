@@ -96,7 +96,9 @@ It will then take care of computing and applying the necessary changes directly 
 
 [source, bash]
 ----
-$ jikkou --bootstrap-servers localhost:9092 topics apply \
+$ jikkou --bootstrap-servers localhost:9092 \
+    topics \
+    apply \
     --file kafka-topics.yml \
     --yes
 ----
