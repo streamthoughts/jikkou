@@ -262,41 +262,35 @@ Thus, it works out-of-the-box with most the Apache Kafka distributions and cloud
 &lt;p>Configuration files are written in &lt;a href="https://yaml.org/">YAML&lt;/a>.&lt;/p>
 &lt;h2 id="cli-usage">CLI Usage&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou &lt;span style="color:#204a87">help&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Usage:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--bootstrap-servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;bootstrapServer&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--command-config&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;clientCommandConfig&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;configFile&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--command-property&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>String&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>... &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Description:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>CLI to ease and automate Apache Kafka cluster configuration management.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Options:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --bootstrap-servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;bootstrapServer&amp;gt;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> A list of host/port pairs to use &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> establishing the initial connection to the Kafka cluster.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --command-config&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;clientCommandConfig&amp;gt;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> A property file containing configs to be passed to Admin Client &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>warning: this option is only relevant &lt;span style="color:#204a87;font-weight:bold">if&lt;/span> your are using the AdminClient
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> based KafkaResourceManager&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --command-property&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>String&amp;gt;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> A &lt;span style="color:#000">KEY&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>VALUE property to be passed to the Admin Client &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>warning: this option is only relevant &lt;span style="color:#204a87;font-weight:bold">if&lt;/span> your are using the AdminClient based
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> KafkaResourceManager&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;configFile&amp;gt;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> The configuration file.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Commands:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> validate Validate your specification file.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> topics Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> acls Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> brokers Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> quotas Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> extensions List all extensions available.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> config Sets or retrieves the configuration of this client.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Displays &lt;span style="color:#204a87">help&lt;/span> information about the specified &lt;span style="color:#204a87">command&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>jikkou [-hV] [--bootstrap-servers=&amp;lt;bootstrapServer&amp;gt;] [--command-config=&amp;lt;clientCommandConfig&amp;gt;] [--config-file=&amp;lt;configFile&amp;gt;]
+[--command-property=&amp;lt;String=String&amp;gt;]... [COMMAND]
+Description:
+A CLI to help you automate the management of the configurations that live on your Apache Kafka clusters.
+Options:
+--bootstrap-servers=&amp;lt;bootstrapServer&amp;gt;
+A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
+--command-config=&amp;lt;clientCommandConfig&amp;gt;
+A property file containing configs to be passed to Admin Client (warning: this option is only relevant if your are using the AdminClient
+based KafkaResourceManager).
+--command-property=&amp;lt;String=String&amp;gt;
+A KEY=VALUE property to be passed to the Admin Client (warning: this option is only relevant if your are using the AdminClient based
+KafkaResourceManager).
+--config-file=&amp;lt;configFile&amp;gt;
+The configuration file.
+-h, --help Show this help message and exit.
+-V, --version Print version information and exit.
+Commands:
+validate Validate your specification file.
+apply Apply configurations to resources by files
+topics Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
+acls Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
+brokers Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
+quotas Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
+extensions List all extensions available.
+config Sets or retrieves the configuration of this client.
+health Print health indicators about the target environment.
+help Displays help information about the specified command
+&lt;/code>&lt;/pre>&lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;p>Jikkou uses the Java Admin client API for interacting with the target Apache Kafka cluster.&lt;/p>
 &lt;p>You can set the configs to be passed to Admin Client using the command-line arguments:&lt;/p>
 &lt;ul>

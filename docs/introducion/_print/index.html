@@ -162,41 +162,41 @@ It assumes that you have already installed the <a href=./_installation.md>Jikkou
 </span></span><span style=display:flex><span><span style=color:#204a87;font-weight:700>&lt;/dependency&gt;</span>
 </span></span></code></pre></div><h3 id=implementation>Implementation</h3><p>The Jikkou client and library are written in the Java programming language.</p><p>It is built on top of the Kafka&rsquo;s <a href=https://kafka.apache.org/30/javadoc/org/apache/kafka/clients/admin/Admin.html>Java AdminClient</a>.
 Thus, it works out-of-the-box with most the Apache Kafka distributions and cloud provider managed services (e.g., <a href=https://aiven.io/>Aiven</a>, <a href=https://confluent.cloud/>Confluent Cloud</a>, etc).</p><p>The tool is completely <strong>stateless</strong> and thus does not store any state. Basically: <em>Your kafka cluster is the state of Jikkou</em>.</p><p>Configuration files are written in <a href=https://yaml.org/>YAML</a>.</p><h2 id=cli-usage>CLI Usage</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ jikkou <span style=color:#204a87>help</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Usage: 
-</span></span><span style=display:flex><span>jikkou <span style=color:#ce5c00;font-weight:700>[</span>-hV<span style=color:#ce5c00;font-weight:700>]</span> <span style=color:#ce5c00;font-weight:700>[</span>--bootstrap-servers<span style=color:#ce5c00;font-weight:700>=</span>&lt;bootstrapServer&gt;<span style=color:#ce5c00;font-weight:700>]</span> <span style=color:#ce5c00;font-weight:700>[</span>--command-config<span style=color:#ce5c00;font-weight:700>=</span>&lt;clientCommandConfig&gt;<span style=color:#ce5c00;font-weight:700>]</span> <span style=color:#ce5c00;font-weight:700>[</span>--config-file<span style=color:#ce5c00;font-weight:700>=</span>&lt;configFile&gt;<span style=color:#ce5c00;font-weight:700>]</span>
-</span></span><span style=display:flex><span>       <span style=color:#ce5c00;font-weight:700>[</span>--command-property<span style=color:#ce5c00;font-weight:700>=</span>&lt;<span style=color:#000>String</span><span style=color:#ce5c00;font-weight:700>=</span>String&gt;<span style=color:#ce5c00;font-weight:700>]</span>... <span style=color:#ce5c00;font-weight:700>[</span>COMMAND<span style=color:#ce5c00;font-weight:700>]</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Description:
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>CLI to ease and automate Apache Kafka cluster configuration management.
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Options:
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      --bootstrap-servers<span style=color:#ce5c00;font-weight:700>=</span>&lt;bootstrapServer&gt;
-</span></span><span style=display:flex><span>                  A list of host/port pairs to use <span style=color:#204a87;font-weight:700>for</span> establishing the initial connection to the Kafka cluster.
-</span></span><span style=display:flex><span>      --command-config<span style=color:#ce5c00;font-weight:700>=</span>&lt;clientCommandConfig&gt;
-</span></span><span style=display:flex><span>                  A property file containing configs to be passed to Admin Client <span style=color:#ce5c00;font-weight:700>(</span>warning: this option is only relevant <span style=color:#204a87;font-weight:700>if</span> your are using the AdminClient
-</span></span><span style=display:flex><span>                    based KafkaResourceManager<span style=color:#ce5c00;font-weight:700>)</span>.
-</span></span><span style=display:flex><span>      --command-property<span style=color:#ce5c00;font-weight:700>=</span>&lt;<span style=color:#000>String</span><span style=color:#ce5c00;font-weight:700>=</span>String&gt;
-</span></span><span style=display:flex><span>                  A <span style=color:#000>KEY</span><span style=color:#ce5c00;font-weight:700>=</span>VALUE property to be passed to the Admin Client <span style=color:#ce5c00;font-weight:700>(</span>warning: this option is only relevant <span style=color:#204a87;font-weight:700>if</span> your are using the AdminClient based
-</span></span><span style=display:flex><span>                    KafkaResourceManager<span style=color:#ce5c00;font-weight:700>)</span>.
-</span></span><span style=display:flex><span>      --config-file<span style=color:#ce5c00;font-weight:700>=</span>&lt;configFile&gt;
-</span></span><span style=display:flex><span>                  The configuration file.
-</span></span><span style=display:flex><span>  -h, --help      Show this <span style=color:#204a87>help</span> message and exit.
-</span></span><span style=display:flex><span>  -V, --version   Print version information and exit.
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Commands:
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  validate    Validate your specification file.
-</span></span><span style=display:flex><span>  topics      Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
-</span></span><span style=display:flex><span>  acls        Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
-</span></span><span style=display:flex><span>  brokers     Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
-</span></span><span style=display:flex><span>  quotas      Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
-</span></span><span style=display:flex><span>  extensions  List all extensions available.
-</span></span><span style=display:flex><span>  config      Sets or retrieves the configuration of this client.
-</span></span><span style=display:flex><span>  <span style=color:#204a87>help</span>        Displays <span style=color:#204a87>help</span> information about the specified <span style=color:#204a87>command</span>
-</span></span></code></pre></div><h2 id=configuration>Configuration</h2><p>Jikkou uses the Java Admin client API for interacting with the target Apache Kafka cluster.</p><p>You can set the configs to be passed to Admin Client using the command-line arguments:</p><ul><li><code>--command-config</code>: A property file containing configs to be passed to Admin Client</li><li><code>--command-property</code>: A KEY=VALUE property to be passed to the Admin Client.</li></ul><p>Additionally, Jikkou will lookup for an <a href=https://github.com/lightbend/config>HOCON (Human-Optimized Config Object Notation)</a> file named <code>application.conf</code> in the following locations:</p><ul><li><code>./application.conf</code></li><li><code>$HOME/.jikkou/application.conf</code></li></ul><p>Depending on the configuration properties you will override, Jikkou will always fallback to its reference default configuration (see <a href=https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf>reference.conf</a>).</p><pre tabindex=0><code class=language-hocon data-lang=hocon>jikkou {
+</span></span></code></pre></div><pre tabindex=0><code>jikkou [-hV] [--bootstrap-servers=&lt;bootstrapServer&gt;] [--command-config=&lt;clientCommandConfig&gt;] [--config-file=&lt;configFile&gt;]
+       [--command-property=&lt;String=String&gt;]... [COMMAND]
+
+Description:
+
+A CLI to help you automate the management of the configurations that live on your Apache Kafka clusters.
+
+Options:
+
+      --bootstrap-servers=&lt;bootstrapServer&gt;
+                  A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
+      --command-config=&lt;clientCommandConfig&gt;
+                  A property file containing configs to be passed to Admin Client (warning: this option is only relevant if your are using the AdminClient
+                    based KafkaResourceManager).
+      --command-property=&lt;String=String&gt;
+                  A KEY=VALUE property to be passed to the Admin Client (warning: this option is only relevant if your are using the AdminClient based
+                    KafkaResourceManager).
+      --config-file=&lt;configFile&gt;
+                  The configuration file.
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+
+Commands:
+
+  validate    Validate your specification file.
+  apply       Apply configurations to resources by files
+  topics      Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  acls        Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  brokers     Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  quotas      Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
+  extensions  List all extensions available.
+  config      Sets or retrieves the configuration of this client.
+  health      Print health indicators about the target environment.
+  help        Displays help information about the specified command
+</code></pre><h2 id=configuration>Configuration</h2><p>Jikkou uses the Java Admin client API for interacting with the target Apache Kafka cluster.</p><p>You can set the configs to be passed to Admin Client using the command-line arguments:</p><ul><li><code>--command-config</code>: A property file containing configs to be passed to Admin Client</li><li><code>--command-property</code>: A KEY=VALUE property to be passed to the Admin Client.</li></ul><p>Additionally, Jikkou will lookup for an <a href=https://github.com/lightbend/config>HOCON (Human-Optimized Config Object Notation)</a> file named <code>application.conf</code> in the following locations:</p><ul><li><code>./application.conf</code></li><li><code>$HOME/.jikkou/application.conf</code></li></ul><p>Depending on the configuration properties you will override, Jikkou will always fallback to its reference default configuration (see <a href=https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf>reference.conf</a>).</p><pre tabindex=0><code class=language-hocon data-lang=hocon>jikkou {
 
   # Set what resource controllers are active (i.e., the fully class names)
   controllers {
