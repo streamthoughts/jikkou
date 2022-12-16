@@ -38,7 +38,7 @@ import picocli.CommandLine;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.",
+        header = "Apply the quotas changes described by your resource definition file against the Kafka cluster you are currently pointing at.",
         description = "This command can be used to create, alter, delete or describe quotas on a remote Kafka cluster",
         subcommands = {
                 Alter.class,

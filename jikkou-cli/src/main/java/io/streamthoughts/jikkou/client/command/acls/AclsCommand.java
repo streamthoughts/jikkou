@@ -40,7 +40,7 @@ import picocli.CommandLine.Command;
         commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage:%n%n",
         synopsisHeading = "%n",
-        header = "Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.",
+        header = "Apply the ACLs changes described by your resource definition file against the Kafka cluster you are currently pointing at.",
         description = "This command can be used to create ACLs on a remote Kafka cluster",
         subcommands = {
                 Apply.class,

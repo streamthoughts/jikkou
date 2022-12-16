@@ -39,7 +39,7 @@ import picocli.CommandLine.Command;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.",
+        header = "Apply the Topic changes described by your resource definition file against the Kafka cluster you are currently pointing at.",
         description = "This command can be used to create, alter, delete or describe Topics on a remote Kafka cluster",
         subcommands = {
                 Alter.class,
