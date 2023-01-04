@@ -16,25 +16,25 @@ Jikkou can be installed either from source, or from releases.
 
 Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available: 
 
-* As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases/tag/v0.14.0)
-* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.14.0/)
+* As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases/tag/v0.15.0)
+* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.15.0/)
 * As a docker image available from [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou).
-* As a Debian package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases/tag/v0.14.0)
+* As a Debian package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases/tag/v0.15.0)
 
 These are the official ways to get Jikkou releases that you manually downloaded and installed.
 
 #### Install From Tarball distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
-2. Unpack it (`tar -zxvf jikkou-0.14.0-runner.tar.gz`)
-3. Move the unpacked directory to its desired destination (`mv jikkou-0.14.0-runner /opt`)
+2. Unpack it (`tar -zxvf jikkou-0.15.0-runner.tar.gz`)
+3. Move the unpacked directory to its desired destination (`mv jikkou-0.15.0-runner /opt`)
 4. Add the executable to your PATH (`export PATH=$PATH:/opt/jikkou/bin`)
 
 #### Install From Debian distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
 ```bash
-$ wget https://github.com/streamthoughts/jikkou/releases/download/0.13.0/jikkou.deb
+$ wget https://github.com/streamthoughts/jikkou/releases/download/0.15.0/jikkou.deb
 $ sudo dpkg -i jikkou.deb
 ```
 
@@ -108,7 +108,7 @@ Then, distributions will be available in the `./dist` directory:
 
 #### Build RPM
 
-In addition to that, you may need to install Jikkou from a _RPM_ package. For doing that, you can run the following commands:
+In addition to that, you may need to install Jikkou from an _RPM_ package. For doing that, you can run the following commands:
 
 ```bash
 $ ./mvnw clean package -DskipTests -Prpm
