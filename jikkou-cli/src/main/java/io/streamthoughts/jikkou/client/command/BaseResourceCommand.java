@@ -31,7 +31,6 @@ import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.model.ResourceList;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
-import io.streamthoughts.jikkou.client.CLIUtils;
 import io.streamthoughts.jikkou.client.Jikkou;
 import io.streamthoughts.jikkou.client.JikkouConfig;
 import io.streamthoughts.jikkou.client.JikkouContext;
@@ -69,10 +68,6 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() {
-        if (!execOptions.yes && !isDryRun()) {
-            CLIUtils.askToProceed(spec);
-        }
-
         try (var api = JikkouContext.jikkouApi()) {
 
             ResourceList resource = loadResources();
