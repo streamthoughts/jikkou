@@ -45,7 +45,7 @@ public class Alter extends QuotasCommand.Base {
 
     /** {@inheritDoc} */
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getReconciliationConfiguration() {
         return new KafkaQuotaReconciliationConfig()
                 .withDeleteConfigOrphans(deleteOrphans)
                 .withDeleteQuotaOrphans(false)

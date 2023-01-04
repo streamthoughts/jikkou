@@ -38,7 +38,7 @@ public class Create extends TopicsCommand.Base {
      * {@inheritDoc}
      */
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getReconciliationConfiguration() {
         return new KafkaTopicReconciliationConfig()
                 .withDeleteTopicOrphans(false)
                 .withDeleteConfigOrphans(false)

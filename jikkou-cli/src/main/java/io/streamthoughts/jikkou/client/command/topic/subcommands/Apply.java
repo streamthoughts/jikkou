@@ -58,7 +58,7 @@ public class Apply extends TopicsCommand.Base {
 
     /** {@inheritDoc} */
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getReconciliationConfiguration() {
         return new KafkaTopicReconciliationConfig()
                 .withDeleteConfigOrphans(deleteConfigOrphans)
                 .withDeleteTopicOrphans(deleteTopicOrphans)

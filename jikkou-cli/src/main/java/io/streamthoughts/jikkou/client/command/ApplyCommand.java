@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 @CommandLine.Command(name = "apply",
         headerHeading = "Usage:%n%n",
@@ -38,35 +39,35 @@ import picocli.CommandLine;
         mixinStandardHelpOptions = true)
 public class ApplyCommand extends BaseResourceCommand {
 
-    @CommandLine.Option(
-            names = { "--set-option"},
+    @Option(
+            names = {"--set-option"},
             description = "Set the options to be used for computing resource reconciliation (can specify multiple values: -o key1=val1 -o key2=val2)"
     )
     Map<String, Object> options = new HashMap<>();
 
-    @CommandLine.Option(
-            names = { "--kind"},
+    @Option(
+            names = {"--kind"},
             defaultValue = "",
             description = "Apply the reconciliation only for the specified kind of resources."
     )
     String kind = "";
 
-    /** {@inheritDoc} **/
+    /** {@inheritDoc } **/
     @Override
     protected @NotNull ResourceList loadResources() {
         ResourceList resources = super.loadResources();
         return !kind.isBlank() ? resources.allResourcesForKind(kind) : resources;
     }
 
-    /** {@inheritDoc} **/
+    /** {@inheritDoc } **/
     @Override
-    public ReconciliationMode getReconciliationMode() {
-        return ReconciliationMode.APPLY_ALL;
+    protected Configuration getReconciliationConfiguration() {
+        return Configuration.from(options);
     }
 
-    /** {@inheritDoc} **/
+    /** {@inheritDoc } **/
     @Override
-    public Configuration getConfiguration() {
-        return Configuration.from(options);
+    protected ReconciliationMode getReconciliationMode() {
+        return ReconciliationMode.APPLY_ALL;
     }
 }

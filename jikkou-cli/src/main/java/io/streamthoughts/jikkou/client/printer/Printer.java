@@ -27,9 +27,10 @@ public interface Printer {
      *
      * @param results the reconciliation changes to print.
      * @param dryRun  is dry-run enabled.
+     * @param executionTimeMs the execution time in milliseconds.
      * @return the exit code.
      */
-    int print(Collection<ChangeResult<?>> results, boolean dryRun);
+    int print(Collection<ChangeResult<?>> results, boolean dryRun, long executionTimeMs);
 
     static int getNumberOfFailedChange(final Collection<ChangeResult<?>> results) {
         return (int) results.stream()

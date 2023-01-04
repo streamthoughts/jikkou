@@ -45,7 +45,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -188,18 +187,8 @@ public final class Jikkou {
         }
     }
 
-    public static String getExecutionTime() {
-        final long execTimeInMillis = Duration.between (START_TIME, LocalDateTime.now ()).toMillis();
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(execTimeInMillis) % 60;
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(execTimeInMillis) % 60;
-        long milliseconds = execTimeInMillis % 1000;
-
-        if (minutes == 0) {
-            return seconds == 0 ?
-                String.format ("%dms", milliseconds) :
-                String.format ("%ds %dms", seconds, milliseconds);
-        }
-        return String.format("%dmin %ds %dms", minutes, seconds, milliseconds);
+    public static long getExecutionTime() {
+       return Duration.between (START_TIME, LocalDateTime.now ()).toMillis();
     }
 
     /**
