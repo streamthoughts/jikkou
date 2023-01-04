@@ -52,7 +52,7 @@ public class Apply extends QuotasCommand.Base {
 
     /** {@inheritDoc} */
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getReconciliationConfiguration() {
         return new KafkaQuotaReconciliationConfig()
                 .withDeleteConfigOrphans(deleteConfigOrphans)
                 .withDeleteQuotaOrphans(deleteQuotaOrphans)

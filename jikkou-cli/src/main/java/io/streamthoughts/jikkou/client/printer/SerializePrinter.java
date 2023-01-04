@@ -34,7 +34,7 @@ public class SerializePrinter implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(Collection<ChangeResult<?>> results, boolean dryRun) {
+    public int print(Collection<ChangeResult<?>> results, boolean dryRun, long executionTimeMs) {
         final String json;
         try {
             json = mapper

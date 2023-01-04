@@ -18,24 +18,32 @@
  */
 package io.streamthoughts.jikkou.client.command.acls.subcommands;
 
-import io.streamthoughts.jikkou.api.SimpleJikkouApi;
+import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.client.JikkouContext;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaAuthorizationList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "describe",
-        description = "Describe all the ACLs that currently exist on remote cluster."
+
+@Command(
+        name = "describe",
+        description = "Describe all the ACLs that currently exist on remote cluster.",
+        synopsisHeading      = "%nUsage:%n%n",
+        descriptionHeading   = "%nDescription:%n%n",
+        parameterListHeading = "%nParameters:%n%n",
+        optionListHeading    = "%nOptions:%n%n",
+        commandListHeading   = "%nCommands:%n%n",
+        mixinStandardHelpOptions = true
 )
-public class Describe extends BaseCommand {
+public class Describe implements Callable<Integer> {
 
     @Option(names = "--file-path",
             description = "The file path to write the description of Topics."
@@ -48,7 +56,7 @@ public class Describe extends BaseCommand {
     @Override
     public Integer call() {
         try {
-            try(SimpleJikkouApi api = JikkouContext.jikkouApi()) {
+            try(JikkouApi api = JikkouContext.jikkouApi()) {
                 HasMetadata resource = api.getResource(V1KafkaAuthorizationList.class);
                 OutputStream os = (outputFile != null) ? new FileOutputStream(outputFile) : System.out;
 

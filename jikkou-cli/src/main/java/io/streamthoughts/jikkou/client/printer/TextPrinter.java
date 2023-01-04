@@ -24,9 +24,9 @@ import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.client.Jikkou;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Helper class pretty print execution results.
@@ -35,7 +35,7 @@ public class TextPrinter implements Printer {
 
     private static final String PADDING = "********************************************************************************";
 
-    private static final String KAFKA_SPECS_COLOR_ENABLED = "KAFKA_SPECS_COLOR_ENABLED";
+    private static final String JIKKOU_COLOR_ENABLED = "JIKKOU_COLOR_ENABLED";
 
     private static final PrintStream PS = System.out;
 
@@ -59,7 +59,8 @@ public class TextPrinter implements Printer {
     /** {@inheritDoc} **/
     @Override
     public int print(Collection<ChangeResult<?>> results,
-                     boolean dryRun) {
+                     boolean dryRun,
+                     long executionTimeMs) {
         int ok = 0;
         int created = 0;
         int changed = 0;
@@ -105,7 +106,7 @@ public class TextPrinter implements Printer {
             }
         }
 
-        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", Jikkou.getExecutionTime(), dryRun ? "(DRY_RUN)" : "");
+        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", formatExecutionTime(executionTimeMs), dryRun ? "(DRY_RUN)" : "");
         TextPrinter.PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }
@@ -117,7 +118,20 @@ public class TextPrinter implements Printer {
     }
 
     private static boolean isColor() {
-        String enabled = System.getenv(KAFKA_SPECS_COLOR_ENABLED);
+        String enabled = System.getenv(JIKKOU_COLOR_ENABLED);
         return enabled == null || "true".equalsIgnoreCase(enabled);
+    }
+
+    private String formatExecutionTime(long execTimeInMillis) {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(execTimeInMillis) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(execTimeInMillis) % 60;
+        long milliseconds = execTimeInMillis % 1000;
+
+        if (minutes == 0) {
+            return seconds == 0 ?
+                    String.format ("%dms", milliseconds) :
+                    String.format ("%ds %dms", seconds, milliseconds);
+        }
+        return String.format("%dmin %ds %dms", minutes, seconds, milliseconds);
     }
 }

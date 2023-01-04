@@ -21,30 +21,16 @@ package io.streamthoughts.jikkou.api.io;
 import io.streamthoughts.jikkou.api.error.JikkouException;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
-import io.streamthoughts.jikkou.api.model.NamedValue;
 import io.streamthoughts.jikkou.api.model.ResourceList;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ResourceLoader {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ResourceLoader.class);
-
     private ResourceReaderOptions options = new ResourceReaderOptions();
-
-    private final List<String> valuesFiles = new LinkedList<>();
 
     private ResourceReaderFactory factory = new ResourceReaderFactory()
             .setObjectMapper(Jackson.YAML_OBJECT_MAPPER)
@@ -57,15 +43,6 @@ public final class ResourceLoader {
      */
     public static ResourceLoader create() {
         return new ResourceLoader();
-    }
-
-    public ResourceLoader withValuesFile(final @NotNull String valuesFile) {
-        return withValuesFiles(List.of(valuesFile));
-    }
-
-    public ResourceLoader withValuesFiles(final @NotNull List<String> valuesFiles) {
-        this.valuesFiles.addAll(valuesFiles);
-        return this;
     }
 
     public ResourceLoader withResourceReaderOptions(@NotNull final ResourceReaderOptions options) {
@@ -100,8 +77,7 @@ public final class ResourceLoader {
      */
     public ResourceList load(@NotNull final InputStream file) {
 
-        final ResourceReaderOptions newOptions = getOptionsWithAllValues();
-        return new ResourceList(factory.create(file).readAllResources(newOptions));
+        return new ResourceList(factory.create(file).readAllResources(options));
     }
 
     /**
@@ -115,50 +91,10 @@ public final class ResourceLoader {
             throw new JikkouException("No resource specification file loaded");
         }
 
-        final ResourceReaderOptions newOptions = getOptionsWithAllValues();
         return new ResourceList(locations.stream()
                 .map(location -> factory.create(URI.create(location)))
-                .flatMap(reader -> reader.readAllResources(newOptions).stream())
+                .flatMap(reader -> reader.readAllResources(options).stream())
                 .toList()
         );
     }
-
-    private ResourceReaderOptions getOptionsWithAllValues() {
-        return new ResourceReaderOptions()
-                .withValues(loadAllValuesFiles())
-                .withValues(options.values())
-                .withLabels(options.labels())
-                .withPattern(options.pattern());
-    }
-
-    private @NotNull NamedValue.Set loadAllValuesFiles() {
-        return valuesFiles
-                .parallelStream()
-                .flatMap(this::loadValuesFromFile)
-                .sorted(Comparator.comparing(ValuesFile::file))
-                .map(ValuesFile::values)
-                .reduce(NamedValue.emptySet(), NamedValue.Set::with);
-    }
-
-    private @NotNull Stream<ValuesFile> loadValuesFromFile(final String filePath) {
-        try {
-            Path path = Path.of(filePath);
-            if (Files.size(path) > 0) {
-                try (InputStream src = Files.newInputStream(path)) {
-                    Map<String, Object> values = Jackson.YAML_OBJECT_MAPPER.readValue(src, Map.class);
-                    return Stream.of(new ValuesFile(filePath, NamedValue.setOf(values)));
-                }
-            } else {
-                LOG.debug("Ignore values from '{}'. File is empty.", filePath);
-                return Stream.empty();
-            }
-        } catch (IOException e) {
-            throw new JikkouException(
-                    String.format("Failed to load values-file '%s': %s", filePath, e.getLocalizedMessage())
-            );
-        }
-    }
-
-    private record ValuesFile(String file, NamedValue.Set values) { }
-
 }

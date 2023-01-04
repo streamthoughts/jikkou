@@ -37,7 +37,7 @@ public class Create extends QuotasCommand.Base {
 
     /** {@inheritDoc} */
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getReconciliationConfiguration() {
         return new KafkaQuotaReconciliationConfig()
                 .withDeleteQuotaOrphans(false)
                 .withDeleteConfigOrphans(false)

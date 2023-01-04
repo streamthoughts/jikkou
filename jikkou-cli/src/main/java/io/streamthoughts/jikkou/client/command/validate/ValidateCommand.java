@@ -18,21 +18,17 @@
  */
 package io.streamthoughts.jikkou.client.command.validate;
 
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.ResourceLoader;
+import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
-import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
-import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
-import io.streamthoughts.jikkou.api.model.NamedValue;
 import io.streamthoughts.jikkou.api.model.ResourceList;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
-import io.streamthoughts.jikkou.client.JikkouConfig;
+import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.client.JikkouContext;
-import io.streamthoughts.jikkou.client.command.ResourceFileOptionsMixin;
-import io.streamthoughts.jikkou.client.command.SetOptionsMixin;
+import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
 import io.streamthoughts.jikkou.kafka.LegacyKafkaClusterResourceHandler;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.Callable;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -44,21 +40,13 @@ import picocli.CommandLine.Mixin;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Validate your specification file.",
-        description = "This command can be used to validate a Kafka Specs file.",
+        header = "Validate your resource definition files.",
+        description = "This command can be used to validate resource definition file.",
         mixinStandardHelpOptions = true)
 public class ValidateCommand implements Callable<Integer> {
 
     @Mixin
-    ResourceFileOptionsMixin specOptions;
-
-    @Mixin
-    SetOptionsMixin setOptions;
-
-    public static void main(String[] args) {
-        JikkouContext.setConfig(JikkouConfig.load());
-        new ValidateCommand().call();
-    }
+    FileOptionsMixin fileOptions;
 
     /**
      * {@inheritDoc}
@@ -66,27 +54,7 @@ public class ValidateCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         try (var api = JikkouContext.jikkouApi()) {
-            ResourceReaderFactory factory = new ResourceReaderFactory()
-                    .setTemplateEnable(true)
-                    .setTemplateRenderer(
-                            new JinjaResourceTemplateRenderer()
-                                    .withPreserveRawTags(false)
-                                    .withFailOnUnknownTokens(false)
-                    )
-                    .setObjectMapper(Jackson.YAML_OBJECT_MAPPER);
-
-            ResourceList resources = ResourceLoader
-                    .create()
-                    .withResourceReaderFactory(factory)
-                    .withResourceReaderOptions(new ResourceReaderOptions()
-                            .withLabels(NamedValue.setOf(setOptions.clientLabels))
-                            .withValues(NamedValue.setOf(setOptions.clientValues))
-                            .withPattern(specOptions.pattern)
-                    )
-                    .withValuesFiles(setOptions.valuesFiles)
-                    .load(specOptions.files);
-
-            resources = new LegacyKafkaClusterResourceHandler().handle(resources);
+            ResourceList resources = loadResources();
 
             api.validate(resources)
                     .forEach(resource -> {
@@ -97,6 +65,17 @@ public class ValidateCommand implements Callable<Integer> {
         }
 
         return CommandLine.ExitCode.OK;
+    }
+
+    protected @NotNull ResourceList loadResources() {
+        ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
+                .withPreserveRawTags(false)
+                .withFailOnUnknownTokens(false);
+
+        YAMLResourceLoader loader = new YAMLResourceLoader(renderer);
+        ResourceList resources = loader.load(fileOptions);
+
+        return new LegacyKafkaClusterResourceHandler().handle(resources);
     }
 
 }

@@ -38,7 +38,7 @@ public enum Printers implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(Collection<ChangeResult<?>> results, boolean dryRun) {
-        return printer.print(results, dryRun);
+    public int print(Collection<ChangeResult<?>> results, boolean dryRun, long executionTimeInMillis) {
+        return printer.print(results, dryRun, executionTimeInMillis);
     }
 }

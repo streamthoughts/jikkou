@@ -22,22 +22,28 @@ import io.streamthoughts.jikkou.api.SimpleJikkouApi;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.client.JikkouContext;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
 import io.streamthoughts.jikkou.kafka.control.ConfigDescribeConfiguration;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBrokerList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "describe",
-        description = "Describe all the Broker's configuration on remote cluster."
+@Command(
+        name = "describe",
+        description = "Describe all the Broker's configuration on remote cluster.",
+        synopsisHeading      = "%nUsage:%n%n",
+        descriptionHeading   = "%nDescription:%n%n",
+        parameterListHeading = "%nParameters:%n%n",
+        optionListHeading    = "%nOptions:%n%n",
+        commandListHeading   = "%nCommands:%n%n",
+        mixinStandardHelpOptions = true
 )
-public class Describe extends BaseCommand {
-
+public class Describe implements Callable<Integer> {
     @Option(names = {"--default-configs"},
             description = "Export built-in default configuration for configs that have a default value."
     )

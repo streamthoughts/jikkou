@@ -63,7 +63,7 @@ public class AclsCommand {
 
         /** {@inheritDoc} */
         @Override
-        public Configuration getConfiguration() {
+        public Configuration getReconciliationConfiguration() {
             return new KafkaAclReconciliationConfig()
                     .withDeleteOrphans(deleteOrphans)
                     .asConfiguration();
