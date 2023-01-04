@@ -64,6 +64,8 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
         @SuppressWarnings("rawtypes")
         private final List<ResourceDescriptor> descriptors = new LinkedList<>();
 
+        private final List<ResourceListHandler> handlers = new LinkedList<>();
+
         /**
          * {@inheritDoc}
          **/
@@ -106,6 +108,15 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
          * {@inheritDoc}
          **/
         @Override
+        public Builder withHandlers(final @NotNull List<ResourceListHandler> handlers) {
+            this.handlers.addAll(handlers);
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
         public SimpleJikkouApi build() {
             SimpleJikkouApi api = new SimpleJikkouApi(controllers, descriptors);
             validations.forEach(api::addValidation);
@@ -119,9 +130,9 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
     private final List<ResourceTransformation> transformations = new LinkedList<>();
 
     @SuppressWarnings("rawtypes")
-    private final HasMetadataAcceptableList<? extends ResourceController> controllers;
+    private final HasMetadataAcceptableList<ResourceController> controllers;
     @SuppressWarnings("rawtypes")
-    private final HasMetadataAcceptableList<? extends ResourceDescriptor> descriptors;
+    private final HasMetadataAcceptableList<ResourceDescriptor> descriptors;
 
     private final List<ResourceListHandler> handlers = new LinkedList<>();
 
@@ -212,9 +223,7 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
         return (T) getResource(type, filter, configuration);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
     public HasMetadata getResource(final @NotNull ResourceType resourceType,
                                    final @NotNull ResourceFilter resourceFilter,
@@ -226,6 +235,17 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
                     objectMetaBuilder.withAnnotation(ObjectMeta.ANNOT_GENERATED, Instant.now()).build()
             );
         }
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+                .withTransformations(transformations)
+                .withValidations(validations)
+                .withControllers(controllers.items())
+                .withDescriptors(descriptors.items())
+                .withHandlers(handlers);
     }
 
     private void applyResourceValidations(@NotNull ResourceList resources) {
@@ -311,9 +331,7 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
         return Optional.of(acceptedController.first());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void close() {
     }
