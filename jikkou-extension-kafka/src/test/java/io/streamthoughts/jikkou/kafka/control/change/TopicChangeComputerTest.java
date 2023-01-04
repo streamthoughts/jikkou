@@ -407,7 +407,7 @@ public class TopicChangeComputerTest {
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
         Assertions.assertEquals(NONE, change.getChange());
-        Assertions.assertEquals(NONE, change.getPartitions().get().type());
+        Assertions.assertEquals(NONE, change.getPartitions().type());
     }
 
     @Test
@@ -438,6 +438,6 @@ public class TopicChangeComputerTest {
         // Then
         TopicChange change = changes.get(TEST_TOPIC);
         Assertions.assertEquals(NONE, change.getChange());
-        Assertions.assertEquals(NONE, change.getReplicationFactor().get().type());
+        Assertions.assertEquals(NONE, change.getReplicationFactor().type());
     }
 }

@@ -98,8 +98,8 @@ public final class CreateTopicOperation implements TopicOperation {
 
         return new NewTopic(
                 t.getName(),
-                t.getPartitions().get().getAfter(),
-                t.getReplicationFactor().get().getAfter())
+                t.getPartitions().getAfter(),
+                t.getReplicationFactor().getAfter())
                 .configs(configs);
     }
 

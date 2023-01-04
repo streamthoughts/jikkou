@@ -18,8 +18,8 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import io.vavr.control.Option;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,8 +135,8 @@ public class ValueChange<T> {
         return before;
     }
 
-    public Option<T> toOption() {
-        return type == ChangeType.NONE ? Option.none() : Option.of(after);
+    public Optional<T> toOptional() {
+        return type == ChangeType.NONE ? Optional.empty() : Optional.ofNullable(after);
     }
 
     public ChangeType type() {

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -101,9 +102,9 @@ public final class AlterTopicOperation implements TopicOperation {
                 alterConfigs.put(new ConfigResource(ConfigResource.Type.TOPIC, change.getName()), alters);
             }
 
-            change.getPartitions()
-                  .flatMap(ValueChange::toOption)
-                  .forEach(newValue -> newPartitions.put(change.getName(), NewPartitions.increaseTo(newValue)));
+            Optional.ofNullable(change.getPartitions())
+              .flatMap(ValueChange::toOptional)
+              .ifPresent(newValue -> newPartitions.put(change.getName(), NewPartitions.increaseTo(newValue)));
 
         }
 

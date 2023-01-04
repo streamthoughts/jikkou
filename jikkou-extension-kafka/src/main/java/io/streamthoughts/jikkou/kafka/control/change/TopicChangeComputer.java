@@ -31,7 +31,6 @@ import io.streamthoughts.jikkou.kafka.adapters.KafkaTopicObjectAdapter;
 import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
-import io.vavr.control.Option;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -138,8 +137,8 @@ public class TopicChangeComputer implements ChangeComputer<V1KafkaTopicObject, S
 
         return TopicChange.builder()
                 .withName(expectedState.getName())
-                .withPartitions(Option.of(partitions))
-                .withReplicationFactor(Option.of(replication))
+                .withPartitions(partitions)
+                .withReplicationFactor(replication)
                 .withOperation(op)
                 .withConfigs(configEntryChanges)
                 .build();
@@ -156,8 +155,8 @@ public class TopicChangeComputer implements ChangeComputer<V1KafkaTopicObject, S
 
         return TopicChange.builder()
                 .withName(topicObject.getName())
-                .withPartitions(Option.of(withAfterValue(topicObject.getPartitionsOrDefault())))
-                .withReplicationFactor(Option.of(withAfterValue(topicObject.getReplicationFactorOrDefault())))
+                .withPartitions(withAfterValue(topicObject.getPartitionsOrDefault()))
+                .withReplicationFactor(withAfterValue(topicObject.getReplicationFactorOrDefault()))
                 .withOperation(ChangeType.ADD)
                 .withConfigs(configEntryChanges)
                 .build();

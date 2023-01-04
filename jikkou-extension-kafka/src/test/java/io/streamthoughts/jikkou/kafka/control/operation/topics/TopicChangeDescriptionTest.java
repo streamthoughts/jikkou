@@ -22,7 +22,6 @@ import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import io.vavr.control.Option;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,8 @@ class TopicChangeDescriptionTest {
                 TopicChange.builder()
                         .withName("test")
                         .withOperation(ChangeType.ADD)
-                        .withPartitions(Option.of(ValueChange.withAfterValue(1)))
-                        .withReplicationFactor(Option.of(ValueChange.withAfterValue((short) 1)))
+                        .withPartitions(ValueChange.withAfterValue(1))
+                        .withReplicationFactor(ValueChange.withAfterValue((short) 1))
                         .withConfigs(List.of(new ConfigEntryChange("key", ValueChange.withAfterValue("value"))))
                         .build()
         );

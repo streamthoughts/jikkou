@@ -25,7 +25,6 @@ import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.Nameable;
-import io.vavr.control.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,8 @@ public final class TopicChange implements Change<String>, Nameable {
 
     private final String name;
     private final ChangeType operation;
-    private final Option<ValueChange<Integer>> partitions;
-    private final Option<ValueChange<Short>> replicationFactor;
+    private final ValueChange<Integer> partitions;
+    private final ValueChange<Short> replicationFactor;
     private final List<ConfigEntryChange> configs;
 
     /** {@inheritDoc} */
@@ -64,12 +63,12 @@ public final class TopicChange implements Change<String>, Nameable {
     }
 
     @JsonProperty("partitions")
-    public Option<ValueChange<Integer>> getPartitions() {
+    public ValueChange<Integer> getPartitions() {
         return partitions;
     }
 
     @JsonProperty("replication_factor")
-    public Option<ValueChange<Short>> getReplicationFactor() {
+    public ValueChange<Short> getReplicationFactor() {
         return replicationFactor;
     }
 

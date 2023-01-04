@@ -20,7 +20,9 @@ package io.streamthoughts.jikkou.kafka.control.operation.topics;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TopicChangeDescription implements ChangeDescription {
@@ -43,8 +45,8 @@ public class TopicChangeDescription implements ChangeDescription {
         return String.format("%s topic '%s' (partitions=%d, replicas=%d, configs=[%s])",
                 ChangeDescription.humanize(type()),
                 change.getName(),
-                change.getPartitions().get().getAfter(),
-                change.getReplicationFactor().get().getAfter(),
+                Optional.ofNullable(change.getPartitions()).map(ValueChange::getAfter).orElse(null),
+                Optional.ofNullable(change.getReplicationFactor()).map(ValueChange::getAfter).orElse(null),
                 change.getConfigEntryChanges().stream().map(s -> s.getName() + "=" + s.getValueChange().getAfter()).collect( Collectors.joining( "," ) )
         );
     }
