@@ -74,6 +74,14 @@ public interface JikkouApi extends AutoCloseable {
         B withControllers(final @NotNull List<ResourceController> controllers);
 
         /**
+         * Associate the given list of resource handlers to the building {@link JikkouApi}.
+         *
+         * @param handlers   the list of handlers to associate.
+         * @return  this builder; never null
+         */
+        B withHandlers(final @NotNull List<ResourceListHandler> handlers);
+
+        /**
          * Associate the given list of resource descriptors to the building {@link JikkouApi}.
          *
          * @param descriptors   the list of descriptors to associate.
@@ -98,7 +106,7 @@ public interface JikkouApi extends AutoCloseable {
          * @param transformation   the resource transformation; should not be null.
          * @return  this builder; never null
          */
-        default B withTransformations(@NotNull ResourceTransformation transformation) {
+        default B withTransformation(@NotNull ResourceTransformation transformation) {
             return withTransformations(List.of(transformation));
         }
 
@@ -122,6 +130,16 @@ public interface JikkouApi extends AutoCloseable {
         @SuppressWarnings("rawtypes")
         default B withDescriptor(final @NotNull ResourceDescriptor descriptor) {
             return withDescriptors(List.of(descriptor));
+        }
+
+        /**
+         * Associate the given resource handler to the building {@link JikkouApi}.
+         *
+         * @param handler   the resource handler; should not be null.
+         * @return  this builder; never null
+         */
+        default B withHandler(final @NotNull ResourceListHandler handler) {
+            return withHandlers(List.of(handler));
         }
 
         /**
@@ -271,6 +289,10 @@ public interface JikkouApi extends AutoCloseable {
     HasMetadata getResource(@NotNull ResourceType resourceType,
                             @NotNull ResourceFilter resourceFilter,
                             @NotNull Configuration configuration);
+
+    @SuppressWarnings("rawtypes")
+    ApiBuilder toBuilder();
+
     /** {@inheritDoc} **/
     @Override
     void close();
