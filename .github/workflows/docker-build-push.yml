@@ -69,7 +69,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}        
 
     - name: Push to Docker Hub
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v4
       with:
         context: docker
         file: docker/Dockerfile
@@ -83,7 +83,7 @@ jobs:
 
     - name: Push to Docker Hub (latest)
       if: startsWith(github.event.ref, 'refs/tags/v')
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v4
       with:
         context: docker
         file: docker/Dockerfile
