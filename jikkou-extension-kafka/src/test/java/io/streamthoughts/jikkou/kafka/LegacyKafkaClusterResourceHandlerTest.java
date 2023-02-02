@@ -36,6 +36,15 @@ class LegacyKafkaClusterResourceHandlerTest {
     private final LegacyKafkaClusterResourceHandler handler = new LegacyKafkaClusterResourceHandler();
 
     @Test
+    void should_handle_legacy_kafka_resource_given_empty_spec() {
+        ResourceList resourceList = handler.handle(ResourceList.of(new V1KafkaCluster().toBuilder()
+                .withSpec(null)
+                .build()
+        ));
+        Assertions.assertTrue(resourceList.isEmpty());
+    }
+
+    @Test
     void should_handle_legacy_kafka_resource_given_topics() {
         ResourceList resourceList = handler.handle(ResourceList.of(new V1KafkaCluster().toBuilder()
                 .withSpec(V1KafkaClusterSpec
@@ -54,8 +63,7 @@ class LegacyKafkaClusterResourceHandlerTest {
         ));
         Assertions.assertNotNull(resourceList);
         Assertions.assertEquals(1, resourceList.size());
-        HasMetadata resource = resourceList.allResourcesForKinds(HasMetadata.getKind(V1KafkaTopicList.class))
-                .first();
+        HasMetadata resource = resourceList.allResourcesForKinds(HasMetadata.getKind(V1KafkaTopicList.class)).first();
         Assertions.assertNotNull(resource);
         V1KafkaTopicList kafkaTopicList = (V1KafkaTopicList) resource;
         V1KafkaTopicObject topicObject = kafkaTopicList.getSpec().getTopics().get(0);

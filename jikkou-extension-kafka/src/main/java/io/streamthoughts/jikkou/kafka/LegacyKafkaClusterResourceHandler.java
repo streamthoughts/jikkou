@@ -54,28 +54,18 @@ public final class LegacyKafkaClusterResourceHandler implements ResourceListHand
     private static Stream<HasMetadata> adapt(final V1KafkaCluster cluster) {
         List<HasMetadata> resources = new LinkedList<>();
         V1KafkaClusterSpec spec = cluster.getSpec();
-        List<V1KafkaTopicObject> topics = spec.getTopics();
-        if (topics != null && topics.size() > 0) {
-            V1KafkaTopicList kafkaTopicList = new V1KafkaTopicList().toBuilder()
-                    .withSpec(V1KafkaTopicSpec.builder()
-                            .withTopics(topics)
-                            .build()
-                    ).build();
-            resources.add(kafkaTopicList);
+
+        if (spec != null) {
+            adaptToV1KafkaTopicObjects(resources, spec);
+            adaptToV1KafkaQuotaObjects(resources, spec);
+            adaptToV1KafkaAuthorizationList(resources, spec);
         }
 
-        List<V1KafkaQuotaObject> quotas = spec.getQuotas();
-        if (quotas != null && quotas.size() > 0) {
-            V1KafkaQuotaList kafkaQuotaList = new V1KafkaQuotaList().toBuilder()
-                    .withSpec(V1KafkaQuotaSpec
-                            .builder()
-                            .withQuotas(quotas)
-                            .build()
-                    )
-                    .build();
-            resources.add(kafkaQuotaList);
-        }
+        return resources.stream();
+    }
 
+    private static void adaptToV1KafkaAuthorizationList(@NotNull List<HasMetadata> resources,
+                                                        @NotNull V1KafkaClusterSpec spec) {
         V1KafkaAuthorizationSpec security = spec.getSecurity();
         if (security != null && (security.getRoles().size() > 0 || security.getUsers().size() > 0 )) {
             var authorizationSpecBuilder = V1KafkaAuthorizationSpec.builder();
@@ -87,8 +77,34 @@ public final class LegacyKafkaClusterResourceHandler implements ResourceListHand
                     .withSpec(authorizationSpecBuilder.build())
                     .build();
             resources.add(authorizationList);
-
         }
-        return resources.stream();
+    }
+
+    private static void adaptToV1KafkaQuotaObjects(@NotNull List<HasMetadata> resources,
+                                                   @NotNull V1KafkaClusterSpec spec) {
+        List<V1KafkaQuotaObject> quotas = spec.getQuotas();
+        if (quotas != null && quotas.size() > 0) {
+            V1KafkaQuotaList kafkaQuotaList = new V1KafkaQuotaList().toBuilder()
+                    .withSpec(V1KafkaQuotaSpec
+                            .builder()
+                            .withQuotas(quotas)
+                            .build()
+                    )
+                    .build();
+            resources.add(kafkaQuotaList);
+        }
+    }
+
+    private static void adaptToV1KafkaTopicObjects(@NotNull List<HasMetadata> resources,
+                                                   @NotNull V1KafkaClusterSpec spec) {
+        List<V1KafkaTopicObject> topics = spec.getTopics();
+        if (topics != null && topics.size() > 0) {
+            V1KafkaTopicList kafkaTopicList = new V1KafkaTopicList().toBuilder()
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withTopics(topics)
+                            .build()
+                    ).build();
+            resources.add(kafkaTopicList);
+        }
     }
 }
