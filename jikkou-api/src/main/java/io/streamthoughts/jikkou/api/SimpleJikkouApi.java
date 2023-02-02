@@ -121,6 +121,7 @@ public final class SimpleJikkouApi implements AutoCloseable, JikkouApi {
             SimpleJikkouApi api = new SimpleJikkouApi(controllers, descriptors);
             validations.forEach(api::addValidation);
             transformations.forEach(api::addTransformation);
+            handlers.forEach(api::addHandler);
             return api;
         }
     }
