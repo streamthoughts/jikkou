@@ -47,29 +47,32 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 
 Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.15.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.15.0/[Maven Central]
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.16.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.16.0/[Maven Central]
 * As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.15.0[GitHub Releases]
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.16.0[GitHub Releases]
 
-```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.15.0/jikkou.deb
+[source, bash]
+----
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.16.0/jikkou.deb
 sudo dpkg -i jikkou.deb
-```
+----
 
 NOTE: Jikkou will install itself in the directory :  `/opt/jikkou`
 
 It is recommended to install the bash/zsh completion script `jikkou_completion`:
 
-```bash
+[source, bash]
+----
 wget https://raw.githubusercontent.com/streamthoughts/jikkou/master/jikkou_completion . jikkou_completion
-```
+----
 
 or alternatively, run the following command for generation the completion script.
 
-```
+[source, bash]
+----
 source <(jikkou generate-completion)
-```
+----
 
 == Overview
 
@@ -207,8 +210,6 @@ Any feedback, bug reports and PRs are greatly appreciated!
 
 You think this project can help you or your team to manage your Apache Kafka Cluster ?
 Please ⭐ this repository to support us!
-
-== FAQ
 
 == Licence
 
