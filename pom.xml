@@ -96,7 +96,7 @@
         <picocli.version>4.7.0</picocli.version>
         <jinjava.version>2.6.0</jinjava.version>
         <reflections.version>0.10.2</reflections.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.26</lombok.version>
         <spotless.version>2.33.0</spotless.version>
         <license.header.file>${project.basedir}/license-header</license.header.file>
         <sonar.organization>streamthoughts</sonar.organization>
