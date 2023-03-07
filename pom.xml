@@ -94,7 +94,7 @@
         <kafka.version>3.4.0</kafka.version>
         <jackson.version>2.14.2</jackson.version>
         <picocli.version>4.7.1</picocli.version>
-        <jinjava.version>2.6.0</jinjava.version>
+        <jinjava.version>2.7.0</jinjava.version>
         <reflections.version>0.10.2</reflections.version>
         <lombok.version>1.18.24</lombok.version>
         <spotless.version>2.33.0</spotless.version>
