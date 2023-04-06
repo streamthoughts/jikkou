@@ -97,7 +97,7 @@
         <jinjava.version>2.6.0</jinjava.version>
         <reflections.version>0.10.2</reflections.version>
         <lombok.version>1.18.24</lombok.version>
-        <spotless.version>2.33.0</spotless.version>
+        <spotless.version>2.36.0</spotless.version>
         <license.header.file>${project.basedir}/license-header</license.header.file>
         <sonar.organization>streamthoughts</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
