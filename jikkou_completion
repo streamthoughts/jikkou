@@ -154,102 +154,69 @@ function compReplyArray() {
 # to generate possible options and subcommands for the last specified subcommand.
 function _complete_jikkou() {
   # Edge case: if command line has no space after subcommand, then don't assume this subcommand is selected (remkop/picocli#1468).
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} validate" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} create" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} delete" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} update" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} apply" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} brokers" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} resources" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} extensions" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} diff" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} validate" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} help" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} generate-completion" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics alter" ];    then _picocli_jikkou_topics; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics apply" ];    then _picocli_jikkou_topics; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics create" ];    then _picocli_jikkou_topics; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics delete" ];    then _picocli_jikkou_topics; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics describe" ];    then _picocli_jikkou_topics; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} topics help" ];    then _picocli_jikkou_topics; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls apply" ];    then _picocli_jikkou_acls; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls create" ];    then _picocli_jikkou_acls; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls delete" ];    then _picocli_jikkou_acls; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls describe" ];    then _picocli_jikkou_acls; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} acls help" ];    then _picocli_jikkou_acls; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} brokers describe" ];    then _picocli_jikkou_brokers; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} brokers help" ];    then _picocli_jikkou_brokers; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas alter" ];    then _picocli_jikkou_quotas; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas apply" ];    then _picocli_jikkou_quotas; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas create" ];    then _picocli_jikkou_quotas; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas delete" ];    then _picocli_jikkou_quotas; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas describe" ];    then _picocli_jikkou_quotas; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} quotas help" ];    then _picocli_jikkou_quotas; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config get" ];    then _picocli_jikkou_config; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} extensions list" ];    then _picocli_jikkou_extensions; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config view" ];    then _picocli_jikkou_config; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config set-context" ];    then _picocli_jikkou_config; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config get-contexts" ];    then _picocli_jikkou_config; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config current-context" ];    then _picocli_jikkou_config; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config use-context" ];    then _picocli_jikkou_config; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health get" ];    then _picocli_jikkou_health; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health get-indicators" ];    then _picocli_jikkou_health; return $?; fi
 
   # Find the longest sequence of subcommands and call the bash function for that subcommand.
-  local cmds0=(validate)
-  local cmds1=(apply)
-  local cmds2=(topics)
-  local cmds3=(acls)
-  local cmds4=(brokers)
-  local cmds5=(quotas)
-  local cmds6=(extensions)
-  local cmds7=(config)
-  local cmds8=(health)
-  local cmds9=(help)
-  local cmds10=(generate-completion)
-  local cmds11=(topics alter)
-  local cmds12=(topics apply)
-  local cmds13=(topics create)
-  local cmds14=(topics delete)
-  local cmds15=(topics describe)
-  local cmds16=(topics help)
-  local cmds17=(acls apply)
-  local cmds18=(acls create)
-  local cmds19=(acls delete)
-  local cmds20=(acls describe)
-  local cmds21=(acls help)
-  local cmds22=(brokers describe)
-  local cmds23=(brokers help)
-  local cmds24=(quotas alter)
-  local cmds25=(quotas apply)
-  local cmds26=(quotas create)
-  local cmds27=(quotas delete)
-  local cmds28=(quotas describe)
-  local cmds29=(quotas help)
-  local cmds30=(config get)
+  local cmds0=(create)
+  local cmds1=(delete)
+  local cmds2=(update)
+  local cmds3=(apply)
+  local cmds4=(resources)
+  local cmds5=(extensions)
+  local cmds6=(config)
+  local cmds7=(diff)
+  local cmds8=(validate)
+  local cmds9=(health)
+  local cmds10=(help)
+  local cmds11=(generate-completion)
+  local cmds12=(extensions list)
+  local cmds13=(config view)
+  local cmds14=(config set-context)
+  local cmds15=(config get-contexts)
+  local cmds16=(config current-context)
+  local cmds17=(config use-context)
+  local cmds18=(health get)
+  local cmds19=(health get-indicators)
 
-  if CompWordsContainsArray "${cmds30[@]}"; then _picocli_jikkou_config_get; return $?; fi
-  if CompWordsContainsArray "${cmds29[@]}"; then _picocli_jikkou_quotas_help; return $?; fi
-  if CompWordsContainsArray "${cmds28[@]}"; then _picocli_jikkou_quotas_describe; return $?; fi
-  if CompWordsContainsArray "${cmds27[@]}"; then _picocli_jikkou_quotas_delete; return $?; fi
-  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_quotas_create; return $?; fi
-  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_quotas_apply; return $?; fi
-  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_quotas_alter; return $?; fi
-  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_brokers_help; return $?; fi
-  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_brokers_describe; return $?; fi
-  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_acls_help; return $?; fi
-  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_acls_describe; return $?; fi
-  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_acls_delete; return $?; fi
-  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_acls_create; return $?; fi
-  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_acls_apply; return $?; fi
-  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_topics_help; return $?; fi
-  if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_topics_describe; return $?; fi
-  if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_topics_delete; return $?; fi
-  if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_topics_create; return $?; fi
-  if CompWordsContainsArray "${cmds12[@]}"; then _picocli_jikkou_topics_apply; return $?; fi
-  if CompWordsContainsArray "${cmds11[@]}"; then _picocli_jikkou_topics_alter; return $?; fi
-  if CompWordsContainsArray "${cmds10[@]}"; then _picocli_jikkou_generatecompletion; return $?; fi
-  if CompWordsContainsArray "${cmds9[@]}"; then _picocli_jikkou_help; return $?; fi
-  if CompWordsContainsArray "${cmds8[@]}"; then _picocli_jikkou_health; return $?; fi
-  if CompWordsContainsArray "${cmds7[@]}"; then _picocli_jikkou_config; return $?; fi
-  if CompWordsContainsArray "${cmds6[@]}"; then _picocli_jikkou_extensions; return $?; fi
-  if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_quotas; return $?; fi
-  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_brokers; return $?; fi
-  if CompWordsContainsArray "${cmds3[@]}"; then _picocli_jikkou_acls; return $?; fi
-  if CompWordsContainsArray "${cmds2[@]}"; then _picocli_jikkou_topics; return $?; fi
-  if CompWordsContainsArray "${cmds1[@]}"; then _picocli_jikkou_apply; return $?; fi
-  if CompWordsContainsArray "${cmds0[@]}"; then _picocli_jikkou_validate; return $?; fi
+  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
+  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_health_get; return $?; fi
+  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
+  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
+  if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
+  if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
+  if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_config_view; return $?; fi
+  if CompWordsContainsArray "${cmds12[@]}"; then _picocli_jikkou_extensions_list; return $?; fi
+  if CompWordsContainsArray "${cmds11[@]}"; then _picocli_jikkou_generatecompletion; return $?; fi
+  if CompWordsContainsArray "${cmds10[@]}"; then _picocli_jikkou_help; return $?; fi
+  if CompWordsContainsArray "${cmds9[@]}"; then _picocli_jikkou_health; return $?; fi
+  if CompWordsContainsArray "${cmds8[@]}"; then _picocli_jikkou_validate; return $?; fi
+  if CompWordsContainsArray "${cmds7[@]}"; then _picocli_jikkou_diff; return $?; fi
+  if CompWordsContainsArray "${cmds6[@]}"; then _picocli_jikkou_config; return $?; fi
+  if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_extensions; return $?; fi
+  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_resources; return $?; fi
+  if CompWordsContainsArray "${cmds3[@]}"; then _picocli_jikkou_apply; return $?; fi
+  if CompWordsContainsArray "${cmds2[@]}"; then _picocli_jikkou_update; return $?; fi
+  if CompWordsContainsArray "${cmds1[@]}"; then _picocli_jikkou_delete; return $?; fi
+  if CompWordsContainsArray "${cmds0[@]}"; then _picocli_jikkou_create; return $?; fi
 
   # No subcommands were specified; generate completions for the top-level command.
   _picocli_jikkou; return $?;
@@ -259,28 +226,55 @@ function _complete_jikkou() {
 function _picocli_jikkou() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+
+  local commands="create delete update apply resources extensions config diff validate health help generate-completion"
+  local flag_opts="-h --help -V --version"
+  local arg_opts=""
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `create` subcommand.
+function _picocli_jikkou_create() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands="validate apply topics acls brokers quotas extensions config health help generate-completion"
-  local flag_opts="-h --help -V --version"
-  local arg_opts="--bootstrap-servers --command-config --command-property --config-file"
+  local commands=""
+  local flag_opts="--dry-run -h --help -V --version"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
-    --bootstrap-servers)
-      return
-      ;;
-    --command-config)
+    --output|-o)
       local IFS=$'\n'
-      type compopt &>/dev/null && compopt -o filenames
-      COMPREPLY=( $( compgen -f -- "${curr_word}" ) ) # files
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
       return $?
       ;;
-    --command-property)
+    --files|-f)
       return
       ;;
-    --config-file)
+    --file-name|-n)
+      return
+      ;;
+    --values-files)
+      return
+      ;;
+    --set-label|-l)
+      return
+      ;;
+    --set-value|-v)
+      return
+      ;;
+    --selector|-s)
       return
       ;;
   esac
@@ -294,32 +288,89 @@ function _picocli_jikkou() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `validate` subcommand.
-function _picocli_jikkou_validate() {
+# Generates completions for the options and subcommands of the `delete` subcommand.
+function _picocli_jikkou_delete() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --values-files --file-name -n --set-label -s --set-value -v"
+  local flag_opts="--dry-run -h --help -V --version"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
-    --files|-f)
-      return
+    --output|-o)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
       ;;
-    --values-files)
+    --files|-f)
       return
       ;;
     --file-name|-n)
       return
       ;;
-    --set-label|-s)
+    --values-files)
+      return
+      ;;
+    --set-label|-l)
       return
       ;;
     --set-value|-v)
+      return
+      ;;
+    --selector|-s)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `update` subcommand.
+function _picocli_jikkou_update() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="--dry-run -h --help -V --version"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --output|-o)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    --files|-f)
+      return
+      ;;
+    --file-name|-n)
+      return
+      ;;
+    --values-files)
+      return
+      ;;
+    --set-label|-l)
+      return
+      ;;
+    --set-value|-v)
+      return
+      ;;
+    --selector|-s)
       return
       ;;
   esac
@@ -340,8 +391,8 @@ function _picocli_jikkou_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--yes --dry-run -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v --set-option --kind"
+  local flag_opts="--dry-run -h --help -V --version"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -352,31 +403,25 @@ function _picocli_jikkou_apply() {
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
       return $?
       ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
     --files|-f)
-      return
-      ;;
-    --values-files)
       return
       ;;
     --file-name|-n)
       return
       ;;
-    --set-label|-s)
+    --values-files)
+      return
+      ;;
+    --set-label|-l)
       return
       ;;
     --set-value|-v)
       return
       ;;
-    --set-option)
+    --selector|-s)
       return
       ;;
-    --kind)
+    --options)
       return
       ;;
   esac
@@ -390,67 +435,13 @@ function _picocli_jikkou_apply() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `topics` subcommand.
-function _picocli_jikkou_topics() {
+# Generates completions for the options and subcommands of the `resources` subcommand.
+function _picocli_jikkou_resources() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="alter apply create delete describe help"
-  local flag_opts="-h --help -V --version"
-  local arg_opts=""
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `acls` subcommand.
-function _picocli_jikkou_acls() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-
-  local commands="apply create delete describe help"
-  local flag_opts="-h --help -V --version"
-  local arg_opts=""
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `brokers` subcommand.
-function _picocli_jikkou_brokers() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-
-  local commands="describe help"
-  local flag_opts="-h --help -V --version"
-  local arg_opts=""
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `quotas` subcommand.
-function _picocli_jikkou_quotas() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-
-  local commands="alter apply create delete describe help"
-  local flag_opts="-h --help -V --version"
+  local commands=""
+  local flag_opts=""
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
@@ -467,8 +458,8 @@ function _picocli_jikkou_extensions() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands=""
-  local flag_opts="--built-in -h --help -V --version"
+  local commands="list"
+  local flag_opts="-h --help -V --version"
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
@@ -485,9 +476,99 @@ function _picocli_jikkou_config() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="get"
-  local flag_opts="-h --help -V --version"
+  local commands="view set-context get-contexts current-context use-context"
+  local flag_opts=""
   local arg_opts=""
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `diff` subcommand.
+function _picocli_jikkou_diff() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="-h --help -V --version"
+  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s --output -o"
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --files|-f)
+      return
+      ;;
+    --file-name|-n)
+      return
+      ;;
+    --values-files)
+      return
+      ;;
+    --set-label|-l)
+      return
+      ;;
+    --set-value|-v)
+      return
+      ;;
+    --selector|-s)
+      return
+      ;;
+    --output|-o)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `validate` subcommand.
+function _picocli_jikkou_validate() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="-h --help -V --version"
+  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --files|-f)
+      return
+      ;;
+    --file-name|-n)
+      return
+      ;;
+    --values-files)
+      return
+      ;;
+    --set-label|-l)
+      return
+      ;;
+    --set-value|-v)
+      return
+      ;;
+    --selector|-s)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -502,19 +583,10 @@ function _picocli_jikkou_config() {
 function _picocli_jikkou_health() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands=""
+  local commands="get get-indicators"
   local flag_opts="-h --help -V --version"
-  local arg_opts="--timeout-ms"
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --timeout-ms)
-      return
-      ;;
-  esac
+  local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -530,7 +602,7 @@ function _picocli_jikkou_help() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="validate apply topics acls brokers quotas extensions config health generate-completion"
+  local commands="create delete update apply resources extensions config diff validate health generate-completion"
   local flag_opts="-h --help"
   local arg_opts=""
 
@@ -561,441 +633,24 @@ function _picocli_jikkou_generatecompletion() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `alter` subcommand.
-function _picocli_jikkou_topics_alter() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `apply` subcommand.
-function _picocli_jikkou_topics_apply() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --delete-config-orphans --delete-topic-orphans --exclude-internals -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `create` subcommand.
-function _picocli_jikkou_topics_create() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `delete` subcommand.
-function _picocli_jikkou_topics_delete() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --exclude-internals -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `describe` subcommand.
-function _picocli_jikkou_topics_describe() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--default-configs --static-broker-configs --dynamic-broker-configs --yes --dry-run -h --help -V --version"
-  local arg_opts="--output-file --output -o --exclude --include"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output-file)
-      local IFS=$'\n'
-      type compopt &>/dev/null && compopt -o filenames
-      COMPREPLY=( $( compgen -f -- "${curr_word}" ) ) # files
-      return $?
-      ;;
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `help` subcommand.
-function _picocli_jikkou_topics_help() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-
-  local commands="alter apply create delete describe"
-  local flag_opts="-h --help"
-  local arg_opts=""
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `apply` subcommand.
-function _picocli_jikkou_acls_apply() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `create` subcommand.
-function _picocli_jikkou_acls_create() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `delete` subcommand.
-function _picocli_jikkou_acls_delete() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `describe` subcommand.
-function _picocli_jikkou_acls_describe() {
+# Generates completions for the options and subcommands of the `list` subcommand.
+function _picocli_jikkou_extensions_list() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--file-path"
+  local arg_opts="--type --kinds"
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
-    --file-path)
-      local IFS=$'\n'
-      type compopt &>/dev/null && compopt -o filenames
-      COMPREPLY=( $( compgen -f -- "${curr_word}" ) ) # files
-      return $?
+    --type)
+      return
+      ;;
+    --kinds)
+      return
       ;;
   esac
 
@@ -1008,13 +663,70 @@ function _picocli_jikkou_acls_describe() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `help` subcommand.
-function _picocli_jikkou_acls_help() {
+# Generates completions for the options and subcommands of the `view` subcommand.
+function _picocli_jikkou_config_view() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="--debug --comments"
+  local arg_opts="--name"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --name)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `set-context` subcommand.
+function _picocli_jikkou_config_setcontext() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts=""
+  local arg_opts="-o --config -f --config-file"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    -o|--config)
+      return
+      ;;
+    -f|--config-file)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `get-contexts` subcommand.
+function _picocli_jikkou_config_getcontexts() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="apply create delete describe"
-  local flag_opts="-h --help"
+  local commands=""
+  local flag_opts=""
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
@@ -1026,43 +738,13 @@ function _picocli_jikkou_acls_help() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `describe` subcommand.
-function _picocli_jikkou_brokers_describe() {
+# Generates completions for the options and subcommands of the `current-context` subcommand.
+function _picocli_jikkou_config_currentcontext() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--default-configs --static-broker-configs --dynamic-broker-configs -h --help -V --version"
-  local arg_opts="--file-path"
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --file-path)
-      local IFS=$'\n'
-      type compopt &>/dev/null && compopt -o filenames
-      COMPREPLY=( $( compgen -f -- "${curr_word}" ) ) # files
-      return $?
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `help` subcommand.
-function _picocli_jikkou_brokers_help() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-
-  local commands="describe"
-  local flag_opts="-h --help"
+  local flag_opts=""
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
@@ -1074,265 +756,70 @@ function _picocli_jikkou_brokers_help() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `alter` subcommand.
-function _picocli_jikkou_quotas_alter() {
+# Generates completions for the options and subcommands of the `use-context` subcommand.
+function _picocli_jikkou_config_usecontext() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--yes --dry-run --delete-orphans -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `apply` subcommand.
-function _picocli_jikkou_quotas_apply() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run --delete-config-orphans --delete-quota-orphans -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `create` subcommand.
-function _picocli_jikkou_quotas_create() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `delete` subcommand.
-function _picocli_jikkou_quotas_delete() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="--yes --dry-run -h --help -V --version"
-  local arg_opts="--output -o --exclude --include --files -f --values-files --file-name -n --set-label -s --set-value -v"
-  local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output|-o)
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    --exclude)
-      return
-      ;;
-    --include)
-      return
-      ;;
-    --files|-f)
-      return
-      ;;
-    --values-files)
-      return
-      ;;
-    --file-name|-n)
-      return
-      ;;
-    --set-label|-s)
-      return
-      ;;
-    --set-value|-v)
-      return
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `describe` subcommand.
-function _picocli_jikkou_quotas_describe() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
-
-  local commands=""
-  local flag_opts="-h --help -V --version"
-  local arg_opts="--output-file"
-
-  type compopt &>/dev/null && compopt +o default
-
-  case ${prev_word} in
-    --output-file)
-      local IFS=$'\n'
-      type compopt &>/dev/null && compopt -o filenames
-      COMPREPLY=( $( compgen -f -- "${curr_word}" ) ) # files
-      return $?
-      ;;
-  esac
-
-  if [[ "${curr_word}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
-  else
-    local positionals=""
-    local IFS=$'\n'
-    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
-  fi
-}
-
-# Generates completions for the options and subcommands of the `help` subcommand.
-function _picocli_jikkou_quotas_help() {
-  # Get completion data
-  local curr_word=${COMP_WORDS[COMP_CWORD]}
-
-  local commands="alter apply create delete describe"
-  local flag_opts="-h --help"
+  local flag_opts=""
   local arg_opts=""
+  local contextName_pos_param_args=("jikkou" "context-name-completions") # 0-0 values
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
   else
     local positionals=""
+    local currIndex
+    currIndex=$(currentPositionalIndex "use-context" "${arg_opts}" "${flag_opts}")
+    if (( currIndex >= 0 && currIndex <= 0 )); then
+      positionals=$( compReplyArray "${contextName_pos_param_args[@]}" )
+    fi
     local IFS=$'\n'
     COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
   fi
 }
 
 # Generates completions for the options and subcommands of the `get` subcommand.
-function _picocli_jikkou_config_get() {
+function _picocli_jikkou_health_get() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="-h --help -V --version"
+  local arg_opts="--output -o --timeout-ms"
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --output|-o)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    --timeout-ms)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `get-indicators` subcommand.
+function _picocli_jikkou_health_getindicators() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
   local commands=""
-  local flag_opts="--debug --comments -h --help -V --version"
+  local flag_opts="-h --help -V --version"
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then

@@ -19,18 +19,22 @@
 package io.streamthoughts.jikkou.api;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ResourceController;
-import io.streamthoughts.jikkou.api.control.ResourceDescriptor;
+import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
+import io.streamthoughts.jikkou.api.control.ExternalResourceController;
 import io.streamthoughts.jikkou.api.error.JikkouApiException;
+import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.Resource;
-import io.streamthoughts.jikkou.api.model.ResourceList;
-import io.streamthoughts.jikkou.api.model.ResourceTransformation;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.model.ResourceType;
-import io.streamthoughts.jikkou.api.model.ResourceValidation;
+import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,95 +55,73 @@ public interface JikkouApi extends AutoCloseable {
         /**
          * Associate the given list of resource validations to the building {@link JikkouApi}.
          *
-         * @param validations   the list of validation to associate.
-         * @return  this builder; never null
+         * @param validations the list of validation to associate.
+         * @return this builder; never null
          */
-        B withValidations(@NotNull List<ResourceValidation> validations);
+        B withValidations(@NotNull List<ResourceValidation<HasMetadata>> validations);
 
         /**
          * Associate the given list of resource transformations to the building {@link JikkouApi}.
          *
-         * @param transformations   the list of transformations to associate.
-         * @return  this builder; never null
+         * @param transformations the list of transformations to associate.
+         * @return this builder; never null
          */
-        B withTransformations(@NotNull List<ResourceTransformation> transformations);
+        B withTransformations(@NotNull List<ResourceTransformation<HasMetadata>> transformations);
 
         /**
          * Associate the given list of resource controllers to the building {@link JikkouApi}.
          *
-         * @param controllers   the list of controllers to associate.
-         * @return  this builder; never null
+         * @param controllers the list of controllers to associate.
+         * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        B withControllers(final @NotNull List<ResourceController> controllers);
+        B withControllers(final @NotNull List<ExternalResourceController> controllers);
 
         /**
-         * Associate the given list of resource handlers to the building {@link JikkouApi}.
+         * Associate the given list of resource collectors to the building {@link JikkouApi}.
          *
-         * @param handlers   the list of handlers to associate.
-         * @return  this builder; never null
-         */
-        B withHandlers(final @NotNull List<ResourceListHandler> handlers);
-
-        /**
-         * Associate the given list of resource descriptors to the building {@link JikkouApi}.
-         *
-         * @param descriptors   the list of descriptors to associate.
-         * @return  this builder; never null
+         * @param collectors the list of collectors to associate.
+         * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        B withDescriptors(@NotNull List<ResourceDescriptor> descriptors);
+        B withCollectors(@NotNull List<ExternalResourceCollector> collectors);
 
         /**
          * Associate the given resource validation to the building {@link JikkouApi}.
          *
-         * @param validation   the resource validation; should not be null.
-         * @return  this builder; never null
+         * @param validation the resource validation; should not be null.
+         * @return this builder; never null
          */
-        default B withValidation(@NotNull ResourceValidation validation) {
-           return withValidations(List.of(validation));
-        }
+        B withValidation(@NotNull ResourceValidation<? extends HasMetadata> validation);
 
         /**
          * Associate the given resource transformation to the building {@link JikkouApi}.
          *
-         * @param transformation   the resource transformation; should not be null.
-         * @return  this builder; never null
+         * @param transformation the resource transformation; should not be null.
+         * @return this builder; never null
          */
-        default B withTransformation(@NotNull ResourceTransformation transformation) {
-            return withTransformations(List.of(transformation));
-        }
+        B withTransformation(@NotNull ResourceTransformation<? extends HasMetadata> transformation);
 
         /**
          * Associate the given resource controller to the building {@link JikkouApi}.
          *
-         * @param controller   the resource controller; should not be null.
-         * @return  this builder; never null
+         * @param controller the resource controller; should not be null.
+         * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        default B withController(final @NotNull ResourceController controller) {
+        default B withController(final @NotNull ExternalResourceController controller) {
             return withControllers(List.of(controller));
         }
 
         /**
          * Associate the given resource descriptor to the building {@link JikkouApi}.
          *
-         * @param descriptor   the resource descriptor; should not be null.
-         * @return  this builder; never null
+         * @param descriptor the resource descriptor; should not be null.
+         * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        default B withDescriptor(final @NotNull ResourceDescriptor descriptor) {
-            return withDescriptors(List.of(descriptor));
-        }
-
-        /**
-         * Associate the given resource handler to the building {@link JikkouApi}.
-         *
-         * @param handler   the resource handler; should not be null.
-         * @return  this builder; never null
-         */
-        default B withHandler(final @NotNull ResourceListHandler handler) {
-            return withHandlers(List.of(handler));
+        default B withCollector(final @NotNull ExternalResourceCollector descriptor) {
+            return withCollectors(List.of(descriptor));
         }
 
         /**
@@ -151,68 +133,82 @@ public interface JikkouApi extends AutoCloseable {
     }
 
     /**
-     * Associate a {@link ResourceListHandler} to this api. Handlers will be executed in order
-     * on the resources passed to the {@link #validate(ResourceList)}, and
-     * {@link #apply(ResourceList, ReconciliationMode, ReconciliationContext)} methods.
-     *
-     * @param handler   the resource handler to associate to this api.
-     * @return this api object so methods can be chained together; never null
-     */
-    JikkouApi addHandler(@NotNull ResourceListHandler handler);
-
-    /**
      * Associate a {@link ResourceValidation} to this api. Validations will be executed in order
-     * on the resources passed to the {@link #validate(ResourceList)}, and
-     * {@link #apply(ResourceList, ReconciliationMode, ReconciliationContext)} methods.
+     * on the resources passed to the {@link #validate(HasItems)}, and
+     * {@link #apply(HasItems, ReconciliationMode, ReconciliationContext)} methods.
      *
-     * @param validation   the resource validation to associate to this api.
+     * @param validation the resource validation to associate to this api.
      * @return this api object so methods can be chained together; never null
      */
-    JikkouApi addValidation(@NotNull ResourceValidation validation);
+    JikkouApi addValidation(@NotNull ResourceValidation<? extends HasMetadata> validation);
 
     /**
      * Associate a {@link ResourceTransformation} to this api. Transformation will be executed in order
-     * on the resources passed to the {@link #validate(ResourceList)}, and
-     * {@link #apply(ResourceList, ReconciliationMode, ReconciliationContext)} method.
+     * on the resources passed to the {@link #validate(HasItems)}, and
+     * {@link #apply(HasItems, ReconciliationMode, ReconciliationContext)} method.
      *
-     * @param transformation   the resource transformation to associate to this api.
+     * @param transformation the resource transformation to associate to this api.
      * @return this api object so methods can be chained together; never null
      */
-    JikkouApi addTransformation(@NotNull ResourceTransformation transformation);
+    JikkouApi addTransformation(@NotNull ResourceTransformation<? extends HasMetadata> transformation);
 
     /**
      * Execute the reconciliation for the given resources using
      *
      * @param resources the list of resource to be reconciled.
-     * @param mode the reconciliation mode.
+     * @param mode      the reconciliation mode.
      * @param context   the context to be used for conciliation.
-     *
      * @return the list of all changes applied on the target system.
      */
-    Collection<ChangeResult<?>> apply(@NotNull ResourceList resources,
-                                      @NotNull ReconciliationMode mode,
-                                      @NotNull ReconciliationContext context);
+    List<ChangeResult<Change>> apply(@NotNull HasItems resources,
+                                     @NotNull ReconciliationMode mode,
+                                     @NotNull ReconciliationContext context);
 
     /**
      * Execute validations on the given resources.
      *
      * @param resources the list of resource to create.
-     * @return the validated {@link ResourceList}.
-     * @throws JikkouApiException if no {@link ResourceDescriptor} can be found for the specified type,
+     * @return the validated {@link GenericResourceListObject}.
+     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    ResourceList validate(@NotNull ResourceList resources);
+    default GenericResourceListObject validate(@NotNull HasItems resources) {
+        return validate(resources, Collections.emptyList());
+    }
 
     /**
-     * Get the resource associated to the given type.
+     * Execute validations on the given resources.
+     *
+     * @param resources the list of resource to create.
+     * @return the validated {@link GenericResourceListObject}.
+     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    GenericResourceListObject validate(@NotNull HasItems resources, final @NotNull List<ResourceSelector> selectors);
+
+    /**
+     * Get the resources associated to the given type.
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceDescriptor} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default HasMetadata getResource(final @NotNull Class<? extends Resource> resourceClass) {
-        return getResource(resourceClass, ResourceFilter.DEFAULT, Configuration.empty());
+    default List<HasMetadata> getResources(final @NotNull Class<? extends HasMetadata> resourceClass) {
+        return getResources(resourceClass, Collections.emptyList(), Configuration.empty());
+    }
+
+    /**
+     * Get the resources associated to the given type.
+     *
+     * @param resourceClass the class of the resource to be described.
+     * @return the {@link HasMetadata}.
+     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    default List<HasMetadata> getResources(final @NotNull Class<? extends HasMetadata> resourceClass,
+                                           final @NotNull List<ResourceSelector> selectors) {
+        return getResources(resourceClass, selectors, Configuration.empty());
     }
 
     /**
@@ -220,40 +216,39 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceDescriptor} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default HasMetadata getResource(final @NotNull Class<? extends Resource> resourceClass,
-                                   final @NotNull ResourceFilter filter) {
-        return getResource(resourceClass, filter, Configuration.empty());
-    }
-
-    /**
-     * Get the resource associated to the given type.
-     *
-     * @param resourceClass the class of the resource to be described.
-     * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceDescriptor} can be found for the specified type,
-     *                            or more than one descriptor match the type.
-     */
-    default <T extends HasMetadata> T getResource(final @NotNull Class<? extends Resource> resourceClass,
-                                                  final @NotNull Configuration configuration) {
-        return getResource(resourceClass, ResourceFilter.DEFAULT, configuration);
+    default <T extends HasMetadata> List<T> getResources(final @NotNull Class<? extends HasMetadata> resourceClass,
+                                                         final @NotNull Configuration configuration) {
+        return getResources(resourceClass, Collections.emptyList(), configuration);
     }
 
 
     /**
      * Get the resource associated to the given type.
      *
-     * @param resourceClass the class of the resource to be described.
+     * @param type          the class of the resource to be described.
      * @param configuration the configuration to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceDescriptor} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    <T extends HasMetadata> T getResource(@NotNull Class<? extends Resource> resourceClass,
-                                          @NotNull ResourceFilter filter,
-                                          @NotNull Configuration configuration);
+    @SuppressWarnings("unchecked")
+    default <T extends HasMetadata> List<T> getResources(@NotNull Class<? extends HasMetadata> type,
+                                                         @NotNull List<ResourceSelector> selectors,
+                                                         @NotNull Configuration configuration) {
+        return (List<T>) getResources(ResourceType.create(type), selectors, configuration);
+    }
+
+    /**
+     * Get all the changes for the given resources.
+     *
+     * @param resources the list of resource to be reconciled.
+     * @return the {@link HasMetadata}.
+     */
+    List<ResourceListObject<HasMetadataChange<Change>>> getDiff(@NotNull final HasItems resources,
+                                                                @NotNull final List<ResourceSelector> selectors);
 
     /**
      * Get the resource associated to the given type.
@@ -261,9 +256,9 @@ public interface JikkouApi extends AutoCloseable {
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default HasMetadata getResource(final @NotNull ResourceType resourceType,
-                                    final @NotNull ResourceFilter resourceFilter) {
-        return getResource(resourceType, resourceFilter, Configuration.empty());
+    default List<HasMetadata> getResources(final @NotNull ResourceType resourceType,
+                                           final @NotNull List<ResourceSelector> selectors) {
+        return getResources(resourceType, selectors, Configuration.empty());
     }
 
     /**
@@ -274,9 +269,9 @@ public interface JikkouApi extends AutoCloseable {
      * @return the {@link HasMetadata}.
      */
     @SuppressWarnings("unchecked")
-    default <T extends HasMetadata> T getResource(final @NotNull ResourceType resourceType,
-                                    final @NotNull Configuration configuration) {
-        return (T) getResource(resourceType, ResourceFilter.DEFAULT, configuration);
+    default <T extends HasMetadata> List<T> getResources(final @NotNull ResourceType resourceType,
+                                                         final @NotNull Configuration configuration) {
+        return (List<T>) getResources(resourceType, Collections.emptyList(), configuration);
     }
 
     /**
@@ -286,14 +281,16 @@ public interface JikkouApi extends AutoCloseable {
      * @param configuration the option to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
      */
-    HasMetadata getResource(@NotNull ResourceType resourceType,
-                            @NotNull ResourceFilter resourceFilter,
-                            @NotNull Configuration configuration);
+    List<HasMetadata> getResources(@NotNull ResourceType resourceType,
+                                   @NotNull List<ResourceSelector> selectors,
+                                   @NotNull Configuration configuration);
 
     @SuppressWarnings("rawtypes")
     ApiBuilder toBuilder();
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     void close();
 }

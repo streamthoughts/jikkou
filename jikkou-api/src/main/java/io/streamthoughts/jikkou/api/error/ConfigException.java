@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.error;
 
-public class ConfigException extends JikkouException {
+public class ConfigException extends JikkouRuntimeException {
 
     public ConfigException() {
         super();

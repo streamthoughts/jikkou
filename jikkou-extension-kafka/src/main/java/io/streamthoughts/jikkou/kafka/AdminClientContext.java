@@ -20,7 +20,7 @@ package io.streamthoughts.jikkou.kafka;
 
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
 import io.streamthoughts.jikkou.kafka.control.KafkaFunction;
 import io.streamthoughts.jikkou.kafka.internals.KafkaBrokersReady;
@@ -48,7 +48,7 @@ public class AdminClientContext implements AutoCloseable {
     private static final int DEFAULT_MIN_AVAILABLE_BROKERS = 1;
     private static final long DEFAULT_TIMEOUT_MS = 60000L;
     private static final long DEFAULT_RETRY_BACKOFF_MS = 1000L;
-    public static final String ADMIN_CLIENT_CONFIG_NAME = "client";
+    public static final String ADMIN_CLIENT_CONFIG_NAME = "kafka.client";
 
     public static final ConfigProperty<Properties> ADMIN_CLIENT_CONFIG = ConfigProperty
             .ofMap(ADMIN_CLIENT_CONFIG_NAME)
@@ -211,7 +211,7 @@ public class AdminClientContext implements AutoCloseable {
             if (isWaitForKafkaBrokersEnabled) {
                 final boolean isReady = KafkaUtils.waitForKafkaBrokers(client, options);
                 if (!isReady) {
-                    throw new JikkouException(
+                    throw new JikkouRuntimeException(
                             "Timeout expired. The timeout period elapsed prior to " +
                             "the requested number of kafka brokers is available."
                     );

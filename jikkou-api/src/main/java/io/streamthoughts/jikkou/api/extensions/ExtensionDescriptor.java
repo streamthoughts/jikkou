@@ -18,19 +18,33 @@
  */
 package io.streamthoughts.jikkou.api.extensions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.jikkou.api.model.HasMetadataAcceptable;
+import io.streamthoughts.jikkou.api.model.ResourceType;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public record ExtensionDescriptor<T extends Extension>(
-        @JsonIgnore @NotNull Class<T> clazz,
-        @JsonProperty("class") @NotNull String classType,
-        @JsonProperty("aliases") @NotNull List<String> aliases,
-        @JsonProperty("type") @Nullable String type,
-        @JsonProperty("description") @Nullable String description
+        @NotNull Class<T> clazz,
+        @NotNull String classType,
+        @NotNull List<String> aliases
         ) implements Comparable<ExtensionDescriptor<T>> {
+
+    public String name() {
+        return Extension.getName(clazz);
+    }
+
+    public String type() {
+        return Extension.getType(clazz);
+    }
+
+    public String description() {
+        return Extension.getDescription(clazz);
+    }
+
+    public boolean isEnabled() {
+        return Extension.isEnabled(clazz);
+    }
 
     /**
      * {@inheritDoc}
@@ -38,5 +52,30 @@ public record ExtensionDescriptor<T extends Extension>(
     @Override
     public int compareTo(@NotNull ExtensionDescriptor<T> that) {
         return that.classType().compareTo(this.classType());
+    }
+
+    public String getSource() {
+        ClassLoader cl = getClass().getClassLoader();
+        if (cl instanceof ExtensionClassLoader o) {
+            return o.location();
+        }
+        return "<internal>";
+    }
+
+    public String getAliases() {
+        return String.join(", ", aliases());
+    }
+
+    public List<ResourceType> getSupportedResources() {
+        return HasMetadataAcceptable.getAcceptedResources(clazz)
+                .stream()
+                .toList();
+    }
+
+    public String getPrintableSupportedResources() {
+        return  getSupportedResources()
+                .stream()
+                .map(ResourceType::getKind)
+                .collect(Collectors.joining(", "));
     }
 }

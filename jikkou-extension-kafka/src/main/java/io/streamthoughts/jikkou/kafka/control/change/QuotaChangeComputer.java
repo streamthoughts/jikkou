@@ -18,125 +18,148 @@
  */
 package io.streamthoughts.jikkou.kafka.control.change;
 
+import static io.streamthoughts.jikkou.JikkouMetadataAnnotations.isAnnotatedWithDelete;
+import static io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter.toClientQuotaConfigs;
+import static java.util.stream.Collectors.toMap;
+
 import io.streamthoughts.jikkou.api.control.ChangeComputer;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChangeComputer;
-import io.streamthoughts.jikkou.api.control.ConfigEntryReconciliationConfig;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.kafka.adapters.KafkaQuotaLimitsAdapter;
-import io.streamthoughts.jikkou.kafka.model.QuotaType;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaQuotaObject;
-import io.streamthoughts.jikkou.kafka.models.V1QuotaEntityObject;
+import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaSpec;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class QuotaChangeComputer implements ChangeComputer<V1KafkaQuotaObject, ClientQuotaEntity, QuotaChange, KafkaQuotaReconciliationConfig> {
+public class QuotaChangeComputer implements ChangeComputer<V1KafkaClientQuota, QuotaChange> {
+
+    private boolean isLimitDeletionEnabled;
+
+    /**
+     * Creates a new {@link QuotaChangeComputer} instance.
+     */
+    public QuotaChangeComputer() {
+        this(true);
+    }
+
+    /**
+     * Creates a new {@link TopicChangeComputer} instance.
+     *
+     * @param isLimitDeletionEnabled {@code true} to delete orphaned limits.
+     */
+    public QuotaChangeComputer(boolean isLimitDeletionEnabled) {
+        this.isLimitDeletionEnabled = isLimitDeletionEnabled;
+    }
+
+    /**
+     * Set whether orphaned limits should be deleted or ignored.
+     *
+     * @param isLimitDeletionEnabled {@code true} to delete, otherwise {@code false}.
+     */
+    public void isLimitDeletionEnabled(boolean isLimitDeletionEnabled) {
+        this.isLimitDeletionEnabled = isLimitDeletionEnabled;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<QuotaChange> computeChanges(@NotNull final Iterable<V1KafkaQuotaObject> actualQuotasObjects,
-                                            @NotNull final Iterable<V1KafkaQuotaObject> expectedQuotasObjects,
-                                            @NotNull final KafkaQuotaReconciliationConfig configuration) {
+    public List<QuotaChange> computeChanges(@NotNull final Iterable<V1KafkaClientQuota> actualResources,
+                                            @NotNull final Iterable<V1KafkaClientQuota> expectedResources) {
 
-        final Map<ClientQuotaEntity, V1KafkaQuotaObject> actualQuotasMapByEntity = StreamSupport
-                .stream(actualQuotasObjects.spliterator(), false)
-                .collect(Collectors.toMap(it -> newClientQuotaEntity(it.getType(), it.getEntity()), o -> o));
 
-        final Map<ClientQuotaEntity, QuotaChange> changes = new HashMap<>();
+        final Map<ClientQuotaEntity, V1KafkaClientQuota> actualClientQuotasByEntity = StreamSupport
+                .stream(actualResources.spliterator(), false)
+                .collect(toMap(this::newClientQuotaEntity, it -> it));
 
-        for (final V1KafkaQuotaObject expectedQuota : expectedQuotasObjects) {
+        // For Each expected client-quota
+        final Map<ClientQuotaEntity, QuotaChange> results = new HashMap<>();
+        for (final V1KafkaClientQuota expectedClientQuota : expectedResources) {
 
-            final ClientQuotaEntity key = newClientQuotaEntity(expectedQuota.getType(), expectedQuota.getEntity());
+            final ClientQuotaEntity key = newClientQuotaEntity(expectedClientQuota);
 
-            final V1KafkaQuotaObject actualQuota = actualQuotasMapByEntity.get(key);
-            final QuotaChange change = actualQuota == null ?
-                    buildChangeForNewQuota(expectedQuota) :
-                    buildChangeForExistingQuota(actualQuota, expectedQuota, configuration);
+            // Check whether an existing client-quota is defined
+            final V1KafkaClientQuota actualClientQuota = actualClientQuotasByEntity.get(key);
 
-            changes.put(
-                    newClientQuotaEntity(change.getType(), change.getEntity()),
-                    change
-            );
+            final QuotaChange change;
+
+            if (isAnnotatedWithDelete(expectedClientQuota)) {
+                change = actualClientQuota != null ? buildChangesForOrphanQuotas(expectedClientQuota) : null;
+            } else if (actualClientQuota != null) {
+                change = buildChangeForExistingQuota(actualClientQuota, expectedClientQuota);
+            } else {
+                change = buildChangeForNewQuota(expectedClientQuota);
+            }
+
+            if (change != null) {
+                results.put(key, change);
+            }
         }
 
-        if (configuration.isDeleteQuotaOrphans()) {
-            changes.putAll(buildChangesForOrphanQuotas(actualQuotasMapByEntity.values(), changes.keySet()));
-        }
-
-        return new ArrayList<>(changes.values());
+        return new ArrayList<>(results.values());
     }
 
-    @NotNull
-    private static ClientQuotaEntity newClientQuotaEntity(final QuotaType type,
-                                                          final V1QuotaEntityObject entity) {
-        return new ClientQuotaEntity(type.toEntities(entity));
+    private ClientQuotaEntity newClientQuotaEntity(final V1KafkaClientQuota clientQuota) {
+        V1KafkaClientQuotaSpec spec = clientQuota.getSpec();
+        return new ClientQuotaEntity(spec.getType().toEntities(spec.getEntity()));
     }
 
-    public static QuotaChange buildChangeForNewQuota(@NotNull final V1KafkaQuotaObject quota) {
-        final List<ConfigEntryChange> configChanges = new KafkaQuotaLimitsAdapter(quota.getConfigs())
-                .toMapDouble()
+    private QuotaChange buildChangeForNewQuota(final V1KafkaClientQuota quota) {
+        V1KafkaClientQuotaSpec spec = quota.getSpec();
+        final List<ConfigEntryChange> configChanges = V1KafkaClientQuotaConfigsAdapter.toClientQuotaConfigs(spec.getConfigs())
                 .entrySet()
                 .stream().map(it -> new ConfigEntryChange(it.getKey(), ValueChange.withAfterValue(it.getValue())))
                 .collect(Collectors.toList());
-        return new QuotaChange(ChangeType.ADD, quota.getType(), quota.getEntity(), configChanges);
+        return new QuotaChange(ChangeType.ADD, spec.getType(), spec.getEntity(), configChanges);
     }
 
 
-    public static QuotaChange buildChangeForExistingQuota(@NotNull final V1KafkaQuotaObject actualState,
-                                                          @NotNull final V1KafkaQuotaObject expectedState,
-                                                          @NotNull final KafkaQuotaReconciliationConfig options) {
+    private QuotaChange buildChangeForExistingQuota(final V1KafkaClientQuota actualResource,
+                                                    final V1KafkaClientQuota expectedResource) {
 
-        final ConfigEntryReconciliationConfig configEntryReconciliationConfig = new ConfigEntryReconciliationConfig()
-                .withDeleteConfigOrphans(options.isDeleteConfigOrphans());
+        ConfigEntryChangeComputer configEntryChangeComputer = new ConfigEntryChangeComputer(isLimitDeletionEnabled);
 
-        List<ConfigEntryChange> configEntryChanges = new ConfigEntryChangeComputer().computeChanges(
-                Configs.of(new KafkaQuotaLimitsAdapter(actualState.getConfigs()).toMapDouble()),
-                Configs.of(new KafkaQuotaLimitsAdapter(expectedState.getConfigs()).toMapDouble()),
-                configEntryReconciliationConfig
+        List<ConfigEntryChange> configEntryChanges = configEntryChangeComputer.computeChanges(
+                Configs.of(V1KafkaClientQuotaConfigsAdapter.toClientQuotaConfigs(actualResource.getSpec().getConfigs())),
+                Configs.of(V1KafkaClientQuotaConfigsAdapter.toClientQuotaConfigs(expectedResource.getSpec().getConfigs()))
         );
 
         boolean hasChanged = configEntryChanges.stream()
-                .anyMatch(configEntryChange -> configEntryChange.getChange() != ChangeType.NONE);
+                .anyMatch(configEntryChange -> configEntryChange.getChangeType() != ChangeType.NONE);
 
         var ot = hasChanged ? ChangeType.UPDATE : ChangeType.NONE;
 
-        return new QuotaChange(ot, actualState.getType(), actualState.getEntity(), configEntryChanges);
+        return new QuotaChange(
+                ot,
+                actualResource.getSpec().getType(),
+                actualResource.getSpec().getEntity(),
+                configEntryChanges
+        );
     }
 
-    private static @NotNull Map<ClientQuotaEntity, QuotaChange> buildChangesForOrphanQuotas(
-            @NotNull final Collection<V1KafkaQuotaObject> quotas,
-            @NotNull final Set<ClientQuotaEntity> changes) {
-        return quotas
+    private static QuotaChange buildChangesForOrphanQuotas(V1KafkaClientQuota resource) {
+        V1KafkaClientQuotaSpec spec = resource.getSpec();
+        Map<String, Double> clientQuotaConfigs = toClientQuotaConfigs(spec.getConfigs());
+        final List<ConfigEntryChange> configChanges = clientQuotaConfigs
+                .entrySet()
                 .stream()
-                .filter(it -> !changes.contains(newClientQuotaEntity(it.getType(), it.getEntity())))
-                .map(quota -> {
-                    var adapter = new KafkaQuotaLimitsAdapter(quota.getConfigs());
-                    final List<ConfigEntryChange> configChanges = adapter
-                            .toMapDouble()
-                            .entrySet()
-                            .stream().map(it -> new ConfigEntryChange(it.getKey(), ValueChange.withBeforeValue(it.getValue())))
-                            .collect(Collectors.toList());
+                .map(it -> new ConfigEntryChange(it.getKey(), ValueChange.withBeforeValue(it.getValue())))
+                .collect(Collectors.toList());
 
-                    return new QuotaChange(
-                            ChangeType.DELETE,
-                            quota.getType(),
-                            quota.getEntity(),
-                            configChanges
-
-                    );
-                })
-                .collect(Collectors.toMap(it -> newClientQuotaEntity(it.getType(), it.getEntity()), it -> it));
+        return new QuotaChange(
+                ChangeType.DELETE,
+                spec.getType(),
+                spec.getEntity(),
+                configChanges
+        );
     }
 }

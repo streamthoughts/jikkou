@@ -19,33 +19,19 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.client.printer.Printers;
-import java.util.regex.Pattern;
 import picocli.CommandLine.Option;
 
 public class ExecOptionsMixin {
 
     @Option(names = { "--output", "-o" },
             defaultValue = "TEXT",
-            description = "prints the output in the specified format. Allowed values: text, compact, json, yaml (default text)"
+            description = "Prints the output in the specified format. Allowed values: text, compact, json, yaml (default text)."
     )
     public Printers format;
-
-    @Option(names = "--yes",
-            defaultValue = "false",
-            description = "Assume yes; assume that the answer to any question which would be asked is yes.",
-            arity = "0..1")
-    public Boolean yes;
 
     @Option(names = "--dry-run",
             description = "Execute command in Dry-Run mode."
     )
     public boolean dryRun;
 
-    @Option(names = "--exclude",
-            description = "The regex patterns to use for excluding resources.")
-    public Pattern[] exclude;
-
-    @Option(names = "--include",
-            description = "The regex patterns to use for including resources.")
-    public Pattern[] include;
 }

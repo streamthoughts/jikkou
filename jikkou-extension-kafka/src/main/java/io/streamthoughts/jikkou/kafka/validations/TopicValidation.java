@@ -18,24 +18,19 @@
  */
 package io.streamthoughts.jikkou.kafka.validations;
 
-import io.streamthoughts.jikkou.api.AcceptResource;
+import io.streamthoughts.jikkou.api.annotations.SupportedResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.ResourceValidation;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.vavr.control.Option;
-import java.util.ArrayList;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Validation for {@link V1KafkaTopicList}.
+ * Validation for {@link V1KafkaTopic}.
  */
-@AcceptResource(type = V1KafkaTopicList.class)
-public abstract class TopicValidation implements ResourceValidation {
+@SupportedResource(type = V1KafkaTopic.class)
+public abstract class TopicValidation implements ResourceValidation<V1KafkaTopic> {
 
     private Configuration config;
 
@@ -45,33 +40,7 @@ public abstract class TopicValidation implements ResourceValidation {
         this.config = config;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void validate(@NotNull final HasMetadata resource) throws ValidationException {
-        V1KafkaTopicList topicList = (V1KafkaTopicList) resource;
-        List<V1KafkaTopicObject> topics = topicList.getSpec().getTopics();
-        if (topics == null || topics.isEmpty()) return;
-
-        List<ValidationException> exceptions = new ArrayList<>(topics.size());
-        for (V1KafkaTopicObject topic : topics) {
-            try {
-                validateTopic(topic);
-            } catch (ValidationException e) {
-                if (e.getErrors() != null && !e.getErrors().isEmpty()) {
-                    exceptions.addAll(e.getErrors());
-                } else {
-                    exceptions.add(e);
-                }
-            }
-        }
-        if (!exceptions.isEmpty()) {
-            throw new ValidationException(exceptions);
-        }
-    }
-
     public Configuration config() {
         return Option.of(config).getOrElseThrow(() -> new IllegalStateException("not configured."));
     }
-
-    public abstract void validateTopic(@NotNull final V1KafkaTopicObject topic) throws ValidationException;
 }

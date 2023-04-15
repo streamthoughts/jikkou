@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.error;
 
-public class InvalidResourceFileException extends JikkouException {
+public class InvalidResourceFileException extends JikkouRuntimeException {
 
     public InvalidResourceFileException() {
         super();

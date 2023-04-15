@@ -23,7 +23,7 @@ import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.RenderResult;
 import com.hubspot.jinjava.interpret.TemplateError;
 import com.hubspot.jinjava.mode.ExecutionMode;
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -79,7 +79,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
         List<TemplateError> errors = result.getErrors();
         if (!errors.isEmpty()) {
             TemplateError error = errors.get(0);
-            throw new JikkouException(
+            throw new JikkouRuntimeException(
                     String.format(
                             "%s: line %d, %s",
                             formatErrorReason(error.getReason().name()),

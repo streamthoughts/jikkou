@@ -85,6 +85,10 @@ public final class ObjectMeta implements Serializable, Nameable {
         return annotations;
     }
 
+    public Optional<Object> getAnnotation(final String key) {
+        return Optional.ofNullable(annotations.get(key));
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -104,5 +108,14 @@ public final class ObjectMeta implements Serializable, Nameable {
     @Override
     public int hashCode() {
         return Objects.hash(name, labels, annotations);
+    }
+
+    @Override
+    public String toString() {
+        return "ObjectMeta{" +
+                "name=" + name +
+                ", labels=" + labels +
+                ", annotations=" + annotations +
+                '}';
     }
 }

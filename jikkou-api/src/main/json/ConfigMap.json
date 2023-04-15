@@ -9,7 +9,8 @@
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,
-    "all-args-constructor": false
+    "all-args-constructor": false,
+    "isTransient": true
   },
   "required": [
     "apiVersion",
@@ -19,7 +20,7 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default":"kafka.jikkou.io/v1beta2"
+      "default":"core.jikkou.io/v1beta2"
     },
     "kind": {
       "type": "string",

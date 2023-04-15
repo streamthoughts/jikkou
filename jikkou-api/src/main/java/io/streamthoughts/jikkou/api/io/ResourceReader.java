@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.io;
 
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
@@ -34,7 +34,7 @@ public interface ResourceReader extends AutoCloseable {
     /**
      * Reads all the resources.
      */
-    List<HasMetadata> readAllResources(@NotNull ResourceReaderOptions options) throws JikkouException;
+    List<HasMetadata> readAllResources(@NotNull ResourceReaderOptions options) throws JikkouRuntimeException;
 
     /**
      * {@inheritDoc}

@@ -29,8 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * Utility class to manipulate {@link Properties}.
  */
-public class PropertiesUtils {
+public final class PropertiesUtils {
 
     @NotNull
     public static Properties loadPropertiesConfig(@Nullable final File file) {

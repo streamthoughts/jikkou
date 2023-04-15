@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -29,6 +29,16 @@ import java.util.LinkedList;
  */
 public interface ApiConfigurator {
 
+    /**
+     * Configures the {@link JikkouApi.ApiBuilder}.
+     *
+     * @param builder       the {@link JikkouApi.ApiBuilder}.
+     * @param configuration the configuration.
+     *
+     * @return      the {@link JikkouApi.ApiBuilder}.
+     * @param <A>   type of the {@link JikkouApi}.
+     * @param <B>   type of the {@link JikkouApi.ApiBuilder}.
+     */
     <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(
             B builder,
             Configuration configuration
@@ -96,7 +106,9 @@ public interface ApiConfigurator {
             return new List(all);
         }
 
-        /** {@inheritDoc} **/
+        /**
+         * {@inheritDoc}
+         **/
         @Override
         public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(final B builder,
                                                                                        final Configuration configuration) {

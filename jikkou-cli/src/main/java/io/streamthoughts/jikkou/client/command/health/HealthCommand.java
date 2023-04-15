@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,18 +18,6 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.health.Health;
-import io.streamthoughts.jikkou.api.health.HealthAggregator;
-import io.streamthoughts.jikkou.api.health.HealthIndicator;
-import io.streamthoughts.jikkou.api.health.Status;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.client.JikkouContext;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "health",
@@ -39,33 +27,12 @@ import picocli.CommandLine.Command;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Print health indicators about the target environment.",
-        description = "This command can be used to get information about the health of the target environment .",
-        mixinStandardHelpOptions = true)
-public class HealthCommand implements Callable<Integer> {
-
-    @CommandLine.Option(names = "--timeout-ms",
-            defaultValue = "2000",
-            description = "Timeout in milliseconds for retrieving health indicators (default: 2000)")
-    public long timeoutMs;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer call() throws IOException {
-        ExtensionFactory factory = JikkouContext.extensionFactory();
-
-        Collection<Health> healths = factory
-                .getAllExtensions(HealthIndicator.class, JikkouContext.jikkouConfig())
-                .stream().map(i -> i.getHealth(Duration.ofMillis(timeoutMs)))
-                .toList();
-
-        Health aggregate = new HealthAggregator().aggregate(healths);
-        Jackson.JSON_OBJECT_MAPPER.writeValue(System.out, aggregate);
-
-        return aggregate.getStatus().equals(Status.UP) ?
-                CommandLine.ExitCode.OK :
-                CommandLine.ExitCode.SOFTWARE;
-    }
+        header = "Print or describe health indicators.",
+        description = "This command can be used to describe all resources of a given kind",
+        mixinStandardHelpOptions = true,
+        subcommands = {
+                GetHealthCommand.class,
+                GetHealthIndicatorsCommand.class
+        })
+public class HealthCommand {
 }

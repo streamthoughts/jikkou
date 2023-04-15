@@ -50,42 +50,33 @@ Configuration files are written in [YAML](https://yaml.org/).
 ```bash
 $ jikkou help
 ```
+Usage:
+jikkou [-hV] [COMMAND]
 
-```
-jikkou [-hV] [--bootstrap-servers=<bootstrapServer>] [--command-config=<clientCommandConfig>] [--config-file=<configFile>]
-       [--command-property=<String=String>]... [COMMAND]
 
-Description:
+Jikkou streamlines the management of the configurations that live on your data streams platform.
 
-A CLI to help you automate the management of the configurations that live on your Apache Kafka clusters.
+Find more information at: https://streamthoughts.github.io/jikkou/.
 
 Options:
 
-      --bootstrap-servers=<bootstrapServer>
-                  A list of host/port pairs to use for establishing the initial connection to the Kafka cluster.
-      --command-config=<clientCommandConfig>
-                  A property file containing configs to be passed to Admin Client (warning: this option is only relevant if your are using the AdminClient
-                    based KafkaResourceManager).
-      --command-property=<String=String>
-                  A KEY=VALUE property to be passed to the Admin Client (warning: this option is only relevant if your are using the AdminClient based
-                    KafkaResourceManager).
-      --config-file=<configFile>
-                  The configuration file.
-  -h, --help      Show this help message and exit.
-  -V, --version   Print version information and exit.
+-h, --help      Show this help message and exit.
+-V, --version   Print version information and exit.
 
 Commands:
 
-  validate    Validate your specification file.
-  apply       Apply configurations to resources by files
-  topics      Apply the Topic changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  acls        Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  brokers     Apply the broker configuration changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  quotas      Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
-  extensions  List all extensions available.
-  config      Sets or retrieves the configuration of this client.
-  health      Print health indicators about the target environment.
-  help        Displays help information about the specified command
+create      Create resources from the resource definition files (only non-existing resources will be created).
+delete      Delete resources that are no longer described by the resource definition files.
+update      Create or update resources from the resource definition files
+apply       Update the resources as described by the resource definition files.
+resources   List supported resources
+extensions  List or describe the extensions of Jikkou
+config      Sets or retrieves the configuration of this client
+diff        Display all resource changes.
+validate    Validate resource definition files.
+health      Print or describe health indicators.
+help        Display help information about the specified command.
+get         List and describe all resources of a specific kind.
 ```
 
 ## Configuration
@@ -118,7 +109,7 @@ jikkou {
   # Set what resource descriptors are active (i.e., the fully class names)
   descriptors {
     active: [
-      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaBrokerDescriptor
+      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaBrokerCollector
     ]
   }
 

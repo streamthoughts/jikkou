@@ -21,20 +21,39 @@ package io.streamthoughts.jikkou.kafka.internals;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
-public class KafkaTopics {
+public final class KafkaTopics {
 
-    public static final String KAFKA_INTERNAL_TOPICS_PREFIX = "__";
+    public static final Integer NO_NUM_PARTITIONS = -1;
+    public static final Short NO_REPLICATION_FACTOR = -1;
 
     public static final Set<String> INTERNAL_TOPICS = Set.of(
-            "__consumer_offsets",
             "_schemas",
+            "__consumer_offsets",
             "__transaction_state",
             "connect-offsets",
             "connect-status",
             "connect-configs"
     );
 
-    public static boolean isInternalTopics(@NotNull final String topic) {
-        return INTERNAL_TOPICS.contains(topic) || topic.startsWith(KAFKA_INTERNAL_TOPICS_PREFIX);
+    /** Check topic is kafka internal topic. */
+    public static boolean isInternalTopic(@NotNull final String topic) {
+        return isMM2InternalTopic(topic) || isDefaultKafkaInternalTopic(topic) || isDefaultConnectTopic(topic);
     }
+
+    /** Check topic is default kafka internal topic. */
+    private static boolean isDefaultKafkaInternalTopic(String topic) {
+        return topic.startsWith("__") || topic.startsWith(".") || INTERNAL_TOPICS.contains(topic);
+    }
+
+    /** Check topic is default connect internal topic. */
+    private static boolean isDefaultConnectTopic(String topic) {
+        return topic.endsWith("-internal") ||  topic.endsWith(".internal");
+    }
+
+    /** Check topic is one of MM2 internal topic. */
+    private static boolean isMM2InternalTopic(String topic) {
+        return topic.endsWith(".internal");
+    }
+
+    private KafkaTopics() {}
 }

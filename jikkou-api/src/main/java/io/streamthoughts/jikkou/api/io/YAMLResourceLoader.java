@@ -21,8 +21,8 @@ package io.streamthoughts.jikkou.api.io;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
+import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.NamedValue;
-import io.streamthoughts.jikkou.api.model.ResourceList;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public final class YAMLResourceLoader {
     }
 
     @NotNull
-    public ResourceList load(final @NotNull ResourceLoaderInputs inputs) {
+    public HasItems load(final @NotNull ResourceLoaderInputs inputs) {
         ResourceReaderFactory factory = new ResourceReaderFactory()
                 .setTemplateEnable(true)
                 .setTemplateRenderer(renderer)

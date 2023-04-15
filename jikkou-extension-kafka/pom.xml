@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>jikkou-model-generator</artifactId>
+            <artifactId>jikkou-resource-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -52,6 +52,10 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -125,7 +129,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>io.streamthoughts</groupId>
-                        <artifactId>jikkou-model-generator</artifactId>
+                        <artifactId>jikkou-resource-generator</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>

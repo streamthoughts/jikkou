@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -58,7 +58,9 @@ public abstract class BaseApiConfigurator implements ApiConfigurator {
 
     /** {@inheritDoc} **/
     @Override
-    public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder, Configuration configuration) {
+    public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(
+            @NotNull final B builder,
+            @NotNull final Configuration configuration) {
         this.configuration = configuration;
         return configure(builder);
     }

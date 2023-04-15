@@ -20,7 +20,7 @@ package io.streamthoughts.jikkou.api.config;
 
 import io.streamthoughts.jikkou.api.config.internals.TypeConverter;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
-import io.streamthoughts.jikkou.common.utils.ClassUtils;
+import io.streamthoughts.jikkou.common.utils.Classes;
 import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
 import java.util.Collections;
 import java.util.HashMap;
@@ -570,7 +570,7 @@ public interface Configuration {
                                             @Nullable final Supplier<List<Class<T>>> defaultValueSupplier) {
         Optional<List<String>> stringList = findStringList(key);
         return stringList.map(strings -> strings.stream()
-                .map(it -> (Class<T>) ClassUtils.forName(it))
+                .map(it -> (Class<T>) Classes.forName(it))
                 .toList())
                 .orElse(Optional.ofNullable(defaultValueSupplier).map(Supplier::get).orElse(null));
     }

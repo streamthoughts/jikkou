@@ -22,7 +22,14 @@ import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
 import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
 import static io.streamthoughts.jikkou.api.control.ChangeType.NONE;
 
-import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
+import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.kafka.control.handlers.acls.KafkaAclBindingBuilder;
+import io.streamthoughts.jikkou.kafka.control.handlers.acls.builder.LiteralKafkaAclBindingBuilder;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorizationSpec;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaResourceMatcher;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,91 +40,99 @@ import org.apache.kafka.common.resource.ResourceType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AclChangeComputerTest {
+class AclChangeComputerTest {
 
-    public static final KafkaAclReconciliationConfig DEFAULT_ACL_CHANGE_OPTIONS = new KafkaAclReconciliationConfig();
+    public static final String TEST_PRINCIPAL = "User:test";
+    private final KafkaAclBindingBuilder kafkaAclRulesBuilder = new LiteralKafkaAclBindingBuilder();
+    private final AclChangeComputer changeComputer = new AclChangeComputer(kafkaAclRulesBuilder);
 
-    private static AccessControlPolicy makeAclPolicy(final String topicName) {
-        return AccessControlPolicy.builder()
-                .withPrincipal("User:test")
-                .withPatternType(PatternType.LITERAL)
-                .withOperation(AclOperation.ALL)
-                .withPermission(AclPermissionType.ALLOW)
-                .withResourcePattern(topicName)
-                .withResourceType(ResourceType.TOPIC)
-                .withHost("*")
+
+    private static V1KafkaPrincipalAuthorization newKafkaPrincipalAuthorization(boolean delete) {
+        return V1KafkaPrincipalAuthorization
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_PRINCIPAL)
+                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, delete)
+                        .build()
+                )
+                .withSpec(V1KafkaPrincipalAuthorizationSpec
+                        .builder()
+                        .withAcl(V1KafkaPrincipalAcl
+                                .builder()
+                                .withType(AclPermissionType.ALLOW)
+                                .withOperation(AclOperation.ALL)
+                                .withResource(V1KafkaResourceMatcher
+                                        .builder()
+                                        .withPatternType(PatternType.LITERAL)
+                                        .withType(ResourceType.TOPIC)
+                                        .withPattern("topic-test")
+                                        .build()
+                                )
+                                .withHost("*")
+                                .build()
+                        )
+                        .build()
+                )
                 .build();
     }
 
     @Test
-    public void should_return_add_changes_when_acl_not_exist() {
+    void shouldReturnAddChangesForNewAuthorization() {
         // Given
-        AccessControlPolicy policy = makeAclPolicy("???");
+        var authorization = newKafkaPrincipalAuthorization(false);
 
-        List<AccessControlPolicy> actualState = Collections.emptyList();
-        List<AccessControlPolicy> expectedState  = List.of(policy);
+        List<V1KafkaPrincipalAuthorization> actualState = Collections.emptyList();
+
+        List<V1KafkaPrincipalAuthorization> expectedState = List.of(authorization);
 
         // When
-        var changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS)
+        var changes = changeComputer
+                .computeChanges(actualState, expectedState)
                 .stream()
-                .collect(Collectors.toMap(AclChange::getKey, it -> it));
+                .collect(Collectors.toMap(AclChange::getAclBindings, it -> it));
 
         // Then
-        AclChange change = changes.get(policy);
-        Assertions.assertEquals(ADD, change.getChange());
+        AclChange change = changes.entrySet().iterator().next().getValue();
+        Assertions.assertEquals(ADD, change.getChangeType());
     }
 
     @Test
-    public void should_return_delete_changes_given_delete_orphans_options_true() {
+    void shouldReturnDeleteChangesForDeleteAuthorization() {
         // Given
-        AccessControlPolicy actual = makeAclPolicy("???");
+        V1KafkaPrincipalAuthorization actual = newKafkaPrincipalAuthorization(false);
+        V1KafkaPrincipalAuthorization expect = newKafkaPrincipalAuthorization(true);
 
-        List<AccessControlPolicy> actualState = List.of(actual);
-        List<AccessControlPolicy> expectedState  = List.of();
+        List<V1KafkaPrincipalAuthorization> actualState = List.of(actual);
+        List<V1KafkaPrincipalAuthorization> expectedState = List.of(expect);
 
         // When
-        var changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS.withDeleteOrphans(true))
+        var changes = changeComputer
+                .computeChanges(actualState, expectedState)
                 .stream()
-                .collect(Collectors.toMap(AclChange::getKey, it -> it));
+                .collect(Collectors.toMap(AclChange::getAclBindings, it -> it));
 
         // Then
-        Assertions.assertEquals(DELETE, changes.get(actual).getChange());
+        AclChange change = changes.entrySet().iterator().next().getValue();
+        Assertions.assertEquals(DELETE, change.getChangeType());
     }
 
     @Test
-    public void should_not_return_delete_changes_given_delete_orphans_options_false() {
+    void shouldReturnNoneChangeForExistingAuthorization() {
         // Given
-        AccessControlPolicy actual = makeAclPolicy("???");
+        V1KafkaPrincipalAuthorization resource = newKafkaPrincipalAuthorization(false);
 
-        List<AccessControlPolicy> actualState = List.of(actual);
-        List<AccessControlPolicy> expectedState  = List.of();
+        List<V1KafkaPrincipalAuthorization> actual = List.of(resource);
+        List<V1KafkaPrincipalAuthorization> expect = List.of(resource);
 
         // When
-        var changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS.withDeleteOrphans(false))
+        var changes = changeComputer
+                .computeChanges(actual, expect)
                 .stream()
-                .collect(Collectors.toMap(AclChange::getKey, it -> it));
+                .collect(Collectors.toMap(AclChange::getAclBindings, it -> it));
 
         // Then
-        Assertions.assertTrue(changes.isEmpty());
-    }
-
-    @Test
-    public void should_return_non_changes_given_identical_acl() {
-        // Given
-        List<AccessControlPolicy> actualState = List.of(makeAclPolicy("???"));
-        List<AccessControlPolicy> expectedState  = List.of(makeAclPolicy("???"));
-
-        // When
-        var changes = new AclChangeComputer()
-                .computeChanges(actualState, expectedState, DEFAULT_ACL_CHANGE_OPTIONS)
-                .stream()
-                .collect(Collectors.toMap(AclChange::getKey, it -> it));
-
-        // Then
-        AclChange change = changes.get(makeAclPolicy("???"));
-        Assertions.assertEquals(NONE, change.getChange());
+        AclChange change = changes.entrySet().iterator().next().getValue();
+        Assertions.assertEquals(NONE, change.getChangeType());
     }
 }

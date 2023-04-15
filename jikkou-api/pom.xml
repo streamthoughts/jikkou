@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>jikkou-model-generator</artifactId>
+            <artifactId>jikkou-resource-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -108,6 +108,10 @@
             <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+        </dependency>
         <!-- END dependencies for test -->
     </dependencies>
 
@@ -138,7 +142,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>io.streamthoughts</groupId>
-                        <artifactId>jikkou-model-generator</artifactId>
+                        <artifactId>jikkou-resource-generator</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>

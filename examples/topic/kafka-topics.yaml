@@ -1,0 +1,26 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: KafkaTopic
+metadata:
+  name: 'my-topic-p3-r1'
+  labels: 
+    environment: example
+spec:
+  partitions: 3
+  replicas: 1
+  configs:
+    min.insync.replicas: 1
+    cleanup.policy: 'delete'
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: KafkaTopic
+metadata:
+  name: 'my-topic-p4-r1'
+  labels:
+    environment: example
+spec:
+  partitions: 4
+  replicas: 1
+  configs:
+    min.insync.replicas: 1
+    cleanup.policy: 'delete'

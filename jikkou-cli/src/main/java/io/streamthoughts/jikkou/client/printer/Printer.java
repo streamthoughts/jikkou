@@ -18,8 +18,9 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import java.util.Collection;
+import java.util.List;
 
 public interface Printer {
     /**
@@ -30,9 +31,9 @@ public interface Printer {
      * @param executionTimeMs the execution time in milliseconds.
      * @return the exit code.
      */
-    int print(Collection<ChangeResult<?>> results, boolean dryRun, long executionTimeMs);
+    int print(List<ChangeResult<Change>> results, boolean dryRun, long executionTimeMs);
 
-    static int getNumberOfFailedChange(final Collection<ChangeResult<?>> results) {
+    static int getNumberOfFailedChange(final List<ChangeResult<Change>> results) {
         return (int) results.stream()
                 .filter(ChangeResult::isFailed)
                 .count();

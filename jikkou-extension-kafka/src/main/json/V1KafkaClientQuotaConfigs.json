@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "description": "Client quota configuration",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "producerByteRate": {
+      "type": "object",
+      "existingJavaType": "java.util.OptionalDouble",
+      "description": "The quota in bytes for restricting data production."
+    },
+    "consumerByteRate": {
+      "type": "object",
+      "existingJavaType": "java.util.OptionalDouble",
+      "description": "The quota in bytes for restricting data consumption."
+    },
+    "requestPercentage": {
+      "type": "object",
+      "existingJavaType": "java.util.OptionalDouble",
+      "description": "The quota in percentage (%) of total requests."
+    }
+  }
+}

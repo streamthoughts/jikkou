@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 class KafkaBrokerHealthIndicatorTest {
 
     @Test
-    void should_throw_exception_if_not_configured() {
+    void shouldThrowExceptionWhenNotConfigured() {
         Assertions.assertThrows(
                 IllegalStateException.class,
                 () -> new KafkaBrokerHealthIndicator().getHealth(Duration.ZERO)

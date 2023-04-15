@@ -18,42 +18,58 @@
  */
 package io.streamthoughts.jikkou.kafka.validations;
 
-import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TopicMinNumPartitionsValidationTest {
+class TopicMinNumPartitionsValidationTest {
 
     TopicMinNumPartitionsValidation validation;
 
     @BeforeEach
-    public void before() {
+    void before() {
         validation = new TopicMinNumPartitionsValidation(1);
     }
 
     @Test
-    public void should_not_throw_exception_given_topic_with_no_num_partition() {
+    public void shouldNotThrowException_not_throw_exception_given_topic_with_no_num_partition() {
         Assertions.assertDoesNotThrow(() -> {
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("test")
-                    .withPartitions(KafkaConstants.NO_NUM_PARTITIONS)
-                    .withReplicationFactor((short) 1)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
+                            .withReplicas((short) 1)
+                            .build()
+                    )
                     .build();
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 
     @Test
-    public void should_not_throw_exception_given_topic_valid_min_num_partition() {
+    void should_not_throw_exception_given_topic_valid_min_num_partition() {
         Assertions.assertDoesNotThrow(() -> {
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("test")
-                    .withPartitions(1)
-                    .withReplicationFactor((short) 1)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(1)
+                            .withReplicas((short) 1)
+                            .build()
+                    )
                     .build();
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 }

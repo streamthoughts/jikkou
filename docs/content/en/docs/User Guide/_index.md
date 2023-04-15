@@ -3,7 +3,7 @@ categories: []
 tags: ["how-to","docs"] 
 title: "User Guide"
 linkTitle: "User Guide"
-weight: 2
+weight: 3
 description: >
   Learn how to use Jikkou for managing resource entities on you Apache Kafka cluster.
 ---

@@ -23,7 +23,7 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigMergeable;
 import com.typesafe.config.ConfigParseOptions;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.common.utils.ClassUtils;
+import io.streamthoughts.jikkou.common.utils.Classes;
 import io.vavr.control.Option;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -285,7 +285,7 @@ public final class JikkouConfig implements Configuration {
 
     @SuppressWarnings("unchecked")
     public <T> Class<T> getClass(@NotNull final String path) {
-        return (Class<T>) ClassUtils.forName(config.getString(path));
+        return (Class<T>) Classes.forName(config.getString(path));
     }
 
 

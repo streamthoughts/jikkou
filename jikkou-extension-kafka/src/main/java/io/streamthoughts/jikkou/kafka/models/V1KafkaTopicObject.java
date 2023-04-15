@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasConfigs;
 import io.streamthoughts.jikkou.api.model.Nameable;
+import io.streamthoughts.jikkou.api.model.annotations.Description;
 import java.beans.ConstructorProperties;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -43,6 +44,7 @@ import lombok.With;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
+@Description("")
 @JsonPropertyOrder({
     "name",
     "partitions",

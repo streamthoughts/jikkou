@@ -18,50 +18,87 @@
  */
 package io.streamthoughts.jikkou.kafka.transformations;
 
+import io.streamthoughts.jikkou.api.annotations.SupportedResource;
 import io.streamthoughts.jikkou.api.error.InvalidResourceException;
-import io.streamthoughts.jikkou.api.extensions.annotations.EnableAutoConfigure;
-import io.streamthoughts.jikkou.api.model.ConfigMapList;
 import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.ResourceList;
+import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.models.ConfigMap;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.models.ConfigMapList;
+import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.HashMap;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Transformation to apply all config-maps to topic objects.
  */
-@EnableAutoConfigure
-public class TopicConfigMapsTransformation extends TopicTransformation {
+@SupportedResource(type = V1KafkaTopic.class)
+public class TopicConfigMapsTransformation implements ResourceTransformation<V1KafkaTopic> {
 
-    /** {@inheritDoc */
+    private static final Logger LOG = LoggerFactory.getLogger(TopicConfigMapsTransformation.class);
+
+    /**
+     * {@inheritDoc
+     */
     @Override
-    public @NotNull V1KafkaTopicObject transformTopic(@NotNull V1KafkaTopicObject topic,
-                                                      @NotNull ResourceList list) {
+    public @NotNull Optional<V1KafkaTopic> transform(@NotNull V1KafkaTopic toTransform,
+                                                     @NotNull HasItems list) {
 
-        var configMapRefs = topic.getConfigMapRefs();
+        var configMapRefs = toTransform.getSpec().getConfigMapRefs();
 
         if (configMapRefs == null || configMapRefs.isEmpty()) {
-            return topic;
+            return Optional.of(toTransform);
         }
 
-        var configMapList = new ConfigMapList(list.getAllResourcesForClass(ConfigMap.class));
+        ConfigMapList configMapList = ConfigMapList.builder()
+                .withItems(list.getAllByClass(ConfigMap.class))
+                .build();
 
-        var newConfigs = new HashMap<String, Object>();
+        var configsFromConfigMaps = new HashMap<String, Object>();
 
         for (String configMapRef : configMapRefs) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(
+                        "Executing '{}' on topic '{}' for configMap '{}'",
+                        this.getClass(),
+                        toTransform.getMetadata().getName(),
+                        configMapRef
+                );
+            }
             ConfigMap configMap = configMapList.findByName(configMapRef)
-                    .orElseThrow(() -> new InvalidResourceException(
-                            "Unknown ConfigMap for name '" + configMapRef + "'"
+                    .orElseThrow(() -> new InvalidResourceException(String.format(
+                            "Failed to process resource '%s/%s' with 'metadata.name: %s'. Cannot find ConfigMap for '%s'.",
+                            toTransform.getApiVersion(),
+                            toTransform.getKind(),
+                            toTransform.getMetadata().getName(),
+                            configMapRef)
                     ));
             Optional.ofNullable(configMap.getData())
-                    .ifPresent(config -> newConfigs.putAll(config.toMap()));
+                    .ifPresent(config -> configsFromConfigMaps.putAll(config.toMap()));
         }
 
-        Optional.ofNullable(topic.getConfigs())
-                .ifPresent(config -> newConfigs.putAll(config.toMap()));
+        var allConfigs = Optional.
+                ofNullable(toTransform.getSpec().getConfigs())
+                .orElse(Configs.empty());
 
-        return topic.withConfigs(Configs.of(newConfigs));
+        allConfigs.addAll(configsFromConfigMaps);
+
+        V1KafkaTopicSpec newSpec = toTransform
+                .getSpec()
+                .toBuilder()
+                .withConfigs(allConfigs)
+                .build();
+
+        newSpec = newSpec.withConfigMapRefs(null);
+
+        V1KafkaTopic result = toTransform.toBuilder()
+                .withSpec(newSpec)
+                .build();
+
+        return Optional.of(result);
     }
 }

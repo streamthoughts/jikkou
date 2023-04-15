@@ -52,8 +52,7 @@ public class ExternalExtension {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ExternalExtension)) return false;
-        ExternalExtension that = (ExternalExtension) o;
+        if (!(o instanceof ExternalExtension that)) return false;
         return Objects.equals(location, that.location) &&
                 Arrays.equals(resources, that.resources);
     }

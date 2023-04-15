@@ -19,56 +19,76 @@
 package io.streamthoughts.jikkou.kafka.validations;
 
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TopicMaxReplicationFactorValidationTest {
+class TopicMaxReplicationFactorValidationTest {
 
     TopicMaxReplicationFactorValidation validation;
 
     @BeforeEach
-    public void before() {
+    void before() {
         validation = new TopicMaxReplicationFactorValidation(1);
     }
 
     @Test
-    public void should_throw_exception_when_max_replication_is_not_valid() {
+    void shouldThrowExceptionForInvalidReplicationFactor() {
         Assertions.assertThrows(ValidationException.class, () -> {
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("test")
-                    .withPartitions(1)
-                    .withReplicationFactor((short) 2)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(1)
+                            .withReplicas((short) 2)
+                            .build()
+                    )
                     .build();
-
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 
     @Test
-    public void should_not_throw_exception_given_topic_with_no_replication_factor() {
+    void shouldNotThrowExceptionForTopicWithNoReplicationFactor() {
         Assertions.assertDoesNotThrow(() -> {
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("test")
-                    .withPartitions(1)
-                    .withReplicationFactor((short) -1)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(1)
+                            .withReplicas((short) -1)
+                            .build()
+                    )
                     .build();
-
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 
     @Test
-    public void should_not_throw_exception_given_topic_valid_replication_factor() {
+    void shouldNotThrowExceptionForValidReplicationFactor() {
         Assertions.assertDoesNotThrow(() -> {
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("test")
-                    .withPartitions(1)
-                    .withReplicationFactor((short) 1)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(1)
+                            .withReplicas((short) 1)
+                            .build()
+                    )
                     .build();
-
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 

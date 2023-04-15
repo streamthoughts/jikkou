@@ -22,9 +22,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.streamthoughts.jikkou.api.model.Configs;
 import java.beans.ConstructorProperties;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.Singular;
@@ -34,15 +35,25 @@ import lombok.With;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @JsonPropertyOrder({
-    "topics"
+    "partitions",
+    "replicas",
+    "configs",
+    "configMapRefs"
 })
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
 public class V1KafkaTopicSpec {
 
-    @JsonProperty("topics")
+    @JsonProperty("partitions")
+    private Integer partitions = -1;
+    @JsonProperty("replicas")
+    private Short replicas = null;
+    @JsonProperty("configs")
+    private Configs configs;
+    @JsonProperty("configMapRefs")
+    @JsonDeserialize(as = java.util.LinkedHashSet.class)
     @Singular
-    private List<V1KafkaTopicObject> topics = new ArrayList<V1KafkaTopicObject>();
+    private Set<String> configMapRefs = new LinkedHashSet<String>();
 
     /**
      * No args constructor for use in serialization
@@ -53,28 +64,64 @@ public class V1KafkaTopicSpec {
 
     /**
      * 
-     * @param topics
+     * @param partitions
+     * @param configs
+     * @param configMapRefs
+     * @param replicas
      */
     @ConstructorProperties({
-        "topics"
+        "partitions",
+        "replicas",
+        "configs",
+        "configMapRefs"
     })
-    public V1KafkaTopicSpec(List<V1KafkaTopicObject> topics) {
+    public V1KafkaTopicSpec(Integer partitions, Short replicas, Configs configs, Set<String> configMapRefs) {
         super();
-        this.topics = topics;
+        this.partitions = partitions;
+        this.replicas = replicas;
+        this.configs = configs;
+        this.configMapRefs = configMapRefs;
     }
 
-    @JsonProperty("topics")
-    public List<V1KafkaTopicObject> getTopics() {
-        return topics;
+    @JsonProperty("partitions")
+    public Integer getPartitions() {
+        return partitions;
+    }
+
+    @JsonProperty("replicas")
+    public Short getReplicas() {
+        return replicas;
+    }
+
+    @JsonProperty("configs")
+    public Configs getConfigs() {
+        return configs;
+    }
+
+    @JsonProperty("configMapRefs")
+    public Set<String> getConfigMapRefs() {
+        return configMapRefs;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(V1KafkaTopicSpec.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("topics");
+        sb.append("partitions");
         sb.append('=');
-        sb.append(((this.topics == null)?"<null>":this.topics));
+        sb.append(((this.partitions == null)?"<null>":this.partitions));
+        sb.append(',');
+        sb.append("replicas");
+        sb.append('=');
+        sb.append(((this.replicas == null)?"<null>":this.replicas));
+        sb.append(',');
+        sb.append("configs");
+        sb.append('=');
+        sb.append(((this.configs == null)?"<null>":this.configs));
+        sb.append(',');
+        sb.append("configMapRefs");
+        sb.append('=');
+        sb.append(((this.configMapRefs == null)?"<null>":this.configMapRefs));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -87,7 +134,10 @@ public class V1KafkaTopicSpec {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.topics == null)? 0 :this.topics.hashCode()));
+        result = ((result* 31)+((this.partitions == null)? 0 :this.partitions.hashCode()));
+        result = ((result* 31)+((this.configs == null)? 0 :this.configs.hashCode()));
+        result = ((result* 31)+((this.configMapRefs == null)? 0 :this.configMapRefs.hashCode()));
+        result = ((result* 31)+((this.replicas == null)? 0 :this.replicas.hashCode()));
         return result;
     }
 
@@ -100,7 +150,7 @@ public class V1KafkaTopicSpec {
             return false;
         }
         V1KafkaTopicSpec rhs = ((V1KafkaTopicSpec) other);
-        return ((this.topics == rhs.topics)||((this.topics!= null)&&this.topics.equals(rhs.topics)));
+        return (((((this.partitions == rhs.partitions)||((this.partitions!= null)&&this.partitions.equals(rhs.partitions)))&&((this.configs == rhs.configs)||((this.configs!= null)&&this.configs.equals(rhs.configs))))&&((this.configMapRefs == rhs.configMapRefs)||((this.configMapRefs!= null)&&this.configMapRefs.equals(rhs.configMapRefs))))&&((this.replicas == rhs.replicas)||((this.replicas!= null)&&this.replicas.equals(rhs.replicas))));
     }
 
 }

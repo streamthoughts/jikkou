@@ -20,9 +20,10 @@ package io.streamthoughts.jikkou.client.printer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.error.JikkouException;
-import java.util.Collection;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import java.util.List;
 
 public class SerializePrinter implements Printer {
 
@@ -34,7 +35,7 @@ public class SerializePrinter implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(Collection<ChangeResult<?>> results, boolean dryRun, long executionTimeMs) {
+    public int print(List<ChangeResult<Change>> results, boolean dryRun, long executionTimeMs) {
         final String json;
         try {
             json = mapper
@@ -42,7 +43,7 @@ public class SerializePrinter implements Printer {
                     .writeValueAsString(results);
             System.out.print(json);
         } catch (JsonProcessingException e) {
-            throw new JikkouException(e);
+            throw new JikkouRuntimeException(e);
         }
         return Printer.getNumberOfFailedChange(results) > 0 ? 1 : 0;
     }

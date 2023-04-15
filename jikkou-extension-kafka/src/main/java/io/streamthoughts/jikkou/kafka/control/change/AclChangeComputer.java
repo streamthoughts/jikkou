@@ -18,73 +18,97 @@
  */
 package io.streamthoughts.jikkou.kafka.control.change;
 
+import static java.util.function.Predicate.not;
+
 import io.streamthoughts.jikkou.api.control.ChangeComputer;
 import io.streamthoughts.jikkou.api.model.Nameable;
-import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
+import io.streamthoughts.jikkou.kafka.control.handlers.acls.KafkaAclBindingBuilder;
+import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.NotNull;
 
-public final class AclChangeComputer implements ChangeComputer<AccessControlPolicy, AccessControlPolicy, AclChange, KafkaAclReconciliationConfig> {
+public final class AclChangeComputer implements ChangeComputer<V1KafkaPrincipalAuthorization, AclChange> {
+
+    private final KafkaAclBindingBuilder kafkaAclRulesBuilder;
+
+    /**
+     * Creates a new {@link AclChangeComputer} instance.
+     *
+     * @param kafkaAclRulesBuilder the {@link KafkaAclBindingBuilder}.
+     */
+    public AclChangeComputer(@NotNull KafkaAclBindingBuilder kafkaAclRulesBuilder) {
+        this.kafkaAclRulesBuilder = kafkaAclRulesBuilder;
+    }
+
+    private Map<String, List<KafkaAclBinding>> toKafkaAclBindingsByPrincipal(Iterable<V1KafkaPrincipalAuthorization> resources) {
+        return StreamSupport.stream(resources.spliterator(), false)
+                .flatMap(resource -> kafkaAclRulesBuilder.toKafkaAclBindings(resource).stream())
+                .collect(Collectors.groupingBy(Nameable::getName));
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<AclChange> computeChanges(@NotNull final Iterable<AccessControlPolicy> actualStates,
-                                          @NotNull final Iterable<AccessControlPolicy> expectedStates,
-                                          @NotNull final KafkaAclReconciliationConfig configuration) {
+    public List<AclChange> computeChanges(@NotNull final Iterable<V1KafkaPrincipalAuthorization> actualResources,
+                                          @NotNull final Iterable<V1KafkaPrincipalAuthorization> expectedResources) {
 
-        Map<String, List<AccessControlPolicy>> beforePoliciesGroupedByPrincipal = Nameable.groupByName(actualStates);
-        Map<String, List<AccessControlPolicy>> afterPoliciesGroupedByPrincipal = Nameable.groupByName(expectedStates);
+
+        Map<String, List<KafkaAclBinding>> actualBindingsGroupedByPrincipal = toKafkaAclBindingsByPrincipal(actualResources);
+        Map<String, List<KafkaAclBinding>> expectBindingsGroupedByPrincipal = toKafkaAclBindingsByPrincipal(expectedResources);
 
         final Map<String, List<AclChange>> changes = new HashMap<>();
-        afterPoliciesGroupedByPrincipal.forEach((principal, afterPrincipalPolicies) -> {
 
-            List<AccessControlPolicy> beforePrincipalPolicies = beforePoliciesGroupedByPrincipal.get(principal);
+        for (Map.Entry<String, List<KafkaAclBinding>> entry : expectBindingsGroupedByPrincipal.entrySet()) {
+            String key = entry.getKey();
+
+            List<KafkaAclBinding> expectPrincipalBindings = entry.getValue();
+            List<KafkaAclBinding> actualPrincipalBindings = actualBindingsGroupedByPrincipal.get(key);
 
             List<AclChange> principalChanges = new LinkedList<>();
 
-            if (beforePrincipalPolicies != null) {
-                beforePrincipalPolicies.stream()
-                        .filter(afterPrincipalPolicies::contains)
+            if (actualPrincipalBindings != null) {
+                expectPrincipalBindings.stream()
+                        .filter(not(KafkaAclBinding::isDelete))
+                        .filter(expectPrincipalBindings::contains)
                         .map(AclChange::none)
                         .forEach(principalChanges::add);
 
-                beforePrincipalPolicies.stream()
-                        .filter(Predicate.not(afterPrincipalPolicies::contains))
+                expectPrincipalBindings.stream()
+                        .filter(not(KafkaAclBinding::isDelete))
+                        .filter(not(actualPrincipalBindings::contains))
+                        .map(AclChange::add)
+                        .forEach(principalChanges::add);
+
+                expectPrincipalBindings.stream()
+                        .filter(KafkaAclBinding::isDelete)
+                        .filter(actualPrincipalBindings::contains)
                         .map(AclChange::delete)
                         .forEach(principalChanges::add);
 
-                afterPrincipalPolicies.stream()
-                        .filter(Predicate.not(beforePrincipalPolicies::contains))
-                        .map(AclChange::add)
+                actualPrincipalBindings.stream()
+                        .filter(not(expectPrincipalBindings::contains))
+                        .map(AclChange::delete)
                         .forEach(principalChanges::add);
+
             } else {
-                afterPrincipalPolicies.stream().map(AclChange::add).forEach(principalChanges::add);
+                expectPrincipalBindings.stream().map(AclChange::add).forEach(principalChanges::add);
             }
-
-            changes.put(principal, principalChanges);
-
-        });
-
-        if (configuration.isDeleteOrphans()) {
-            beforePoliciesGroupedByPrincipal.keySet()
-                    .stream()
-                    .filter(Predicate.not(changes::containsKey))
-                    .forEach(principal -> changes.put(
-                            principal,
-                            beforePoliciesGroupedByPrincipal.get(principal)
-                                    .stream()
-                                    .map(AclChange::delete)
-                                    .collect(Collectors.toList())
-                    ));
+            changes.put(key, principalChanges);
         }
-        return changes.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+
+        return changes.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .sorted(Comparator.comparing(it -> it.getAclBindings().getPrincipal()))
+                .toList();
     }
 }

@@ -18,31 +18,22 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 
 /**
- * Represents a change operation on an object.
- *
- * @param <K> the type of the Key used to identify an object.
+ * Represents a change operation on a resource object.
  */
-@InterfaceStability.Evolving
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public interface Change<K> {
+@Evolving
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
+public interface Change {
 
     /**
      * @return the of type of this change.
      */
     @JsonProperty("operation")
-    ChangeType getChange();
-
-    /**
-     * @return the identifier of the object on which the change is applied.
-     */
-    @JsonIgnore
-    K getKey();
+    ChangeType getChangeType();
 
 }

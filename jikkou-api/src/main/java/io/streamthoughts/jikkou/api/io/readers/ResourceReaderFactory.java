@@ -19,7 +19,7 @@
 package io.streamthoughts.jikkou.api.io.readers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.ResourceReader;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import java.io.IOException;
@@ -79,7 +79,7 @@ public final class ResourceReaderFactory {
             return createTemplateResourceLoader(newInputStream(location), location);
         }
 
-        throw new JikkouException("Resource location scheme '" + scheme + "' is not supported");
+        throw new JikkouRuntimeException("Resource location scheme '" + scheme + "' is not supported");
     }
 
     /**

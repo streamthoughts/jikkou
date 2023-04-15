@@ -1,0 +1,42 @@
+{
+  "title": "ConfigMapList",
+  "description": "",
+  "type": "object",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.ResourceListObject<ConfigMap>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "items"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default":"core.jikkou.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "ConfigMapList"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "template": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "type": "object"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "./ConfigMap.json"
+      }
+    }
+  }
+}

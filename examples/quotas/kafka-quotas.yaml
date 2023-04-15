@@ -1,0 +1,28 @@
+---
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaClientQuota'
+metadata:
+  labels: {}
+  annotations: {}
+spec:
+  type: 'CLIENT'
+  entity:
+    clientId: 'my-client'
+  configs:
+    requestPercentage: 10
+    producerByteRate: 1024
+    consumerByteRate: 1024
+---
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaClientQuota'
+metadata:
+  labels: {}
+  annotations: {}
+spec:
+  type: 'USER'
+  entity:
+    user: 'my-user'
+  configs:
+    requestPercentage: 10
+    producerByteRate: 1024
+    consumerByteRate: 1024

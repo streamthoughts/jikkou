@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> the change-type.
  */
-public class ChangeResult<T extends Change<?>> implements Serializable {
+public class ChangeResult<T extends Change> implements Serializable {
 
     public enum Status {CHANGED, OK, FAILED}
 
@@ -52,8 +52,8 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
      * @param <T>         the operation result-type.
      * @return a new {@link ChangeResult}.
      */
-    public static <T extends Change<?>> ChangeResult<T> ok(final T resource,
-                                                           final ChangeDescription description) {
+    public static <T extends Change> ChangeResult<T> ok(final T resource,
+                                                        final ChangeDescription description) {
         return new ChangeResult<>(Status.OK, false, resource, description);
     }
 
@@ -65,8 +65,8 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
      * @param <T>         the operation result-type.
      * @return a new {@link ChangeResult}.
      */
-    public static <T extends Change<?>> ChangeResult<T> changed(final T resource,
-                                                                final ChangeDescription description) {
+    public static <T extends Change> ChangeResult<T> changed(final T resource,
+                                                             final ChangeDescription description) {
         return new ChangeResult<>(Status.CHANGED, true, resource, description);
     }
 
@@ -79,9 +79,9 @@ public class ChangeResult<T extends Change<?>> implements Serializable {
      * @param <T>         the operation result-type.
      * @return a new {@link ChangeResult}.
      */
-    public static <T extends Change<?>> ChangeResult<T> failed(final T resource,
-                                                               final ChangeDescription description,
-                                                               final List<Throwable> exceptions) {
+    public static <T extends Change> ChangeResult<T> failed(final T resource,
+                                                            final ChangeDescription description,
+                                                            final List<Throwable> exceptions) {
         return new ChangeResult<>(
                 Status.FAILED,
                 false,

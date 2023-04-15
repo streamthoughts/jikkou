@@ -3,18 +3,24 @@
   "description": "",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaBrokersSpec>"
+    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1KafkaBroker>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,
-    "all-args-constructor": false
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "shortNames": [
+          "kbl"
+        ]
+      }
+    }
   },
   "required": [
     "apiVersion",
     "kind",
-    "spec"
+    "items"
   ],
   "properties": {
     "apiVersion": {
@@ -33,25 +39,10 @@
       "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
       "type": "object"
     },
-    "spec": {
-      "$ref": "#/$defs/V1KafkaBrokersSpec"
-    }
-  },
-  "$defs": {
-    "V1KafkaBrokersSpec": {
-      "type": "object",
-      "additionalProperties": {
-        "lombok-builder": true,
-        "lombok-with": true,
-        "all-args-constructor": false
-      },
-      "properties": {
-        "brokers": {
-          "type": "array",
-          "items": {
-            "$ref": "./V1KafkaBrokerObject.json"
-          }
-        }
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "./V1KafkaBroker.json"
       }
     }
   }

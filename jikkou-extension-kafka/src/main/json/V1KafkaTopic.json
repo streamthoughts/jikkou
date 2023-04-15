@@ -1,0 +1,80 @@
+{
+  "type": "object",
+  "description": "",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaTopicSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names" : {
+        "singular": "kafkatopic",
+        "plural" : "kafkatopics",
+        "shortNames" : [ "kt" ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaTopic"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "template": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "type": "object"
+    },
+    "spec": {
+     "$ref": "#/$defs/V1KafkaTopicSpec"
+    }
+  },
+  "$defs": {
+    "V1KafkaTopicSpec": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "partitions": {
+          "type": "integer",
+          "default": -1
+        },
+        "replicas": {
+          "type": "object",
+          "existingJavaType": "Short",
+          "default": -1
+        },
+        "configs": {
+          "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
+          "type": "object"
+        },
+        "configMapRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

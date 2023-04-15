@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,70 +18,17 @@
  */
 package io.streamthoughts.jikkou.client.command.config;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigRenderOptions;
-import io.streamthoughts.jikkou.client.JikkouConfig;
-import io.streamthoughts.jikkou.client.JikkouContext;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Callable;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "config",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
-        header = "Sets or retrieves the configuration of this client.",
-        description = "This command can be used to set or retrieve the configuration of this client.",
-        mixinStandardHelpOptions = true,
         subcommands = {
-            ConfigCommand.Get.class,
-        })
+                ViewCommand.class,
+                SetContextCommand.class,
+                GetContextsCommand.class,
+                CurrentContextCommand.class,
+                UseContextCommand.class},
+        description = "Sets or retrieves the configuration of this client"
+
+)
 public class ConfigCommand {
-
-    @Command(synopsisHeading      = "%nUsage:%n%n",
-            descriptionHeading   = "%nDescription:%n%n",
-            parameterListHeading = "%nParameters:%n%n",
-            optionListHeading    = "%nOptions:%n%n",
-            commandListHeading   = "%nCommands:%n%n",
-            mixinStandardHelpOptions = true,
-            name = "get",
-            description = "Retrieve the configuration of this client."
-    )
-    public static class Get implements Callable<Integer> {
-
-        @CommandLine.Option(names = "--debug",
-                defaultValue = "false",
-                description = "Print CLI's configuration with the origin of setting as comments.")
-        public boolean debug;
-
-        @CommandLine.Option(names = "--comments",
-                defaultValue = "false",
-                description = "Print CLI's configuration with human-written comments.")
-        public boolean comments;
-
-        @Override
-        public Integer call() {
-            JikkouConfig config = JikkouContext.jikkouConfig();
-            try {
-                ConfigRenderOptions options = ConfigRenderOptions
-                        .defaults()
-                        .setOriginComments(debug)
-                        .setComments(comments);
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                Config unwrapped = config.unwrap();
-                baos.write(unwrapped.root().render(options).getBytes(StandardCharsets.UTF_8));
-                System.out.println(baos);
-                return CommandLine.ExitCode.OK;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 }

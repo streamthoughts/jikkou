@@ -19,25 +19,28 @@
 package io.streamthoughts.jikkou.api;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ResourceController;
+import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import java.util.Collections;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents the context of a reconciliation operation.
  *
- * @see ResourceController
+ * @see ExternalResourceController
  */
 @InterfaceStability.Evolving
 public interface ReconciliationContext {
 
     /**
-     * Returns the {@link ResourceFilter} used for restricting the
+     * Returns the {@link ResourceSelector} used for restricting the
      * resources that should be included in the current operation.
      *
-     * @return the {@link ResourceFilter}.
+     * @return the {@link ResourceSelector}.
      */
-    @NotNull ResourceFilter filter();
+    @NotNull List<ResourceSelector> selectors();
 
     /**
      * Returns the {@link Configuration} used for executing
@@ -57,44 +60,52 @@ public interface ReconciliationContext {
     /**
      * Helper method to create a new {@link ReconciliationContext} for the given arguments.
      *
-     * @param configuration  the options for computing resource changes.
-     * @param isDryRun specify if the update should be run in dry-run.
+     * @param isDryRun      specify if the update should be run in dry-run.
      * @return a new {@link ReconciliationContext}
      */
     @NotNull
-    static ReconciliationContext with(@NotNull final Configuration configuration, final boolean isDryRun) {
-        return with(ResourceFilter.DEFAULT, configuration, isDryRun);
+    static ReconciliationContext with(final boolean isDryRun) {
+        return with(Collections.emptyList(), Configuration.empty(), isDryRun);
     }
 
     /**
      * Helper method to create a new {@link ReconciliationContext} for the given arguments.
      *
-     * @param filter   the predicate for filtering resource.
-     * @param config   the config for computing resource changes.
-     * @param isDryRun specify if the update should be run in dry-run.
-
+     * @param configuration the options for computing resource changes.
+     * @param isDryRun      specify if the update should be run in dry-run.
      * @return a new {@link ReconciliationContext}
      */
     @NotNull
-    static ReconciliationContext with(@NotNull final ResourceFilter filter,
-                                      @NotNull final Configuration config,
+    static ReconciliationContext with(@NotNull final Configuration configuration,
                                       final boolean isDryRun) {
-        return new ReconciliationContext() {
-            @Override
-            public @NotNull ResourceFilter filter() {
-                return filter;
-            }
-
-            @Override
-            public @NotNull Configuration configuration() {
-                return config;
-            }
-
-            @Override
-            public boolean isDryRun() {
-                return isDryRun;
-            }
-        };
+        return with(Collections.emptyList(), configuration, isDryRun);
     }
 
+    /**
+     * Helper method to create a new {@link ReconciliationContext} for the given arguments.
+     *
+     * @param selectors the selectors to filter resources to be included in the reconciliation.
+     * @param config    the config for computing resource changes.
+     * @param isDryRun  specify if the reconciliation should be run in dry-run.
+     * @return a new {@link ReconciliationContext}
+     */
+    @NotNull
+    static ReconciliationContext with(@NotNull final List<ResourceSelector> selectors,
+                                      @NotNull final Configuration config,
+                                      final boolean isDryRun) {
+        return new Default(selectors, config, isDryRun);
+    }
+
+    /**
+     * A default {@link ReconciliationContext} implementation.
+     *
+     * @param selectors     the selectors to filter resources to be included in the reconciliation.
+     * @param configuration the config for computing resource changes.
+     * @param isDryRun      specify if the reconciliation should be run in dry-run.
+     */
+    record Default(List<ResourceSelector> selectors,
+                   Configuration configuration,
+                   boolean isDryRun)
+            implements ReconciliationContext {
+    }
 }

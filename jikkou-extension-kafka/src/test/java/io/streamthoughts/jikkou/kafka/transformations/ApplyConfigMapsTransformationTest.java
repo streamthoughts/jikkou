@@ -19,57 +19,119 @@
 package io.streamthoughts.jikkou.kafka.transformations;
 
 import io.streamthoughts.jikkou.api.model.Configs;
+import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.model.ResourceList;
 import io.streamthoughts.jikkou.api.models.ConfigMap;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ApplyConfigMapsTransformationTest {
+class ApplyConfigMapsTransformationTest {
 
-    public static final String TEST_CONFIG_MAP_NAME = "configMap";
-
+    static final String TEST_CONFIG_MAP_NAME = "configMap";
+    static final String TEST_TOPIC = "topic";
+    static final String TEST_CONFIG_K1 = "k1";
+    static final String TEST_CONFIG_K2 = "k2";
     private final static ConfigMap TEST_CONFIG_MAP = ConfigMap
             .builder()
             .withMetadata(ObjectMeta
                     .builder()
                     .withName(TEST_CONFIG_MAP_NAME)
                     .build())
-            .withData(Configs.of("k1", "v1"))
-            .build();
-
-    private final static V1KafkaTopicObject TEST_TOPIC_OBJECT = V1KafkaTopicObject
-            .builder()
-            .withName("topic")
-            .withPartitions(null)
-            .withReplicationFactor(null)
-            .withConfigs(Configs.empty())
-            .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
+            .withData(Configs.of(TEST_CONFIG_K1, "v1"))
             .build();
 
 
     @Test
-    public void should_add_config_props_to_topic_given_valid_config_map() {
-        var resource = V1KafkaTopicList.builder()
+    void shouldAddConfigPropsToTopicGivenValidConfigMapRefForTopicWithNoConfigs() {
+        // Given
+        var resource = V1KafkaTopic.builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_TOPIC)
+                        .build()
+                )
                 .withSpec(V1KafkaTopicSpec
                         .builder()
-                        .withTopics(List.of(TEST_TOPIC_OBJECT))
+                        .withPartitions(null)
+                        .withReplicas(null)
+                        .withConfigs(Configs.empty())
+                        .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
                         .build())
                 .build();
 
-        var transformed = new TopicConfigMapsTransformation()
-                .transform(resource, new ResourceList(List.of(TEST_CONFIG_MAP)));
+        // When
+        var result = (V1KafkaTopic) new TopicConfigMapsTransformation()
+                .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
+                .get();
 
-        V1KafkaTopicList transformedList = (V1KafkaTopicList) transformed;
-        V1KafkaTopicObject topicObject = transformedList.getSpec().getTopics().get(0);
+        // Then
+        Assertions.assertNull(result.getSpec().getConfigMapRefs());
+        Configs configs = result.getSpec().getConfigs();
+        Assertions.assertEquals("v1", configs.get(TEST_CONFIG_K1).value());
+    }
 
-        Assertions.assertEquals("v1",
-                topicObject.getConfigs().get("k1").value()
-        );
+    @Test
+    void shouldAddConfigPropsToTopicGivenValidConfigMapRefForTopicWithConfigs() {
+        // Given
+        var resource = V1KafkaTopic.builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_TOPIC)
+                        .build()
+                )
+                .withSpec(V1KafkaTopicSpec
+                        .builder()
+                        .withPartitions(null)
+                        .withReplicas(null)
+                        .withConfigs(Configs.of(TEST_CONFIG_K2, "v2"))
+                        .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
+                        .build())
+                .build();
+
+        // When
+        var result = (V1KafkaTopic) new TopicConfigMapsTransformation()
+                .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
+                .get();
+
+        // Then
+        Configs configs = result.getSpec().getConfigs();
+        Assertions.assertEquals(2, configs.size());
+        Assertions.assertNull(result.getSpec().getConfigMapRefs());
+        Assertions.assertEquals("v1", configs.get(TEST_CONFIG_K1).value());
+        Assertions.assertEquals("v2", configs.get(TEST_CONFIG_K2).value());
+    }
+
+    @Test
+    void shouldOverrideConfigPropsToTopicGivenValidConfigMapRefForTopicWithConfigs() {
+        // Given
+        var resource = V1KafkaTopic.builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_TOPIC)
+                        .build()
+                )
+                .withSpec(V1KafkaTopicSpec
+                        .builder()
+                        .withPartitions(null)
+                        .withReplicas(null)
+                        .withConfigs(Configs.of(TEST_CONFIG_K1, "v2"))    // should be overridden
+                        .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
+                        .build())
+                .build();
+
+        // When
+        var result = (V1KafkaTopic) new TopicConfigMapsTransformation()
+                .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
+                .get();
+
+        // Then
+        Configs configs = result.getSpec().getConfigs();
+        Assertions.assertEquals(1, configs.size());
+        Assertions.assertNull(result.getSpec().getConfigMapRefs());
+        Assertions.assertEquals("v1", configs.get(TEST_CONFIG_K1).value());
     }
 }

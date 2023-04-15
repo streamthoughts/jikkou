@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.io;
 import io.streamthoughts.jikkou.api.model.Resource;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Default interface to write a cluster specification.
@@ -31,8 +32,8 @@ public interface ResourceWriter {
     /**
      * Writes the cluster specification into the specified output stream.
      *
-     * @param resource  the {@link Resource} to write.
+     * @param items  the list of {@link Resource} to write.
      * @param os        the output stream.
      */
-    void write(final Resource resource, final OutputStream os);
+    void write(final List<? extends Object> items, final OutputStream os);
 }

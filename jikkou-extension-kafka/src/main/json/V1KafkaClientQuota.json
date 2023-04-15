@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "description": "",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaClientQuotaSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "kafkaclientquota",
+        "plural": "kafkaclientquotas",
+        "shortNames": [
+          "kq"
+        ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaClientQuota"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "template": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "V1KafkaClientQuotaSpec.json"
+    }
+  }
+}

@@ -18,7 +18,8 @@
  */
 package io.streamthoughts.jikkou.api.error;
 
-import io.streamthoughts.jikkou.api.model.ResourceValidation;
+import io.streamthoughts.jikkou.api.extensions.Extension;
+import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  *
  * @see ResourceValidation
  */
-public class ValidationException extends JikkouException {
+public class ValidationException extends JikkouRuntimeException {
 
     private final ResourceValidation validation;
     private final List<ValidationException> errors;
@@ -87,7 +88,7 @@ public class ValidationException extends JikkouException {
     private String getFormattedMessage() {
         final String message = super.getMessage();
         return Optional.ofNullable(validation)
-        .map(ResourceValidation::name).map(s -> String.format("\n\t - [%s]: %s", s, message))
+        .map(Extension::getName).map(s -> String.format("\n\t - [%s]: %s", s, message))
         .orElse(message);
     }
 }

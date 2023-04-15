@@ -79,7 +79,6 @@ public class Configs implements Iterable<ConfigValue> {
         return of(Map.of(k1, v1, k2, v2));
     }
 
-
     /**
      * Static helper method to create a new {@link Configs} object from a given {@link Map}.
      *
@@ -115,13 +114,31 @@ public class Configs implements Iterable<ConfigValue> {
     }
 
     /**
-     * Add a new {@link ConfigValue} to this configs.
+     * Adds a new {@link ConfigValue} to {@code this} configs.
      *
      * @param value a new config entry.
-     * @return the previous config containing into this configs.
+     * @return the previous config containing into {@code this} configs.
      */
     public ConfigValue add(final ConfigValue value) {
         return this.configValues.put(value.getName(), value);
+    }
+
+    /**
+     * Adds all config values from the given configs.
+     *
+     * @param configs the config values to be added.
+     */
+    public void addAll(final Map<String, Object> configs) {
+       addAll(Configs.of(configs));
+    }
+
+    /**
+     * Adds all config values from the given configs.
+     *
+     * @param configs the config values to be added.
+     */
+    public void addAll(final Configs configs) {
+        this.configValues.putAll(configs.configValues);
     }
 
     /**
@@ -144,6 +161,10 @@ public class Configs implements Iterable<ConfigValue> {
 
     public int size() {
         return this.configValues.size();
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
     }
 
     public ConfigValue get(final String name) {

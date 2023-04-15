@@ -23,16 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TopicConfigKeysValidationTest {
+class TopicConfigKeysValidationTest {
 
     TopicConfigKeysValidation validation;
 
@@ -42,19 +41,18 @@ public class TopicConfigKeysValidationTest {
     }
 
     @Test
-    public void should_throw_exception_given_not_valid_topic_config_key() {
+    void shouldThrowExceptionForTopicWithInvalidConfigKey() {
         ValidationException exception = assertThrows(ValidationException.class, () -> {
-            var resource = V1KafkaTopicList.builder()
+            var resource = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
                     .withSpec(V1KafkaTopicSpec.builder()
-                            .withTopics(List.of(
-                                            V1KafkaTopicObject.builder()
-                                                    .withName("test")
-                                                    .withPartitions(KafkaConstants.NO_NUM_PARTITIONS)
-                                                    .withReplicationFactor(KafkaConstants.NO_REPLICATION_FACTOR)
-                                                    .withConfigs(Configs.of("bad.key1", "???", "bad.key2", "???"))
-                                                    .build()
-                                    )
-                            )
+                            .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
+                            .withReplicas(KafkaTopics.NO_REPLICATION_FACTOR)
+                            .withConfigs(Configs.of("bad.key1", "???", "bad.key2", "???"))
                             .build()
                     )
                     .build();
@@ -66,19 +64,18 @@ public class TopicConfigKeysValidationTest {
     }
 
     @Test
-    public void should_not_throw_exception_given_valid_topic_config_key() {
+    void shouldNotThrowExceptionForTopicWithValidConfigKey() {
         assertDoesNotThrow(() -> {
-            var resource = V1KafkaTopicList.builder()
+            var resource = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("test")
+                            .build()
+                    )
                     .withSpec(V1KafkaTopicSpec.builder()
-                            .withTopics(List.of(
-                                            V1KafkaTopicObject.builder()
-                                                    .withName("test")
-                                                    .withPartitions(KafkaConstants.NO_NUM_PARTITIONS)
-                                                    .withReplicationFactor(KafkaConstants.NO_REPLICATION_FACTOR)
-                                                    .withConfigs(Configs.of("retention.ms", "???"))
-                                                    .build()
-                                    )
-                            )
+                            .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
+                            .withReplicas(KafkaTopics.NO_REPLICATION_FACTOR)
+                            .withConfigs(Configs.of("retention.ms", "???"))
                             .build()
                     )
                     .build();
