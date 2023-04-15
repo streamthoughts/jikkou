@@ -37,7 +37,7 @@ public final class HasMetadataAcceptableList<T extends HasMetadataAcceptable> im
 
     /** {@inheritDoc} */
     @Override
-    public List<T> items() {
+    public List<T> getItems() {
         return items;
     }
 
@@ -49,7 +49,7 @@ public final class HasMetadataAcceptableList<T extends HasMetadataAcceptable> im
      * @return          the filtered {@link HasMetadataAcceptableList}.
      */
     public HasMetadataAcceptableList<T> allResourcesAccepting(@NotNull final HasMetadata resource) {
-        return allResourcesAccepting(ResourceType.create(resource.getKind(), resource.getApiVersion()));
+        return allResourcesAccepting(ResourceType.create(resource));
     }
 
     /**

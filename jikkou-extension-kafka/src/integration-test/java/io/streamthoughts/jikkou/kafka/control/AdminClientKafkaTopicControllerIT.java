@@ -18,28 +18,27 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
+import io.streamthoughts.jikkou.api.DefaultApi;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.SimpleJikkouApi;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
 import io.streamthoughts.jikkou.api.model.Nameable;
-import io.streamthoughts.jikkou.api.model.ResourceList;
 import io.streamthoughts.jikkou.api.testcontainer.RedpandaContainerConfig;
 import io.streamthoughts.jikkou.api.testcontainer.RedpandaKafkaContainer;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.LegacyKafkaClusterResourceTypeResolver;
-import io.streamthoughts.jikkou.kafka.control.change.KafkaTopicReconciliationConfig;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.Assertions;
@@ -54,9 +53,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("integration")
 public class AdminClientKafkaTopicControllerIT {
 
-    public static final String CLASSPATH_RESOURCE_TOPIC = "topics-test.yaml";
-    public static final String ORPHAN_TOPIC = "orphan-topic";
+    public static final String CLASSPATH_RESOURCE_TOPICS = "test-kafka-topics.yaml";
+    public static final String CLASSPATH_RESOURCE_TOPIC_ALL_DELETE = "test-kafka-topics-with-all-delete.yaml";
+    public static final String CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE = "test-kafka-topics-with-single-delete.yaml";
     public static final String TOPIC_TEST_A = "topic-test-A";
+    public static final String TOPIC_TEST_B = "topic-test-B";
+    public static final String TOPIC_TEST_C = "topic-test-C";
 
     @Container
     public RedpandaKafkaContainer kafka = new RedpandaKafkaContainer(
@@ -71,7 +73,6 @@ public class AdminClientKafkaTopicControllerIT {
     @BeforeAll
     public static void beforeAll() {
         ResourceDeserializer.registerKind(V1KafkaTopicList.class);
-        ResourceDeserializer.registerResolverType(new LegacyKafkaClusterResourceTypeResolver());
     }
 
     @BeforeEach
@@ -80,60 +81,60 @@ public class AdminClientKafkaTopicControllerIT {
                 AdminClient.create(Map.of(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers())))
         );
 
-        api = SimpleJikkouApi.builder()
+        var descriptor = new AdminClientKafkaTopicCollector(new AdminClientContext(() ->
+                AdminClient.create(Map.of(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers())))
+        );
+
+        api = DefaultApi.builder()
                 .withController(controller)
+                .withCollector(descriptor)
                 .build();
     }
 
 
     @Test
-    public void should_reconcile_kafka_topics_given_mode_create_only_with_default_options() {
-        // Given
-        ResourceList resourceList = ResourceLoader.create()
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC);
-
+    public void shouldReconcileKafkaTopicsGivenModeCreate() {
+        // GIVEN
         var resources = ResourceLoader.create()
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC);
+                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var config = new KafkaTopicReconciliationConfig().asConfiguration();
+        var context = ReconciliationContext.with(Configuration.empty(), false);
 
-        var context = ReconciliationContext.with(config, false);
-
-        // When
+        // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        Collection<ChangeResult<?>> results = api.apply(resources, ReconciliationMode.CREATE_ONLY, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.CREATE, context);
         V1KafkaTopicList actualTopicList = getResource();
 
-        // Then
+        // THEN
         Assertions.assertEquals(
                 0,
-                initialTopicList.getSpec().getTopics().size(),
+                initialTopicList.getItems().size(),
                 "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                2, actualTopicList.getSpec().getTopics().size(),
+                2, actualTopicList.getItems().size(),
                 "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
                 2,
                 results.size(),
                 "Invalid number of changes");
 
-        V1KafkaTopicList expectedTopicList = resourceList.getAllResourcesForClass(V1KafkaTopicList.class).get(0);
+        V1KafkaTopicList expectedTopicList = resources.getAllByClass(V1KafkaTopicList.class).get(0);
         Assertions.assertEquals(
-                expectedTopicList.getSpec().getTopics().size(),
-                actualTopicList.getSpec().getTopics().size()
+                expectedTopicList.getItems().size(),
+                actualTopicList.getItems().size()
         );
 
-        Map<String, V1KafkaTopicObject> actualByTopicName = Nameable.keyByName(actualTopicList.getSpec().getTopics());
-        Map<String, V1KafkaTopicObject> expectedByTopicName = Nameable.keyByName(expectedTopicList.getSpec().getTopics());
+        Map<String, V1KafkaTopic> actualByTopicName = actualTopicList.groupByName();
+        Map<String, V1KafkaTopic> expectedByTopicName = expectedTopicList.groupByName();
 
         expectedByTopicName.forEach((topicName, expected) -> {
-            V1KafkaTopicObject actual = actualByTopicName.get(topicName);
-            Assertions.assertEquals(expected.getPartitions(), actual.getPartitions());
-            Assertions.assertEquals(expected.getReplicationFactor(), actual.getReplicationFactor());
+            V1KafkaTopic actual = actualByTopicName.get(topicName);
+            Assertions.assertEquals(expected.getSpec().getPartitions(), actual.getSpec().getPartitions());
+            Assertions.assertEquals(expected.getSpec().getReplicas(), actual.getSpec().getReplicas());
 
             // Explicitly validate each config because Redpanda returns additional config properties.
-            Map<String, ConfigValue> expectedConfigByName = Nameable.keyByName(expected.getConfigs());
-            Map<String, ConfigValue> actualConfigByName = Nameable.keyByName(actual.getConfigs());
+            Map<String, ConfigValue> expectedConfigByName = Nameable.keyByName(expected.getSpec().getConfigs());
+            Map<String, ConfigValue> actualConfigByName = Nameable.keyByName(actual.getSpec().getConfigs());
 
             expectedConfigByName.forEach((configName, expectedConfigValue) -> {
                 ConfigValue actualConfigValue = actualConfigByName.get(configName);
@@ -143,35 +144,32 @@ public class AdminClientKafkaTopicControllerIT {
     }
 
     @Test
-    public void should_reconcile_kafka_topics_given_mode_delete_with_delete_orphans_true() {
+    public void shouldReconcileKafkaTopicsForModeDeleteWithDeleteAnnotations() {
 
-        // Given
-        kafka.createTopic(ORPHAN_TOPIC);
+        // GIVEN
+        kafka.createTopic(TOPIC_TEST_A);
+        kafka.createTopic(TOPIC_TEST_B);
 
         var resources = ResourceLoader.create()
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC);
+                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_ALL_DELETE);
 
-        var config = new KafkaTopicReconciliationConfig()
-                .withDeleteTopicOrphans(true)
-                .asConfiguration();
+        var context = ReconciliationContext.with(false);
 
-        var context = ReconciliationContext.with(config, false);
-
-        // When
+        // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        Collection<ChangeResult<?>> results = api.apply(resources, ReconciliationMode.DELETE_ONLY, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.DELETE, context);
         V1KafkaTopicList actualTopicList = getResource();
 
-        // Then
+        // THEN
         Assertions.assertEquals(
-                1,
-                initialTopicList.getSpec().getTopics().size(),
+                2,
+                initialTopicList.getItems().size(),
                 "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                0, actualTopicList.getSpec().getTopics().size(),
+                0, actualTopicList.getItems().size(),
                 "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
-               1,
+                2,
                 results.size(),
                 "Invalid number of changes");
 
@@ -181,70 +179,67 @@ public class AdminClientKafkaTopicControllerIT {
     }
 
     @Test
-    public void should_reconcile_kafka_topics_given_mode_update_only_with_default_options() {
+    public void shouldReconcileKafkaTopicsForModeUpdate() {
 
-        // Given
+        // GIVEN
         kafka.createTopic(TOPIC_TEST_A);
 
         var resources = ResourceLoader.create()
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC);
+                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var configuration = new KafkaTopicReconciliationConfig().asConfiguration();
+        var context = ReconciliationContext.with(false);
 
-        var context = ReconciliationContext.with(configuration, false);
-
-        // When
+        // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        Collection<ChangeResult<?>> results = api.apply(resources, ReconciliationMode.UPDATE_ONLY, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.UPDATE, context);
         V1KafkaTopicList actualTopicList = getResource();
 
-        // Then
+        // THEN
         Assertions.assertEquals(
                 1,
-                initialTopicList.getSpec().getTopics().size(),
+                initialTopicList.getItems().size(),
                 "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                1, actualTopicList.getSpec().getTopics().size(),
+                2, actualTopicList.getItems().size(),
                 "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
-                1,
+                2,
                 results.size(),
                 "Invalid number of changes");
 
-        ChangeResult<?> change = results.iterator().next();
-        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status(), change.toString());
-        Assertions.assertEquals(TOPIC_TEST_A, ((TopicChange) change.resource()).getName());
-        Assertions.assertEquals(ChangeType.UPDATE, change.description().type());
+        Map<String, TopicChange> changeKeyedByTopicName = results.stream()
+                .map(o -> ((TopicChange) o.resource()))
+                .collect(Collectors.toMap(TopicChange::getName, o -> o));
+
+        Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_A));
+        Assertions.assertEquals(ChangeType.UPDATE, changeKeyedByTopicName.get(TOPIC_TEST_A).getChangeType());
+        Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_B));
+        Assertions.assertEquals(ChangeType.ADD, changeKeyedByTopicName.get(TOPIC_TEST_B).getChangeType());
     }
 
     @Test
-    public void should_reconcile_kafka_topics_given_mode_apply_with_delete_orphans_false() {
+    public void shouldReconcileKafkaTopicsGivenModeApply() {
 
-        // Given
-        kafka.createTopic(ORPHAN_TOPIC);
+        // GIVEN
+        kafka.createTopic(TOPIC_TEST_C);
 
         var resources = ResourceLoader.create()
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC);
+                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var configuration = new KafkaTopicReconciliationConfig()
-                .withExcludeInternalTopics(true)
-                .withDeleteTopicOrphans(false)  // /!\ IMPORTANT
-                .asConfiguration();
+        var context = ReconciliationContext.with( false);
 
-        var context = ReconciliationContext.with(configuration, false);
-
-        // When
+        // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        Collection<ChangeResult<?>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY, context);
         V1KafkaTopicList actualTopicList = getResource();
 
-        // Then
+        // THEN
         Assertions.assertEquals(
                 1,
-                initialTopicList.getSpec().getTopics().size(),
+                initialTopicList.getItems().size(),
                 "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                3, actualTopicList.getSpec().getTopics().size(),
+                3, actualTopicList.getItems().size(),
                 "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
                 2,
@@ -259,40 +254,35 @@ public class AdminClientKafkaTopicControllerIT {
     }
 
     @Test
-    public void should_reconcile_kafka_topics_given_mode_apply_with_delete_orphans_true() {
+    public void shouldReconcileKafkaTopicForModeApplyAndDeleteOrphansTrue() {
 
-        // Given
-        kafka.createTopic(ORPHAN_TOPIC);
+        // GIVEN
+        kafka.createTopic(TOPIC_TEST_C);
 
         var resources = ResourceLoader.create()
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC);
+                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE);
 
-        var configuration = new KafkaTopicReconciliationConfig()
-                .withExcludeInternalTopics(true)
-                .withDeleteTopicOrphans(true)
-                .asConfiguration();
+        var context = ReconciliationContext.with( false);
 
-        var context = ReconciliationContext.with(configuration, false);
-
-        // When
+        // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        Collection<ChangeResult<?>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY, context);
         V1KafkaTopicList actualTopicList = getResource();
 
-        // Then
+        // THEN
         Assertions.assertEquals(
                 1,
-                initialTopicList.getSpec().getTopics().size(),
+                initialTopicList.getItems().size(),
                 "Invalid number of topics");
         Assertions.assertEquals(
-                2, actualTopicList.getSpec().getTopics().size(),
+                2, actualTopicList.getItems().size(),
                 "Invalid number of topics");
         Assertions.assertEquals(
                 3,
                 results.size(),
                 "Invalid number of changes");
 
-        Assertions.assertEquals(1, initialTopicList.getSpec().getTopics().size());
+        Assertions.assertEquals(1, initialTopicList.getItems().size());
         boolean delete = results.stream()
                 .map(it -> it.description().type())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
@@ -307,6 +297,7 @@ public class AdminClientKafkaTopicControllerIT {
                 .withDescribeDefaultConfigs(false)
                 .asConfiguration();
 
-        return api.getResource(V1KafkaTopicList.class, configuration);
+        List<V1KafkaTopicList> resources = api.getResources(V1KafkaTopicList.class, configuration);
+        return resources.get(0);
     }
 }

@@ -18,11 +18,9 @@
  */
 package io.streamthoughts.jikkou.kafka.validations;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.extensions.annotations.EnableAutoConfigure;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.model.Configs;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.vavr.collection.Array;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -36,29 +34,26 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see TopicConfig
  */
-@EnableAutoConfigure
 public class TopicConfigKeysValidation extends TopicValidation {
 
     /** {@inheritDoc} */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-    }
+    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
 
-    /** {@inheritDoc} */
-    @Override
-    public void validateTopic(final @NotNull V1KafkaTopicObject topic) throws ValidationException {
+        Configs configs = resource.getSpec().getConfigs();
+        if (configs == null || configs.isEmpty())
+            return;
 
         final Array<String> definedStaticConfigKeys = Array
                 .of(TopicConfig.class.getDeclaredFields())
                 .flatMap(f -> f.trySetAccessible() ? Try.of(() -> f.get(null).toString()).toOption() : Option.none());
 
-        final Map<String, Object> topicConfigs = topic.getConfigs().toMap();
+        final Map<String, Object> topicConfigs = configs.toMap();
         final List<ValidationException> errors = List
                 .ofAll(topicConfigs.entrySet())
                 .flatMap(e -> definedStaticConfigKeys.contains(e.getKey()) ?
                         Option.none() :
-                        Option.of(newValidationError(topic.getName(), e.getKey()))
+                        Option.of(newValidationError(resource.getMetadata().getName(), e.getKey()))
                 );
 
         if (!errors.isEmpty()) {

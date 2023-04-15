@@ -18,44 +18,49 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import io.streamthoughts.jikkou.api.AcceptResource;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.CREATE;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.UPDATE;
+
 import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.ResourceFilter;
+import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.annotations.SupportedReconciliationModes;
+import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
+import io.streamthoughts.jikkou.api.control.ChangeHandler;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ResourceController;
-import io.streamthoughts.jikkou.api.error.JikkouException;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.adapters.KafkaQuotaLimitsAdapter;
-import io.streamthoughts.jikkou.kafka.control.change.KafkaQuotaReconciliationConfig;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChangeComputer;
-import io.streamthoughts.jikkou.kafka.control.operation.quotas.AlterQuotasOperation;
-import io.streamthoughts.jikkou.kafka.control.operation.quotas.ApplyQuotasOperation;
-import io.streamthoughts.jikkou.kafka.control.operation.quotas.CreateQuotasOperation;
-import io.streamthoughts.jikkou.kafka.control.operation.quotas.DeleteQuotasOperation;
-import io.streamthoughts.jikkou.kafka.model.QuotaType;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaQuotaList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaQuotaObject;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaQuotaSpec;
-import io.streamthoughts.jikkou.kafka.models.V1QuotaEntityObject;
+import io.streamthoughts.jikkou.kafka.control.handlers.quotas.AlterQuotasChangeHandlerKafka;
+import io.streamthoughts.jikkou.kafka.control.handlers.quotas.CreateQuotasChangeHandlerKafka;
+import io.streamthoughts.jikkou.kafka.control.handlers.quotas.DeleteQuotasChangeHandler;
+import io.streamthoughts.jikkou.kafka.control.handlers.quotas.QuotaChangeDescription;
+import io.streamthoughts.jikkou.kafka.converters.V1KafkaClientQuotaListConverter;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaChange;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaChangeList;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.DescribeClientQuotasResult;
-import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.quota.ClientQuotaEntity;
-import org.apache.kafka.common.quota.ClientQuotaFilter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
-@AcceptResource(type = V1KafkaQuotaList.class)
-public final class AdminClientKafkaQuotaController extends AdminClientKafkaController
-        implements ResourceController<V1KafkaQuotaList, QuotaChange> {
+@SupportedResource(type = V1KafkaClientQuota.class)
+@SupportedResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
+@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY})
+public final class AdminClientKafkaQuotaController extends AbstractAdminClientKafkaController
+        implements BaseExternalResourceController<V1KafkaClientQuota, QuotaChange> {
+
+    public static final String LIMITS_DELETE_ORPHANS_CONFIG_NAME = "limits-delete-orphans";
+
+    private AdminClientKafkaQuotaCollector descriptor;
 
     /**
      * Creates a new {@link AdminClientKafkaQuotaController} instance.
@@ -80,133 +85,62 @@ public final class AdminClientKafkaQuotaController extends AdminClientKafkaContr
      * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
      */
     public AdminClientKafkaQuotaController(final @NotNull AdminClientContext adminClientContext) {
-       super(adminClientContext);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public V1KafkaQuotaList describe(@NotNull final Configuration configuration,
-                                     @NotNull final ResourceFilter filter) {
-        final List<V1KafkaQuotaObject> quotaObjects;
-        if (adminClientContext.isInitialized()) {
-            quotaObjects = new DescribeQuotas(adminClientContext.client()).describe();
-        } else {
-            quotaObjects = adminClientContext.invoke(adminClient -> new DescribeQuotas(adminClient).describe());
-        }
-
-        return new V1KafkaQuotaList().toBuilder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withAnnotation("jikkou.io/kafka-cluster-id", adminClientContext.getClusterId() )
-                        .build()
-                )
-                .withSpec(V1KafkaQuotaSpec.builder()
-                        .withQuotas(quotaObjects)
-                        .build())
-                .build();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public KafkaQuotaReconciliationConfig defaultConciliationConfig() {
-        return new KafkaQuotaReconciliationConfig();
+        super(adminClientContext);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<QuotaChange> computeReconciliationChanges(@NotNull V1KafkaQuotaList resource,
-                                                          @NotNull ReconciliationContext reconciliationContext) {
-        // Get the list of remote resources that are candidates for this reconciliation
-        final List<V1KafkaQuotaObject> expectedResources = resource
-                .getSpec().getQuotas();
+    public void configure(@NotNull Configuration config) throws ConfigException {
+        super.configure(config);
+        this.descriptor = new AdminClientKafkaQuotaCollector(this.adminClientContext);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public V1KafkaClientQuotaChangeList computeReconciliationChanges(@NotNull Collection<V1KafkaClientQuota> resources,
+                                                                     @NotNull ReconciliationMode mode,
+                                                                     @NotNull ReconciliationContext context) {
 
         // Get the list of described resource that are candidates for this reconciliation
-        final List<V1KafkaQuotaObject> actualResource = describe()
-                .getSpec()
-                .getQuotas();
+        final List<V1KafkaClientQuota> actualResource = descriptor.listAll();
+
+        boolean isLimitDeletionEnabled = isLimitDeletionEnabled(mode, context);
 
         // Compute state changes
-        return new QuotaChangeComputer().computeChanges(
+        List<QuotaChange> changes = new QuotaChangeComputer(isLimitDeletionEnabled).computeChanges(
                 actualResource,
-                expectedResources,
-                new KafkaQuotaReconciliationConfig(reconciliationContext.configuration())
+                resources
         );
+
+        return new V1KafkaClientQuotaChangeList()
+                .withItems(changes.stream().map(c -> V1KafkaClientQuotaChange.builder().withChange(c).build()).toList());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<ChangeResult<QuotaChange>> create(@NotNull List<QuotaChange> changes, boolean dryRun) {
-        var operation = new CreateQuotasOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
+    public List<ChangeResult<QuotaChange>> execute(@NotNull List<QuotaChange> changes,
+                                                   @NotNull ReconciliationMode mode,
+                                                   boolean dryRun) {
+        AdminClient client = adminClientContext.client();
+        List<ChangeHandler<QuotaChange>> handlers = List.of(
+                new CreateQuotasChangeHandlerKafka(client),
+                new AlterQuotasChangeHandlerKafka(client),
+                new DeleteQuotasChangeHandler(client),
+                new ChangeHandler.None<>(QuotaChangeDescription::new)
+        );
+        return new ChangeExecutor<>(handlers).execute(changes, dryRun);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<QuotaChange>> update(@NotNull List<QuotaChange> changes, boolean dryRun) {
-        var operation = new AlterQuotasOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<QuotaChange>> delete(@NotNull List<QuotaChange> changes, boolean dryRun) {
-        var operation = new DeleteQuotasOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<QuotaChange>> apply(@NotNull List<QuotaChange> changes, boolean dryRun) {
-        var operation = new ApplyQuotasOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    public static final class DescribeQuotas {
-
-        private final AdminClient client;
-
-        /**
-         * Creates a new {@link DescribeQuotas} instance.
-         *
-         * @param client       the {@link AdminClient}.
-         */
-        public DescribeQuotas(final AdminClient client) {
-            this.client = client;
-        }
-
-        public List<V1KafkaQuotaObject> describe() {
-            DescribeClientQuotasResult result = client.describeClientQuotas(ClientQuotaFilter.all());
-            KafkaFuture<Map<ClientQuotaEntity, Map<String, Double>>> future = result.entities();
-            try {
-                Map<ClientQuotaEntity, Map<String, Double>> entities = future.get();
-                return entities.entrySet()
-                        .stream()
-                        .map(e -> {
-                            Map<String, String> entries = e.getKey().entries();
-                            V1QuotaEntityObject entityObject = new V1QuotaEntityObject(
-                                    entries.get(ClientQuotaEntity.USER),
-                                    entries.get(ClientQuotaEntity.CLIENT_ID)
-                            );
-                            var configsObject = new KafkaQuotaLimitsAdapter(e.getValue()).toV1QuotaLimitsObject();
-                            return new V1KafkaQuotaObject(QuotaType.from(entries), entityObject, configsObject);
-                        })
-                        .collect(Collectors.toList());
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new JikkouException(e);
-            } catch (ExecutionException e) {
-                throw new JikkouException(e);
-            }
-        }
+    @VisibleForTesting
+    static boolean isLimitDeletionEnabled(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context) {
+        return ConfigProperty.ofBoolean(LIMITS_DELETE_ORPHANS_CONFIG_NAME)
+                .orElse(() -> List.of(APPLY, DELETE, UPDATE).contains(mode))
+                .evaluate(context.configuration());
     }
 }

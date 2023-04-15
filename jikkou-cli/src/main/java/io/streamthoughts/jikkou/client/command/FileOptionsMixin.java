@@ -37,13 +37,6 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
     public List<String> resourceFiles;
 
     @Option(
-            names = {"--values-files"},
-            arity = "1..*",
-            description = "Specify the values-files containing the variables to pass into the template engine built-in object 'Values' (can specify multiple)."
-    )
-    public List<String> valuesFiles = new LinkedList<>();
-
-    @Option(
             names = {"--file-name", "-n"},
             defaultValue = "**/*.{yaml,yml}",
             description =
@@ -53,7 +46,15 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
     )
     public String pattern;
 
-    @Option(names = { "--set-label", "-s" },
+    @Option(
+            names = {"--values-files"},
+            arity = "1..*",
+            description = "Specify the values-files containing the variables to pass into the template engine built-in object 'Values' (can specify multiple)."
+    )
+    public List<String> valuesFiles = new LinkedList<>();
+
+
+    @Option(names = { "--set-label", "-l" },
             description = "Set labels on the command line (can specify multiple values: -s key1=val1 -s key2=val2)"
     )
     public Map<String, Object> clientLabels = new HashMap<>();

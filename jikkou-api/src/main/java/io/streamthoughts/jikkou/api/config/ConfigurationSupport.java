@@ -32,8 +32,7 @@ public abstract class ConfigurationSupport<C extends ConfigurationSupport<C>> im
     /**
      * Creates a new {@link ConfigurationSupport} instance.
      */
-    public ConfigurationSupport() {
-    }
+    public ConfigurationSupport() {}
 
     /** {@inheritDoc} **/
     @Override

@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.io.readers;
 
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.ResourceReader;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.common.utils.IOUtils;
@@ -52,7 +52,7 @@ public class DirectoryResourceReader implements ResourceReader {
      * {@inheritDoc}
      */
     @Override
-    public List<HasMetadata> readAllResources(@NotNull ResourceReaderOptions options) throws JikkouException {
+    public List<HasMetadata> readAllResources(@NotNull ResourceReaderOptions options) throws JikkouRuntimeException {
         return IOUtils.findMatching(directory, options.pattern())
                 .parallelStream()
                 .flatMap(path -> {

@@ -18,32 +18,24 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import static io.streamthoughts.jikkou.client.JikkouConfigProperty.EXCLUDE_RESOURCES;
-import static io.streamthoughts.jikkou.client.JikkouConfigProperty.INCLUDE_RESOURCES;
-
+import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.ResourceByNameFilter;
-import io.streamthoughts.jikkou.api.ResourceFilter;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
-import io.streamthoughts.jikkou.api.model.ResourceList;
+import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
+import io.streamthoughts.jikkou.client.ClientContext;
 import io.streamthoughts.jikkou.client.Jikkou;
-import io.streamthoughts.jikkou.client.JikkouConfig;
-import io.streamthoughts.jikkou.client.JikkouContext;
-import io.streamthoughts.jikkou.kafka.LegacyKafkaClusterResourceHandler;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Spec;
 
 @Command(synopsisHeading      = "%nUsage:%n%n",
         descriptionHeading   = "%nDescription:%n%n",
@@ -59,24 +51,23 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
     @Mixin
     FileOptionsMixin fileOptions;
 
-
-    @Spec
-    private CommandSpec spec;
-
+    @Mixin
+    SelectorOptionsMixin selectorOptions;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() {
-        try (var api = JikkouContext.jikkouApi()) {
+        try(JikkouApi api = ClientContext.get().createApi()) {
 
-            ResourceList resource = loadResources();
+            HasItems resources = loadResources();
 
-            final Collection<ChangeResult<?>> results = api.apply(
-                    resource,
+            final List<ChangeResult<Change>> results = api.apply(
+                    resources,
                     getReconciliationMode(),
                     ReconciliationContext.with(
-                            getResourceFilter(),
+                            selectorOptions.getResourceSelectors(),
                             getReconciliationConfiguration(),
                             isDryRun()
                     ));
@@ -85,15 +76,14 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
         }
     }
 
-    protected @NotNull ResourceList loadResources() {
+    protected @NotNull HasItems loadResources() {
         ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
                 .withPreserveRawTags(false)
                 .withFailOnUnknownTokens(false);
 
         YAMLResourceLoader loader = new YAMLResourceLoader(renderer);
-        ResourceList resources = loader.load(fileOptions);
 
-        return new LegacyKafkaClusterResourceHandler().handle(resources);
+        return loader.load(fileOptions);
     }
 
     protected abstract Configuration getReconciliationConfiguration();
@@ -101,16 +91,5 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
 
     public boolean isDryRun() {
         return execOptions.dryRun;
-    }
-
-    public final ResourceFilter getResourceFilter() {
-        JikkouConfig config = JikkouContext.jikkouConfig();
-        return new ResourceByNameFilter()
-                .withExcludes(Optional.ofNullable(execOptions.exclude)
-                        .or(() -> EXCLUDE_RESOURCES.getOptional(config)).orElse(null)
-                )
-                .withIncludes(Optional.ofNullable(execOptions.include)
-                        .or(() -> INCLUDE_RESOURCES.getOptional(config)).orElse(null)
-                );
     }
 }

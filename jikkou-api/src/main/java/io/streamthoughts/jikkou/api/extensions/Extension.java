@@ -18,9 +18,15 @@
  */
 package io.streamthoughts.jikkou.api.extensions;
 
+import io.streamthoughts.jikkou.api.annotations.ExtensionDescription;
+import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
+import io.streamthoughts.jikkou.api.annotations.ExtensionName;
+import io.streamthoughts.jikkou.api.annotations.ExtensionType;
 import io.streamthoughts.jikkou.api.config.Configurable;
-import io.streamthoughts.jikkou.api.extensions.annotations.ExtensionDescription;
-import io.streamthoughts.jikkou.api.extensions.annotations.ExtensionType;
+import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
+import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 
@@ -28,20 +34,58 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
  * The top-level interface for extension.
  *
  * @see io.streamthoughts.jikkou.api.model.Resource
- * @see io.streamthoughts.jikkou.api.model.ResourceValidation
- * @see io.streamthoughts.jikkou.api.model.ResourceTransformation
- * @see io.streamthoughts.jikkou.api.control.ResourceController
- * @see io.streamthoughts.jikkou.api.control.ResourceDescriptor
+ * @see ResourceValidation
+ * @see ResourceTransformation
+ * @see ExternalResourceController
+ * @see ExternalResourceCollector
  * @see io.streamthoughts.jikkou.api.health.HealthIndicator
  */
 @InterfaceStability.Evolving
 public interface Extension extends Configurable {
 
     /**
+     * Get the name of the given extension class.
+     *
+     * @param extension the extension for which to extract the name.
+     * @return the extension name.
+     */
+    static String getName(final Extension extension) {
+        return getName(extension.getClass());
+    }
+
+    /**
+     * Get the name of the given extension class.
+     *
+     * @param clazz the extension class for which to extract the name.
+     * @return the extension name.
+     */
+    static String getName(final Class<? extends Extension> clazz) {
+        return AnnotationResolver.findAllAnnotationsByType(clazz, ExtensionName.class)
+                .stream()
+                .map(ExtensionName::value)
+                .findFirst()
+                .orElse(clazz.getSimpleName());
+    }
+
+    /**
+     * Check whether the given extension is enabled.
+     *
+     * @param clazz the extension class for which to extract the description.
+     * @return boolean, default is {@code true}.
+     */
+    static boolean isEnabled(final Class<? extends Extension> clazz) {
+        return AnnotationResolver.findAllAnnotationsByType(clazz, ExtensionEnabled.class)
+                .stream()
+                .map(ExtensionEnabled::value)
+                .findFirst()
+                .orElse(true);
+    }
+
+    /**
      * Gets the description of the given extension class.
      *
      * @param clazz the extension class for which to extract the description.
-     * @return      the description or {@code null}.
+     * @return the description or {@code ""}.
      */
     static String getDescription(final Class<? extends Extension> clazz) {
         return AnnotationResolver.findAllAnnotationsByType(clazz, ExtensionDescription.class)
@@ -55,7 +99,7 @@ public interface Extension extends Configurable {
      * Gets the type of the given extension class.
      *
      * @param clazz the extension class for which to extract the type.
-     * @return      the Version or {@code null}.
+     * @return the type or {@code "<unknown>"}.
      */
     static String getType(final Class<? extends Extension> clazz) {
         return AnnotationResolver.findAllAnnotationsByType(clazz, ExtensionType.class)

@@ -1,0 +1,22 @@
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: KafkaTopicList
+metadata:
+  annotations:
+    jikkou.io/delete: true
+  labels: {}
+items:
+  - metadata:
+      name: "topic-test-A"
+    spec:
+      partitions: 3
+      replicas: 1
+      configs:
+        cleanup.policy: compact
+
+  - metadata:
+      name: "topic-test-B"
+    spec:
+      partitions: 3
+      replicas: 1
+      configs:
+        cleanup.policy: delete

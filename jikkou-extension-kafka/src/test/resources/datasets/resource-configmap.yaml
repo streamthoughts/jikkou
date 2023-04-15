@@ -1,4 +1,4 @@
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "core.jikkou.io/v1beta2"
 metadata:
   name: "test"
 kind: "ConfigMap"

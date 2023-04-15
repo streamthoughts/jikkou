@@ -18,16 +18,16 @@
  */
 package io.streamthoughts.jikkou.api.health;
 
+import io.streamthoughts.jikkou.api.annotations.ExtensionType;
 import io.streamthoughts.jikkou.api.extensions.Extension;
-import io.streamthoughts.jikkou.api.extensions.annotations.ExtensionType;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.time.Duration;
 
 /**
- *
+ * Provides indicators about the health of a service or sub-system.
  */
-@InterfaceStability.Evolving
-@ExtensionType("health_indicator")
+@Evolving
+@ExtensionType("HealthIndicator")
 public interface HealthIndicator extends Extension {
 
     /**

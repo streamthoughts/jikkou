@@ -24,23 +24,22 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
-import io.streamthoughts.jikkou.kafka.model.QuotaType;
-import io.streamthoughts.jikkou.kafka.models.V1QuotaEntityObject;
+import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import java.util.List;
 import java.util.Objects;
 import lombok.Builder;
-import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public final class QuotaChange implements Change<ClientQuotaEntity> {
+public final class QuotaChange implements Change {
 
     private final ChangeType operation;
 
-    private final QuotaType type;
+    private final KafkaClientQuotaType type;
 
-    private final V1QuotaEntityObject entity;
+    private final V1KafkaClientQuotaEntity entity;
 
     private final List<ConfigEntryChange> configs;
 
@@ -53,8 +52,8 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
      * @param configs       the quota configuration.
      */
     public QuotaChange(@NotNull final ChangeType operation,
-                       @NotNull final QuotaType type,
-                       @NotNull final V1QuotaEntityObject entity,
+                       @NotNull final KafkaClientQuotaType type,
+                       @NotNull final V1KafkaClientQuotaEntity entity,
                        @NotNull final List<ConfigEntryChange> configs) {
         this.operation = Objects.requireNonNull(operation, "operation cannot be null");
         this.entity = Objects.requireNonNull(entity, "entity cannot be null");;
@@ -64,18 +63,12 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
 
     /** {@inheritDoc} */
     @Override
-    public ChangeType getChange() {
+    public ChangeType getChangeType() {
         return operation;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public ClientQuotaEntity getKey() {
-        return new ClientQuotaEntity(type.toEntities(entity));
-    }
-
     @JsonProperty
-    public V1QuotaEntityObject getEntity() {
+    public V1KafkaClientQuotaEntity getEntity() {
         return entity;
     }
 
@@ -85,7 +78,7 @@ public final class QuotaChange implements Change<ClientQuotaEntity> {
     }
 
     @JsonProperty
-    public QuotaType getType() {
+    public KafkaClientQuotaType getType() {
         return type;
     }
 

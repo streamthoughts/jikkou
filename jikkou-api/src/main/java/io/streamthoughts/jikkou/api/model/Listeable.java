@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import java.util.Iterator;
 import java.util.List;
@@ -32,20 +33,26 @@ import java.util.stream.Stream;
 @InterfaceStability.Evolving
 public interface Listeable<T> extends Iterable<T> {
 
-    List<T> items();
+    /**
+     * Gets the items.
+     *
+     * @return the items.
+     */
+    List<T> getItems();
 
     /**
      * @return {@code true} if this list contains no items.
      */
+    @JsonIgnore
     default boolean isEmpty() {
-        return items().isEmpty();
+        return getItems().isEmpty();
     }
 
     /**
      * @return  a sequential {@link Stream} with this list as its source.
      */
     default Stream<T> stream() {
-        return items().stream();
+        return getItems().stream();
     }
 
     /**
@@ -56,19 +63,19 @@ public interface Listeable<T> extends Iterable<T> {
         if (isEmpty()) {
             throw new NoSuchElementException("Items list is empty");
         }
-        return items().get(0);
+        return getItems().get(0);
     }
 
     /**
      * @return the number of items in this list.
      */
     default int size() {
-        return items().size();
+        return getItems().size();
     }
 
     /** {@inheritDoc} */
     @Override
     default Iterator<T> iterator() {
-        return items().iterator();
+        return getItems().iterator();
     }
 }

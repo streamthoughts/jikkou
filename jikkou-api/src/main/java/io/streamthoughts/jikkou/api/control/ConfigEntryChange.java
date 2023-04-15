@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.api.model.Nameable;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
-public final class ConfigEntryChange implements Change<String>, Nameable {
+public final class ConfigEntryChange implements Change, Nameable {
 
     private final ValueChange<Object> valueChange;
     private final String name;
@@ -52,7 +52,7 @@ public final class ConfigEntryChange implements Change<String>, Nameable {
     /** {@inheritDoc} */
     @Override
     @JsonProperty("operation")
-    public ChangeType getChange() {
+    public ChangeType getChangeType() {
         return valueChange.type();
     }
 
@@ -60,12 +60,6 @@ public final class ConfigEntryChange implements Change<String>, Nameable {
     @JsonUnwrapped
     public ValueChange<Object> getValueChange() {
         return valueChange;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getKey() {
-        return name;
     }
 
     /** {@inheritDoc} */
@@ -81,5 +75,14 @@ public final class ConfigEntryChange implements Change<String>, Nameable {
     @Override
     public int hashCode() {
         return Objects.hash(valueChange, name);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "ConfigEntryChange{" +
+                "valueChange=" + valueChange +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

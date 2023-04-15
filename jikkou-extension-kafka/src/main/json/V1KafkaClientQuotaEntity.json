@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "description": "A secure logical group of clients that share both user principal and client ID.",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "user": {
+      "type": "string"
+    },
+    "clientId": {
+      "type": "string"
+    }
+  }
+}

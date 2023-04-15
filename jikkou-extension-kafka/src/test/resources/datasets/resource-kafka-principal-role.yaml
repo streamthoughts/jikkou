@@ -1,0 +1,37 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalRole"
+metadata:
+  name: "group_one"
+spec:
+  acls:
+    - type: "ALLOW"
+      operations: [ 'CREATE', 'DELETE', 'ALTER', 'ALTER_CONFIGS' ]
+      resource:
+        type: 'topic'
+        pattern: '/([.-])*/'
+        patternType: 'MATCH'
+      host: "*"
+
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalRole"
+metadata:
+  name: "group_two"
+spec:
+  acls:
+    - type: "ALLOW"
+      operations: [ 'READ', 'WRITE' ]
+      resource:
+        type: 'topic'
+        pattern: '/public-([.-])*/'
+        patternType: 'MATCH'
+      host: "*"
+
+    - type: "ALLOW"
+      operations: [ 'READ' ]
+      resource:
+        type: 'group'
+        pattern: 'public-'
+        patternType: 'MATCH'
+      host: "*"

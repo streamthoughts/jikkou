@@ -20,34 +20,63 @@ package io.streamthoughts.jikkou.api.model;
 
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.api.model.annotations.Transient;
+import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
-@InterfaceStability.Evolving
+/**
+ * Represents an individual resource object.
+ */
+@Evolving
 public interface HasMetadata extends Resource {
 
     /**
-     * @return  the metadata of this resource object.
+     * Gets resource metadata.
+     *
+     * @return the metadata of this resource object.
      */
     ObjectMeta getMetadata();
 
+    /**
+     * Gets a new object with metadata updated.
+     *
+     * @param objectMeta the object meta to set.
+     * @return a new object.
+     */
     HasMetadata withMetadata(ObjectMeta objectMeta);
 
     /**
-     * @return  the API Version of this resource.
+     * Gets resource api version.
+     *
+     * @return the API Version of this resource.
      */
     String getApiVersion();
 
     /**
-     * @return  the kind of this resource.
+     * Gets resource kind.
+     *
+     * @return the kind of this resource.
      */
     String getKind();
+
+    /**
+     * Check whether this resource should not be part of the reconciliation process.
+     *
+     * @return {@link true} if this class is annotated with {@link Transient}, otherwise return {@link false}.
+     */
+    static boolean isTransient(final Class<? extends Resource> clazz) {
+        return AnnotationResolver.isAnnotatedWith(clazz, Transient.class);
+    }
 
     /**
      * Gets the Version of the given resource class.
      *
      * @param clazz the resource class for which to extract the Version.
-     * @return      the Version or {@code null}.
+     * @return the Version or {@code null}.
      */
     static String getApiVersion(final Class<? extends Resource> clazz) {
         ApiVersion version = clazz.getAnnotation(ApiVersion.class);
@@ -61,7 +90,7 @@ public interface HasMetadata extends Resource {
      * Gets the Kind of the given resource class.
      *
      * @param clazz the resource class for which to extract the Kind.
-     * @return      the Kind or {@code null}.
+     * @return the Kind or {@code null}.
      */
     static String getKind(final Class<? extends Resource> clazz) {
         Kind kind = clazz.getAnnotation(Kind.class);
@@ -71,7 +100,27 @@ public interface HasMetadata extends Resource {
         return clazz.getSimpleName();
     }
 
+    /**
+     * Gets the optional metadata.
+     *
+     * @return an optional metadata.
+     */
     default Optional<ObjectMeta> optionalMetadata() {
         return Optional.ofNullable(getMetadata());
+    }
+
+    static Optional<Object> getMetadataAnnotation(@NotNull HasMetadata resource,
+                                                  @NotNull String annotation) {
+        return resource.optionalMetadata()
+                .stream()
+                .map(meta -> meta.getAnnotation(annotation))
+                .flatMap(Optional::stream)
+                .findFirst();
+    }
+
+    static <T extends HasMetadata> List<T> sortByName(final List<T> resources) {
+        return resources.stream()
+                .sorted(Comparator.comparing(it -> it.getMetadata().getName()))
+                .toList();
     }
 }

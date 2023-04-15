@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.api.io;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -54,6 +55,7 @@ public interface Jackson {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET,false)
             .serializationInclusion(JsonInclude.Include.NON_ABSENT)
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
@@ -64,6 +66,7 @@ public interface Jackson {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET,false)
             .serializationInclusion(JsonInclude.Include.NON_ABSENT)
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)

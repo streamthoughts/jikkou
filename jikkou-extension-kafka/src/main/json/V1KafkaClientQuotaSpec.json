@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "description": "Client quota specification",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "properties": {
+    "type": {
+      "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType",
+      "type": "object"
+    },
+    "entity": {
+      "$ref": "V1KafkaClientQuotaEntity.json"
+    },
+    "configs": {
+      "$ref": "V1KafkaClientQuotaConfigs.json"
+    }
+  }
+}

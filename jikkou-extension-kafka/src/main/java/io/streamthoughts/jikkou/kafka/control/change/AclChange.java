@@ -22,26 +22,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.kafka.model.AccessControlPolicy;
+import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import java.util.Objects;
 import lombok.Builder;
 
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
-public final class AclChange implements Change<AccessControlPolicy> {
+public final class AclChange implements Change {
 
     private final ChangeType operation;
 
-    private final AccessControlPolicy policy;
+    private final KafkaAclBinding acl;
 
-    static AclChange delete(final AccessControlPolicy policy) {
+    static AclChange delete(final KafkaAclBinding policy) {
         return new AclChange(ChangeType.DELETE, policy);
     }
 
-    static AclChange add(final AccessControlPolicy policy) {
+    static AclChange add(final KafkaAclBinding policy) {
         return new AclChange(ChangeType.ADD, policy);
     }
 
-    static AclChange none(final AccessControlPolicy policy) {
+    static AclChange none(final KafkaAclBinding policy) {
         return new AclChange(ChangeType.NONE, policy);
     }
 
@@ -49,34 +49,27 @@ public final class AclChange implements Change<AccessControlPolicy> {
      * Creates a new {@link AclChange} instance.
      *
      * @param operation the {@link ChangeType}.
-     * @param policy    the {@link AccessControlPolicy}.
+     * @param acl    the {@link KafkaAclBinding}.
      */
     private AclChange(final ChangeType operation,
-                      final AccessControlPolicy policy) {
+                      final KafkaAclBinding acl) {
         this.operation = Objects.requireNonNull(operation, "'operation' should not be null");
-        this.policy = Objects.requireNonNull(policy, "'policy' should not be null");
+        this.acl = Objects.requireNonNull(acl, "'policy' should not be null");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ChangeType getChange() {
+    public ChangeType getChangeType() {
         return operation;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AccessControlPolicy getKey() {
-        return policy;
-    }
 
     @JsonProperty
     @JsonUnwrapped
-    public AccessControlPolicy getAccessControlPolicy() {
-        return policy;
+    public KafkaAclBinding getAclBindings() {
+        return acl;
     }
 
     /**
@@ -87,7 +80,7 @@ public final class AclChange implements Change<AccessControlPolicy> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AclChange aclChange = (AclChange) o;
-        return operation == aclChange.operation && Objects.equals(policy, aclChange.policy);
+        return operation == aclChange.operation && Objects.equals(acl, aclChange.acl);
     }
 
     /**
@@ -95,6 +88,6 @@ public final class AclChange implements Change<AccessControlPolicy> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(operation, policy);
+        return Objects.hash(operation, acl);
     }
 }

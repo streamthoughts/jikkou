@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,53 +18,56 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import io.streamthoughts.jikkou.api.AcceptResource;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.CREATE;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.UPDATE;
+
 import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.ResourceFilter;
+import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.annotations.SupportedReconciliationModes;
+import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
+import io.streamthoughts.jikkou.api.control.ChangeHandler;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ResourceController;
-import io.streamthoughts.jikkou.api.error.JikkouException;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.error.ConfigException;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.api.model.ResourceListObject;
+import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
-import io.streamthoughts.jikkou.kafka.control.change.KafkaTopicReconciliationConfig;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChangeComputer;
-import io.streamthoughts.jikkou.kafka.control.operation.topics.AlterTopicOperation;
-import io.streamthoughts.jikkou.kafka.control.operation.topics.ApplyTopicOperation;
-import io.streamthoughts.jikkou.kafka.control.operation.topics.CreateTopicOperation;
-import io.streamthoughts.jikkou.kafka.control.operation.topics.DeleteTopicOperation;
-import io.streamthoughts.jikkou.kafka.internals.ConfigsBuilder;
+import io.streamthoughts.jikkou.kafka.control.handlers.topics.AlterTopicChangeHandler;
+import io.streamthoughts.jikkou.kafka.control.handlers.topics.CreateTopicChangeHandler;
+import io.streamthoughts.jikkou.kafka.control.handlers.topics.DeleteTopicChangeHandler;
+import io.streamthoughts.jikkou.kafka.control.handlers.topics.TopicChangeDescription;
+import io.streamthoughts.jikkou.kafka.converters.V1KafkaTopicListConverter;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChange;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChangeList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.DescribeConfigsResult;
-import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.TopicPartitionInfo;
-import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@AcceptResource(type = V1KafkaTopicList.class)
-public final class AdminClientKafkaTopicController extends AdminClientKafkaController
-        implements ResourceController<V1KafkaTopicList, TopicChange> {
+@SupportedResource(type = V1KafkaTopic.class)
+@SupportedResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
+@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY})
+public final class AdminClientKafkaTopicController extends AbstractAdminClientKafkaController
+        implements BaseExternalResourceController<V1KafkaTopic, TopicChange> {
 
-    private static final TopicChangeComputer COMPUTER = new TopicChangeComputer();
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
+
+    public static final String CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME = "config-delete-orphans";
+
+    private AdminClientKafkaTopicCollector collector;
 
     /**
      * Creates a new {@link AdminClientKafkaTopicController} instance.
@@ -90,238 +93,82 @@ public final class AdminClientKafkaTopicController extends AdminClientKafkaContr
      */
     public AdminClientKafkaTopicController(final @NotNull AdminClientContext adminClientContext) {
         super(adminClientContext);
+        setInternalDescriptor(adminClientContext);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public KafkaTopicReconciliationConfig defaultConciliationConfig() {
-        return new KafkaTopicReconciliationConfig();
+    public void configure(@NotNull Configuration config) throws ConfigException {
+        super.configure(config);
+        setInternalDescriptor(adminClientContext);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<TopicChange> computeReconciliationChanges(@NotNull V1KafkaTopicList topicList,
-                                                          @NotNull ReconciliationContext context) {
-
-
-        List<V1KafkaTopicObject> topicObjects = topicList
-                .optionalSpec()
-                .map(V1KafkaTopicSpec::getTopics)
-                .orElse(null);
-
-        if (topicObjects == null) {
-            // return; no spec exist for topics
-            return Collections.emptyList();
+    private void setInternalDescriptor(@NotNull AdminClientContext adminClientContext) {
+        if (collector == null) {
+            this.collector = new AdminClientKafkaTopicCollector(adminClientContext);
         }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ChangeResult<TopicChange>> execute(@NotNull List<TopicChange> changes,
+                                                   @NotNull ReconciliationMode mode,
+                                                   boolean dryRun) {
+        AdminClient client = adminClientContext.client();
+        List<ChangeHandler<TopicChange>> handlers = List.of(
+                new CreateTopicChangeHandler(client),
+                new AlterTopicChangeHandler(client),
+                new DeleteTopicChangeHandler(client),
+                new ChangeHandler.None<>(TopicChangeDescription::new)
+        );
+        return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+    }
+
+    @Override
+    public ResourceListObject<? extends HasMetadataChange<TopicChange>> computeReconciliationChanges(
+            @NotNull Collection<V1KafkaTopic> resources,
+            @NotNull ReconciliationMode mode, @NotNull
+            ReconciliationContext context) {
+
+        LOG.info("Computing reconciliation change for '{}' resources in '{}' mode", resources.size(), mode);
+
+        // Get the list of described resource that are candidates for this reconciliation
+        List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
+                .filter(new AggregateSelector(context.selectors())::apply)
+                .toList();
 
         // Build the configuration for describing actual resources
-        Configuration describeConfiguration = new ConfigDescribeConfiguration(context.configuration())
+        Configuration describeConfiguration = new ConfigDescribeConfiguration()
                 .withDescribeDefaultConfigs(true)
+                .withDescribeStaticBrokerConfigs(true)
+                .withDescribeDynamicBrokerConfigs(true)
                 .asConfiguration();
 
         // Get the list of remote resources that are candidates for this reconciliation
-        List<V1KafkaTopicObject> actualResources =
-                describe(describeConfiguration, context.filter())
-                .getSpec().getTopics();
+        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration, context.selectors());
 
-        // Get the list of described resource that are candidates for this reconciliation
-        List<V1KafkaTopicObject> expectedResources = topicObjects
-                .stream()
-                .filter(context.filter()::apply)
-                .toList();
 
-        return COMPUTER.computeChanges(
-                actualResources,
-                expectedResources,
-                new KafkaTopicReconciliationConfig(context.configuration())
-        );
+        boolean isConfigDeletionEnabled = isConfigDeletionEnabled(mode, context);
+
+        TopicChangeComputer changeComputer = new TopicChangeComputer(isConfigDeletionEnabled);
+
+        List<TopicChange> changes = changeComputer.computeChanges(
+                actualKafkaTopics,
+                expectedKafkaTopics);
+
+        return new V1KafkaTopicChangeList()
+                .withItems(changes.stream().map(c -> V1KafkaTopicChange.builder().withChange(c).build()).toList());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public V1KafkaTopicList describe(@NotNull final Configuration configuration,
-                                     @NotNull final ResourceFilter resourceFilter) {
-
-        ConfigDescribeConfiguration describeConfiguration = new ConfigDescribeConfiguration(configuration);
-        KafkaFunction<List<V1KafkaTopicObject>> function = client -> new DescribeTopics(
-                client,
-                describeConfiguration.configEntryPredicate(),
-                resourceFilter.getPredicateByName()
-        ).describe();
-        List<V1KafkaTopicObject> topicObjects = adminClientContext.invoke(function);
-
-        return new V1KafkaTopicList()
-                .toBuilder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withAnnotation("jikkou.io/kafka-cluster-id", adminClientContext.getClusterId())
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec.builder()
-                        .withTopics(topicObjects)
-                        .build()
-                )
-                .build();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<TopicChange>> create(@NotNull List<TopicChange> changes, boolean dryRun) {
-        var operation = new CreateTopicOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<TopicChange>> update(@NotNull List<TopicChange> changes, boolean dryRun) {
-        var operation = new AlterTopicOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<TopicChange>> delete(@NotNull List<TopicChange> changes, boolean dryRun) {
-        var operation = new DeleteTopicOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ChangeResult<TopicChange>> apply(@NotNull List<TopicChange> changes, boolean dryRun) {
-        var operation = new ApplyTopicOperation(adminClientContext.client());
-        return ChangeExecutor.ofSupplier(() -> changes).execute(operation, dryRun);
-    }
-
-    /**
-     * Function to list all topics on Kafka Cluster matching a given predicate.
-     */
-    public static final class DescribeTopics {
-
-        public static final Set<String> NO_CONFIG_MAP_REFS = null;
-        private final AdminClient client;
-
-        private final Predicate<ConfigEntry> configEntryPredicate;
-
-        private final Predicate<String> topicPredicate;
-
-        public DescribeTopics(final AdminClient client,
-                              final Predicate<ConfigEntry> configEntryPredicate,
-                              final Predicate<String> topicPredicate) {
-            this.client = client;
-            this.configEntryPredicate = configEntryPredicate;
-            this.topicPredicate = topicPredicate;
-        }
-
-        public List<V1KafkaTopicObject> describe() {
-
-            final Collection<String> topicNames;
-            try {
-                topicNames = client.listTopics().names().get()
-                        .stream()
-                        .filter(topicPredicate)
-                        .collect(Collectors.toList());
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new JikkouException(e);
-            } catch (ExecutionException e) {
-                throw new JikkouException(e);
-            }
-
-            final CompletableFuture<Map<String, TopicDescription>> futureTopicDesc = describeTopics(topicNames);
-            final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(topicNames);
-
-            try {
-                return futureTopicDesc.thenCombine(futureTopicConfig, (descriptions, configs) -> {
-                    return descriptions.values()
-                            .stream()
-                            .map(desc -> newTopicResources(desc, configs.get(desc.name())))
-                            .collect(Collectors.toList());
-                }).get();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new JikkouException(e);
-            } catch (ExecutionException e) {
-                throw new JikkouException(e);
-            }
-        }
-
-        private V1KafkaTopicObject newTopicResources(final TopicDescription desc, final Config config) {
-            int rf = computeReplicationFactor(desc);
-            return new V1KafkaTopicObject(
-                    desc.name(),
-                    desc.partitions().size(),
-                    (short) rf,
-                    KafkaConfigsAdapter.of(config, configEntryPredicate),
-                    NO_CONFIG_MAP_REFS
-            );
-        }
-
-        /**
-         * Determines the replication factor for the specified topic based on its partitions.
-         *
-         * @param desc the topic description
-         * @return return {@literal -1} if all partitions do not have a same number of replicas (this may happen during replicas reassignment).
-         */
-        private int computeReplicationFactor(final TopicDescription desc) {
-            Iterator<TopicPartitionInfo> it = desc.partitions().iterator();
-            int rf = it.next().replicas().size();
-            while (it.hasNext() && rf != -1) {
-                int replica = it.next().replicas().size();
-                if (rf != replica) {
-                    rf = -1;
-                }
-            }
-            return rf;
-        }
-
-        private CompletableFuture<Map<String, Config>> describeConfigs(final Collection<String> topicNames) {
-            return CompletableFuture.supplyAsync(() -> {
-                try {
-                    final ConfigsBuilder builder = new ConfigsBuilder();
-                    topicNames.forEach(topicName ->
-                            builder.newResourceConfig()
-                                    .setType(ConfigResource.Type.TOPIC)
-                                    .setName(topicName));
-                    DescribeConfigsResult rs = client.describeConfigs(builder.build().keySet());
-                    Map<ConfigResource, Config> configs = rs.all().get();
-                    return configs.entrySet()
-                            .stream()
-                            .collect(Collectors.toMap(entry -> entry.getKey().name(), Map.Entry::getValue));
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new JikkouException(e);
-                } catch (ExecutionException e) {
-                    throw new JikkouException(e);
-                }
-            });
-        }
-
-        private CompletableFuture<Map<String, TopicDescription>> describeTopics(final Collection<String> topicNames) {
-            return CompletableFuture.supplyAsync(() -> {
-                try {
-                    DescribeTopicsResult describeTopicsResult = client.describeTopics(topicNames);
-                    return describeTopicsResult.allTopicNames().get();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new JikkouException(e);
-                } catch (ExecutionException e) {
-                    throw new JikkouException(e);
-                }
-            });
-        }
+    @VisibleForTesting
+    static boolean isConfigDeletionEnabled(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context) {
+        return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
+                .orElse(() -> List.of(APPLY, DELETE, UPDATE).contains(mode))
+                .evaluate(context.configuration());
     }
 }

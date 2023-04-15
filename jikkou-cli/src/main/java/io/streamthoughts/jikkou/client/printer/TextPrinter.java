@@ -19,13 +19,14 @@
 package io.streamthoughts.jikkou.client.printer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import java.io.PrintStream;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,7 +59,7 @@ public class TextPrinter implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(Collection<ChangeResult<?>> results,
+    public int print(List<ChangeResult<Change>> results,
                      boolean dryRun,
                      long executionTimeMs) {
         int ok = 0;
@@ -73,7 +74,7 @@ public class TextPrinter implements Printer {
                         .writerWithDefaultPrettyPrinter()
                         .writeValueAsString(r);
             } catch (JsonProcessingException e) {
-                throw new JikkouException(e);
+                throw new JikkouRuntimeException(e);
             }
 
             String color = TextPrinter.ANSI_WHITE;

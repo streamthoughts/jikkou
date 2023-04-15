@@ -18,43 +18,26 @@
  */
 package io.streamthoughts.jikkou.kafka.validations;
 
-import io.streamthoughts.jikkou.api.AcceptResource;
+import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.error.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.extensions.annotations.EnableAutoConfigure;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.Nameable;
-import io.streamthoughts.jikkou.api.model.ResourceValidation;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptResource(type = V1KafkaTopicList.class)
-@EnableAutoConfigure
-public class NoDuplicateTopicsAllowedValidation implements ResourceValidation {
-
+@SupportedResource(type = V1KafkaTopic.class)
+public class NoDuplicateTopicsAllowedValidation implements ResourceValidation<V1KafkaTopic> {
 
     /** {@inheritDoc} */
     @Override
-    public void validate(@NotNull HasMetadata resource) throws ValidationException {
-        V1KafkaTopicList topicList = (V1KafkaTopicList) resource;
-        List<V1KafkaTopicObject> topics = topicList.getSpec().getTopics();
-
-        if (topics == null || topics.isEmpty()) return;
-
-        final Map<String, List<V1KafkaTopicObject>> groupedByName = Nameable.groupByName(topics);
-
-        final Set<String> duplicates = groupedByName.entrySet()
-                .stream()
-                .filter(it -> it.getValue().size() > 1)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-
-        if (!duplicates.isEmpty()) {
-            throw new ValidationException("Duplicates 'name' in specs.topics: " + duplicates, this);
+    public void validate(@NotNull List<V1KafkaTopic> resources) throws ValidationException {
+        GenericResourceListObject list = new GenericResourceListObject(resources);
+        try {
+            list.verifyNoDuplicateMetadataName();
+        } catch (DuplicateMetadataNameException e) {
+            throw new ValidationException("Duplicate V1KafkaTopic for metadata.name: " + e.duplicates(), this);
         }
     }
 }

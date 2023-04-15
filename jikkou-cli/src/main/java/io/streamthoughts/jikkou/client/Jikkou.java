@@ -20,67 +20,64 @@ package io.streamthoughts.jikkou.client;
 
 import static picocli.CommandLine.Model.CommandSpec;
 
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.client.banner.Banner;
 import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
 import io.streamthoughts.jikkou.client.banner.JikkouBanner;
-import io.streamthoughts.jikkou.client.command.ApplyCommand;
-import io.streamthoughts.jikkou.client.command.CLIOptionsMixin;
-import io.streamthoughts.jikkou.client.command.acls.AclsCommand;
-import io.streamthoughts.jikkou.client.command.broker.BrokerCommand;
+import io.streamthoughts.jikkou.client.command.ApplyResourceCommand;
+import io.streamthoughts.jikkou.client.command.CreateResourceCommand;
+import io.streamthoughts.jikkou.client.command.DeleteResourceCommand;
+import io.streamthoughts.jikkou.client.command.DiffCommand;
+import io.streamthoughts.jikkou.client.command.ResourcesCommand;
+import io.streamthoughts.jikkou.client.command.UpdateResourceCommand;
+import io.streamthoughts.jikkou.client.command.ValidateCommand;
 import io.streamthoughts.jikkou.client.command.config.ConfigCommand;
-import io.streamthoughts.jikkou.client.command.extensions.ExtensionCommand;
+import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCandidateCommand;
+import io.streamthoughts.jikkou.client.command.extension.ExtensionCommand;
+import io.streamthoughts.jikkou.client.command.get.GetCommandGenerator;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
-import io.streamthoughts.jikkou.client.command.quotas.QuotasCommand;
-import io.streamthoughts.jikkou.client.command.topic.TopicsCommand;
-import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
-import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import picocli.AutoComplete;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Mixin;
 
 /**
  * The main-class
  */
 @Command(name = "jikkou",
-        descriptionHeading   = "%nDescription:%n%n",
+        descriptionHeading = "%n%n",
         parameterListHeading = "%nParameters:%n%n",
-        optionListHeading    = "%nOptions:%n%n",
-        commandListHeading   = "%nCommands:%n%n",
+        optionListHeading = "%nOptions:%n%n",
+        commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage: ",
         synopsisHeading = "%n",
-        description = "A CLI to help you automate the management of the configurations that live on your Apache Kafka clusters.",
+        description = "Jikkou streamlines the management of the configurations that live on your data streams platform.%n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
         mixinStandardHelpOptions = true,
         versionProvider = Jikkou.ManifestVersionProvider.class,
         subcommands = {
-            ValidateCommand.class,
-            ApplyCommand.class,
-            TopicsCommand.class,
-            AclsCommand.class,
-            BrokerCommand.class,
-            QuotasCommand.class,
-            ExtensionCommand.class,
-            ConfigCommand.class,
-            HealthCommand.class,
-            CommandLine.HelpCommand.class,
-            AutoComplete.GenerateCompletion.class
+                CreateResourceCommand.class,
+                DeleteResourceCommand.class,
+                UpdateResourceCommand.class,
+                ApplyResourceCommand.class,
+                ResourcesCommand.class,
+                ExtensionCommand.class,
+                ConfigCommand.class,
+                DiffCommand.class,
+                ValidateCommand.class,
+                HealthCommand.class,
+                CommandLine.HelpCommand.class,
+                AutoComplete.GenerateCompletion.class,
+                ContextNamesCompletionCandidateCommand.class
         }
 )
 public final class Jikkou {
@@ -89,8 +86,7 @@ public final class Jikkou {
 
     static LocalDateTime START_TIME;
 
-    @Mixin
-    public CLIOptionsMixin options;
+    private Jikkou() {}
 
     public static void main(final String... args) {
         START_TIME = LocalDateTime.now();
@@ -105,23 +101,29 @@ public final class Jikkou {
         final CommandLine commandLine = new CommandLine(command)
                 .setCaseInsensitiveEnumValuesAllowed(true)
                 .setUsageHelpWidth(160)
-                .setExecutionStrategy(new CommandLine.RunLast(){
+                .setExecutionStrategy(new CommandLine.RunLast() {
                     @Override
                     public int execute(final CommandLine.ParseResult parseResult) throws CommandLine.ExecutionException {
                         // Initialization must be triggered after args was parsed by Picocli
-                        command.initialize();
                         return super.execute(parseResult);
                     }
                 })
                 .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
                     final PrintWriter err = cmd.getErr();
-                    if (! (ex instanceof JikkouException) ) {
+                    if (!(ex instanceof JikkouRuntimeException)) {
                         err.println(cmd.getColorScheme().stackTraceText(ex));
                     }
-                    err.println(cmd.getColorScheme().errorText(ex.getMessage()));
+                    String message = ex.getLocalizedMessage() != null ?
+                            ex.getLocalizedMessage() :
+                            ex.getClass().getName();
+
+                    err.println(cmd.getColorScheme().errorText("Error: " + message));
                     return cmd.getCommandSpec().exitCodeOnExecutionException();
                 })
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
+
+
+        commandLine.addSubcommand(new GetCommandGenerator().createGetCommandLine());
 
         CommandLine gen = commandLine.getSubcommands().get("generate-completion");
         gen.getCommandSpec().usageMessage().hidden(true);
@@ -132,32 +134,6 @@ public final class Jikkou {
         } else {
             commandLine.usage(System.out);
         }
-    }
-
-    /**
-     * Initializes the global-static configuration object.
-     */
-    private void initialize() {
-        Map<String, Object> adminClientParams = new HashMap<>();
-        if (options.clientCommandConfig != null) {
-            final Properties cliCommandProps = PropertiesUtils.loadPropertiesConfig(options.clientCommandConfig);
-            adminClientParams.putAll(PropertiesUtils.toMap(cliCommandProps));
-        }
-
-        adminClientParams.putAll(options.clientCommandProperties);
-        if (options.bootstrapServer != null && !options.bootstrapServer.isEmpty()) {
-            adminClientParams.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, options.bootstrapServer);
-        }
-
-        Map<String, Object> cliConfigParams = new HashMap<>();
-        cliConfigParams.put(AdminClientContext.ADMIN_CLIENT_CONFIG_NAME, adminClientParams);
-
-        JikkouConfig jikkouConfig = JikkouConfig.builder()
-                .withConfigFile(options.configFile)
-                .withConfigOverrides(cliConfigParams)
-                .build();
-
-        JikkouContext.setConfig(jikkouConfig);
     }
 
     public static class ShortErrorMessageHandler implements CommandLine.IParameterExceptionHandler {
@@ -172,7 +148,7 @@ public final class Jikkou {
             PrintWriter err = cmd.getErr();
 
             // if tracing at DEBUG level, show the location of the issue
-            if ("DEBUG".equalsIgnoreCase(System.getProperty("picocli.trace"))) {
+            if ("DEBUG" .equalsIgnoreCase(System.getProperty("picocli.trace"))) {
                 err.println(cmd.getColorScheme().stackTraceText(ex));
             }
 
@@ -188,7 +164,7 @@ public final class Jikkou {
     }
 
     public static long getExecutionTime() {
-       return Duration.between (START_TIME, LocalDateTime.now ()).toMillis();
+        return Duration.between(START_TIME, LocalDateTime.now()).toMillis();
     }
 
     /**
@@ -203,12 +179,12 @@ public final class Jikkou {
                     Manifest manifest = new Manifest(url.openStream());
                     if (isApplicableManifest(manifest)) {
                         Attributes attr = manifest.getMainAttributes();
-                        return new String[] {
-                            get(attr, "Implementation-Title") + " version v" + get(attr, "Implementation-Version")
+                        return new String[]{
+                                get(attr, "Implementation-Title") + " version v" + get(attr, "Implementation-Version")
                         };
                     }
                 } catch (IOException ex) {
-                    return new String[] { "Unable to read from " + url + ": " + ex };
+                    return new String[]{"Unable to read from " + url + ": " + ex};
                 }
             }
             return new String[0];

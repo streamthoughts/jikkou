@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.kafka.control.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
@@ -36,12 +35,12 @@ import lombok.Builder;
 
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @AllArgsConstructor
-public final class TopicChange implements Change<String>, Nameable {
+public final class TopicChange implements Change, Nameable {
 
     private final String name;
     private final ChangeType operation;
     private final ValueChange<Integer> partitions;
-    private final ValueChange<Short> replicationFactor;
+    private final ValueChange<Short> replicas;
     private final List<ConfigEntryChange> configs;
 
     /** {@inheritDoc} */
@@ -52,27 +51,18 @@ public final class TopicChange implements Change<String>, Nameable {
 
     /** {@inheritDoc} */
     @Override
-    public ChangeType getChange() {
+    public ChangeType getChangeType() {
         return operation;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getKey() {
-        return name;
-    }
-
-    @JsonProperty("partitions")
     public ValueChange<Integer> getPartitions() {
         return partitions;
     }
 
-    @JsonProperty("replication_factor")
-    public ValueChange<Short> getReplicationFactor() {
-        return replicationFactor;
+    public ValueChange<Short> getReplicas() {
+        return replicas;
     }
 
-    @JsonProperty("configs")
     public Map<String, ConfigEntryChange> getConfigs() {
         return  getConfigEntryChanges()
                 .stream()
@@ -87,7 +77,7 @@ public final class TopicChange implements Change<String>, Nameable {
     public boolean hasConfigEntryChanges() {
         return  getConfigEntryChanges()
                 .stream()
-                .anyMatch(it -> !it.getChange().equals(ChangeType.NONE));
+                .anyMatch(it -> !it.getChangeType().equals(ChangeType.NONE));
     }
 
     /** {@inheritDoc} */
@@ -99,14 +89,14 @@ public final class TopicChange implements Change<String>, Nameable {
         return operation == change.operation &&
             Objects.equals(name, change.name) &&
             Objects.equals(partitions, change.partitions) &&
-            Objects.equals(replicationFactor, change.replicationFactor) &&
+            Objects.equals(replicas, change.replicas) &&
             Objects.equals(configs, change.configs);
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(name, operation, partitions, replicationFactor, configs);
+        return Objects.hash(name, operation, partitions, replicas, configs);
     }
 
     /** {@inheritDoc} */
@@ -116,7 +106,7 @@ public final class TopicChange implements Change<String>, Nameable {
                 "name='" + name + '\'' +
                 ", operation=" + operation +
                 ", partitions=" + partitions +
-                ", replicationFactor=" + replicationFactor +
+                ", replicationFactor=" + replicas +
                 ", configs=" + configs +
                 '}';
     }

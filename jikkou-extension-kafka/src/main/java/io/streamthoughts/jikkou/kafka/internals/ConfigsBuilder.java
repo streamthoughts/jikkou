@@ -38,7 +38,7 @@ public class ConfigsBuilder {
     }
 
     public static class ResourceConfigSupplier {
-        private Map<String, String> entries = new HashMap<>();
+        private final Map<String, String> entries = new HashMap<>();
 
         private ConfigResource.Type type;
 

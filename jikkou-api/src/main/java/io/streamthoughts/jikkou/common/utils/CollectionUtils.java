@@ -22,7 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class to manipulate collections.
+ */
 public final class CollectionUtils {
+
+    private CollectionUtils() {}
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T extends E, E> List<T> cast(List<E> list) {

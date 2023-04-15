@@ -20,26 +20,37 @@ package io.streamthoughts.jikkou.api.model;
 
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
+import io.streamthoughts.jikkou.api.model.annotations.Transient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class HasMetadataTest {
 
     @Test
-    void should_get_api_version() {
-        String apiVersion = HasMetadata.getApiVersion(TestHasMetadata.class);
+    void shouldGetApiVersion() {
+        String apiVersion = HasMetadata.getApiVersion(TransientTestResource.class);
         Assertions.assertEquals("version", apiVersion);
     }
 
     @Test
-    void should_get_kind() {
-        String apiVersion = HasMetadata.getKind(TestHasMetadata.class);
+    void shouldGetKind() {
+        String apiVersion = HasMetadata.getKind(TransientTestResource.class);
         Assertions.assertEquals("kind", apiVersion);
     }
 
-    @ApiVersion("version")
-    @Kind("kind")
-    static class TestHasMetadata implements HasMetadata {
+    @Test
+    void shouldGetTrueForTransientResource() {
+        boolean isTransient = HasMetadata.isTransient(TransientTestResource.class);
+        Assertions.assertTrue(isTransient);
+    }
+
+    @Test
+    void shouldGetFalseForNonTransientResource() {
+        boolean isTransient = HasMetadata.isTransient(NonTransientTestResource.class);
+        Assertions.assertFalse(isTransient);
+    }
+
+    private static class TestResource implements HasMetadata {
 
         @Override
         public ObjectMeta getMetadata() {
@@ -61,5 +72,12 @@ class HasMetadataTest {
             return null;
         }
     }
+    @ApiVersion("version")
+    @Kind("kind")
+    static class NonTransientTestResource extends TestResource {}
 
+    @ApiVersion("version")
+    @Kind("kind")
+    @Transient
+    static class TransientTestResource extends TestResource {}
 }

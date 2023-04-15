@@ -18,114 +18,110 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import io.vavr.Tuple2;
-import io.vavr.concurrent.Future;
-import io.vavr.control.Option;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This class is responsible for executing an operation.
  *
- * @param <K>   the type of the key used for identifying an object state.
- * @param <C>   the type of the {@link Change} that will be computed.
+ * @param <C> the type of the {@link Change} that will be computed.
  */
-public final class ChangeExecutor<K, C extends Change<K>> {
+public final class ChangeExecutor<C extends Change> {
 
-    private final Supplier<List<C>> changeComputer;
-
-    public static <K, T extends Change<K>> ChangeExecutor<K, T> ofSupplier(final Supplier<List<T>> supplier) {
-        return new ChangeExecutor<>(supplier);
-    }
+    private final Map<ChangeType, ChangeHandler<C>> handlers;
 
     /**
      * Creates a new {@link ChangeExecutor} instance.
      *
-     * @param changeComputer the {@link Supplier} to be used for computing changes.
+     * @param handlers the list of handlers.
      */
-    private ChangeExecutor(@NotNull final Supplier<List<C>> changeComputer) {
-        this.changeComputer = Objects.requireNonNull(changeComputer, "'changeComputer' cannot be null");
+    public ChangeExecutor(@NotNull final List<? extends ChangeHandler<C>> handlers) {
+        Objects.requireNonNull(handlers, "'handlers' cannot be null");
+        this.handlers = new HashMap<>();
+        for (ChangeHandler<C> handler : handlers) {
+            for (var type : handler.supportedChangeTypes()) {
+                if (this.handlers.put(type, handler) != null) {
+                    throw new IllegalArgumentException("ChangeHandler already registered for type: " + type);
+                }
+            }
+        }
     }
 
     /**
-     * Runs the given {@link ExecutableOperation}.
+     * Executes all the given changes.
      *
-     * @param operation the {@link ExecutableOperation} to be executed.
-     * @param dryRun    {@code true} if the execution should be run as dry-run.
+     * @param changes the list of changes to execute.
+     * @param dryRun  {@code true} if the execution should be run as dry-run.
      * @return the list of {@link ChangeResult}.
      */
-    public @NotNull Collection<ChangeResult<C>> execute(@NotNull final ExecutableOperation<C, K, ?> operation,
-                                                        final boolean dryRun) {
-        // Compute all changes
-        List<C> changes = changeComputer.get();
+    public @NotNull List<ChangeResult<C>> execute(@NotNull final List<C> changes, final boolean dryRun) {
 
-        // Execute the operation changes
         if (dryRun) {
             return changes.stream()
-                    .filter(it -> operation.test(it) || it.getChange() == ChangeType.NONE)
+                    .filter(this::isChangeSupported)
                     .map(change -> {
-                        ChangeDescription description = operation.getDescriptionFor(change);
-                        return change.getChange() == ChangeType.NONE ?
+                        ChangeHandler<C> handler = handlers.get(change.getChangeType());
+                        ChangeDescription description = handler.getDescriptionFor(change);
+                        return change.getChangeType() == ChangeType.NONE ?
                                 ChangeResult.ok(change, description) :
                                 ChangeResult.changed(change, description);
                     })
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
+            List<C> filtered = changes.stream()
+                    .filter(it -> it.getChangeType() != ChangeType.NONE)
+                    .toList();
 
-            // Do execute the change with the given operation.
-            final List<ChangeResult<C>> results = execute(changes, operation);
+            // Do execute the change with the given handler.
+            final List<ChangeResult<C>> results = new ArrayList<>(execute(filtered));
 
             // Then, add all resources with no changes
-            changes
+            List<ChangeResult<C>> noneChanges = changes
                     .stream()
-                    .filter(it -> it.getChange() == ChangeType.NONE)
-                    .map(change -> ChangeResult.ok(change, operation.getDescriptionFor(change)))
-                    .forEach(results::add);
-
+                    .filter(it -> it.getChangeType() == ChangeType.NONE)
+                    .map(change -> ChangeResult.ok(change, handlers.get(ChangeType.NONE).getDescriptionFor(change)))
+                    .toList();
+            results.addAll(noneChanges);
             return results;
         }
     }
 
-    private List<ChangeResult<C>> execute(final List<C> changes,
-                                          final ExecutableOperation<C, K, ?> operation) {
+    private boolean isChangeSupported(C change) {
+        ChangeType type = change.getChangeType();
+        return handlers.containsKey(type) || type == ChangeType.NONE;
+    }
 
-        var changesKeyedById = changes.stream().collect(Collectors.toMap(Change::getKey, e -> e));
-
-        var futures = operation.apply(changes)
-                .entrySet()
+    private List<ChangeResult<C>> execute(final List<C> changes) {
+        Map<ChangeType, List<C>> changesGroupedByType = changes
                 .stream()
-                .map(e -> new Tuple2<>(changesKeyedById.get(e.getKey()), e.getValue()))
-                .map(t -> {
+                .collect(Collectors.groupingBy(Change::getChangeType));
 
-                    final List<Future<Option<Throwable>>> allOptions = t._2().stream()
-                            .map(f -> f.map(it -> Option.<Throwable>none()))
-                            .map(f -> f.recover(Option::some))
-                            .collect(Collectors.toList());
-
-                    final Future<List<Throwable>> allThrowable = Future.fold(
-                            allOptions,
-                            new ArrayList<>(),
-                            (list, option) -> {
-                                option.peek(list::add);
-                                return list;
-                            });
-
-                    return allThrowable
-                            .map(l -> l.isEmpty() ?
-                                    ChangeResult.changed(t._1(), operation.getDescriptionFor(t._1())) :
-                                    ChangeResult.failed(t._1(), operation.getDescriptionFor(t._1()), l))
-                            .toCompletableFuture();
-                }).toList();
-
-        return futures
+        return changesGroupedByType.entrySet()
                 .stream()
+                .flatMap(e -> execute(e.getValue(), handlers.get(e.getKey())))
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
+    }
+
+    private Stream<CompletableFuture<ChangeResult<C>>> execute(final List<C> changes,
+                                                               final ChangeHandler<C> handler) {
+        return handler.apply(changes)
+                .stream()
+                .map(response -> {
+                    CompletableFuture<? extends List<ChangeMetadata>> future = response.getResults();
+                    return future.thenApply(list -> {
+                        List<Throwable> errors = list.stream().flatMap(l -> l.getError().stream()).toList();
+                        return errors.isEmpty() ?
+                                ChangeResult.changed(response.getChange(), handler.getDescriptionFor(response.getChange())) :
+                                ChangeResult.failed(response.getChange(), handler.getDescriptionFor(response.getChange()), errors);
+                    });
+                });
     }
 }

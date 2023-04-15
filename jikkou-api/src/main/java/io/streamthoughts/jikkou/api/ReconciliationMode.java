@@ -18,17 +18,58 @@
  */
 package io.streamthoughts.jikkou.api;
 
+import io.streamthoughts.jikkou.api.control.Change;
+import io.streamthoughts.jikkou.api.control.ChangeType;
+import java.util.Set;
+
 /**
  * Determines the type of changes that can be applied on the resources to be reconciled.
  */
 public enum ReconciliationMode {
 
     /** Only apply changes creating new resource items */
-    CREATE_ONLY,
+    CREATE(ChangeType.ADD),
+
     /** Only apply changes deleting orphan resource items */
-    DELETE_ONLY,
+    DELETE(ChangeType.DELETE),
+
     /** Only apply changes altering existing resource items */
-    UPDATE_ONLY,
+    UPDATE(ChangeType.ADD, ChangeType.UPDATE),
+
     /** Apply all reconciliation changes */
-    APPLY_ALL
+    APPLY(ChangeType.ADD, ChangeType.UPDATE, ChangeType.DELETE);
+
+    /**
+     * Set of change-type supported for this reconciliation mode.
+     */
+    private final Set<ChangeType> changeTypes;
+
+    /**
+     * Creates a new {@link ReconciliationMode} instance.
+     *
+     * @param changeTypes   {@link #changeTypes}
+     */
+    ReconciliationMode(ChangeType... changeTypes) {
+        this(Set.of(changeTypes));
+    }
+
+    /**
+     * Creates a new {@link ReconciliationMode} instance.
+     *
+     * @param changeTypes   {@link #changeTypes}
+     */
+    ReconciliationMode(Set<ChangeType> changeTypes) {
+        this.changeTypes = changeTypes;
+    }
+
+    /**
+     * Checks whether the given change is supported by this reconciliation mode.
+     *
+     * @param change    the change to test.
+     * @return  {@code true} if the change is supported, otherwise {@code false}.
+     */
+    public boolean isSupported(Change change) {
+        ChangeType changeType = change.getChangeType();
+        return changeType == ChangeType.NONE || changeTypes.contains(changeType);
+    }
 }

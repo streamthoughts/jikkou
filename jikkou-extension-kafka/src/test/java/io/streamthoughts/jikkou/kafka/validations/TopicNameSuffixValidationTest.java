@@ -23,51 +23,67 @@ import static io.streamthoughts.jikkou.kafka.validations.TopicNameSuffixValidati
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TopicNameSuffixValidationTest {
+class TopicNameSuffixValidationTest {
 
     TopicNameSuffixValidation validation;
 
     @BeforeEach
-    public void before() {
+    void before() {
         validation = new TopicNameSuffixValidation();
     }
 
     @Test
-    public void should_throw_exception_when_no_suffixes_is_configured() {
+    void shouldThrowExceptionForConfigMissing() {
         Assertions.assertThrows(ConfigException.class, () -> validation.configure(Configuration.empty()));
     }
 
     @Test
-    public void should_throw_exception_given_topic_not_ending_with() {
+    void shouldThrowExceptionForTopicNotEndingWithSuffix() {
         Assertions.assertThrows(ValidationException.class, () -> {
             validation.configure(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")
             ));
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("dummy")
-                    .withPartitions(KafkaConstants.NO_NUM_PARTITIONS)
-                    .withReplicationFactor(KafkaConstants.NO_REPLICATION_FACTOR)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("dummy")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
+                            .withReplicas(KafkaTopics.NO_REPLICATION_FACTOR)
+                            .build()
+                    )
                     .build();
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 
     @Test
-    public void should_return_given_topic_ending_with() {
-        Assertions.assertDoesNotThrow( () -> {
+    void shouldNotThrowForValidTopic() {
+        Assertions.assertDoesNotThrow(() -> {
             validation.configure(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
-            var topic = V1KafkaTopicObject.builder()
-                    .withName("dummy-test")
-                    .withPartitions(KafkaConstants.NO_NUM_PARTITIONS)
-                    .withReplicationFactor(KafkaConstants.NO_REPLICATION_FACTOR)
+            var topic = V1KafkaTopic.builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName("dummy-test")
+                            .build()
+                    )
+                    .withSpec(V1KafkaTopicSpec.builder()
+                            .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
+                            .withReplicas(KafkaTopics.NO_REPLICATION_FACTOR)
+                            .build()
+                    )
                     .build();
-            validation.validateTopic(topic);
+            validation.validate(topic);
         });
     }
 }

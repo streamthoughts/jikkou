@@ -1,16 +1,21 @@
 apiVersion: "kafka.jikkou.io/v1beta2"
 kind: "KafkaTopicList"
-spec:
-  topics:
-    - name: 'my-topic-p1'
+items:
+  - metadata:
+      name: "my-topic-p1"
+    spec:
       partitions: 1
-      replication_factor: 1
-      config_map_refs: null
-    - name: 'my-topic-p2'
+      replicas: 1
+      configMapRefs: null
+  - metadata:
+      name: "my-topic-p2"
+    spec:
       partitions: 2
-      replication_factor: 2
-      config_map_refs: null
-    - name: 'my-topic-p3'
+      replicas: 2
+      configMapRefs: null
+  - metadata:
+      name: "my-topic-p3"
+    spec:
       configs:
         retention.ms: 10000
-      config_map_refs: null
+      configMapRefs: null

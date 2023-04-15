@@ -18,15 +18,17 @@
  */
 package io.streamthoughts.jikkou.kafka.validations;
 
+import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.kafka.internals.KafkaConstants;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
+import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@ExtensionEnabled(value = false)
 public class TopicMaxReplicationFactorValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG = ConfigProperty
@@ -54,26 +56,24 @@ public class TopicMaxReplicationFactorValidation extends TopicValidation {
     public void configure(@NotNull final Configuration config) throws ConfigException {
         super.configure(config);
         maxReplicationFactor = VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.getOptional(config)
-                .orElseThrow(() -> {
-                    throw new ConfigException(
-                            String.format("The '%s' configuration property is required for %s",
-                                    VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.key(),
-                                    TopicNameSuffixValidation.class.getSimpleName()
-                            )
-                    );
-                });
+                .orElseThrow(() -> new ConfigException(
+                        String.format("The '%s' configuration property is required for %s",
+                                VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.key(),
+                                TopicNameSuffixValidation.class.getSimpleName()
+                        )
+                ));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void validateTopic(final @NotNull V1KafkaTopicObject topic) throws ValidationException {
-        Optional.ofNullable(topic.getReplicationFactor()).ifPresent(p -> {
-            if (!p.equals(KafkaConstants.NO_REPLICATION_FACTOR) && p > maxReplicationFactor) {
+    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+        Optional.ofNullable(resource.getSpec().getReplicas()).ifPresent(p -> {
+            if (!p.equals(KafkaTopics.NO_REPLICATION_FACTOR) && p > maxReplicationFactor) {
                 throw new ValidationException(String.format(
                         "Replication factor for topic '%s' is greater than the maximum required: %d > %d",
-                        topic.getName(),
+                        resource.getMetadata().getName(),
                         p,
                         maxReplicationFactor
                 ), this);

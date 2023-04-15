@@ -18,9 +18,10 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
+import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.io.Jackson;
-import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 public enum Printers implements Printer {
@@ -38,7 +39,7 @@ public enum Printers implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(Collection<ChangeResult<?>> results, boolean dryRun, long executionTimeInMillis) {
+    public int print(List<ChangeResult<Change>> results, boolean dryRun, long executionTimeInMillis) {
         return printer.print(results, dryRun, executionTimeInMillis);
     }
 }

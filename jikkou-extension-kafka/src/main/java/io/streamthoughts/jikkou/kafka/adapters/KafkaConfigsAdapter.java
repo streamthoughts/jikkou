@@ -20,7 +20,6 @@ package io.streamthoughts.jikkou.kafka.adapters;
 
 import io.streamthoughts.jikkou.api.model.ConfigValue;
 import io.streamthoughts.jikkou.api.model.Configs;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.Config;
@@ -38,13 +37,12 @@ public final class KafkaConfigsAdapter {
      */
     public static Configs of(final Config config,
                              final Predicate<ConfigEntry> predicate) {
-        Set<ConfigValue> configs = config.entries().stream()
+        return new Configs(config.entries().stream()
                 .filter(predicate)
                 .map(KafkaConfigsAdapter::of)
-                .collect(Collectors.toSet());
-        return new Configs(configs);
+                .collect(Collectors.toSet())
+        );
     }
-
 
     /**
      * Static helper method to create a new {@link ConfigValue} object from a given Kafka {@link ConfigEntry}.

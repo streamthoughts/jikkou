@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.api.io.readers.TemplateResourceReader;
 import io.streamthoughts.jikkou.api.model.GenericResource;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.NamedValue;
-import io.streamthoughts.jikkou.common.utils.ClassUtils;
+import io.streamthoughts.jikkou.common.utils.Classes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -43,7 +43,7 @@ class JinjaResourceTemplateRendererTest {
     void should_load_template_resource_given_values_file() throws IOException {
 
         // Given
-        ClassLoader classLoader = ClassUtils.getClassLoader();
+        ClassLoader classLoader = Classes.getClassLoader();
         InputStream template = classLoader.getResourceAsStream("datasets/resource-template.yaml");
         InputStream values = classLoader.getResourceAsStream("datasets/resource-values.yaml");
 

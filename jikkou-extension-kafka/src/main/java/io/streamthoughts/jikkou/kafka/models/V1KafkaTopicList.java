@@ -22,16 +22,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasSpec;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.ObjectTemplate;
-import io.streamthoughts.jikkou.api.model.Resource;
+import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
+import io.streamthoughts.jikkou.api.model.annotations.Description;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
+import io.streamthoughts.jikkou.api.model.annotations.Names;
 import java.beans.ConstructorProperties;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
+import lombok.Singular;
 import lombok.With;
 
 
@@ -41,18 +44,22 @@ import lombok.With;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
+@Description("")
+@Names(shortNames = {
+    "ktl"
+})
 @JsonPropertyOrder({
     "apiVersion",
     "kind",
     "metadata",
     "template",
-    "spec"
+    "items"
 })
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaTopicList")
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
-public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Resource
+public class V1KafkaTopicList implements ResourceListObject<V1KafkaTopic>
 {
 
     /**
@@ -78,8 +85,9 @@ public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> 
      * (Required)
      * 
      */
-    @JsonProperty("spec")
-    private io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec spec;
+    @JsonProperty("items")
+    @Singular
+    private List<io.streamthoughts.jikkou.kafka.models.V1KafkaTopic> items = new ArrayList<io.streamthoughts.jikkou.kafka.models.V1KafkaTopic>();
 
     /**
      * No args constructor for use in serialization
@@ -94,22 +102,22 @@ public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> 
      * @param metadata
      * @param apiVersion
      * @param kind
-     * @param spec
+     * @param items
      */
     @ConstructorProperties({
         "apiVersion",
         "kind",
         "metadata",
         "template",
-        "spec"
+        "items"
     })
-    public V1KafkaTopicList(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec spec) {
+    public V1KafkaTopicList(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, List<io.streamthoughts.jikkou.kafka.models.V1KafkaTopic> items) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
         this.metadata = metadata;
         this.template = template;
-        this.spec = spec;
+        this.items = items;
     }
 
     /**
@@ -147,9 +155,9 @@ public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> 
      * (Required)
      * 
      */
-    @JsonProperty("spec")
-    public io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec getSpec() {
-        return spec;
+    @JsonProperty("items")
+    public List<io.streamthoughts.jikkou.kafka.models.V1KafkaTopic> getItems() {
+        return items;
     }
 
     @Override
@@ -172,9 +180,9 @@ public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> 
         sb.append('=');
         sb.append(((this.template == null)?"<null>":this.template));
         sb.append(',');
-        sb.append("spec");
+        sb.append("items");
         sb.append('=');
-        sb.append(((this.spec == null)?"<null>":this.spec));
+        sb.append(((this.items == null)?"<null>":this.items));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -190,8 +198,8 @@ public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> 
         result = ((result* 31)+((this.template == null)? 0 :this.template.hashCode()));
         result = ((result* 31)+((this.metadata == null)? 0 :this.metadata.hashCode()));
         result = ((result* 31)+((this.apiVersion == null)? 0 :this.apiVersion.hashCode()));
+        result = ((result* 31)+((this.items == null)? 0 :this.items.hashCode()));
         result = ((result* 31)+((this.kind == null)? 0 :this.kind.hashCode()));
-        result = ((result* 31)+((this.spec == null)? 0 :this.spec.hashCode()));
         return result;
     }
 
@@ -204,7 +212,7 @@ public class V1KafkaTopicList implements HasMetadata, HasSpec<V1KafkaTopicSpec> 
             return false;
         }
         V1KafkaTopicList rhs = ((V1KafkaTopicList) other);
-        return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
+        return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.items == rhs.items)||((this.items!= null)&&this.items.equals(rhs.items))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))));
     }
 
 }

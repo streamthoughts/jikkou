@@ -26,15 +26,41 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
-public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, String, ConfigEntryChange, ConfigEntryReconciliationConfig> {
+public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, ConfigEntryChange> {
+
+    private boolean isConfigDeletionEnabled;
+
+    /**
+     * Creates a new {@link ConfigEntryChangeComputer} instance.
+     */
+    public ConfigEntryChangeComputer() {
+        this(true);
+    }
+
+    /**
+     * Creates a new {@link ConfigEntryChangeComputer} instance.
+     *
+     * @param isConfigDeletionEnabled {@code true} to delete orphaned config entries.
+     */
+    public ConfigEntryChangeComputer(boolean isConfigDeletionEnabled) {
+        this.isConfigDeletionEnabled = isConfigDeletionEnabled;
+    }
+
+    /**
+     * Sets whether orphaned config entries should be deleted or ignored.
+     *
+     * @param isConfigDeletionEnabled {@code true} to enable orphans deletion.
+     */
+    public void isConfigDeletionEnabled(boolean isConfigDeletionEnabled) {
+        this.isConfigDeletionEnabled = isConfigDeletionEnabled;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public List<ConfigEntryChange> computeChanges(@NotNull final Iterable<ConfigValue> actualStates,
-                                                  @NotNull final Iterable<ConfigValue> expectedStates,
-                                                  @NotNull final ConfigEntryReconciliationConfig configuration) {
+                                                  @NotNull final Iterable<ConfigValue> expectedStates) {
 
         final Map<String, ConfigValue> actualConfigsByName = Nameable.keyByName(actualStates);
         final Map<String, ConfigEntryChange> expectedConfigsByName = new HashMap<>();
@@ -55,7 +81,7 @@ public class ConfigEntryChangeComputer implements ChangeComputer<ConfigValue, St
             expectedConfigsByName.put(configEntryName, new ConfigEntryChange(configEntryName, change));
         }
 
-        if (configuration.isDeleteConfigOrphans()) {
+        if (isConfigDeletionEnabled) {
             List<ConfigEntryChange> orphanChanges = actualConfigsByName.values()
                     .stream()
                     .filter(ConfigValue::isDeletable)

@@ -19,45 +19,30 @@
 package io.streamthoughts.jikkou.kafka.validations;
 
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicObject;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class NoDuplicateTopicsAllowedValidationTest {
+class NoDuplicateTopicsAllowedValidationTest {
 
-    public static final V1KafkaTopicObject TEST_TOPIC = V1KafkaTopicObject
+    public static final V1KafkaTopic TEST_TOPIC = V1KafkaTopic
             .builder()
-            .withName("test-topic")
+            .withMetadata(ObjectMeta
+                    .builder()
+                    .withName("topic")
+                    .build())
             .build();
     private final NoDuplicateTopicsAllowedValidation validation = new NoDuplicateTopicsAllowedValidation();
 
     @Test
-    public void should_throw_validation_exception_given_duplicate() {
-        List<V1KafkaTopicObject> testTopic = List.of(TEST_TOPIC, TEST_TOPIC);
-        Assertions.assertThrows(ValidationException.class, () -> {
-            var resource = V1KafkaTopicList.builder()
-                    .withSpec(V1KafkaTopicSpec.builder()
-                            .withTopics(testTopic)
-                            .build()
-                    )
-                    .build();
-            validation.validate(resource);
-        });
+    void shouldThrowExceptionForDuplicate() {
+        Assertions.assertThrows(ValidationException.class, () -> validation.validate(List.of(TEST_TOPIC, TEST_TOPIC)));
     }
 
     @Test
-    public void should_not_throw_validation_exception_duplicate() {
-        Assertions.assertDoesNotThrow(() -> {
-            var resource = V1KafkaTopicList.builder()
-                    .withSpec(V1KafkaTopicSpec.builder()
-                            .withTopics(List.of(TEST_TOPIC))
-                            .build()
-                    )
-                    .build();
-            validation.validate(resource);
-        });
+    void shouldNotThrowExceptionForDuplicate() {
+        Assertions.assertDoesNotThrow(() -> validation.validate(List.of(TEST_TOPIC)));
     }
 }

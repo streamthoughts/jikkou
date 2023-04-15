@@ -21,7 +21,7 @@ package io.streamthoughts.jikkou.api.error;
 /**
  * Execution exception for Kafka Specs.
  */
-public class ExecutionException extends JikkouException {
+public class ExecutionException extends JikkouRuntimeException {
 
     public ExecutionException() {
         super();

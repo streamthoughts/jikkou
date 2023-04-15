@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.common.annotation;
 
-import static io.streamthoughts.jikkou.common.utils.ClassUtils.getAllSuperTypes;
+import static io.streamthoughts.jikkou.common.utils.Classes.getAllSuperTypes;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -59,7 +59,7 @@ public final class AnnotationResolver {
                 .filter(Predicate.not(JAVA_PACKAGES::matches))
                 .filter(Predicate.not(KOTLIN_PACKAGES::matches))
                 .flatMap(AnnotationResolver::mayUnwrapAnnotationContainer)
-                .collect(Collectors.toList());
+                .toList();
             annotations.addAll(declared);
 
             // Then, lookup annotations on each declared annotation

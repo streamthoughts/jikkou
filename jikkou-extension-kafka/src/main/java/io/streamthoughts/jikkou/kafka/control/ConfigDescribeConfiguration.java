@@ -18,30 +18,32 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_BROKER_CONFIG;
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.DYNAMIC_DEFAULT_BROKER_CONFIG;
-import static org.apache.kafka.clients.admin.ConfigEntry.ConfigSource.STATIC_BROKER_CONFIG;
 
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.config.ConfigurationSupport;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
-import org.apache.kafka.clients.admin.ConfigEntry;
 import org.jetbrains.annotations.NotNull;
 
 public class ConfigDescribeConfiguration extends ConfigurationSupport<ConfigDescribeConfiguration> {
 
-    public static final ConfigProperty<Boolean> DESCRIBE_DEFAULT_CONFIGS_PROPERTY =
-            ConfigProperty.ofBoolean("describe-default-configs").orElse(true);
+    public static final String DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME = "describe-default-configs";
+    public static final String DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC = "Describe built-in default configuration for configs that have a default value.";
+    public static final ConfigProperty<Boolean> DESCRIBE_DEFAULT_CONFIGS_PROPERTY = ConfigProperty
+            .ofBoolean(DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME)
+            .orElse(false);
 
-    public static final ConfigProperty<Boolean> DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY =
-            ConfigProperty.ofBoolean("describe-dynamic-broker-configs").orElse(true);
+    public static final String DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME = "describe-dynamic-broker-configs";
+    public static final String DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC = "Describe dynamic configs that is configured as default for all brokers or for specific broker in the cluster.";
+    public static final ConfigProperty<Boolean> DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY = ConfigProperty
+            .ofBoolean(DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME)
+            .orElse(false);
 
-    public static final ConfigProperty<Boolean> DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY =
-            ConfigProperty.ofBoolean("describe-static-broker-configs").orElse(true);
+    public static final String DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG = "describe-static-broker-configs";
+    public static final String DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC = "Describe static configs provided as broker properties at start up (e.g. server.properties file).";
+    public static final ConfigProperty<Boolean> DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY = ConfigProperty
+            .ofBoolean(DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG)
+            .orElse(false);
 
     /**
      * Creates a new {@link ConfigDescribeConfiguration} instance.
@@ -97,23 +99,6 @@ public class ConfigDescribeConfiguration extends ConfigurationSupport<ConfigDesc
 
     public boolean isDescribeStaticBrokerConfigs() {
         return get(DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY);
-    }
-
-    public Predicate<ConfigEntry> configEntryPredicate() {
-        List<Predicate<ConfigEntry>> predicates = new ArrayList<>();
-
-        predicates.add(entry -> !entry.isDefault() || isDescribeDefaultConfigs());
-
-        if (!isDescribeStaticBrokerConfigs()) {
-            predicates.add(config -> config.source() != STATIC_BROKER_CONFIG);
-        }
-
-        if (!isDescribeDynamicBrokerConfigs()) {
-            predicates.add(config -> config.source() != DYNAMIC_BROKER_CONFIG);
-            predicates.add(config -> config.source() != DYNAMIC_DEFAULT_BROKER_CONFIG);
-        }
-
-        return predicates.stream().reduce(t -> DESCRIBE_DEFAULT_CONFIGS_PROPERTY.defaultValue(), Predicate::and);
     }
 
 }

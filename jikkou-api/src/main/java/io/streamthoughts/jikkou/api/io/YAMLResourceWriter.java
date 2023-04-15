@@ -18,13 +18,10 @@
  */
 package io.streamthoughts.jikkou.api.io;
 
-import io.streamthoughts.jikkou.api.model.Resource;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
-/**
- * Default interface to write a cluster specification.
- */
 public class YAMLResourceWriter implements ResourceWriter {
 
     private static final YAMLResourceWriter INSTANCE = new YAMLResourceWriter();
@@ -37,11 +34,13 @@ public class YAMLResourceWriter implements ResourceWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(final Resource resource, final OutputStream os) {
-        try {
-            Jackson.YAML_OBJECT_MAPPER.writeValue(os, resource);
+    public void write(final List<? extends Object> items, final OutputStream os) {
+        try(os) {
+            for (Object item : items) {
+                Jackson.YAML_OBJECT_MAPPER.writeValue(os, item);
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to serialize resource specification into YAML", e);
+            throw new RuntimeException("Failed to serialize object into YAML", e);
         }
     }
 }

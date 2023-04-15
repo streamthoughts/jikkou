@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.error;
 
-public class JikkouApiException extends JikkouException {
+public class JikkouApiException extends JikkouRuntimeException {
 
     /**
      * Creates a new {@link JikkouApiException} instance.

@@ -18,7 +18,12 @@
  */
 package io.streamthoughts.jikkou.kafka.internals;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -37,12 +42,12 @@ public class KafkaUtils {
 
     public static CompletableFuture<Collection<Node>> listBrokers(final AdminClient client) {
         Objects.requireNonNull(client, "client cannot be null");
-        return FutureUtils.toCompletableFuture(client.describeCluster().nodes());
+        return Futures.toCompletableFuture(client.describeCluster().nodes());
     }
 
     public static CompletableFuture<Collection<TopicListing>> listTopics(final AdminClient client) {
         Objects.requireNonNull(client, "client cannot be null");
-        return FutureUtils.toCompletableFuture(client.listTopics().listings());
+        return Futures.toCompletableFuture(client.listTopics().listings());
     }
 
     public static boolean waitForKafkaBrokers(final AdminClient client, final KafkaBrokersReady.Options options) {
@@ -63,4 +68,4 @@ public class KafkaUtils {
         }
         return parsed;
     }
-}
+ }

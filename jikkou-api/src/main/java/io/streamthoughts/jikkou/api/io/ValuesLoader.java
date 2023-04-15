@@ -19,7 +19,7 @@
 package io.streamthoughts.jikkou.api.io;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.NamedValue;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +70,7 @@ public final class ValuesLoader {
                 return Stream.empty();
             }
         } catch (IOException e) {
-            throw new JikkouException(
+            throw new JikkouRuntimeException(
                     String.format("Failed to load values-file '%s': %s", filePath, e.getLocalizedMessage())
             );
         }

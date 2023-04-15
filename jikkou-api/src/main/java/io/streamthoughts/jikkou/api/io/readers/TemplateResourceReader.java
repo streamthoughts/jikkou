@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.streamthoughts.jikkou.api.error.InvalidResourceFileException;
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.GenericResource;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectTemplate;
@@ -77,7 +77,7 @@ public final class TemplateResourceReader extends AbstractResourceReader {
      * {@inheritDoc}
      */
     @Override
-    public List<HasMetadata> readAllResources(@NotNull final ResourceReaderOptions options) throws JikkouException {
+    public List<HasMetadata> readAllResources(@NotNull final ResourceReaderOptions options) throws JikkouRuntimeException {
 
         var factory =  mapper.getFactory();
         try (var rawInputStream = resourceSupplier.get()) {

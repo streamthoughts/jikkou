@@ -27,10 +27,12 @@ import java.nio.file.PathMatcher;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-public class IOUtils {
+public final class IOUtils {
 
     private static final String SYNTAX_GLOB = "glob:";
     private static final String SYNTAX_REGEX = "regex:";
+
+    private IOUtils() {}
 
     public static List<Path> findMatching(final Path startingDirectory,
                                           final String pattern) {

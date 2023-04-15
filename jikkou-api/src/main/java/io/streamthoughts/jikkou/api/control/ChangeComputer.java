@@ -22,27 +22,24 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import java.util.List;
 
 /**
- * A {@link ChangeComputer} is responsible for computing all changes required
+ * This interface is used for computing all changes required
  * to reconcile a current object with its expected state.
  *
- * @param <S>   the type of the object state.
- * @param <K>   the type of the key used for identifying an object state.
- * @param <C>   the type of the {@link Change} that will be computed.
- * @param <O>   the type of the {@link ReconciliationConfig}.
+ * @param <S> the type of the object state.
+ * @param <C> the type of the {@link Change} that will be computed.
  */
 @InterfaceStability.Evolving
-public interface ChangeComputer<S, K, C extends Change<K>, O extends ReconciliationConfig> {
+public interface ChangeComputer<S, C extends Change> {
 
 
     /**
      * Computes the changes between the given states.
      *
-     * @param actualStates      the actual states.
-     * @param expectedStates    the expected states.
-     * @param configuration           the configuration to be used for computing changes.
-     * @return                  the list of state changes.
+     * @param actualStates   the actual states.
+     * @param expectedStates the expected states.
+     * @return the list of state changes.
      */
     List<C> computeChanges(Iterable<S> actualStates,
-                           Iterable<S> expectedStates,
-                           O configuration);
+                           Iterable<S> expectedStates);
+
 }

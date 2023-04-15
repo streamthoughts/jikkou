@@ -19,7 +19,7 @@
 package io.streamthoughts.jikkou.api.extensions;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.common.utils.ClassUtils;
+import io.streamthoughts.jikkou.common.utils.Classes;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,11 +28,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultExtensionFactory implements ExtensionFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExtensionFactory.class);
 
     private final Map<Class<?>, List<Supplier<? extends Extension>>> suppliersByTypes;
 
@@ -56,21 +61,20 @@ public class DefaultExtensionFactory implements ExtensionFactory {
      * {@inheritDoc}
      */
     @Override
-    public void register(final @NotNull Class<? extends Extension> type,
-                         final @NotNull Supplier<? extends Extension> supplier) {
-
+    public <T extends Extension> void register(final @NotNull Class<T> type,
+                                               final @NotNull Supplier<T> supplier) {
+        LOG.info("Registered extension for type {}", type.getName());
         var descriptor = registerExtensionDescriptorForClassAndGet(type);
 
         descriptor.aliases().forEach(alias -> suppliersByAliases.computeIfAbsent(
                 type.getSimpleName(),
                 k -> new LinkedList<>()).add(supplier));
 
-        ClassUtils.getAllSuperTypes(type).forEach(cls -> {
+        Classes.getAllSuperTypes(type).forEach(cls -> {
             suppliersByTypes.computeIfAbsent(cls, k -> new LinkedList<>()).add(supplier);
             descriptorsByTypes.computeIfAbsent(cls, k -> new LinkedList<>()).add(descriptor);
             suppliersByAliases.computeIfAbsent(cls.getName(), k -> new LinkedList<>()).add(supplier);
         });
-
     }
 
     /**
@@ -115,9 +119,13 @@ public class DefaultExtensionFactory implements ExtensionFactory {
      * {@inheritDoc}
      */
     @Override
-    public <T extends Extension> Collection<T> getAllExtensions(final Class<T> type,
-                                                                final Configuration config) {
-        return findAllExtensionsSuppliersByClass(type)
+    public <T extends Extension> List<T> getAllExtensions(final Class<T> type,
+                                                          final Configuration config,
+                                                          final Predicate<ExtensionDescriptor<T>> predicate) {
+        return getAllDescriptorsForType(type)
+                .stream()
+                .filter(predicate)
+                .map(it -> getExtensionSupplier(it.clazz()))
                 .map(Supplier::get)
                 .map(extension -> configureAndGet(config, extension))
                 .toList();
@@ -146,6 +154,26 @@ public class DefaultExtensionFactory implements ExtensionFactory {
      * {@inheritDoc}
      */
     @Override
+    public <T extends Extension> T getExtension(final Class<T> type,
+                                                final Configuration config) {
+
+        Optional<Supplier<T>> optional = this.findExtensionSupplierByClass(type);
+
+        T extension = optional
+                .map(Supplier::get)
+                .or(() -> newExtensionInstanceForClass(type))
+                .orElseThrow(() -> new NoSuchExtensionException(
+                        "No extension registered for type '" + type + "'")
+                );
+
+        return configureAndGet(config, extension);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Collection<ExtensionDescriptor<?>> allExtensionTypes() {
         return new TreeSet<>(descriptors);
     }
@@ -154,7 +182,7 @@ public class DefaultExtensionFactory implements ExtensionFactory {
      * {@inheritDoc}
      */
     @Override
-    public <T extends Extension> Collection<ExtensionDescriptor<T>> allExtensionsDescriptorForType(@NotNull final Class<T> type) {
+    public <T extends Extension> Collection<ExtensionDescriptor<T>> getAllDescriptorsForType(@NotNull final Class<T> type) {
         List<ExtensionDescriptor<?>> descriptors = descriptorsByTypes.get(type);
         return new TreeSet<>(CollectionUtils.cast(descriptors));
     }
@@ -182,7 +210,7 @@ public class DefaultExtensionFactory implements ExtensionFactory {
     }
 
     private <T extends Extension> Optional<Supplier<T>> findExtensionSupplierByClass(@NotNull final Class<T> type) {
-        List<Supplier<T>> suppliers = this.<T>findAllExtensionsSuppliersByClass(type).toList();
+        List<Supplier<T>> suppliers = this.findAllExtensionsSuppliersByClass(type).toList();
         if (suppliers.isEmpty()) return Optional.empty();
 
         int numMatchingExtensions = suppliers.size();
@@ -213,30 +241,31 @@ public class DefaultExtensionFactory implements ExtensionFactory {
     private ExtensionDescriptor<?> registerExtensionDescriptorForClassAndGet(final Class<? extends Extension> type) {
 
         List<String> aliases = new LinkedList<>();
-        aliases.add(type.getName());
+        aliases.add(type.getSimpleName());
 
         var descriptor = new ExtensionDescriptor<>(
                 type,
                 type.getName(),
-                aliases,
-                Extension.getType(type),
-                Extension.getDescription(type)
+                aliases
         );
         descriptors.add(descriptor);
         return descriptor;
     }
-
 
     private static <T extends Extension> T configureAndGet(final Configuration config, final T extension) {
         extension.configure(config);
         return extension;
     }
 
+    private static <T> Optional<T> newExtensionInstanceForClass(final Class<T> type) {
+        return Optional.of(Classes.newInstance(type));
+    }
+
     @SuppressWarnings("unchecked")
     private static <T> Optional<T> newExtensionInstanceForClass(final String type) {
         try {
             Class<T> extensionClass = (Class<T>) Class.forName(type);
-            return Optional.of(ClassUtils.newInstance(extensionClass));
+            return Optional.of(Classes.newInstance(extensionClass));
         } catch (ClassNotFoundException e) {
             return Optional.empty();
         }

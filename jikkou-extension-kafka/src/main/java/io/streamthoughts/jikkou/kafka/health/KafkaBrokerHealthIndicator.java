@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.jikkou.kafka.health;
 
+import io.streamthoughts.jikkou.api.annotations.ExtensionDescription;
+import io.streamthoughts.jikkou.api.annotations.ExtensionName;
 import io.streamthoughts.jikkou.api.config.Configurable;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
@@ -36,6 +38,8 @@ import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.NotNull;
 
+@ExtensionName("kafkabroker")
+@ExtensionDescription("Get the health of kafka brokers")
 public final class KafkaBrokerHealthIndicator implements HealthIndicator, Configurable {
 
     private static final String HEALTH_NAME = "kafka";
@@ -48,8 +52,7 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
      * Empty constructor required for CLI.
      */
-    public KafkaBrokerHealthIndicator() {
-    }
+    public KafkaBrokerHealthIndicator() {}
 
     /**
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
@@ -57,6 +60,15 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
      */
     public KafkaBrokerHealthIndicator(@NotNull AdminClientContext adminClientContext) {
         this.adminClientContext = adminClientContext;
+    }
+
+    /**
+     * Creates a new {@link KafkaBrokerHealthIndicator} instance.
+     *
+     * @param configuration the context configuration.
+     */
+    public KafkaBrokerHealthIndicator(@NotNull Configuration configuration) {
+        configure(configuration);
     }
 
     /** {@inheritDoc} */

@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,18 +34,6 @@ public final class JikkouConfigProperty {
 
     public static final ConfigProperty<List<String>> EXTENSION_PATHS = ConfigProperty
             .ofList("extension.paths");
-
-    public static final ConfigProperty<Pattern[]> INCLUDE_RESOURCES = ConfigProperty
-            .ofList("include-resources")
-            .map(l -> l.stream().map(Pattern::compile).collect(Collectors.toList()))
-            .orElse(Collections::emptyList)
-            .map(l -> l.toArray(Pattern[]::new));
-
-    public static final ConfigProperty<Pattern[]> EXCLUDE_RESOURCES = ConfigProperty
-            .ofList("exclude-resources")
-            .map(l -> l.stream().map(Pattern::compile).collect(Collectors.toList()))
-            .orElse(Collections::emptyList)
-            .map(l -> l.toArray(Pattern[]::new));
 
     /**
      * Static helper method to create a new {@link ConfigProperty} with an expected {@link List} of {@link Config}.

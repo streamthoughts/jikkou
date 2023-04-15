@@ -1,0 +1,35 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Alice"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: 'my-topic-'
+        patternType: 'PREFIXED'
+      type: "ALLOW"
+      operations: [ 'READ', 'WRITE' ]
+      host: "*"
+    - resource:
+        type: 'topic'
+        pattern: 'my-other-topic-.*'
+        patternType: 'MATCH'
+      type: 'ALLOW'
+      operations: [ 'READ' ]
+      host: "*"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Bob"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: 'my-topic-'
+        patternType: 'PREFIXED'
+      type: 'ALLOW'
+      operations: [ 'READ', 'WRITE' ]
+      host: "*"

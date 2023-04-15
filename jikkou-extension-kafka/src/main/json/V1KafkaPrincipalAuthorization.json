@@ -1,0 +1,76 @@
+{
+  "type": "object",
+  "description": "",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaPrincipalAuthorizationSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names" : {
+        "singular": "kafkaprincipalauthorization",
+        "plural" : "kafkaprincipalauthorizations",
+        "shortNames" : [ "ka" ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaPrincipalAuthorization"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "template": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaPrincipalAuthorizationSpec"
+    }
+  },
+  "$defs": {
+    "V1KafkaPrincipalAuthorizationSpec": {
+      "type": "object",
+      "description": "",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "acls"
+      ],
+      "properties": {
+        "acls": {
+          "type": "array",
+          "items": {
+            "$ref": "V1KafkaPrincipalAcl.json"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for waiting for enough kafka brokers to be ready.
  */
-public class KafkaBrokersReady {
+public final class KafkaBrokersReady {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBrokersReady.class);
 

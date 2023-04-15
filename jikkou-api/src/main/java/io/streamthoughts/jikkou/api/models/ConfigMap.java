@@ -28,7 +28,9 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.ObjectTemplate;
 import io.streamthoughts.jikkou.api.model.Resource;
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
+import io.streamthoughts.jikkou.api.model.annotations.Description;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
+import io.streamthoughts.jikkou.api.model.annotations.Transient;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -44,6 +46,8 @@ import lombok.With;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
+@Description("")
+@Transient
 @JsonPropertyOrder({
     "apiVersion",
     "kind",
@@ -51,7 +55,7 @@ import lombok.With;
     "template",
     "data"
 })
-@ApiVersion("kafka.jikkou.io/v1beta2")
+@ApiVersion("core.jikkou.io/v1beta2")
 @Kind("ConfigMap")
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
@@ -64,7 +68,7 @@ public class ConfigMap implements HasMetadata, Resource
      * 
      */
     @JsonProperty("apiVersion")
-    private String apiVersion = "kafka.jikkou.io/v1beta2";
+    private String apiVersion = "core.jikkou.io/v1beta2";
     /**
      * 
      * (Required)

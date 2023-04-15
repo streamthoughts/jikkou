@@ -1,24 +1,26 @@
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaTopicList'
-spec:
-  topics:
-    - name: 'jikkou-demo-my-first-topic'
+items:
+  - metadata:
+      name: 'jikkou-demo-my-first-topic'
+    spec:
       partitions: 1
-      replication_factor: 1
-      config_map_refs:
+      replicationFactor: 1
+      configMapRefs:
         - TopicConfig
       configs:
         cleanup.policy: 'compact'
-
-    - name: 'jikkou-demo-my-second-topic'
+  - metadata:
+      name: 'jikkou-demo-my-second-topic'
+    spec:
       partitions: 5
-      replication_factor: 1
-      config_map_refs:
+      replicationFactor: 1
+      configMapRefs:
         - TopicConfig
       configs:
         cleanup.policy: 'delete'
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "core.jikkou.io/v1beta2"
 kind: "ConfigMap"
 metadata:
   name: TopicConfig

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -25,9 +25,10 @@ import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.model.ResourceValidation;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.client.JikkouConfig;
-import io.vavr.Tuple2;
+import io.streamthoughts.jikkou.common.utils.Tuple2;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,10 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
                     .collect(Collectors.toList())
             );
 
+    /**
+     * Creates a new {@link ResourceValidationApiConfigurator} instance.
+     * @param extensionFactory  the extension factory.
+     */
     public ResourceValidationApiConfigurator(final ExtensionFactory extensionFactory) {
         super(extensionFactory);
     }
@@ -54,15 +59,15 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
     @Override
     public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder) {
 
-        LOG.info("Loading resource validation from configuration");
+        LOG.info("Loading all resource validations from config settings");
         java.util.List<Tuple2<String, JikkouConfig>> extensionsClasses = getPropertyValue(VALIDATIONS_PROPERTY);
 
-        java.util.List<ResourceValidation> extensions = extensionsClasses.stream()
-                .peek(tuple -> LOG.info("Added {} with values:\n\t{}", tuple._1(), tuple._2().toPrettyString()))
+        java.util.List<ResourceValidation<HasMetadata>> extensions = extensionsClasses.stream()
+                .peek(tuple -> LOG.info("Configure '{}' with values:\n\t{}", tuple._1(), tuple._2().toPrettyString()))
                 .map(tuple -> {
                     String extensionType = tuple._1();
                     Configuration extensionConfig = tuple._2().withFallback(configuration());
-                    return (ResourceValidation) extensionFactory().getExtension(extensionType, extensionConfig);
+                    return (ResourceValidation<HasMetadata>) extensionFactory().getExtension(extensionType, extensionConfig);
                 }).toList();
 
         return builder.withValidations(extensions);

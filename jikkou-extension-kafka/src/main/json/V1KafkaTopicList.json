@@ -2,19 +2,24 @@
   "type": "object",
   "description": "",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaTopicSpec>"
+    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1KafkaTopic>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,
-    "all-args-constructor": false
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "shortNames": [
+          "ktl"
+        ]
+      }
+    }
   },
   "required": [
     "apiVersion",
     "kind",
-    "spec"
+    "items"
   ],
   "properties": {
     "apiVersion": {
@@ -33,25 +38,10 @@
       "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
       "type": "object"
     },
-    "spec": {
-     "$ref": "#/$defs/V1KafkaTopicSpec"
-    }
-  },
-  "$defs": {
-    "V1KafkaTopicSpec": {
-      "type": "object",
-      "additionalProperties": {
-        "lombok-builder": true,
-        "lombok-with": true,
-        "all-args-constructor": false
-      },
-      "properties": {
-        "topics": {
-          "type": "array",
-          "items": {
-            "$ref": "./V1KafkaTopicObject.json"
-          }
-        }
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "./V1KafkaTopic.json"
       }
     }
   }

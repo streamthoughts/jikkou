@@ -38,22 +38,26 @@ wget https://github.com/streamthoughts/jikkou/raw/main/up && \
 chmod +x ./up && ./up
 ```
 
-## Check Jikkou configuration
+## Set configuration context for localhost
 
 ```bash
-jikkou config get | jq
+jikkou config set-context localhost --config=kafka.client.bootstrap.servers=localhost:9092
+```
+
+```bash
+jikkou config view --name localhost
 ```
 
 ## Check if cluster is accessible
 
 ```bash
-jikkou health | jq
+jikkou health get kafkabroker  | yq
 ```
 
 ## Describe Kafka Broker
 
 ```bash
-jikkou brokers describe | yq
+jikkou get kafkabrokerlist | yq
 ```
 
 ## Working with Kafka Topics 
@@ -69,11 +73,7 @@ cat ./resources/initial-topics.yaml | yq
 **Create Kafka Topics**
 
 ```bash
-jikkou topics \
-  apply \
-  --files ./resources/initial-topics.yaml \
-  --include "jikkou-demo-.*" \
-  --yes
+jikkou apply --files ./demo/resources/initial-topics.yaml --selector "metadata.name MATCHES (jikkou-demo-.*)"
 ```
 
 NOTE: Run the command above a second time to see the behavior of Jikkou
@@ -89,16 +89,12 @@ cat ./resources/remove-topics.yaml | yq
 **Delete Kafka Topics**
 
 ```bash
-jikkou topics \
-  apply \
+jikkou apply \
   --files ./resources/remove-topics.yaml \
-  --include "jikkou-demo-.*" \
-  --delete-config-orphans \
-  --delete-topic-orphans \
-  --yes
+  --selector "metadata.name MATCHES (jikkou-demo-.*)"
 ```
 
-WARN: When working on a production environment, we highly recommend to always run the apply or delete command with the `--include` or `--exclude` options to make sure to not remove any topics by accident. Furthermore, always run your command in `--dry-run` mode to check for changes that will be executed by Jikkou before proceeding.
+WARN: When working on a production environment, we highly recommend to always run the apply or delete command with the `--selector` options to make sure to not remove any topics by accident. Furthermore, always run your command in `--dry-run` mode to check for changes that will be executed by Jikkou before proceeding.
 
 ### Exploring the use of ConfigMap
 
@@ -120,8 +116,7 @@ jikkou validate \
 jikkou topics \
   apply \
   --files ./resources/topics-configmap.yaml \
-  --include "jikkou-demo-.*" \
-  --yes
+ --selector "metadata.name MATCHES (jikkou-demo-.*)"
 ```
 
 ### Exploring the use of Templating

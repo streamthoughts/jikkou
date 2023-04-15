@@ -21,7 +21,6 @@ package io.streamthoughts.jikkou.kafka.control.change;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.config.ConfigurationSupport;
-import io.streamthoughts.jikkou.api.control.ReconciliationConfig;
 import java.util.Set;
 
 /**
@@ -30,11 +29,8 @@ import java.util.Set;
  * @see QuotaChangeComputer
  */
 
-public final class KafkaQuotaReconciliationConfig extends ConfigurationSupport<KafkaQuotaReconciliationConfig>
-    implements ReconciliationConfig {
-
-    public static final ConfigProperty<Boolean> DELETE_CONFIG_ORPHAN_OPTION =
-            ConfigProperty.ofBoolean(  "delete-config-orphans").orElse(false);
+public final class KafkaQuotaReconciliationConfig
+        extends ConfigurationSupport<KafkaQuotaReconciliationConfig> {
 
     public static final ConfigProperty<Boolean> DELETE_QUOTA_ORPHANS_OPTION =
             ConfigProperty.ofBoolean(  "delete-quota-orphans").orElse(false);
@@ -56,18 +52,6 @@ public final class KafkaQuotaReconciliationConfig extends ConfigurationSupport<K
         configure(configuration);
     }
 
-    public KafkaQuotaReconciliationConfig withDeleteConfigOrphans(boolean booleanValue) {
-        return with(DELETE_CONFIG_ORPHAN_OPTION, booleanValue);
-    }
-
-    public KafkaQuotaReconciliationConfig withDeleteQuotaOrphans(boolean booleanValue) {
-        return with(DELETE_QUOTA_ORPHANS_OPTION, booleanValue);
-    }
-
-    public boolean isDeleteConfigOrphans() {
-        return get(DELETE_CONFIG_ORPHAN_OPTION);
-    }
-
     public boolean isDeleteQuotaOrphans() {
         return get(DELETE_QUOTA_ORPHANS_OPTION);
     }
@@ -81,6 +65,6 @@ public final class KafkaQuotaReconciliationConfig extends ConfigurationSupport<K
     /** {@inheritDoc} **/
     @Override
     protected Set<ConfigProperty<?>> defaultConfigProperties() {
-        return Set.of(DELETE_CONFIG_ORPHAN_OPTION, DELETE_QUOTA_ORPHANS_OPTION);
+        return Set.of(DELETE_QUOTA_ORPHANS_OPTION);
     }
 }

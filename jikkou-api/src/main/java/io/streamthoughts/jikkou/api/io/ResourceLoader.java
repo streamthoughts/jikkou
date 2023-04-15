@@ -18,10 +18,11 @@
  */
 package io.streamthoughts.jikkou.api.io;
 
-import io.streamthoughts.jikkou.api.error.JikkouException;
+import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
-import io.streamthoughts.jikkou.api.model.ResourceList;
+import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.api.model.HasItems;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -59,9 +60,9 @@ public final class ResourceLoader {
      * Loads specifications for Kafka resources from the classpath resource.
      *
      * @param resourceName name of the classpath resource to load.
-     * @return a new {@link ResourceList}.
+     * @return a new {@link GenericResourceListObject}.
      */
-    public ResourceList loadFromClasspath(@NotNull final String resourceName) {
+    public HasItems loadFromClasspath(@NotNull final String resourceName) {
         return Optional.ofNullable(getClass().getClassLoader().getResourceAsStream(resourceName))
                 .map(this::load)
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -73,25 +74,25 @@ public final class ResourceLoader {
      * Loads specifications for Kafka resources from the given {@code InputStream}.
      *
      * @param file the input stream.
-     * @return a new {@link ResourceList}.
+     * @return a new {@link GenericResourceListObject}.
      */
-    public ResourceList load(@NotNull final InputStream file) {
+    public HasItems load(@NotNull final InputStream file) {
 
-        return new ResourceList(factory.create(file).readAllResources(options));
+        return new GenericResourceListObject(factory.create(file).readAllResources(options));
     }
 
     /**
      * Loads specifications for Kafka resources from YAML files, directories or URLs.
      *
      * @param locations locations from which to load specifications.
-     * @return a list of {@link ResourceList}.
+     * @return a list of {@link GenericResourceListObject}.
      */
-    public ResourceList load(final @NotNull List<String> locations) {
+    public HasItems load(final @NotNull List<String> locations) {
         if (locations.isEmpty()) {
-            throw new JikkouException("No resource specification file loaded");
+            throw new JikkouRuntimeException("No resource specification file loaded");
         }
 
-        return new ResourceList(locations.stream()
+        return new GenericResourceListObject(locations.stream()
                 .map(location -> factory.create(URI.create(location)))
                 .flatMap(reader -> reader.readAllResources(options).stream())
                 .toList()

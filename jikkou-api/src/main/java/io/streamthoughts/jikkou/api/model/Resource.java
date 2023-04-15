@@ -19,15 +19,12 @@
 package io.streamthoughts.jikkou.api.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.streamthoughts.jikkou.api.extensions.Extension;
-import io.streamthoughts.jikkou.api.extensions.annotations.ExtensionType;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.io.Serializable;
 
-@InterfaceStability.Evolving
-@ExtensionType("resource")
+@Evolving
 @JsonDeserialize(using = ResourceDeserializer.class)
-public interface Resource extends Extension, Serializable {
+public interface Resource extends Serializable {
 
 }

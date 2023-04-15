@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "description": "A KafkaPrincipalAcl defines a list of allowed or denied operations for a resource",
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false
+  },
+  "required": [
+    "resource",
+    "operations",
+    "type",
+    "host"
+  ],
+  "properties": {
+    "resource": {
+      "$ref": "#/$defs/V1KafkaResourceMatcher"
+    },
+    "operations": {
+      "type": "array",
+      "description": "List of ACL operations e.g., ALL, READ, WRITE, CREATE, DELETE, etc.",
+      "items": {
+        "existingJavaType": "org.apache.kafka.common.acl.AclOperation"
+      }
+    },
+    "type": {
+      "type": "string",
+      "description": "The ACL permission type, i.e., ALLOW or DENY.",
+      "existingJavaType": "org.apache.kafka.common.acl.AclPermissionType",
+      "default": "ALLOW"
+    },
+    "host": {
+      "type": "string",
+      "default": "*"
+    }
+  },
+  "$defs": {
+    "V1KafkaResourceMatcher": {
+      "type": "object",
+      "description": "",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "type",
+        "pattern",
+        "patternType"
+      ],
+      "properties": {
+        "type": {
+          "type": "enum",
+          "description": "The resource type, i.e., TOPIC, GROUP.",
+          "existingJavaType": "org.apache.kafka.common.resource.ResourceType"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "A literal name, a prefix, or a regex pattern for matching the resource."
+        },
+        "patternType": {
+          "type": "string",
+          "description": "The pattern type, i.e., LITERAL, PREFIX, MATCH.",
+          "existingJavaType": "org.apache.kafka.common.resource.PatternType",
+          "default": "LITERAL"
+        }
+      }
+    }
+  }
+}
