@@ -1,4 +1,4 @@
-= Jikkou : Automate the management of your Apache Kafka using GitOps approach!
+= Jikkou streamlines the management of the configurations that live on your data streams platform!
 
 image:https://img.shields.io/github/license/streamthoughts/jikkou[]
 image:https://img.shields.io/github/issues/streamthoughts/jikkou[]
@@ -47,14 +47,14 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 
 Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.16.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.16.0/[Maven Central]
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.17.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.17.0/[Maven Central]
 * As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.16.0[GitHub Releases]
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.17.0[GitHub Releases]
 
 [source, bash]
 ----
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.16.0/jikkou.deb
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.17.0/jikkou.deb
 sudo dpkg -i jikkou.deb
 ----
 
@@ -82,17 +82,16 @@ kafka-topics.yml:::
 [source,yaml]
 ----
 apiVersion: 'kafka.jikkou.io/v1beta2'
-kind: 'KafkaTopicList'
+kind: 'KafkaTopic'
 metadata:
+  name: 'my-first-topic-with-jikkou'
   labels: {}
   annotations: {}
 spec:
-  topics:
-  - name: 'my-first-topic-with-jikkou'
-    partitions: 12
-    replication_factor: 3
-    configs:
-      min.insync.replicas: 2
+  partitions: 12
+  replicas: 3
+  configs:
+    min.insync.replicas: 2
 ----
 
 It will then take care of computing and applying the necessary changes directly to your cluster.
@@ -122,7 +121,7 @@ TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, repl
       "after" : 12,
       "operation" : "ADD"
     },
-    "replication_factor" : {
+    "replicas" : {
       "after" : 3,
       "operation" : "ADD"
     },
