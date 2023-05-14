@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – resources</title><link>https://streamthoughts.github.io/jikkou/tags/resources/</link><description>Recent content in resources on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/tags/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Topics</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/topics/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – resources</title><link>https://streamthoughts.github.io/jikkou/tags/resources/</link><description>Recent content in resources on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/tags/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Topics</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/topics/</guid><description>
 &lt;h2 id="the-resource-definition-file">The Resource Definition File&lt;/h2>
 &lt;p>The &lt;em>resource definition file&lt;/em> for defining &lt;code>topics&lt;/code> contains the following fields:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;kafka.jikkou.io/v1beta2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># The api version (required)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
@@ -85,7 +85,7 @@
 }
 EXECUTION in 2s 661ms
 ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
-&lt;/code>&lt;/pre></description></item><item><title>Docs: ACLs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/acls/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: ACLs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/acls/</guid><description>
 &lt;p>Jikkou can be used to describe all ACL policies that need to be created on Kafka Cluster&lt;/p>
 &lt;h2 id="the-resource-definition-file">The Resource Definition File&lt;/h2>
 &lt;p>The &lt;em>resource definition file&lt;/em> for defining &lt;code>acls&lt;/code> contains the following fields:&lt;/p>
@@ -234,7 +234,7 @@ TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL TOPIC:LITERAL:*) - 
 }
 EXECUTION in 2s 146ms
 ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Quotas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/quotas/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Quotas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/quotas/</guid><description>
 &lt;p>Jikkou allows defining the quotas to apply to consumers and/or producers identified by a &lt;code>client-id&lt;/code> or a user &lt;code>principal&lt;/code>.&lt;/p>
 &lt;h2 id="the-resource-definition-file">The Resource Definition File&lt;/h2>
 &lt;p>The &lt;em>resource definition file&lt;/em> for defining &lt;code>quotas&lt;/code> contains the following fields:&lt;/p>
