@@ -1,1 +1,168 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Concepts</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/</link><description>Recent content in Concepts on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/concepts/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Resource</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</guid><description/></item><item><title>Docs: Resource Definition</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/resource-definition/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/resource-definition/</guid><description/></item><item><title>Docs: Labels and annotations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</guid><description/></item></channel></rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Concepts</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/</link><description>Recent content in Concepts on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/concepts/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Resource</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;em>Jikkou Resources&lt;/em> are entities that represent the state of a concrete instance of a concept that are part of the state
+of your system, like a Topic on an Apache Kafka cluster.&lt;/p>
+&lt;/div>
+&lt;h2 id="resource-objects">Resource Objects&lt;/h2>
+&lt;p>All resources can be distinguished between &lt;em>persistent objects&lt;/em>, which are used to describe the desired state of your
+system, and &lt;em>transient objects&lt;/em>, which are only used to enrich or provide additional capabilities for the definition of
+persistent objects.&lt;/p>
+&lt;p>A resource is an object with a type (called a &lt;em>Kind&lt;/em>) and a concrete model that describe the associated data.
+All resource are scoped by an API &lt;em>Group&lt;/em> and &lt;em>Version&lt;/em>.&lt;/p>
+&lt;h2 id="resource-definition">Resource Definition&lt;/h2>
+&lt;p>Resources are described in YAML format.&lt;/p>
+&lt;p>Here is a sample resource that described a Kafka Topic.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;kafka.jikkou.io/v1beta2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">KafkaTopic&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;my-topic&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">environment&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">test&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>{}&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">partitions&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">configs&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">cleanup.policy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;delete&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="resource-properties">Resource Properties&lt;/h2>
+&lt;p>The following are the properties that can be set to describe a resource:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Property&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>apiVersion&lt;/code>&lt;/td>
+&lt;td>The &lt;code>group/version&lt;/code> of the resource type.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>kind&lt;/code>&lt;/td>
+&lt;td>The type of the describe resource.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>metadata.name&lt;/code>&lt;/td>
+&lt;td>An optional name to identify the resource.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>metadata.labels&lt;/code>&lt;/td>
+&lt;td>Arbitrary metadata to attach to the resource that can be handy when you have a lot of resources and you only need to identity or filters some objects.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>metadata.annotations&lt;/code>&lt;/td>
+&lt;td>Arbitrary non-identifying metadata to attach to the resource to mark them for a specific operation or to record some metadata.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>spec&lt;/code>&lt;/td>
+&lt;td>The object properties describing a desired state&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: Labels and annotations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</guid><description>
+&lt;h2 id="labels">Labels&lt;/h2>
+&lt;p>You can use labels to attach arbitrary identifying metadata to objects.&lt;/p>
+&lt;p>Labels are key/value maps:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;key1&amp;#34;: &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;value-1&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;key2&amp;#34;: &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;value-2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+The keys in the map must be string, but values can be any scalar types (&lt;em>string&lt;/em>, &lt;em>boolean&lt;/em>, or &lt;em>numeric&lt;/em>).
+&lt;/div>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Labels are not persistent&lt;/h4>
+Jikkou is completely stateless. In other words, it will not store any state about the describe resources objects. Thus, when
+retrieving objects from your system labels may not be reattached to the metadata objects.
+&lt;/div>
+&lt;h4 id="example">Example&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">environment&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;stating&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="annotations">Annotations&lt;/h2>
+&lt;p>You can use annotations to attach arbitrary non-identifying metadata to objects.&lt;/p>
+&lt;p>Annotations are key/value maps:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">key1&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;value-1&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">key2&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;value-2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+The keys in the map must be string, but the values can be of any scalar types (&lt;em>string&lt;/em>, &lt;em>boolean&lt;/em>, or &lt;em>numeric&lt;/em>).
+&lt;/div>
+&lt;h3 id="built-in-annotations">Built-in Annotations&lt;/h3>
+&lt;h4 id="jikkouioignore">&lt;code>jikkou.io/ignore&lt;/code>&lt;/h4>
+&lt;p>Used on: All Objects.&lt;/p>
+&lt;p>This annotation indicates whether the object should be ignored for reconciliation.&lt;/p>
+&lt;h4 id="jikkouiodelete">&lt;code>jikkou.io/delete&lt;/code>&lt;/h4>
+&lt;p>Used on: All Objects.&lt;/p>
+&lt;p>This annotation indicates (&lt;em>when set to &lt;code>true&lt;/code>&lt;/em>) that the object should be deleted from your system.&lt;/p>
+&lt;h4 id="jikkouioresource-location">&lt;code>jikkou.io/resource-location&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>This annotation is automatically added by Jikkou to an object when loaded from your local filesystem.&lt;/p>
+&lt;h4 id="jikkouioitems-count">&lt;code>jikkou.io/items-count&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p>
+&lt;h4 id="kafkajikkouiocluster-id">&lt;code>kafka.jikkou.io/cluster-id&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item><item><title>Docs: Reconciliation</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>In the context of Jikkou, reconciliation refers to the process by which the current state of a desired object
+is compared to the actual state of the system and any differences (called &lt;em>changes&lt;/em>) between the two are reconciled or
+corrected.&lt;/p>
+&lt;/div>
+&lt;h3 id="changes">Changes&lt;/h3>
+&lt;p>A &lt;em>Change&lt;/em> represents a difference, detected during reconciliation, between two objects that can reconciled or
+corrected by adding, updating, or deleting an object or property attached to the actual state of the system.&lt;/p>
+&lt;p>Jikkou computes four types of changes:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>ADD&lt;/strong>: Indicates that a new object or a property of an existing object was added.&lt;/li>
+&lt;li>&lt;strong>UPDATE&lt;/strong>: Indicates that an existing object or a property of an existing object was changed.&lt;/li>
+&lt;li>&lt;strong>DELETE&lt;/strong>: Indicates that an existing object must be deleted or a property of an existing object was removed.&lt;/li>
+&lt;li>&lt;strong>NONE&lt;/strong>: Indicates that an existing object or property was not changed.&lt;/li>
+&lt;/ul>
+&lt;h3 id="reconciliation-modes">Reconciliation Modes&lt;/h3>
+&lt;p>Depending on the chosen reconciliation mode, only specific types of changes may be applied.&lt;/p>
+&lt;p>Jikkou defines the following four distinct reconciliation modes:&lt;/p>
+&lt;p>Jikkou offers four distinct reconciliation modes that determine which types of changes will be applied:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>CREATE&lt;/strong>: Only changes that create new resource objects on your system will be applied.&lt;/li>
+&lt;li>&lt;strong>DELETE&lt;/strong>: Only changes that delete existing resource objects on your system will be applied.&lt;/li>
+&lt;li>&lt;strong>UPDATE&lt;/strong>: Only changes that create or update existing resource objects on your system will be applied.&lt;/li>
+&lt;li>&lt;strong>APPLY_ALL&lt;/strong>: Apply all changes to ensure that the actual state of a resource in the cluster matches the desired
+state as defined in your resource definition file, regardless of the specific type of change.&lt;/li>
+&lt;/ul>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+The reconciliation modes listed above correspond to the &lt;em>commands&lt;/em> available through the Jikkou CLI.
+&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>You can use &lt;em>selectors&lt;/em> to select only a subset of resource objects to describe from your system or for which you want
+to perform a reconciliation process.&lt;/p>
+&lt;/div>
+&lt;h2 id="field-selector-default">Field Selector (default)&lt;/h2>
+&lt;p>Jikkou provides the built-in &lt;code>FieldSelector&lt;/code> that allows you to filter resource objects based on a &lt;em>field key&lt;/em>.&lt;/p>
+&lt;h3 id="selector-expression">Selector Expression&lt;/h3>
+&lt;p>The expression below shows you how to select only resource having a label &lt;code>environement&lt;/code> equals to either &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>.&lt;/p>
+&lt;pre tabindex="0">&lt;code>metadata.labels.environement IN (staging,production)
+&lt;/code>&lt;/pre>&lt;h3 id="expression-operators">Expression Operators&lt;/h3>
+&lt;p>Five kinds of operators are supported:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>IN&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>NOTIN&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>EXISTS&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>MATCHES&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>DOESNOTMATCH&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Using JIKKOU CLI&lt;/h4>
+Selectors can be specified via the Jikkou CLI option: &lt;code>--selector&lt;/code>.
+&lt;/div></description></item></channel></rss>
