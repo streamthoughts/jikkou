@@ -1,0 +1,46 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalRole"
+metadata:
+  name: "KafkaTopicPublicRead"
+spec:
+  acls:
+    - type: "ALLOW"
+      operations: [ 'READ' ]
+      resource:
+        type: 'topic'
+        pattern: '/public-([.-])*/'
+        patternType: 'MATCH'
+      host: "*"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalRole"
+metadata:
+  name: "KafkaTopicPublicWrite"
+spec:
+  acls:
+    - type: "ALLOW"
+      operations: [ 'WRITE' ]
+      resource:
+        type: 'topic'
+        pattern: '/public-([.-])*/'
+        patternType: 'MATCH'
+      host: "*"
+---
+
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Alice"
+spec:
+  roles:
+    - "KafkaTopicPublicRead"
+    - "KafkaTopicPublicWrite"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Bob"
+spec:
+  roles:
+    - "KafkaTopicPublicRead"

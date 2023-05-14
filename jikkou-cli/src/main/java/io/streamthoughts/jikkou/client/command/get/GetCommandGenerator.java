@@ -161,7 +161,10 @@ public class GetCommandGenerator {
         }
 
         private int maxLength(Map<String, CommandLine> subcommands, int max) {
-            int result = subcommands.values().stream().map(cmd -> cmd.getCommandSpec().names().toString().length() - 2).max(Integer::compareTo).get();
+            int result = subcommands.values()
+                    .stream().map(cmd -> cmd.getCommandSpec().names().toString().length() - 2)
+                    .max(Integer::compareTo)
+                    .orElse(max);
             return Math.min(max, result);
         }
 

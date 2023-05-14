@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY_ALL;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
 
@@ -51,7 +51,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
-@SupportedReconciliationModes(modes = {CREATE, DELETE, APPLY})
+@SupportedReconciliationModes(modes = {CREATE, DELETE, APPLY_ALL})
 public final class AdminClientKafkaAclController extends AbstractAdminClientKafkaController
         implements BaseExternalResourceController<V1KafkaPrincipalAuthorization, AclChange> {
 

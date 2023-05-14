@@ -5,7 +5,7 @@ title: "Template"
 linkTitle: "Template"
 weight: 40
 description: >
-  Learn how to use templating to dynamically build resource specification files for Jikkou.
+  Learn how to use templating to dynamically build resource definition files.
 ---
 
 
@@ -91,21 +91,23 @@ This file defines all the data (i.e., the variables) that will be passed to the 
 
 **Resource Specification File**
 
-Create a file named `topics.tpl` with the following contents:
+Create a file named `kafka-topics.tpl` with the following contents:
 
 ```yaml
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaTopicList'
-spec:
-  topics:
-{% for location in values.locations %}
-  - name: "{{ values.topic_prefix}}-iot-events-{{ location }}"
-      partitions: {{ values.topic_configs.partitions }}
-      replication_factor: {{ values.topic_configs.replication_factor }}
-      config_map_refs: [ 'TopicConfig' ]
-{% endfor %}
+items:
+  {% for location in values.locations %}
+- metadata:
+    name: "{{ values.topic_prefix}}-iot-events-{{ location }}"
+  spec:
+    partitions: {{ values.topic_configs.partitions }}
+    replicas: {{ values.topic_configs.replication_factor }}
+    configMapRefs:
+      - TopicConfig
+  {% endfor %}
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "core.jikkou.io/v1beta2"
 kind: "ConfigMap"
 metadata:
   name: TopicConfig
@@ -113,7 +115,8 @@ template:
   values:
     default_min_insync_replicas: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) | int | add(-1) }}"
 data:
-  retention.ms: 604800000
+  retention.ms: 3600000
+  max.message.bytes: 20971520
   min.insync.replicas: '{% raw %}{{ values.default_min_insync_replicas }}{% endraw %}'
 
 ```

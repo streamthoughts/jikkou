@@ -1,186 +1,189 @@
 ---
-categories: []
-tags: ["feature", "resources"] 
-title: "ACLs"
-linkTitle: "ACLs"
+categories: [ ]
+tags: [ "feature", "resources" ]
+title: "Kafka Authorizations"
+linkTitle: "Authorizations"
 weight: 20
 description: >
-  Learn how to describe ACL policies.
+  Learn how to manage Kafka Authorizations and ACLs. 
 ---
+
+{{% pageinfo color="info" %}}
+KafkaPrincipalAuthorization resources are used to define Access Control Lists (ACLs) for principals authenticated
+to your Kafka Cluster.
+{{% /pageinfo %}}
 
 Jikkou can be used to describe all ACL policies that need to be created on Kafka Cluster
 
-## The Resource Definition File
+## `KafkaPrincipalAuthorization`
 
-The _resource definition file_ for defining `acls` contains the following fields:
-
-```yaml
-apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)
-kind: KafkaAuthorizationList # The resource kind (required)
-metadata: # (optional)
-  labels: {}
-  annotations: {}
-spec:
-  security:
-    roles: # A list of the roles that can be assigned to users (optional)
-    - name:  The name of the role
-      permissions:  # A list of the permissions to add to the role
-        - resource: # A list of the resources to add to the role
-            type: The type of the resources, i.e., topic
-            pattern: The pattern to be used for matching resources
-            pattern_type: The type of the pattern
-          allow_operations: [] # A list of the operations allowed for this role
-
-    users: # A list of the users to manage
-      - principal: The principal of the user
-        roles: [] # A list of the role to add to the user (optional)
-        permissions:  # A list of the permissions to add to the user (optional)
-          - resource: # A list of the resources to add to the user
-              type: The type of the resources, i.e., topic
-              pattern: The pattern to be used for matching resources
-              pattern_type: The type of the pattern
-            allow_operations: [] # A list of the operations allowed for this user
-```
-
-## Usage
-
-```bash
-$ jikkou acls -h
-```
-
-```bash
-Usage:
-
-Apply the ACLs changes described by your specs-file against the Kafka cluster you are currently pointing at.
-
-jikkou acls [-hV] [COMMAND]
-
-Description:
-
-This command can be used to create ACLs on a remote Kafka cluster
-
-Options:
-
-  -h, --help      Show this help message and exit.
-  -V, --version   Print version information and exit.
-
-Commands:
-
-  apply     Apply all changes to the Kafka ACLs.
-  create    Create the ACL policies missing on the cluster as describe in the specification file.
-  delete    Delete all ACL policies not described in the specification file.
-  describe  Describe all the ACLs that currently exist on remote cluster.
-  help      Displays help information about the specified command
-```  
-
-## Examples
-
-**Resource Specification File**
-
-Create a file named `kafka-security.yaml` with the following content:
+### Specification
 
 ```yaml
-apiVersion: 1
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Alice"
 spec:
-  security:
-    roles:
-      - name: 'AdminTopics'
-        permissions:
-          - resource:
-              type: 'topic'
-              pattern: '*'
-              pattern_type: 'LITERAL'
-            allow_operations: ['ALL:*']
-
-      - name: 'AdminGroups'
-        permissions:
-          - resource:
-              type: 'group'
-              pattern: '*'
-              pattern_type: 'LITERAL'
-            allow_operations: ['ALL:*']
-
-    users:
-      - principal: 'User:admin'
-        roles: [ 'AdminTopics', 'AdminGroups' ]
-
-      - principal: 'User:admin-topics'
-        roles: [ 'AdminTopics' ]
+  roles: [ ]                     # List of roles to be added to the principal (optional)
+  acls:                          # List of KafkaPrincipalACL (required)
+    - resource:
+        type: <The type of the resource>                            #  (required)
+        pattern: <The pattern to be used for matching resources>    #  (required) 
+        patternType: <The pattern type>                             #  (required) 
+      type: <The type of this ACL>     # ALLOW or DENY (required) 
+      operations: [ ]                  # Operation that will be allowed or denied (required) 
+      host: <HOST>                     # IP address from which principal will have access or will be denied (optional)
 ```
 
-In the above file, we define multiple *roles* to apply to our _principals_. Jikkou will take care of creating all corresponding ACLs policies.
+For more information on how to define authorization and ACLs, see the official Apache Kafka
+documentation: [Security](https://kafka.apache.org/documentation/#security_authz)
 
-**Command**
+### Operations
 
-Run the following command to create and/or update the ACLs declared in the resource file.
+The list below describes the valid values for the `spec.acls.[].operations` property :
 
-```bash
-$ jikkou --bootstrap-servers localhost:9092 acls apply --files kafka-security.yml
+* `READ`
+* `WRITE`
+* `CERATE`
+* `DELETE`
+* `ALTER`
+* `DESCRIBE`
+* `CLUSTER_ACTION`
+* `DESCRIBE_CONFIGS`
+* `ALTER_CONFIGS`
+* `IDEMPOTENT_WRITE`
+* `CREATE_TOKEN`
+* `DESCRIBE_TOKENS`
+* `ALL`
+
+For more information see official Apache Kafka
+documentation: [Operations in Kafka](https://kafka.apache.org/documentation/#operations_in_kafka)
+
+### Resource Types
+
+The list below describes the valid values for the `spec.acls.[].resource.type` property :
+
+* `TOPIC`
+* `GROUP`
+* `CLUSTER`
+* `USER`
+* `TRANSACTIONAL_ID`
+
+For more information see official Apache Kafka
+documentation: [Resources in Kafka](https://kafka.apache.org/documentation/#resources_in_kafka)
+
+### Pattern Types
+
+The list below describes the valid values for the `spec.acls.[].resource.patternType` property :
+
+* `LITERAL`: Use to allow or denied a principal to have access to a specific resource name.
+* `MATCH`:  Use to allow or denied a principal to have access to all resources matching the given regex.
+* `PREFIXED`: Use to allow or denied a principal to have access to all resources having the given prefix.
+
+### Example
+
+```yaml
+---
+apiVersion: "kafka.jikkou.io/v1beta2"    # The api version (required)
+kind: "KafkaPrincipalAuthorization"      # The resource kind (required)
+metadata:
+  name: "User:Alice"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: 'my-topic-'
+        patternType: 'PREFIXED'
+      type: "ALLOW"
+      operations: [ 'READ', 'WRITE' ]
+      host: "*"
+    - resource:
+        type: 'topic'
+        pattern: 'my-other-topic-.*'
+        patternType: 'MATCH'
+      type: 'ALLOW'
+      operations: [ 'READ' ]
+      host: "*"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Bob"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: 'my-topic-'
+        patternType: 'PREFIXED'
+      type: 'ALLOW'
+      operations: [ 'READ', 'WRITE' ]
+      host: "*"
 ```
 
-**Output**
+## `KafkaPrincipalRole`
 
+### Specification
+
+```yaml
+apiVersion: "kafka.jikkou.io/v1beta2"    # The api version (required)
+kind: "KafkaPrincipalRole"               # The resource kind (required)
+metadata:
+  name: <Name of role>                   # The name of the role (required)  
+spec:
+acls: [ ]                                # A list of KafkaPrincipalACL (required)
 ```
-TASK [CREATE] Create a new ACL (ALLOW User:admin-user to ALL TOPIC:LITERAL:*) - CHANGED *****************
-{
-  "changed" : true,
-  "end" : 1633980549689,
-  "resource" : {
-    "operation" : "ADD",
-    "principal_type" : "User",
-    "principal_name" : "admin-user",
-    "resource_pattern" : "*",
-    "pattern_type" : "LITERAL",
-    "resource_type" : "TOPIC",
-    "operation" : "ALL",
-    "permission" : "ALLOW",
-    "host" : "*",
-    "name" : "admin-user",
-    "principal" : "User:admin-user"
-  },
-  "failed" : false,
-  "status" : "CHANGED"
-}
-TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL GROUP:LITERAL:*) - CHANGED *****************
-{
-  "changed" : true,
-  "end" : 1633980549689,
-  "resource" : {
-    "operation" : "ADD",
-    "principal_type" : "User",
-    "principal_name" : "kafka-user",
-    "resource_pattern" : "*",
-    "pattern_type" : "LITERAL",
-    "resource_type" : "GROUP",
-    "operation" : "ALL",
-    "permission" : "ALLOW",
-    "host" : "*",
-    "name" : "kafka-user",
-    "principal" : "User:kafka-user"
-  },
-  "failed" : false,
-  "status" : "CHANGED"
-}
-TASK [CREATE] Create a new ACL (ALLOW User:kafka-user to ALL TOPIC:LITERAL:*) - CHANGED *****************
-{
-  "changed" : true,
-  "end" : 1633980549689,
-  "resource" : {
-    "operation" : "ADD",
-    "principal_type" : "User",
-    "principal_name" : "kafka-user",
-    "resource_pattern" : "*",
-    "pattern_type" : "LITERAL",
-    "resource_type" : "TOPIC",
-    "operation" : "ALL",
-    "permission" : "ALLOW",
-    "host" : "*",
-    "name" : "kafka-user",
-    "principal" : "User:kafka-user"
-  },
-  "failed" : false,
-  "status" : "CHANGED"
-}
-EXECUTION in 2s 146ms
-ok : 0, created : 3, altered : 0, deleted : 0 failed : 0
+
+### Example
+
+```yaml
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalRole"
+metadata:
+  name: "KafkaTopicPublicRead"
+spec:
+  acls:
+    - type: "ALLOW"
+      operations: [ 'READ' ]
+      resource:
+        type: 'topic'
+        pattern: '/public-([.-])*/'
+        patternType: 'MATCH'
+      host: "*"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalRole"
+metadata:
+  name: "KafkaTopicPublicWrite"
+spec:
+  acls:
+    - type: "ALLOW"
+      operations: [ 'WRITE' ]
+      resource:
+        type: 'topic'
+        pattern: '/public-([.-])*/'
+        patternType: 'MATCH'
+      host: "*"
+---
+
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Alice"
+spec:
+  roles:
+    - "KafkaTopicPublicRead"
+    - "KafkaTopicPublicWrite"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:Bob"
+spec:
+  roles:
+    - "KafkaTopicPublicRead"
 ```
+
+

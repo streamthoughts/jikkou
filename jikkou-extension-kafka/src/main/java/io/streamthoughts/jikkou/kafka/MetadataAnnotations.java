@@ -20,6 +20,5 @@ package io.streamthoughts.jikkou.kafka;
 
 public class MetadataAnnotations {
 
-    public static String JIKKOU_IO_ITEMS_COUNT = "jikkou.io/items-count";
-    public static String JIKKOU_IO_KAFKA_CLUSTER_ID = "jikkou.io/kafka-cluster-id";
+    public static String JIKKOU_IO_KAFKA_CLUSTER_ID = "kafka.jikkou.io/cluster-id";
 }

@@ -230,7 +230,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN
@@ -266,7 +266,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN

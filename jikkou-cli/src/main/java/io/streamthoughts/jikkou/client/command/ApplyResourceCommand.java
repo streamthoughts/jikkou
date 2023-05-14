@@ -52,6 +52,6 @@ public class ApplyResourceCommand extends BaseResourceCommand {
     /** {@inheritDoc } **/
     @Override
     protected ReconciliationMode getReconciliationMode() {
-        return ReconciliationMode.APPLY;
+        return ReconciliationMode.APPLY_ALL;
     }
 }

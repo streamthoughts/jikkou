@@ -6,7 +6,7 @@ items:
     name: "{{ values.topic_prefix}}-iot-events-{{ location }}"
   spec:
     partitions: {{ values.topic_configs.partitions }}
-    replicationFactor: {{ values.topic_configs.replication_factor }}
+    replicas: {{ values.topic_configs.replication_factor }}
     configMapRefs:
     - TopicConfig
 {% endfor %}

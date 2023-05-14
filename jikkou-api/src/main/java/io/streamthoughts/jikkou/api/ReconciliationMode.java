@@ -27,17 +27,17 @@ import java.util.Set;
  */
 public enum ReconciliationMode {
 
-    /** Only apply changes creating new resource items */
+    /** Only changes that create new resource objects on the system will be applied. */
     CREATE(ChangeType.ADD),
 
-    /** Only apply changes deleting orphan resource items */
+    /** Only changes that delete an existing resource objects on your system will be applied. */
     DELETE(ChangeType.DELETE),
 
-    /** Only apply changes altering existing resource items */
+    /** Only changes that create or update existing resource objects on the system will be applied. */
     UPDATE(ChangeType.ADD, ChangeType.UPDATE),
 
     /** Apply all reconciliation changes */
-    APPLY(ChangeType.ADD, ChangeType.UPDATE, ChangeType.DELETE);
+    APPLY_ALL(ChangeType.ADD, ChangeType.UPDATE, ChangeType.DELETE);
 
     /**
      * Set of change-type supported for this reconciliation mode.

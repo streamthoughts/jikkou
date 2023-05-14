@@ -6,15 +6,17 @@ items:
       name: 'jikkou-demo-my-first-topic'
     spec:
       partitions: 1
-      replicationFactor: 1
+      replicas: 1
       configs:
         cleanup.policy: 'compact'
 
-#  - metadata:
-#      name: 'jikkou-demo-my-second-topic'
-#    spec:
-#      partitions: 5
-#      replicationFactor: 1
-#      configs:
-#       cleanup.policy: 'delete'
+  - metadata:
+      name: 'jikkou-demo-my-second-topic'
+      annotations:
+        jikkou.io/delete: true
+    spec:
+      partitions: 5
+      replicas: 1
+      configs:
+      cleanup.policy: 'delete'
 

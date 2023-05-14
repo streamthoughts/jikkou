@@ -18,9 +18,9 @@
  */
 package io.streamthoughts.jikkou.kafka.converters;
 
+import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaList;
 import java.util.Collections;
@@ -62,7 +62,7 @@ public class V1KafkaClientQuotaListConverter implements ResourceConverter<V1Kafk
         return List.of(
                 new V1KafkaClientQuotaList()
                         .withMetadata(ObjectMeta.builder()
-                                .withAnnotation(MetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
+                                .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)

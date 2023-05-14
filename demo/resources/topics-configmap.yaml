@@ -5,7 +5,7 @@ items:
       name: 'jikkou-demo-my-first-topic'
     spec:
       partitions: 1
-      replicationFactor: 1
+      replicas: 1
       configMapRefs:
         - TopicConfig
       configs:
@@ -14,7 +14,7 @@ items:
       name: 'jikkou-demo-my-second-topic'
     spec:
       partitions: 5
-      replicationFactor: 1
+      replicas: 1
       configMapRefs:
         - TopicConfig
       configs:

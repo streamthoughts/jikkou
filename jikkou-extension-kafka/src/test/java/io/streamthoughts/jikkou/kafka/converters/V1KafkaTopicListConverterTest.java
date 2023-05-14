@@ -18,9 +18,9 @@
  */
 package io.streamthoughts.jikkou.kafka.converters;
 
+import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import java.util.List;
@@ -165,6 +165,6 @@ class V1KafkaTopicListConverterTest {
         Assertions.assertEquals(2, kafkaTopicList
                 .getMetadata()
                 .getAnnotations()
-                .get(MetadataAnnotations.JIKKOU_IO_ITEMS_COUNT));
+                .get(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT));
     }
 }

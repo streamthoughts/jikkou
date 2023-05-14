@@ -29,7 +29,7 @@ The Jikkou library is available on [Maven Central]( https://mvnrepository.com/ar
 ```xml
 <dependency>
     <groupId>io.streamthoughts</groupId>
-    <artifactId>jikkou</artifactId>
+    <artifactId>jikkou-api</artifactId>
     <version>${jikkou.version}</version>
 </dependency>
 ```
@@ -49,7 +49,7 @@ Configuration files are written in [YAML](https://yaml.org/).
 
 ```bash
 $ jikkou help
-```
+
 Usage:
 jikkou [-hV] [COMMAND]
 
@@ -81,38 +81,47 @@ get         List and describe all resources of a specific kind.
 
 ## Configuration
 
-Jikkou uses the Java Admin client API for interacting with the target Apache Kafka cluster.
+To set up the configuration settings used by Jikkou CLI, you will need create a _jikkou config file_, which is created
+automatically when you create a configuration context using:
 
-You can set the configs to be passed to Admin Client using the command-line arguments:
-* `--command-config`: A property file containing configs to be passed to Admin Client
-* `--command-property`: A KEY=VALUE property to be passed to the Admin Client.
+```bash
+jikkou config set-context <context-name> [--config-file=<config-gile>] [--config=<config-value>]
+```
 
-Additionally, Jikkou will lookup for an [HOCON (Human-Optimized Config Object Notation)](https://github.com/lightbend/config) file named `application.conf` in the following locations:
+By default, the configuration of `jikkou` is located under the path `~/.jikkou/config`.
+
+This _jikkou config file_ defines all the contexts that can be used by jikkou CLI.
+
+For example, below is the config file created during the [Getting Started]({{< relref "./getting_started.md" >}}).
+
+```json
+{
+  "currentContext" : "localhost",
+  "localhost" : {
+    "configFile": null,
+    "configProps" : {
+      "kafka.client.bootstrap.servers" : "localhost:9092"
+    }
+  }
+}
+```
+
+Most of the time, a _context_ does not directly contain the configuration properties to be used, but rather points to a specific 
+[HOCON (Human-Optimized Config Object Notation)](https://github.com/lightbend/config) through the (`configFile`).
+
+Then, the `configProps` allows you to override some of the property define by this file.
+
+In addition, if no configuration file path is specified, Jikkou will lookup for an `application.conf` to
+those following locations:
 
 * `./application.conf`
 * `$HOME/.jikkou/application.conf`
 
-Depending on the configuration properties you will override, Jikkou will always fallback to its reference default configuration (see [reference.conf](https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf)).
+
+Finally, Jikkou always fallback to a reference configuration (see [reference.conf](https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf)).
 
 ```hocon
 jikkou {
-
-  # Set what resource controllers are active (i.e., the fully class names)
-  controllers {
-    active: [
-      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController
-      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaController
-      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaAuthorizationController
-    ]
-  }
-
-  # Set what resource descriptors are active (i.e., the fully class names)
-  descriptors {
-    active: [
-      io.streamthoughts.jikkou.kafka.control.AdminClientKafkaBrokerCollector
-    ]
-  }
-
   # The paths from which to load extensions
   extension.paths = [${?JIKKOU_EXTENSION_PATH}]
 
@@ -138,17 +147,8 @@ jikkou {
     }
   }
 
-  # The regex patterns to use for including resources.
-  include-resources = []
-  # The regex patterns to use for excluding resources.
-  exclude-resources = []
-
   # The default validation rules to apply on any specification files.
   validations = [
-    {
-      type = TopicConfigKeysValidation
-      config = {}
-    },
     {
       type = TopicNameRegexValidation
       config = {
@@ -171,12 +171,13 @@ jikkou {
       }
     }
   ]
-
-  # The default transformations to apply on any specification files.
-  transforms = []
 }
 ```
 
+### Verify current configuration
+
+You can use `jikkou config view` to show the configuration currently used by your client.
+
 {{% alert title="Tips" color="info" %}}
-To debug the configuration use byu Jikkou, you can run the following command: `jikkou config get --comments`
+To debug the configuration use by Jikkou, you can run the following command: `jikkou config view --comments` or `jikkou config view --debug`
 {{% /alert %}}

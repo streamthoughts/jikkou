@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY_ALL;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.UPDATE;
@@ -54,7 +54,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 @SupportedResource(type = V1KafkaClientQuota.class)
 @SupportedResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
-@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY})
+@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaQuotaController extends AbstractAdminClientKafkaController
         implements BaseExternalResourceController<V1KafkaClientQuota, QuotaChange> {
 
@@ -140,7 +140,7 @@ public final class AdminClientKafkaQuotaController extends AbstractAdminClientKa
     @VisibleForTesting
     static boolean isLimitDeletionEnabled(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(LIMITS_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(() -> List.of(APPLY, DELETE, UPDATE).contains(mode))
+                .orElse(() -> List.of(APPLY_ALL, DELETE, UPDATE).contains(mode))
                 .evaluate(context.configuration());
     }
 }

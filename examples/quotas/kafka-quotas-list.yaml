@@ -1,14 +1,23 @@
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaClientQuotaList'
 metadata:
-  labels: {}
-  annotations: {}
+  labels: { }
+  annotations: { }
 items:
   - spec:
-      type: 'f'
+    type: 'CLIENT'
+    entity:
+      clientId: 'my-client'
+    configs:
+      requestPercentage: 10
+      producerByteRate: 1024
+      consumerByteRate: 1024
+
+  - spec:
+      type: 'USER'
       entity:
-        clientId: 'my-client'
+        user: 'my-user'
       configs:
-        requestByte_rate: 10
+        requestPercentage: 10
         producerByteRate: 1024
         consumerByteRate: 1024

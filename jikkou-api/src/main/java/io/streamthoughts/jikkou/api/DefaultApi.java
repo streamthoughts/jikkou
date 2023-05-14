@@ -230,7 +230,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     List<HasMetadata> resource = e.getValue();
                     return (ResourceListObject<HasMetadataChange<Change>>) controller.computeReconciliationChanges(
                             resource,
-                            ReconciliationMode.APPLY,
+                            ReconciliationMode.APPLY_ALL,
                             context
                     );
                 })

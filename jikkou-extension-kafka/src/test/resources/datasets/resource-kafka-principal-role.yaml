@@ -12,7 +12,6 @@ spec:
         pattern: '/([.-])*/'
         patternType: 'MATCH'
       host: "*"
-
 ---
 apiVersion: "kafka.jikkou.io/v1beta2"
 kind: "KafkaPrincipalRole"

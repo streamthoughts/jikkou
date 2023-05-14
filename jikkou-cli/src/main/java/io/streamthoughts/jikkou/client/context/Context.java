@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.jikkou.client.context;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.client.JikkouConfig;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @param configFile       a configuration file in HOCON format.
  * @param configProps      additional config properties.
  */
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public record Context(String configFile, Map<String, Object> configProps) {
     public Context(
             @JsonProperty("configFile") String configFile,

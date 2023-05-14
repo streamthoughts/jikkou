@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.api.model.HasMetadata;
 
 public final class JikkouMetadataAnnotations {
 
+    public static String JIKKOU_IO_ITEMS_COUNT = "jikkou.io/items-count";
     public static final String JIKKOU_IO_IGNORE = "jikkou.io/ignore";
     public static final String JIKKOU_IO_DELETE = "jikkou.io/delete";
 

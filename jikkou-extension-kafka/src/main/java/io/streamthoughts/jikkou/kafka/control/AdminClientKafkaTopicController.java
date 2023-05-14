@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY;
+import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY_ALL;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.api.ReconciliationMode.UPDATE;
@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaTopic.class)
 @SupportedResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
-@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY})
+@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaTopicController extends AbstractAdminClientKafkaController
         implements BaseExternalResourceController<V1KafkaTopic, TopicChange> {
 
@@ -168,7 +168,7 @@ public final class AdminClientKafkaTopicController extends AbstractAdminClientKa
     @VisibleForTesting
     static boolean isConfigDeletionEnabled(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(() -> List.of(APPLY, DELETE, UPDATE).contains(mode))
+                .orElse(() -> List.of(APPLY_ALL, DELETE, UPDATE).contains(mode))
                 .evaluate(context.configuration());
     }
 }

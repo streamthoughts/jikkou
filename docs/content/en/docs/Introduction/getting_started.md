@@ -1,6 +1,5 @@
 ---
-title: "Quickstart Guide"
-linkTitle: "Quickstart Guide"
+title: "Getting Started"
 weight: 1
 description: >
     This guide covers how you can quickly get started using Jikkou.
@@ -46,7 +45,7 @@ source <(jikkou generate-completion) && \
 jikkou --version
 ```
 
-For more details, or for other options, see the [installation](./_installation.md) guide.
+For more details, or for other options, see the [installation](./installation.md) guide.
 
 ## Configure Jikkou for your local Apache Kafka cluster
 
@@ -253,6 +252,6 @@ $ jikkou help get
 Now, you're ready to use Jikkou!🚀
 
 As next steps, we suggest reading the following documentation in this order:
-* Learn Jikkou [concepts](../Concepts)
+* Learn Jikkou [concepts]({{% relref "../Concepts" %}})
 * Read the Developer Guide to understand how to use the Jikkou API for Java
 * Look at the [examples](https://github.com/streamthoughts/jikkou/tree/main/examples)

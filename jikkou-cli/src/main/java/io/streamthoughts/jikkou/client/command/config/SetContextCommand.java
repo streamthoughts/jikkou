@@ -21,7 +21,6 @@ package io.streamthoughts.jikkou.client.command.config;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
 import io.streamthoughts.jikkou.common.utils.Strings;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -45,14 +44,16 @@ public class SetContextCommand implements Callable<Integer> {
     String clientConfigFile;
 
     @Override
-    public Integer call() throws FileNotFoundException, IOException {
+    public Integer call() throws IOException {
         ConfigurationContext context = new ConfigurationContext();
 
         Properties clientConfigProps = new Properties();
 
         if (!Strings.isBlank(clientConfigFile)) {
             final String expandedPath = Paths.get(clientConfigFile).toAbsolutePath().toString();
-            clientConfigProps.load(new FileReader(expandedPath));
+            try (var reader = new FileReader(expandedPath)) {
+                clientConfigProps.load(reader);
+            }
         }
 
         if (this.clientConfigs != null) {

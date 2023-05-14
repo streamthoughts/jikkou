@@ -1,39 +1,45 @@
 ---
-categories: []
-tags: ["feature", "resources"] 
-title: "Quotas"
+categories: [ ]
+tags: [ "feature", "resources" ]
+title: "Kafka Quotas"
 linkTitle: "Quotas"
 weight: 30
 description: >
-  Learn how to define quotas for consumers and/or producers.
+  Learn how to manage Kafka Client Quotas
 ---
 
+{{% pageinfo color="info" %}}
+KafkaClientQuota resources are used to define the quota limits to be applied on Kafka consumers and producers.
+A KafkaClientQuota resource can be used to apply limit to consumers and/or producers identified by a `client-id` or a
+user `principal`.
+{{% /pageinfo %}}
 
-Jikkou allows defining the quotas to apply to consumers and/or producers identified by a `client-id` or a user `principal`.
+## `KafkaClientQuota`
 
-## The Resource Definition File
+### Specification
 
-The _resource definition file_ for defining `quotas` contains the following fields:
+Here is the _resource definition file_ for defining a `KafkaClientQuota`.
 
 ```yaml
 apiVersion: "kafka.jikkou.io/v1beta2" # The api version (required)
-kind: KafkaQuotaList # The resource kind (required)
+kind: "KafkaClientQuota"              # The resource kind (required)
 metadata: # (optional)
-  labels: {}
-  annotations: {}
+  labels: { }
+  annotations: { }
 spec:
-  quotas:
-  - type: The quota type (required)
-    entity:
-      client_id: The id of the client (required depending on the quota type).
-      user:  The principal of the user (required depending on the quota type).
-    configs:
-      request_byte_rate: The quota in percentage (%) of total requests (optional)
-      producer_byte_rate: The quota in bytes for restricting data production (optional)
-      consumer_byte_rate: The quota in bytes for restricting data consumption (optional)
+  type: <The quota type> # (required)       
+  entity:
+    clientId: <The id of the client>    # (required depending on the quota type).
+    user: <The principal of the user>   # (required depending on the quota type).
+  configs:
+    requestPercentage: <The quota in percentage (%) of total requests>      # (optional)
+    producerByteRate: <The quota in bytes for restricting data production>  # (optional)
+    consumerByteRate: <The quota in bytes for restricting data consumption> # (optional)
 ```
 
-**The list below describes the supported quota types:**
+### Quota Types
+
+The list below describes the supported quota types:
 
 * `USERS_DEFAULT`: Set default quotas for all users.
 * `USER`: Set quotas for a specific user principal.
@@ -42,32 +48,90 @@ spec:
 * `CLIENT`: Set default quotas for a specific client.
 * `CLIENTS_DEFAULT`: Set default quotas for all clients.
 
-## Usage
+### Example
 
-```bash
-$ jikkou quotas -h
+Here is a simple example that shows how to define a single YAML file containing two quota definitions using
+the `KafkaClientQuota` resource type.
+
+_`file: kafka-quotas.yaml`_
+
+```yaml
+---
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaClientQuota'
+metadata:
+  labels: { }
+  annotations: { }
+spec:
+  type: 'CLIENT'
+  entity:
+    clientId: 'my-client'
+  configs:
+    requestPercentage: 10
+    producerByteRate: 1024
+    consumerByteRate: 1024
+---
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaClientQuota'
+metadata:
+  labels: { }
+  annotations: { }
+spec:
+  type: 'USER'
+  entity:
+    user: 'my-user'
+  configs:
+    requestPercentage: 10
+    producerByteRate: 1024
+    consumerByteRate: 1024
 ```
 
-```bash
-Apply the quotas changes described by your specs-file against the Kafka cluster you are currently pointing at.
+## `KafkaClientQuotaList`
 
-jikkou quotas [-hV] [COMMAND]
+If you need to define multiple topics (e.g. using a template), it may be easier to use a `KafkaClientQuotaList`
+resource.
 
-Description:
+### Specification
 
-This command can be used to create, alter, delete or describe quotas on a remote Kafka cluster
+Here the _resource definition file_ for defining a `KafkaTopicList`.
 
-Options:
+```yaml
+apiVersion: "kafka.jikkou.io/v1beta2"  # The api version (required)
+kind: "KafkaClientQuotaList"           # The resource kind (required)
+metadata: # (optional)
+  name: <The name of the topic>
+  labels: { }
+  annotations: { }
+items: [ ]                              # An array of KafkaClientQuota
+```
 
-  -h, --help      Show this help message and exit.
-  -V, --version   Print version information and exit.
+### Example
 
-Commands:
+Here is a simple example that shows how to define a single YAML file containing two `KafkaClientQuota` definition using
+the `KafkaClientQuotaList` resource type.
 
-  alter     Update the client quotas on the cluster as describe in the specification file.
-  apply     Apply all changes to the Kafka client quotas.
-  create    Create the client quotas missing on the cluster as describe in the specification file.
-  delete    Delete all client-quotas not described in the specification file.
-  describe  Describe quotas that currently exist on the remote Kafka cluster.
-  help      Displays help information about the specified command
+```yaml
+apiVersion: 'kafka.jikkou.io/v1beta2'
+kind: 'KafkaClientQuotaList'
+metadata:
+  labels: { }
+  annotations: { }
+items:
+  - spec:
+    type: 'CLIENT'
+    entity:
+      clientId: 'my-client'
+    configs:
+      requestPercentage: 10
+      producerByteRate: 1024
+      consumerByteRate: 1024
+
+  - spec:
+      type: 'USER'
+      entity:
+        user: 'my-user'
+      configs:
+        requestPercentage: 10
+        producerByteRate: 1024
+        consumerByteRate: 1024
 ```
