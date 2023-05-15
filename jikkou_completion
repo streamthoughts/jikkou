@@ -698,15 +698,18 @@ function _picocli_jikkou_config_setcontext() {
 
   local commands=""
   local flag_opts=""
-  local arg_opts="-o --config -f --config-file"
+  local arg_opts="--config-props-file --config-props --config-file"
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
-    -o|--config)
+    --config-props-file)
       return
       ;;
-    -f|--config-file)
+    --config-props)
+      return
+      ;;
+    --config-file)
       return
       ;;
   esac

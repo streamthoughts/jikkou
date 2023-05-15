@@ -106,7 +106,7 @@ public final class TopicChange implements Change, Nameable {
                 "name='" + name + '\'' +
                 ", operation=" + operation +
                 ", partitions=" + partitions +
-                ", replicationFactor=" + replicas +
+                ", replicas=" + replicas +
                 ", configs=" + configs +
                 '}';
     }

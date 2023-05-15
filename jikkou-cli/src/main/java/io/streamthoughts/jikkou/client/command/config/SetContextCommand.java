@@ -37,10 +37,13 @@ public class SetContextCommand implements Callable<Integer> {
     @Parameters(index = "0", description = "Context name")
     String contextName;
 
-    @Option(names = { "-o", "--config" }, description = "Configuration for client")
-    String[] clientConfigs;
+    @Option(names = { "--config-props-file" }, description = "Configuration properties file for client")
+    String[] clientConfigPropertiesFile;
 
-    @Option(names = { "-f", "--config-file" }, description = "Configuration file for client")
+    @Option(names = { "--config-props" }, description = "Configuration properties for client")
+    String[] clientConfigProperties;
+
+    @Option(names = { "--config-file" }, description = "Configuration file for client")
     String clientConfigFile;
 
     @Override
@@ -49,15 +52,19 @@ public class SetContextCommand implements Callable<Integer> {
 
         Properties clientConfigProps = new Properties();
 
-        if (!Strings.isBlank(clientConfigFile)) {
-            final String expandedPath = Paths.get(clientConfigFile).toAbsolutePath().toString();
-            try (var reader = new FileReader(expandedPath)) {
-                clientConfigProps.load(reader);
+        if (this.clientConfigPropertiesFile != null) {
+            for (final String propertiesFile : clientConfigPropertiesFile) {
+                if (!Strings.isBlank(propertiesFile)) {
+                    final String expandedPath = Paths.get(propertiesFile).toAbsolutePath().toString();
+                    try (var reader = new FileReader(expandedPath)) {
+                        clientConfigProps.load(reader);
+                    }
+                }
             }
         }
 
-        if (this.clientConfigs != null) {
-            for (final String clientConfigString : this.clientConfigs) {
+        if (this.clientConfigProperties != null) {
+            for (final String clientConfigString : this.clientConfigProperties) {
                 try {
                     clientConfigProps.putAll(Strings.toProperties(clientConfigString));
                 }
