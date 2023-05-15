@@ -27,8 +27,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationContext.class);
 
     private final ObjectMapper OBJECT_MAPPER = JsonMapper
             .builder()
@@ -51,7 +55,6 @@ public class ConfigurationContext {
     public void setContext(String contextName, Context context) {
         if (!isExists()) {
             tryWriteConfiguration(new Configuration(contextName).addConfigurationContext(contextName, context));
-
             return;
         }
 
@@ -133,6 +136,10 @@ public class ConfigurationContext {
 
     private void tryWriteConfiguration(Configuration configuration) {
         try {
+            if (!isExists() && configFile.getParentFile().mkdirs()) {
+                LOG.debug("Creating missing parent directory for: {}", configFile);
+            }
+            LOG.debug("Writing configuration to {}: {}", configFile, configuration);
             OBJECT_MAPPER.writeValue(configFile, configuration);
         }
         catch (IOException e) {
