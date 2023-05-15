@@ -29,6 +29,7 @@ sudo dpkg -i "$temp/jikkou.deb"
 echo -e "\nDone installing!\n"
 
 source <(jikkou generate-completion)
+
 jikkou --version
 
 exit 0;

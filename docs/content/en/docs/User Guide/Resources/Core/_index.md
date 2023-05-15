@@ -8,4 +8,6 @@ weight: 1
 Here, you will find the list of core resources supported for Jikkou.
 {{% /pageinfo %}}
 
+## Resources
+
 More information:

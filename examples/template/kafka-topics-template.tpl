@@ -1,12 +1,12 @@
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaTopicList'
 items:
-{% for location in values.locations %}
+{% for country in values.countryCodes %}
 - metadata:
-    name: "{{ values.topic_prefix}}-iot-events-{{ location }}"
+    name: "{{ values.topicPrefix}}-iot-events-{{ country }}"
   spec:
-    partitions: {{ values.topic_configs.partitions }}
-    replicationFactor: {{ values.topic_configs.replication_factor }}
+    partitions: {{ values.topicConfigs.partitions }}
+    replicas: {{ values.topicConfigs.replicas }}
     configMapRefs:
     - TopicConfig
 {% endfor %}
@@ -17,7 +17,7 @@ metadata:
   name: TopicConfig
 template:
   values:
-    default_min_insync_replicas: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) | int | add(-1) }}"
+    default_min_insync_replicas: "{{ values.topicConfigs.replicas | default(3, true) | int | add(-1) }}"
 data:
   retention.ms: 3600000
   max.message.bytes: 20971520

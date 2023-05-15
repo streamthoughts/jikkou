@@ -1,6 +1,8 @@
-topic_prefix: "{{ system.env.TOPIC_PREFIX | default('local', true) }}"
-default_replication_factor: "{{ system.env.DEFAULT_REPLICATION_FACTOR | default(3, true) }}"
-locations:
+topicConfigs:
+  partitions: 4
+  replicas: 3
+topicPrefix: "{{ system.env.TOPIC_PREFIX | default('test', true) }}"
+countryCodes:
   - fr
   - be
   - de
