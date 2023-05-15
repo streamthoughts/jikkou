@@ -2,8 +2,49 @@
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find the list of core resources supported for Jikkou.&lt;/p>
 &lt;/div>
+&lt;h2 id="resources">Resources&lt;/h2>
 &lt;p>More information:&lt;/p></description></item><item><title>Docs: Apache Kafka</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/resources/kafka/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find the list of resources supported for Apache Kafka.&lt;/p>
 &lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The Apache Kafka extension is built on top of the Kafka Admin Client. You can configure the properties to be passed to
+kafka client
+through the Jikkou client configuration property &lt;code>jikkou.kafka.client&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+kafka {
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+security.protocol = &amp;#34;SSL&amp;#34;
+ssl.keystore.location = &amp;#34;/tmp/client.keystore.p12&amp;#34;
+ssl.keystore.password = &amp;#34;password&amp;#34;
+ssl.keystore.type = &amp;#34;PKCS12&amp;#34;
+ssl.truststore.location = &amp;#34;/tmp/client.truststore.jks&amp;#34;
+ssl.truststore.password = &amp;#34;password&amp;#34;
+ssl.key.password = &amp;#34;password&amp;#34;
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>In addition, the extension support configuration settings to wait for at least a minimal number of brokers before
+processing.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+kafka {
+brokers {
+# If &amp;#39;True&amp;#39;
+wait-for-enabled = true
+wait-for-enabled = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_ENABLED}
+# The minimal number of brokers that should be alive for the CLI stops waiting.
+wait-for-min-available = 1
+wait-for-min-available = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE}
+# The amount of time to wait before verifying that brokers are available.
+wait-for-retry-backoff-ms = 1000
+wait-for-retry-backoff-ms = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
+# Wait until brokers are available or this timeout is reached.
+wait-for-timeout-ms = 60000
+wait-for-timeout-ms = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;h2 id="apache-kafka-resources">Apache Kafka Resources&lt;/h2>
 &lt;p>More information:&lt;/p></description></item></channel></rss>

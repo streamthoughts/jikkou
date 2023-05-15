@@ -23,7 +23,7 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="run-jikkou">Run Jikkou&lt;/h2>
 &lt;h3 id="download-the-latest-distribution">Download the latest distribution&lt;/h3>
 &lt;p>Run the following commands to install the latest version:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/jikkou/releases/download/0.17.0/jikkou.deb &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/jikkou/releases/download/0.18.0/jikkou.deb &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>sudo dpkg -i jikkou.deb &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>jikkou --version
@@ -265,15 +265,15 @@ All resource are scoped by an API &lt;em>Group&lt;/em> and &lt;em>Version&lt;/em
 &lt;h4 id="install-from-tarball-distribution">Install From Tarball distribution&lt;/h4>
 &lt;ol>
 &lt;li>Download your desired &lt;a href="https://github.com/streamthoughts/jikkou/releases">version&lt;/a>&lt;/li>
-&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.17.0-runner.tar.gz&lt;/code>)&lt;/li>
-&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.17.0-runner /opt&lt;/code>)&lt;/li>
+&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.18.0-runner.tar.gz&lt;/code>)&lt;/li>
+&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.18.0-runner /opt&lt;/code>)&lt;/li>
 &lt;li>Add the executable to your PATH (&lt;code>export PATH=$PATH:/opt/jikkou/bin&lt;/code>)&lt;/li>
 &lt;/ol>
 &lt;h4 id="install-from-debian-distribution">Install From Debian distribution&lt;/h4>
 &lt;ol>
 &lt;li>Download your desired &lt;a href="https://github.com/streamthoughts/jikkou/releases">version&lt;/a>&lt;/li>
 &lt;/ol>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ wget https://github.com/streamthoughts/jikkou/releases/download/0.17.0/jikkou.deb
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ wget https://github.com/streamthoughts/jikkou/releases/download/0.18.0/jikkou.deb
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ sudo dpkg -i jikkou.deb
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or just run the command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/streamthoughts/jikkou/main/get.sh &lt;span style="color:#000;font-weight:bold">|&lt;/span> sh
