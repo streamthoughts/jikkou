@@ -2,10 +2,9 @@ name: Docker Builds & Push
 on:
   push:
     branches:
-      - main
-  create:
+      - 'main'
     tags:
-      - v*
+      - 'v*'
 jobs:
   build_docker_image:
     if: github.repository == 'streamthoughts/jikkou'
@@ -49,10 +48,10 @@ jobs:
 
     - name: Set DOCKER_IMAGE_TAG
       if: github.ref_name == 'main'
-      run: echo "DOCKER_TAG=master" >> $GITHUB_ENV
+      run: echo "DOCKER_TAG=main" >> $GITHUB_ENV
 
     - name: Set DOCKER_IMAGE_TAG
-      if: startsWith(github.event.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/v')
       run: echo "DOCKER_TAG=${{ env.PROJECT_VERSION }}" >> $GITHUB_ENV
 
     - name: Check DOCKER_IMAGE_TAG
@@ -81,7 +80,7 @@ jobs:
           jikkouBranch=${{ env.GIT_BRANCH }}
 
     - name: Push to Docker Hub (latest)
-      if: startsWith(github.event.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/v')
       uses: docker/build-push-action@v4
       with:
         context: docker
