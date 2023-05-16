@@ -33,7 +33,6 @@ import io.streamthoughts.jikkou.client.Jikkou;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
@@ -71,8 +70,8 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
                             getReconciliationConfiguration(),
                             isDryRun()
                     ));
-            execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
-            return CommandLine.ExitCode.OK;
+
+            return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
         }
     }
 
