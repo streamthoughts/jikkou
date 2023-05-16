@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
 import java.util.stream.Collectors;
 
@@ -33,15 +32,9 @@ public class QuotaChangeDescription implements ChangeDescription {
 
     /** {@inheritDoc} **/
     @Override
-    public ChangeType type() {
-        return change.getChangeType();
-    }
-
-    /** {@inheritDoc} **/
-    @Override
     public String textual() {
         return  String.format("%s quotas %s with entity=[%s], constraints=[%s])",
-                ChangeDescription.humanize(type()),
+                ChangeDescription.humanize(change.getChangeType()),
                 change.getType(),
                 change.getType().toPettyString(change.getEntity()),
                 change.getConfigs().stream().map(s -> s.getName() + "=" + s.getValueChange().getAfter()).collect( Collectors.joining( "," ) )

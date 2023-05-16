@@ -18,10 +18,10 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -98,7 +98,7 @@ public interface ChangeHandler<T extends Change> extends
          **/
         @Override
         public List<ChangeResponse<T>> apply(@NotNull List<T> changes) {
-            return Collections.emptyList();
+            return changes.stream().map(ChangeResponse::new).collect(Collectors.toList());
         }
 
         /**

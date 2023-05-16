@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,20 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.api.model;
+package io.streamthoughts.jikkou.api.control;
 
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ListeableTest {
+class ChangeMetadataTest {
 
     @Test
-    void test() {
-        Listeable<String> listeable = () -> List.of("foo", "bar");
-        Assertions.assertEquals("foo", listeable.first());
-        Assertions.assertEquals(2, listeable.size());
-        Assertions.assertFalse(listeable.isEmpty());
+    void shouldGetEmptyGIvenNoError() {
+        Assertions.assertTrue(new ChangeMetadata().getError().isEmpty());
     }
 
 }

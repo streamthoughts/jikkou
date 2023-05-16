@@ -67,19 +67,19 @@ public class TextPrinter implements Printer {
         int changed = 0;
         int deleted = 0;
         int failed = 0;
-        for (ChangeResult<?> r : results) {
+        for (ChangeResult<?> result : results) {
             final String json;
             try {
                 json = Jackson.JSON_OBJECT_MAPPER
                         .writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(r);
+                        .writeValueAsString(result);
             } catch (JsonProcessingException e) {
                 throw new JikkouRuntimeException(e);
             }
 
             String color = TextPrinter.ANSI_WHITE;
-            ChangeType changeType = r.description().type();
-            if (r.isChanged()) {
+            ChangeType changeType = result.resource().getChangeType();
+            if (result.isChanged()) {
                 switch (changeType) {
                     case ADD -> {
                         color = TextPrinter.ANSI_GREEN;
@@ -94,14 +94,14 @@ public class TextPrinter implements Printer {
                         deleted++;
                     }
                 }
-            } else if (r.isFailed()) {
+            } else if (result.isFailed()) {
                 failed++;
             } else {
                 color = TextPrinter.ANSI_BLUE;
                 ok++;
             }
 
-            TextPrinter.printTask(r.description(), r.status().name());
+            TextPrinter.printTask(result.resource().getChangeType(), result.description(), result.status().name());
             if (printChangeDetail) {
                 TextPrinter.PS.printf("%s%s%n", TextPrinter.isColor() ? color : "", json);
             }
@@ -112,10 +112,12 @@ public class TextPrinter implements Printer {
         return failed > 0 ? 1 : 0;
     }
 
-    private static void printTask(final ChangeDescription description, final String status) {
+    private static void printTask(final ChangeType changeType,
+                                  final ChangeDescription description,
+                                  final String status) {
         String text = description.textual();
         String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
-        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? ANSI_WHITE : "", description.type(), text, status, padding);
+        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? ANSI_WHITE : "", changeType, text, status, padding);
     }
 
     private static boolean isColor() {

@@ -28,11 +28,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This class is used to describe the result of a change operation that succeed of failed.
+ * Represents a serializable result of the execution of a change.
  *
- * @param <T> the change-type.
+ * @see Change
+ * @see ChangeResponse
+ * @see ChangeExecutor
+ *
+ * @param <T> the type of the change.
  */
-public class ChangeResult<T extends Change> implements Serializable {
+public final class ChangeResult<T extends Change> implements Serializable {
 
     public enum Status {CHANGED, OK, FAILED}
 

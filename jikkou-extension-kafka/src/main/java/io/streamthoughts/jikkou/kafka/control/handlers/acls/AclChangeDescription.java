@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.kafka.control.handlers.acls;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.control.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 
@@ -33,16 +32,10 @@ public class AclChangeDescription implements ChangeDescription {
 
     /** {@inheritDoc} **/
     @Override
-    public ChangeType type() {
-        return change.getChangeType();
-    }
-
-    /** {@inheritDoc} **/
-    @Override
     public String textual() {
         KafkaAclBinding policy = change.getAclBindings();
         return String.format("%s ACL to %s '%s' to execute operation(s) '%s' on resource(s) '%s:%s:%s'",
-                ChangeDescription.humanize(type()),
+                ChangeDescription.humanize(change.getChangeType()),
                 policy.getType(),
                 policy.getPrincipal(),
                 policy.getOperation(),

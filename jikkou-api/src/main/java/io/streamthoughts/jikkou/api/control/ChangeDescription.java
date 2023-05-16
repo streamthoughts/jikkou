@@ -24,11 +24,6 @@ package io.streamthoughts.jikkou.api.control;
 public interface ChangeDescription {
 
     /**
-     * @return the type of the change.
-     */
-    ChangeType type();
-
-    /**
      * @return a textual description of the operation.
      */
     String textual();

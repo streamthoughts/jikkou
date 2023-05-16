@@ -28,5 +28,4 @@ class JikkouVersionTest {
         String version = JikkouVersion.getVersion();
         Assertions.assertNotEquals("unknown", version);
     }
-
 }

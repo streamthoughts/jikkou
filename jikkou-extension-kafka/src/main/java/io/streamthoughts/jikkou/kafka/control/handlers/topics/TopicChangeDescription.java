@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
 import java.util.Objects;
@@ -39,17 +38,9 @@ public class TopicChangeDescription implements ChangeDescription {
      * {@inheritDoc}
      **/
     @Override
-    public ChangeType type() {
-        return change.getChangeType();
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
     public String textual() {
         return String.format("%s topic '%s' (partitions=%d, replicas=%d, configs=[%s])",
-                ChangeDescription.humanize(type()),
+                ChangeDescription.humanize(change.getChangeType()),
                 change.getName(),
                 Optional.ofNullable(change.getPartitions()).map(ValueChange::getAfter).orElse(null),
                 Optional.ofNullable(change.getReplicas()).map(ValueChange::getAfter).orElse(null),

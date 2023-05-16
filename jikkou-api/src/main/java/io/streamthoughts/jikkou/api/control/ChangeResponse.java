@@ -24,16 +24,32 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+/**
+ * Represents the response
+ *
+ * @param <T> type of the change.
+ */
 public final class ChangeResponse<T extends Change> {
 
     private final T change;
 
     private final List<Future<Void>> results;
 
+    /**
+     * Creates a new {@link ChangeResponse} for the given change.
+     *
+     * @param change    the change to attached to this response.
+     */
     public ChangeResponse(T change) {
         this(change, new ArrayList<>());
     }
 
+    /**
+     * Creates a new {@link ChangeResponse} for the given change.
+     *
+     * @param change    the change to attached to this response.
+     * @param result    the result to attached to this response;
+     */
     public ChangeResponse(T change, Future<Void> result) {
         this(change, List.of(result));
     }
@@ -43,6 +59,11 @@ public final class ChangeResponse<T extends Change> {
         this.results = new ArrayList<>(results);
     }
 
+    /**
+     * Add a result to this response.
+     *
+     * @param result
+     */
     public void addResult(Future<Void> result) {
         this.results.add(result);
     }
@@ -51,6 +72,11 @@ public final class ChangeResponse<T extends Change> {
         return change;
     }
 
+    /**
+     * Gets the all {@link ChangeMetadata}.
+     *
+     * @return  the {@link CompletableFuture}.
+     */
     public CompletableFuture<? extends List<ChangeMetadata>> getResults() {
         List<io.vavr.concurrent.Future<Option<ChangeMetadata>>> futures = results
                 .stream()

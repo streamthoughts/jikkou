@@ -18,18 +18,18 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This class is responsible for executing an operation.
+ * This class is responsible to execute an operation.
  *
  * @param <C> the type of the {@link Change} that will be computed.
  */
@@ -63,9 +63,12 @@ public final class ChangeExecutor<C extends Change> {
      */
     public @NotNull List<ChangeResult<C>> execute(@NotNull final List<C> changes, final boolean dryRun) {
 
+        List<C> supportedChanges = changes.stream()
+                .filter(this::isChangeSupported)
+                .toList();
+
         if (dryRun) {
-            return changes.stream()
-                    .filter(this::isChangeSupported)
+            return supportedChanges.stream()
                     .map(change -> {
                         ChangeHandler<C> handler = handlers.get(change.getChangeType());
                         ChangeDescription description = handler.getDescriptionFor(change);
@@ -75,27 +78,13 @@ public final class ChangeExecutor<C extends Change> {
                     })
                     .toList();
         } else {
-            List<C> filtered = changes.stream()
-                    .filter(it -> it.getChangeType() != ChangeType.NONE)
-                    .toList();
-
-            // Do execute the change with the given handler.
-            final List<ChangeResult<C>> results = new ArrayList<>(execute(filtered));
-
-            // Then, add all resources with no changes
-            List<ChangeResult<C>> noneChanges = changes
-                    .stream()
-                    .filter(it -> it.getChangeType() == ChangeType.NONE)
-                    .map(change -> ChangeResult.ok(change, handlers.get(ChangeType.NONE).getDescriptionFor(change)))
-                    .toList();
-            results.addAll(noneChanges);
-            return results;
+            // Execute supported all changes
+            return execute(supportedChanges);
         }
     }
 
     private boolean isChangeSupported(C change) {
-        ChangeType type = change.getChangeType();
-        return handlers.containsKey(type) || type == ChangeType.NONE;
+        return handlers.containsKey(change.getChangeType());
     }
 
     private List<ChangeResult<C>> execute(final List<C> changes) {
@@ -105,22 +94,34 @@ public final class ChangeExecutor<C extends Change> {
 
         return changesGroupedByType.entrySet()
                 .stream()
-                .flatMap(e -> execute(e.getValue(), handlers.get(e.getKey())))
+                .flatMap(e -> execute(handlers.get(e.getKey()), e.getValue()))
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
     }
 
-    private Stream<CompletableFuture<ChangeResult<C>>> execute(final List<C> changes,
-                                                               final ChangeHandler<C> handler) {
+    private Stream<CompletableFuture<ChangeResult<C>>> execute(final ChangeHandler<C> handler,
+                                                               final List<C> changes) {
         return handler.apply(changes)
                 .stream()
                 .map(response -> {
                     CompletableFuture<? extends List<ChangeMetadata>> future = response.getResults();
-                    return future.thenApply(list -> {
-                        List<Throwable> errors = list.stream().flatMap(l -> l.getError().stream()).toList();
+                    return future.thenApply(metadata -> {
+                        C change = response.getChange();
+
+                        ChangeDescription description = handler.getDescriptionFor(change);
+
+                        if (change.getChangeType() == ChangeType.NONE) {
+                            return ChangeResult.ok(change, description);
+                        }
+                        
+                        List<Throwable> errors = metadata.stream()
+                                .map(ChangeMetadata::getError)
+                                .flatMap(Optional::stream)
+                                .toList();
+
                         return errors.isEmpty() ?
-                                ChangeResult.changed(response.getChange(), handler.getDescriptionFor(response.getChange())) :
-                                ChangeResult.failed(response.getChange(), handler.getDescriptionFor(response.getChange()), errors);
+                                ChangeResult.changed(change, description) :
+                                ChangeResult.failed(change, description, errors);
                     });
                 });
     }

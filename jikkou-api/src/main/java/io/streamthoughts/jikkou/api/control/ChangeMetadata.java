@@ -22,7 +22,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents the metadata attached.
+ * Represents the metadata attached to a change task operation result.
  */
 public final class ChangeMetadata {
 

@@ -18,10 +18,8 @@
  */
 package io.streamthoughts.jikkou.api.selector;
 
-import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.TestResource;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
-import io.streamthoughts.jikkou.api.model.annotations.Kind;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -67,34 +65,4 @@ class FieldSelectorTest {
         // THEN
         Assertions.assertFalse(result);
     }
-
-    @ApiVersion("kafka.jikkou.io/v1beta2")
-    @Kind("Test")
-    public static class TestResource implements HasMetadata {
-
-        private ObjectMeta meta;
-        /** {@inheritDoc} **/
-        @Override
-        public ObjectMeta getMetadata() {
-            return meta;
-        }
-        /** {@inheritDoc} **/
-        @Override
-        public TestResource withMetadata(ObjectMeta objectMeta) {
-            this.meta = objectMeta;
-            return this;
-        }
-
-        /** {@inheritDoc} **/
-        @Override
-        public String getApiVersion() {
-            return HasMetadata.getApiVersion(this.getClass());
-        }
-        /** {@inheritDoc} **/
-        @Override
-        public String getKind() {
-            return HasMetadata.getKind(this.getClass());
-        }
-    }
-
 }

@@ -122,9 +122,7 @@ public class ValueChange<T> {
      * @param change the {@link ValueChange} to copy.
      */
     protected ValueChange(@NotNull final ValueChange<T> change) {
-        this.after = change.after;
-        this.before = change.before;
-        this.type = change.type;
+        this(change.after, change.before, change.type);
     }
 
     public T getAfter() {
