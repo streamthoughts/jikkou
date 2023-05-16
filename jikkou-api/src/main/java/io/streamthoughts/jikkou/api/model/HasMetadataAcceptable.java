@@ -53,6 +53,7 @@ public interface HasMetadataAcceptable {
         return getResourceConverter(ResourceType.create(resource.getClass()));
     }
 
+    @SuppressWarnings("unchecked")
     default ResourceConverter<HasMetadata, HasMetadata> getResourceConverter(@NotNull ResourceType resource) {
         List<SupportedResource> annotations = AnnotationResolver
                 .findAllAnnotationsByType(this.getClass(), SupportedResource.class);
