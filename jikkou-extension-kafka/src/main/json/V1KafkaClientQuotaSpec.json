@@ -15,7 +15,8 @@
       "$ref": "V1KafkaClientQuotaEntity.json"
     },
     "configs": {
-      "$ref": "V1KafkaClientQuotaConfigs.json"
+      "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaConfigs",
+      "type": "object"
     }
   }
 }

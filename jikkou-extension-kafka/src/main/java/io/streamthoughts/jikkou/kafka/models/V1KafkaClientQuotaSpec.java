@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.annotations.Description;
+import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaConfigs;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
@@ -57,13 +58,8 @@ public class V1KafkaClientQuotaSpec {
     @JsonProperty("entity")
     @JsonPropertyDescription("A secure logical group of clients that share both user principal and client ID.")
     private V1KafkaClientQuotaEntity entity;
-    /**
-     * Client quota configuration
-     * 
-     */
     @JsonProperty("configs")
-    @JsonPropertyDescription("Client quota configuration")
-    private V1KafkaClientQuotaConfigs configs;
+    private KafkaClientQuotaConfigs configs;
 
     /**
      * No args constructor for use in serialization
@@ -83,7 +79,7 @@ public class V1KafkaClientQuotaSpec {
         "entity",
         "configs"
     })
-    public V1KafkaClientQuotaSpec(KafkaClientQuotaType type, V1KafkaClientQuotaEntity entity, V1KafkaClientQuotaConfigs configs) {
+    public V1KafkaClientQuotaSpec(KafkaClientQuotaType type, V1KafkaClientQuotaEntity entity, KafkaClientQuotaConfigs configs) {
         super();
         this.type = type;
         this.entity = entity;
@@ -104,12 +100,8 @@ public class V1KafkaClientQuotaSpec {
         return entity;
     }
 
-    /**
-     * Client quota configuration
-     * 
-     */
     @JsonProperty("configs")
-    public V1KafkaClientQuotaConfigs getConfigs() {
+    public KafkaClientQuotaConfigs getConfigs() {
         return configs;
     }
 

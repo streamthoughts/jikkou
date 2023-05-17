@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.kafka.models;
+package io.streamthoughts.jikkou.kafka.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,15 +25,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.annotations.Description;
 import java.beans.ConstructorProperties;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalDouble;
-import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
 
 
 /**
- * Client quota configuration
- * 
+ * Client Quota Limits
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
@@ -45,26 +45,23 @@ import lombok.With;
     "requestPercentage"
 })
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
-@Generated("jsonschema2pojo")
-public class V1KafkaClientQuotaConfigs {
+public class KafkaClientQuotaConfigs {
 
     /**
      * The quota in bytes for restricting data production.
-     * 
      */
     @JsonProperty("producerByteRate")
     @JsonPropertyDescription("The quota in bytes for restricting data production.")
     private OptionalDouble producerByteRate;
     /**
      * The quota in bytes for restricting data consumption.
-     * 
      */
     @JsonProperty("consumerByteRate")
     @JsonPropertyDescription("The quota in bytes for restricting data consumption.")
-    private OptionalDouble consumerByteRate;
+    private OptionalDouble consumerByteRate ;
+
     /**
      * The quota in percentage (%) of total requests.
-     * 
      */
     @JsonProperty("requestPercentage")
     @JsonPropertyDescription("The quota in percentage (%) of total requests.")
@@ -74,25 +71,28 @@ public class V1KafkaClientQuotaConfigs {
      * No args constructor for use in serialization
      * 
      */
-    public V1KafkaClientQuotaConfigs() {
+    public KafkaClientQuotaConfigs() {
     }
 
     /**
-     * 
-     * @param producerByteRate
-     * @param consumerByteRate
-     * @param requestPercentage
+     * Creates a new {@link KafkaClientQuotaConfigs} instance.
+     *
+     * @param producerByteRate {@link #producerByteRate}.
+     * @param consumerByteRate {@link #consumerByteRate}.
+     * @param requestPercentage {@link #requestPercentage}.
      */
     @ConstructorProperties({
         "producerByteRate",
         "consumerByteRate",
         "requestPercentage"
     })
-    public V1KafkaClientQuotaConfigs(OptionalDouble producerByteRate, OptionalDouble consumerByteRate, OptionalDouble requestPercentage) {
+    public KafkaClientQuotaConfigs(OptionalDouble producerByteRate,
+                                   OptionalDouble consumerByteRate,
+                                   OptionalDouble requestPercentage) {
         super();
-        this.producerByteRate = producerByteRate;
-        this.consumerByteRate = consumerByteRate;
-        this.requestPercentage = requestPercentage;
+        this.producerByteRate = Optional.ofNullable(producerByteRate).orElse(OptionalDouble.empty());
+        this.consumerByteRate = Optional.ofNullable(consumerByteRate).orElse(OptionalDouble.empty());
+        this.requestPercentage = Optional.ofNullable(requestPercentage).orElse(OptionalDouble.empty());
     }
 
     /**
@@ -122,49 +122,28 @@ public class V1KafkaClientQuotaConfigs {
         return requestPercentage;
     }
 
+    /** {@inheritDoc} **/
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(V1KafkaClientQuotaConfigs.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("producerByteRate");
-        sb.append('=');
-        sb.append(((this.producerByteRate == null)?"<null>":this.producerByteRate));
-        sb.append(',');
-        sb.append("consumerByteRate");
-        sb.append('=');
-        sb.append(((this.consumerByteRate == null)?"<null>":this.consumerByteRate));
-        sb.append(',');
-        sb.append("requestPercentage");
-        sb.append('=');
-        sb.append(((this.requestPercentage == null)?"<null>":this.requestPercentage));
-        sb.append(',');
-        if (sb.charAt((sb.length()- 1)) == ',') {
-            sb.setCharAt((sb.length()- 1), ']');
-        } else {
-            sb.append(']');
-        }
-        return sb.toString();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KafkaClientQuotaConfigs that = (KafkaClientQuotaConfigs) o;
+        return Objects.equals(producerByteRate, that.producerByteRate) && Objects.equals(consumerByteRate, that.consumerByteRate) && Objects.equals(requestPercentage, that.requestPercentage);
     }
 
+    /** {@inheritDoc} **/
     @Override
     public int hashCode() {
-        int result = 1;
-        result = ((result* 31)+((this.producerByteRate == null)? 0 :this.producerByteRate.hashCode()));
-        result = ((result* 31)+((this.consumerByteRate == null)? 0 :this.consumerByteRate.hashCode()));
-        result = ((result* 31)+((this.requestPercentage == null)? 0 :this.requestPercentage.hashCode()));
-        return result;
+        return Objects.hash(producerByteRate, consumerByteRate, requestPercentage);
     }
 
+    /** {@inheritDoc} **/
     @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof V1KafkaClientQuotaConfigs) == false) {
-            return false;
-        }
-        V1KafkaClientQuotaConfigs rhs = ((V1KafkaClientQuotaConfigs) other);
-        return ((((this.producerByteRate == rhs.producerByteRate)||((this.producerByteRate!= null)&&this.producerByteRate.equals(rhs.producerByteRate)))&&((this.consumerByteRate == rhs.consumerByteRate)||((this.consumerByteRate!= null)&&this.consumerByteRate.equals(rhs.consumerByteRate))))&&((this.requestPercentage == rhs.requestPercentage)||((this.requestPercentage!= null)&&this.requestPercentage.equals(rhs.requestPercentage))));
+    public String toString() {
+        return "KafkaClientQuotaConfigs{" +
+                "producerByteRate=" + producerByteRate +
+                ", consumerByteRate=" + consumerByteRate +
+                ", requestPercentage=" + requestPercentage +
+                '}';
     }
-
 }

@@ -57,7 +57,7 @@ public class QuotaChangeComputer implements ChangeComputer<V1KafkaClientQuota, Q
      * @param isLimitDeletionEnabled {@code true} to delete orphaned limits.
      */
     public QuotaChangeComputer(boolean isLimitDeletionEnabled) {
-        this.isLimitDeletionEnabled = isLimitDeletionEnabled;
+        isLimitDeletionEnabled(isLimitDeletionEnabled);
     }
 
     /**
