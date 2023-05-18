@@ -21,9 +21,10 @@ package io.streamthoughts.jikkou.api.validation;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasMetadataAcceptableList;
+import io.streamthoughts.jikkou.api.model.HasPriority;
 import io.streamthoughts.jikkou.api.model.ResourceType;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +34,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ResourceValidationChain implements ResourceValidation<HasMetadata> {
 
-    private final HasMetadataAcceptableList<? extends ResourceValidation<HasMetadata>> validations;
+    private final List<ResourceValidation<HasMetadata>> validations;
 
-    public ResourceValidationChain(final List<? extends ResourceValidation<HasMetadata>> validations) {
-        this.validations = new HasMetadataAcceptableList<>(validations);
+    public ResourceValidationChain(final List<ResourceValidation<HasMetadata>> validations) {
+        this.validations = validations
+                .stream()
+                .sorted(Comparator.comparing(HasPriority::getPriority))
+                .toList();
     }
 
     /** {@inheritDoc} **/
@@ -47,18 +51,15 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
 
         List<ValidationException> exceptions = new ArrayList<>(resources.size());
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : grouped.entrySet()) {
-            List<? extends ResourceValidation<HasMetadata>> resourceValidations
-                    = validations.allResourcesAccepting(entry.getKey())
-                    .getItems();
-            for (ResourceValidation<HasMetadata> validation : resourceValidations) {
+            ResourceType type = entry.getKey();
+            List<HasMetadata> resourcesHavingSameType = entry.getValue();
+            for (ResourceValidation<HasMetadata> validation : validations) {
                 try {
-                    validation.validate(resources);
-                } catch (ValidationException e) {
-                    if (e.getErrors() != null && !e.getErrors().isEmpty()) {
-                        exceptions.addAll(e.getErrors());
-                    } else {
-                        exceptions.add(e);
+                    if (validation.canAccept(type)) {
+                        validation.validate(resourcesHavingSameType);
                     }
+                } catch (ValidationException e) {
+                    exceptions.add(e);
                 }
             }
         }

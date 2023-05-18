@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,30 +18,36 @@
  */
 package io.streamthoughts.jikkou.api.transform;
 
-import io.streamthoughts.jikkou.api.annotations.ExtensionType;
-import io.streamthoughts.jikkou.api.extensions.ResourceInterceptor;
+import io.streamthoughts.jikkou.api.extensions.ResourceInterceptorDecorator;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.ResourceListObject;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This interface is used to transform a resource.
+ * This class can be used to decorate a transformation with a different name and priority.
+ *
+ * @param <T> type of resources accepted by the transformation.
  */
-@Evolving
-@ExtensionType("ResourceTransformation")
-public interface ResourceTransformation<T extends HasMetadata> extends ResourceInterceptor {
+public class ResourceTransformationDecorator<T extends HasMetadata>
+        extends ResourceInterceptorDecorator<ResourceTransformation<T>, ResourceTransformationDecorator<T>>
+        implements ResourceTransformation<T> {
+
 
     /**
-     * Applies this transformation on the given {@link HasMetadata} object.
+     * Creates a new {@link ResourceTransformationDecorator} instance.
      *
-     * @param toTransform  the {@link HasMetadata} to be transformed.
-     * @param resources    the {@link ResourceListObject} involved in the current operation.
-     *
-     * @return            the list of resources resulting from that transformation.
+     * @param transformation the transformation to delegate, must not be {@code null}.
      */
-    @NotNull Optional<T> transform(@NotNull T toTransform, @NotNull HasItems resources);
+    public ResourceTransformationDecorator(final @NotNull ResourceTransformation<T> transformation) {
+       super(transformation);
+    }
 
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public @NotNull Optional<T> transform(@NotNull T toTransform, @NotNull HasItems resources) {
+        return extension.transform(toTransform, resources);
+    }
 }

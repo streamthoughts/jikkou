@@ -16,19 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client.configure;
-
-import static io.streamthoughts.jikkou.client.JikkouConfigProperty.ofConfigs;
+package io.streamthoughts.jikkou.api.validation;
 
 import io.streamthoughts.jikkou.api.BaseApiConfigurator;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import io.streamthoughts.jikkou.api.extensions.ResourceInterceptorDescriptor;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.client.JikkouConfig;
-import io.streamthoughts.jikkou.common.utils.Tuple2;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +35,11 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceValidationApiConfigurator.class);
 
-    public static final ConfigProperty<java.util.List<Tuple2<String, JikkouConfig>>> VALIDATIONS_PROPERTY = ofConfigs("validations")
-            .map(configs -> configs.stream()
-                    .map(o -> new JikkouConfig(o, false))
-                    .map(config -> new Tuple2<>(
-                            config.getString("type"),
-                            config.findConfig("config").getOrElse(JikkouConfig.empty())
-                    ))
-                    .collect(Collectors.toList())
-            );
+    public static final String VALIDATIONS_CONFIG_NAME = "validations";
+    public static final ConfigProperty<List<ResourceInterceptorDescriptor>> VALIDATIONS_CONFIG = ConfigProperty
+            .ofConfigList(VALIDATIONS_CONFIG_NAME)
+            .map(configs -> configs.stream().map(ResourceInterceptorDescriptor::of).collect(Collectors.toList()))
+            .orElse(Collections.emptyList());
 
     /**
      * Creates a new {@link ResourceValidationApiConfigurator} instance.
@@ -58,18 +52,28 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
     /** {@inheritDoc} **/
     @Override
     public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder) {
-
         LOG.info("Loading all resource validations from config settings");
-        java.util.List<Tuple2<String, JikkouConfig>> extensionsClasses = getPropertyValue(VALIDATIONS_PROPERTY);
+        List<ResourceInterceptorDescriptor> extensions = getPropertyValue(VALIDATIONS_CONFIG);
+        List<ResourceValidation<HasMetadata>> transformations = extensions.stream()
+                .peek(extension -> LOG.info(
+                        "Configure validation for type {} (name={}, priority={}):\n\t{}",
+                        extension.extensionClass(),
+                        extension.name(),
+                        extension.priority(),
+                        extension.config().toPrettyString("\n\t")))
+                .map(extension -> {
+                    String extensionClass = extension.extensionClass();
+                    Configuration extensionConfig = extension.config().withFallback(configuration());
+                    ResourceValidation<HasMetadata> validation = extensionFactory()
+                            .getExtension(extensionClass, extensionConfig);
 
-        java.util.List<ResourceValidation<HasMetadata>> extensions = extensionsClasses.stream()
-                .peek(tuple -> LOG.info("Configure '{}' with values:\n\t{}", tuple._1(), tuple._2().toPrettyString()))
-                .map(tuple -> {
-                    String extensionType = tuple._1();
-                    Configuration extensionConfig = tuple._2().withFallback(configuration());
-                    return (ResourceValidation<HasMetadata>) extensionFactory().getExtension(extensionType, extensionConfig);
+                    validation = new ResourceValidationDecorator<>(validation)
+                            .withPriority(extension.priority())
+                            .withName(extension.name());
+
+                    return validation;
                 }).toList();
 
-        return builder.withValidations(extensions);
+        return builder.withValidations(transformations);
     }
 }

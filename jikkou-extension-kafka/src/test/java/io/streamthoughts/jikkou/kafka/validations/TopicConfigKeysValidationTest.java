@@ -58,7 +58,7 @@ class TopicConfigKeysValidationTest {
                     .build();
             validation.validate(resource);
         });
-        Assertions.assertEquals(2, exception.getErrors().size());
+        Assertions.assertEquals(2, exception.getExceptions().size());
 
         exception.printStackTrace();
     }

@@ -83,7 +83,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Map<String, Object>> ofMap(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findConfiguration(p).map(Configuration::asMap));
+        return new ConfigProperty<>(key, (p, config) -> config.findConfig(p).map(Configuration::asMap));
     }
 
     /**
@@ -104,6 +104,17 @@ public final class ConfigProperty<T> {
      */
     public static <T> ConfigProperty<List<Class<T>>> ofClasses(final @NotNull String key) {
         return new ConfigProperty<>(key, (p, config) -> config.findClassList(p));
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link List} of {@link Configuration}.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static ConfigProperty<List<Configuration>> ofConfigList(final @NotNull String path) {
+        BiFunction<String, Configuration, Optional<List<Configuration>>> supplier = (p, config) -> config.findConfigList(p);
+        return new ConfigProperty<>(path, supplier);
     }
 
     private final String key;

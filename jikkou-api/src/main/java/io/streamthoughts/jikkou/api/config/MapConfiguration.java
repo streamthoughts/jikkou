@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.config;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,6 +82,30 @@ class MapConfiguration implements Configuration {
     /**{@inheritDoc}**/
     @Override
     public Map<String, Object> asMap() {
-        return new HashMap<>(configMap);
+        Map<String, Object> results = new HashMap<>(fallbackConfigMap);
+        results.putAll(configMap);
+        return results;
+    }
+
+    /**{@inheritDoc}**/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MapConfiguration that = (MapConfiguration) o;
+        return Objects.equals(configMap, that.configMap) &&
+                Objects.equals(fallbackConfigMap, that.fallbackConfigMap);
+    }
+
+    /**{@inheritDoc}**/
+    @Override
+    public int hashCode() {
+        return Objects.hash(configMap, fallbackConfigMap);
+    }
+
+    /**{@inheritDoc}**/
+    @Override
+    public String toString() {
+        return asMap().toString();
     }
 }

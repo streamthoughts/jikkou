@@ -31,7 +31,7 @@ class ConfigPropertyTest {
     public static final String KEY = "key";
 
     @Test
-    void should_create_config_given_long_value() {
+    void shouldCreateConfigGivenLongValue() {
         // Given
         ConfigProperty<Long> config = ConfigProperty.ofLong(KEY);
         // When
@@ -41,7 +41,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_long_default() {
+    void shouldCreateConfigGivenLongDefault() {
         // Given
         ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).orElse(42L);
         // When
@@ -51,7 +51,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_boolean_value() {
+    void shouldCreateConfigGivenBooleanValue() {
         // Given
         ConfigProperty<Boolean> config = ConfigProperty.ofBoolean(KEY);
         // When
@@ -61,7 +61,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_boolean_default() {
+    void shouldCreateConfigGivenBooleanDefault() {
         // Given
         ConfigProperty<Boolean> config = ConfigProperty.ofBoolean(KEY).orElse(true);
         // When
@@ -71,7 +71,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_int_value() {
+    void shouldCreateConfigGivenIntValue() {
         // Given
         ConfigProperty<Integer> config = ConfigProperty.ofInt(KEY);
         // When
@@ -81,7 +81,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_int_default() {
+    void shouldCreateConfigGivenIntDefault() {
         // Given
         ConfigProperty<Integer> config = ConfigProperty.ofInt(KEY).orElse(42);
         // When
@@ -91,7 +91,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_string_value() {
+    void shouldCreateConfigGivenStringValue() {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
         // When
@@ -101,7 +101,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_string_default() {
+    void shouldCreateConfigGivenStringDefault() {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY).orElse("test");
 
@@ -113,7 +113,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_list_value() {
+    void shouldCreateConfigGivenListValue() {
         // Given
         ConfigProperty<List<String>> config = ConfigProperty.ofList(KEY);
         // When
@@ -123,7 +123,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_list_default() {
+    void shouldCreateConfigGivenListDefault() {
         // Given
         ConfigProperty<List<String>> config = ConfigProperty.ofList(KEY).orElse(List.of("test"));
         // When
@@ -133,7 +133,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_throw_exception_given_no_value() {
+    void shouldThrowExceptionGivenNoValue() {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
 
@@ -143,7 +143,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_return_default_given_empty_config() {
+    void shouldReturnDefaultGivenEmptyConfig() {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
         // When
@@ -153,7 +153,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_map_value_given_any_config() {
+    void shouldMapValueGivenAnyConfig() {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY)
                 .map(String::toUpperCase);
@@ -166,7 +166,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_get_config_param_as_config() {
+    void shouldGetConfigParamAsConfig() {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
 
@@ -178,7 +178,7 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_class_value() {
+    void shouldCreateConfigGivenClassValue() {
         // Given
         ConfigProperty<List<Class<TestClass>>> config = ConfigProperty.ofClasses(KEY);
         // When
@@ -189,13 +189,37 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void should_create_config_given_class_default() {
+    void shouldCreateConfigGivenClassDefault() {
         // Given
         ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).orElse(42L);
         // When
         Long value = config.evaluate(Configuration.empty());
         // Then
         Assertions.assertEquals(42L, value);
+    }
+
+    @Test
+    void shouldGetConfigListGivenDefault() {
+        // Given
+        ConfigProperty<List<Configuration>> config = ConfigProperty
+                .ofConfigList(KEY)
+                .orElse(List.of(Configuration.of("k1", "v1")));
+        // When
+        List<Configuration> value = config.evaluate(Configuration.empty());
+        // Then
+        Assertions.assertNotNull(value);
+        Assertions.assertEquals(1, value.size());
+    }
+
+    @Test
+    void shouldGetConfigListGivenValue() {
+        // Given
+        ConfigProperty<List<Configuration>> config = ConfigProperty.ofConfigList(KEY);
+        // When
+        List<Configuration> value = config.evaluate(Configuration.of(KEY, List.of(Configuration.of("k1", "v1"))));
+        // Then
+        Assertions.assertNotNull(value);
+        Assertions.assertEquals(1, value.size());
     }
 
     public static class TestClass {

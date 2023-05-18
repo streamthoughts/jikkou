@@ -20,9 +20,12 @@ package io.streamthoughts.jikkou.api.transform;
 
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.model.HasPriority;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,8 +35,16 @@ public class ResourceTransformationChain implements ResourceTransformation<HasMe
 
     private final List<ResourceTransformation<HasMetadata>> transformations;
 
+    /**
+     * Creates a new {@link ResourceTransformationChain} instance.
+     *
+     * @param transformations   the chain of transformations.
+     */
     public ResourceTransformationChain(final List<ResourceTransformation<HasMetadata>> transformations) {
-        this.transformations = transformations;
+        this.transformations = transformations
+                .stream()
+                .sorted(Comparator.comparing(HasPriority::getPriority))
+                .collect(Collectors.toList());
     }
 
     public @NotNull List<HasMetadata> transformAll(@NotNull List<HasMetadata> toTransform,
