@@ -18,11 +18,13 @@
  */
 package io.streamthoughts.jikkou.client;
 
+import io.streamthoughts.jikkou.api.ApiConfigurator;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.ResourceContext;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.client.configure.ResourceValidationApiConfigurator;
+import io.streamthoughts.jikkou.api.transform.ResourceTransformationApiConfigurator;
+import io.streamthoughts.jikkou.api.validation.ResourceValidationApiConfigurator;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +88,11 @@ public class ClientContext {
      * @return  the api.
      */
     public JikkouApi createApi() {
-        return context.createApi(new ResourceValidationApiConfigurator(context.getExtensionFactory()));
+        ApiConfigurator[] configurators = {
+                new ResourceValidationApiConfigurator(context.getExtensionFactory()),
+                new ResourceTransformationApiConfigurator(context.getExtensionFactory())
+        };
+        return context.createApi(configurators);
     }
 
     /**

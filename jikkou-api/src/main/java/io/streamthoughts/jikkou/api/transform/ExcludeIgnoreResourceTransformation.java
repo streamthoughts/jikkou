@@ -20,12 +20,15 @@ package io.streamthoughts.jikkou.api.transform;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
+import io.streamthoughts.jikkou.api.annotations.Priority;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.model.HasPriority;
 import io.streamthoughts.jikkou.api.model.ResourceType;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@Priority(HasPriority.HIGHEST_PRECEDENCE)
 @ExtensionEnabled
 public class ExcludeIgnoreResourceTransformation implements ResourceTransformation<HasMetadata> {
 

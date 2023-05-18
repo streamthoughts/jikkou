@@ -44,7 +44,16 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 public interface Extension extends Configurable {
 
     /**
-     * Get the name of the given extension class.
+     * Get the runtime name of this extension.
+     *
+     * @return the extension name.
+     */
+    default String getName() {
+        return getName(this);
+    }
+
+    /**
+     * Get the static name of the given extension class.
      *
      * @param extension the extension for which to extract the name.
      * @return the extension name.
@@ -54,7 +63,7 @@ public interface Extension extends Configurable {
     }
 
     /**
-     * Get the name of the given extension class.
+     * Get the static name of the given extension class.
      *
      * @param clazz the extension class for which to extract the name.
      * @return the extension name.

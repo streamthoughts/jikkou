@@ -24,7 +24,6 @@ import com.typesafe.config.ConfigMergeable;
 import com.typesafe.config.ConfigParseOptions;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.common.utils.Classes;
-import io.vavr.control.Option;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -260,8 +259,8 @@ public final class JikkouConfig implements Configuration {
      * @see Config#getConfig(String)
      */
     @Override
-    public Configuration getConfiguration(@NotNull String path,
-                                          @Nullable Supplier<Configuration> defaultValueSupplier) {
+    public Configuration getConfig(@NotNull String path,
+                                   @Nullable Supplier<Configuration> defaultValueSupplier) {
         if (config.hasPath(path)) {
             return new JikkouConfig(config.getConfig(path));
         }
@@ -269,19 +268,24 @@ public final class JikkouConfig implements Configuration {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @see Config#getConfig(String)
      */
+    @Override
     public JikkouConfig getConfig(@NotNull final String path) {
         return new JikkouConfig(config.getConfig(path), false);
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @see Config#getConfig(String)
      */
-    public Option<JikkouConfig> findConfig(@NotNull final String path) {
-        return config.hasPath(path) ? Option.some(getConfig(path)) : Option.none();
+    @Override
+    public Optional<Configuration> findConfig(@NotNull final String path) {
+        return config.hasPath(path) ? Optional.of(getConfig(path)) : Optional.empty();
     }
-
 
     @SuppressWarnings("unchecked")
     public <T> Class<T> getClass(@NotNull final String path) {
@@ -319,14 +323,6 @@ public final class JikkouConfig implements Configuration {
         Properties properties = new Properties();
         config.entrySet().forEach(e -> properties.setProperty(e.getKey(), config.getString(e.getKey())));
         return properties;
-    }
-
-    public String toPrettyString() {
-        Map<String, Object> confAsMap = new TreeMap<>(getConfAsMap(config));
-        return confAsMap.entrySet()
-                .stream()
-                .map(e -> e.getKey() + " = " + e.getValue())
-                .collect(Collectors.joining("\n\t"));
     }
 
     public static Builder builder() {

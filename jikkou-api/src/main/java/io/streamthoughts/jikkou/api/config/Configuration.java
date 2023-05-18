@@ -29,11 +29,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,12 +51,12 @@ public interface Configuration {
      * @param <C> the type of configuration
      * @param <B> the type of builder
      */
-     interface ConfigBuilder<C extends Configuration, B extends ConfigBuilder<C, B>> {
+    interface ConfigBuilder<C extends Configuration, B extends ConfigBuilder<C, B>> {
 
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -63,7 +65,7 @@ public interface Configuration {
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -74,7 +76,7 @@ public interface Configuration {
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -85,7 +87,7 @@ public interface Configuration {
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -96,7 +98,7 @@ public interface Configuration {
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -107,7 +109,7 @@ public interface Configuration {
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -118,7 +120,7 @@ public interface Configuration {
         /**
          * Associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -129,7 +131,7 @@ public interface Configuration {
         /**
          * Associate the given class name value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the Class value
          * @return this builder object so methods can be chained together; never null
          */
@@ -140,7 +142,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -149,7 +151,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -160,7 +162,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -171,7 +173,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -182,7 +184,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -193,7 +195,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the value
          * @return this builder object so methods can be chained together; never null
          */
@@ -204,7 +206,7 @@ public interface Configuration {
         /**
          * If there is no field with the specified key, then associate the given class name value with the specified key.
          *
-         * @param key the key
+         * @param key   the key
          * @param value the Class value
          * @return this builder object so methods can be chained together; never null
          */
@@ -226,20 +228,25 @@ public interface Configuration {
     class Builder implements ConfigBuilder<Configuration, Builder> {
         private final Map<String, Object> props = new HashMap<>();
 
-        protected Builder() {}
+        protected Builder() {
+        }
 
         protected Builder(final Map<String, Object> props) {
             this.props.putAll(props);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Builder with(String key, String value) {
             props.put(key, value);
             return this;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Builder withDefault(String key, String value) {
             if (!props.containsKey(key)) {
@@ -248,7 +255,9 @@ public interface Configuration {
             return this;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Configuration build() {
             return Configuration.from(props);
@@ -274,7 +283,6 @@ public interface Configuration {
      * Get the string value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     Object getAny(@NotNull final String key);
@@ -283,7 +291,6 @@ public interface Configuration {
      * Get the string value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default String getString(@NotNull final String key) {
@@ -294,7 +301,6 @@ public interface Configuration {
      * Get the boolean value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default Boolean getBoolean(@NotNull final String key) {
@@ -305,7 +311,6 @@ public interface Configuration {
      * Get the long value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default Long getLong(@NotNull final String key) {
@@ -316,7 +321,6 @@ public interface Configuration {
      * Get the integer value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default Integer getInteger(@NotNull final String key) {
@@ -327,7 +331,6 @@ public interface Configuration {
      * Get the float value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default Short getShort(@NotNull final String key) {
@@ -338,7 +341,6 @@ public interface Configuration {
      * Get the double value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default Double getDouble(@NotNull final String key) {
@@ -349,7 +351,6 @@ public interface Configuration {
      * Get the float value associated with the given key.
      *
      * @param key the key of the configuration property
-     *
      * @return the value, or null if the key is null, or no such property exist in the configuration.
      */
     default Float getFloat(@NotNull final String key) {
@@ -360,7 +361,6 @@ public interface Configuration {
      * Get the string list value associated with the given key.
      *
      * @param key the key for the configuration property.
-     *
      * @return the configuration value.
      */
     default List<String> getStringList(@NotNull final String key) {
@@ -371,18 +371,27 @@ public interface Configuration {
      * Get the configuration associated with the given key.
      *
      * @param key the key for the configuration property.
-     *
      * @return the configuration value.
      */
-    default Configuration getConfiguration(@NotNull final String key) {
-        return getConfiguration(key, null);
+    default Configuration getConfig(@NotNull final String key) {
+        return getConfig(key, null);
     }
+
+    /**
+     * Get the configuration associated with the given key.
+     *
+     * @param key the key for the configuration property.
+     * @return the configuration value.
+     */
+    default List<Configuration> getConfigList(@NotNull final String key) {
+        return getConfigList(key, null);
+    }
+
 
     /**
      * Get the list of classes associated with the given key.
      *
      * @param key the key for the configuration property.
-     *
      * @return the configuration value.
      */
     default <T> List<Class<T>> getClassList(@NotNull final String key) {
@@ -392,9 +401,8 @@ public interface Configuration {
     /**
      * Get the string value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default String getString(@NotNull final String key,
@@ -405,22 +413,20 @@ public interface Configuration {
     /**
      * Get the boolean value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default boolean getBoolean(@NotNull final String key,
-                               @Nullable boolean defaultValue) {
+                               boolean defaultValue) {
         return getBoolean(key, () -> defaultValue);
     }
 
     /**
      * Get the long value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default long getLong(@NotNull final String key, long defaultValue) {
@@ -430,9 +436,8 @@ public interface Configuration {
     /**
      * Get the integer value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default int getInteger(@NotNull final String key, int defaultValue) {
@@ -442,9 +447,8 @@ public interface Configuration {
     /**
      * Get the float value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default short getShort(@NotNull final String key, short defaultValue) {
@@ -454,9 +458,8 @@ public interface Configuration {
     /**
      * Get the double value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default double getDouble(@NotNull final String key, double defaultValue) {
@@ -466,15 +469,21 @@ public interface Configuration {
     /**
      * Get the float value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key          the key for the configuration property.
      * @param defaultValue the default value; may be null
-     *
      * @return the configuration value.
      */
     default float getFloat(@NotNull final String key, float defaultValue) {
         return getFloat(key, () -> defaultValue);
     }
 
+    /**
+     * Find the string value associated with the given key.
+     *
+     * @param key                  the key for the configuration property.
+     * @param defaultValueSupplier the supplier for the default value; may be null
+     * @return the configuration value.
+     */
     default String getString(@NotNull final String key,
                              @Nullable final Supplier<String> defaultValueSupplier) {
         String value = getString(key);
@@ -484,9 +493,8 @@ public interface Configuration {
     /**
      * Find the boolean value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default Boolean getBoolean(@NotNull final String key,
@@ -499,9 +507,8 @@ public interface Configuration {
     /**
      * Find the long value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default Long getLong(@NotNull final String key,
@@ -514,9 +521,8 @@ public interface Configuration {
     /**
      * Find the integer value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default Integer getInteger(@NotNull final String key,
@@ -529,9 +535,8 @@ public interface Configuration {
     /**
      * Get the short value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default Short getShort(@NotNull final String key,
@@ -544,43 +549,40 @@ public interface Configuration {
     /**
      * Get the string list value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default List<String> getStringList(@NotNull final String key,
                                        @Nullable final Supplier<List<String>> defaultValueSupplier) {
         Object object = getAny(key);
         if (object != null) {
-           return (List<String>) TypeConverter.getArray(object);
+            return (List<String>) TypeConverter.getArray(object);
         }
-        return defaultValueSupplier != null ? defaultValueSupplier.get(): null;
+        return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
     }
 
     /**
      * Get the list of classes associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default <T> List<Class<T>> getClassList(@NotNull final String key,
                                             @Nullable final Supplier<List<Class<T>>> defaultValueSupplier) {
         Optional<List<String>> stringList = findStringList(key);
         return stringList.map(strings -> strings.stream()
-                .map(it -> (Class<T>) Classes.forName(it))
-                .toList())
+                        .map(it -> (Class<T>) Classes.forName(it))
+                        .toList())
                 .orElse(Optional.ofNullable(defaultValueSupplier).map(Supplier::get).orElse(null));
     }
 
     /**
      * Find the integer value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default Float getFloat(@NotNull final String key,
@@ -595,9 +597,8 @@ public interface Configuration {
     /**
      * Find the double value associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
     default Double getDouble(@NotNull final String key,
@@ -612,18 +613,19 @@ public interface Configuration {
     /**
      * Get the configuration associated with the given key.
      *
-     * @param key the key for the configuration property.
+     * @param key                  the key for the configuration property.
      * @param defaultValueSupplier the supplier for the default value; may be null
-     *
      * @return the configuration value.
      */
-    default Configuration getConfiguration(@NotNull final String key,
-                                           @Nullable final Supplier<Configuration> defaultValueSupplier) {
+    default Configuration getConfig(@NotNull final String key,
+                                    @Nullable final Supplier<Configuration> defaultValueSupplier) {
         Object value = getAny(key);
         if (value != null) {
-            if (Map.class.isAssignableFrom(value.getClass())) {
-                Map<String, ?> stringMap = (Map<String, ?>) value;
-                return Configuration.from(stringMap);
+            if (value instanceof Configuration config) {
+                return config;
+            }
+            if (value instanceof Map map) {
+                return Configuration.from((Map<String, ?>) map);
             }
         }
 
@@ -631,10 +633,47 @@ public interface Configuration {
     }
 
     /**
+     * Get the configuration associated with the given key.
+     *
+     * @param key                  the key for the configuration property.
+     * @param defaultValueSupplier the supplier for the default value; may be null
+     * @return the configuration value.
+     */
+    default List<Configuration> getConfigList(@NotNull final String key,
+                                              @Nullable final Supplier<List<Configuration>> defaultValueSupplier) {
+        Object value = getAny(key);
+        if (!(value instanceof List)) {
+            return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Object> items = (List<Object>) value;
+        if (items.isEmpty())
+            return Collections.emptyList();
+
+        return items.stream()
+                .map(item -> {
+                    Configuration config = null;
+                    if (Map.class.isAssignableFrom(item.getClass())) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, ?> stringMap = (Map<String, ?>) item;
+                        config = Configuration.from(stringMap);
+                    }
+
+                    if (Configuration.class.isAssignableFrom(item.getClass())) {
+                        config = (Configuration) item;
+                    }
+
+                    return Optional.ofNullable(config);
+                })
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Finds the boolean configuration value for the specified config key.
      *
      * @param key the key for the configuration property.
-     *
      * @return the {@link java.util.Optional} configuration value.
      */
     default Optional<Boolean> findBoolean(@NotNull final String key) {
@@ -645,7 +684,6 @@ public interface Configuration {
      * Finds the boolean configuration value for the specified config key.
      *
      * @param key the key for the configuration property.
-     *
      * @return the {@link java.util.Optional} configuration value.
      */
     default Optional<String> findString(@NotNull final String key) {
@@ -708,8 +746,18 @@ public interface Configuration {
      * @param key the key for the configuration property.
      * @return the {@link java.util.Optional} configuration value.
      */
-    default Optional<Configuration> findConfiguration(@NotNull final String key){
-        return Optional.ofNullable(getConfiguration(key));
+    default Optional<Configuration> findConfig(@NotNull final String key) {
+        return Optional.ofNullable(getConfig(key));
+    }
+
+    /**
+     * Finds the map configuration value for the specified config key.
+     *
+     * @param key the key for the configuration property.
+     * @return the {@link java.util.Optional} configuration value.
+     */
+    default Optional<List<Configuration>> findConfigList(@NotNull final String key) {
+        return Optional.ofNullable(getConfigList(key));
     }
 
     /**
@@ -718,12 +766,23 @@ public interface Configuration {
      * @param key the key for the configuration property.
      * @return the {@link java.util.Optional} configuration value.
      */
-    default <T> Optional<List<Class<T>>> findClassList(@NotNull final String key){
+    default <T> Optional<List<Class<T>>> findClassList(@NotNull final String key) {
         return Optional.ofNullable(getClassList(key));
     }
 
+    default String toPrettyString() {
+        return toPrettyString("\n");
+    }
+
+    default String toPrettyString(String delimiter) {
+        Map<String, Object> confAsMap = new TreeMap<>(asMap());
+        return confAsMap.entrySet()
+                .stream()
+                .map(e -> e.getKey() + " = " + e.getValue())
+                .collect(Collectors.joining(delimiter));
+    }
+
     /**
-     *
      * @param other – a configuration whose keys should be used as fallbacks, if the keys are not present in this one
      * @return a new configuration, or this original one, if the fallback does not get used.
      */

@@ -19,11 +19,9 @@
 package io.streamthoughts.jikkou.api.validation;
 
 import io.streamthoughts.jikkou.api.annotations.ExtensionType;
-import io.streamthoughts.jikkou.api.config.Configurable;
 import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.extensions.Extension;
+import io.streamthoughts.jikkou.api.extensions.ResourceInterceptor;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.util.ArrayList;
@@ -40,10 +38,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Evolving
 @ExtensionType("ResourceValidation")
-public interface ResourceValidation<T extends HasMetadata> extends
-        HasMetadataAcceptable,
-        Extension,
-        Configurable {
+public interface ResourceValidation<T extends HasMetadata> extends ResourceInterceptor {
 
     /**
      * Validates the given the resource.
@@ -57,11 +52,7 @@ public interface ResourceValidation<T extends HasMetadata> extends
             try {
                 validate(resource);
             } catch (ValidationException e) {
-                if (e.getErrors() != null && !e.getErrors().isEmpty()) {
-                    exceptions.addAll(e.getErrors());
-                } else {
-                    exceptions.add(e);
-                }
+                exceptions.add(e);
             }
         }
         if (!exceptions.isEmpty()) {
