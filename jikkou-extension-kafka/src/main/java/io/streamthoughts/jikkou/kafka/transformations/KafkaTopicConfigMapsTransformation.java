@@ -18,10 +18,11 @@
  */
 package io.streamthoughts.jikkou.kafka.transformations;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.Priority;
 import io.streamthoughts.jikkou.api.error.InvalidResourceException;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasItems;
+import io.streamthoughts.jikkou.api.model.HasPriority;
 import io.streamthoughts.jikkou.api.models.ConfigMap;
 import io.streamthoughts.jikkou.api.models.ConfigMapList;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
@@ -34,12 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transformation to apply all config-maps to topic objects.
+ * This transformation is used to apply all config-maps to topic objects.
+ *
+ * @see ConfigMap
  */
-@SupportedResource(type = V1KafkaTopic.class)
-public class TopicConfigMapsTransformation implements ResourceTransformation<V1KafkaTopic> {
+@Priority(HasPriority.LOWEST_PRECEDENCE)
+public class KafkaTopicConfigMapsTransformation implements ResourceTransformation<V1KafkaTopic> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TopicConfigMapsTransformation.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaTopicConfigMapsTransformation.class);
 
     /**
      * {@inheritDoc

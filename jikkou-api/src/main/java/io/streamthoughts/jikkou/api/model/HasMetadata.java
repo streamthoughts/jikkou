@@ -109,13 +109,43 @@ public interface HasMetadata extends Resource {
         return Optional.ofNullable(getMetadata());
     }
 
+    /**
+     * Static helper method get a single metadata annotation from the given resource.
+     *
+     * @param resource      the resource.
+     * @param annotationKey the key of the annotation
+     * @return the optional value for the annotation.
+     */
     static Optional<Object> getMetadataAnnotation(@NotNull HasMetadata resource,
-                                                  @NotNull String annotation) {
+                                                  @NotNull String annotationKey) {
         return resource.optionalMetadata()
                 .stream()
-                .map(meta -> meta.getAnnotation(annotation))
+                .map(meta -> meta.getAnnotation(annotationKey))
                 .flatMap(Optional::stream)
                 .findFirst();
+    }
+
+
+    /**
+     * Static helper method to add a single metadata annotation to the given resource.
+     *
+     * @param resource        the resource
+     * @param annotationKey   the key of the annotation to add.
+     * @param annotationValue the value of the annotation to add.
+     * @return a new {@link HasMetadata}.
+     */
+    @NotNull
+    @SuppressWarnings("unchecked")
+    static <T extends HasMetadata> T addMetadataAnnotation(@NotNull T resource,
+                                                           @NotNull String annotationKey,
+                                                           @NotNull Object annotationValue) {
+        ObjectMeta objectMeta = resource.optionalMetadata()
+                .map(ObjectMeta::toBuilder)
+                .or(() -> Optional.of(ObjectMeta.builder()))
+                .map(builder -> builder.withAnnotation(annotationKey, annotationValue))
+                .map(ObjectMeta.ObjectMetaBuilder::build)
+                .get();
+        return (T) resource.withMetadata(objectMeta);
     }
 
     static <T extends HasMetadata> List<T> sortByName(final List<T> resources) {

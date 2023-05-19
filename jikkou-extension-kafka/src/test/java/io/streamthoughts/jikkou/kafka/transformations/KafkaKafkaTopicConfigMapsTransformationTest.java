@@ -29,7 +29,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ApplyConfigMapsTransformationTest {
+class KafkaKafkaTopicConfigMapsTransformationTest {
 
     static final String TEST_CONFIG_MAP_NAME = "configMap";
     static final String TEST_TOPIC = "topic";
@@ -64,7 +64,7 @@ class ApplyConfigMapsTransformationTest {
                 .build();
 
         // When
-        var result = (V1KafkaTopic) new TopicConfigMapsTransformation()
+        var result = (V1KafkaTopic) new KafkaTopicConfigMapsTransformation()
                 .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
@@ -93,7 +93,7 @@ class ApplyConfigMapsTransformationTest {
                 .build();
 
         // When
-        var result = (V1KafkaTopic) new TopicConfigMapsTransformation()
+        var result = (V1KafkaTopic) new KafkaTopicConfigMapsTransformation()
                 .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
@@ -124,7 +124,7 @@ class ApplyConfigMapsTransformationTest {
                 .build();
 
         // When
-        var result = (V1KafkaTopic) new TopicConfigMapsTransformation()
+        var result = (V1KafkaTopic) new KafkaTopicConfigMapsTransformation()
                 .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
