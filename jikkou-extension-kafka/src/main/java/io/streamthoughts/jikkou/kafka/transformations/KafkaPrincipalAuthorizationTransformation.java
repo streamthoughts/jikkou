@@ -37,13 +37,14 @@ import org.jetbrains.annotations.NotNull;
  */
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
 @ExtensionEnabled
-public class PrincipalAuthorizationTransformation implements ResourceTransformation<V1KafkaPrincipalAuthorization> {
+public class KafkaPrincipalAuthorizationTransformation implements ResourceTransformation<V1KafkaPrincipalAuthorization> {
 
     /**
      * {@inheritDoc
      */
     @Override
-    public @NotNull Optional<V1KafkaPrincipalAuthorization> transform(@NotNull V1KafkaPrincipalAuthorization toTransform, @NotNull HasItems items) {
+    public @NotNull Optional<V1KafkaPrincipalAuthorization> transform(@NotNull V1KafkaPrincipalAuthorization toTransform,
+                                                                      @NotNull HasItems items) {
         Set<String> roles = toTransform.getSpec().getRoles();
         if (roles == null || roles.isEmpty()) {
             return Optional.of(toTransform);

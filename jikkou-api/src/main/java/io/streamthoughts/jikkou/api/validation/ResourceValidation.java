@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> type of resources accepted by the validation.
  */
 @Evolving
-@ExtensionType("ResourceValidation")
+@ExtensionType("Validation")
 public interface ResourceValidation<T extends HasMetadata> extends ResourceInterceptor {
 
     /**

@@ -28,8 +28,14 @@ import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaController;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicCollector;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
-import io.streamthoughts.jikkou.kafka.transformations.PrincipalAuthorizationTransformation;
-import io.streamthoughts.jikkou.kafka.transformations.TopicConfigMapsTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaPrincipalAuthorizationTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicConfigMapsTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicMaxNumPartitionsTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicMaxReplicasTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicMaxRetentionMsTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicMinInSyncReplicasTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicMinReplicasTransformation;
+import io.streamthoughts.jikkou.kafka.transformations.KafkaTopicMinRetentionMsTransformation;
 import io.streamthoughts.jikkou.kafka.validations.ClientQuotaValidation;
 import io.streamthoughts.jikkou.kafka.validations.NoDuplicatePrincipalAllowedValidation;
 import io.streamthoughts.jikkou.kafka.validations.NoDuplicatePrincipalRoleValidation;
@@ -70,8 +76,14 @@ public class KafkaExtensionProvider implements ExtensionProvider {
         factory.register(AdminClientKafkaAclCollector.class);
 
         // transformations
-        factory.register(TopicConfigMapsTransformation.class);
-        factory.register(PrincipalAuthorizationTransformation.class);
+        factory.register(KafkaTopicConfigMapsTransformation.class);
+        factory.register(KafkaPrincipalAuthorizationTransformation.class);
+        factory.register(KafkaTopicMaxRetentionMsTransformation.class);
+        factory.register(KafkaTopicMaxReplicasTransformation.class);
+        factory.register(KafkaTopicMaxNumPartitionsTransformation.class);
+        factory.register(KafkaTopicMinRetentionMsTransformation.class);
+        factory.register(KafkaTopicMinReplicasTransformation.class);
+        factory.register(KafkaTopicMinInSyncReplicasTransformation.class);
 
         // validations
         factory.register(ClientQuotaValidation.class);

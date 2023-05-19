@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * This interface is used to transform a resource.
  */
 @Evolving
-@ExtensionType("ResourceTransformation")
+@ExtensionType("Transformation")
 public interface ResourceTransformation<T extends HasMetadata> extends ResourceInterceptor {
 
     /**
