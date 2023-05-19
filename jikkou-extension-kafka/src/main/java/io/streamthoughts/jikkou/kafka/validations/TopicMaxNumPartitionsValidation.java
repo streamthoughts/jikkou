@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 public class TopicMaxNumPartitionsValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG = ConfigProperty
-            .ofInt("topic-max-num-partitions");
+            .ofInt("topicMaxNumPartitions");
 
     private Integer maxNumPartitions;
 

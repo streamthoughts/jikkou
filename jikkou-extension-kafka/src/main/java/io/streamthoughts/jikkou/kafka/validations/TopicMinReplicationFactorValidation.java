@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 public class TopicMinReplicationFactorValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG = ConfigProperty
-            .ofInt("topic-min-replication-factor");
+            .ofInt("topicMinReplicationFactor");
 
 
     private Integer minReplicationFactor;
