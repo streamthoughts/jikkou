@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 public class TopicNamePrefixValidation extends TopicValidation {
 
     public static final ConfigProperty<List<String>> VALIDATION_TOPIC_NAME_PREFIXES_CONFIG = ConfigProperty
-            .ofList("topic-name-prefixes-allowed");
+            .ofList("topicNamePrefixes");
 
     private List<String> prefixes;
 

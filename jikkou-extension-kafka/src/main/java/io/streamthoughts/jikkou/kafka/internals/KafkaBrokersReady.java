@@ -68,6 +68,18 @@ public final class KafkaBrokersReady {
         public Options withRetryBackoffMs(final long retryBackoffMs) {
             return new Options(minAvailableBrokers, timeoutMs, retryBackoffMs);
         }
+
+        public int minAvailableBrokers() {
+            return minAvailableBrokers;
+        }
+
+        public long timeoutMs() {
+            return timeoutMs;
+        }
+
+        public long retryBackoffMs() {
+            return retryBackoffMs;
+        }
     }
 
     private final Options options;

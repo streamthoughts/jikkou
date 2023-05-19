@@ -33,7 +33,7 @@ public class TopicMinNumPartitionsValidation extends TopicValidation {
 
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG = ConfigProperty
-            .ofInt("topic-min-num-partitions");
+            .ofInt("topicMinNumPartitions");
 
     private Integer minNumPartitions;
 

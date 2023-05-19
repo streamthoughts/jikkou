@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 public class TopicNameRegexValidation extends TopicValidation {
 
     public static final ConfigProperty<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigProperty
-            .ofString("topic-name-regex");
+            .ofString("topicNameRegex");
 
     private Pattern pattern;
 

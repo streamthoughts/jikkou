@@ -57,19 +57,19 @@ public class AdminClientContext implements AutoCloseable {
             .map(PropertiesUtils::fromMap);
 
     public static final ConfigProperty<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigProperty
-            .ofBoolean("kafka.brokers.wait-for-enabled")
+            .ofBoolean("kafka.brokers.waitForEnabled")
             .orElse(true);
 
     public static final ConfigProperty<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigProperty
-            .ofInt("kafka.brokers.wait-for-min-available")
+            .ofInt("kafka.brokers.waitForMinAvailable")
             .orElse(DEFAULT_MIN_AVAILABLE_BROKERS);
 
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigProperty
-            .ofLong("kafka.brokers.wait-for-retry-backoff-ms")
+            .ofLong("kafka.brokers.waitForRetryBackoffMs")
             .orElse(DEFAULT_RETRY_BACKOFF_MS);
 
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigProperty
-            .ofLong("kafka.brokers.wait-for-timeout-ms")
+            .ofLong("kafka.brokers.waitForTimeoutMs")
             .orElse(DEFAULT_TIMEOUT_MS);
 
 
@@ -117,6 +117,14 @@ public class AdminClientContext implements AutoCloseable {
             withWaitForMinAvailableBrokers(KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.evaluate(config));
             withWaitTimeoutMs(KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.evaluate(config));
         }
+    }
+
+    boolean isWaitForKafkaBrokersEnabled() {
+        return isWaitForKafkaBrokersEnabled;
+    }
+
+    KafkaBrokersReady.Options getOptions() {
+        return options;
     }
 
     public AdminClientContext withWaitForKafkaBrokersEnabled(final boolean isWaitForKafkaBrokersEnabled) {
