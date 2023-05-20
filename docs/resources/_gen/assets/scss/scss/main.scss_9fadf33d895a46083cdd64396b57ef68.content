@@ -20525,11 +20525,11 @@ main p > a, main li > a {
   border-radius: 0.25rem;
   color: #BF1363 !important; }
 
-h2 {
+.td-content h2 {
   font-weight: 800;
   color: #223232; }
 
-h3 {
+.td-content h3 {
   font-weight: 800;
   color: #223232; }
 
