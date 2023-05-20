@@ -1,0 +1,114 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extension</title><link>https://streamthoughts.github.io/jikkou/tags/extension/</link><description>Recent content in extension on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/tags/extension/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;strong>&lt;em>Transformations&lt;/em>&lt;/strong> are applied to inbound resources. &lt;em>Transformations&lt;/em> are used to transform, enrich, or filter
+resource entities
+before they are validated and thus before the reconciliation process is executed on them.&lt;/p>
+&lt;/div>
+&lt;h2 id="available-transformations">Available Transformations&lt;/h2>
+&lt;p>You can list all the available transformations using the Jikkou CLI command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Transformation &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="transformation-chain">Transformation chain&lt;/h2>
+&lt;p>When using Jikkou CLI, you can configure a &lt;em>transformation chain&lt;/em> that will be applied to every resource.
+This chain consists of multiple transformations, each designed to handle different types of resources. Jikkou ensures
+that a transformation is executed only for the resource types it supports. In cases where a resource is not
+accepted by a transformation, it is passed to the next transformation in the chain.
+This process continues until a suitable transformation is found or until all transformations have been attempted.&lt;/p>
+&lt;h3 id="configuration">Configuration&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The list of transformations to execute
+transformations: [
+{
+# Simple or fully qualified class name of the transformation extension.
+type = &amp;#34;&amp;#34;
+# Priority to be used for executing this transformation extension.
+# The lowest value has the highest priority, so it&amp;#39;s run first. Minimum value is -2^31 (highest) and a maximum value is 2^31-1 (lowest).
+# Usually, values under 0 should be reserved for internal transformation extensions.
+priority = 0
+config = {
+# Configuration properties for this transformation
+}
+}
+]
+}
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Tips&lt;/h4>
+The &lt;code>config&lt;/code> object of a &lt;em>Transformation&lt;/em> always fallback on the top-level &lt;code>jikkou&lt;/code> config. This allows you to globally
+declare some properties of the validation configuration.
+&lt;/div>
+&lt;h3 id="example">Example&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The list of transformations to execute
+transformations: [
+{
+# Enforce a minimum number of replicas for a kafka topic
+type = KafkaTopicMinReplicasTransformation
+priority = 100
+config = {
+minReplicationFactor = 4
+}
+},
+{
+# Enforce a {@code min.insync.replicas} for a kafka topic.
+type = KafkaTopicMinInSyncReplicasTransformation
+priority = 100
+config = {
+minInSyncReplicas = 2
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;em>&lt;strong>Validations&lt;/strong>&lt;/em> are applied to inbound resources to ensure that the resource entities adhere to specific rules or
+constraints.
+These validations are carried out after the execution of the transformation chain and before the reconciliation process
+takes place.&lt;/p>
+&lt;/div>
+&lt;h2 id="available-validations">Available Validations&lt;/h2>
+&lt;p>You can list all the available validations using the Jikkou CLI command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Validation &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="validation-chain">Validation chain&lt;/h2>
+&lt;p>When using Jikkou CLI, you can configure a &lt;em>validation chain&lt;/em> that will be applied to every resource.
+This chain consists of multiple validations, each designed to handle different types of resources. Jikkou ensures
+that a validation is executed only for the resource types it supports. In cases where a resource is not
+accepted by a validation, it is passed to the next validation in the chain.
+This process continues until a suitable validation is found or until all validations have been attempted.&lt;/p>
+&lt;h3 id="configuration">Configuration&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The list of transformations to execute
+validations: [
+{
+# Custom name for the validation rule
+name = &amp;#34;&amp;#34;
+# Simple or fully qualified class name of the transformation extension.
+type = &amp;#34;&amp;#34;
+config = {
+# Configuration properties for this transformation
+}
+}
+]
+}
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Tips&lt;/h4>
+The &lt;code>config&lt;/code> object of a &lt;em>Validation&lt;/em> always fallback on the top-level &lt;code>jikkou&lt;/code> config. This allows you to globally
+declare some properties of the validation configuration.
+&lt;/div>
+&lt;h3 id="example">Example&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The list of transformations to execute
+validations: [
+{
+# Custom name for the validation rule
+name = topicMustBePrefixedWithRegion
+# Simple or fully qualified class name of the validation extension.
+type = TopicNameRegexValidation
+# The config values that will be passed to the validation.
+config = {
+topicNameRegex = &amp;#34;(europe|northamerica|asiapacific)-.+&amp;#34;
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item></channel></rss>

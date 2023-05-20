@@ -1,5 +1,4 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – how-to</title><link>https://streamthoughts.github.io/jikkou/tags/how-to/</link><description>Recent content in how-to on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/tags/how-to/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: User Guide</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>The User Guide section helps you learn about the functionalities of Jikkou and the concepts
-Jikkou uses to manage kafka resources, and helps you obtain a deeper understanding of how Jikkou works.&lt;/p>
+&lt;p>The User Guide section helps you learn more about the functionalities of Jikkou.&lt;/p>
 &lt;/div></description></item></channel></rss>

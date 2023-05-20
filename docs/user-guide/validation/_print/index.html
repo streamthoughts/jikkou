@@ -1,14 +1,156 @@
-<!doctype html><html lang=en class=no-js><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=generator content="Hugo 0.100.1"><link rel=canonical type=text/html href=https://streamthoughts.github.io/jikkou/docs/user-guide/validation/><link rel=alternate type=application/rss+xml href=https://streamthoughts.github.io/jikkou/docs/user-guide/validation/index.xml><meta name=robots content="noindex, nofollow"><link rel="shortcut icon" href=/jikkou/favicons/favicon.ico><link rel=apple-touch-icon href=/jikkou/favicons/apple-touch-icon-180x180.png sizes=180x180><link rel=icon type=image/png href=/jikkou/favicons/favicon-16x16.png sizes=16x16><link rel=icon type=image/png href=/jikkou/favicons/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/jikkou/favicons/android-36x36.png sizes=36x36><link rel=icon type=image/png href=/jikkou/favicons/android-48x48.png sizes=48x48><link rel=icon type=image/png href=/jikkou/favicons/android-72x72.png sizes=72x72><link rel=icon type=image/png href=/jikkou/favicons/android-96x96.png sizes=96x96><link rel=icon type=image/png href=/jikkou/favicons/android-144x144.png sizes=144x144><link rel=icon type=image/png href=/jikkou/favicons/android-192x192.png sizes=192x192><title>Validations | Jikkou</title><meta name=description content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
-"><meta property="og:title" content="Validations"><meta property="og:description" content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
-"><meta property="og:type" content="website"><meta property="og:url" content="https://streamthoughts.github.io/jikkou/docs/user-guide/validation/"><meta property="og:site_name" content="Jikkou"><meta itemprop=name content="Validations"><meta itemprop=description content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
-"><meta name=twitter:card content="summary"><meta name=twitter:title content="Validations"><meta name=twitter:description content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
-"><link rel=preload href=/jikkou/scss/main.min.c3d91ad9b4704341bf145fad47d34388c084ae6d9688919be2f4d9e8c0eadaeb.css as=style><link href=/jikkou/scss/main.min.c3d91ad9b4704341bf145fad47d34388c084ae6d9688919be2f4d9e8c0eadaeb.css rel=stylesheet integrity><script src=https://code.jquery.com/jquery-3.6.0.min.js integrity=sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK crossorigin=anonymous></script></head><body class=td-section><header><nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar"><a class=navbar-brand href=/jikkou/><span class=navbar-logo></span><span class=font-weight-bold>Jikkou</span></a><div class="td-navbar-nav-scroll ml-md-auto" id=main_navbar><ul class="navbar-nav mt-2 mt-lg-0"><li class="nav-item mr-4 mb-2 mb-lg-0"><a class=nav-link href=/jikkou/about/><span>About</span></a></li><li class="nav-item mr-4 mb-2 mb-lg-0"><a class="nav-link active" href=/jikkou/docs/><span class=active>Documentation</span></a></li><li class="nav-item mr-4 mb-2 mb-lg-0"><a class=nav-link href=https://github.com/streamthoughts/jikkou target=_blank><span>GitHub</span></a></li></ul></div><div class="navbar-nav d-none d-lg-block"></div></nav></header><div class="container-fluid td-outer"><div class=td-main><div class="row flex-xl-nowrap"><main class="col-12 col-md-9 col-xl-8 pl-md-5" role=main><div class=td-content><div class="pageinfo pageinfo-primary d-print-none"><p>This is the multi-page printable view of this section.
-<a href=# onclick="return print(),!1">Click here to print</a>.</p><p><a href=/jikkou/docs/user-guide/validation/>Return to the regular view of this page</a>.</p></div><h1 class=title>Validations</h1><div class=lead>Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.</div><ul></ul><div class=content><h2 id=introduction>Introduction</h2><p>Jikkou allows running validation rules on declared resources (i.e. <em>Topics</em>, <em>Quotas</em>, <em>ACLs</em>, etc) before executing any action on your Kafka cluster.</p><p>To do that, the validations to be applied must be configured in your <code>application.conf</code>.</p><p>For example, the below configuration shows how to use the validation <code>io.streamthoughts.jikkou.kafka.validations.TopicNameRegexValidation</code> class
-to verify that all topic names match a given regex.</p><pre tabindex=0><code class=language-hocon data-lang=hocon>jikkou {
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.100.1" />
+<link rel="canonical" type="text/html" href="https://streamthoughts.github.io/jikkou/docs/user-guide/validation/">
+<link rel="alternate" type="application/rss&#43;xml" href="https://streamthoughts.github.io/jikkou/docs/user-guide/validation/index.xml">
+<meta name="robots" content="noindex, nofollow">
+
+
+<link rel="shortcut icon" href="/jikkou/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/jikkou/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/jikkou/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/jikkou/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/jikkou/favicons/android-36x36.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/jikkou/favicons/android-48x48.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/jikkou/favicons/android-72x72.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/jikkou/favicons/android-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/jikkou/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/jikkou/favicons/android-192x192.png" sizes="192x192">
+
+<title>Validations | Jikkou</title>
+<meta name="description" content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
+">
+<meta property="og:title" content="Validations" />
+<meta property="og:description" content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
+" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://streamthoughts.github.io/jikkou/docs/user-guide/validation/" /><meta property="og:site_name" content="Jikkou" />
+
+<meta itemprop="name" content="Validations">
+<meta itemprop="description" content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
+"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Validations"/>
+<meta name="twitter:description" content="Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.
+"/>
+
+
+
+
+<link rel="preload" href="/jikkou/scss/main.min.c3d91ad9b4704341bf145fad47d34388c084ae6d9688919be2f4d9e8c0eadaeb.css" as="style">
+<link href="/jikkou/scss/main.min.c3d91ad9b4704341bf145fad47d34388c084ae6d9688919be2f4d9e8c0eadaeb.css" rel="stylesheet" integrity="">
+
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK"
+  crossorigin="anonymous"></script>
+
+  </head>
+  <body class="td-section">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/jikkou/">
+		<span class="navbar-logo"></span><span class="font-weight-bold">Jikkou</span>
+	</a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/jikkou/about/" ><span>About</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link active" href="/jikkou/docs/" ><span class="active">Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/streamthoughts/jikkou" target="_blank" ><span>GitHub</span></a>
+			</li>
+			
+			
+			
+		</ul>
+	</div>
+	<div class="navbar-nav d-none d-lg-block"></div>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+
+
+
+
+<div class="td-content">
+<div class="pageinfo pageinfo-primary d-print-none">
+<p>
+This is the multi-page printable view of this section.
+<a href="#" onclick="print();return false;">Click here to print</a>.
+</p><p>
+<a href="/jikkou/docs/user-guide/validation/">Return to the regular view of this page</a>.
+</p>
+</div>
+
+
+
+<h1 class="title">Validations</h1>
+<div class="lead">Learn how to use the validations for ensuring resource entity configurations meets your requirements before being created and/or updated.</div>
+
+
+
+
+    <ul>
+    
+  
+  
+  
+  
+
+  
+
+    </ul>
+
+
+<div class="content">
+      <h2 id="introduction">Introduction</h2>
+<p>Jikkou allows running validation rules on declared resources (i.e. <em>Topics</em>, <em>Quotas</em>, <em>ACLs</em>, etc) before executing any action on your Kafka cluster.</p>
+<p>To do that, the validations to be applied must be configured in your <code>application.conf</code>.</p>
+<p>For example, the below configuration shows how to use the validation <code>io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation</code> class
+to verify that all topic names match a given regex.</p>
+<pre tabindex="0"><code class="language-hocon" data-lang="hocon">jikkou {
     validations = [
         {
           # The fully-qualified name of the Validation class, e.g.:
-          type = io.streamthoughts.jikkou.kafka.validations.TopicNameRegexValidation
+          type = io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation
           # The config values that will be passed to the Validation.
           config = {
             topic-regex = &#34;[a-zA-Z0-9\\._\\-]+&#34;
@@ -16,11 +158,221 @@ to verify that all topic names match a given regex.</p><pre tabindex=0><code cla
         }
    ]
 }
-</code></pre><div class="alert alert-info" role=alert><h4 class=alert-heading>About validation's configuration</h4>The <code>config</code> object of a validation will always fallback on the top-level <code>jikkou</code> config. This allowed to declare some validation config properties globally.</div><h2 id=built-in-validations>Built-in Validations</h2><p>Jikkou ships with the following built-in <em>validations</em>:</p><h3 id=topics>Topics</h3><h4 id=noduplicatetopicsallowedvalidation><code>NoDuplicateTopicsAllowedValidation</code></h4><h4 id=topicconfigkeysvalidation><code>TopicConfigKeysValidation</code></h4><p>The <code>TopicConfigKeysValidation</code> allows checking if the specified topic configs are all valid.</p><p><strong>Configuration</strong></p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicConfigKeysValidation</code></li></ul><h4 id=topicminnumpartitions><code>TopicMinNumPartitions</code></h4><p>The <code>TopicMinNumPartitions</code> allows checking if the specified number of partitions for a topic is not less than the minimum required.</p><p><strong>Configuration</strong></p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicMinNumPartitionsValidation</code></li><li><code>config</code>:<ul><li><code>topic-min-num-partitions</code>: (default: <code>1</code>)</li></ul></li></ul><h4 id=topicmaxnumpartitions><code>TopicMaxNumPartitions</code></h4><p>The <code>TopicMaxNumPartitions</code> allows checking if the number of partitions for a topic is not greater than the maximum configured.</p><p><strong>Configuration</strong></p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicMaxNumPartitions</code></li><li><code>config</code>:<ul><li><code>topic-max-num-partitions</code>:</li></ul></li></ul><h4 id=topicminreplicationfactor><code>TopicMinReplicationFactor</code></h4><p>The <code>TopicMinReplicationFactor</code> allows checking if the specified replication factor for a topic is not less than the minimum required.</p><p><strong>Configuration</strong></p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicMinReplicationFactor</code></li><li><code>config</code>:<ul><li><code>topic-min-replication-factor</code>: (default: <code>1</code>)</li></ul></li></ul><h4 id=topicmaxreplicationfactor><code>TopicMaxReplicationFactor</code></h4><p>The <code>TopicMaxReplicationFactor</code> allows checking if the specified replication factor for a topic is not greater than the maximum configured.</p><p><strong>Configuration</strong></p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicMaxReplicationFactor</code></li><li><code>config</code>:<ul><li><code>topic-max-replication-factor</code>: (default: <code>1</code>)</li></ul></li></ul><h4 id=topicnameprefix><code>TopicNamePrefix</code></h4><p>The <code>TopicNamePrefix</code> allows checking if the specified name for a topic starts with one of the configured suffixes.</p><p><strong>Configuration</strong></p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicNamePrefix</code></li><li><code>config</code>:<ul><li><code>topic-name-prefixes-allowed</code>:</li></ul></li></ul><h4 id=topicnameregex><code>TopicNameRegex</code></h4><p>The <code>TopicNameRegex</code> allows checking if the specified name for a topic matches the configured regex.</p><p><strong>Configuration</strong></p><h4 id=topicnamesuffix><code>TopicNameSuffix</code></h4><p>The <code>TopicNameSuffix</code> allows checking if the specified name for a topic ends with one of the configured suffixes.</p><ul><li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validations.TopicNameSuffix</code></li><li><code>config</code>:<ul><li><code>topic-name-suffixes-allowed</code>:</li></ul></li></ul><h3 id=acls>ACLs</h3><h4 id=noduplicateusersallowedvalidation><code>NoDuplicateUsersAllowedValidation</code></h4><h4 id=noduplicaterolesallowedvalidation><code>NoDuplicateRolesAllowedValidation</code></h4><h3 id=quotas>Quotas</h3><h4 id=quotasentityvalidation><code>QuotasEntityValidation</code></h4><h2 id=default-configuration>Default configuration</h2><p>By default, Jikkou is configured with the following <em>validations</em>:</p><ul><li><code>TopicConfigKeysValidation</code></li><li><code>TopicMinNumPartitionsValidation</code></li><li><code>TopicMinReplicationFactorValidation</code></li><li><code>TopicNameRegexValidation</code></li></ul><p>You can easily override the config values for those validations by setting the following environment variables:</p><ul><li><code>VALIDATION_DEFAULT_TOPIC_NAME_REGEX</code></li><li><code>VALIDATION_DEFAULT_TOPIC_MIN_NUM_PARTITIONS</code></li><li><code>VALIDATION_DEFAULT_TOPIC_MIN_REPLICATION_FACTOR</code></li></ul><h2 id=validation-report>Validation Report</h2><p>All validation rule errors are reported in the following form:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text><span style=display:flex><span>Validation rule violations:
-</span></span><span style=display:flex><span>- [TopicNameRegex]: Name for topic &#39;my_topic&#39; does not match the configured regex: [a-zA-Z0-9\.\-]+
-</span></span><span style=display:flex><span>- [TopicMinNumPartitions]: Number of partitions for topic &#39;my_topic&#39; is less than the minimum required: 1 &lt; 3
-</span></span><span style=display:flex><span>- [TopicMinReplicationFactor]: Replication factor for topic &#39;my-topic&#39; is less than the minimum required: 1 &lt; 3
-</span></span></code></pre></div></div></div></main></div></div><footer class="bg-dark py-5 row d-print-none"><div class="container-fluid mx-sm-5"><div class=row><div class="col-6 col-sm-4 text-xs-center order-sm-2"><ul class="list-inline mb-0"><li class="list-inline-item mx-2 h3" data-toggle=tooltip data-placement=top title=Twitter aria-label=Twitter><a class=text-white target=_blank rel=noopener href=https://twitter.com/streamthought_ aria-label=Twitter><i class="fab fa-twitter"></i></a></li></ul></div><div class="col-6 col-sm-4 text-right text-xs-center order-sm-3"><ul class="list-inline mb-0"><li class="list-inline-item mx-2 h3" data-toggle=tooltip data-placement=top title=GitHub aria-label=GitHub><a class=text-white target=_blank rel=noopener href=https://github.com/streamthoughts/jikkou aria-label=GitHub><i class="fab fa-github"></i></a></li></ul></div><div class="col-12 col-sm-4 text-center py-2 order-sm-2"><small class=text-white>&copy; 2023 The Jikkou Authors All Rights Reserved</small></div></div></div></footer></div><script src=https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js integrity=sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN crossorigin=anonymous></script>
-<script src=https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin=anonymous></script>
-<script src=/jikkou/js/tabpane-persist.js></script>
-<script src=/jikkou/js/main.min.4b36622378848c3a178bdfe687d6d1e7d4fba865dc45eedfa77ddfc872a1b934.js integrity="sha256-SzZiI3iEjDoXi9/mh9bR59T7qGXcRe7fp33fyHKhuTQ=" crossorigin=anonymous></script></body></html>
+</code></pre>
+
+<div class="alert alert-info" role="alert">
+<h4 class="alert-heading">About validation's configuration</h4>
+
+    The <code>config</code> object of a validation will always fallback on the top-level <code>jikkou</code> config. This allowed to declare some validation config properties globally.
+
+</div>
+
+<h2 id="built-in-validations">Built-in Validations</h2>
+<p>Jikkou ships with the following built-in <em>validations</em>:</p>
+<h3 id="topics">Topics</h3>
+<h4 id="noduplicatetopicsallowedvalidation"><code>NoDuplicateTopicsAllowedValidation</code></h4>
+<h4 id="topicconfigkeysvalidation"><code>TopicConfigKeysValidation</code></h4>
+<p>The <code>TopicConfigKeysValidation</code> allows checking if the specified topic configs are all valid.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicConfigKeysValidation</code></li>
+</ul>
+<h4 id="topicminnumpartitions"><code>TopicMinNumPartitions</code></h4>
+<p>The <code>TopicMinNumPartitions</code> allows checking if the specified number of partitions for a topic is not less than the minimum required.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation</code></li>
+<li><code>config</code>:
+<ul>
+<li><code>topic-min-num-partitions</code>: (default: <code>1</code>)</li>
+</ul>
+</li>
+</ul>
+<h4 id="topicmaxnumpartitions"><code>TopicMaxNumPartitions</code></h4>
+<p>The <code>TopicMaxNumPartitions</code> allows checking if the number of partitions for a topic is not greater than the maximum configured.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitions</code></li>
+<li><code>config</code>:
+<ul>
+<li><code>topic-max-num-partitions</code>:</li>
+</ul>
+</li>
+</ul>
+<h4 id="topicminreplicationfactor"><code>TopicMinReplicationFactor</code></h4>
+<p>The <code>TopicMinReplicationFactor</code> allows checking if the specified replication factor for a topic is not less than the minimum required.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactor</code></li>
+<li><code>config</code>:
+<ul>
+<li><code>topic-min-replication-factor</code>: (default: <code>1</code>)</li>
+</ul>
+</li>
+</ul>
+<h4 id="topicmaxreplicationfactor"><code>TopicMaxReplicationFactor</code></h4>
+<p>The <code>TopicMaxReplicationFactor</code> allows checking if the specified replication factor for a topic is not greater than the maximum configured.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactor</code></li>
+<li><code>config</code>:
+<ul>
+<li><code>topic-max-replication-factor</code>: (default: <code>1</code>)</li>
+</ul>
+</li>
+</ul>
+<h4 id="topicnameprefix"><code>TopicNamePrefix</code></h4>
+<p>The <code>TopicNamePrefix</code> allows checking if the specified name for a topic starts with one of the configured suffixes.</p>
+<p><strong>Configuration</strong></p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicNamePrefix</code></li>
+<li><code>config</code>:
+<ul>
+<li><code>topic-name-prefixes-allowed</code>:</li>
+</ul>
+</li>
+</ul>
+<h4 id="topicnameregex"><code>TopicNameRegex</code></h4>
+<p>The <code>TopicNameRegex</code> allows checking if the specified name for a topic matches the configured regex.</p>
+<p><strong>Configuration</strong></p>
+<h4 id="topicnamesuffix"><code>TopicNameSuffix</code></h4>
+<p>The <code>TopicNameSuffix</code> allows checking  if the specified name for a topic ends with one of the configured suffixes.</p>
+<ul>
+<li><code>type</code>: <code>io.streamthoughts.jikkou.kafka.validation.TopicNameSuffix</code></li>
+<li><code>config</code>:
+<ul>
+<li><code>topic-name-suffixes-allowed</code>:</li>
+</ul>
+</li>
+</ul>
+<h3 id="acls">ACLs</h3>
+<h4 id="noduplicateusersallowedvalidation"><code>NoDuplicateUsersAllowedValidation</code></h4>
+<h4 id="noduplicaterolesallowedvalidation"><code>NoDuplicateRolesAllowedValidation</code></h4>
+<h3 id="quotas">Quotas</h3>
+<h4 id="quotasentityvalidation"><code>QuotasEntityValidation</code></h4>
+<h2 id="default-configuration">Default configuration</h2>
+<p>By default, Jikkou is configured with the following <em>validations</em>:</p>
+<ul>
+<li><code>TopicConfigKeysValidation</code></li>
+<li><code>TopicMinNumPartitionsValidation</code></li>
+<li><code>TopicMinReplicationFactorValidation</code></li>
+<li><code>TopicNameRegexValidation</code></li>
+</ul>
+<p>You can easily override the config values for those validations by setting the following environment variables:</p>
+<ul>
+<li><code>VALIDATION_DEFAULT_TOPIC_NAME_REGEX</code></li>
+<li><code>VALIDATION_DEFAULT_TOPIC_MIN_NUM_PARTITIONS</code></li>
+<li><code>VALIDATION_DEFAULT_TOPIC_MIN_REPLICATION_FACTOR</code></li>
+</ul>
+<h2 id="validation-report">Validation Report</h2>
+<p>All validation rule errors are reported in the following form:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Validation rule violations:
+</span></span><span style="display:flex;"><span>- [TopicNameRegex]: Name for topic &#39;my_topic&#39; does not match the configured regex: [a-zA-Z0-9\.\-]+
+</span></span><span style="display:flex;"><span>- [TopicMinNumPartitions]: Number of partitions for topic &#39;my_topic&#39; is less than the minimum required: 1 &lt; 3
+</span></span><span style="display:flex;"><span>- [TopicMinReplicationFactor]: Replication factor for topic &#39;my-topic&#39; is less than the minimum required: 1 &lt; 3
+</span></span></code></pre></div>
+</div>
+</div>
+
+
+  
+  
+  
+  
+
+  
+  
+
+  
+
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Twitter" aria-label="Twitter">
+    <a class="text-white" target="_blank" rel="noopener" href="https://twitter.com/streamthought_" aria-label="Twitter">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="GitHub" aria-label="GitHub">
+    <a class="text-white" target="_blank" rel="noopener" href="https://github.com/streamthoughts/jikkou" aria-label="GitHub">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2023 The Jikkou Authors All Rights Reserved</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+    integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+    crossorigin="anonymous"></script>
+
+
+
+
+
+<script src='/jikkou/js/tabpane-persist.js'></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/jikkou/js/main.min.4b36622378848c3a178bdfe687d6d1e7d4fba865dc45eedfa77ddfc872a1b934.js" integrity="sha256-SzZiI3iEjDoXi9/mh9bR59T7qGXcRe7fp33fyHKhuTQ=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

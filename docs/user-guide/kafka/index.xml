@@ -1,0 +1,197 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Apache Kafka</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/</link><description>Recent content in Apache Kafka on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported for Apache Kafka.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The Apache Kafka extension is built on top of the Kafka Admin Client. You can configure the properties to be passed to
+kafka client
+through the Jikkou client configuration property &lt;code>jikkou.kafka.client&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+kafka {
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+security.protocol = &amp;#34;SSL&amp;#34;
+ssl.keystore.location = &amp;#34;/tmp/client.keystore.p12&amp;#34;
+ssl.keystore.password = &amp;#34;password&amp;#34;
+ssl.keystore.type = &amp;#34;PKCS12&amp;#34;
+ssl.truststore.location = &amp;#34;/tmp/client.truststore.jks&amp;#34;
+ssl.truststore.password = &amp;#34;password&amp;#34;
+ssl.key.password = &amp;#34;password&amp;#34;
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>In addition, the extension support configuration settings to wait for at least a minimal number of brokers before
+processing.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+kafka {
+brokers {
+# If &amp;#39;True&amp;#39;
+waitForEnabled = true
+waitForEnabled = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_ENABLED}
+# The minimal number of brokers that should be alive for the CLI stops waiting.
+waitForMinAvailable = 1
+waitForMinAvailable = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE}
+# The amount of time to wait before verifying that brokers are available.
+waitForRetryBackoffMs = 1000
+waitForRetryBackoffMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
+# Wait until brokers are available or this timeout is reached.
+waitForTimeoutMs = 60000
+waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
+}
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported for Apache Kafka.&lt;/p>
+&lt;/div>
+&lt;h2 id="apache-kafka-resources">Apache Kafka Resources&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
+&lt;h2 id="topics">Topics&lt;/h2>
+&lt;h3 id="noduplicatetopicsallowedvalidation">&lt;code>NoDuplicateTopicsAllowedValidation&lt;/code>&lt;/h3>
+&lt;p>(&lt;em>auto registered&lt;/em>)&lt;/p>
+&lt;h3 id="topicconfigkeysvalidation">&lt;code>TopicConfigKeysValidation&lt;/code>&lt;/h3>
+&lt;p>(&lt;em>auto registered&lt;/em>)&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicConfigKeysValidation
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicConfigKeysValidation&lt;/code> allows checking if the specified topic configs are all valid.&lt;/p>
+&lt;h3 id="topicminnumpartitions">&lt;code>TopicMinNumPartitions&lt;/code>&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicMinNumPartitions&lt;/code> allows checking if the specified number of partitions for a topic is not less than the minimum required.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topicMinNumPartitions&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum number of partitions allowed&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="topicmaxnumpartitions">&lt;code>TopicMaxNumPartitions&lt;/code>&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitions
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicMaxNumPartitions&lt;/code> allows checking if the number of partitions for a topic is not greater than the maximum configured.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topicMaxNumPartitions&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Maximum number of partitions allowed&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="topicminreplicationfactor">&lt;code>TopicMinReplicationFactor&lt;/code>&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactor
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicMinReplicationFactor&lt;/code> allows checking if the specified replication factor for a topic is not less than the minimum required.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topicMinReplicationFactor&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum replication factor allowed&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="topicmaxreplicationfactor">&lt;code>TopicMaxReplicationFactor&lt;/code>&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactor
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicMaxReplicationFactor&lt;/code> allows checking if the specified replication factor for a topic is not greater than the maximum configured.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topicMaxReplicationFactor&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Maximum replication factor allowed&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="topicnameprefix">&lt;code>TopicNamePrefix&lt;/code>&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicNamePrefix
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicNamePrefix&lt;/code> allows checking if the specified name for a topic starts with one of the configured suffixes.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topicNamePrefixes&lt;/code>&lt;/td>
+&lt;td>List&lt;/td>
+&lt;td>List of topic name prefixes allows&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="topicnamesuffix">&lt;code>TopicNameSuffix&lt;/code>&lt;/h4>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicNameSuffix
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicNameSuffix&lt;/code> allows checking if the specified name for a topic ends with one of the configured suffixes.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topicNameSuffixes&lt;/code>&lt;/td>
+&lt;td>List&lt;/td>
+&lt;td>List of topic name suffixes allows&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="acls">ACLs&lt;/h2>
+&lt;h3 id="noduplicateusersallowedvalidation">&lt;code>NoDuplicateUsersAllowedValidation&lt;/code>&lt;/h3>
+&lt;p>(auto registered)&lt;/p>
+&lt;h3 id="noduplicaterolesallowedvalidation">&lt;code>NoDuplicateRolesAllowedValidation&lt;/code>&lt;/h3>
+&lt;p>(auto registered)&lt;/p>
+&lt;h2 id="quotas">Quotas&lt;/h2>
+&lt;h3 id="quotasentityvalidation">&lt;code>QuotasEntityValidation&lt;/code>&lt;/h3>
+&lt;p>(auto registered)&lt;/p></description></item></channel></rss>
