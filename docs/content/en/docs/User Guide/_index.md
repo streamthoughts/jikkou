@@ -9,8 +9,7 @@ description: >
 ---
 
 {{% pageinfo %}}
-The User Guide section helps you learn about the functionalities of Jikkou and the concepts
-Jikkou uses to manage kafka resources, and helps you obtain a deeper understanding of how Jikkou works.
+The User Guide section helps you learn more about the functionalities of Jikkou.
 {{% /pageinfo %}}
 
 

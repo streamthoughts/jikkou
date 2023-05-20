@@ -1,13 +1,13 @@
 ---
+tags: [ "concept" ]
 title: "Reconciliation"
 linkTitle: "Reconciliation"
 weight: 3
 ---
 
 {{% pageinfo color="info" %}}
-In the context of Jikkou, reconciliation refers to the process by which the current state of a desired object
-is compared to the actual state of the system and any differences (called _changes_) between the two are reconciled or
-corrected.
+In the context of Jikkou, reconciliation refers to the process of comparing the desired state of an object with the
+actual state of the system and making any necessary corrections or adjustments to align them.
 {{% /pageinfo %}}
 
 ### Changes
@@ -15,27 +15,28 @@ corrected.
 A _Change_ represents a difference, detected during reconciliation, between two objects that can reconciled or
 corrected by adding, updating, or deleting an object or property attached to the actual state of the system.
 
-Jikkou computes four types of changes:
+A _Change_ represents a detected difference between two objects during the reconciliation process. These differences can
+be reconciled or corrected by adding, updating, or deleting an object or property associated with the actual state of
+the system
 
-* **ADD**: Indicates that a new object or a property of an existing object was added.
-* **UPDATE**: Indicates that an existing object or a property of an existing object was changed.
-* **DELETE**: Indicates that an existing object must be deleted or a property of an existing object was removed.
-* **NONE**: Indicates that an existing object or property was not changed.
+* Jikkou identifies four types of changes:
+
+* **ADD**: Indicates the addition of a new object or property to an existing object.
+* **UPDATE**: Indicates modifications made to an existing object or property of an existing object.
+* **DELETE**: Indicates the removal of an existing object or property of an existing object.
+* **NONE**: Indicates that no changes were made to an existing object or property.
 
 ### Reconciliation Modes
 
-Depending on the chosen reconciliation mode, only specific types of changes may be applied.
+Depending on the chosen reconciliation mode, only specific types of changes will be applied.
 
-Jikkou defines the following four distinct reconciliation modes:
+Jikkou provides four distinct reconciliation modes that determine the types of changes to be applied:
 
-Jikkou offers four distinct reconciliation modes that determine which types of changes will be applied:
+* **`CREATE`**: This mode only applies changes that create new resource objects in your system.
+* **`DELETE`**: This mode only applies changes that delete existing resource objects in your system.
+* **`UPDATE`**: This mode only applies changes that create or update existing resource objects in your system.
+* **`APPLY_ALL`**: This mode applies all changes to ensure that the actual state of a resource in the cluster matches
+  the desired state defined in your resource definition file, regardless of the specific type of change.
 
-* **CREATE**: Only changes that create new resource objects on your system will be applied.
-* **DELETE**: Only changes that delete existing resource objects on your system will be applied.
-* **UPDATE**: Only changes that create or update existing resource objects on your system will be applied.
-* **APPLY_ALL**: Apply all changes to ensure that the actual state of a resource in the cluster matches the desired
-  state as defined in your resource definition file, regardless of the specific type of change.
-
-{{% alert title="Note" color="info" %}}
-The reconciliation modes listed above correspond to the _commands_ available through the Jikkou CLI.
-{{% /alert %}}
+Each mode corresponds to a command offered by the Jikkou CLI (i.e., `create`, `update`, `delete`, and `apply`). Choose
+the appropriate mode based on your requirements.

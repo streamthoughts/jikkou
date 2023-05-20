@@ -13842,59 +13842,10 @@ nav.foldable-nav .with-child ul {
   padding-left: 0;
   padding-top: 0; }
 
-.alert {
-  font-weight: 500;
-  background: #fff;
-  color: inherit;
-  border-radius: 0; }
-  .alert-primary {
-    border-style: solid;
-    border-color: #16262f;
-    border-width: 0 0 0 4px; }
-    .alert-primary .alert-heading {
-      color: #16262f; }
-  .alert-secondary {
-    border-style: solid;
-    border-color: #BF1363;
-    border-width: 0 0 0 4px; }
-    .alert-secondary .alert-heading {
-      color: #BF1363; }
-  .alert-success {
-    border-style: solid;
-    border-color: #3772FF;
-    border-width: 0 0 0 4px; }
-    .alert-success .alert-heading {
-      color: #3772FF; }
-  .alert-info {
-    border-style: solid;
-    border-color: #C0E0DE;
-    border-width: 0 0 0 4px; }
-    .alert-info .alert-heading {
-      color: #C0E0DE; }
-  .alert-warning {
-    border-style: solid;
-    border-color: #ED6A5A;
-    border-width: 0 0 0 4px; }
-    .alert-warning .alert-heading {
-      color: #ED6A5A; }
-  .alert-danger {
-    border-style: solid;
-    border-color: #ED6A5A;
-    border-width: 0 0 0 4px; }
-    .alert-danger .alert-heading {
-      color: #ED6A5A; }
-  .alert-light {
-    border-style: solid;
-    border-color: #D3F3EE;
-    border-width: 0 0 0 4px; }
-    .alert-light .alert-heading {
-      color: #D3F3EE; }
-  .alert-dark {
-    border-style: solid;
-    border-color: #121b28;
-    border-width: 0 0 0 4px; }
-    .alert-dark .alert-heading {
-      color: #121b28; }
+.alert-info {
+  border-style: solid;
+  border-color: #33c5c5;
+  border-width: 0 0 0 4px; }
 
 .td-content {
   order: 1; }
@@ -20574,10 +20525,35 @@ main p > a, main li > a {
   border-radius: 0.25rem;
   color: #BF1363 !important; }
 
+h2 {
+  font-weight: 800;
+  color: #223232; }
+
+h3 {
+  font-weight: 800;
+  color: #223232; }
+
 h3 > code {
   color: #16262f !important;
   word-break: normal;
   background-color: rgba(0, 0, 0, 0.05);
   border-radius: 0.25rem; }
+
+.pageinfo-info {
+  border-style: solid;
+  border-color: #33c5c5; }
+
+.alert-heading {
+  font-weight: bold; }
+
+.alert-info {
+  border-style: solid;
+  border-color: #33c5c5;
+  border-width: 0 0 0 4px; }
+  .alert-info h4.alert-heading {
+    color: #33c5c5; }
+
+.alert-warning {
+  border-width: 0 0 0 4px; }
 
 /*# sourceMappingURL=main.css.map */

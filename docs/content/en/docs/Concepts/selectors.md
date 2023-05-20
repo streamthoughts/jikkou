@@ -1,4 +1,5 @@
 ---
+tags: [ "concept", "feature" ]
 title: "Selectors"
 linkTitle: "Selectors"
 weight: 4

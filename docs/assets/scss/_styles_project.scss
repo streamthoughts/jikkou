@@ -66,9 +66,42 @@ main {
     color: $secondary!important;
 }
 
+h2 {
+    font-weight: 800;
+    color: #223232;
+}
+
+h3 {
+    font-weight: 800;
+    color: #223232;
+}
+
 h3 > code {
     color:$primary !important;
     word-break: normal;
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 0.25rem;
+}
+
+.pageinfo-info {
+    border-style: solid;
+    border-color: #33c5c5;
+}
+
+.alert-heading {
+    font-weight: bold;
+}
+
+.alert-info {
+    border-style: solid;
+    border-color: #33c5c5;
+    border-width: 0 0 0 4px;
+
+    h4.alert-heading {
+        color: #33c5c5;
+    }
+}
+
+.alert-warning {
+    border-width: 0 0 0 4px;
 }

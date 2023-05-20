@@ -1,0 +1,16 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jikkou – Jikkou</title>
+    <link>https://streamthoughts.github.io/jikkou/</link>
+    <description>Recent content on Jikkou</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://streamthoughts.github.io/jikkou/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+      
+    
+    
+  </channel>
+</rss>
