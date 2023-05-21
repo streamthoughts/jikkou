@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,16 +20,26 @@ package io.streamthoughts.jikkou.api.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
 
-import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.converter.IdentityResourceConverter;
+import io.streamthoughts.jikkou.api.converter.ResourceConverter;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
 import java.lang.annotation.Documented;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Defines a resource type that can be accepted by an extension.
+ */
 @Documented
 @Target({TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SupportedReconciliationModes {
+@Repeatable(AcceptsResources.class)
+public @interface AcceptsResource {
+    String kind() default "";
+    String version() default "";
+    Class<? extends HasMetadata> type() default HasMetadata.class;
 
-    ReconciliationMode[] modes();
+    Class<? extends ResourceConverter> converter() default IdentityResourceConverter.class;
 }

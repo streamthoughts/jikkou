@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.error.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
@@ -27,7 +27,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@SupportedResource(type = V1KafkaTopic.class)
+@AcceptsResource(type = V1KafkaTopic.class)
 public class NoDuplicateTopicsAllowedValidation implements ResourceValidation<V1KafkaTopic> {
 
     /** {@inheritDoc} */

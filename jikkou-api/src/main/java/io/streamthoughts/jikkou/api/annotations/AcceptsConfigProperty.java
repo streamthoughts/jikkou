@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,9 +20,6 @@ package io.streamthoughts.jikkou.api.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
 
-import io.streamthoughts.jikkou.api.converter.IdentityResourceConverter;
-import io.streamthoughts.jikkou.api.converter.ResourceConverter;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
@@ -32,11 +29,12 @@ import java.lang.annotation.Target;
 @Documented
 @Target({TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(SupportedResources.class)
-public @interface SupportedResource {
-    String kind() default "";
-    String version() default "";
-    Class<? extends HasMetadata> type() default HasMetadata.class;
+@Repeatable(AcceptsConfigProperties.class)
+public @interface AcceptsConfigProperty {
 
-    Class<? extends ResourceConverter> converter() default IdentityResourceConverter.class;
+    String name();
+    String description() default "";
+    String defaultValue();
+    Class<?> type();
+    boolean isRequired() default true;
 }

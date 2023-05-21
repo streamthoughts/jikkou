@@ -29,7 +29,6 @@ import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicCollector;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
 import io.streamthoughts.jikkou.kafka.transform.KafkaPrincipalAuthorizationTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicConfigMapsTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxReplicasTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxRetentionMsTransformation;
@@ -76,7 +75,6 @@ public class KafkaExtensionProvider implements ExtensionProvider {
         factory.register(AdminClientKafkaAclCollector.class);
 
         // transformations
-        factory.register(KafkaTopicConfigMapsTransformation.class);
         factory.register(KafkaPrincipalAuthorizationTransformation.class);
         factory.register(KafkaTopicMaxRetentionMsTransformation.class);
         factory.register(KafkaTopicMaxReplicasTransformation.class);

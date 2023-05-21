@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Validation for {@link V1KafkaClientQuota}.
  */
-@SupportedResource(type = V1KafkaClientQuota.class)
+@AcceptsResource(type = V1KafkaClientQuota.class)
 public class ClientQuotaValidation implements ResourceValidation<V1KafkaClientQuota> {
 
     /** {@inheritDoc} */

@@ -24,8 +24,8 @@ import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
 
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.annotations.SupportedReconciliationModes;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
@@ -50,8 +50,8 @@ import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
-@SupportedResource(type = V1KafkaPrincipalAuthorization.class)
-@SupportedReconciliationModes(modes = {CREATE, DELETE, APPLY_ALL})
+@AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
+@AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
 public final class AdminClientKafkaAclController extends AbstractAdminClientKafkaController
         implements BaseExternalResourceController<V1KafkaPrincipalAuthorization, AclChange> {
 

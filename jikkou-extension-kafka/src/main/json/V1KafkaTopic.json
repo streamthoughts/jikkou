@@ -48,9 +48,13 @@
   "$defs": {
     "V1KafkaTopicSpec": {
       "type": "object",
+      "javaInterfaces": [
+        "io.streamthoughts.jikkou.api.model.HasConfigRefs"
+      ],
       "additionalProperties": {
         "lombok-builder": true,
         "lombok-with": true,
+        "lombok-setter": true,
         "all-args-constructor": false
       },
       "properties": {

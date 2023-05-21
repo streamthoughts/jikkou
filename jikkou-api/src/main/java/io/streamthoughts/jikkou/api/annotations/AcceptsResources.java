@@ -16,25 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.api.model;
+package io.streamthoughts.jikkou.api.annotations;
 
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import static java.lang.annotation.ElementType.TYPE;
 
-@InterfaceStability.Evolving
-public interface HasConfigs {
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    /**
-     * Gets the configs, may be null.
-     *
-     * @return  {@link Configs} object.
-     */
-    Configs getConfigs();
-
-    /**
-     * Sets the configs.
-     *
-     * @param configs the {@link Configs} to be set.
-     */
-    void setConfigs(final Configs configs);
-    
+/**
+ * Defines a set of resources type that can be accepted by an extension.
+ *
+ * An empty set implies that the extension can accept any resource-type or takes care of checking resource-type itself.
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE})
+public @interface AcceptsResources {
+    AcceptsResource[] value();
 }

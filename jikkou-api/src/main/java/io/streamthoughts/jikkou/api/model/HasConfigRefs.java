@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,25 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.api.annotations;
+package io.streamthoughts.jikkou.api.model;
 
-import static java.lang.annotation.ElementType.TYPE;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import java.util.Set;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@InterfaceStability.Evolving
+public interface HasConfigRefs extends HasConfigs {
 
-@Documented
-@Target({TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Repeatable(AcceptConfigProperties.class)
-public @interface AcceptConfigProperty {
+    Set<String> getConfigMapRefs();
 
-    String name();
-    String description() default "";
-    String defaultValue();
-    Class<?> type();
-    boolean isRequired() default true;
+    void setConfigMapRefs(final Set<String> configMapsRefs);
+
 }

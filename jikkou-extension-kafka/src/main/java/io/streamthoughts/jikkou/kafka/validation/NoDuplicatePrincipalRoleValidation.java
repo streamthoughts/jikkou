@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.error.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
@@ -27,7 +27,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@SupportedResource(type = V1KafkaPrincipalRole.class)
+@AcceptsResource(type = V1KafkaPrincipalRole.class)
 public class NoDuplicatePrincipalRoleValidation implements ResourceValidation<V1KafkaPrincipalRole> {
 
     /** {@inheritDoc} */

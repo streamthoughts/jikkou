@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.model;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
@@ -55,8 +55,8 @@ public interface HasMetadataAcceptable {
 
     @SuppressWarnings("unchecked")
     default ResourceConverter<HasMetadata, HasMetadata> getResourceConverter(@NotNull ResourceType resource) {
-        List<SupportedResource> annotations = AnnotationResolver
-                .findAllAnnotationsByType(this.getClass(), SupportedResource.class);
+        List<AcceptsResource> annotations = AnnotationResolver
+                .findAllAnnotationsByType(this.getClass(), AcceptsResource.class);
 
         return annotations.stream()
                 .filter(annot -> {
@@ -66,7 +66,7 @@ public interface HasMetadataAcceptable {
                     return type.canAccept(resource);
                 })
                 .findFirst()
-                .map(SupportedResource::converter)
+                .map(AcceptsResource::converter)
                 .map(Classes::newInstance)
                 .orElseThrow(() -> new JikkouRuntimeException(
                         "Cannot found any converter for type '" + resource.getKind()  + "'"
@@ -81,10 +81,10 @@ public interface HasMetadataAcceptable {
      * @return      the list of acceptable types.
      */
     static List<ResourceType> getAcceptedResources(final Class<?> clazz) {
-        List<SupportedResource> supportedResources = AnnotationResolver
-                .findAllAnnotationsByType(clazz, SupportedResource.class);
+        List<AcceptsResource> acceptsResources = AnnotationResolver
+                .findAllAnnotationsByType(clazz, AcceptsResource.class);
 
-        return supportedResources.stream()
+        return acceptsResources.stream()
                 .map(accept -> {
                     if (accept.type() != HasMetadata.class) {
                         return ResourceType.create(accept.type());
@@ -96,6 +96,7 @@ public interface HasMetadataAcceptable {
 
     private static boolean canAccept(@NotNull HasMetadataAcceptable acceptable,
                                      @NotNull Predicate<ResourceType> predicate) {
-        return getAcceptedResources(acceptable.getClass()).stream().anyMatch(predicate);
+        List<ResourceType> resources = getAcceptedResources(acceptable.getClass());
+        return resources.isEmpty() || resources.stream().anyMatch(predicate);
     }
 }

@@ -20,8 +20,8 @@ package io.streamthoughts.jikkou.api.control;
 
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.api.annotations.ExtensionType;
-import io.streamthoughts.jikkou.api.annotations.SupportedReconciliationModes;
 import io.streamthoughts.jikkou.api.extensions.Extension;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasMetadataAcceptable;
@@ -54,9 +54,9 @@ public interface ExternalResourceController<
      * @return the set of reconciliation modes.
      */
     static Set<ReconciliationMode> supportedReconciliationModes(Class<? extends Extension> clazz) {
-        SupportedReconciliationModes supported = clazz.getAnnotation(SupportedReconciliationModes.class);
+        AcceptsReconciliationModes supported = clazz.getAnnotation(AcceptsReconciliationModes.class);
         if (supported != null) {
-            return Set.of(supported.modes());
+            return Set.of(supported.value());
         }
         return Collections.emptySet();
     }

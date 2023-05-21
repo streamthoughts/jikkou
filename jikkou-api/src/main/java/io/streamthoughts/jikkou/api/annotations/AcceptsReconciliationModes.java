@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,14 +20,22 @@ package io.streamthoughts.jikkou.api.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
 
+import io.streamthoughts.jikkou.api.ReconciliationMode;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Defines the reconciliation modes that can be accepted by an
+ * {@link io.streamthoughts.jikkou.api.control.ExternalResourceController}.
+ *
+ * An empty set implies that the controller can accept any reconciliation mode.
+ */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
 @Target({TYPE})
-public @interface AcceptConfigProperties {
-    AcceptConfigProperty[] value();
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AcceptsReconciliationModes {
+
+    ReconciliationMode[] value();
 }

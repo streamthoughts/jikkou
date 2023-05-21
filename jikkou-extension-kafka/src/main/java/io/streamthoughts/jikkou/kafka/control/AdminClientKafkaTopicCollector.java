@@ -18,8 +18,8 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import io.streamthoughts.jikkou.api.annotations.AcceptConfigProperty;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsConfigProperty;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
@@ -58,21 +58,21 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SupportedResource(type = V1KafkaTopic.class)
-@SupportedResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
-@AcceptConfigProperty(
+@AcceptsResource(type = V1KafkaTopic.class)
+@AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
+@AcceptsConfigProperty(
         name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
         description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
         defaultValue = "false",
         type = Boolean.class
 )
-@AcceptConfigProperty(
+@AcceptsConfigProperty(
         name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
         description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
         defaultValue = "false",
         type = Boolean.class
 )
-@AcceptConfigProperty(
+@AcceptsConfigProperty(
         name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
         description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
         defaultValue = "false",

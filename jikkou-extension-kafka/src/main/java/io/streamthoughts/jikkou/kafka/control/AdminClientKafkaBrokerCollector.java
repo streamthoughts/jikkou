@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
@@ -51,8 +51,8 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
 
-@SupportedResource(type = V1KafkaBroker.class)
-@SupportedResource(type = V1KafkaBrokerList.class, converter = V1KafkaBrokerListConverter.class)
+@AcceptsResource(type = V1KafkaBroker.class)
+@AcceptsResource(type = V1KafkaBrokerList.class, converter = V1KafkaBrokerListConverter.class)
 public final class AdminClientKafkaBrokerCollector extends AbstractAdminClientKafkaController
         implements ExternalResourceCollector<V1KafkaBroker> {
 

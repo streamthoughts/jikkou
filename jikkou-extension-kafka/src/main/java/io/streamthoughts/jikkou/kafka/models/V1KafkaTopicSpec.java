@@ -23,17 +23,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.Configs;
+import io.streamthoughts.jikkou.api.model.HasConfigRefs;
 import java.beans.ConstructorProperties;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
+import lombok.Setter;
 import lombok.Singular;
 import lombok.With;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
+@Setter
 @JsonPropertyOrder({
     "partitions",
     "replicas",
@@ -42,7 +45,8 @@ import lombok.With;
 })
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
-public class V1KafkaTopicSpec {
+public class V1KafkaTopicSpec implements HasConfigRefs
+{
 
     @JsonProperty("partitions")
     private Integer partitions = -1;

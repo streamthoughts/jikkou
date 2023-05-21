@@ -16,23 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.kafka.transform;
+package io.streamthoughts.jikkou.api.transform;
 
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.api.model.HasConfigRefs;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.model.HasSpec;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.models.ConfigMap;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class KafkaKafkaTopicConfigMapsTransformationTest {
+class ConfigMapsTransformationTest {
 
     static final String TEST_CONFIG_MAP_NAME = "configMap";
-    static final String TEST_TOPIC = "topic";
     static final String TEST_CONFIG_K1 = "k1";
     static final String TEST_CONFIG_K2 = "k2";
     private final static ConfigMap TEST_CONFIG_MAP = ConfigMap
@@ -46,30 +46,19 @@ class KafkaKafkaTopicConfigMapsTransformationTest {
 
 
     @Test
-    void shouldAddConfigPropsToTopicGivenValidConfigMapRefForTopicWithNoConfigs() {
+    void shouldAddConfigPropsForResourceWithNoPreviousConfigs() {
         // Given
-        var resource = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(null)
-                        .withReplicas(null)
-                        .withConfigs(Configs.empty())
-                        .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
-                        .build())
-                .build();
+        var resource = new TestResource(new TestConfigMapsObject(
+                Configs.empty(),
+                Set.of(TEST_CONFIG_MAP_NAME)
+        ));
 
         // When
-        var result = (V1KafkaTopic) new KafkaTopicConfigMapsTransformation()
+        var result = (TestResource) new ConfigMapsTransformation()
                 .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
         // Then
-        Assertions.assertNull(result.getSpec().getConfigMapRefs());
         Configs configs = result.getSpec().getConfigs();
         Assertions.assertEquals("v1", configs.get(TEST_CONFIG_K1).value());
     }
@@ -77,30 +66,19 @@ class KafkaKafkaTopicConfigMapsTransformationTest {
     @Test
     void shouldAddConfigPropsToTopicGivenValidConfigMapRefForTopicWithConfigs() {
         // Given
-        var resource = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(null)
-                        .withReplicas(null)
-                        .withConfigs(Configs.of(TEST_CONFIG_K2, "v2"))
-                        .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
-                        .build())
-                .build();
+        var resource = new TestResource(new TestConfigMapsObject(
+                Configs.of(TEST_CONFIG_K2, "v2"),
+                Set.of(TEST_CONFIG_MAP_NAME)
+        ));
 
         // When
-        var result = (V1KafkaTopic) new KafkaTopicConfigMapsTransformation()
+        var result = (TestResource) new ConfigMapsTransformation()
                 .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
         // Then
         Configs configs = result.getSpec().getConfigs();
         Assertions.assertEquals(2, configs.size());
-        Assertions.assertNull(result.getSpec().getConfigMapRefs());
         Assertions.assertEquals("v1", configs.get(TEST_CONFIG_K1).value());
         Assertions.assertEquals("v2", configs.get(TEST_CONFIG_K2).value());
     }
@@ -108,30 +86,84 @@ class KafkaKafkaTopicConfigMapsTransformationTest {
     @Test
     void shouldOverrideConfigPropsToTopicGivenValidConfigMapRefForTopicWithConfigs() {
         // Given
-        var resource = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(null)
-                        .withReplicas(null)
-                        .withConfigs(Configs.of(TEST_CONFIG_K1, "v2"))    // should be overridden
-                        .withConfigMapRefs(Set.of(TEST_CONFIG_MAP_NAME))
-                        .build())
-                .build();
-
+        var resource = new TestResource(new TestConfigMapsObject(
+                Configs.of(TEST_CONFIG_K1, "v2"),
+                Set.of(TEST_CONFIG_MAP_NAME)
+        ));
         // When
-        var result = (V1KafkaTopic) new KafkaTopicConfigMapsTransformation()
+        var result = (TestResource) new ConfigMapsTransformation()
                 .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
         // Then
         Configs configs = result.getSpec().getConfigs();
         Assertions.assertEquals(1, configs.size());
-        Assertions.assertNull(result.getSpec().getConfigMapRefs());
         Assertions.assertEquals("v1", configs.get(TEST_CONFIG_K1).value());
+    }
+
+    public static class TestConfigMapsObject implements HasConfigRefs {
+
+        private Configs configs;
+
+        private Set<String> configMapRefs;
+
+        public TestConfigMapsObject(Configs configs, Set<String> configMapRefs) {
+            this.configs = configs;
+            this.configMapRefs = configMapRefs;
+        }
+
+        @Override
+        public Set<String> getConfigMapRefs() {
+            return configMapRefs;
+        }
+
+        @Override
+        public void setConfigMapRefs(Set<String> configMapsRefs) {
+            this.configMapRefs = configMapsRefs;
+        }
+
+        @Override
+        public Configs getConfigs() {
+            return configs;
+        }
+
+        @Override
+        public void setConfigs(final Configs configs) {
+            this.configs = configs;
+        }
+    }
+
+    public static class TestResource implements HasSpec<TestConfigMapsObject> {
+
+        private final TestConfigMapsObject object;
+
+        public TestResource(TestConfigMapsObject object) {
+            this.object = object;
+        }
+
+        @Override
+        public ObjectMeta getMetadata() {
+            return null;
+        }
+
+        @Override
+        public HasMetadata withMetadata(ObjectMeta objectMeta) {
+            return null;
+        }
+
+        @Override
+        public String getApiVersion() {
+            return null;
+        }
+
+        @Override
+        public String getKind() {
+            return null;
+        }
+
+        @Override
+        public TestConfigMapsObject getSpec() {
+            return object;
+        }
     }
 }

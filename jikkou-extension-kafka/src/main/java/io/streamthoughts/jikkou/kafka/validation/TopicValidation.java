@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Validation for {@link V1KafkaTopic}.
  */
-@SupportedResource(type = V1KafkaTopic.class)
+@AcceptsResource(type = V1KafkaTopic.class)
 public abstract class TopicValidation implements ResourceValidation<V1KafkaTopic> {
 
     private Configuration config;

@@ -42,6 +42,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.Singular;
 import lombok.ToString;
 import lombok.With;
@@ -245,6 +246,20 @@ public class JikkouAnnotator extends AbstractAnnotator {
                         LombokAnnotation.builder()
                                 .schemaProperty(LOMBOK_SCHEMA_PROPERTY_PREFIX + "to-string")
                                 .annotation(ToString.class)
+                                .enabledByDefault(false)
+                                .build()
+                )
+                .registerLombokAnnotation(
+                        LombokAnnotation.builder()
+                                .schemaProperty(LOMBOK_SCHEMA_PROPERTY_PREFIX + "setter")
+                                .annotation(Setter.class)
+                                .enabledByDefault(false)
+                                .build()
+                )
+                .registerLombokAnnotation(
+                        LombokAnnotation.builder()
+                                .schemaProperty(LOMBOK_SCHEMA_PROPERTY_PREFIX + "getter")
+                                .annotation(Getter.class)
                                 .enabledByDefault(false)
                                 .build()
                 )

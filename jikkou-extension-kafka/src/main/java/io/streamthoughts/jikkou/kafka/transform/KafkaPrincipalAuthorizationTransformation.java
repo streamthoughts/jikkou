@@ -18,9 +18,9 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
 import io.streamthoughts.jikkou.api.annotations.Priority;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasPriority;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Transformation to apply all roles to topic objects.
  */
-@SupportedResource(type = V1KafkaPrincipalAuthorization.class)
+@AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
 @ExtensionEnabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 public class KafkaPrincipalAuthorizationTransformation implements ResourceTransformation<V1KafkaPrincipalAuthorization> {

@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import io.streamthoughts.jikkou.api.annotations.AcceptConfigProperty;
+import io.streamthoughts.jikkou.api.annotations.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.api.annotations.ExtensionType;
 import io.streamthoughts.jikkou.api.config.ConfigPropertyDescriptor;
 import io.streamthoughts.jikkou.api.config.Configurable;
@@ -92,7 +92,7 @@ public interface ExternalResourceCollector<R extends HasMetadata>
 
     static List<ConfigPropertyDescriptor> getConfigPropertyDescriptors(Class<? extends ExternalResourceCollector> type) {
         return AnnotationResolver
-                .findAllAnnotationsByType(type, AcceptConfigProperty.class)
+                .findAllAnnotationsByType(type, AcceptsConfigProperty.class)
                 .stream()
                 .map(descriptor -> new ConfigPropertyDescriptor(
                         descriptor.name(),

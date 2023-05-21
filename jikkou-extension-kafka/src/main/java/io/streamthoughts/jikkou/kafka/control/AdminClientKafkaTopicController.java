@@ -25,8 +25,8 @@ import static io.streamthoughts.jikkou.api.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.annotations.SupportedReconciliationModes;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
@@ -57,9 +57,9 @@ import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SupportedResource(type = V1KafkaTopic.class)
-@SupportedResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
-@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY_ALL})
+@AcceptsResource(type = V1KafkaTopic.class)
+@AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
+@AcceptsReconciliationModes( { CREATE, DELETE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaTopicController extends AbstractAdminClientKafkaController
         implements BaseExternalResourceController<V1KafkaTopic, TopicChange> {
 

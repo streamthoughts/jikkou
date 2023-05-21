@@ -21,7 +21,8 @@ package io.streamthoughts.jikkou.api.model;
 import static io.streamthoughts.jikkou.api.model.HasMetadataAcceptable.getAcceptedResources;
 
 import io.streamthoughts.jikkou.api.TestResource;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResources;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -62,9 +63,12 @@ class HasMetadataAcceptableTest {
         Assertions.assertEquals(TestResourceConverter.class, converter.getClass());
     }
 
-    @SupportedResource(
-            type = TestResource.class,
-            converter = TestResourceConverter.class
+    @AcceptsResources(
+            {
+                    @AcceptsResource( type = TestResource.class,
+                    converter = TestResourceConverter.class
+            )}
+
     )
     public static class TestHasMetadataAcceptable implements HasMetadataAcceptable {
 

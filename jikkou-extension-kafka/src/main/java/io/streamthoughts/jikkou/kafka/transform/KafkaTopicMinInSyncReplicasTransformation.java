@@ -20,9 +20,9 @@ package io.streamthoughts.jikkou.kafka.transform;
 
 import static io.streamthoughts.jikkou.JikkouMetadataAnnotations.JIKKOU_IO_TRANSFORM_PREFIX;
 
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
 import io.streamthoughts.jikkou.api.annotations.Priority;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
  * This transformation can be used to enforce a minimum value for the `min.insync.replicas` property of a kafka topic.
  */
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@SupportedResource(type = V1KafkaTopic.class)
+@AcceptsResource(type = V1KafkaTopic.class)
 @ExtensionEnabled(value = false)
 public class KafkaTopicMinInSyncReplicasTransformation implements ResourceTransformation<V1KafkaTopic> {
 

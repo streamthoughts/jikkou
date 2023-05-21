@@ -28,6 +28,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({TYPE})
-public @interface SupportedResources {
-    SupportedResource[] value();
+public @interface AcceptsConfigProperties {
+    AcceptsConfigProperty[] value();
 }

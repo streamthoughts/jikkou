@@ -25,8 +25,8 @@ import static io.streamthoughts.jikkou.api.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.annotations.SupportedReconciliationModes;
-import io.streamthoughts.jikkou.api.annotations.SupportedResource;
+import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
@@ -52,9 +52,9 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
-@SupportedResource(type = V1KafkaClientQuota.class)
-@SupportedResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
-@SupportedReconciliationModes(modes = {CREATE, DELETE, UPDATE, APPLY_ALL})
+@AcceptsResource(type = V1KafkaClientQuota.class)
+@AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
+@AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaQuotaController extends AbstractAdminClientKafkaController
         implements BaseExternalResourceController<V1KafkaClientQuota, QuotaChange> {
 

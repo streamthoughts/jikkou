@@ -20,6 +20,7 @@ package io.streamthoughts.jikkou.api;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import io.streamthoughts.jikkou.api.transform.ConfigMapsTransformation;
 import io.streamthoughts.jikkou.api.transform.ExcludeIgnoreResourceTransformation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
@@ -32,5 +33,6 @@ public class CoreExtensionProvider implements ExtensionProvider {
     @Override
     public void registerExtensions(@NotNull ExtensionFactory factory, @NotNull Configuration configuration) {
         factory.register(ExcludeIgnoreResourceTransformation.class);
+        factory.register(ConfigMapsTransformation.class);
     }
 }
