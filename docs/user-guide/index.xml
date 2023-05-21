@@ -1,9 +1,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – User Guide</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/</link><description>Recent content in User Guide on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/user-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Core</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/core/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>Here, you will find information to use extensions for Apache Kafka&lt;/p>
+&lt;p>Here, you will find information to use the Core extensions.&lt;/p>
 &lt;/div>
 &lt;p>More information:&lt;/p></description></item><item><title>Docs: Apache Kafka</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>Here, you will find information to use extensions for Apache Kafka&lt;/p>
+&lt;p>Here, you will find information to use the Apache Kafka extensions.&lt;/p>
 &lt;/div>
 &lt;p>More information:&lt;/p></description></item></channel></rss>

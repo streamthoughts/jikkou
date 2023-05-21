@@ -46,6 +46,10 @@ waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 &lt;p>Here, you will find the list of resources supported for Apache Kafka.&lt;/p>
 &lt;/div>
 &lt;h2 id="apache-kafka-resources">Apache Kafka Resources&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information to use the built-in transformations for Apache Kafka resources.&lt;/p>
+&lt;/div>
 &lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="topics">Topics&lt;/h2>

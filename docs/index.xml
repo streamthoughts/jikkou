@@ -932,7 +932,42 @@ fields:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">max.message.bytes&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">20971520&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">3600000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Topics</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/topics/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: External Resource Collectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;em>&lt;strong>ExternalResourceCollectors&lt;/strong>&lt;/em> are used to collect and describe all entities that exist into your system for a
+specific resource type.&lt;/p>
+&lt;/div>
+&lt;h2 id="available-collectors">Available Collectors&lt;/h2>
+&lt;p>You can list all the available collectors using the Jikkou CLI command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>ExternalResourceCollector &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: External Resource Controllers</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;em>&lt;strong>ExternalResourceControllers&lt;/strong>&lt;/em> are used to compute and apply changes required to reconcile resources into a managed
+system.&lt;/p>
+&lt;/div>
+&lt;h2 id="available-controllers">Available Controllers&lt;/h2>
+&lt;p>You can list all the available controllers using the Jikkou CLI command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>ExternalResourceController &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</guid><description>
+&lt;h2 id="extensions">Extensions&lt;/h2>
+&lt;p>Jikkou allows implementing and configuring extensions, i.e., &lt;em>&lt;code>Validation&lt;/code>&lt;/em>, and &lt;em>&lt;code>Transformer&lt;/code>&lt;/em>.&lt;/p>
+&lt;p>Jikkou&amp;rsquo;s sources are available on&lt;a href="https://mvnrepository.com/artifact/io.streamthoughts/jikkou">Maven Central&lt;/a>&lt;/p>
+&lt;p>&lt;strong>For Maven:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;groupId&amp;gt;&lt;/span>io.streamthoughts&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;artifactId&amp;gt;&lt;/span>jikkou-api&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;version&amp;gt;&lt;/span>${jikkou.version}&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>For Gradle:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>implementation group: &amp;#39;io.streamthoughts&amp;#39;, name: &amp;#39;jikkou&amp;#39;, version: ${jikkou.version}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="packaging">Packaging&lt;/h2>
+&lt;p>To make your extensions available to Jikkou, install them into one or many local directories.
+Then, use the &lt;code>jikkou.extension.paths&lt;/code> property to configure the list of locations from which the extensions will be loaded.&lt;/p>
+&lt;p>Each configured directories may contain:&lt;/p>
+&lt;ul>
+&lt;li>an uber JAR containing all the classes and third-party dependencies for the extensions.&lt;/li>
+&lt;li>a directory containing all JARs for the extensions.&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Kafka Topics</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/topics/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaTopic resources are used to define the topics you want to manage on your Kafka Cluster(s). A KafkaTopic resource
 defines the number of partitions, the replication factor, and the configuration properties to be associated to a topics.&lt;/p>
@@ -1286,23 +1321,179 @@ the &lt;code>KafkaClientQuotaList&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">requestPercentage&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">10&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">producerByteRate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1024&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">consumerByteRate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1024&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</guid><description>
-&lt;h2 id="extensions">Extensions&lt;/h2>
-&lt;p>Jikkou allows implementing and configuring extensions, i.e., &lt;em>&lt;code>Validation&lt;/code>&lt;/em>, and &lt;em>&lt;code>Transformer&lt;/code>&lt;/em>.&lt;/p>
-&lt;p>Jikkou&amp;rsquo;s sources are available on&lt;a href="https://mvnrepository.com/artifact/io.streamthoughts/jikkou">Maven Central&lt;/a>&lt;/p>
-&lt;p>&lt;strong>For Maven:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;dependency&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;groupId&amp;gt;&lt;/span>io.streamthoughts&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/groupId&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;artifactId&amp;gt;&lt;/span>jikkou-api&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/artifactId&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;lt;version&amp;gt;&lt;/span>${jikkou.version}&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/version&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;/dependency&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>For Gradle:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>implementation group: &amp;#39;io.streamthoughts&amp;#39;, name: &amp;#39;jikkou&amp;#39;, version: ${jikkou.version}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="packaging">Packaging&lt;/h2>
-&lt;p>To make your extensions available to Jikkou, install them into one or many local directories.
-Then, use the &lt;code>jikkou.extension.paths&lt;/code> property to configure the list of locations from which the extensions will be loaded.&lt;/p>
-&lt;p>Each configured directories may contain:&lt;/p>
-&lt;ul>
-&lt;li>an uber JAR containing all the classes and third-party dependencies for the extensions.&lt;/li>
-&lt;li>a directory containing all JARs for the extensions.&lt;/li>
-&lt;/ul></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaTopicMaxNumPartitions</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxnumpartitions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxnumpartitions/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the number of partitions of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>maxNumPartitions&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>maximum value for the number of partitions to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitions
+priority = 100
+config = {
+maxNumPartitions = 50
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMaxRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxretentionms/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>maxRetentionMs&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of &lt;code>retention.ms&lt;/code> to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+priority = 100
+config = {
+maxRetentionMs = 2592000000 # 30 days
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinInSyncReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmininsyncreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmininsyncreplicas/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>min.insync.replicas&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>minInSyncReplicas&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of &lt;code>min.insync.replicas&lt;/code> to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
+priority = 100
+config = {
+minInSyncReplicas = 2
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminreplicas/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a minimum value for the replication factor of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>minReplicationFactor&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of replication factor to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation
+priority = 100
+config = {
+minReplicationFactor = 3
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminretentionms/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>minRetentionMs&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of &lt;code>retention.ms&lt;/code> to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+priority = 100
+config = {
+minRetentionMs = 604800000 # 7 days
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item></channel></rss>

@@ -1,0 +1,176 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/</link><description>Recent content in Transformations on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaTopicMaxNumPartitions</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxnumpartitions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxnumpartitions/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the number of partitions of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>maxNumPartitions&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>maximum value for the number of partitions to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitions
+priority = 100
+config = {
+maxNumPartitions = 50
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMaxRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmaxretentionms/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>maxRetentionMs&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of &lt;code>retention.ms&lt;/code> to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+priority = 100
+config = {
+maxRetentionMs = 2592000000 # 30 days
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinInSyncReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmininsyncreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicmininsyncreplicas/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>min.insync.replicas&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>minInSyncReplicas&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of &lt;code>min.insync.replicas&lt;/code> to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
+priority = 100
+config = {
+minInSyncReplicas = 2
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminreplicas/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a minimum value for the replication factor of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>minReplicationFactor&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of replication factor to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation
+priority = 100
+config = {
+minReplicationFactor = 3
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/transformations/kafkatopicminretentionms/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>minRetentionMs&lt;/code>&lt;/td>
+&lt;td>Int&lt;/td>
+&lt;td>Minimum value of &lt;code>retention.ms&lt;/code> to be used for Kafka Topics&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+transformations: [
+{
+type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+priority = 100
+config = {
+minRetentionMs = 604800000 # 7 days
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item></channel></rss>
