@@ -2,6 +2,8 @@
 title: "Configuration"
 linkTitle: "Configuration"
 weight: 2
+description: >
+  Learn how to configure the extensions for Apache Kafka.
 ---
 
 {{% pageinfo %}}

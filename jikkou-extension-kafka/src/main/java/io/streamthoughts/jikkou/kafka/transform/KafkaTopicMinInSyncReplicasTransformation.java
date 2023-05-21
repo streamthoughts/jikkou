@@ -40,7 +40,7 @@ import org.apache.kafka.common.config.TopicConfig;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This transformation can be used to enforce a {@code min.insync.replicas} for a kafka topic.
+ * This transformation can be used to enforce a minimum value for the `min.insync.replicas` property of a kafka topic.
  */
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 @SupportedResource(type = V1KafkaTopic.class)

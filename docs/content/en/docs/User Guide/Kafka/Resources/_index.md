@@ -2,6 +2,8 @@
 title: "Resources"
 linkTitle: "Resources"
 weight: 2
+description: >
+  Learn how to use the built-in resources provided by the extensions for Apache Kafka.
 ---
 
 {{% pageinfo %}}

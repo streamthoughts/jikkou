@@ -3,7 +3,7 @@ categories: []
 tags: ["feature", "extensions"] 
 title: "Extensions"
 linkTitle: "Extensions"
-weight: 80
+weight: 10
 description: >
   Learn how to extend Jikkou
 ---
