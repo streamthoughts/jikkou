@@ -2,6 +2,8 @@
 title: "Apache Kafka"
 linkTitle: "Apache Kafka"
 weight: 2
+description: >
+  Extensions for Apache Kafka.
 ---
 
 {{% pageinfo %}}

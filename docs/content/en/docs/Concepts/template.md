@@ -3,8 +3,6 @@ tags: [ "concept", "feature" ]
 title: "Template"
 linkTitle: "Template"
 weight: 7
-description: >
-  Learn how to use templating to dynamically build resource definition files.
 ---
 
 {{% pageinfo color="info" %}}

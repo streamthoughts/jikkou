@@ -4,8 +4,6 @@ tags: ["feature", "extensions"]
 title: "Extensions"
 linkTitle: "Extensions"
 weight: 10
-description: >
-  Learn how to extend Jikkou
 ---
 
 ## Extensions

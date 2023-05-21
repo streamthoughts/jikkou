@@ -3,7 +3,7 @@ title: "Core"
 linkTitle: "Core"
 weight: 1
 description: >
-  Learn how to use the core resources provided by Jikkou.
+  Core extensions for Jikkou
 ---
 
 {{% pageinfo %}}
