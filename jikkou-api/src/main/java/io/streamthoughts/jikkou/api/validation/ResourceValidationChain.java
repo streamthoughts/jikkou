@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.jikkou.api.validation;
 
+import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -47,7 +50,12 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
     @Override
     public void validate(@NotNull final List<HasMetadata> resources) {
 
-        Map<ResourceType, List<HasMetadata>> grouped = new GenericResourceListObject(resources).groupByType();
+        List<HasMetadata> filtered = resources.stream()
+                .filter(Predicate.not(JikkouMetadataAnnotations::isAnnotatedWithByPassValidation))
+                .collect(Collectors.toList());
+
+        Map<ResourceType, List<HasMetadata>> grouped = new GenericResourceListObject(filtered)
+                .groupByType();
 
         List<ValidationException> exceptions = new ArrayList<>(resources.size());
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : grouped.entrySet()) {

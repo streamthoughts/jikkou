@@ -19,28 +19,37 @@
 package io.streamthoughts.jikkou;
 
 import io.streamthoughts.jikkou.api.model.HasMetadata;
+import org.jetbrains.annotations.NotNull;
 
 public final class JikkouMetadataAnnotations {
 
     public static String JIKKOU_IO_ITEMS_COUNT = "jikkou.io/items-count";
     public static final String JIKKOU_IO_IGNORE = "jikkou.io/ignore";
     public static final String JIKKOU_IO_DELETE = "jikkou.io/delete";
+    public static final String JIKKOU_BYPASS_VALIDATIONS = "jikkou.io/bypass-validations";
     public static final String JIKKOU_IO_TRANSFORM_PREFIX = "transform.jikkou.io";
 
     private JikkouMetadataAnnotations() {
     }
 
+    public static boolean isAnnotatedWithByPassValidation(final HasMetadata resource) {
+        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_BYPASS_VALIDATIONS);
+    }
+
     public static boolean isAnnotatedWithIgnore(final HasMetadata resource) {
-        return HasMetadata.getMetadataAnnotation(resource, JikkouMetadataAnnotations.JIKKOU_IO_IGNORE)
+        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_IO_IGNORE);
+    }
+
+    public static boolean isAnnotatedWithDelete(final HasMetadata resource) {
+        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_IO_DELETE);
+    }
+
+    @NotNull
+    private static Boolean isAnnotatedWith(HasMetadata resource, String jikkouIoIgnore) {
+        return HasMetadata.getMetadataAnnotation(resource, jikkouIoIgnore)
                 .map(Object::toString)
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }
 
-    public static boolean isAnnotatedWithDelete(final HasMetadata resource) {
-        return HasMetadata.getMetadataAnnotation(resource, JikkouMetadataAnnotations.JIKKOU_IO_DELETE)
-                .map(Object::toString)
-                .map(Boolean::parseBoolean)
-                .orElse(false);
-    }
 }
