@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.api.transform;
 
 import io.streamthoughts.jikkou.api.annotations.AcceptsResources;
+import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
 import io.streamthoughts.jikkou.api.annotations.Priority;
 import io.streamthoughts.jikkou.api.error.InvalidResourceException;
 import io.streamthoughts.jikkou.api.model.Configs;
@@ -39,31 +40,34 @@ import org.jetbrains.annotations.NotNull;
  * @see ConfigMap
  */
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
+@ExtensionEnabled
 @AcceptsResources(value = {})
-public class ConfigMapsTransformation implements ResourceTransformation<HasSpec<? extends HasConfigRefs>> {
-    
-    @Override
-    public boolean canAccept(@NotNull HasMetadata resource) {
-        if (HasSpec.class.isAssignableFrom(resource.getClass())) {
-            Object spec = ((HasSpec) resource).getSpec();
-            return spec instanceof HasConfigRefs;
-        }
-        return false;
-    }
+public class ConfigMapsTransformation implements ResourceTransformation<HasMetadata> {
+
 
     /**
      * {@inheritDoc
      */
     @Override
-    public @NotNull Optional<HasSpec<? extends HasConfigRefs>> transform(@NotNull HasSpec<? extends HasConfigRefs> resource,
-                                                                         @NotNull HasItems list) {
+    public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata resource,
+                                                    @NotNull HasItems list) {
+        HasMetadata result = resource;
+        if (HasSpec.class.isAssignableFrom(resource.getClass())) {
+            Object spec = ((HasSpec) resource).getSpec();
+            if (spec instanceof HasConfigRefs) {
+                result = doTransform((HasSpec<HasConfigRefs>) resource, list);
+            }
+        }
+        return Optional.of(result);
+    }
 
+    private HasMetadata doTransform(final HasSpec<HasConfigRefs> resource,
+                                    final HasItems list) {
         HasConfigRefs spec = resource.getSpec();
-
         var configMapRefs = spec.getConfigMapRefs();
 
         if (configMapRefs == null || configMapRefs.isEmpty()) {
-            return Optional.of(resource);
+            return resource;
         }
 
         ConfigMapList configMapList = ConfigMapList.builder()
@@ -92,6 +96,6 @@ public class ConfigMapsTransformation implements ResourceTransformation<HasSpec<
         spec.setConfigMapRefs(null);
         spec.setConfigs(allConfigs);
 
-        return Optional.of(resource);
+        return resource;
     }
 }

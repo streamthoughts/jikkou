@@ -96,14 +96,6 @@ public final class ResourceType implements HasMetadataAcceptable {
      * {@inheritDoc}
      */
     @Override
-    public boolean canAccept(@NotNull HasMetadata resource) {
-        return canAccept(ResourceType.create(resource));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean canAccept(@NotNull ResourceType that) {
         if (equals(that)) {
             return true;

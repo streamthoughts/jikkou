@@ -30,16 +30,6 @@ import org.jetbrains.annotations.NotNull;
 public interface HasMetadataAcceptable {
 
     /**
-     * Checks whether a given resource is acceptable.
-     *
-     * @param resource  the resource.
-     * @return          {@code true} if the given resource is acceptable.
-     */
-    default boolean canAccept(@NotNull HasMetadata resource) {
-        return canAccept(this, resourceType -> resourceType.canAccept(resource));
-    }
-
-    /**
      * Checks whether a given resource-type is acceptable.
      *
      * @param type      the type of the resource.

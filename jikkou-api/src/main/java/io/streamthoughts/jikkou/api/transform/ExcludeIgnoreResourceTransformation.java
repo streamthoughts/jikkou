@@ -19,31 +19,19 @@
 package io.streamthoughts.jikkou.api.transform;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.api.annotations.AcceptsResources;
 import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
 import io.streamthoughts.jikkou.api.annotations.Priority;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasPriority;
-import io.streamthoughts.jikkou.api.model.ResourceType;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 @ExtensionEnabled
+@AcceptsResources(value = {})
 public class ExcludeIgnoreResourceTransformation implements ResourceTransformation<HasMetadata> {
-
-
-    /** {@inheritDoc}**/
-    @Override
-    public boolean canAccept(@NotNull HasMetadata resource) {
-        return true;
-    }
-    
-    /** {@inheritDoc}**/
-    @Override
-    public boolean canAccept(@NotNull ResourceType type) {
-        return true;
-    }
 
     /** {@inheritDoc}**/
     @Override

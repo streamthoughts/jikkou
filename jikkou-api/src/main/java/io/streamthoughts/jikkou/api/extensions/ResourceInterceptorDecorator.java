@@ -61,14 +61,6 @@ public class ResourceInterceptorDecorator<E extends ResourceInterceptor, D exten
      * {@inheritDoc}
      **/
     @Override
-    public boolean canAccept(@NotNull HasMetadata resource) {
-        return this.extension.canAccept(resource);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
     public boolean canAccept(@NotNull ResourceType type) {
         return this.extension.canAccept(type);
     }

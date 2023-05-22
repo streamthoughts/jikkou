@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.transform;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasPriority;
+import io.streamthoughts.jikkou.api.model.ResourceType;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -59,12 +60,12 @@ public class ResourceTransformationChain implements ResourceTransformation<HasMe
      * {@inheritDoc}
      **/
     @Override
-    public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata toTransform, @NotNull HasItems otherResources) {
-        Optional<HasMetadata> result = Optional.of(toTransform);
+    public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata resource, @NotNull HasItems otherResources) {
+        Optional<HasMetadata> result = Optional.of(resource);
         Iterator<ResourceTransformation<HasMetadata>> iterator = transformations.iterator();
         while (iterator.hasNext() && result.isPresent()) {
             ResourceTransformation<HasMetadata> transformation = iterator.next();
-            if (transformation.canAccept(toTransform)) {
+            if (transformation.canAccept(ResourceType.create(resource))) {
                 result = transformation.transform(result.get(), otherResources);
             }
         }

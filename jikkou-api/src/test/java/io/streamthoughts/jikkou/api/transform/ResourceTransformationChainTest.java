@@ -62,12 +62,7 @@ class ResourceTransformationChainTest {
             public boolean canAccept(@NotNull ResourceType type) {
                 return true;
             }
-
-            @Override
-            public boolean canAccept(@NotNull HasMetadata resource) {
-                return true;
-            }
-
+            
             @Override
             public int getPriority() {
                 return priority;
