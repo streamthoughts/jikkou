@@ -198,4 +198,11 @@ waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 &lt;p>(auto registered)&lt;/p>
 &lt;h2 id="quotas">Quotas&lt;/h2>
 &lt;h3 id="quotasentityvalidation">&lt;code>QuotasEntityValidation&lt;/code>&lt;/h3>
-&lt;p>(auto registered)&lt;/p></description></item></channel></rss>
+&lt;p>(auto registered)&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/annotations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information about the annotations provided the Apache Kafka extension for Jikkou.&lt;/p>
+&lt;/div>
+&lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
+&lt;h4 id="kafkajikkouiocluster-id">&lt;code>kafka.jikkou.io/cluster-id&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item></channel></rss>
