@@ -60,6 +60,7 @@ public class JikkouAnnotator extends AbstractAnnotator {
     public static final String SPEC_NAMES = "names";
     public static final String SPEC_NAMES_SHORT_NAMES = "shortNames";
     public static final String SPEC = "spec";
+    public static final String SPEC_IS_TRANSIENT = "isTransient";
 
     private final Mapping classAnnotationMapping = new Mapping();
 
@@ -141,10 +142,6 @@ public class JikkouAnnotator extends AbstractAnnotator {
             annotate.param("value", descriptionProperty.textValue());
         }
 
-        JsonNode isTransient = additionalProperties.get("isTransient");
-        if (isTransient != null && isTransient.asBoolean()) {
-            clazz.annotate(Transient.class);
-        }
 
         JsonNode spec = additionalProperties.get(SPEC);
         if (spec != null) {
@@ -164,6 +161,10 @@ public class JikkouAnnotator extends AbstractAnnotator {
                             .map(JsonNode::textValue)
                             .forEach(params::param);
                 }
+            }
+            JsonNode isTransient = spec.get(SPEC_IS_TRANSIENT);
+            if (isTransient != null && isTransient.isBoolean()) {
+                clazz.annotate(Transient.class);
             }
         }
     }

@@ -8,7 +8,10 @@
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,
-    "all-args-constructor": false
+    "all-args-constructor": false,
+    "spec": {
+      "isTransient" : true
+    }
   },
   "required": [
     "apiVersion",

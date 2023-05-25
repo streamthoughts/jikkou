@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
 import io.streamthoughts.jikkou.api.model.annotations.Description;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
+import io.streamthoughts.jikkou.api.model.annotations.Transient;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ import lombok.With;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("")
+@Transient
 @JsonPropertyOrder({
     "apiVersion",
     "kind",

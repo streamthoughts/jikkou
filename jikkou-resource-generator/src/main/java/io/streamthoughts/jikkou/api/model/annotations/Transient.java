@@ -24,8 +24,12 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Defines a Jikkou Resource as transient.
+ * Transient resources are only used as part of the processing and validation chain,
+ * and are never reconciled with a managed system.
+ */
 @Documented
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target({TYPE})
-public @interface Transient {
-}
+public @interface Transient { }

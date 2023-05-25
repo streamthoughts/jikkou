@@ -10,7 +10,9 @@
     "lombok-builder": true,
     "lombok-with": true,
     "all-args-constructor": false,
-    "isTransient": true
+    "spec": {
+      "isTransient" : true
+    }
   },
   "required": [
     "apiVersion",
