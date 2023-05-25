@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
  * @param <C> type of the change managed by this controller.
  */
 @Evolving
-public interface BaseExternalResourceController<
+public interface BaseResourceController<
         R extends HasMetadata,
         C extends Change>
-        extends ExternalResourceController<R, C> {
+        extends ResourceController<R, C> {
 
     /**
      * {@inheritDoc}

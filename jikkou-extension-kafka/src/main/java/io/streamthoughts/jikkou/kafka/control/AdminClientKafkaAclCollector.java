@@ -20,7 +20,7 @@ package io.streamthoughts.jikkou.kafka.control;
 
 import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
 public final class AdminClientKafkaAclCollector extends AbstractAdminClientKafkaController
-        implements ExternalResourceCollector<V1KafkaPrincipalAuthorization> {
+        implements ResourceCollector<V1KafkaPrincipalAuthorization> {
 
     /**
      * Creates a new {@link AdminClientKafkaAclCollector} instance.

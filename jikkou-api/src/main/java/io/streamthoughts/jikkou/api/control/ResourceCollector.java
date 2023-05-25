@@ -37,13 +37,13 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * This interface is used to collect all resources that currently exist into the managed system.
- * An {@link ExternalResourceCollector} is only responsible to collect resources for a specific type.
+ * An {@link ResourceCollector} is only responsible to collect resources for a specific type.
  *
  * @param <R> type of the resources that are collected.
  */
 @Evolving
-@ExtensionType("ExternalResourceCollector")
-public interface ExternalResourceCollector<R extends HasMetadata>
+@ExtensionType("Collector")
+public interface ResourceCollector<R extends HasMetadata>
         extends HasMetadataAcceptable, Extension, Configurable, AutoCloseable {
 
     /**
@@ -86,11 +86,11 @@ public interface ExternalResourceCollector<R extends HasMetadata>
     default void close() {}
 
 
-    static List<ConfigPropertyDescriptor> getConfigPropertyDescriptors(ExternalResourceCollector<?> collector) {
+    static List<ConfigPropertyDescriptor> getConfigPropertyDescriptors(ResourceCollector<?> collector) {
         return getConfigPropertyDescriptors(collector.getClass());
     }
 
-    static List<ConfigPropertyDescriptor> getConfigPropertyDescriptors(Class<? extends ExternalResourceCollector> type) {
+    static List<ConfigPropertyDescriptor> getConfigPropertyDescriptors(Class<? extends ResourceCollector> type) {
         return AnnotationResolver
                 .findAllAnnotationsByType(type, AcceptsConfigProperty.class)
                 .stream()
@@ -103,5 +103,4 @@ public interface ExternalResourceCollector<R extends HasMetadata>
                 ))
                 .toList();
     }
-
 }

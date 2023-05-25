@@ -41,8 +41,8 @@ import org.jetbrains.annotations.NotNull;
  * @param <C> type of the change managed by this controller.
  */
 @Evolving
-@ExtensionType("ExternalResourceController")
-public interface ExternalResourceController<
+@ExtensionType("Controller")
+public interface ResourceController<
         R extends HasMetadata,
         C extends Change>
         extends HasMetadataAcceptable, Extension, AutoCloseable {

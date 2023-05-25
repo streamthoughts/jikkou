@@ -23,7 +23,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIS
 
 import io.streamthoughts.jikkou.api.ResourceDescriptor;
 import io.streamthoughts.jikkou.api.config.ConfigPropertyDescriptor;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.api.model.HasMetadataAcceptable;
@@ -49,12 +49,12 @@ public class GetCommandGenerator {
         ExtensionFactory extensionFactory = context.getExtensionFactory();
         CommandLine cmd = new CommandLine(new GetCommand());
 
-        Collection<ExtensionDescriptor<ExternalResourceCollector>> descriptors = extensionFactory
-                .getAllDescriptorsForType(ExternalResourceCollector.class);
+        Collection<ExtensionDescriptor<ResourceCollector>> descriptors = extensionFactory
+                .getAllDescriptorsForType(ResourceCollector.class);
 
         Map<String, List<String>> sections = new LinkedHashMap<>();
-        for (ExtensionDescriptor<ExternalResourceCollector> descriptor : descriptors) {
-            Class<ExternalResourceCollector> type = descriptor.clazz();
+        for (ExtensionDescriptor<ResourceCollector> descriptor : descriptors) {
+            Class<ResourceCollector> type = descriptor.clazz();
 
             List<ResourceType> resources = HasMetadataAcceptable.getAcceptedResources(type);
             for (ResourceType resource : resources) {
@@ -76,7 +76,7 @@ public class GetCommandGenerator {
 
                 spec.aliases(resourceDescriptor.shortNames().toArray(new String[0]));
 
-                List<ConfigPropertyDescriptor> configs = ExternalResourceCollector.getConfigPropertyDescriptors(type);
+                List<ConfigPropertyDescriptor> configs = ResourceCollector.getConfigPropertyDescriptors(type);
                 for (ConfigPropertyDescriptor config : configs) {
                     spec.addOption(CommandLine.Model.OptionSpec
                             .builder("--" + config.name())

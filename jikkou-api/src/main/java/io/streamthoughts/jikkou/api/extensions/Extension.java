@@ -23,8 +23,8 @@ import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
 import io.streamthoughts.jikkou.api.annotations.ExtensionName;
 import io.streamthoughts.jikkou.api.annotations.ExtensionType;
 import io.streamthoughts.jikkou.api.config.Configurable;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
-import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
@@ -36,8 +36,8 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
  * @see io.streamthoughts.jikkou.api.model.Resource
  * @see ResourceValidation
  * @see ResourceTransformation
- * @see ExternalResourceController
- * @see ExternalResourceCollector
+ * @see ResourceController
+ * @see ResourceCollector
  * @see io.streamthoughts.jikkou.api.health.HealthIndicator
  */
 @InterfaceStability.Evolving

@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,7 +29,7 @@ import java.lang.annotation.Target;
 
 /**
  * Defines the reconciliation modes that can be accepted by an
- * {@link io.streamthoughts.jikkou.api.control.ExternalResourceController}.
+ * {@link ResourceController}.
  *
  * An empty set implies that the controller can accept any reconciliation mode.
  */

@@ -19,7 +19,7 @@
 package io.streamthoughts.jikkou.api;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents the context of a reconciliation operation.
  *
- * @see ExternalResourceController
+ * @see ResourceController
  */
 @InterfaceStability.Evolving
 public interface ReconciliationContext {

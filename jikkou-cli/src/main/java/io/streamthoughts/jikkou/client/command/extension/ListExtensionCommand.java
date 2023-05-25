@@ -21,7 +21,7 @@ package io.streamthoughts.jikkou.client.command.extension;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.api.model.ResourceType;
@@ -94,7 +94,7 @@ public class ListExtensionCommand implements Runnable {
                         String.valueOf(descriptor.isEnabled()),
                         descriptor.getSource(),
                         descriptor.getPrintableSupportedResources(),
-                        ExternalResourceController.supportedReconciliationModes(descriptor.clazz())
+                        ResourceController.supportedReconciliationModes(descriptor.clazz())
                                 .stream()
                                 .map(Enum::name)
                                 .map(String::toLowerCase)

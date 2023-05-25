@@ -21,8 +21,8 @@ package io.streamthoughts.jikkou.api;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
-import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import io.streamthoughts.jikkou.api.error.JikkouApiException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
@@ -68,9 +68,9 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         private final List<ResourceValidation<? extends HasMetadata>> validations = new LinkedList<>();
         private final List<ResourceTransformation<? extends HasMetadata>> transformations = new LinkedList<>();
         @SuppressWarnings("rawtypes")
-        private final List<ExternalResourceController> controllers = new LinkedList<>();
+        private final List<ResourceController> controllers = new LinkedList<>();
         @SuppressWarnings("rawtypes")
-        private final List<ExternalResourceCollector> collectors = new LinkedList<>();
+        private final List<ResourceCollector> collectors = new LinkedList<>();
 
         /**
          * {@inheritDoc}
@@ -95,7 +95,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          **/
         @Override
         @SuppressWarnings("rawtypes")
-        public Builder withControllers(final @NotNull List<ExternalResourceController> controllers) {
+        public Builder withControllers(final @NotNull List<ResourceController> controllers) {
             this.controllers.addAll(controllers);
             return this;
         }
@@ -105,7 +105,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          **/
         @Override
         @SuppressWarnings("rawtypes")
-        public Builder withCollectors(final @NotNull List<ExternalResourceCollector> collectors) {
+        public Builder withCollectors(final @NotNull List<ResourceCollector> collectors) {
             this.collectors.addAll(collectors);
             return this;
         }
@@ -144,16 +144,16 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
 
     private final List<ResourceTransformation<HasMetadata>> transformations = new LinkedList<>();
     @SuppressWarnings("rawtypes")
-    private final HasMetadataAcceptableList<ExternalResourceController> controllers;
+    private final HasMetadataAcceptableList<ResourceController> controllers;
     @SuppressWarnings("rawtypes")
-    private final HasMetadataAcceptableList<ExternalResourceCollector> collectors;
+    private final HasMetadataAcceptableList<ResourceCollector> collectors;
 
     /**
      * Creates a new {@link DefaultApi} instance.
      */
     @SuppressWarnings("rawtypes")
-    private DefaultApi(@NotNull final List<ExternalResourceController> controllers,
-                       @NotNull final List<ExternalResourceCollector> collectors) {
+    private DefaultApi(@NotNull final List<ResourceController> controllers,
+                       @NotNull final List<ResourceCollector> collectors) {
         this.controllers = new HasMetadataAcceptableList<>(controllers);
         this.collectors = new HasMetadataAcceptableList<>(collectors);
     }
@@ -188,7 +188,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .entrySet()
                 .stream()
                 .map(e -> {
-                    ExternalResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
+                    ResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
                     return controller.reconcile(e.getValue(), mode, context);
                 })
                 .flatMap(Collection::stream)
@@ -226,7 +226,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .entrySet()
                 .stream()
                 .map(e -> {
-                    ExternalResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
+                    ResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
                     List<HasMetadata> resource = e.getValue();
                     return (ResourceListObject<HasMetadataChange<Change>>) controller.computeReconciliationChanges(
                             resource,
@@ -249,7 +249,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     if (type.isTransient()) {
                         return entry.getValue().stream();
                     } else {
-                        ExternalResourceController<HasMetadata, Change> controller = getControllerForResource(type);
+                        ResourceController<HasMetadata, Change> controller = getControllerForResource(type);
                         ResourceConverter<HasMetadata, HasMetadata> converter = controller.getResourceConverter(type);
                         return converter.convertFrom(entry.getValue()).stream();
                     }
@@ -313,7 +313,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     @SuppressWarnings({"rawtypes"})
-    private ExternalResourceCollector getResourceCollectorForType(@NotNull ResourceType resource) {
+    private ResourceCollector getResourceCollectorForType(@NotNull ResourceType resource) {
 
         var acceptedDescriptors = collectors.allResourcesAccepting(resource);
 
@@ -338,11 +338,12 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
 
-    private ExternalResourceController<HasMetadata, Change> getControllerForResource(@NotNull ResourceType resource) {
+    private ResourceController<HasMetadata, Change> getControllerForResource(@NotNull ResourceType resource) {
         var result = controllers.allResourcesAccepting(resource);
         if (result.isEmpty()) {
             throw new JikkouApiException(String.format(
-                    "Cannot find controller for resource type: version=%s and kind=%s",
+                    "Cannot find controller for resource type: group=%s, version=%s and kind=%s",
+                    resource.getGroup(),
                     resource.getApiVersion(),
                     resource.getKind()
             ));
@@ -351,14 +352,15 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         int numMatchingHandlers = result.size();
         if (numMatchingHandlers > 1) {
             throw new JikkouApiException(String.format(
-                    "Expected single matching controller for resource type: version=%s and kind=%s, but found %s",
+                    "Expected single matching controller for resource type: group=%s, version=%s and kind=%s, but found %s",
+                    resource.getGroup(),
                     resource.getApiVersion(),
                     resource.getKind(),
                     numMatchingHandlers
             ));
         }
         @SuppressWarnings({"unchecked"})
-        ExternalResourceController<HasMetadata, Change> res = result.first();
+        ResourceController<HasMetadata, Change> res = result.first();
         return res;
     }
 

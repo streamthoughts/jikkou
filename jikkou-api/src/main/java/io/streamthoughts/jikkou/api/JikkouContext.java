@@ -21,8 +21,8 @@ package io.streamthoughts.jikkou.api;
 import static io.streamthoughts.jikkou.common.utils.CollectionUtils.cast;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
-import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.extensions.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.api.extensions.Extension;
 import io.streamthoughts.jikkou.api.extensions.ExtensionClassLoader;
@@ -194,8 +194,8 @@ public class JikkouContext {
                                                                                        Configuration configuration) {
             LOG.info("Loading all extensions enabled");
             return builder
-                    .withControllers(getAllEnabledExtensionsForType(ExternalResourceController.class, configuration))
-                    .withCollectors(getAllEnabledExtensionsForType(ExternalResourceCollector.class, configuration))
+                    .withControllers(getAllEnabledExtensionsForType(ResourceController.class, configuration))
+                    .withCollectors(getAllEnabledExtensionsForType(ResourceCollector.class, configuration))
                     .withValidations(cast(getAllEnabledExtensionsForType(ResourceValidation.class, configuration)))
                     .withTransformations(cast(getAllEnabledExtensionsForType(ResourceTransformation.class, configuration)));
         }

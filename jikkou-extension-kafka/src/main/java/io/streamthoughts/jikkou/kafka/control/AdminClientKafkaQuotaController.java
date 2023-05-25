@@ -29,7 +29,7 @@ import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
+import io.streamthoughts.jikkou.api.control.BaseResourceController;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
@@ -56,7 +56,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
 @AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaQuotaController extends AbstractAdminClientKafkaController
-        implements BaseExternalResourceController<V1KafkaClientQuota, QuotaChange> {
+        implements BaseResourceController<V1KafkaClientQuota, QuotaChange> {
 
     public static final String LIMITS_DELETE_ORPHANS_CONFIG_NAME = "limits-delete-orphans";
 

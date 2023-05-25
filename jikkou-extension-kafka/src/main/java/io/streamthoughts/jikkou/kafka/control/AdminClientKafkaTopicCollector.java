@@ -21,7 +21,7 @@ package io.streamthoughts.jikkou.kafka.control;
 import io.streamthoughts.jikkou.api.annotations.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
         type = Boolean.class
 )
 public final class AdminClientKafkaTopicCollector extends AbstractAdminClientKafkaController
-        implements ExternalResourceCollector<V1KafkaTopic> {
+        implements ResourceCollector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);
 

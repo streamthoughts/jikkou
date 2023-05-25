@@ -21,8 +21,8 @@ package io.streamthoughts.jikkou.api;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
-import io.streamthoughts.jikkou.api.control.ExternalResourceController;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.error.JikkouApiException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasItems;
@@ -75,7 +75,7 @@ public interface JikkouApi extends AutoCloseable {
          * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        B withControllers(final @NotNull List<ExternalResourceController> controllers);
+        B withControllers(final @NotNull List<ResourceController> controllers);
 
         /**
          * Associate the given list of resource collectors to the building {@link JikkouApi}.
@@ -84,7 +84,7 @@ public interface JikkouApi extends AutoCloseable {
          * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        B withCollectors(@NotNull List<ExternalResourceCollector> collectors);
+        B withCollectors(@NotNull List<ResourceCollector> collectors);
 
         /**
          * Associate the given resource validation to the building {@link JikkouApi}.
@@ -109,7 +109,7 @@ public interface JikkouApi extends AutoCloseable {
          * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        default B withController(final @NotNull ExternalResourceController controller) {
+        default B withController(final @NotNull ResourceController controller) {
             return withControllers(List.of(controller));
         }
 
@@ -120,7 +120,7 @@ public interface JikkouApi extends AutoCloseable {
          * @return this builder; never null
          */
         @SuppressWarnings("rawtypes")
-        default B withCollector(final @NotNull ExternalResourceCollector descriptor) {
+        default B withCollector(final @NotNull ResourceCollector descriptor) {
             return withCollectors(List.of(descriptor));
         }
 
@@ -169,7 +169,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @return the validated {@link GenericResourceListObject}.
-     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default GenericResourceListObject validate(@NotNull HasItems resources) {
@@ -181,7 +181,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @return the validated {@link GenericResourceListObject}.
-     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     GenericResourceListObject validate(@NotNull HasItems resources, final @NotNull List<ResourceSelector> selectors);
@@ -191,7 +191,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default List<HasMetadata> getResources(final @NotNull Class<? extends HasMetadata> resourceClass) {
@@ -203,7 +203,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default List<HasMetadata> getResources(final @NotNull Class<? extends HasMetadata> resourceClass,
@@ -216,7 +216,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default <T extends HasMetadata> List<T> getResources(final @NotNull Class<? extends HasMetadata> resourceClass,
@@ -231,7 +231,7 @@ public interface JikkouApi extends AutoCloseable {
      * @param type          the class of the resource to be described.
      * @param configuration the configuration to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ExternalResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     @SuppressWarnings("unchecked")

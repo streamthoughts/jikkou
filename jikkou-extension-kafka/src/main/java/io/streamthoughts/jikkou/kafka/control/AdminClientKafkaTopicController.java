@@ -29,7 +29,7 @@ import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.BaseExternalResourceController;
+import io.streamthoughts.jikkou.api.control.BaseResourceController;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
 @AcceptsReconciliationModes( { CREATE, DELETE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaTopicController extends AbstractAdminClientKafkaController
-        implements BaseExternalResourceController<V1KafkaTopic, TopicChange> {
+        implements BaseResourceController<V1KafkaTopic, TopicChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 

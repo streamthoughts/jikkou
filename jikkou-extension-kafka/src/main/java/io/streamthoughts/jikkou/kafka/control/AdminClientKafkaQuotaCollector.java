@@ -20,7 +20,7 @@ package io.streamthoughts.jikkou.kafka.control;
 
 import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ExternalResourceCollector;
+import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsResource(type = V1KafkaClientQuota.class)
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
 public final class AdminClientKafkaQuotaCollector extends AbstractAdminClientKafkaController
-        implements ExternalResourceCollector<V1KafkaClientQuota> {
+        implements ResourceCollector<V1KafkaClientQuota> {
 
     /**
      * Creates a new {@link AdminClientKafkaQuotaCollector} instance.
