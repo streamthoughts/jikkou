@@ -22,7 +22,8 @@ The keys in the map must be string, but values can be any scalar types (_string_
 {{% /alert %}}
 
 {{% alert title="Labels are not persistent" color="warning" %}}
-Jikkou is completely stateless. In other words, it will not store any state about the describe resources objects. Thus, when
+Jikkou is completely stateless. In other words, it will not store any state about the describe resources objects. Thus,
+when
 retrieving objects from your system labels may not be reattached to the metadata objects.
 {{% /alert %}}
 
@@ -59,6 +60,13 @@ Used on: All Objects.
 
 This annotation indicates whether the object should be ignored for reconciliation.
 
+#### `jikkou.io/bypass-validations`
+
+Used on: All Objects.
+
+This annotation indicates whether the object should bypass the validation chain. In other words, no validations will be
+applied on the object.
+
 #### `jikkou.io/delete`
 
 Used on: All Objects.
@@ -76,9 +84,3 @@ This annotation is automatically added by Jikkou to an object when loaded from y
 Used by jikkou.
 
 This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.
-
-#### `kafka.jikkou.io/cluster-id`
-
-Used by jikkou.
-
-The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.

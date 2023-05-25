@@ -6,7 +6,7 @@ description: >
   How to contribute to Jikkou
 ---
 
-Jikkou is an open source project and we love getting patches and contributions to make Jikkou and its docs even better.
+Jikkou is an open source project, and we love getting patches and contributions to make Jikkou and its docs even better.
 
 
 ## Contributing to Jikkou
