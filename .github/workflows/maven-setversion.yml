@@ -15,7 +15,6 @@ on:
 
 jobs:
   set-maven-version:
-    name: Build and analyze
     runs-on: ubuntu-latest
     steps:
       - name: Checkout GitHub Action Repo
@@ -55,13 +54,18 @@ jobs:
       - name: Check VERSION
         run: echo "${{ env.VERSION }}"
 
+      - name: Setup Git Config
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
       - name: Create Tag and Commit
         if: "${{ github.event.inputs.createTag == 'true' }}"
         run: |
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: release version ${{ env.VERSION }} 🎉"
-          git tag -a "v${{ env.VERSION }}" -m"release "v${{ env.VERSION }}"
-          git push --atomic origin main "v${{ env.VERSION }}"
+          git tag -a "v${{ env.VERSION }}" -m"release v${{ env.VERSION }}"
+          git push --atomic origin main v${{ env.VERSION }}
 
       - name: Bump version for next iteration
         if: "${{ github.event.inputs.newVersion == '' }}"

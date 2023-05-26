@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
     runs-on: ubuntu-latest
     permissions:
       contents: write
