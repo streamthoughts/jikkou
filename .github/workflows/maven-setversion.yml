@@ -61,6 +61,8 @@ jobs:
 
       - name: Create Tag and Commit
         if: "${{ github.event.inputs.createTag == 'true' }}"
+        with:
+          github_token: ${{ secrets.PAT}}
         run: |
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: release version ${{ env.VERSION }} 🎉"

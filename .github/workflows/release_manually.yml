@@ -1,9 +1,7 @@
-name: Releases
+name: Releases Manually
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
