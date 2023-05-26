@@ -1,7 +1,9 @@
-name: Releases Manually
+name: Deploy Maven Central
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -41,24 +43,6 @@ jobs:
       - name: Grant execute permission to MVN Wrapper
         run: chmod +x ./mvnw
 
-      - name: Build Distributions
-        run: |
-          ./mvnw -s ./settings.xml clean package -Pdist -DskipTests
-          sha1sum ./dist/jikkou.deb > ./dist/jikkou.deb.sha1
-          sha1sum ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz > ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1
-          sha1sum ./dist/jikkou-${{ env.VERSION }}-runner.zip > ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1
-
       - name: Deploy Maven Central
         run: |
           ./mvnw -s ./settings.xml deploy -Possrh
-
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: "v${{ env.VERSION }}"
-          release_name: RELEASE-${{env.VERSION}}
-          draft: false
-          artifacts: "./dist/jikkou.deb,./dist/jikkou.deb.sha1,./dist/jikkou-${{ env.VERSION }}-runner.tar.gz,./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1,./dist/jikkou-${{ env.VERSION }}-runner.zip,./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1"
-          prerelease: false

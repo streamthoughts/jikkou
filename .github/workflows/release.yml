@@ -1,24 +1,26 @@
 name: Releases
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      newVersion:
+        type: string
+        required: false
+        description: "New version (if null use current version)"
+      createTag:
+        type: boolean
+        required: true
+        description: "Create a Tag"
+        default: true
 
 jobs:
-  build:
+  set-maven-version:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout GitHub Action Repo
         uses: actions/checkout@v3
-
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v5
         with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          clean: true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -28,6 +30,20 @@ jobs:
           check-latest: true
           cache: maven
 
+      - name: Grant execute permission to MVN Wrapper
+        run: chmod +x ./mvnw
+
+      - name: Update release version
+        if: "${{ github.event.inputs.newVersion == '' }}"
+        run: |
+          echo 'Remove snapshot from maven version'
+          ./mvnw -q versions:set -DremoveSnapshot -DprocessAllModules -DgenerateBackupPoms=false
+
+      - name: Set specific version to release
+        if: "${{ github.event.inputs.newVersion != '' }}"
+        run: |
+          ./mvnw -q versions:set -DnewVersion=${{ github.event.inputs.newVersion }}
+
       - name: Set env VERSION
         run: |
           VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
@@ -36,31 +52,54 @@ jobs:
       - name: Check VERSION
         run: echo "${{ env.VERSION }}"
 
-      - name: Init Setting.xml
+      - name: Configure Git
         run: |
-          echo "<settings><interactiveMode>false</interactiveMode><server><id>ossrh</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_PASSWORD }}</password></server></settings>" > settings.xml
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
-      - name: Grant execute permission to MVN Wrapper
-        run: chmod +x ./mvnw
+      - name: Push release version
+        if: "${{ github.event.inputs.createTag == 'true' }}"
+        run: |
+          find . -name 'pom.xml' | xargs git add
+          git commit -m "ci: release version ${{ env.VERSION }} 🎉"
+          git push --atomic origin main
 
       - name: Build Distributions
         run: |
-          ./mvnw -s ./settings.xml clean package -Pdist -DskipTests
+          ./mvnw clean package -Pdist -DskipTests
           sha1sum ./dist/jikkou.deb > ./dist/jikkou.deb.sha1
           sha1sum ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz > ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1
           sha1sum ./dist/jikkou-${{ env.VERSION }}-runner.zip > ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1
 
-      - name: Deploy Maven Central
-        run: |
-          ./mvnw -s ./settings.xml deploy -Possrh
-
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
+          name: "RELEASE-${{ env.VERSION }}"
           tag_name: "v${{ env.VERSION }}"
-          release_name: RELEASE-${{env.VERSION}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
           draft: false
-          artifacts: "./dist/jikkou.deb,./dist/jikkou.deb.sha1,./dist/jikkou-${{ env.VERSION }}-runner.tar.gz,./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1,./dist/jikkou-${{ env.VERSION }}-runner.zip,./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1"
+          files: |
+            ./dist/jikkou.deb
+            ./dist/jikkou.deb.sha1
+            ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz
+            ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1
+            ./dist/jikkou-${{ env.VERSION }}-runner.zip
+            ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1"
           prerelease: false
+
+      - name: Bump version for next iteration
+        if: "${{ github.event.inputs.newVersion == '' }}"
+        run: |
+          ./mvnw -q build-helper:parse-version versions:set \
+            -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
+            versions:commit
+          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Commit Bump Version
+        if: "${{ github.event.inputs.newVersion == '' }}"
+        run: |
+          find . -name 'pom.xml' | xargs git add
+          git commit -m "ci: bump version for next iteration to ${{ env.VERSION }} 🤖"
+          git push origin main
