@@ -93,7 +93,7 @@
         <vavr.version>0.10.4</vavr.version>
         <kafka.version>3.4.0</kafka.version>
         <picocli.version>4.7.1</picocli.version>
-        <jackson.version>2.15.0</jackson.version>
+        <jackson.version>2.15.1</jackson.version>
         <jinjava.version>2.6.0</jinjava.version>
         <reflections.version>0.10.2</reflections.version>
         <lombok.version>1.18.26</lombok.version>
