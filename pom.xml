@@ -25,7 +25,7 @@
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
     <packaging>pom</packaging>
-    <version>0.21.0</version>
+    <version>0.22.0-SNAPSHOT</version>
     <modules>
         <module>jikkou-resource-generator</module>
         <module>jikkou-api</module>
