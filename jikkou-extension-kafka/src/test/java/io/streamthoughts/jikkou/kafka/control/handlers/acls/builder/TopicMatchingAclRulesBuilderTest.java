@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 
 public class TopicMatchingAclRulesBuilderTest {
 
-    static final String TOPIC_REGEX = "/topic-.*/";
+    static final String TOPIC_REGEX = "topic-.*";
     static final String TOPIC_TEST_A = "topic-test-a";
     static final String TOPIC_TEST_B = "topic-test-b";
     static final String USER_TYPE = "User:";
@@ -51,8 +51,8 @@ public class TopicMatchingAclRulesBuilderTest {
 
     private Supplier<Collection<TopicListing>> getSupplier() {
         return () -> Arrays.asList(
-                new TopicListing(TOPIC_TEST_A, false),
-                new TopicListing(TOPIC_TEST_B, false)
+                new TopicListing(TOPIC_TEST_A, null,false),
+                new TopicListing(TOPIC_TEST_B, null,false)
         );
     }
 
@@ -101,7 +101,6 @@ public class TopicMatchingAclRulesBuilderTest {
             assertEquals(WILDCARD, rule.getHost());
             assertEquals(AclOperation.CREATE, rule.getOperation());
             assertEquals(USER_TYPE + SIMPLE_USER, rule.getPrincipal());
-            assertEquals(SIMPLE_USER, rule.getPrincipalName());
             assertEquals(topics[i], rule.getResourcePattern());
             assertEquals(ResourceType.TOPIC, rule.getResourceType());
             assertEquals(PatternType.LITERAL, rule.getPatternType());

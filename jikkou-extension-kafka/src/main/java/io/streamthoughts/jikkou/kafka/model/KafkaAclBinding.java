@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class KafkaAclBinding implements Serializable, Nameable {
 
+    private static final String PRINCIPAL_TYPE_SEPARATOR = ":";
+
     private final String principalType;
 
     private final String principalName;
@@ -60,8 +62,6 @@ public class KafkaAclBinding implements Serializable, Nameable {
      */
     public static class Builder {
 
-        private static final String ACL_PRINCIPAL_TYPE_SEPARATOR = ":";
-
         private String principalType;
         private String principalName;
         private String resource;
@@ -79,7 +79,7 @@ public class KafkaAclBinding implements Serializable, Nameable {
         }
 
         public Builder withPrincipal(final String principal) {
-            String[] parts = principal.split(ACL_PRINCIPAL_TYPE_SEPARATOR);
+            String[] parts = principal.split(PRINCIPAL_TYPE_SEPARATOR);
             return this
                     .withPrincipalType(parts[0])
                     .withPrincipalName(parts[1]);
@@ -163,19 +163,10 @@ public class KafkaAclBinding implements Serializable, Nameable {
         this.delete = delete;
     }
 
-    @JsonIgnore
-    public String getPrincipalName() {
-        return principalName;
-    }
-
-    @JsonIgnore
-    public String getPrincipalType() {
-        return principalType;
-    }
-
     public void isDelete(boolean delete) {
         this.delete = delete;
     }
+
     @JsonIgnore
     public boolean isDelete() {
         return delete;
@@ -186,7 +177,7 @@ public class KafkaAclBinding implements Serializable, Nameable {
     }
 
     public String getPrincipal() {
-        return this.principalType + ":" + this.principalName;
+        return principalType + PRINCIPAL_TYPE_SEPARATOR + principalName;
     }
 
     public String getResourcePattern() {

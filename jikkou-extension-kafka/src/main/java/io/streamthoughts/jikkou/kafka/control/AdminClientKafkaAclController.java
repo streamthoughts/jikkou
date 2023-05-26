@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.annotations.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.api.annotations.AcceptsResource;
+import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
 import io.streamthoughts.jikkou.api.control.ChangeExecutor;
@@ -54,6 +55,10 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
 public final class AdminClientKafkaAclController extends AbstractAdminClientKafkaController
         implements BaseResourceController<V1KafkaPrincipalAuthorization, AclChange> {
+
+    public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
+            .ofBoolean("delete-orphans")
+            .orElse(false);
 
     private AdminClientKafkaAclCollector descriptor;
 
@@ -99,7 +104,6 @@ public final class AdminClientKafkaAclController extends AbstractAdminClientKafk
                                                              @NotNull ReconciliationMode mode,
                                                              @NotNull ReconciliationContext context) {
 
-
         AdminClient adminClient = adminClientContext.client();
 
         // Get the list of remote resources that are candidates for this reconciliation
@@ -120,9 +124,9 @@ public final class AdminClientKafkaAclController extends AbstractAdminClientKafk
                 new TopicMatchingAclRulesBuilder(adminClient)
         );
 
-        List<AclChange> changes = new AclChangeComputer(builder)
-                .computeChanges(actualStates, expectedStates);
-
+        AclChangeComputer computer = new AclChangeComputer(builder);
+        computer.setDeleteAclBindingForOrphanPrincipal(DELETE_ORPHANS_OPTIONS.evaluate(context.configuration()));
+        List<AclChange> changes = computer.computeChanges(actualStates, expectedStates);
         return new V1KafkaAclChangeList()
                 .withItems(changes.stream().map(this::toModelChange).toList());
     }
@@ -146,4 +150,5 @@ public final class AdminClientKafkaAclController extends AbstractAdminClientKafk
         );
         return new ChangeExecutor<>(handlers).execute(changes, dryRun);
     }
+
 }
