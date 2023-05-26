@@ -33,3 +33,18 @@ spec:
       type: 'ALLOW'
       operations: [ 'READ', 'WRITE' ]
       host: "*"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:ANONYMOUS"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: '*'
+        patternType: 'LITERAL'
+      type: 'ALLOW'
+      operations: [ 'ALL' ]
+      host: "*"
+

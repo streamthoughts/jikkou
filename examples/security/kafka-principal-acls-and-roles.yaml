@@ -9,7 +9,7 @@ spec:
       operations: [ 'READ' ]
       resource:
         type: 'topic'
-        pattern: '/public-([.-])*/'
+        pattern: '^my-topic-.*'
         patternType: 'MATCH'
       host: "*"
 ---
@@ -23,11 +23,10 @@ spec:
       operations: [ 'WRITE' ]
       resource:
         type: 'topic'
-        pattern: '/public-([.-])*/'
+        pattern: '^my-topic-.*'
         patternType: 'MATCH'
       host: "*"
 ---
-
 apiVersion: "kafka.jikkou.io/v1beta2"
 kind: "KafkaPrincipalAuthorization"
 metadata:
@@ -44,3 +43,18 @@ metadata:
 spec:
   roles:
     - "KafkaTopicPublicRead"
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:ANONYMOUS"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: '*'
+        patternType: 'LITERAL'
+      type: 'ALLOW'
+      operations: [ 'ALL' ]
+      host: "*"
+

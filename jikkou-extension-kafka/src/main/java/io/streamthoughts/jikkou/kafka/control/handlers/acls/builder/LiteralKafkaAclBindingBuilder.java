@@ -23,71 +23,52 @@ import io.streamthoughts.jikkou.kafka.control.handlers.acls.KafkaAclBindingBuild
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.resource.PatternType;
-import org.apache.kafka.common.resource.ResourceType;
 
 public class LiteralKafkaAclBindingBuilder extends AbstractKafkaAclBindingBuilder implements KafkaAclBindingBuilder {
 
     /**
      * Creates a new {@link LiteralKafkaAclBindingBuilder} instance.
      */
-    public LiteralKafkaAclBindingBuilder() { }
+    public LiteralKafkaAclBindingBuilder() {
+    }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<KafkaAclBinding> toKafkaAclBindings(final V1KafkaPrincipalAuthorization resource) {
 
-        boolean annotatedWithDelete = JikkouMetadataAnnotations.isAnnotatedWithDelete(resource);
+        List<V1KafkaPrincipalAcl> acls = getAcceptedAclsFromResource(resource);
+        if (acls.isEmpty()) return Collections.emptyList();
 
-        List<V1KafkaPrincipalAcl> permissions = resource.getSpec().getAcls()
+        String principal = getPrincipalFromResource(resource);
+        return buildAclBindings(
+                principal,
+                acls,
+                null,
+                null,
+                null,
+                JikkouMetadataAnnotations.isAnnotatedWithDelete(resource)
+        );
+    }
+
+    private List<V1KafkaPrincipalAcl> getAcceptedAclsFromResource(V1KafkaPrincipalAuthorization resource) {
+        return resource.getSpec().getAcls()
                 .stream()
-                .filter(it -> it.getResource().getPatternType() != PatternType.MATCH)
+                .filter(this::isAclAccepted)
                 .distinct()
                 .collect(Collectors.toList());
-
-        return buildAclBindings(resource.getMetadata().getName(), annotatedWithDelete, permissions);
     }
 
-    public static class ResourcePattern {
-
-        public final String pattern;
-        public final ResourceType resourceType;
-        public final PatternType patternType;
-
-        public final String host;
-
-        public ResourcePattern(final KafkaAclBinding policy) {
-            this(policy.getResourcePattern(), policy.getResourceType(), policy.getPatternType(), policy.getHost());
-        }
-
-        public ResourcePattern(final String pattern,
-                               final ResourceType resourceType,
-                               final PatternType patternType,
-                               final String host) {
-            this.pattern = pattern;
-            this.resourceType = resourceType;
-            this.patternType = patternType;
-            this.host = host;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ResourcePattern that = (ResourcePattern) o;
-            return Objects.equals(pattern, that.pattern)
-                    && resourceType == that.resourceType
-                    && patternType == that.patternType
-                    && Objects.equals(host, that.host);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(pattern, resourceType, patternType, host);
-        }
+    private boolean isAclAccepted(V1KafkaPrincipalAcl object) {
+        return object.getResource().getPatternType() != PatternType.MATCH;
     }
 
+    private String getPrincipalFromResource(V1KafkaPrincipalAuthorization resource) {
+        return resource.getMetadata().getName();
+    }
 }

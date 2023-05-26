@@ -36,8 +36,11 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TopicMatchingAclRulesBuilder extends AbstractKafkaAclBindingBuilder implements KafkaAclBindingBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(TopicMatchingAclRulesBuilder.class);
 
     private AdminClient client;
     private CompletableFuture<Collection<TopicListing>> listTopics;
@@ -53,7 +56,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractKafkaAclBindingBuilder
      * @param client the kafka admin client to be used.
      */
     public TopicMatchingAclRulesBuilder(final AdminClient client) {
-        this.client = Objects.requireNonNull(client, "client cannot be null");;
+        this.client = Objects.requireNonNull(client, "client cannot be null");
     }
 
     /**
@@ -61,12 +64,32 @@ public class TopicMatchingAclRulesBuilder extends AbstractKafkaAclBindingBuilder
      */
     @Override
     public List<KafkaAclBinding> toKafkaAclBindings(V1KafkaPrincipalAuthorization resource) {
+        List<V1KafkaPrincipalAcl> acls = getAcceptedAclsFromResource(resource);
+        if (acls.isEmpty()) return Collections.emptyList();
+
+        String principal = resource.getMetadata().getName();
         return getListTopics()
                 .thenApply(topics -> topics.stream()
-                        .flatMap(topic -> createAclBindingsForMatchingTopics(resource, topic).stream())
+                        .flatMap(topic -> {
+                            return buildAclBindings(principal,
+                                    filterPermissionMatchingTopic(acls, topic),
+                                    topic.name(),
+                                    PatternType.LITERAL,
+                                    ResourceType.TOPIC,
+                                    JikkouMetadataAnnotations.isAnnotatedWithDelete(resource)
+                            ).stream();
+                        })
                         .toList()
                 )
                 .join();
+    }
+
+    private List<V1KafkaPrincipalAcl> getAcceptedAclsFromResource(V1KafkaPrincipalAuthorization resource) {
+         return resource.getSpec().getAcls()
+                .stream()
+                .filter(it -> it.getResource().getType() == ResourceType.TOPIC)
+                .filter(it -> it.getResource().getPatternType() == PatternType.MATCH)
+                .toList();
     }
 
     /**
@@ -85,45 +108,21 @@ public class TopicMatchingAclRulesBuilder extends AbstractKafkaAclBindingBuilder
         return listTopics;
     }
 
-    private Collection<KafkaAclBinding> createAclBindingsForMatchingTopics(final V1KafkaPrincipalAuthorization resource,
-                                                                           final TopicListing topic) {
-        List<V1KafkaPrincipalAcl> permissions = resource.getSpec().getAcls();
-        if (permissions == null) {
-            return Collections.emptyList();
-        }
-
-        permissions = permissions
-                .stream()
-                .filter(it -> it.getResource().getType() == ResourceType.TOPIC)
-                .filter(it -> it.getResource().getPatternType() == PatternType.MATCH)
-                .toList();
-
-        boolean annotatedWithDelete = JikkouMetadataAnnotations.isAnnotatedWithDelete(resource);
-
-        String principal = resource.getMetadata().getName();
-        return buildAclBindings(principal,
-                annotatedWithDelete,
-                filterPermissionMatchingTopic(permissions, topic),
-                topic.name(),
-                PatternType.LITERAL,
-                ResourceType.TOPIC);
-    }
-
     /**
-     * Keeps only #@link AclResourcePermission matching the specified topic.
+     * Keeps only {@link V1KafkaPrincipalAcl} matching the topic.
      *
-     * @param acls  the acls to be filtered
+     * @param items the list of ACLs to be filtered
      * @param topic the topic to be used.
      * @return a new list of {@link V1KafkaPrincipalAcl} instances.
      */
-    private Collection<V1KafkaPrincipalAcl> filterPermissionMatchingTopic(final Collection<V1KafkaPrincipalAcl> acls,
+    private Collection<V1KafkaPrincipalAcl> filterPermissionMatchingTopic(final Collection<V1KafkaPrincipalAcl> items,
                                                                           final TopicListing topic) {
-        return acls.stream()
-                .filter(acl -> {
-                    String regex = acl.getResource().getPattern();
-                    regex = regex.substring(1, regex.length() - 1);
-                    Matcher matcher = Pattern.compile(regex).matcher(topic.name());
-                    return matcher.matches();
-                }).collect(Collectors.toSet());
+        return items.stream().filter(acl -> {
+            String regex = acl.getResource().getPattern();
+            Matcher matcher = Pattern.compile(regex).matcher(topic.name());
+            boolean matches = matcher.matches();
+            LOG.info("Matching topic '{}' with resource pattern '{}': {}", topic.name(), regex, matches);
+            return matches;
+        }).collect(Collectors.toSet());
     }
 }

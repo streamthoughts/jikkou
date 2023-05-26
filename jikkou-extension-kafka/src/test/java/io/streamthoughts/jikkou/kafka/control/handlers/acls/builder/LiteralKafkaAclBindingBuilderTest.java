@@ -86,7 +86,6 @@ public class LiteralKafkaAclBindingBuilderTest {
         assertEquals(WILDCARD, rule.getHost());
         assertEquals(AclOperation.CREATE, rule.getOperation());
         assertEquals(USER_TYPE + SIMPLE_USER, rule.getPrincipal());
-        assertEquals(SIMPLE_USER, rule.getPrincipalName());
         assertEquals(TOPIC_TEST_A, rule.getResourcePattern());
         assertEquals(ResourceType.TOPIC, rule.getResourceType());
     }
@@ -128,7 +127,6 @@ public class LiteralKafkaAclBindingBuilderTest {
         assertEquals(WILDCARD, rule.getHost());
         assertEquals(AclOperation.CREATE, rule.getOperation());
         assertEquals(USER_TYPE + SIMPLE_USER, rule.getPrincipal());
-        assertEquals(SIMPLE_USER, rule.getPrincipalName());
         assertEquals(TOPIC_WITH_WILDCARD, rule.getResourcePattern());
         assertEquals(ResourceType.TOPIC, rule.getResourceType());
     }

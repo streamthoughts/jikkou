@@ -19,8 +19,8 @@
 package io.streamthoughts.jikkou.kafka.adapters;
 
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.kafka.control.handlers.acls.builder.LiteralKafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
+import io.streamthoughts.jikkou.kafka.model.KafkaAclResource;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorizationSpec;
@@ -48,7 +48,7 @@ public final class V1KafkaPrincipalAuthorizationSupport {
 
         List<V1KafkaPrincipalAcl> acl = bindings
                 .stream()
-                .collect(Collectors.groupingBy(LiteralKafkaAclBindingBuilder.ResourcePattern::new))
+                .collect(Collectors.groupingBy(KafkaAclResource::new))
                 .entrySet()
                 .stream()
                 .flatMap(resourceAndBindings -> {
@@ -67,14 +67,14 @@ public final class V1KafkaPrincipalAuthorizationSupport {
                                 return V1KafkaPrincipalAcl.builder()
                                         .withResource(V1KafkaResourceMatcher
                                                 .builder()
-                                                .withType(pattern.resourceType)
-                                                .withPattern(pattern.pattern)
-                                                .withPatternType(pattern.patternType)
+                                                .withType(pattern.resourceType())
+                                                .withPattern(pattern.pattern())
+                                                .withPatternType(pattern.patternType())
                                                 .build()
                                         )
                                         .withType(typeAndBindings.getKey())
                                         .withOperations(operations)
-                                        .withHost(pattern.host)
+                                        .withHost(pattern.host())
                                         .build();
 
                             });
