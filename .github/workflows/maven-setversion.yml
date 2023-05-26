@@ -1,0 +1,80 @@
+name: Set Version and Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      newVersion:
+        type: string
+        required: false
+        description: "New version (if null use current version)"
+      createTag:
+        type: boolean
+        required: true
+        description: "Create a Tag"
+        default: true
+
+jobs:
+  set-maven-version:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub Action Repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          check-latest: true
+          cache: maven
+
+      - name: Grant execute permission to MVN Wrapper
+        run: chmod +x ./mvnw
+
+      - name: Build Distributions
+        run: |
+          ./mvnw clean package -Pdist -DskipTests
+
+      - name: Update release version
+        if: "${{ github.event.inputs.newVersion == '' }}"
+        run: |
+          echo 'Remove snapshot from maven version'
+          ./mvnw -q versions:set -DremoveSnapshot -DprocessAllModules -DgenerateBackupPoms=false
+
+      - name: Set specific version to release
+        if: "${{ github.event.inputs.newVersion != '' }}"
+        run: |
+          ./mvnw -q versions:set -DnewVersion=${{ github.event.inputs.newVersion }}
+
+      - name: Set env VERSION
+        run: |
+          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Check VERSION
+        run: echo "${{ env.VERSION }}"
+
+      - name: Create Tag and Commit
+        if: "${{ github.event.inputs.createTag == 'true' }}"
+        run: |
+          find . -name 'pom.xml' | xargs git add
+          git commit -m "ci: release version ${{ env.VERSION }} 🎉"
+          git tag -a "v${{ env.VERSION }}" -m"release "v${{ env.VERSION }}"
+          git push --atomic origin main "v${{ env.VERSION }}"
+
+      - name: Bump version for next iteration
+        if: "${{ github.event.inputs.newVersion == '' }}"
+        run: |
+          ./mvnw -q build-helper:parse-version versions:set \
+            -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
+            versions:commit
+          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Commit Bump Version
+        if: "${{ github.event.inputs.newVersion == '' }}"
+        run: |
+          find . -name 'pom.xml' | xargs git add
+          git commit -m "ci: bump version for next iteration to ${{ env.VERSION }} 🤖"
+          git push origin main
