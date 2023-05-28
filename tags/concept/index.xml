@@ -69,7 +69,7 @@ All resource are scoped by an API &lt;em>Group&lt;/em> and &lt;em>Version&lt;/em
 &lt;p>In the context of Jikkou, reconciliation refers to the process of comparing the desired state of an object with the
 actual state of the system and making any necessary corrections or adjustments to align them.&lt;/p>
 &lt;/div>
-&lt;h3 id="changes">Changes&lt;/h3>
+&lt;h2 id="changes">Changes&lt;/h2>
 &lt;p>A &lt;em>Change&lt;/em> represents a difference, detected during reconciliation, between two objects that can reconciled or
 corrected by adding, updating, or deleting an object or property attached to the actual state of the system.&lt;/p>
 &lt;p>A &lt;em>Change&lt;/em> represents a detected difference between two objects during the reconciliation process. These differences can
@@ -92,7 +92,7 @@ the system&lt;/p>
 &lt;p>&lt;strong>NONE&lt;/strong>: Indicates that no changes were made to an existing object or property.&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h3 id="reconciliation-modes">Reconciliation Modes&lt;/h3>
+&lt;h2 id="reconciliation-modes">Reconciliation Modes&lt;/h2>
 &lt;p>Depending on the chosen reconciliation mode, only specific types of changes will be applied.&lt;/p>
 &lt;p>Jikkou provides four distinct reconciliation modes that determine the types of changes to be applied:&lt;/p>
 &lt;ul>
@@ -103,7 +103,22 @@ the system&lt;/p>
 the desired state defined in your resource definition file, regardless of the specific type of change.&lt;/li>
 &lt;/ul>
 &lt;p>Each mode corresponds to a command offered by the Jikkou CLI (i.e., &lt;code>create&lt;/code>, &lt;code>update&lt;/code>, &lt;code>delete&lt;/code>, and &lt;code>apply&lt;/code>). Choose
-the appropriate mode based on your requirements.&lt;/p></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
+the appropriate mode based on your requirements.&lt;/p>
+&lt;div class="alert alert-Warning" role="alert">
+&lt;h4 class="alert-heading">Using JIKKOU CLI&lt;/h4>
+Some reconciliation modes might not be supported for all resources.
+Use &lt;code>jikkou extensions list --type Controller&lt;/code> to check which actions could be perfomed for each resources.
+&lt;/div>
+&lt;h2 id="reconciliation-options">Reconciliation Options&lt;/h2>
+&lt;p>Depending on the type of resources being reconciled, the controller that will be involved in the reconciliation
+process might accept some options (i.e., using &lt;code>--options&lt;/code> argument).&lt;/p>
+&lt;h2 id="mark-resource-for-deletion">Mark Resource for Deletion&lt;/h2>
+&lt;p>To delete all the states associated with resource&amp;rsquo;s entities, you must add the following annotation to the resource
+definition:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou.io/delete&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>You can use &lt;em>selectors&lt;/em> to select only a subset of resource objects to describe from your system or for which you want
 to perform a reconciliation process.&lt;/p>
