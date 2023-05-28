@@ -10,7 +10,7 @@ In the context of Jikkou, reconciliation refers to the process of comparing the 
 actual state of the system and making any necessary corrections or adjustments to align them.
 {{% /pageinfo %}}
 
-### Changes
+## Changes
 
 A _Change_ represents a difference, detected during reconciliation, between two objects that can reconciled or
 corrected by adding, updating, or deleting an object or property attached to the actual state of the system.
@@ -26,7 +26,7 @@ the system
 * **DELETE**: Indicates the removal of an existing object or property of an existing object.
 * **NONE**: Indicates that no changes were made to an existing object or property.
 
-### Reconciliation Modes
+## Reconciliation Modes
 
 Depending on the chosen reconciliation mode, only specific types of changes will be applied.
 
@@ -40,3 +40,25 @@ Jikkou provides four distinct reconciliation modes that determine the types of c
 
 Each mode corresponds to a command offered by the Jikkou CLI (i.e., `create`, `update`, `delete`, and `apply`). Choose
 the appropriate mode based on your requirements.
+
+{{% alert title="Using JIKKOU CLI" color="Warning" %}}
+Some reconciliation modes might not be supported for all resources.
+Use `jikkou extensions list --type Controller` to check which actions could be perfomed for each resources.
+{{% /alert %}}
+
+## Reconciliation Options
+
+Depending on the type of resources being reconciled, the controller that will be involved in the reconciliation
+process might accept some options (i.e., using `--options` argument).
+
+## Mark Resource for Deletion
+
+To delete all the states associated with resource's entities, you must add the following annotation to the resource
+definition: 
+
+```yaml
+metadata:
+  annotations:
+    jikkou.io/delete: true
+```
+

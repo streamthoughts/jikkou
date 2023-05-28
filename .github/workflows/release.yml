@@ -67,16 +67,16 @@ jobs:
       - name: Build Distributions
         run: |
           ./mvnw clean package -Pdist -DskipTests
-          sha1sum ./dist/jikkou.deb > ./dist/jikkou.deb.sha1
-          sha1sum ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz > ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1
-          sha1sum ./dist/jikkou-${{ env.VERSION }}-runner.zip > ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1
+          (cd ./dist; sha1sum jikkou.deb > jikkou.deb.sha1)
+          (cd ./dist; sha1sum jikkou-${{ env.VERSION }}-runner.tar.gz > jikkou-${{ env.VERSION }}-runner.tar.gz.sha1)
+          (cd ./dist; sha1sum jikkou-${{ env.VERSION }}-runner.zip > jikkou-${{ env.VERSION }}-runner.zip.sha1)
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           name: "RELEASE-${{ env.VERSION }}"
           tag_name: "v${{ env.VERSION }}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           generate_release_notes: true
           draft: false
           files: |

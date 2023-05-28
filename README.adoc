@@ -17,24 +17,31 @@ See: https://streamthoughts.github.io/jikkou/[official documentation]
 
 == Introduction
 
-**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool to help you automate the
-management of the configurations that live on your https://kafka.apache.org/documentation/[Apache Kafka] clusters.
-It was developed by Kafka ❤️ to make daily operations on an Apache Kafka cluster simpler for both **developers** and **administrators**.
+**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an easier way to
+manage the configurations on your Data Stream platform.
 
-It can efficiently manage configuration changes for **Topics**, **ACLs**, **Quotas** and more with the use of **_Resource Definition_ files**.
-It is also applicable to quickly replicate the configuration of a production cluster to another with a few command lines or to initialize a new cluster for testing purpose.
+Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
+ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
 
-__Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of this project can still be found under that name.__
+Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, and even more with the use of YAML files called **_Resource Definitions_**.
 
-=== The main usage scenarios
+Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
+
+== Motivation
+
+See https://medium.com/@fhussonnois/why-is-managing-kafka-topics-still-such-a-pain-introducing-jikkou-4ee9d5df948[this blog post] for more details.
+
+== The main usage scenarios
 
 * Create new resource entities on an Apache Kafka cluster (i.e., _Topics_, _ACLs_, and _Quotas_).
 * Update the configurations of existing resource entities.
 * Delete resource entities which are not anymore managed.
 * Describe all the configuration defined for Brokers.
 * Describe all the configuration defined for _Topics_, _ACLs_, and _Quotas_.
+* Replicate configurations of a production cluster to another with a few command lines.
+* Initialize a new cluster for testing purpose.
 
-=== Core features that make it awesome
+== Core features that make it awesome
 
 * Simple command line interface (CLI) for end user.
 * Simple Java API on top of the Kafka's  https://kafka.apache.org/30/javadoc/org/apache/kafka/clients/admin/Admin.html[Java AdminClient].
@@ -47,14 +54,14 @@ __Note: Jikkou is the project formerly known as **Kafka Specs**. Old versions of
 
 Jikkou is available:
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.18.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.18.0/[Maven Central]
+* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.21.0[GitHub Releases]
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.21.0/[Maven Central]
 * As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.18.0[GitHub Releases]
+* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.21.0[GitHub Releases]
 
 [source, bash]
 ----
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.18.0/jikkou.deb
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.21.0/jikkou.deb
 sudo dpkg -i jikkou.deb
 ----
 
@@ -81,6 +88,7 @@ It allows you to define the desired current state of your **Topics**, **ACLs**, 
 kafka-topics.yml:::
 [source,yaml]
 ----
+# file:./kafka-topics.yml
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaTopic'
 metadata:
@@ -98,11 +106,7 @@ It will then take care of computing and applying the necessary changes directly 
 
 [source, bash]
 ----
-$ jikkou --bootstrap-servers localhost:9092 \
-    topics \
-    apply \
-    --file kafka-topics.yml \
-    --yes
+$ jikkou apply -f ./kafka-topics.yml
 ----
 
 [source]

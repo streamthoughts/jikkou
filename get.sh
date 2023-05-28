@@ -17,10 +17,7 @@ curl -s $url \
 | tr -d \" \
 | wget -qP "$temp" --show-progress -i -
 
-# Verify signature
-echo -e "\nVerifying signature: ($temp/jikkou.deb.asc)\n"
-gpg --quiet --keyserver keyserver.ubuntu.com --recv-keys D12696955654914F 2>/dev/null
-gpg --quiet --verify "$temp/jikkou.deb.asc" "$temp/jikkou.deb" 2>/dev/null
+cat "$temp/jikkou.deb.sha1"
 
 # Installing debian package
 echo -e "\nInstalling: Jikkou $latest\n"
