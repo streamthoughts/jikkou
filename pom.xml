@@ -87,7 +87,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <junit.version>5.9.3</junit.version>
         <maven.surefire.plugin.version>3.1.0</maven.surefire.plugin.version>
-        <maven.failsafe.plugin.version>3.0.0-M9</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>3.1.0</maven.failsafe.plugin.version>
         <testcontainer.version>1.18.1</testcontainer.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <vavr.version>0.10.4</vavr.version>
