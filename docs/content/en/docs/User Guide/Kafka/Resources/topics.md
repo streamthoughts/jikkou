@@ -41,8 +41,6 @@ To use the cluster default values for the number of `partitions` and `replicas` 
 
 ### Example
 
-**Resource Specification File**
-
 Here is a simple example that shows how to define a single YAML file containing two topic definition using
 the `KafkaTopic` resource type.
 

@@ -19,13 +19,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <app.distribution.directory>${project.basedir}/../dist</app.distribution.directory>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
+        <ascii-table.version>1.8.0</ascii-table.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.github.freva</groupId>
             <artifactId>ascii-table</artifactId>
-            <version>1.8.0</version>
+            <version>${ascii-table.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -40,6 +41,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jikkou-extension-kafka</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-extension-schema-registry</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -116,13 +122,7 @@
                             <shadedClassifierName>runner</shadedClassifierName>
                             <filters>
                                 <filter>
-                                    <artifact>io.streamthoughts:jikkou-extension-kafka</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>com.fasterxml.jackson*:*</artifact>
+                                    <artifact>*:*</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>

@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -138,8 +137,8 @@ class ConfigPropertyTest {
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
 
         // When, Then
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> config.evaluate(Configuration.empty()));
-        Assertions.assertEquals("No value present for param 'key'", exception.getLocalizedMessage());
+        ConfigException.Missing exception = assertThrows(ConfigException.Missing.class, () -> config.evaluate(Configuration.empty()));
+        Assertions.assertEquals(KEY, exception.property().key());
     }
 
     @Test

@@ -25,6 +25,7 @@ import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.Nameable;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -74,7 +75,7 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
         final Map<ConfigResource, Collection<AlterConfigOp>> alterConfigs = new HashMap<>();
         final Map<String, NewPartitions> newPartitions = new HashMap<>();
 
-        final Map<String, List<Future<Void>>> results = new HashMap<>();
+        final Map<String, List<CompletableFuture<Void>>> results = new HashMap<>();
         for (TopicChange change : changes) {
             ChangeHandler.verify(this, change);
             results.put(change.getName(), new ArrayList<>());
@@ -104,12 +105,12 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
 
         if (!alterConfigs.isEmpty()) {
             client.incrementalAlterConfigs(alterConfigs).values()
-                    .forEach((k, v) -> results.get(k.name()).add(v));
+                    .forEach((k, v) -> results.get(k.name()).add(Futures.toCompletableFuture(v)));
         }
 
         if (!newPartitions.isEmpty()) {
             client.createPartitions(newPartitions).values()
-                    .forEach((k, v) -> results.get(k).add(v));
+                    .forEach((k, v) -> results.get(k).add(Futures.toCompletableFuture(v)));
         }
 
         Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);

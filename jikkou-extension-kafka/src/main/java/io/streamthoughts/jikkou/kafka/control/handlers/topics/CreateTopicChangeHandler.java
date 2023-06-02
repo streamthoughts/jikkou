@@ -24,11 +24,12 @@ import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
 import io.streamthoughts.jikkou.api.model.Nameable;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsOptions;
@@ -80,7 +81,11 @@ public final class CreateTopicChangeHandler implements KafkaTopicChangeHandler {
 
         Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);
 
-        final Map<String, Future<Void>> results = new HashMap<>(result.values());
+        final Map<String, CompletableFuture<Void>> results = new HashMap<>(result.values())
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Futures.toCompletableFuture(e.getValue())));
+
         return results.entrySet()
                 .stream()
                 .map(e -> new ChangeResponse<>(topicKeyedByName.get(e.getKey()), e.getValue()))

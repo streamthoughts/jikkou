@@ -34,8 +34,6 @@ import io.streamthoughts.jikkou.api.control.ChangeExecutor;
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
@@ -130,7 +128,7 @@ public final class AdminClientKafkaTopicController extends AbstractAdminClientKa
     }
 
     @Override
-    public ResourceListObject<? extends HasMetadataChange<TopicChange>> computeReconciliationChanges(
+    public V1KafkaTopicChangeList computeReconciliationChanges(
             @NotNull Collection<V1KafkaTopic> resources,
             @NotNull ReconciliationMode mode, @NotNull
             ReconciliationContext context) {

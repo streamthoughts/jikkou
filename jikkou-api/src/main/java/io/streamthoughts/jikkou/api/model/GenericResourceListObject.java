@@ -29,6 +29,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class GenericResourceListObject implements HasItems  {
 
+    public static GenericResourceListObject empty() {
+        return new GenericResourceListObject(Collections.emptyList());
+    }
+
     public static GenericResourceListObject of(final HasItems items) {
         return new GenericResourceListObject(items.getItems());
     }

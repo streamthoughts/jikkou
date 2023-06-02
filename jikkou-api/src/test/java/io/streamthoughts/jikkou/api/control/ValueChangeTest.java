@@ -34,7 +34,7 @@ class ValueChangeTest {
         ValueChange<String> change = ValueChange.with(AFTER_VALUE, AFTER_VALUE);
 
         // When
-        ChangeType type = change.type();
+        ChangeType type = change.getChangeType();
 
         // Then
         Assertions.assertEquals(ChangeType.NONE, type);
@@ -46,7 +46,7 @@ class ValueChangeTest {
         ValueChange<String> change = ValueChange.with(AFTER_VALUE, BEFORE_VALUE);
 
         // When
-        ChangeType type = change.type();
+        ChangeType type = change.getChangeType();
 
         // Then
         Assertions.assertEquals(BEFORE_VALUE, change.getBefore());
@@ -60,7 +60,7 @@ class ValueChangeTest {
         ValueChange<String> change = ValueChange.with(AFTER_VALUE, null);
 
         // When
-        ChangeType type = change.type();
+        ChangeType type = change.getChangeType();
 
         // Then
         assertNull(change.getBefore());
@@ -74,7 +74,7 @@ class ValueChangeTest {
         ValueChange<String> change = ValueChange.with(null, BEFORE_VALUE);
 
         // When
-        ChangeType type = change.type();
+        ChangeType type = change.getChangeType();
 
         // Then
         assertNull(change.getAfter());

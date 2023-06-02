@@ -23,11 +23,12 @@ import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.model.Nameable;
 import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,10 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
                 .collect(Collectors.toList());
 
         LOG.info("Deleting topics: {}", topics);
-        final Map<String, Future<Void>> results = new HashMap<>(client.deleteTopics(topics).topicNameValues());
+        final Map<String, CompletableFuture<Void>> results = new HashMap<>(client.deleteTopics(topics).topicNameValues())
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Futures.toCompletableFuture(e.getValue())));
 
         Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);
         return results.entrySet()

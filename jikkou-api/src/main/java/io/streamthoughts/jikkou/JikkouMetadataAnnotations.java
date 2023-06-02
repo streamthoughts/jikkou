@@ -45,8 +45,8 @@ public final class JikkouMetadataAnnotations {
     }
 
     @NotNull
-    private static Boolean isAnnotatedWith(HasMetadata resource, String jikkouIoIgnore) {
-        return HasMetadata.getMetadataAnnotation(resource, jikkouIoIgnore)
+    public static Boolean isAnnotatedWith(@NotNull HasMetadata resource, @NotNull String annotation) {
+        return HasMetadata.getMetadataAnnotation(resource, annotation)
                 .map(Object::toString)
                 .map(Boolean::parseBoolean)
                 .orElse(false);

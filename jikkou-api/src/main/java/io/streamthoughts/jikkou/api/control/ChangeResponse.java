@@ -22,7 +22,6 @@ import io.vavr.control.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 /**
  * Represents the response
@@ -33,7 +32,7 @@ public final class ChangeResponse<T extends Change> {
 
     private final T change;
 
-    private final List<Future<Void>> results;
+    private final List<CompletableFuture<?>> results;
 
     /**
      * Creates a new {@link ChangeResponse} for the given change.
@@ -50,11 +49,11 @@ public final class ChangeResponse<T extends Change> {
      * @param change    the change to attached to this response.
      * @param result    the result to attached to this response;
      */
-    public ChangeResponse(T change, Future<Void> result) {
+    public ChangeResponse(T change, CompletableFuture<?> result) {
         this(change, List.of(result));
     }
 
-    public ChangeResponse(T change, List<? extends Future<Void>> results) {
+    public ChangeResponse(T change, List<? extends CompletableFuture<?>> results) {
         this.change = change;
         this.results = new ArrayList<>(results);
     }
@@ -64,7 +63,7 @@ public final class ChangeResponse<T extends Change> {
      *
      * @param result
      */
-    public void addResult(Future<Void> result) {
+    public void addResult(CompletableFuture<Void> result) {
         this.results.add(result);
     }
 

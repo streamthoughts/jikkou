@@ -18,12 +18,19 @@
  */
 package io.streamthoughts.jikkou.common.utils;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -47,5 +54,49 @@ public final class IOUtils {
 
     private static boolean isPrefixWithSyntax(String pattern) {
         return pattern.startsWith(SYNTAX_REGEX) | pattern.startsWith(SYNTAX_GLOB);
+    }
+
+    public static String readTextFile(final String location) {
+        return readTextFile(URI.create(location));
+    }
+
+    public static String readTextFile(final URI location) {
+        String scheme = location.getScheme();
+        if (scheme == null)
+            return readTextFile(Paths.get(location.getPath()));
+
+        if (scheme.equalsIgnoreCase("file"))
+            return readTextFile(Paths.get(location));
+
+        if (scheme.equalsIgnoreCase("http") ||
+            scheme.equalsIgnoreCase("https")) {
+            try {
+                return readTextFile(location.toURL());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        throw new RuntimeException(String.format(
+                "Scheme '%s 'is not supported in given URI: '%s'",
+                scheme,
+                location
+                )
+        );
+    }
+
+    public static String readTextFile(final Path url) {
+        try(InputStream stream = Files.newInputStream(url)) {
+            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String readTextFile(final URL url) {
+        try(BufferedInputStream stream = new BufferedInputStream(url.openStream())) {
+            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
