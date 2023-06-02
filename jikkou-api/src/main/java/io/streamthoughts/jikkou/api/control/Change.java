@@ -18,22 +18,40 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import static io.streamthoughts.jikkou.api.control.ChangeType.NONE;
+import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
+import java.util.Arrays;
 
 /**
- * Represents a change operation on a resource object.
+ * Represents a change operation on a resource entity.
  */
 @Evolving
 @JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public interface Change {
 
     /**
-     * @return the of type of this change.
+     * Gets the type of the change.
+     *
+     * @return the change type.
      */
     @JsonProperty("operation")
     ChangeType getChangeType();
 
+    /**
+     * Computes a common change type from all changes. This method will return {@link ChangeType#NONE} if all
+     * given changes are of type {@link ChangeType#NONE}, otherwise it returns {@link ChangeType#UPDATE}.
+     *
+     * @param changes   the list of changes.
+     * @return  a {@link ChangeType}.
+     */
+    static ChangeType computeChangeTypeFrom(Change... changes) {
+        return Arrays.stream(changes)
+                .map(Change::getChangeType)
+                .reduce(NONE, (t1, t2) -> t1 == NONE && t2 == NONE ? NONE : UPDATE);
+    }
 }

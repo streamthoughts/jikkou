@@ -157,6 +157,10 @@ public final class ConfigProperty<T> {
         this.description = description;
     }
 
+    public ConfigProperty<T> description(final @NotNull String description) {
+        return new ConfigProperty<>(key, accessor, defaultValueSupplier, description);
+    }
+
     public ConfigProperty<T> orElse(final @NotNull T other) {
         return orElse(() -> other);
     }
@@ -200,7 +204,7 @@ public final class ConfigProperty<T> {
      */
     public T evaluate(final @NotNull Configuration config) {
         Optional<T> option = getOptional(config);
-        return option.orElseThrow(() -> new NoSuchElementException("No value present for param '" + key + "'"));
+        return option.orElseThrow(() -> new ConfigException.Missing(this));
     }
 
     /**
@@ -213,7 +217,7 @@ public final class ConfigProperty<T> {
     }
 
     /**
-     * Get the key of this property.
+     * Gets the key of this property.
      *
      * @return the key for this property ; never null.
      */
@@ -221,12 +225,20 @@ public final class ConfigProperty<T> {
         return key;
     }
 
+    /**
+     * Gets the description of this property.
+     * @return  the description string, or {@code null} if no description was set.
+     */
+    public String description() {
+        return description;
+    }
+
     public Supplier<? extends T> defaultValueSupplier() {
         return Optional.ofNullable(defaultValueSupplier).orElse(() -> null);
     }
 
     /**
-     * Get the default value for this config property.
+     * Gets the default value for this config property.
      *
      * @return the default value, or {@code null} if no supplier was provided for default value.
      */
@@ -247,5 +259,14 @@ public final class ConfigProperty<T> {
     @Override
     public int hashCode() {
         return Objects.hash(key, description);
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public String toString() {
+        return "ConfigProperty{" +
+                "key='" + key + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

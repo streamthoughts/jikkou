@@ -53,7 +53,7 @@ public final class ConfigEntryChange implements Change, Nameable {
     @Override
     @JsonProperty("operation")
     public ChangeType getChangeType() {
-        return valueChange.type();
+        return valueChange.getChangeType();
     }
 
     /** {@inheritDoc} */

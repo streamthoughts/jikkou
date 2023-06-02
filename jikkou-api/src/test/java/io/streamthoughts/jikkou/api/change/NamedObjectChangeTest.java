@@ -31,7 +31,7 @@ public class NamedObjectChangeTest {
         ValueChange<String> value = ValueChange.withBeforeValue("dummy");
 
         // Then
-        Assertions.assertEquals(ChangeType.DELETE, value.type());
+        Assertions.assertEquals(ChangeType.DELETE, value.getChangeType());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class NamedObjectChangeTest {
         ValueChange<String> value = ValueChange.with("foo", "bar");
 
         // Then
-        Assertions.assertEquals(ChangeType.UPDATE, value.type());
+        Assertions.assertEquals(ChangeType.UPDATE, value.getChangeType());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class NamedObjectChangeTest {
         ValueChange<String> value = ValueChange.withAfterValue("dummy");
 
         // Then
-        Assertions.assertEquals(ChangeType.ADD, value.type());
+        Assertions.assertEquals(ChangeType.ADD, value.getChangeType());
     }
 
     @Test
@@ -58,6 +58,6 @@ public class NamedObjectChangeTest {
         ValueChange<String> value = ValueChange.with("dummy", "dummy");
 
         // Then
-        Assertions.assertEquals(ChangeType.NONE, value.type());
+        Assertions.assertEquals(ChangeType.NONE, value.getChangeType());
     }
 }

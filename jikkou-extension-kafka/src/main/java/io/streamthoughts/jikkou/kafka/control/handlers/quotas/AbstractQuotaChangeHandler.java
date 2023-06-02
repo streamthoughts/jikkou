@@ -20,12 +20,13 @@ package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
 import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
+import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterClientQuotasResult;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.quota.ClientQuotaAlteration;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,10 @@ public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHand
 
         final AlterClientQuotasResult result = client.alterClientQuotas(alterations);
 
-        final Map<ClientQuotaEntity, KafkaFuture<Void>> results = result.values();
+        final Map<ClientQuotaEntity, CompletableFuture<Void>> results = result.values()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Futures.toCompletableFuture(e.getValue())));
 
         Map<ClientQuotaEntity, QuotaChange> changeByQuotaEntity = changes.stream()
                 .collect(Collectors.toMap(c -> new ClientQuotaEntity(c.getType().toEntities(c.getEntity())), c -> c));

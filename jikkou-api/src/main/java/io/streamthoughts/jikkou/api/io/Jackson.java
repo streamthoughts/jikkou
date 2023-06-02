@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -51,6 +52,7 @@ public interface Jackson {
             .setDeserializerModifier(new NullCollectionsAsEmptyModifier());
 
     ObjectMapper YAML_OBJECT_MAPPER = YAMLMapper.builder()
+            .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
             .addModules(new Jdk8Module(), new VavrModule(), new JavaTimeModule(), NULL_COLLECTIONS_AS_EMPTY)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)

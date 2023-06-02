@@ -1,0 +1,116 @@
+{
+  "type": "object",
+  "description": "",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1SchemaRegistrySubjectSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "schemaregistrysubject",
+        "plural": "schemaregistrysubjects",
+        "shortNames": [
+          "sr"
+        ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "schemaregistry.jikkou.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "SchemaRegistrySubject"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1SchemaRegistrySubjectSpec"
+    }
+  },
+  "$defs": {
+    "V1SchemaRegistrySubjectSpec": {
+      "type": "object",
+      "javaInterfaces": [],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "compatibilityLevel": {
+          "type": "string",
+          "description": "The schema compatibility level for this subject.",
+          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels"
+        },
+        "schemaRegistry": {
+          "type": "object",
+          "additionalProperties": {
+            "lombok-builder": true,
+            "lombok-with": true,
+            "lombok-setter": true,
+            "all-args-constructor": false
+          },
+          "properties": {
+            "vendor": {
+              "type": "string",
+              "description": "Provides information about the Schema Registry used to store the describe schema."
+            }
+          }
+        },
+        "schemaType": {
+          "type": "string",
+          "description": "The schema format: AVRO, PROTOBUF, JSON.",
+          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.SchemaType"
+        },
+        "schema": {
+          "type": "object",
+          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.SchemaHandle",
+          "properties": {
+            "$ref": {
+              "type": "string"
+            }
+          }
+        },
+        "references": {
+          "type": "array",
+          "description": "Specifies the names of referenced schemas (Optional).",
+          "items": {
+            "type": "object",
+            "existingJavaType": "io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name for the reference. "
+              },
+              "subject": {
+                "type": "string",
+                "description": "The subject under which the referenced schema is registered."
+              },
+              "version": {
+                "type": "int",
+                "description": "The exact version of the schema under the registered subject."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

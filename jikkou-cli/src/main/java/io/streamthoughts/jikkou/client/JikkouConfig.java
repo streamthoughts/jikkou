@@ -250,7 +250,7 @@ public final class JikkouConfig implements Configuration {
      */
     @Override
     public Object getAny(@NotNull String key) {
-        return config.getAnyRef(key);
+        return !config.hasPath(key) ? null : config.getAnyRef(key);
     }
 
     /**

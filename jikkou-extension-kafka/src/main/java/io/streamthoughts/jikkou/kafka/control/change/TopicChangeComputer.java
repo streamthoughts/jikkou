@@ -139,7 +139,7 @@ public class TopicChangeComputer implements ChangeComputer<V1KafkaTopic, TopicCh
                 .anyMatch(configEntryChange -> configEntryChange.getChangeType() != ChangeType.NONE);
 
         var configOpType = hasChanged ? ChangeType.UPDATE : ChangeType.NONE;
-        var partitionOpType = partitions.type();
+        var partitionOpType = partitions.getChangeType();
         ChangeType op = List.of(partitionOpType, configOpType).contains(ChangeType.UPDATE) ?
                 ChangeType.UPDATE :
                 ChangeType.NONE;

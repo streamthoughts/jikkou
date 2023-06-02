@@ -30,8 +30,9 @@
         <module>jikkou-resource-generator</module>
         <module>jikkou-api</module>
         <module>jikkou-cli</module>
-        <module>jikkou-extension-kafka</module>
         <module>jikkou-template-jinja</module>
+        <module>jikkou-extension-kafka</module>
+        <module>jikkou-extension-schema-registry</module>
     </modules>
 
     <name>Jikkou</name>
@@ -83,11 +84,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <junit.version>5.9.3</junit.version>
-        <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
-        <maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
         <testcontainer.version>1.18.3</testcontainer.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <vavr.version>0.10.4</vavr.version>
@@ -107,6 +105,18 @@
         <sonar.java.binaries>target</sonar.java.binaries>
         <sonar.java.source>${java.version}</sonar.java.source>
         <sonar.language>java</sonar.language>
+        <config.version>1.4.2</config.version>
+        <vavr-jackson.version>0.10.3</vavr-jackson.version>
+        <annotations.version>24.0.1</annotations.version>
+        <!-- START Maven plugin versions -->
+        <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
+        <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
+        <!-- END Maven plugin versions -->
     </properties>
 
     <dependencyManagement>
@@ -114,7 +124,7 @@
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>24.0.1</version>
+                <version>${annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.vavr</groupId>
@@ -124,7 +134,7 @@
             <dependency>
                 <groupId>io.vavr</groupId>
                 <artifactId>vavr-jackson</artifactId>
-                <version>0.10.3</version>
+                <version>${vavr-jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
@@ -134,7 +144,7 @@
             <dependency>
                 <groupId>com.typesafe</groupId>
                 <artifactId>config</artifactId>
-                <version>1.4.2</version>
+                <version>${config.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -258,33 +268,28 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>${maven-clean-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
-                    <configuration>
-                        <parameters>true</parameters>
-                        <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
-                        </annotationProcessorPaths>
-                    </configuration>
+                    <version>${maven-assembly-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>${maven-shade-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -302,6 +307,21 @@
                     <version>3.4.0</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <parameters>true</parameters>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.vafer</groupId>
                     <artifactId>jdeb</artifactId>
                     <version>1.10</version>
@@ -312,7 +332,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.3.1</version>
                 <configuration>
                     <filesets>
                         <fileset>

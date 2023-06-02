@@ -23,7 +23,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ValueChange<T> {
+public class ValueChange<T> implements Change {
 
     private final T after;
     private final T before;
@@ -74,7 +74,7 @@ public class ValueChange<T> {
                                           @Nullable final T before) {
 
         if (after == null && before == null) {
-            throw new IllegalArgumentException("Target and previous value cannot be both 'null'.");
+            return none(null);
         }
         if (after != null && before != null) {
             return isEquals(after, before) ?
@@ -108,9 +108,9 @@ public class ValueChange<T> {
      * @param before the previous value.
      * @param type   the change type.
      */
-    private ValueChange(@Nullable final T after,
-                       @Nullable final T before,
-                       @NotNull final ChangeType type) {
+    protected ValueChange(@Nullable final T after,
+                          @Nullable final T before,
+                          @NotNull final ChangeType type) {
         this.after = after;
         this.before = before;
         this.type = type;
@@ -137,7 +137,11 @@ public class ValueChange<T> {
         return type == ChangeType.NONE ? Optional.empty() : Optional.ofNullable(after);
     }
 
-    public ChangeType type() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ChangeType getChangeType() {
         return type;
     }
 
