@@ -60,6 +60,10 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
         </dependency>
+        <dependency>
+            <groupId>software.amazon.msk</groupId>
+            <artifactId>aws-msk-iam-auth</artifactId>
+        </dependency>
         <!-- START dependencies for test -->
         <dependency>
             <groupId>org.mockito</groupId>
