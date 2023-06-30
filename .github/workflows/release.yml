@@ -85,7 +85,7 @@ jobs:
             ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz
             ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1
             ./dist/jikkou-${{ env.VERSION }}-runner.zip
-            ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1"
+            ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1
           prerelease: false
 
       - name: Bump version for next iteration
