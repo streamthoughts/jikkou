@@ -6,4 +6,8 @@
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the Apache Kafka extensions.&lt;/p>
 &lt;/div>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Schema Registry</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/schema-registry/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/schema-registry/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information to use the Schema Registry extensions.&lt;/p>
+&lt;/div>
 &lt;p>More information:&lt;/p></description></item></channel></rss>

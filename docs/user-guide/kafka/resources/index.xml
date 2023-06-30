@@ -22,7 +22,6 @@ defines the number of partitions, the replication factor, and the configuration 
 &lt;p>To use the cluster default values for the number of &lt;code>partitions&lt;/code> and &lt;code>replicas&lt;/code> you can set the property
 &lt;code>spec.partitions&lt;/code> and &lt;code>spec.replicas&lt;/code> to &lt;code>-1&lt;/code>.&lt;/p>
 &lt;h3 id="example">Example&lt;/h3>
-&lt;p>&lt;strong>Resource Specification File&lt;/strong>&lt;/p>
 &lt;p>Here is a simple example that shows how to define a single YAML file containing two topic definition using
 the &lt;code>KafkaTopic&lt;/code> resource type.&lt;/p>
 &lt;p>&lt;em>&lt;code>file: kafka-topics.yaml&lt;/code>&lt;/em>&lt;/p>
