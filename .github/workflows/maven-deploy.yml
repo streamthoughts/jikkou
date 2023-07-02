@@ -38,7 +38,7 @@ jobs:
 
       - name: Init Setting.xml
         run: |
-          echo "<settings><interactiveMode>false</interactiveMode><servers><server><id>ossrh</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_PASSWORD }}</password></server><servers></settings>" > ./settings.xml
+          echo "<settings><interactiveMode>false</interactiveMode><servers><server><id>ossrh</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_PASSWORD }}</password></server></servers></settings>" > ./settings.xml
 
       - name: Grant execute permission to MVN Wrapper
         run: chmod +x ./mvnw
