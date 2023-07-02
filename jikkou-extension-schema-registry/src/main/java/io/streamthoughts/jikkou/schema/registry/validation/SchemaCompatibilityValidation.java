@@ -25,9 +25,8 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryClientContext;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
@@ -39,15 +38,15 @@ import org.jetbrains.annotations.NotNull;
 public class SchemaCompatibilityValidation implements ResourceValidation<V1SchemaRegistrySubject> {
 
     public static final int LATEST_VERSION = -1;
-    private AsyncSchemaRegistryApi api;
+
+    private SchemaRegistryClientContext context;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(@NotNull final Configuration config) throws ConfigException {
-        SchemaRegistryClientConfig registryClientConfig = new SchemaRegistryClientConfig(config);
-        api = new AsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(registryClientConfig));
+       context = new SchemaRegistryClientContext(config);
     }
 
     /**
@@ -65,6 +64,7 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
                     spec.getSchemaType(),
                     spec.getReferences()
             );
+            AsyncSchemaRegistryApi api = context.getAsyncClientApi();
             var check = api.testCompatibility(subjectName, LATEST_VERSION, true, registration).get();
             if (!check.isCompatible()) {
                 throw new ValidationException(String.format(

@@ -30,8 +30,7 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
-import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryClientContext;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientException;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
@@ -55,7 +54,7 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
 
     private SchemaRegistryClientConfig config;
 
-    private AsyncSchemaRegistryApi api;
+    private SchemaRegistryClientContext context;
 
     private boolean prettyPrintSchema = true;
 
@@ -85,7 +84,7 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
 
     private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
         this.config = config;
-        this.api = new AsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config));
+        this.context = new SchemaRegistryClientContext(config);
     }
 
     /**
@@ -96,7 +95,7 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
                                                  @NotNull List<ResourceSelector> selectors) {
 
 
-        CompletableFuture<List<V1SchemaRegistrySubject>> result = api
+        CompletableFuture<List<V1SchemaRegistrySubject>> result = context.getAsyncClientApi()
                 .listSubjects()
                 .thenComposeAsync(subjects -> AsyncUtils.waitForAll(getAllSubjects(subjects)));
         Optional<Throwable> exception = AsyncUtils.getException(result);
@@ -118,9 +117,9 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
 
     @NotNull
     private List<CompletableFuture<V1SchemaRegistrySubject>> getAllSubjects(List<String> subjects) {
-        return subjects.stream().map(subject -> api
+        return subjects.stream().map(subject -> context.getAsyncClientApi()
                 .getLatestSubjectSchema(subject)
-                .thenCombine(api
+                .thenCombine(context.getAsyncClientApi()
                             .getConfigCompatibility(subject, defaultToGlobalCompatibilityLevel)
                             .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
                             .exceptionally(t -> {

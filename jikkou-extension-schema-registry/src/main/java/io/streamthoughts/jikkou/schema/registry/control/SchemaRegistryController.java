@@ -36,8 +36,8 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryClientContext;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer;
@@ -55,7 +55,7 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistryController implements BaseResourceController<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
-    private SchemaRegistryClientConfig config;
+    private SchemaRegistryClientContext context;
 
     private SchemaRegistryCollector collector;
 
@@ -82,8 +82,8 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     }
 
     private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
-        this.config = config;
-        this.collector = new SchemaRegistryCollector(this.config)
+        this.context = new SchemaRegistryClientContext(config);
+        this.collector = new SchemaRegistryCollector(config)
                 .prettyPrintSchema(false)
                 .defaultToGlobalCompatibilityLevel(false);
     }
@@ -95,7 +95,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<SchemaSubjectChange> changes,
                                                            @NotNull ReconciliationMode mode,
                                                            boolean dryRun) {
-        SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
+        SchemaRegistryApi api = context.getClientApi();
         List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
                 new CreateSchemaSubjectChangeHandler(api),
                 new UpdateSchemaSubjectChangeHandler(api),
