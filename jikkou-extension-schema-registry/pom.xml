@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
         <jersey.version>3.1.2</jersey.version>
-        <avro.version>1.11.1</avro.version>
+        <avro.version>1.11.2</avro.version>
     </properties>
 
     <dependencies>
