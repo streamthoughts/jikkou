@@ -69,9 +69,11 @@ public final class SchemaHandle {
             if (jsonToken.isStructStart()) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> map = jsonParser.readValueAs(Map.class);
-                String location = map.get("$ref").toString();
-                String schema = IOUtils.readTextFile(location);
-                return new SchemaHandle(schema);
+                Object ref = map.get("$ref");
+                if (ref != null) {
+                    String location = ref.toString();
+                    return new SchemaHandle(IOUtils.readTextFile(location));
+                }
             }
             return null;
         }

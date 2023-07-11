@@ -82,10 +82,13 @@ public class InputStreamResourceReader extends AbstractResourceReader {
             return list;
 
         } catch (IOException e) {
-            throw new InvalidResourceFileException(
-                    String.format("Failed to parse and/or render resource file at location '%s'", location),
-                    e
-            );
+            String errorMessage = location != null ?
+                    String.format(
+                            "Failed to parse and/or render resource file at location '%s'.",
+                            location
+                    ) :
+                    "Failed to parse and/or render resource file.";
+            throw new InvalidResourceFileException(errorMessage, e);
         }
     }
 }

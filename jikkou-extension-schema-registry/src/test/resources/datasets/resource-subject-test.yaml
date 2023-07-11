@@ -1,0 +1,13 @@
+---
+apiVersion: "schemaregistry.jikkou.io/v1beta2"
+kind: "SchemaRegistrySubject"
+metadata:
+  name: "Test"
+  labels: { }
+  annotations:
+    schemaregistry.jikkou.io/normalize-schema: true
+spec:
+  compatibilityLevel: "FULL_TRANSITIVE"
+  schemaType: "AVRO"
+  schema:
+    $ref: classpath://datasets/avro-schema.avsc

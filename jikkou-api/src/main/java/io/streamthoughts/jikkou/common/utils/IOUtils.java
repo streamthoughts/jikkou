@@ -76,6 +76,16 @@ public final class IOUtils {
                 throw new RuntimeException(e);
             }
         }
+
+        if (scheme.equalsIgnoreCase("classpath")) {
+            String path = location.toString().replaceFirst("classpath://", "");
+            URL resource = ClassLoader.getSystemResource(path);
+            if (resource == null) {
+                throw new RuntimeException(String.format("Cannot find resource from URI: '%s'", location));
+            }
+            return readTextFile(resource);
+        }
+
         throw new RuntimeException(String.format(
                 "Scheme '%s 'is not supported in given URI: '%s'",
                 scheme,
