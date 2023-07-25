@@ -30,7 +30,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesForMatchingSelector() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -44,7 +44,7 @@ class HasItemsTest {
     @Test
     void shouldGetNoResourceForNotMatchingSelector() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -58,7 +58,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByKindClass() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -72,7 +72,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByKindString() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -86,7 +86,7 @@ class HasItemsTest {
     @Test
     void shouldGetNoResourceByKindString() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -100,7 +100,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByApiVersionString() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -114,7 +114,7 @@ class HasItemsTest {
     @Test
     void shouldGetResourceByName() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -128,7 +128,7 @@ class HasItemsTest {
     @Test
     void shouldThrowExceptionForNoResourceMatchingResourceName() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When / Then
@@ -138,7 +138,7 @@ class HasItemsTest {
     @Test
     void shouldReturnNonEmptyOptionalForMatchingResourceName() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -152,7 +152,7 @@ class HasItemsTest {
     @Test
     void shouldReturnEmptyOptionalForNonMatchingResourceName() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -166,7 +166,7 @@ class HasItemsTest {
     @Test
     void shouldThrowExceptionGivenDuplicateResourceName() {
         // Given
-        GenericResourceListObject list = new GenericResourceListObject(List.of(
+        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
                 getTestResourceForName("test"),
                 getTestResourceForName("test")
         ));

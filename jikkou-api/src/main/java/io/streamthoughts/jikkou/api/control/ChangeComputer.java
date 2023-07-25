@@ -39,7 +39,7 @@ public interface ChangeComputer<S, C extends Change> {
      * @param expectedStates the expected states.
      * @return the list of state changes.
      */
-    List<C> computeChanges(Iterable<S> actualStates,
-                           Iterable<S> expectedStates);
+    List<? extends C> computeChanges(Iterable<S> actualStates,
+                                     Iterable<S> expectedStates);
 
 }

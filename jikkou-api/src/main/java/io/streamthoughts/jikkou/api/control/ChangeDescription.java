@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.control;
 /**
  * Simple interface to get a human-readable description of an executed operation.
  */
+@FunctionalInterface
 public interface ChangeDescription {
 
     /**

@@ -47,6 +47,16 @@ public interface ResourceCollector<R extends HasMetadata>
         extends HasMetadataAcceptable, Extension, Configurable, AutoCloseable {
 
     /**
+     * Gets all the resources that exist into the managed system.
+     *
+     * @param configuration the configuration settings that may be used to get resources.
+     * @return the list of resources.
+     */
+    default List<R> listAll(@NotNull Configuration configuration) {
+        return listAll(configuration, Collections.emptyList());
+    }
+
+    /**
      * Gets all the resources that exist into the managed system. The given selectors
      * can be used as predicates to only select a subset of resources.
      *
