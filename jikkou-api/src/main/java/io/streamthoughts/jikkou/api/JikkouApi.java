@@ -172,7 +172,7 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default GenericResourceListObject validate(@NotNull HasItems resources) {
+    default GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources) {
         return validate(resources, Collections.emptyList());
     }
 
@@ -184,7 +184,7 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    GenericResourceListObject validate(@NotNull HasItems resources, final @NotNull List<ResourceSelector> selectors);
+    GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources, final @NotNull List<ResourceSelector> selectors);
 
     /**
      * Get the resources associated to the given type.

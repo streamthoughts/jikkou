@@ -1,0 +1,19 @@
+---
+apiVersion: "kafka.aiven.io/v1beta2"
+kind: "KafkaTopicAclEntryList"
+metadata: {}
+items:
+  - metadata:
+      annotations:
+        aiven.io/kafka-acl-id: "default"
+    spec:
+      permission: "ADMIN"
+      username: "avnadmin"
+      topic: "*"
+  - metadata:
+      annotations:
+        aiven.io/kafka-acl-id: "acl1234567890f"
+    spec:
+      permission: "READWRITE"
+      username: "alice"
+      topic: "*alice*"

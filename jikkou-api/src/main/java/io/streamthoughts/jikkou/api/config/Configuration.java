@@ -228,10 +228,10 @@ public interface Configuration {
     class Builder implements ConfigBuilder<Configuration, Builder> {
         private final Map<String, Object> props = new HashMap<>();
 
-        protected Builder() {
+        public Builder() {
         }
 
-        protected Builder(final Map<String, Object> props) {
+        public Builder(final Map<String, Object> props) {
             this.props.putAll(props);
         }
 

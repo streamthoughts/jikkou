@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "description": "Kafka ACL entry for a specific topic",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaTopicAclEntrySpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "kafkatopicaclentry",
+        "plural": "kafkatopicaclentries",
+        "shortNames": [
+          "avnkta"
+        ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.aiven.io/v1beta2"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaTopicAclEntry"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaTopicAclEntrySpec"
+    }
+  },
+  "$defs": {
+    "V1KafkaTopicAclEntrySpec": {
+      "type": "object",
+      "javaInterfaces": [],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "permission",
+        "username",
+        "topic"
+      ],
+      "properties": {
+        "permission": {
+          "type": "string",
+          "description": "Kafka permission",
+          "existingJavaType": "io.streamthoughts.jikkou.extension.aiven.api.data.Permission"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username"
+        },
+        "topic": {
+          "type": "string",
+          "description": "Topic name pattern"
+        }
+      }
+    }
+  }
+}

@@ -199,8 +199,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public GenericResourceListObject validate(final @NotNull HasItems resources,
-                                              final @NotNull List<ResourceSelector> selectors) {
+    public GenericResourceListObject<HasMetadata> validate(final @NotNull HasItems resources,
+                                                           final @NotNull List<ResourceSelector> selectors) {
         return GenericResourceListObject.of(handleResources(resources, selectors)
                 .values()
                 .stream()
@@ -228,11 +228,12 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .map(e -> {
                     ResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
                     List<HasMetadata> resource = e.getValue();
-                    return (ResourceListObject<HasMetadataChange<Change>>) controller.computeReconciliationChanges(
+                    ResourceListObject<? extends HasMetadataChange<Change>> changes = controller.computeReconciliationChanges(
                             resource,
                             ReconciliationMode.APPLY_ALL,
                             context
                     );
+                    return (ResourceListObject<HasMetadataChange<Change>>) changes;
                 })
                 .toList();
     }
@@ -241,7 +242,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     private Map<ResourceType, List<HasMetadata>> handleResources(@NotNull HasItems resources,
                                                                  @NotNull List<ResourceSelector> selectors) {
 
-        List<? extends HasMetadata> converted = resources.groupByType()
+        List<HasMetadata> converted = resources.groupByType()
                 .entrySet()
                 .stream()
                 .flatMap(entry -> {
@@ -262,9 +263,9 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .stream()
                 .map(Tuple2::of)
                 .map(t -> t.mapRight(resource -> {
-                    return transformationChain.transformAll(resource, new GenericResourceListObject(converted));
+                    return transformationChain.transformAll(resource, new GenericResourceListObject<>(converted));
                 }))
-                .map(t -> t.mapRight(resource -> new GenericResourceListObject(t._2()).getAllMatching(selectors)))
+                .map(t -> t.mapRight(resource -> new GenericResourceListObject<>(t._2()).getAllMatching(selectors)))
                 .filter(t -> !t._1().isTransient())
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
 
@@ -285,7 +286,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     public List<HasMetadata> getResources(final @NotNull ResourceType resourceType,
                                           final @NotNull List<ResourceSelector> selectors,
                                           final @NotNull Configuration configuration) {
-        try (var collector = getResourceCollectorForType(resourceType)) {
+        try (ResourceCollector<HasMetadata> collector = getResourceCollectorForType(resourceType)) {
             List<HasMetadata> resources = collector.listAll(configuration, selectors);
             ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
             List<HasMetadata> result = resources.stream()
@@ -312,8 +313,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .withCollectors(collectors.getItems());
     }
 
-    @SuppressWarnings({"rawtypes"})
-    private ResourceCollector getResourceCollectorForType(@NotNull ResourceType resource) {
+    private ResourceCollector<HasMetadata> getResourceCollectorForType(@NotNull ResourceType resource) {
 
         var acceptedDescriptors = collectors.allResourcesAccepting(resource);
 

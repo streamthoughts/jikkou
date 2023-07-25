@@ -1,0 +1,24 @@
+---
+apiVersion: "kafka.aiven.io/v1beta2"
+kind: "SchemaRegistryAclEntryList"
+metadata:
+  labels: {}
+  annotations:
+    jikkou.io/items-count: 2
+items:
+  - metadata:
+      labels: {}
+      annotations:
+        aiven.io/kafka-acl-id: "acl1234567890f"
+    spec:
+      permission: "READ"
+      username: "bob"
+      topic: "Subject:*alice*"
+  - metadata:
+      labels: {}
+      annotations:
+        aiven.io/kafka-acl-id: "acl1234567890f"
+    spec:
+      permission: "WRITE"
+      username: "alice"
+      topic: "Subject:*alice*"
