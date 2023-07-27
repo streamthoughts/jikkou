@@ -70,6 +70,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: docker
+        platforms: linux/amd64,linux/arm64
         file: docker/Dockerfile
         no-cache: true
         push: true
@@ -84,6 +85,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: docker
+        platforms: linux/amd64,linux/arm64
         file: docker/Dockerfile
         no-cache: true
         push: true
