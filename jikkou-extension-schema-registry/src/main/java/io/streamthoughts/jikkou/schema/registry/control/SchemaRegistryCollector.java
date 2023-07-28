@@ -30,7 +30,8 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
-import io.streamthoughts.jikkou.schema.registry.SchemaRegistryClientContext;
+import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientException;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
@@ -54,8 +55,6 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
 
     private SchemaRegistryClientConfig config;
 
-    private SchemaRegistryClientContext context;
-
     private boolean prettyPrintSchema = true;
 
     private boolean defaultToGlobalCompatibilityLevel = true;
@@ -63,7 +62,8 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
     /**
      * Creates a new {@link SchemaRegistryCollector} instance.
      */
-    public SchemaRegistryCollector() {}
+    public SchemaRegistryCollector() {
+    }
 
     /**
      * Creates a new {@link SchemaRegistryCollector} instance.
@@ -84,7 +84,6 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
 
     private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
         this.config = config;
-        this.context = new SchemaRegistryClientContext(config);
     }
 
     /**
@@ -94,15 +93,19 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
     public List<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
                                                  @NotNull List<ResourceSelector> selectors) {
 
-
-        CompletableFuture<List<V1SchemaRegistrySubject>> result = context.getAsyncClientApi()
-                .listSubjects()
-                .thenComposeAsync(subjects -> AsyncUtils.waitForAll(getAllSubjects(subjects)));
-        Optional<Throwable> exception = AsyncUtils.getException(result);
-        if (exception.isPresent()) {
-            throw new JikkouRuntimeException("Failed to list all subject schemas", exception.get());
+        AsyncSchemaRegistryApi api = new AsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config));
+        try {
+            CompletableFuture<List<V1SchemaRegistrySubject>> result = api
+                    .listSubjects()
+                    .thenComposeAsync(subjects -> AsyncUtils.waitForAll(getAllSubjects(subjects, api)));
+            Optional<Throwable> exception = AsyncUtils.getException(result);
+            if (exception.isPresent()) {
+                throw new JikkouRuntimeException("Failed to list all subject schemas", exception.get());
+            }
+            return result.join();
+        } finally {
+            api.close();
         }
-        return result.join();
     }
 
     public SchemaRegistryCollector prettyPrintSchema(final boolean prettyPrintSchema) {
@@ -116,30 +119,31 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
     }
 
     @NotNull
-    private List<CompletableFuture<V1SchemaRegistrySubject>> getAllSubjects(List<String> subjects) {
-        return subjects.stream().map(subject -> context.getAsyncClientApi()
+    private List<CompletableFuture<V1SchemaRegistrySubject>> getAllSubjects(final List<String> subjects,
+                                                                            final AsyncSchemaRegistryApi api) {
+        return subjects.stream().map(subject -> api
                 .getLatestSubjectSchema(subject)
-                .thenCombine(context.getAsyncClientApi()
-                            .getConfigCompatibility(subject, defaultToGlobalCompatibilityLevel)
-                            .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
-                            .exceptionally(t -> {
-                                if (t.getCause() != null) t = t.getCause();
+                .thenCombine(api
+                                .getConfigCompatibility(subject, defaultToGlobalCompatibilityLevel)
+                                .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
+                                .exceptionally(t -> {
+                                    if (t.getCause() != null) t = t.getCause();
 
-                                if (t instanceof SchemaRegistryClientException registryError) {
-                                    if (registryError.getResponseCode() == 404)
-                                        return null;
-                                }
-                                if (t instanceof RuntimeException re) {
-                                    throw re;
-                                }
-                                throw new JikkouRuntimeException(t);
-                            })
+                                    if (t instanceof SchemaRegistryClientException registryError) {
+                                        if (registryError.getResponseCode() == 404)
+                                            return null;
+                                    }
+                                    if (t instanceof RuntimeException re) {
+                                        throw re;
+                                    }
+                                    throw new JikkouRuntimeException(t);
+                                })
                         ,
                         this::mapToV1SchemaRegistrySubject
                 )
         ).toList();
     }
-    
+
     @NotNull
     private V1SchemaRegistrySubject mapToV1SchemaRegistrySubject(SubjectSchema subjectSchema,
                                                                  CompatibilityLevels compatibilityLevels) {

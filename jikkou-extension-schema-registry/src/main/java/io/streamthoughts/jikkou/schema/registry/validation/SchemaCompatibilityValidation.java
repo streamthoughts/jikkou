@@ -25,12 +25,13 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.schema.registry.SchemaRegistryClientContext;
-import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
+import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
-import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
 
 @ExtensionEnabled(value = false)
@@ -39,14 +40,14 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
 
     public static final int LATEST_VERSION = -1;
 
-    private SchemaRegistryClientContext context;
+    private SchemaRegistryClientConfig config;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(@NotNull final Configuration config) throws ConfigException {
-       context = new SchemaRegistryClientContext(config);
+        this.config = new SchemaRegistryClientConfig(config);
     }
 
     /**
@@ -55,34 +56,33 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
     @Override
     public void validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
         String subjectName = resource.getMetadata().getName();
-        try {
-            V1SchemaRegistrySubjectSpec spec = resource.getSpec();
-            if (spec == null) return;
+        V1SchemaRegistrySubjectSpec spec = resource.getSpec();
+        if (spec == null) return;
 
-            SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
-                    spec.getSchema().value(),
-                    spec.getSchemaType(),
-                    spec.getReferences()
-            );
-            AsyncSchemaRegistryApi api = context.getAsyncClientApi();
-            var check = api.testCompatibility(subjectName, LATEST_VERSION, true, registration).get();
+        SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
+                spec.getSchema().value(),
+                spec.getSchemaType(),
+                spec.getReferences()
+        );
+        SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
+        try {
+            var check = api.testCompatibility(subjectName, LATEST_VERSION, true, registration);
             if (!check.isCompatible()) {
                 throw new ValidationException(String.format(
                         "Schema for subject '%s' is not compatible with latest version: %s",
                         subjectName,
                         check.getMessages()
-                        )
-                , this);
+                )
+                        , this);
             }
-        } catch (ExecutionException e) {
-            rethrowException(e);
-        } catch (InterruptedException e) {
-           Thread.currentThread().interrupt();
-            rethrowException(e);
+        } catch (RestClientException e) {
+            throw new JikkouRuntimeException("Failed to test schema compatibility: " + e.getLocalizedMessage());
+        } finally {
+            api.close();
         }
     }
 
     private static void rethrowException(Exception e) {
-        throw new JikkouRuntimeException("Failed to test schema compatibility: " + e.getLocalizedMessage());
+
     }
 }

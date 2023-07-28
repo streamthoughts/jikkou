@@ -16,30 +16,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.schema.registry.api;
+package io.streamthoughts.jikkou.schema.registry.api.restclient;
 
-import jakarta.ws.rs.NotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.streamthoughts.jikkou.api.io.Jackson;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.MultivaluedHashMap;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.ContextResolver;
 import jakarta.ws.rs.ext.Provider;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.proxy.WebResourceFactory;
+import org.glassfish.jersey.logging.LoggingFeature;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * This class is used to abstract the way a REST API is build based on a given interface.
@@ -52,12 +52,14 @@ public class RestClientBuilder {
 
     private Map<String, List<Object>> headers;
 
+    private boolean enableClientDebugging = false;
+
     private final ClientBuilder clientBuilder;
 
     /**
      * Creates a new {@link RestClientBuilder} instance.
      *
-     * @return  a new {@link RestClientBuilder} instance.
+     * @return a new {@link RestClientBuilder} instance.
      */
     public static RestClientBuilder newBuilder() {
         return new RestClientBuilder();
@@ -73,7 +75,7 @@ public class RestClientBuilder {
     /**
      * Sets the base url.
      *
-     * @return  {@code this}.
+     * @return {@code this}.
      */
     public RestClientBuilder baseUri(String uri) {
         return baseUri(URI.create(uri));
@@ -82,7 +84,7 @@ public class RestClientBuilder {
     /**
      * Sets the base url.
      *
-     * @return  {@code this}.
+     * @return {@code this}.
      */
     public RestClientBuilder baseUri(URI uri) {
         this.baseUri = uri;
@@ -93,7 +95,7 @@ public class RestClientBuilder {
     /**
      * Sets the base url.
      *
-     * @return  {@code this}.
+     * @return {@code this}.
      */
     public RestClientBuilder baseUrl(URL url) {
         try {
@@ -107,7 +109,7 @@ public class RestClientBuilder {
     /**
      * Sets the connect timeout.
      *
-     * @return  {@code this}.
+     * @return {@code this}.
      */
     public RestClientBuilder writeTimeout(Duration writeTimeout) {
         clientBuilder.connectTimeout(writeTimeout.toMillis(), TimeUnit.MILLISECONDS);
@@ -118,7 +120,7 @@ public class RestClientBuilder {
      * Sets the read timeout.
      *
      * @param readTimeout the read timeout duration.
-     * @return  {@code this}.
+     * @return {@code this}.
      */
     public RestClientBuilder readTimeout(Duration readTimeout) {
         clientBuilder.readTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS);
@@ -130,11 +132,17 @@ public class RestClientBuilder {
         return this;
     }
 
+    public RestClientBuilder enableClientDebugging(boolean enableClientDebugging) {
+        this.enableClientDebugging = enableClientDebugging;
+        return this;
+    }
+
     /**
      * Adds header to request.
-     * @param header    the header name.
-     * @param value     the header value.
-     * @return  {@code this}.
+     *
+     * @param header the header name.
+     * @param value  the header value.
+     * @return {@code this}.
      */
     public RestClientBuilder header(final String header, final Object value) {
         this.headers.computeIfAbsent(header, s -> new ArrayList<>()).add(value);
@@ -144,46 +152,57 @@ public class RestClientBuilder {
     /**
      * Builds a new client for the given resource interface.
      *
-     * @param clazz the interface that defines REST API methods for use
+     * @param resourceInterface the interface that defines REST API methods for use
      * @return a new instance of an implementation of this REST interface that can be used for making requests to the server.
      */
-    public <T> T build(Class<T> clazz) {
+    public <T> T build(Class<T> resourceInterface) {
         if (baseUri == null) {
             throw new IllegalStateException("baseUri has not been set");
         }
 
-        Client client = clientBuilder
-                .register(new ServerExceptionMapper())
+        ClientBuilder cb = clientBuilder;
+        if (enableClientDebugging) {
+            SLF4JBridgeHandler.removeHandlersForRootLogger();
+            SLF4JBridgeHandler.install();
+            cb = cb
+                    .register(new LoggingFeature(
+                                    Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
+                                    Level.INFO,
+                                    LoggingFeature.Verbosity.PAYLOAD_ANY,
+                                    null
+                            )
+                    );
+        }
+        Client client = cb
+                .register(new CustomJacksonMapperProvider())
                 .build();
-        WebTarget webTarget = client.target(baseUri);
 
+        WebTarget webTarget = client.target(baseUri);
         webTarget.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
 
         MultivaluedHashMap<String, Object> inboundHeaders = new MultivaluedHashMap<>();
         inboundHeaders.putAll(headers);
 
-        return WebResourceFactory.newResource(
-                clazz,
+        return ProxyInvocationHandler.newResource(
+                resourceInterface,
+                client,
                 webTarget,
-                false,
-                inboundHeaders,
-                Collections.emptyList(),
-                new Form()
+                inboundHeaders
         );
     }
 
     @Provider
-    public static class ServerExceptionMapper implements ExceptionMapper<NotFoundException> {
-        @Override
-        public Response toResponse(NotFoundException exception) {
-            String message = exception.getMessage();
-            Response response = exception.getResponse();
-            Response.Status status = response.getStatusInfo().toEnum();
+    public static class CustomJacksonMapperProvider implements ContextResolver<ObjectMapper> {
 
-            return Response.status(status)
-                    .entity(status + ": " + message)
-                    .type(MediaType.TEXT_PLAIN)
-                    .build();
+        final ObjectMapper mapper;
+
+        public CustomJacksonMapperProvider() {
+            mapper = Jackson.JSON_OBJECT_MAPPER;
+        }
+
+        @Override
+        public ObjectMapper getContext(Class<?> type) {
+            return mapper;
         }
     }
 }

@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.schema.registry.api;
 
 import io.streamthoughts.jikkou.common.utils.Encoding;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;

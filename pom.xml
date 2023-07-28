@@ -120,6 +120,7 @@
         <!-- END Maven plugin versions -->
         <slf4j-api.version>2.0.7</slf4j-api.version>
         <logback-classic.version>1.4.8</logback-classic.version>
+        <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
     </properties>
 
     <dependencyManagement>

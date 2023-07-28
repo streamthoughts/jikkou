@@ -27,8 +27,7 @@ import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectVersion;
-import jakarta.ws.rs.ClientErrorException;
-import jakarta.ws.rs.core.Response;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A wrapper around the REST API {@link SchemaRegistryApi} to provide asynchronous methods.
  */
-public final class AsyncSchemaRegistryApi {
+public final class AsyncSchemaRegistryApi implements AutoCloseable {
 
     private final SchemaRegistryApi api;
 
@@ -213,10 +212,9 @@ public final class AsyncSchemaRegistryApi {
                     e = completionError.getCause();
                 }
 
-                if (e instanceof ClientErrorException clientError) {
-                    Response response = clientError.getResponse();
-                    ErrorResponse error = response.readEntity(ErrorResponse.class);
-                    throw new SchemaRegistryClientException(response.getStatus(), error);
+                if (e instanceof RestClientException clientError) {
+                    ErrorResponse error = clientError.getResponseEntity(ErrorResponse.class);
+                    throw new SchemaRegistryClientException(clientError.response().getStatus(), error);
                 }
                 if (e instanceof RuntimeException re) {
                     throw re;
@@ -225,5 +223,10 @@ public final class AsyncSchemaRegistryApi {
             }
             return r;
         });
+    }
+
+    @Override
+    public void close() {
+        this.api.close();
     }
 }

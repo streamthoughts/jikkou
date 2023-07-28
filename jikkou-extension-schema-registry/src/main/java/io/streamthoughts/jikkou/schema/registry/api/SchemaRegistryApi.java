@@ -42,7 +42,7 @@ import java.util.List;
  * REST API for Schema Registry implementation.
  */
 @Path("/")
-public interface SchemaRegistryApi {
+public interface SchemaRegistryApi  extends AutoCloseable {
 
     /*
      * ----------------------------------------------------------------------------------------------------------------
@@ -246,4 +246,11 @@ public interface SchemaRegistryApi {
                                          @PathParam("version") int version,
                                          @QueryParam("verbose") boolean verbose,
                                          SubjectSchemaRegistration schema);
+
+    /**
+     * Closes this client.
+     */
+    @Override
+    default void close() {
+    }
 }

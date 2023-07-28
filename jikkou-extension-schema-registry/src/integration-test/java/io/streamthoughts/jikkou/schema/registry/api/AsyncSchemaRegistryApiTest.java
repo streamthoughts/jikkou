@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientBuilder;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.util.List;
@@ -103,6 +104,7 @@ class AsyncSchemaRegistryApiTest {
         SchemaRegistryApi api = RestClientBuilder
                 .newBuilder()
                 .baseUri(SCHEMA_REGISTRY.getSchemaRegistryUrl())
+                .enableClientDebugging(true)
                 .build(SchemaRegistryApi.class);
         async = new AsyncSchemaRegistryApi(api);
     }

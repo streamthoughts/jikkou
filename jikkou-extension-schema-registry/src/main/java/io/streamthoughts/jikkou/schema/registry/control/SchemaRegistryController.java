@@ -36,8 +36,8 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.schema.registry.SchemaRegistryClientContext;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer;
@@ -55,19 +55,20 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistryController implements BaseResourceController<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
-    private SchemaRegistryClientContext context;
-
     private SchemaRegistryCollector collector;
+
+    private SchemaRegistryClientConfig config;
 
     /**
      * Creates a new {@link SchemaRegistryController} instance.
      */
-    public SchemaRegistryController() {}
+    public SchemaRegistryController() {
+    }
 
     /**
      * Creates a new {@link SchemaRegistryController} instance.
      *
-     * @param config  the schema registry client configuration.
+     * @param config the schema registry client configuration.
      */
     public SchemaRegistryController(@NotNull SchemaRegistryClientConfig config) {
         configure(config);
@@ -82,7 +83,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     }
 
     private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
-        this.context = new SchemaRegistryClientContext(config);
+        this.config = config;
         this.collector = new SchemaRegistryCollector(config)
                 .prettyPrintSchema(false)
                 .defaultToGlobalCompatibilityLevel(false);
@@ -95,13 +96,17 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<SchemaSubjectChange> changes,
                                                            @NotNull ReconciliationMode mode,
                                                            boolean dryRun) {
-        SchemaRegistryApi api = context.getClientApi();
-        List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
-                new CreateSchemaSubjectChangeHandler(api),
-                new UpdateSchemaSubjectChangeHandler(api),
-                new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
-        );
-        return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
+        try {
+            List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
+                    new CreateSchemaSubjectChangeHandler(api),
+                    new UpdateSchemaSubjectChangeHandler(api),
+                    new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
+            );
+            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        } finally {
+            api.close();
+        }
     }
 
     /**
@@ -119,7 +124,9 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
                 .toList();
 
         // Get existing resources from the environment.
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), context.selectors());
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration()).stream()
+                .filter(new AggregateSelector(context.selectors())::apply)
+                .toList();
 
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();
 

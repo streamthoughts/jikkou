@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.extension.aiven.api.restclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.EnumFeature;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -203,7 +202,7 @@ public class RestClientBuilder {
 
         @Override
         public ObjectMapper getContext(Class<?> type) {
-            return mapper.configure(EnumFeature.WRITE_ENUMS_TO_LOWERCASE, true);
+            return mapper;
         }
     }
 }
