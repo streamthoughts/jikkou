@@ -19,46 +19,7 @@ Then, use the &lt;code>jikkou.extension.paths&lt;/code> property to configure th
 &lt;li>a directory containing all JARs for the extensions.&lt;/li>
 &lt;/ul></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
-&lt;h2 id="subject">Subject&lt;/h2>
-&lt;h3 id="schemacompatibilityvalidation">&lt;code>SchemaCompatibilityValidation&lt;/code>&lt;/h3>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation
-&lt;/code>&lt;/pre>&lt;p>The &lt;code>SchemaCompatibilityValidation&lt;/code> allows testing the compatibility of the schema with the latest
-version already registered in the Schema Registry using the provided compatibility-level.&lt;/p>
-&lt;h3 id="avroschemavalidation">&lt;code>AvroSchemaValidation&lt;/code>&lt;/h3>
-&lt;p>The &lt;code>AvroSchemaValidation&lt;/code> allows checking if the specified Avro schema matches some specific avro schema definition
-rules;&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation
-&lt;/code>&lt;/pre>&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Name&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>fieldsMustHaveDoc&lt;/code>&lt;/td>
-&lt;td>Boolean&lt;/td>
-&lt;td>Verify that all record fields have a &lt;code>doc&lt;/code> property&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fieldsMustBeNullable&lt;/code>&lt;/td>
-&lt;td>Boolean&lt;/td>
-&lt;td>Verify that all record fields are nullable&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fieldsMustBeOptional&lt;/code>&lt;/td>
-&lt;td>Boolean&lt;/td>
-&lt;td>Verify that all record fields are optional&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</guid><description>
+&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="topics">Topics&lt;/h2>
 &lt;h3 id="noduplicatetopicsallowedvalidation">&lt;code>NoDuplicateTopicsAllowedValidation&lt;/code>&lt;/h3>
