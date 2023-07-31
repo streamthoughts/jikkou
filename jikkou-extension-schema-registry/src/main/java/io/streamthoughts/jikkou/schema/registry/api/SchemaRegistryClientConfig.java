@@ -47,6 +47,12 @@ public class SchemaRegistryClientConfig {
             .ofString(SCHEMA_REGISTRY_CONFIG_PREFIX + ".basicAuthPassword")
             .description("Use when 'schemaRegistry.authMethod' is 'basicauth' to specify the password for Authorization Basic header");
 
+    public static final ConfigProperty<Boolean> SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED = ConfigProperty
+            .ofBoolean(SCHEMA_REGISTRY_CONFIG_PREFIX + ".debugLoggingEnabled")
+            .description("Enable debug logging.")
+            .orElse(false);
+
+
     private final Configuration configuration;
 
     /**
@@ -80,5 +86,9 @@ public class SchemaRegistryClientConfig {
 
     public String getBasicAuthInfo() {
         return getBasicAuthUsername() + ":" + getBasicAuthPassword();
+    }
+
+    public boolean getDebugLoggingEnabled() {
+        return SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED.evaluate(configuration);
     }
 }

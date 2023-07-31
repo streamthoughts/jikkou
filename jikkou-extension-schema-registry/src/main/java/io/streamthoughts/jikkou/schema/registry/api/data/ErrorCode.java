@@ -18,20 +18,12 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import java.util.List;
-import lombok.Builder;
-import lombok.extern.jackson.Jacksonized;
-
 /**
- * @param subject    Name of the subject that this schema is registered under
- * @param id         Globally unique identifier of the schema.
- * @param version    Version of the returned schema.
- * @param schemaType The schema format: AVRO is the default (if no schema type is shown on the response, the type is AVRO), PROTOBUF, JSON
- * @param schema     The schema string
- * @param references The schema references
+ * Error code that can be returned.
  */
-@Builder
-@Jacksonized
-public record SubjectSchema(String subject, int id, int version, String schemaType, String schema,
-                            List<String> references) {
+public class ErrorCode {
+
+    public static final int SUBJECT_NOT_FOUND = 40401;
+    public static final int VERSION_NOT_FOUND = 40402;
+
 }

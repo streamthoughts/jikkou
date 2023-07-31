@@ -42,7 +42,7 @@ import java.util.List;
  * REST API for Schema Registry implementation.
  */
 @Path("/")
-public interface SchemaRegistryApi  extends AutoCloseable {
+public interface SchemaRegistryApi extends AutoCloseable {
 
     /*
      * ----------------------------------------------------------------------------------------------------------------
@@ -246,6 +246,14 @@ public interface SchemaRegistryApi  extends AutoCloseable {
                                          @PathParam("version") int version,
                                          @QueryParam("verbose") boolean verbose,
                                          SubjectSchemaRegistration schema);
+
+    @POST
+    @Path("/compatibility/subjects/{subject}/versions/latest")
+    @Produces("application/vnd.schemaregistry.v1+json")
+    @Consumes({"application/vnd.schemaregistry.v1+json", "application/vnd.schemaregistry+json", "application/json"})
+    CompatibilityCheck testCompatibilityLatest(@PathParam("subject") String subject,
+                                               @QueryParam("verbose") boolean verbose,
+                                               SubjectSchemaRegistration schema);
 
     /**
      * Closes this client.

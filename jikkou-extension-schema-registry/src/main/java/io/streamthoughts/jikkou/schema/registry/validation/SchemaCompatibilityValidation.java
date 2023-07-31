@@ -28,17 +28,18 @@ import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
+import io.streamthoughts.jikkou.schema.registry.api.data.ErrorCode;
+import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @ExtensionEnabled(value = false)
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
 public class SchemaCompatibilityValidation implements ResourceValidation<V1SchemaRegistrySubject> {
-
-    public static final int LATEST_VERSION = -1;
 
     private SchemaRegistryClientConfig config;
 
@@ -66,7 +67,7 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
         );
         SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
         try {
-            var check = api.testCompatibility(subjectName, LATEST_VERSION, true, registration);
+            var check = api.testCompatibilityLatest(subjectName, true, registration);
             if (!check.isCompatible()) {
                 throw new ValidationException(String.format(
                         "Schema for subject '%s' is not compatible with latest version: %s",
@@ -76,13 +77,13 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
                         , this);
             }
         } catch (RestClientException e) {
-            throw new JikkouRuntimeException("Failed to test schema compatibility: " + e.getLocalizedMessage());
+            ErrorResponse response = e.getResponseEntity(ErrorResponse.class);
+            List<Integer> shippableErrors = List.of(ErrorCode.SUBJECT_NOT_FOUND, ErrorCode.VERSION_NOT_FOUND);
+            if (!shippableErrors.contains(response.errorCode())) {
+                throw new JikkouRuntimeException("Failed to test schema compatibility: " + response.message());
+            }
         } finally {
             api.close();
         }
-    }
-
-    private static void rethrowException(Exception e) {
-
     }
 }

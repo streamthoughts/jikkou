@@ -42,9 +42,8 @@ public final class AivenApiClientConfig {
             .ofString(AIVEN_CONFIG_PREFIX + ".tokenAuth")
             .description("Aiven Bearer Token. Tokens can be obtained from your Aiven profile page");
 
-
     public static final ConfigProperty<Boolean> AIVEN_DEBUG_LOGGING_ENABLED = ConfigProperty
-            .ofBoolean(AIVEN_CONFIG_PREFIX + ".debugLoggingEnableD")
+            .ofBoolean(AIVEN_CONFIG_PREFIX + ".debugLoggingEnabled")
             .description("Enable debug logging.")
             .orElse(false);
 

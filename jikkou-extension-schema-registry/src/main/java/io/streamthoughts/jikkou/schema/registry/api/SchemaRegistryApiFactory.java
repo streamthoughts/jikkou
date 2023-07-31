@@ -44,7 +44,8 @@ public final class SchemaRegistryApiFactory {
         LOG.info("Create new Schema Registry client for: {}", baseUri);
         RestClientBuilder builder = RestClientBuilder
                 .newBuilder()
-                .baseUri(baseUri);
+                .baseUri(baseUri)
+                .enableClientDebugging(config.getDebugLoggingEnabled());
 
         builder = switch (config.getAuthMethod()) {
             case BASICAUTH -> {
