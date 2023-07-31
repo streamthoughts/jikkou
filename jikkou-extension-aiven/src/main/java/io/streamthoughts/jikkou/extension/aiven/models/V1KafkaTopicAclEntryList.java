@@ -38,13 +38,13 @@ import lombok.With;
 
 
 /**
- * Kafka ACL entry for a specific topic
+ * List of ACL entries for Kafka Topic
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("Kafka ACL entry for a specific topic")
+@Description("List of ACL entries for Kafka Topic")
 @Names(singular = "avn-kafka-topic-acl-list", shortNames = {
     "avnktal"
 })
@@ -54,7 +54,7 @@ import lombok.With;
     "metadata",
     "items"
 })
-@ApiVersion("kafka.aiven.io/v1beta2")
+@ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("KafkaTopicAclEntryList")
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
@@ -67,7 +67,7 @@ public class V1KafkaTopicAclEntryList implements ResourceListObject<V1KafkaTopic
      * 
      */
     @JsonProperty("apiVersion")
-    private String apiVersion = "kafka.aiven.io/v1beta2";
+    private String apiVersion = "kafka.aiven.io/v1beta1";
     /**
      * 
      * (Required)

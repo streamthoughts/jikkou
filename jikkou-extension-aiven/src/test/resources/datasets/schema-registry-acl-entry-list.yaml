@@ -1,6 +1,6 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
-kind: "KafkaTopicAclEntryList"
+apiVersion: "kafka.aiven.io/v1beta1"
+kind: "SchemaRegistryAclEntryList"
 metadata:
   labels: {}
   annotations:
@@ -9,16 +9,16 @@ items:
   - metadata:
       labels: {}
       annotations:
-        aiven.io/kafka-acl-id: "default"
+        aiven.io/kafka-acl-id: "acl1234567890f"
     spec:
-      permission: "ADMIN"
-      username: "avnadmin"
-      topic: "*"
+      permission: "READ"
+      username: "bob"
+      topic: "Subject:*alice*"
   - metadata:
       labels: {}
       annotations:
         aiven.io/kafka-acl-id: "acl1234567890f"
     spec:
-      permission: "READWRITE"
+      permission: "WRITE"
       username: "alice"
-      topic: "*alice*"
+      topic: "Subject:*alice*"

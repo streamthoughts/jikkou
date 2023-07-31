@@ -37,15 +37,15 @@ import lombok.With;
 
 
 /**
- * Kafka ACL entry for a specific topic
+ * A single ACL entry for Schema Registry
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("Kafka ACL entry for a specific topic")
-@Names(singular = "avn-kafka-topic-acl", shortNames = {
-    "avnkta"
+@Description("A single ACL entry for Schema Registry")
+@Names(singular = "avn-schema-registry-acl", shortNames = {
+    "avnsra"
 })
 @JsonPropertyOrder({
     "apiVersion",
@@ -53,11 +53,11 @@ import lombok.With;
     "metadata",
     "spec"
 })
-@ApiVersion("kafka.aiven.io/v1beta2")
-@Kind("KafkaTopicAclEntry")
+@ApiVersion("kafka.aiven.io/v1beta1")
+@Kind("SchemaRegistryAclEntry")
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
-public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAclEntrySpec> , Resource
+public class V1SchemaRegistryAclEntry implements HasMetadata, HasSpec<V1SchemaRegistryAclEntrySpec> , Resource
 {
 
     /**
@@ -66,14 +66,14 @@ public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAc
      * 
      */
     @JsonProperty("apiVersion")
-    private String apiVersion = "kafka.aiven.io/v1beta2";
+    private String apiVersion = "kafka.aiven.io/v1beta1";
     /**
      * 
      * (Required)
      * 
      */
     @JsonProperty("kind")
-    private String kind = "KafkaTopicAclEntry";
+    private String kind = "SchemaRegistryAclEntry";
     /**
      * 
      * (Required)
@@ -87,13 +87,13 @@ public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAc
      * 
      */
     @JsonProperty("spec")
-    private io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec spec;
+    private io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec spec;
 
     /**
      * No args constructor for use in serialization
      * 
      */
-    public V1KafkaTopicAclEntry() {
+    public V1SchemaRegistryAclEntry() {
     }
 
     /**
@@ -109,7 +109,7 @@ public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAc
         "metadata",
         "spec"
     })
-    public V1KafkaTopicAclEntry(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec spec) {
+    public V1SchemaRegistryAclEntry(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec spec) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -153,14 +153,14 @@ public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAc
      * 
      */
     @JsonProperty("spec")
-    public io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec getSpec() {
+    public io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec getSpec() {
         return spec;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(V1KafkaTopicAclEntry.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(V1SchemaRegistryAclEntry.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("apiVersion");
         sb.append('=');
         sb.append(((this.apiVersion == null)?"<null>":this.apiVersion));
@@ -200,10 +200,10 @@ public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAc
         if (other == this) {
             return true;
         }
-        if ((other instanceof V1KafkaTopicAclEntry) == false) {
+        if ((other instanceof V1SchemaRegistryAclEntry) == false) {
             return false;
         }
-        V1KafkaTopicAclEntry rhs = ((V1KafkaTopicAclEntry) other);
+        V1SchemaRegistryAclEntry rhs = ((V1SchemaRegistryAclEntry) other);
         return (((((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata)))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
     }
 

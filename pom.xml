@@ -32,7 +32,7 @@
         <module>jikkou-cli</module>
         <module>jikkou-template-jinja</module>
         <module>jikkou-extension-kafka</module>
-        <module>jikkou-extension-kafka-aiven</module>
+        <module>jikkou-extension-aiven</module>
         <module>jikkou-extension-schema-registry</module>
     </modules>
 

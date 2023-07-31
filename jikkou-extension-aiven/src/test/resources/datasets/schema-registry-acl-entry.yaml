@@ -1,21 +1,21 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "SchemaRegistryAclEntry"
 metadata:
   labels: {}
   annotations:
-    aiven.io/kafka-acl-id: "acl1234567890f"
+    kafka.aiven.io/acl-entry-id: "acl1234567890f"
 spec:
   permission: "READ"
   username: "bob"
   resource: "Subject:*alice*"
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "SchemaRegistryAclEntry"
 metadata:
   labels: {}
   annotations:
-    aiven.io/kafka-acl-id: "acl1234567890f"
+    kafka.aiven.io/acl-entry-id: "acl1234567890f"
   spec:
     permission: "READWRITE"
     username: "alice"

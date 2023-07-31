@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-extension-kafka-aiven</artifactId>
+            <artifactId>jikkou-extension-aiven</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

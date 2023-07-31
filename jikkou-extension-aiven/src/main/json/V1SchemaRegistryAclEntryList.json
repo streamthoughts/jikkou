@@ -1,8 +1,8 @@
 {
   "type": "object",
-  "description": "Kafka ACL entry for a specific topic",
+  "description": "List of ACL entries for Schema Registry",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1KafkaTopicAclEntry>"
+    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1SchemaRegistryAclEntry>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -10,9 +10,9 @@
     "all-args-constructor": false,
     "spec": {
       "names": {
-        "singular": "avn-kafka-topic-acl-list",
+        "singular": "avn-schema-registry-acl-list",
         "shortNames": [
-          "avnktal"
+          "avnsral"
         ]
       }
     }
@@ -26,11 +26,11 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "kafka.aiven.io/v1beta2"
+      "default": "kafka.aiven.io/v1beta1"
     },
     "kind": {
       "type": "string",
-      "default": "KafkaTopicAclEntryList"
+      "default": "SchemaRegistryAclEntryList"
     },
     "metadata": {
       "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
@@ -39,7 +39,7 @@
     "items": {
       "type": "array",
       "items": {
-        "$ref": "./V1KafkaTopicAclEntry.json"
+        "$ref": "./V1SchemaRegistryAclEntry.json"
       }
     }
   }

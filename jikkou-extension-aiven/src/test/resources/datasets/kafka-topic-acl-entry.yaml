@@ -1,22 +1,23 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "KafkaTopicAclEntry"
 metadata:
   labels: {}
   annotations:
-    aiven.io/kafka-acl-id: "default"
+    kafka.aiven.io/acl-entry-id: "default"
 spec:
   permission: "ADMIN"
   username: "avnadmin"
   topic: "*"
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "KafkaTopicAclEntry"
 metadata:
   labels: {}
   annotations:
-    aiven.io/kafka-acl-id: "acl1234567890f"
+    kafka.aiven.io/acl-entry-id: "acl1234567890f"
   spec:
     permission: "READWRITE"
     username: "alice"
     topic: "*alice*"
+

@@ -9,7 +9,7 @@
         <version>0.24.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jikkou-extension-kafka-aiven</artifactId>
+    <artifactId>jikkou-extension-aiven</artifactId>
 
     <properties>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>

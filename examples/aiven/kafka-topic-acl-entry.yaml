@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "KafkaTopicAclEntry"
 metadata:
   labels: {}

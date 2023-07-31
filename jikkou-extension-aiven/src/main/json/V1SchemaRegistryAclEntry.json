@@ -1,10 +1,10 @@
 {
   "type": "object",
-  "description": "Kafka ACL entry for a specific topic",
+  "description": "A single ACL entry for Schema Registry",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.api.model.Resource",
     "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaTopicAclEntrySpec>"
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1SchemaRegistryAclEntrySpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -12,9 +12,9 @@
     "all-args-constructor": false,
     "spec": {
       "names": {
-        "singular": "avn-kafka-topic-acl",
+        "singular": "avn-schema-registry-acl",
         "shortNames": [
-          "avnkta"
+          "avnsra"
         ]
       }
     }
@@ -28,22 +28,22 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "kafka.aiven.io/v1beta2"
+      "default": "kafka.aiven.io/v1beta1"
     },
     "kind": {
       "type": "string",
-      "default": "KafkaTopicAclEntry"
+      "default": "SchemaRegistryAclEntry"
     },
     "metadata": {
       "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
       "type": "object"
     },
     "spec": {
-      "$ref": "#/$defs/V1KafkaTopicAclEntrySpec"
+      "$ref": "#/$defs/V1SchemaRegistryAclEntrySpec"
     }
   },
   "$defs": {
-    "V1KafkaTopicAclEntrySpec": {
+    "V1SchemaRegistryAclEntrySpec": {
       "type": "object",
       "javaInterfaces": [],
       "additionalProperties": {
@@ -55,21 +55,21 @@
       "required": [
         "permission",
         "username",
-        "topic"
+        "resource"
       ],
       "properties": {
         "permission": {
           "type": "string",
-          "description": "Kafka permission",
+          "description": "ACL entry for Schema Registry",
           "existingJavaType": "io.streamthoughts.jikkou.extension.aiven.api.data.Permission"
         },
         "username": {
           "type": "string",
           "description": "Username"
         },
-        "topic": {
+        "resource": {
           "type": "string",
-          "description": "Topic name pattern"
+          "description": "Schema Registry ACL entry resource name pattern"
         }
       }
     }

@@ -20,5 +20,5 @@ package io.streamthoughts.jikkou.extension.aiven;
 
 public class MetadataAnnotations {
 
-    public static String AIVEN_IO_KAFKA_ACL_ID = "aiven.io/kafka-acl-id";
+    public static String AIVEN_IO_KAFKA_ACL_ID = "kafka.aiven.io/acl-entry-id";
 }

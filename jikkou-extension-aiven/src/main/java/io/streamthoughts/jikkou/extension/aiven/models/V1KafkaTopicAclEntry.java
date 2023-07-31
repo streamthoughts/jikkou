@@ -22,43 +22,42 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.model.HasSpec;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.model.ResourceListObject;
+import io.streamthoughts.jikkou.api.model.Resource;
 import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
 import io.streamthoughts.jikkou.api.model.annotations.Description;
 import io.streamthoughts.jikkou.api.model.annotations.Kind;
 import io.streamthoughts.jikkou.api.model.annotations.Names;
 import java.beans.ConstructorProperties;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
-import lombok.Singular;
 import lombok.With;
 
 
 /**
- * Kafka ACL entry for a specific topic
+ * ACL entry for Kafka Topic
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("Kafka ACL entry for a specific topic")
-@Names(singular = "avn-schema-registry-acl-list", shortNames = {
-    "avnsral"
+@Description("ACL entry for Kafka Topic")
+@Names(singular = "avn-kafka-topic-acl", shortNames = {
+    "avnkta"
 })
 @JsonPropertyOrder({
     "apiVersion",
     "kind",
     "metadata",
-    "items"
+    "spec"
 })
-@ApiVersion("kafka.aiven.io/v1beta2")
-@Kind("SchemaRegistryAclEntryList")
+@ApiVersion("kafka.aiven.io/v1beta1")
+@Kind("KafkaTopicAclEntry")
 @JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 @Generated("jsonschema2pojo")
-public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1SchemaRegistryAclEntry>
+public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAclEntrySpec> , Resource
 {
 
     /**
@@ -67,14 +66,14 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
      * 
      */
     @JsonProperty("apiVersion")
-    private String apiVersion = "kafka.aiven.io/v1beta2";
+    private String apiVersion = "kafka.aiven.io/v1beta1";
     /**
      * 
      * (Required)
      * 
      */
     @JsonProperty("kind")
-    private String kind = "SchemaRegistryAclEntryList";
+    private String kind = "KafkaTopicAclEntry";
     /**
      * 
      * (Required)
@@ -82,15 +81,19 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
      */
     @JsonProperty("metadata")
     private ObjectMeta metadata;
-    @JsonProperty("items")
-    @Singular
-    private List<io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry> items = new ArrayList<io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry>();
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("spec")
+    private io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec spec;
 
     /**
      * No args constructor for use in serialization
      * 
      */
-    public V1SchemaRegistryAclEntryList() {
+    public V1KafkaTopicAclEntry() {
     }
 
     /**
@@ -98,20 +101,20 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
      * @param metadata
      * @param apiVersion
      * @param kind
-     * @param items
+     * @param spec
      */
     @ConstructorProperties({
         "apiVersion",
         "kind",
         "metadata",
-        "items"
+        "spec"
     })
-    public V1SchemaRegistryAclEntryList(String apiVersion, String kind, ObjectMeta metadata, List<io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry> items) {
+    public V1KafkaTopicAclEntry(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec spec) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
         this.metadata = metadata;
-        this.items = items;
+        this.spec = spec;
     }
 
     /**
@@ -144,15 +147,20 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
         return metadata;
     }
 
-    @JsonProperty("items")
-    public List<io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry> getItems() {
-        return items;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("spec")
+    public io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec getSpec() {
+        return spec;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(V1SchemaRegistryAclEntryList.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(V1KafkaTopicAclEntry.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("apiVersion");
         sb.append('=');
         sb.append(((this.apiVersion == null)?"<null>":this.apiVersion));
@@ -165,9 +173,9 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
         sb.append('=');
         sb.append(((this.metadata == null)?"<null>":this.metadata));
         sb.append(',');
-        sb.append("items");
+        sb.append("spec");
         sb.append('=');
-        sb.append(((this.items == null)?"<null>":this.items));
+        sb.append(((this.spec == null)?"<null>":this.spec));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -182,8 +190,8 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
         int result = 1;
         result = ((result* 31)+((this.metadata == null)? 0 :this.metadata.hashCode()));
         result = ((result* 31)+((this.apiVersion == null)? 0 :this.apiVersion.hashCode()));
-        result = ((result* 31)+((this.items == null)? 0 :this.items.hashCode()));
         result = ((result* 31)+((this.kind == null)? 0 :this.kind.hashCode()));
+        result = ((result* 31)+((this.spec == null)? 0 :this.spec.hashCode()));
         return result;
     }
 
@@ -192,11 +200,11 @@ public class V1SchemaRegistryAclEntryList implements ResourceListObject<V1Schema
         if (other == this) {
             return true;
         }
-        if ((other instanceof V1SchemaRegistryAclEntryList) == false) {
+        if ((other instanceof V1KafkaTopicAclEntry) == false) {
             return false;
         }
-        V1SchemaRegistryAclEntryList rhs = ((V1SchemaRegistryAclEntryList) other);
-        return (((((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata)))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.items == rhs.items)||((this.items!= null)&&this.items.equals(rhs.items))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))));
+        V1KafkaTopicAclEntry rhs = ((V1KafkaTopicAclEntry) other);
+        return (((((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata)))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
     }
 
 }
