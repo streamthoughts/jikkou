@@ -23,12 +23,10 @@ import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
-import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntriesResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.change.AclEntryChangeDescription;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public class DeleteSchemaRegistryAclEntryChangeHandler extends AbstractKafkaAclEntryChangeHandler<SchemaRegistryAclEntry> {
@@ -49,13 +47,9 @@ public class DeleteSchemaRegistryAclEntryChangeHandler extends AbstractKafkaAclE
     public List<ChangeResponse<ValueChange<SchemaRegistryAclEntry>>> apply(
             @NotNull List<ValueChange<SchemaRegistryAclEntry>> changes) {
 
-        List<ChangeResponse<ValueChange<SchemaRegistryAclEntry>>> results = new ArrayList<>();
-        for (ValueChange<SchemaRegistryAclEntry> change : changes) {
-            CompletableFuture<SchemaRegistryAclEntriesResponse> future = CompletableFuture
-                    .supplyAsync(() -> api.deleteSchemaRegistryAclEntry(change.getBefore().id()));
-            results.add(new ChangeResponse<>(change, future));
-        }
-        return results;
+        return changes.stream()
+                .map(change -> executeAsync(change, () -> api.deleteSchemaRegistryAclEntry(change.getBefore().id())))
+                .collect(Collectors.toList());
     }
 
     /**

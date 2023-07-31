@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
+import io.streamthoughts.jikkou.api.control.ChangeMetadata;
 import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.model.Nameable;
@@ -81,7 +82,11 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
         Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(topicKeyedByName.get(e.getKey()), e.getValue()))
+                .map(e -> new ChangeResponse<>(
+                                topicKeyedByName.get(e.getKey()),
+                                e.getValue().thenApply(unused -> ChangeMetadata.empty())
+                        )
+                )
                 .toList();
     }
 }

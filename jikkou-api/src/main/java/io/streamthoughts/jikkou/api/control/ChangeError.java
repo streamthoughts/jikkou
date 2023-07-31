@@ -18,49 +18,37 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Represents the metadata attached to a change task operation result.
- */
-public final class ChangeMetadata {
+public record ChangeError(@NotNull String message, @Nullable Integer status) {
 
-    public static ChangeMetadata empty() {
-        return new ChangeMetadata(null);
+    public ChangeError(final String message) {
+        this(message, null);
     }
 
-    public static ChangeMetadata of(Throwable error) {
-        String message = String.format("%s: %s", error.getClass().getSimpleName(), error.getLocalizedMessage());
-        return new ChangeMetadata(new ChangeError(message, null));
+    public ChangeError(@NotNull final String message,
+                       @Nullable final Integer status) {
+        this.message = Objects.requireNonNull(message, "message must not be null");
+        this.status = status;
     }
 
-    private final ChangeError error;
-
-    /**
-     * Creates a new {@link ChangeMetadata}.
-     */
-    public ChangeMetadata() {
-        this(null);
+    @Override
+    @JsonProperty("message")
+    public String message() {
+        return message;
     }
 
-    /**
-     * Creates a new {@link ChangeMetadata}.
-     *
-     * @param error the error.
-     */
-    public ChangeMetadata(@Nullable ChangeError error) {
-        this.error = error;
-    }
-
-    public Optional<ChangeError> getError() {
-        return Optional.ofNullable(error);
+    @Override
+    @JsonProperty("status")
+    public Integer status() {
+        return status;
     }
 
     @Override
     public String toString() {
-        return "ChangeMetadata{" +
-                "error=" + error +
-                '}';
+        return message;
     }
 }

@@ -33,8 +33,8 @@ import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientException;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
@@ -129,8 +129,8 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
                                 .exceptionally(t -> {
                                     if (t.getCause() != null) t = t.getCause();
 
-                                    if (t instanceof SchemaRegistryClientException registryError) {
-                                        if (registryError.getResponseCode() == 404)
+                                    if (t instanceof RestClientException exception) {
+                                        if (exception.response().getStatus() == 404)
                                             return null;
                                     }
                                     if (t instanceof RuntimeException re) {

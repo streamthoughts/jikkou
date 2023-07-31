@@ -72,7 +72,7 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
                     }
                     return null;
                 });
-            results.add(new ChangeResponse<>(change, future));
+            results.add(toChangeResponse(change, future));
         }
         return results;
     }

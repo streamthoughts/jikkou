@@ -81,7 +81,7 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
             if (DELETE == compatibilityLevels.getChangeType()) {
                 future = future.thenComposeAsync(unused -> deleteCompatibilityLevel(change));
             }
-            results.add(new ChangeResponse<>(change, future));
+            results.add(toChangeResponse(change, future));
         }
         return results;
     }

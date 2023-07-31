@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
+import io.streamthoughts.jikkou.api.control.ChangeMetadata;
 import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
@@ -35,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -117,7 +119,11 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
 
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(topicKeyedByName.get(e.getKey()), e.getValue()))
+                .map(e -> new ChangeResponse<>(
+                                topicKeyedByName.get(e.getKey()),
+                                e.getValue().stream().map(f -> f.thenApply(unused -> ChangeMetadata.empty())).collect(Collectors.toList())
+                        )
+                )
                 .toList();
     }
 

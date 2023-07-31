@@ -19,11 +19,16 @@
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
+import io.streamthoughts.jikkou.api.control.ChangeError;
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
+import io.streamthoughts.jikkou.api.control.ChangeMetadata;
+import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescription;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
@@ -89,6 +94,22 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                     }
                     return null;
                 });
+    }
+
+    public ChangeResponse<SchemaSubjectChange> toChangeResponse(SchemaSubjectChange change,
+                                                                CompletableFuture<?> future) {
+        CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
+            if (throwable == null) {
+                return ChangeMetadata.empty();
+            }
+            if (throwable instanceof RestClientException e) {
+                ErrorResponse error = e.getResponseEntity(ErrorResponse.class);
+                return new ChangeMetadata(new ChangeError(error.message(), error.errorCode()));
+            }
+            return ChangeMetadata.of(throwable);
+        });
+
+        return new ChangeResponse<>(change, handled);
     }
 
     /**

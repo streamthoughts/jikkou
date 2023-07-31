@@ -18,10 +18,13 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
-import io.vavr.control.Option;
+import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents the response
@@ -32,14 +35,14 @@ public final class ChangeResponse<T extends Change> {
 
     private final T change;
 
-    private final List<CompletableFuture<?>> results;
+    private final List<CompletableFuture<ChangeMetadata>> results;
 
     /**
      * Creates a new {@link ChangeResponse} for the given change.
      *
      * @param change    the change to attached to this response.
      */
-    public ChangeResponse(T change) {
+    public ChangeResponse(@NotNull T change) {
         this(change, new ArrayList<>());
     }
 
@@ -49,11 +52,17 @@ public final class ChangeResponse<T extends Change> {
      * @param change    the change to attached to this response.
      * @param result    the result to attached to this response;
      */
-    public ChangeResponse(T change, CompletableFuture<?> result) {
+    public ChangeResponse(@NotNull T change, @NotNull CompletableFuture<ChangeMetadata> result) {
         this(change, List.of(result));
     }
 
-    public ChangeResponse(T change, List<? extends CompletableFuture<?>> results) {
+    /**
+     * Creates a new {@link ChangeResponse} instance.
+     *
+     * @param change    the change object.
+     * @param results   the change results.
+     */
+    public ChangeResponse(@NotNull T change, @NotNull List<CompletableFuture<ChangeMetadata>> results) {
         this.change = change;
         this.results = new ArrayList<>(results);
     }
@@ -63,33 +72,33 @@ public final class ChangeResponse<T extends Change> {
      *
      * @param result
      */
-    public void addResult(CompletableFuture<Void> result) {
+    public void addResult(CompletableFuture<ChangeMetadata> result) {
         this.results.add(result);
     }
 
+    /**
+     * Gets the change object.
+     *
+     * @return  the change.
+     */
     public T getChange() {
         return change;
     }
 
     /**
-     * Gets the all {@link ChangeMetadata}.
+     * Gets the all change metadata objects.
      *
      * @return  the {@link CompletableFuture}.
      */
-    public CompletableFuture<? extends List<ChangeMetadata>> getResults() {
-        List<io.vavr.concurrent.Future<Option<ChangeMetadata>>> futures = results
-                .stream()
-                .map(io.vavr.concurrent.Future::fromJavaFuture)
-                .map(f -> f.map(it -> Option.of(new ChangeMetadata())))
-                .map(f -> f.recover(it -> Option.of(new ChangeMetadata(it))))
-                .toList();
-
-        return io.vavr.concurrent.Future.fold(futures,
-                        new ArrayList<ChangeMetadata>(),
-                        (list, option) -> {
-                            option.peek(list::add);
-                            return list;
-                        })
-                .toCompletableFuture();
+    public CompletableFuture<List<ChangeMetadata>> getResults() {
+        List<CompletableFuture<ChangeMetadata>> futures = results.stream()
+                .map(f -> f.exceptionally(throwable -> {
+                    if (throwable instanceof CompletionException completionException) {
+                        return ChangeMetadata.of(completionException.getCause());
+                    }
+                    return ChangeMetadata.of(throwable);
+                }))
+                .collect(Collectors.toList());
+        return AsyncUtils.waitForAll(futures);
     }
 }

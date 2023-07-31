@@ -153,7 +153,7 @@ class KafkaTopicAclEntryIT {
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.ADD, change.resource().getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, change.data().getChangeType());
     }
 
     @Test
@@ -196,7 +196,7 @@ class KafkaTopicAclEntryIT {
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.resource().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChangeType());
     }
 
 

@@ -19,6 +19,7 @@
 package io.streamthoughts.jikkou.kafka.control.handlers.acls;
 
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
+import io.streamthoughts.jikkou.api.control.ChangeMetadata;
 import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
@@ -81,8 +82,9 @@ public class CreateAclChangeHandler implements KafkaAclChangeHandler {
                 .map(t -> t.map2(List::of))
                 .map(t -> {
                     AclChange change = data.get(t._1());
-                    List<CompletableFuture<Void>> futures = t._2().stream()
+                    List<CompletableFuture<ChangeMetadata>> futures = t._2().stream()
                             .map(Future::toCompletableFuture)
+                            .map(f -> f.thenApply(unused -> ChangeMetadata.empty()))
                             .toList();
                     return new ChangeResponse<>(change, futures);
                 })

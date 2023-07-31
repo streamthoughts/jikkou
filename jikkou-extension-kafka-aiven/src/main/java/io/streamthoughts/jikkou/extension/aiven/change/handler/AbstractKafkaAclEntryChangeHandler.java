@@ -18,15 +18,14 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+import io.streamthoughts.jikkou.api.control.ChangeError;
 import io.streamthoughts.jikkou.api.control.ChangeHandler;
+import io.streamthoughts.jikkou.api.control.ChangeMetadata;
 import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
-import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ErrorsResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.restclient.RestClientResponseException;
 import java.util.Objects;
 import java.util.Set;
@@ -53,24 +52,24 @@ public abstract class AbstractKafkaAclEntryChangeHandler<T> implements ChangeHan
 
     protected <R> ChangeResponse<ValueChange<T>> executeAsync(final ValueChange<T> change,
                                                               final Supplier<R> supplier) {
-        CompletableFuture<R> future = CompletableFuture
+        CompletableFuture<ChangeMetadata> future = CompletableFuture
                 .supplyAsync(() -> {
                     try {
-                        return supplier.get();
+                        supplier.get();
+                        return ChangeMetadata.empty();
                     } catch (RestClientResponseException e) {
-                        String response;
                         try {
-                            response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                                    .writeValueAsString(e.getResponseEntity(JsonNode.class));
-                        } catch (JsonProcessingException ex) {
-                            response = e.getResponseEntity();
+                            ErrorsResponse entity = e.getResponseEntity(ErrorsResponse.class);
+                            if (entity.errors().size() == 1) {
+                                ErrorsResponse.Error error = entity.errors().get(0);
+                                return new ChangeMetadata(new ChangeError(error.message(), error.status()));
+                            } else {
+                                return new ChangeMetadata(new ChangeError(entity.message()));
+                            }
+                        } catch (Exception ignore) {
+                            return ChangeMetadata.of(e);
                         }
-                        throw new JikkouRuntimeException(String.format(
-                                "failed to list schema registry acl entries. %s:%n%s",
-                                e.getLocalizedMessage(),
-                                response
-                        ), e);
-                     }
+                    }
                 });
         return new ChangeResponse<>(change, future);
     }

@@ -63,7 +63,8 @@ public class CreateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
             if (compatibilityLevels != null) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
             }
-            results.add(new ChangeResponse<>(change, future));
+
+            results.add(toChangeResponse(change, future));
         }
         return results;
     }

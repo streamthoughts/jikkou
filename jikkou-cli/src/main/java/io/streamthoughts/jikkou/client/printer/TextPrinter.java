@@ -78,7 +78,7 @@ public class TextPrinter implements Printer {
             }
 
             String color = TextPrinter.ANSI_WHITE;
-            ChangeType changeType = result.resource().getChangeType();
+            ChangeType changeType = result.data().getChangeType();
             if (result.isChanged()) {
                 switch (changeType) {
                     case ADD -> {
@@ -101,7 +101,7 @@ public class TextPrinter implements Printer {
                 ok++;
             }
 
-            TextPrinter.printTask(result.resource().getChangeType(), result.description(), result.status().name());
+            TextPrinter.printTask(result.data().getChangeType(), result.description(), result.status().name());
             if (printChangeDetail) {
                 TextPrinter.PS.printf("%s%s%n", TextPrinter.isColor() ? color : "", json);
             }

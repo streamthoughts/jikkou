@@ -68,7 +68,7 @@ class SchemaRegistryControllerTest extends AbstractIntegrationTest {
         Assertions.assertEquals(1, results.size());
 
         ChangeResult<SchemaSubjectChange> change = results.get(0);
-        Assertions.assertEquals(ChangeType.ADD, change.resource().getChangeType());
-        Assertions.assertEquals(SchemaType.AVRO, change.resource().getSchemaType().getAfter());
+        Assertions.assertEquals(ChangeType.ADD, change.data().getChangeType());
+        Assertions.assertEquals(SchemaType.AVRO, change.data().getSchemaType().getAfter());
     }
 }

@@ -58,7 +58,7 @@ class ChangeResultTest {
         // When
         ChangeResult<Change> result = ChangeResult.failed(change,
                 description,
-                List.of(new RuntimeException("Failed"))
+                List.of(new ChangeError("Failed"))
        );
 
         // Then

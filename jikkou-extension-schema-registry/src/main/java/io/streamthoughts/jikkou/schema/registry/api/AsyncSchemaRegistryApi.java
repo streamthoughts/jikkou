@@ -21,17 +21,14 @@ package io.streamthoughts.jikkou.schema.registry.api;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SchemaString;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectVersion;
-import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -54,27 +51,21 @@ public final class AsyncSchemaRegistryApi implements AutoCloseable {
      * @see SchemaRegistryApi#listSubjects()
      */
     public CompletableFuture<List<String>> listSubjects() {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(api::listSubjects)
-        );
+        return CompletableFuture.supplyAsync(api::listSubjects);
     }
 
     /**
      * @see SchemaRegistryApi#deleteSubjectVersions(String, boolean)
      */
     public CompletableFuture<List<Integer>> deleteSubjectVersions(String subject, boolean permanent) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.deleteSubjectVersions(subject, permanent))
-        );
+        return  CompletableFuture.supplyAsync(() -> api.deleteSubjectVersions(subject, permanent));
     }
 
     /**
      * @see SchemaRegistryApi#getAllSubjectVersions(String)
      */
     public CompletableFuture<List<Integer>> getSubjectVersions(String subject) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.getAllSubjectVersions(subject))
-        );
+        return CompletableFuture.supplyAsync(() -> api.getAllSubjectVersions(subject));
     }
 
     /**
@@ -83,9 +74,7 @@ public final class AsyncSchemaRegistryApi implements AutoCloseable {
     public CompletableFuture<SubjectSchemaId> registerSubjectVersion(String subject,
                                                                      SubjectSchemaRegistration schema,
                                                                      boolean normalize) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.registerSchema(subject, schema, normalize))
-        );
+        return CompletableFuture.supplyAsync(() -> api.registerSchema(subject, schema, normalize));
     }
 
     /**
@@ -94,63 +83,49 @@ public final class AsyncSchemaRegistryApi implements AutoCloseable {
     public CompletableFuture<SubjectSchema> checkSubjectVersion(String subject,
                                                                 SubjectSchemaRegistration schema,
                                                                 boolean normalize) {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(() -> api.checkSubjectVersion(subject, schema, normalize))
-        );
+        return CompletableFuture.supplyAsync(() -> api.checkSubjectVersion(subject, schema, normalize));
     }
 
     /**
      * @see SchemaRegistryApi#getLatestSubjectSchema(String)
      */
     public CompletableFuture<SubjectSchema> getLatestSubjectSchema(String subject) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.getLatestSubjectSchema(subject))
-        );
+        return  CompletableFuture.supplyAsync(() -> api.getLatestSubjectSchema(subject));
     }
 
     /**
      * @see SchemaRegistryApi#getSchemaByVersion(String, int)
      */
     public CompletableFuture<SubjectSchema> getSubjectSchemaByVersion(String subject, int version) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.getSchemaByVersion(subject, version))
-        );
+        return CompletableFuture.supplyAsync(() -> api.getSchemaByVersion(subject, version));
     }
 
     /**
      * @see SchemaRegistryApi#getSchemasTypes()
      */
     public CompletableFuture<List<String>> getSchemasTypes() {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(api::getSchemasTypes)
-        );
+        return CompletableFuture.supplyAsync(api::getSchemasTypes);
     }
 
     /**
      * @see SchemaRegistryApi#getSchemasTypes()
      */
     public CompletableFuture<SchemaString> getSchemaById(String id) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.getSchemaById(id))
-        );
+        return CompletableFuture.supplyAsync(() -> api.getSchemaById(id));
     }
 
     /**
      * @see SchemaRegistryApi#getSchemaOnlyById(String)
      */
     public CompletableFuture<String> getSchemaOnlyById(String id) {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(() -> api.getSchemaOnlyById(id))
-        );
+        return CompletableFuture.supplyAsync(() -> api.getSchemaOnlyById(id));
     }
 
     /**
      * @see SchemaRegistryApi#getVersionSchemaById(String)
      */
     public CompletableFuture<List<SubjectVersion>> getSchemaVersionsById(String id) {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(() -> api.getVersionSchemaById(id))
-        );
+        return  CompletableFuture.supplyAsync(() -> api.getVersionSchemaById(id));
     }
 
 
@@ -158,18 +133,14 @@ public final class AsyncSchemaRegistryApi implements AutoCloseable {
      * @see SchemaRegistryApi#getGlobalCompatibility()
      */
     public CompletableFuture<CompatibilityLevelObject> getGlobalCompatibility() {
-        return handleClientErrorException(
-            CompletableFuture.supplyAsync(api::getGlobalCompatibility)
-        );
+        return CompletableFuture.supplyAsync(api::getGlobalCompatibility);
     }
 
     /**
      * @see SchemaRegistryApi#getConfigCompatibility(String, boolean)
      */
     public CompletableFuture<CompatibilityLevelObject> getConfigCompatibility(String subject, boolean defaultToGlobal) {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(() -> api.getConfigCompatibility(subject, defaultToGlobal))
-        );
+        return CompletableFuture.supplyAsync(() -> api.getConfigCompatibility(subject, defaultToGlobal));
     }
 
     /**
@@ -177,18 +148,15 @@ public final class AsyncSchemaRegistryApi implements AutoCloseable {
      */
     public CompletableFuture<CompatibilityObject> updateConfigCompatibility(String subject,
                                                                             CompatibilityObject compatibility) {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(() -> api.updateConfigCompatibility(subject, compatibility))
-        );
+        return  CompletableFuture.supplyAsync(() -> api.updateConfigCompatibility(subject, compatibility));
     }
 
     /**
      * @see SchemaRegistryApi#deleteConfigCompatibility(String)
      */
     public CompletableFuture<CompatibilityObject> deleteConfigCompatibility(String subject) {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(() -> api.deleteConfigCompatibility(subject))
-        );
+        return CompletableFuture.supplyAsync(() -> api.deleteConfigCompatibility(subject));
+
     }
 
     /**
@@ -198,31 +166,7 @@ public final class AsyncSchemaRegistryApi implements AutoCloseable {
                                                                    int version,
                                                                    boolean verbose,
                                                                    SubjectSchemaRegistration schema) {
-        return handleClientErrorException(
-                CompletableFuture.supplyAsync(
-                        () -> api.testCompatibility(subject, version, verbose, schema))
-        );
-    }
-
-    private static <T> CompletableFuture<T> handleClientErrorException(CompletableFuture<T> future) {
-        return future.handle((r, e) -> {
-            if (e != null) {
-                if (e.getCause() != null &&
-                    e instanceof CompletionException completionError) {
-                    e = completionError.getCause();
-                }
-
-                if (e instanceof RestClientException clientError) {
-                    ErrorResponse error = clientError.getResponseEntity(ErrorResponse.class);
-                    throw new SchemaRegistryClientException(clientError.response().getStatus(), error);
-                }
-                if (e instanceof RuntimeException re) {
-                    throw re;
-                }
-                throw new RuntimeException(e);
-            }
-            return r;
-        });
+        return CompletableFuture.supplyAsync(() -> api.testCompatibility(subject, version, verbose, schema));
     }
 
     @Override

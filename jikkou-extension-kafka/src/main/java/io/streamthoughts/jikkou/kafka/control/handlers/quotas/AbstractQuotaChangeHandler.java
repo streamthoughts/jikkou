@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
+import io.streamthoughts.jikkou.api.control.ChangeMetadata;
 import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
@@ -38,7 +39,7 @@ public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHand
     /**
      * Creates a new {@link AlterQuotasChangeHandlerKafka} instance.
      *
-     * @param client        the {@link AdminClient}.
+     * @param client the {@link AdminClient}.
      */
     public AbstractQuotaChangeHandler(@NotNull final AdminClient client) {
         this.client = client;
@@ -71,7 +72,11 @@ public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHand
 
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(changeByQuotaEntity.get(e.getKey()), e.getValue()))
+                .map(e -> new ChangeResponse<>(
+                                changeByQuotaEntity.get(e.getKey()),
+                                e.getValue().thenApply(unused -> ChangeMetadata.empty())
+                        )
+                )
                 .toList();
     }
 }

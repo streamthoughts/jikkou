@@ -20,33 +20,30 @@ package io.streamthoughts.jikkou.api.control;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.common.utils.Time;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a serializable result of the execution of a change.
  *
+ * @param <T> the type of the change.
  * @see Change
  * @see ChangeResponse
  * @see ChangeExecutor
- *
- * @param <T> the type of the change.
  */
+@JsonPropertyOrder({
+        "status",
+        "changed",
+        "failed",
+        "end",
+        "data",
+        "error"
+})
 public final class ChangeResult<T extends Change> implements Serializable {
-
-    public enum Status {CHANGED, OK, FAILED}
-
-    private final boolean changed;
-    private final long end;
-    private final T resource;
-    private final boolean failed;
-    private final List<String> errors;
-    private final Status status;
-    private transient final ChangeDescription description;
 
     /**
      * Static method to build a new {@link ChangeResult} that doesn't result in cluster resource changes.
@@ -58,7 +55,7 @@ public final class ChangeResult<T extends Change> implements Serializable {
      */
     public static <T extends Change> ChangeResult<T> ok(final T resource,
                                                         final ChangeDescription description) {
-        return new ChangeResult<>(Status.OK, false, resource, description);
+        return new ChangeResult<>(Status.OK, resource, description);
     }
 
     /**
@@ -71,7 +68,7 @@ public final class ChangeResult<T extends Change> implements Serializable {
      */
     public static <T extends Change> ChangeResult<T> changed(final T resource,
                                                              final ChangeDescription description) {
-        return new ChangeResult<>(Status.CHANGED, true, resource, description);
+        return new ChangeResult<>(Status.CHANGED, resource, description);
     }
 
     /**
@@ -79,67 +76,96 @@ public final class ChangeResult<T extends Change> implements Serializable {
      *
      * @param resource    the operation result.
      * @param description the operation result description.
-     * @param exceptions  the exceptions.
+     * @param errors      the errors.
      * @param <T>         the operation result-type.
      * @return a new {@link ChangeResult}.
      */
     public static <T extends Change> ChangeResult<T> failed(final T resource,
                                                             final ChangeDescription description,
-                                                            final List<Throwable> exceptions) {
-        return new ChangeResult<>(
-                Status.FAILED,
-                false,
-                resource,
-                description,
-                true,
-                exceptions.stream().map(ChangeResult::getStacktrace).collect(Collectors.toList())
-        );
+                                                            final List<ChangeError> errors) {
+        return new ChangeResult<>(Status.FAILED, resource, description, errors);
     }
 
     /**
+     *
+     */
+    public enum Status {
+        /**
+         * Execution of all changes was successfully
+         **/
+        CHANGED,
+        /**
+         * Execution did not apply any change
+         **/
+        OK,
+        /**
+         * Execution of one or more changes failed
+         **/
+        FAILED
+    }
+
+    private final long end;
+    private final T data;
+    private final List<ChangeError> errors;
+    private final Status status;
+    private transient final ChangeDescription description;
+
+    /**
      * Creates a new {@link ChangeResult} instance.
+     *
+     * @param status      the change execution status.
+     * @param resource    the resource on which the change was applied.
+     * @param description the description of the change.
      */
     private ChangeResult(final Status status,
-                         final boolean changed,
                          final T resource,
                          final ChangeDescription description) {
-        this(status, changed, resource, description, false, null);
+        this(status, resource, description, null);
     }
 
     /**
      * Creates a new {@link ChangeResult} instance.
+     *
+     * @param status      the change execution status.
+     * @param resource    the resource on which the change was applied.
+     * @param description the description of the change.
+     * @param errors      the change execution errors.
      */
     private ChangeResult(final Status status,
-                         final boolean changed,
                          final T resource,
                          final ChangeDescription description,
-                         final boolean failed,
-                         final List<String> errors) {
-        this(status, changed, resource, description, failed, errors, Time.SYSTEM.milliseconds());
+                         final List<ChangeError> errors) {
+        this(status, resource, description, errors, Time.SYSTEM.milliseconds());
     }
 
     /**
      * Creates a new {@link ChangeResult} instance.
+     *
+     * @param status      the change execution status.
+     * @param data        the data of the change.
+     * @param description the description of the change.
+     * @param errors      the change execution errors.
      */
-    private ChangeResult(final Status status,
-                         final boolean changed,
-                         final T resource,
-                         final ChangeDescription description,
-                         final boolean failed,
-                         final List<String> errors,
+    private ChangeResult(@NotNull final Status status,
+                         @NotNull final T data,
+                         @NotNull final ChangeDescription description,
+                         @Nullable final List<ChangeError> errors,
                          final long end) {
         this.status = status;
-        this.changed = changed;
-        this.resource = resource;
+        this.data = data;
         this.end = end;
-        this.failed = failed;
         this.errors = errors;
         this.description = description;
     }
 
     @JsonProperty
     public boolean isChanged() {
-        return changed;
+        return status == Status.CHANGED;
+    }
+
+    @JsonProperty
+    public boolean isFailed() {
+        return status == Status.FAILED;
     }
 
     @JsonProperty
@@ -148,17 +174,12 @@ public final class ChangeResult<T extends Change> implements Serializable {
     }
 
     @JsonProperty
-    public T resource() {
-        return resource;
+    public T data() {
+        return data;
     }
 
     @JsonProperty
-    public boolean isFailed() {
-        return failed;
-    }
-
-    @JsonProperty
-    public List<String> errors() {
+    public List<ChangeError> errors() {
         return errors;
     }
 
@@ -175,23 +196,11 @@ public final class ChangeResult<T extends Change> implements Serializable {
     @Override
     public String toString() {
         return "ChangeResult{" +
-                "changed=" + changed +
                 ", end=" + end +
-                ", resource=" + resource +
-                ", failed=" + failed +
+                ", data=" + data +
                 ", errors=" + errors +
                 ", status=" + status +
                 ", description=" + description +
                 '}';
-    }
-
-    /**
-     * @return the stacktrace representation for the given {@link Throwable}.
-     */
-    static String getStacktrace(final Throwable throwable) {
-        final StringWriter sw = new StringWriter();
-        final PrintWriter pw = new PrintWriter(sw, true);
-        throwable.printStackTrace(pw);
-        return sw.getBuffer().toString();
     }
 }

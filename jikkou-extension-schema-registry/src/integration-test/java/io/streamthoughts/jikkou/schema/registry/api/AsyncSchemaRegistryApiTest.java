@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientBuilder;
+import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.util.List;
@@ -191,8 +192,8 @@ class AsyncSchemaRegistryApiTest {
         CompletableFuture<CompatibilityLevelObject> future = async.getConfigCompatibility("unknown", false);
 
         // Then
-        SchemaRegistryClientException exception = Assertions
-                .assertThrowsExactly(SchemaRegistryClientException.class, () -> {
+        RestClientException exception = Assertions
+                .assertThrowsExactly(RestClientException.class, () -> {
                     try {
                         future.get();
                     } catch (ExecutionException e) {
@@ -200,7 +201,7 @@ class AsyncSchemaRegistryApiTest {
                     }
                 });
 
-        ErrorResponse response = exception.getResponse();
+        ErrorResponse response =  exception.getResponseEntity(ErrorResponse.class);
         Assertions.assertEquals(40408, response.errorCode());
         Assertions.assertEquals("Subject 'unknown' does not have subject-level compatibility configured", response.message());
     }

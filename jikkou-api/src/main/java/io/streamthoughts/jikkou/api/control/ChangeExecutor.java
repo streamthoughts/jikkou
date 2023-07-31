@@ -114,7 +114,7 @@ public final class ChangeExecutor<C extends Change> {
                             return ChangeResult.ok(change, description);
                         }
                         
-                        List<Throwable> errors = metadata.stream()
+                        List<ChangeError> errors = metadata.stream()
                                 .map(ChangeMetadata::getError)
                                 .flatMap(Optional::stream)
                                 .toList();

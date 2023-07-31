@@ -175,7 +175,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         ChangeResult<?> change = results.iterator().next();
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.resource().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChangeType());
     }
 
     @Test
@@ -208,7 +208,7 @@ public class AdminClientKafkaTopicControllerIT {
                 "Invalid number of changes");
 
         Map<String, TopicChange> changeKeyedByTopicName = results.stream()
-                .map(o -> ((TopicChange) o.resource()))
+                .map(o -> ((TopicChange) o.data()))
                 .collect(Collectors.toMap(TopicChange::getName, o -> o));
 
         Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_A));
@@ -247,7 +247,7 @@ public class AdminClientKafkaTopicControllerIT {
                 "Invalid number of changes");
 
         boolean delete = results.stream()
-                .map(it -> it.resource().getChangeType())
+                .map(it -> it.data().getChangeType())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertFalse(delete);
@@ -284,7 +284,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         Assertions.assertEquals(1, initialTopicList.getItems().size());
         boolean delete = results.stream()
-                .map(it -> it.resource().getChangeType())
+                .map(it -> it.data().getChangeType())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertTrue(delete);
