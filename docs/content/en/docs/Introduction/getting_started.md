@@ -52,7 +52,7 @@ For more details, or for other options, see the [installation](./installation.md
 Set configuration context for localhost
 
 ```bash
-jikkou config set-context localhost --config=kafka.client.bootstrap.servers=localhost:9092
+jikkou config set-context localhost --config-props=kafka.client.bootstrap.servers=localhost:9092
 ```
 Show the complete configuration.
 
