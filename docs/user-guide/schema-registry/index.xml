@@ -18,6 +18,8 @@ authMethod = none
 basicAuthUser = null
 # Use when &amp;#39;schemaRegistry.authMethod&amp;#39; is &amp;#39;basicauth&amp;#39; to specify the password for Authorization Basic header
 basicAuthPassword = null
+# Enable debug logging
+debugLoggingEnabled = false
 }
 }
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/schema-registry/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/schema-registry/resources/</guid><description>
@@ -68,7 +70,7 @@ rules;&lt;/p>
 &lt;/tbody>
 &lt;/table></description></item><item><title>Docs: Annotations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/schema-registry/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/schema-registry/annotations/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>Here, you will find information about the annotations provided the Schema Registry extension for Jikkou.&lt;/p>
+&lt;p>Here, you will find information about the annotations provided by the Schema Registry extension for Jikkou.&lt;/p>
 &lt;/div>
 &lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
 &lt;h4 id="schemaregistryjikkouiourl">&lt;code>schemaregistry.jikkou.io/url&lt;/code>&lt;/h4>
