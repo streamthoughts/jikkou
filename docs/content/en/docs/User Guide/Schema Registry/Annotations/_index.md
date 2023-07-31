@@ -7,7 +7,7 @@ description: >
 ---
 
 {{% pageinfo %}}
-Here, you will find information about the annotations provided the Schema Registry extension for Jikkou.
+Here, you will find information about the annotations provided by the Schema Registry extension for Jikkou.
 {{% /pageinfo %}}
 
 ### List of built-in annotations

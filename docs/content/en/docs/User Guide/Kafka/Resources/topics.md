@@ -93,7 +93,6 @@ Here the _resource definition file_ for defining a `KafkaTopicList`.
 apiVersion: "kafka.jikkou.io/v1beta2"  # The api version (required)
 kind: "KafkaTopicList"                 # The resource kind (required)
 metadata: # (optional)
-  name: <The name of the topic>
   labels: { }
   annotations: { }
 items: [ ]                             # An array of KafkaTopic
@@ -101,7 +100,7 @@ items: [ ]                             # An array of KafkaTopic
 
 ### Example
 
-Here is a simple example that shows how to define a single YAML file containing two topic definition using
+Here is a simple example that shows how to define a single YAML file containing two topic definitions using
 the `KafkaTopicList` resource type. In addition, the example uses a `ConfigMap` object to define the topic configuration
 only once.
 

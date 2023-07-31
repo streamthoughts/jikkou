@@ -23,7 +23,7 @@ manage the configurations on your Data Stream platform.
 Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
 ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
 
-Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, and even more with the use of YAML files called **_Resource Definitions_**.
+Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schema** and even more with the use of YAML files called **_Resource Definitions_**.
 
 Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
 

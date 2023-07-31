@@ -12,7 +12,7 @@ Here, you will find the list of resources supported for SchemaRegistry.
 
 ## Configuration
 
-You can configure the properties to be used to connect the SchemaRegistry service 
+You can configure the properties to be used to connect the SchemaRegistry service
 through the Jikkou client configuration property `jikkou.schemaRegistry`.
 
 **Example:**
@@ -30,6 +30,8 @@ jikkou {
     basicAuthUser = null
     # Use when 'schemaRegistry.authMethod' is 'basicauth' to specify the password for Authorization Basic header
     basicAuthPassword = null
+    # Enable debug logging
+    debugLoggingEnabled = false
   }
 }
 ```
