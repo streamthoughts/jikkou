@@ -334,9 +334,9 @@ system.&lt;/p>
 &lt;h2 id="available-controllers">Available Controllers&lt;/h2>
 &lt;p>You can list all the available controllers using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Controller &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Aiven ACL for Kafka Topic</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-topic-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-topic-acl/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ACL for Aiven Apache Kafka®</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-topic-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-topic-acl/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
-&lt;p>The &lt;code>KafkaTopicAclEntry&lt;/code> resources are used to manage the ACL entries of an Aiven for Apache Kafka service. A
+&lt;p>The &lt;code>KafkaTopicAclEntry&lt;/code> resources are used to manage the Access Control Lists for Aiven Apache Kafka® service. A
 &lt;code>KafkaTopicAclEntry&lt;/code> resource defines the permission to be granted to a user for one or more kafka topics.&lt;/p>
 &lt;/div>
 &lt;h2 id="kafkatopicaclentry">&lt;code>KafkaTopicAclEntry&lt;/code>&lt;/h2>
@@ -618,9 +618,9 @@ only once.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">data&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">cleanup.policy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;delete&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Aiven ACL for Schema Registry</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-schema-registry-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-schema-registry-acl/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ACL for Aiven Schema Registry</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-schema-registry-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/resources/kafka-schema-registry-acl/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
-&lt;p>The &lt;code>SchemaRegistryAclEntry&lt;/code> resources are used to manage the ACL entries of an Aiven for Schema Registry service. A
+&lt;p>The &lt;code>SchemaRegistryAclEntry&lt;/code> resources are used to manage the Access Control Lists for Aiven Schema Registry service. A
 &lt;code>SchemaRegistryAclEntry&lt;/code> resource defines the permission to be granted to a user for one or more Schema Registry
 Subjects.&lt;/p>
 &lt;/div>
