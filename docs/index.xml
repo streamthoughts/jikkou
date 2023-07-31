@@ -53,7 +53,7 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="./installation.md">installation&lt;/a> guide.&lt;/p>
 &lt;h2 id="configure-jikkou-for-your-local-apache-kafka-cluster">Configure Jikkou for your local Apache Kafka cluster&lt;/h2>
 &lt;p>Set configuration context for localhost&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context localhost --config&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>kafka.client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>localhost:9092
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context localhost --config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>kafka.client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>localhost:9092
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Show the complete configuration.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config view --name localhost
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally, let&amp;rsquo;s check if your cluster is accessible:&lt;/p>
