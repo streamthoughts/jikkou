@@ -14,8 +14,6 @@ apiVersion: "kafka.aiven.io/v1beta2"
 kind: "KafkaTopicAclEntry"
 metadata:
   labels: {}
-  annotations:
-    aiven.io/kafka-acl-id: "acl1234567890f"
   spec:
     permission: "READWRITE"
     username: "alice"

@@ -34,15 +34,15 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntriesResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.restclient.RestClientResponseException;
-import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaAclEntryListConverter;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
+import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntryList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
-@AcceptsResource(type = V1KafkaTopicAclEntryList.class, converter = V1KafkaAclEntryListConverter.class)
+@AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
 public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
 
     private AivenApiClientConfig config;

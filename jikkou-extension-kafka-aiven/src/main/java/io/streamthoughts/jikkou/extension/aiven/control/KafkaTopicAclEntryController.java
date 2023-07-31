@@ -107,7 +107,7 @@ public class KafkaTopicAclEntryController implements BaseResourceController<V1Ka
             List<ChangeHandler<ValueChange<KafkaAclEntry>>> handlers = List.of(
                     new CreateKafkaAclEntryChangeHandler(api),
                     new DeleteKafkaAclEntryChangeHandler(api),
-                    new ChangeHandler.None<>(it -> AclEntryChangeDescription.of(it.getChangeType(), it.getBefore()))
+                    new ChangeHandler.None<>(it -> AclEntryChangeDescription.of(it.getChangeType(), it.getAfter()))
             );
             return new ChangeExecutor<>(handlers).execute(changes, dryRun);
         } finally {

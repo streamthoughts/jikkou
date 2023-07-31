@@ -10,8 +10,7 @@
     "all-args-constructor": false,
     "spec": {
       "names": {
-        "singular": "schemaregistryaclentrylist",
-        "plural": "schemaregistryaclentrylist",
+        "singular": "avn-schema-registry-acl-list",
         "shortNames": [
           "avnsral"
         ]

@@ -20,7 +20,8 @@ package io.streamthoughts.jikkou.extension.aiven.change;
 
 import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
 import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.NONE;
+import static io.streamthoughts.jikkou.api.control.ChangeType.IGNORE;
+import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.control.ChangeType;
@@ -49,7 +50,16 @@ public class KafkaAclEntryChangeComputer extends ValueChangeComputer<V1KafkaTopi
      **/
     @Override
     protected ChangeType getChangeType(V1KafkaTopicAclEntry before, V1KafkaTopicAclEntry after) {
-        return before == null ? ADD : after == null ? DELETE : JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? DELETE : NONE;
+        if (before == null && after == null)
+            return IGNORE;
+
+        if (before == null)
+            return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? IGNORE : ADD;
+
+        if (after == null)
+            return DELETE;
+
+        return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? DELETE : UPDATE;
     }
 
     record Key(String username, String topic, Permission permission) {}

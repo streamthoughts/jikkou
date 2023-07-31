@@ -47,17 +47,15 @@ import io.streamthoughts.jikkou.extension.aiven.change.AclEntryChangeDescription
 import io.streamthoughts.jikkou.extension.aiven.change.SchemaRegistryAclEntryChangeComputer;
 import io.streamthoughts.jikkou.extension.aiven.change.handler.CreateSchemaRegistryAclEntryChangeHandler;
 import io.streamthoughts.jikkou.extension.aiven.change.handler.DeleteSchemaRegistryAclEntryChangeHandler;
-import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaAclEntryListConverter;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
+import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
-@AcceptsResource(type = V1KafkaTopicAclEntry.class)
-@AcceptsResource(type = V1KafkaTopicAclEntryList.class, converter = V1KafkaAclEntryListConverter.class)
+@AcceptsResource(type = V1SchemaRegistryAclEntry.class)
+@AcceptsResource(type = V1SchemaRegistryAclEntry.class, converter = V1SchemaRegistryAclEntryListConverter.class)
 public class SchemaRegistryAclEntryController implements BaseResourceController<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
@@ -108,7 +106,7 @@ public class SchemaRegistryAclEntryController implements BaseResourceController<
             List<ChangeHandler<ValueChange<SchemaRegistryAclEntry>>> handlers = List.of(
                     new CreateSchemaRegistryAclEntryChangeHandler(api),
                     new DeleteSchemaRegistryAclEntryChangeHandler(api),
-                    new ChangeHandler.None<>(it -> AclEntryChangeDescription.of(it.getChangeType(), it.getBefore()))
+                    new ChangeHandler.None<>(it -> AclEntryChangeDescription.of(it.getChangeType(), it.getAfter()))
             );
             return new ChangeExecutor<>(handlers).execute(changes, dryRun);
         } finally {

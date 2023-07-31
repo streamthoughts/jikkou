@@ -23,11 +23,24 @@ package io.streamthoughts.jikkou.api.control;
  */
 public enum ChangeType {
 
+    /**
+     * the modification neither creates new resource objects nor updates existing ones.
+     */
     NONE,
-
+    /**
+     * the change creates a new resource object.
+     */
     ADD,
-
+    /**
+     * the change deletes an existing resource object.
+     */
     DELETE,
-
-    UPDATE
+    /**
+     * the change updates an existing resource object.
+     */
+    UPDATE,
+    /**
+     * the change is not applicable and should be ignored or filtered - internal usage
+     */
+    IGNORE;
 }

@@ -45,7 +45,7 @@ import lombok.With;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("Kafka ACL entry for a specific topic")
-@Names(singular = "kafkatopicaclentrylist", plural = "kafkatopicaclentrylist", shortNames = {
+@Names(singular = "avn-kafka-topic-acl-list", shortNames = {
     "avnktal"
 })
 @JsonPropertyOrder({

@@ -20,6 +20,7 @@ package io.streamthoughts.jikkou.api.control;
 
 import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
 import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
+import static io.streamthoughts.jikkou.api.control.ChangeType.IGNORE;
 import static io.streamthoughts.jikkou.api.control.ChangeType.NONE;
 import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
 import static java.util.stream.Collectors.mapping;
@@ -98,7 +99,7 @@ public class ValueChangeComputer<T, V> implements ChangeComputer<T, ValueChange<
                             .groupingBy(before -> {
                                         Object key = keyMapper.apply(before);
                                         T after = keyedExpectedStates.get(key);
-                                        return after == null ? DELETE : NONE;
+                                        return after == null ? DELETE : IGNORE;
                                     }
                                     , mapping(before -> {
                                         Object key = keyMapper.apply(before);
@@ -126,7 +127,9 @@ public class ValueChangeComputer<T, V> implements ChangeComputer<T, ValueChange<
                 .stream().map(it -> ValueChange.with(it.after(), it.before())).toList());
 
         results.addAll(groupedByChangeType.getOrDefault(NONE, Collections.emptyList())
-                .stream().map(it -> ValueChange.none(it.after())).toList());
+                .stream().map(it -> ValueChange.none(it.before(), it.after())).toList());
+
+        // IGNORE are filtered and should not be part of the result changes
 
         return results;
     }

@@ -98,13 +98,7 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
         this.kind = kind;
         this.apiVersion = apiVersion;
         this.items = new ArrayList<>(items);
-        if (metadata != null) {
-            this.metadata = metadata.toBuilder()
-                    .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, items.size())
-                    .build();
-        } else {
-            this.metadata = new ObjectMeta();
-        }
+        this.metadata = metadata;
     }
 
     /**
@@ -131,7 +125,9 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
     @JsonProperty("metadata")
     @Override
     public ObjectMeta getMetadata() {
-        return Optional.ofNullable(metadata).orElse(new ObjectMeta());
+        return Optional.ofNullable(metadata).orElse(new ObjectMeta()).toBuilder()
+                .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, items.size())
+                .build();
     }
 
     /** {@inheritDoc} */

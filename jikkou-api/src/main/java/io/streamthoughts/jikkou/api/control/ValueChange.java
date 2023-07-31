@@ -32,6 +32,18 @@ public class ValueChange<T> implements Change {
     /**
      * Static helper method to create a new {@link ValueChange} instance.
      *
+     * @param after  the target value.
+     * @param before the previous value.
+     * @param <T>   the value type.
+     * @return a new {@link ValueChange}
+     */
+    public static <T> ValueChange<T> none(@Nullable T before, @Nullable T after) {
+        return new ValueChange<>(after, before, ChangeType.NONE);
+    }
+
+    /**
+     * Static helper method to create a new {@link ValueChange} instance.
+     *
      * @param value the before/after value.
      * @param <T>   the value type.
      * @return a new {@link ValueChange}

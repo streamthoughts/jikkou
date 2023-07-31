@@ -10,8 +10,7 @@
     "all-args-constructor": false,
     "spec": {
       "names": {
-        "singular": "kafkatopicaclentrylist",
-        "plural": "kafkatopicaclentrylist",
+        "singular": "avn-kafka-topic-acl-list",
         "shortNames": [
           "avnktal"
         ]
