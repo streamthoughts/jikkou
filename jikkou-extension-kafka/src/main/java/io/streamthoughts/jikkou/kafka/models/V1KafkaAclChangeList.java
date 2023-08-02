@@ -21,7 +21,6 @@ package io.streamthoughts.jikkou.kafka.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.ObjectTemplate;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
@@ -36,6 +35,7 @@ import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -57,7 +57,7 @@ import lombok.With;
 })
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaAclChangeList")
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaAclChangeList implements ResourceListObject<V1KafkaAclChange>
 {
@@ -68,6 +68,7 @@ public class V1KafkaAclChangeList implements ResourceListObject<V1KafkaAclChange
      * 
      */
     @JsonProperty("apiVersion")
+    @Builder.Default
     private String apiVersion = "kafka.jikkou.io/v1beta2";
     /**
      * 
@@ -75,6 +76,7 @@ public class V1KafkaAclChangeList implements ResourceListObject<V1KafkaAclChange
      * 
      */
     @JsonProperty("kind")
+    @Builder.Default
     private String kind = "KafkaAclChangeList";
     @JsonProperty("metadata")
     private ObjectMeta metadata;

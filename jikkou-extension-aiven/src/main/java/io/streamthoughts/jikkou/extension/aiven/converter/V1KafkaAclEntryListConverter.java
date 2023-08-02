@@ -43,21 +43,13 @@ public class V1KafkaAclEntryListConverter extends AbstractResourceListConverter<
                 .toList();
 
         return List.of(
-                new V1KafkaTopicAclEntryList()
+                V1KafkaTopicAclEntryList.builder()
                         .withMetadata(ObjectMeta.builder()
                                 .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)
-                        .toBuilder()
                         .build()
         );
     }
-
-    @Override
-    public V1KafkaTopicAclEntry updateMetadata(V1KafkaTopicAclEntry resource,
-                                               ObjectMeta objectMeta) {
-        return resource.withMetadata(objectMeta);
-    }
-
 }

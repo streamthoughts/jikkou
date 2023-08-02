@@ -22,13 +22,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
@@ -39,7 +39,7 @@ import lombok.With;
     "username",
     "topic"
 })
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaTopicAclEntrySpec {
 

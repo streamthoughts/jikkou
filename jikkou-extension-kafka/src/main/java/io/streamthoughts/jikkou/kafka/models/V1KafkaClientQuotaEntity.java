@@ -21,12 +21,12 @@ package io.streamthoughts.jikkou.kafka.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.annotations.Description;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -41,7 +41,7 @@ import lombok.With;
     "user",
     "clientId"
 })
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaClientQuotaEntity {
 

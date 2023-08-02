@@ -53,11 +53,4 @@ public class V1SchemaRegistryAclEntryListConverter extends AbstractResourceListC
                         .build()
         );
     }
-
-    @Override
-    public V1SchemaRegistryAclEntry updateMetadata(V1SchemaRegistryAclEntry resource,
-                                                   ObjectMeta objectMeta) {
-        return resource.withMetadata(objectMeta);
-    }
-
 }

@@ -71,9 +71,10 @@ public abstract class AbstractResourceListConverter<T extends ResourceListObject
                             .withLabels(labels)
                             .withAnnotations(annotations)
                             .build();
-                    return updateMetadata(item, objectMeta);
+
+                    @SuppressWarnings("unchecked")
+                    E updated = (E) item.withMetadata(objectMeta);
+                    return updated;
                 });
     }
-
-    public abstract E updateMetadata(E resource, ObjectMeta objectMeta);
 }

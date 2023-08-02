@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasSpec;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
@@ -36,6 +35,7 @@ import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -57,7 +57,7 @@ import lombok.With;
 })
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaClientQuota")
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuotaSpec> , Resource
 {
@@ -68,6 +68,7 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
      * 
      */
     @JsonProperty("apiVersion")
+    @Builder.Default
     private String apiVersion = "kafka.jikkou.io/v1beta2";
     /**
      * 
@@ -75,6 +76,7 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
      * 
      */
     @JsonProperty("kind")
+    @Builder.Default
     private String kind = "KafkaClientQuota";
     @JsonProperty("metadata")
     private ObjectMeta metadata;

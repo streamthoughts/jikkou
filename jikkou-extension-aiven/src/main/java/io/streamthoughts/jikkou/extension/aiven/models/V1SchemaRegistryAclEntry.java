@@ -21,7 +21,6 @@ package io.streamthoughts.jikkou.extension.aiven.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasSpec;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
@@ -34,6 +33,7 @@ import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -55,7 +55,7 @@ import lombok.With;
 })
 @ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("SchemaRegistryAclEntry")
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1SchemaRegistryAclEntry implements HasMetadata, HasSpec<V1SchemaRegistryAclEntrySpec> , Resource
 {
@@ -66,6 +66,7 @@ public class V1SchemaRegistryAclEntry implements HasMetadata, HasSpec<V1SchemaRe
      * 
      */
     @JsonProperty("apiVersion")
+    @Builder.Default
     private String apiVersion = "kafka.aiven.io/v1beta1";
     /**
      * 
@@ -73,6 +74,7 @@ public class V1SchemaRegistryAclEntry implements HasMetadata, HasSpec<V1SchemaRe
      * 
      */
     @JsonProperty("kind")
+    @Builder.Default
     private String kind = "SchemaRegistryAclEntry";
     /**
      * 

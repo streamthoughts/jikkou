@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.extension.aiven;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.model.HasItems;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
@@ -64,7 +65,13 @@ class AivenExtensionResourceLoaderTest {
 
         List<V1KafkaTopicAclEntryList> resource = resources.getAllByClass(V1KafkaTopicAclEntryList.class);
         Assertions.assertEquals(1, resource.size());
-        Assertions.assertEquals(2, resource.get(0).getItems().size());
+        List<V1KafkaTopicAclEntry> items = resource.get(0).getItems();
+        Assertions.assertEquals(2, items.size());
+
+        for (HasMetadata r : items) {
+            Assertions.assertNotNull(r.getApiVersion());
+            Assertions.assertNotNull(r.getKind());
+        }
     }
 
     @Test

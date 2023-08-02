@@ -32,6 +32,7 @@ import lombok.Builder;
 import lombok.Setter;
 import lombok.Singular;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
@@ -43,14 +44,16 @@ import lombok.With;
     "configs",
     "configMapRefs"
 })
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaTopicSpec implements HasConfigRefs
 {
 
     @JsonProperty("partitions")
+    @Builder.Default
     private Integer partitions = -1;
     @JsonProperty("replicas")
+    @Builder.Default
     private Short replicas = null;
     @JsonProperty("configs")
     private Configs configs;

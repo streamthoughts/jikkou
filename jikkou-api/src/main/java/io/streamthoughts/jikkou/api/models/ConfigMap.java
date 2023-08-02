@@ -21,7 +21,6 @@ package io.streamthoughts.jikkou.api.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
@@ -35,6 +34,7 @@ import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -57,7 +57,7 @@ import lombok.With;
 })
 @ApiVersion("core.jikkou.io/v1beta2")
 @Kind("ConfigMap")
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class ConfigMap implements HasMetadata, Resource
 {
@@ -68,6 +68,7 @@ public class ConfigMap implements HasMetadata, Resource
      * 
      */
     @JsonProperty("apiVersion")
+    @Builder.Default
     private String apiVersion = "core.jikkou.io/v1beta2";
     /**
      * 
@@ -75,6 +76,7 @@ public class ConfigMap implements HasMetadata, Resource
      * 
      */
     @JsonProperty("kind")
+    @Builder.Default
     private String kind = "ConfigMap";
     @JsonProperty("metadata")
     private ObjectMeta metadata;

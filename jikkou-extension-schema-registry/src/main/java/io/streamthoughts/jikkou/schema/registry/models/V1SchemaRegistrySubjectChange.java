@@ -21,7 +21,6 @@ package io.streamthoughts.jikkou.schema.registry.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.Resource;
@@ -32,6 +31,7 @@ import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -49,7 +49,7 @@ import lombok.With;
 })
 @ApiVersion("schemaregistry.jikkou.io/v1beta2")
 @Kind("SchemaSubjectChange")
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1SchemaRegistrySubjectChange implements HasMetadataChange<io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange> , Resource
 {
@@ -60,6 +60,7 @@ public class V1SchemaRegistrySubjectChange implements HasMetadataChange<io.strea
      * 
      */
     @JsonProperty("apiVersion")
+    @Builder.Default
     private String apiVersion = "schemaregistry.jikkou.io/v1beta2";
     /**
      * 
@@ -67,6 +68,7 @@ public class V1SchemaRegistrySubjectChange implements HasMetadataChange<io.strea
      * 
      */
     @JsonProperty("kind")
+    @Builder.Default
     private String kind = "SchemaSubjectChange";
     /**
      * 

@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.generator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JDefinedClass;
@@ -46,6 +45,7 @@ import lombok.Setter;
 import lombok.Singular;
 import lombok.ToString;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 import org.jsonschema2pojo.AbstractAnnotator;
 
 public class JikkouAnnotator extends AbstractAnnotator {
@@ -81,6 +81,10 @@ public class JikkouAnnotator extends AbstractAnnotator {
         if (type.equalsIgnoreCase("array")) {
             field.annotate(Singular.class);
         }
+
+        if (propertyNode.get("default") != null) {
+            field.annotate(Builder.Default.class);
+        }
     }
 
     /** {@inheritDoc} */
@@ -100,9 +104,7 @@ public class JikkouAnnotator extends AbstractAnnotator {
                     JAnnotationUse annotate = clazz.annotate(Kind.class);
                     annotate.param("value", val.textValue());
                 });
-
-        JAnnotationUse annotateJsonDeserialize = clazz.annotate(JsonDeserialize.class);
-        annotateJsonDeserialize.param("using", com.fasterxml.jackson.databind.JsonDeserializer.None.class);
+        clazz.annotate(Jacksonized.class);
     }
 
     /**

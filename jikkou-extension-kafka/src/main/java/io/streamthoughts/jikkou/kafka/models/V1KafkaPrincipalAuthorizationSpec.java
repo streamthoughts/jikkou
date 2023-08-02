@@ -32,6 +32,7 @@ import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 
 
 /**
@@ -45,7 +46,7 @@ import lombok.With;
     "acls",
     "roles"
 })
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaPrincipalAuthorizationSpec {
 

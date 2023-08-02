@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.api.model.annotations.Description;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.With;
+import lombok.extern.jackson.Jacksonized;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 
@@ -49,7 +49,7 @@ import org.apache.kafka.common.acl.AclPermissionType;
     "type",
     "host"
 })
-@JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
+@Jacksonized
 @Generated("jsonschema2pojo")
 public class V1KafkaPrincipalAcl {
 
@@ -77,6 +77,7 @@ public class V1KafkaPrincipalAcl {
      */
     @JsonProperty("type")
     @JsonPropertyDescription("The ACL permission type, i.e., ALLOW or DENY.")
+    @Builder.Default
     private AclPermissionType type = null;
     /**
      * 
@@ -84,6 +85,7 @@ public class V1KafkaPrincipalAcl {
      * 
      */
     @JsonProperty("host")
+    @Builder.Default
     private String host = "*";
 
     /**
