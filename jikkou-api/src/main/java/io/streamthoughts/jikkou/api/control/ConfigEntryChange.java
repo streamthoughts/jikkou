@@ -19,7 +19,6 @@
 package io.streamthoughts.jikkou.api.control;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.streamthoughts.jikkou.api.model.Nameable;
 import java.util.Objects;
@@ -51,7 +50,7 @@ public final class ConfigEntryChange implements Change, Nameable {
 
     /** {@inheritDoc} */
     @Override
-    @JsonProperty("operation")
+    @JsonIgnore
     public ChangeType getChangeType() {
         return valueChange.getChangeType();
     }
