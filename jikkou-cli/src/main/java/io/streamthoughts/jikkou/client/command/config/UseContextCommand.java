@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -20,25 +17,32 @@ package io.streamthoughts.jikkou.client.command.config;
 
 import io.streamthoughts.jikkou.client.completion.ContextNameCompletions;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
-import picocli.CommandLine;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@CommandLine.Command(name = "use-context", description = "Configures jikkou to use the specified context")
+@Command(
+        name = "use-context",
+        description = "Configures jikkou to use the specified context"
+)
+@Singleton
 public class UseContextCommand implements Runnable {
 
     @Parameters(index = "0", description = "Context name", completionCandidates = ContextNameCompletions.class)
     String contextName;
 
+    @Inject
+    private ConfigurationContext configurationContext;
+
     /** {@link} **/
     @Override
     public void run() {
-        ConfigurationContext context = new ConfigurationContext();
-
-        if (context.getCurrentContextName().equals(contextName)) {
+        if (configurationContext.getCurrentContextName().equals(contextName)) {
             System.out.println("Already using context " + contextName);
         }
         else {
-            boolean success = context.setCurrentContext(contextName);
+            boolean success = configurationContext.setCurrentContext(contextName);
 
             if (success) {
                 System.out.println("Using context '" + contextName + "'");

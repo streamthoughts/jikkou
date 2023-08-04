@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -26,10 +23,8 @@ import io.streamthoughts.jikkou.api.control.Change;
 import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
-import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
-import io.streamthoughts.jikkou.client.ClientContext;
 import io.streamthoughts.jikkou.client.Jikkou;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
@@ -52,40 +47,39 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
 
     @Mixin
     SelectorOptionsMixin selectorOptions;
+
+    @Inject
+    JikkouApi api;
+
+    @Inject
+    YAMLResourceLoader loader;
     
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() {
-        try(JikkouApi api = ClientContext.get().createApi()) {
 
-            HasItems resources = loadResources();
+        HasItems resources = loadResources();
 
-            final List<ChangeResult<Change>> results = api.apply(
-                    resources,
-                    getReconciliationMode(),
-                    ReconciliationContext.with(
-                            selectorOptions.getResourceSelectors(),
-                            getReconciliationConfiguration(),
-                            isDryRun()
-                    ));
+        final List<ChangeResult<Change>> results = api.apply(
+                resources,
+                getReconciliationMode(),
+                ReconciliationContext.with(
+                        selectorOptions.getResourceSelectors(),
+                        getReconciliationConfiguration(),
+                        isDryRun()
+                ));
 
-            return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
-        }
+        return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
     }
 
     protected @NotNull HasItems loadResources() {
-        ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
-                .withPreserveRawTags(false)
-                .withFailOnUnknownTokens(false);
-
-        YAMLResourceLoader loader = new YAMLResourceLoader(renderer);
-
         return loader.load(fileOptions);
     }
 
     protected abstract Configuration getReconciliationConfiguration();
+
     protected abstract ReconciliationMode getReconciliationMode();
 
     public boolean isDryRun() {

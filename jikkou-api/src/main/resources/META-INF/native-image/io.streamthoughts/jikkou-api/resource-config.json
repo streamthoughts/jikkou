@@ -1,0 +1,5 @@
+{
+  "resources" : [ {
+    "pattern" : "\\Qjikkou-info.properties\\E"
+  }]
+}

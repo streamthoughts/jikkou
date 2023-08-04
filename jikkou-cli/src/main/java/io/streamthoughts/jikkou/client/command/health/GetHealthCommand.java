@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
+import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
@@ -26,7 +24,9 @@ import io.streamthoughts.jikkou.api.health.HealthAggregator;
 import io.streamthoughts.jikkou.api.health.HealthIndicator;
 import io.streamthoughts.jikkou.api.health.Status;
 import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.client.ClientContext;
+import io.streamthoughts.jikkou.client.JikkouConfig;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
@@ -47,6 +47,7 @@ import picocli.CommandLine.Parameters;
         header = "Print health indicators.",
         description = "This command can be used to get information about the health of target environments.",
         mixinStandardHelpOptions = true)
+@Singleton
 public class GetHealthCommand implements Callable<Integer> {
 
     enum Formats { JSON, YAML }
@@ -55,31 +56,35 @@ public class GetHealthCommand implements Callable<Integer> {
             defaultValue = "YAML",
             description = "Prints the output in the specified format. Allowed values: json, yaml (default yaml)."
     )
-    public Formats format;
+    Formats format;
 
     @Option(names = "--timeout-ms",
             defaultValue = "2000",
             description = "Timeout in milliseconds for retrieving health indicators (default: 2000).")
-    public long timeoutMs;
+    long timeoutMs;
 
     @Parameters(
             paramLabel = "HEALTH_INDICATOR",
             description = "Name of the health indicator (use 'all' to get all indicators).")
     String indicator;
 
+    @Inject
+    private JikkouContext context;
+
+    @Inject
+    private JikkouConfig config;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() throws IOException {
-        ClientContext clientContext = ClientContext.get();
-
-        ExtensionFactory factory = clientContext.getExtensionFactory();
+        ExtensionFactory factory = context.getExtensionFactory();
 
         Health health = null;
         if (indicator.equalsIgnoreCase("all")) {
             List<Health> l = factory
-                    .getAllExtensions(HealthIndicator.class, clientContext.getConfiguration())
+                    .getAllExtensions(HealthIndicator.class, config)
                     .stream().map(i -> i.getHealth(Duration.ofMillis(timeoutMs)))
                     .toList();
             health = new HealthAggregator().aggregate(l);
@@ -91,7 +96,7 @@ public class GetHealthCommand implements Callable<Integer> {
                     .orElseThrow(() ->
                             new JikkouRuntimeException("Cannot find health-indicator for name '" + indicator + "'")
                     );
-            HealthIndicator indicator = factory.getExtension(descriptor.clazz(), clientContext.getConfiguration());
+            HealthIndicator indicator = factory.getExtension(descriptor.clazz(), config);
             health = indicator.getHealth(Duration.ofMillis(timeoutMs));
         }
 

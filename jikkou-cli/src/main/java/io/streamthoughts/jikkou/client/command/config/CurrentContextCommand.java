@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -25,16 +22,23 @@ import com.github.freva.asciitable.HorizontalAlign;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
-import picocli.CommandLine;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import picocli.CommandLine.Command;
 
-@CommandLine.Command(name = "current-context", description = "Displays the current context")
+@Command(
+        name = "current-context",
+        description = "Displays the current context"
+)
+@Singleton
 public class CurrentContextCommand implements Runnable {
 
-    ConfigurationContext context = new ConfigurationContext();
+    @Inject
+    private ConfigurationContext configurationContext;
 
     @Override
     public void run() {
-        Context currentContext = context.getCurrentContext();
+        Context currentContext = configurationContext.getCurrentContext();
         String[][] data = new String[2][];
         data[0] = new String[]{ "ConfigFile", currentContext.configFile() };
         data[1] = new String[]{ "ConfigProps", getString(currentContext)};
@@ -45,7 +49,7 @@ public class CurrentContextCommand implements Runnable {
                 },
                 data);
 
-        System.out.println("Using context '" + context.getCurrentContextName() + "'");
+        System.out.println("Using context '" + configurationContext.getCurrentContextName() + "'");
         System.out.println();
         System.out.println(table);
     }

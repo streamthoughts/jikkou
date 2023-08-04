@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -54,6 +51,7 @@ public final class JikkouConfig implements Configuration {
 
     private static final String DEFAULT_CONFIG = "application.conf";
     private static final String ROOT_CONFIG_KEY = "jikkou";
+    private static final String CONFIG_FILE_SYSTEM_PROPERTY = "config.file";
 
     private final Config config;
 
@@ -159,8 +157,11 @@ public final class JikkouConfig implements Configuration {
 
         getConfigFile(configFilePath).ifPresentOrElse(configFile -> {
             LOG.info("Loading configuration from: '{}'", configFile);
-            System.setProperty("config.file", configFile);
-        }, () -> LOG.info("No configuration file was found"));
+            System.setProperty(CONFIG_FILE_SYSTEM_PROPERTY, configFile);
+        }, () -> {
+            System.clearProperty(CONFIG_FILE_SYSTEM_PROPERTY);
+            LOG.info("No configuration file was found");
+        });
 
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig(ROOT_CONFIG_KEY);

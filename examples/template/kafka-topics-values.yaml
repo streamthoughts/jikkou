@@ -1,6 +1,6 @@
 topicConfigs:
   partitions: 4
-  replicas: 3
+  replicas: 1
 topicPrefix: "{{ system.env.TOPIC_PREFIX | default('test', true) }}"
 countryCodes:
   - fr

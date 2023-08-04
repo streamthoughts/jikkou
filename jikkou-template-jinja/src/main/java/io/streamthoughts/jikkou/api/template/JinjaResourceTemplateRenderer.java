@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -32,11 +29,15 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Jinja based template rendered.
  */
 public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JinjaResourceTemplateRenderer.class);
 
     // list of scopes for bindings
     public enum Scopes {
@@ -65,7 +66,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
     @Override
     public String render(@NotNull final String template,
                          @NotNull final TemplateBindings bindings) {
-
+        LOG.debug("Starting resource template rendering");
         JinjavaConfig config = JinjavaConfig.newBuilder()
                 .withCharset(StandardCharsets.UTF_8)
                 .withFailOnUnknownTokens(failOnUnknownTokens)
@@ -81,13 +82,15 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
             TemplateError error = errors.get(0);
             throw new JikkouRuntimeException(
                     String.format(
-                            "%s: line %d, %s",
+                            "Cannot render resource template. '%s': line %d, start_pos: %d, %s",
                             formatErrorReason(error.getReason().name()),
                             error.getLineno(),
-                            error.getMessage())
+                            error.getStartPosition(),
+                            error.getMessage()
+                    )
             );
         }
-
+        LOG.debug("Resource template rendering done");
         return result.getOutput();
     }
 

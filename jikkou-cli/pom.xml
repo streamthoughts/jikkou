@@ -10,17 +10,49 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jikkou-cli</artifactId>
-    <name>jikkou</name>
 
-    <description>A command-line tool to help you automate the management of the configurations that live on your Apache Kafka platform.</description>
+    <name>jikkou-cli</name>
+    <description>A command-line tool to help you automate the management of the configurations that live on your Apache
+        Kafka platform.
+    </description>
+    <packaging>${packaging}</packaging>
+
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <packaging>jar</packaging>
         <app.distribution.directory>${project.basedir}/../dist</app.distribution.directory>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
         <ascii-table.version>1.8.0</ascii-table.version>
+        <micronaut.version>3.10.0</micronaut.version>
+        <micronaut-parent.version>3.10.0</micronaut-parent.version>
+        <micronaut-maven-plugin.version>4.0.4</micronaut-maven-plugin.version>
+        <micronaut-picocli-bom.version>5.0.1</micronaut-picocli-bom.version>
+        <micronaut.aot.enabled>false</micronaut.aot.enabled>
+        <jreleaser-maven-plugin.version>1.7.0</jreleaser-maven-plugin.version>
+        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
+        <executable-suffix/>
+        <imageName>jikkou</imageName>
+        <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Micronaut -->
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-parent</artifactId>
+                <version>${micronaut-parent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut.picocli</groupId>
+                <artifactId>micronaut-picocli-bom</artifactId>
+                <version>${micronaut-picocli-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -62,13 +94,42 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
+            <groupId>software.amazon.msk</groupId>
+            <artifactId>aws-msk-iam-auth</artifactId>
+        </dependency>
+        <!-- START dependencies for Micronaut/Picocli -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-jackson-databind</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.micronaut</groupId>
+                    <artifactId>micronaut-jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
         </dependency>
         <dependency>
-            <groupId>software.amazon.msk</groupId>
-            <artifactId>aws-msk-iam-auth</artifactId>
+            <groupId>io.micronaut.picocli</groupId>
+            <artifactId>micronaut-picocli</artifactId>
         </dependency>
+        <!-- END dependencies for Micronaut -->
+
         <!-- START dependencies for test -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -105,14 +166,85 @@
             <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- END dependencies for test -->
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <!-- detect OS classifier, needed for distribution Zip file -->
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${os-maven-plugin.version}</version>
+            </extension>
+        </extensions>
         <plugins>
+            <plugin>
+                <groupId>io.micronaut.maven</groupId>
+                <artifactId>micronaut-maven-plugin</artifactId>
+                <version>${micronaut-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <micronautAotVersion>2.0.1</micronautAotVersion>
+                    <testResourcesVersion>1.2.5</testResourcesVersion>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${jdk.version}</release>
+                    <!-- Uncomment to enable incremental compilation -->
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <annotationProcessorPaths combine.children="append">
+                        <path>
+                            <groupId>io.micronaut.serde</groupId>
+                            <artifactId>micronaut-serde-processor</artifactId>
+                            <version>1.5.3</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-graal</artifactId>
+                            <version>${micronaut.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-inject-java</artifactId>
+                            <version>${micronaut.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-validation</artifactId>
+                            <version>${micronaut.version}</version>
+                        </path>
+                        <path>
+                            <groupId>info.picocli</groupId>
+                            <artifactId>picocli-codegen</artifactId>
+                            <version>${picocli.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-Amicronaut.processing.group=io.streamthoughts</arg>
+                        <arg>-Amicronaut.processing.module=jikkou-cli</arg>
+                        <arg>-verbose</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -131,10 +263,13 @@
                             <shadedClassifierName>runner</shadedClassifierName>
                             <filters>
                                 <filter>
-                                    <artifact>*:*</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
+                                    <artifact>*.*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>module-info.class</exclude>
+                                    </excludes>
                                 </filter>
                             </filters>
                             <transformers>
@@ -159,8 +294,9 @@
                 <configuration>
                     <attach>false</attach>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>jikkou-${project.version}-runner</finalName>
+                    <finalName>jikkou-${project.version}-${os.detected.classifier}</finalName>
                     <outputDirectory>${app.distribution.directory}</outputDirectory>
+                    <workDirectory>${project.build.directory}/assembly/work</workDirectory>
                     <skipAssembly>true</skipAssembly>
                 </configuration>
                 <executions>
@@ -173,9 +309,116 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-autocompletion-script</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-Dpicocli.autocomplete.systemExitOnError</argument>
+                        <argument>-cp</argument>
+                        <classpath/>
+                        <argument>picocli.AutoComplete</argument>
+                        <argument>--force</argument><!-- overwrite if exists -->
+                        <argument>--completionScript</argument>
+                        <argument>${project.basedir}/../jikkou_completion</argument>
+                        <argument>io.streamthoughts.jikkou.client.Jikkou</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>native</id>
+            <activation>
+                <property>
+                    <name>native</name>
+                </property>
+            </activation>
+            <properties>
+                <packaging>native-image</packaging>
+                <imageName>${project.build.finalName}-runner</imageName>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <version>${jreleaser-maven-plugin.version}</version>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <jreleaser>
+                                <project>
+                                    <snapshot>
+                                        <label>{{ projectVersionNumber }}-early-access</label>
+                                    </snapshot>
+                                </project>
+                                <release>
+                                    <github>
+                                        <changelog>
+                                            <formatted>ALWAYS</formatted>
+                                            <includeLabels>
+                                                <includeLabel>features</includeLabel>
+                                                <includeLabel>changes</includeLabel>
+                                                <includeLabel>dependencies</includeLabel>
+                                            </includeLabels>
+                                            <labelers>
+                                                <labeler>
+                                                    <label>features</label>
+                                                    <title>regex:^feat.+$</title>
+                                                </labeler>
+                                                <labeler>
+                                                    <label>changes</label>
+                                                    <title>regex:^(?!feat|build|ci).+$</title>
+                                                </labeler>
+                                                <labeler>
+                                                    <label>dependencies</label>
+                                                    <title>regex:^build\(deps\)\:.+$</title>
+                                                </labeler>
+                                            </labelers>
+                                            <categories>
+                                                <category>
+                                                    <title>🚀 New Features</title>
+                                                    <key>features</key>
+                                                    <labels>features</labels>
+                                                    <order>1</order>
+                                                </category>
+                                                <category>
+                                                    <title>🪛 Improvement and 🐞 Bug fixes</title>
+                                                    <key>changes</key>
+                                                    <labels>changes</labels>
+                                                    <order>2</order>
+                                                </category>
+                                                <category>
+                                                    <title>⬆️ Dependencies</title>
+                                                    <key>dependencies</key>
+                                                    <labels>dependencies</labels>
+                                                    <order>3</order>
+                                                </category>
+                                            </categories>
+                                        </changelog>
+                                    </github>
+                                </release>
+                            </jreleaser>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>dist</id>
             <activation>
@@ -186,33 +429,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${exec-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>generate-autocompletion-script</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <executable>java</executable>
-                            <arguments>
-                                <argument>-Dpicocli.autocomplete.systemExitOnError</argument>
-                                <argument>-cp</argument>
-                                <classpath/>
-                                <argument>picocli.AutoComplete</argument>
-                                <argument>--force</argument><!-- overwrite if exists -->
-                                <argument>--completionScript</argument>
-                                <argument>${project.basedir}/../jikkou_completion</argument>
-                                <argument>io.streamthoughts.jikkou.client.Jikkou</argument>
-                            </arguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <configuration combine.self="append">
@@ -222,18 +438,31 @@
                             </descriptors>
                         </configuration>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deb</id>
+            <activation>
+                <file>
+                    <exists>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.vafer</groupId>
                         <artifactId>jdeb</artifactId>
                         <executions>
                             <execution>
+                                <id>make-debian-package</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>jdeb</goal>
                                 </goals>
                                 <configuration>
                                     <installDir>/opt/jikkou</installDir>
-                                    <deb>${app.distribution.directory}/jikkou.deb</deb>
+                                    <deb>${app.distribution.directory}/jikkou-${project.version}-${os.detected.classifier}.deb</deb>
                                     <verbose>true</verbose>
                                     <snapshotExpand>true</snapshotExpand>
                                     <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
@@ -242,35 +471,15 @@
                                     <controlDir>${project.basedir}/src/deb/control</controlDir>
                                     <dataSet>
                                         <data>
-                                            <src>${project.basedir}/target/jikkou-runner.jar</src>
+                                            <src>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</src>
                                             <type>file</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/opt/jikkou/lib</prefix>
-                                                <filemode>444</filemode>
-                                            </mapper>
-                                        </data>
-
-                                        <data>
-                                            <src>${project.basedir}/src/main/bin/jikkou</src>
-                                            <type>file</type>
+                                            <dst>jikkou</dst>
                                             <mapper>
                                                 <type>perm</type>
                                                 <prefix>/opt/jikkou/bin</prefix>
                                                 <filemode>755</filemode>
                                             </mapper>
                                         </data>
-
-                                        <data>
-                                            <src>${project.basedir}/src/main/conf/</src>
-                                            <type>directory</type>
-                                            <mapper>
-                                                <type>perm</type>
-                                                <prefix>/opt/jikkou/etc</prefix>
-                                                <filemode>755</filemode>
-                                            </mapper>
-                                        </data>
-
                                         <data>
                                             <src>${project.basedir}/../jikkou_completion</src>
                                             <type>file</type>
@@ -292,7 +501,7 @@
             <id>rpm</id>
             <activation>
                 <file>
-                    <exists>/usr/bin/rpmbuild</exists>
+                    <exists>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</exists>
                 </file>
             </activation>
             <build>
@@ -300,7 +509,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
-                        <version>2.3.0</version>
+                        <version>${rpm-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>generate-rpm</id>
@@ -326,30 +535,11 @@
                             </requires>
                             <mappings>
                                 <mapping>
-                                    <directory>/opt/jikkou/lib/</directory>
-                                    <filemode>444</filemode>
-                                    <sources>
-                                        <source>
-                                            <location>${project.basedir}/target/jikkou-runner.jar</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
                                     <directory>/opt/jikkou/bin/</directory>
                                     <filemode>755</filemode>
                                     <sources>
                                         <source>
-                                            <location>${project.basedir}/src/main/bin/jikkou</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/opt/jikkou/etc/</directory>
-                                    <filemode>640</filemode>
-                                    <configuration>noreplace</configuration>
-                                    <sources>
-                                        <source>
-                                            <location>${project.basedir}/src/main/conf/</location>
+                                            <location>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</location>
                                         </source>
                                     </sources>
                                 </mapping>

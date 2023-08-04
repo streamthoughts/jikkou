@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -21,11 +18,13 @@ package io.streamthoughts.jikkou.client.command.extension;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.api.model.ResourceType;
-import io.streamthoughts.jikkou.client.ClientContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +43,7 @@ import picocli.CommandLine.Option;
         header = "Get all the extensions.",
         description = "Get all the extensions.",
         mixinStandardHelpOptions = true)
+@Singleton
 public class ListExtensionCommand implements Runnable {
 
     @Option(names = { "--type"},
@@ -59,12 +59,12 @@ public class ListExtensionCommand implements Runnable {
     )
     public List<String> kinds = Collections.emptyList();
 
+    @Inject
+    private JikkouContext context;
 
     /** {@inheritDoc} **/
     @Override
     public void run() {
-        ClientContext context = ClientContext.get();
-
         ExtensionFactory factory = context.getExtensionFactory();
         Collection<ExtensionDescriptor<?>> extensions = factory.allExtensionTypes();
 

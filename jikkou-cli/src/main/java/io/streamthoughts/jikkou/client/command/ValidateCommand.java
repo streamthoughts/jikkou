@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,15 +15,14 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
+import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
-import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
-import io.streamthoughts.jikkou.client.ClientContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.Callable;
-import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -41,6 +37,7 @@ import picocli.CommandLine.Mixin;
         header = "Validate resource definition files.",
         description = "This command can be used to validate resource definition file.",
         mixinStandardHelpOptions = true)
+@Singleton
 public class ValidateCommand implements Callable<Integer> {
 
     @Mixin
@@ -49,27 +46,24 @@ public class ValidateCommand implements Callable<Integer> {
     @Mixin
     SelectorOptionsMixin selectorOptions;
 
+    @Inject
+    JikkouApi api;
+
+    @Inject
+    YAMLResourceLoader loader;
+    @Inject
+    YAMLResourceWriter writer;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() {
-        try (var api = ClientContext.get().createApi()) {
-            HasItems resources = api.validate(loadResources(), selectorOptions.getResourceSelectors());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            YAMLResourceWriter.instance().write(resources.getItems(), baos);
-            System.out.println(baos);
-        }
-
+        HasItems resources = loader.load(fileOptions);
+        HasItems validated = api.validate(resources, selectorOptions.getResourceSelectors());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writer.write(validated.getItems(), baos);
+        System.out.println(baos);
         return CommandLine.ExitCode.OK;
-    }
-
-    protected @NotNull HasItems loadResources() {
-        ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
-                .withPreserveRawTags(false)
-                .withFailOnUnknownTokens(false);
-
-        YAMLResourceLoader loader = new YAMLResourceLoader(renderer);
-        return loader.load(fileOptions);
     }
 }

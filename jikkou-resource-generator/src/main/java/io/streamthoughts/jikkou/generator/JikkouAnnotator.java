@@ -1,12 +1,9 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2022 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -23,11 +20,12 @@ import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JFieldVar;
-import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
-import io.streamthoughts.jikkou.api.model.annotations.Description;
-import io.streamthoughts.jikkou.api.model.annotations.Kind;
-import io.streamthoughts.jikkou.api.model.annotations.Names;
-import io.streamthoughts.jikkou.api.model.annotations.Transient;
+import io.streamthoughts.jikkou.annotation.ApiVersion;
+import io.streamthoughts.jikkou.annotation.Description;
+import io.streamthoughts.jikkou.annotation.Kind;
+import io.streamthoughts.jikkou.annotation.Names;
+import io.streamthoughts.jikkou.annotation.Reflectable;
+import io.streamthoughts.jikkou.annotation.Transient;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -105,6 +103,7 @@ public class JikkouAnnotator extends AbstractAnnotator {
                     annotate.param("value", val.textValue());
                 });
         clazz.annotate(Jacksonized.class);
+        clazz.annotate(Reflectable.class);
     }
 
     /**

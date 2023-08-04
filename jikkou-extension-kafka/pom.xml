@@ -13,9 +13,6 @@
     <description>Integration between Apache Kafka and Jikkou</description>
 
     <properties>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
     </properties>
 
@@ -28,6 +25,11 @@
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>jikkou-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-extension-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

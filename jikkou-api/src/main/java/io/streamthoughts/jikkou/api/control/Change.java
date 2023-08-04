@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -24,6 +21,7 @@ import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.streamthoughts.jikkou.annotation.Reflectable;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.util.Arrays;
 
@@ -32,6 +30,7 @@ import java.util.Arrays;
  */
 @Evolving
 @JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
+@Reflectable
 public interface Change {
 
     /**

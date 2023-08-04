@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.get;
 
+import io.micronaut.context.annotation.Prototype;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
@@ -25,7 +23,7 @@ import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ResourceType;
 import io.streamthoughts.jikkou.api.selector.ExpressionResourceSelectorFactory;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.client.ClientContext;
+import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -49,6 +47,7 @@ import picocli.CommandLine.Spec;
         description = "Display one or many resources",
         mixinStandardHelpOptions = true
 )
+@Prototype
 public class GetResourceCommand implements Callable<Integer> {
 
     @Spec
@@ -62,9 +61,10 @@ public class GetResourceCommand implements Callable<Integer> {
 
     private ResourceType resourceType;
 
-    public GetResourceCommand(ResourceType resourceType) {
-        this.resourceType = resourceType;
-    }
+    @Inject
+    JikkouApi api;
+    @Inject
+    YAMLResourceWriter writer;
 
     // Picocli require an empty constructor to generate the completion file
     public GetResourceCommand() {}
@@ -74,19 +74,16 @@ public class GetResourceCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         List<ResourceSelector> resourceSelectors = new ExpressionResourceSelectorFactory().make(selectors);
         try {
-            try(JikkouApi api = ClientContext.get().createApi()) {
-                List<HasMetadata> resources = api.getResources(
-                        resourceType,
-                        resourceSelectors,
-                        Configuration.from(options)
-                );
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    YAMLResourceWriter.instance().write(resources, baos);
-                    System.out.println(baos);
-                    return CommandLine.ExitCode.OK;
-                }
+            List<HasMetadata> resources = api.getResources(
+                    resourceType,
+                    resourceSelectors,
+                    Configuration.from(options)
+            );
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                writer.write(resources, baos);
+                System.out.println(baos);
+                return CommandLine.ExitCode.OK;
             }
-
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
