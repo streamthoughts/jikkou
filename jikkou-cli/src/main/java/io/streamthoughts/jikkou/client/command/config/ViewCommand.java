@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -24,13 +21,19 @@ import com.typesafe.config.ConfigRenderOptions;
 import io.streamthoughts.jikkou.client.JikkouConfig;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "view", description = "Show merged jikkou config settings")
+@Command(
+        name = "view",
+        description = "Show merged jikkou config settings"
+)
+@Singleton
 public class ViewCommand implements Runnable {
 
     @Option(names = "--name",
@@ -50,14 +53,16 @@ public class ViewCommand implements Runnable {
             description = "Print configuration with human-written comments.")
     public boolean comments;
 
+    @Inject
+    private ConfigurationContext configurationContext;
+
+    /** {@inheritDoc} **/
     @Override
     public void run() {
         ConfigRenderOptions options = ConfigRenderOptions
                 .defaults()
                 .setOriginComments(debug)
                 .setComments(comments);
-
-        ConfigurationContext configurationContext = new ConfigurationContext();
 
         String configName = name != null ? name : configurationContext.getCurrentContextName();
         Context context = configurationContext.getContext(configName);
@@ -68,7 +73,6 @@ public class ViewCommand implements Runnable {
             Config unwrapped = configuration.unwrap();
             baos.write(unwrapped.root().render(options).getBytes(StandardCharsets.UTF_8));
             System.out.println(baos);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,38 +15,32 @@
  */
 package io.streamthoughts.jikkou.client.context;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigurationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationContext.class);
-
-    private final ObjectMapper OBJECT_MAPPER = JsonMapper
-            .builder()
-            .serializationInclusion(JsonInclude.Include.NON_NULL)
-            .configure(SerializationFeature.INDENT_OUTPUT, true)
-            .build();
+    public static final String EMPTY_CONTEXT = "";
+    private final ObjectMapper objectMapper;
 
     private static final String CONFIG_FILE = ".jikkou/config";
     private final File configFile;
 
-
-    public ConfigurationContext() {
-        this(new File(System.getProperty("user.home")));
+    public ConfigurationContext(ObjectMapper objectMapper) {
+        this(new File(System.getProperty("user.home")), objectMapper);
     }
 
-    public ConfigurationContext(File configDirectory) {
+    public ConfigurationContext(File configDirectory, ObjectMapper objectMapper) {
         this.configFile = new File(configDirectory, CONFIG_FILE);
+        this.objectMapper = objectMapper;
     }
 
     public void setContext(String contextName, Context context) {
@@ -94,17 +85,20 @@ public class ConfigurationContext {
 
         var configuration = tryReadConfiguration();
 
-        return configuration.configurationContexts().get(configuration.getCurrentContext());
+        String currentContext = configuration.getCurrentContext();
+        return Optional.ofNullable(configuration.configurationContexts().get(currentContext))
+                .orElseThrow(() -> new JikkouRuntimeException("Empty configuration context for '" + currentContext + "'"));
     }
 
     public String getCurrentContextName() {
         if (!isExists()) {
-            return "";
+            return EMPTY_CONTEXT;
         }
 
         var configuration = tryReadConfiguration();
 
-        return configuration.getCurrentContext();
+
+        return Optional.ofNullable(configuration.getCurrentContext()).orElse(EMPTY_CONTEXT);
     }
 
     public boolean setCurrentContext(String contextName) {
@@ -127,7 +121,7 @@ public class ConfigurationContext {
 
     private Configuration tryReadConfiguration() {
         try {
-            return OBJECT_MAPPER.readValue(configFile, Configuration.class);
+            return objectMapper.readValue(configFile, Configuration.class);
         }
         catch (IOException e) {
             throw new JikkouRuntimeException("Couldn't read configuration file ~/" + CONFIG_FILE + ".", e);
@@ -140,10 +134,11 @@ public class ConfigurationContext {
                 LOG.debug("Creating missing parent directory for: {}", configFile);
             }
             LOG.debug("Writing configuration to {}: {}", configFile, configuration);
-            OBJECT_MAPPER.writeValue(configFile, configuration);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(configFile, configuration);
         }
         catch (IOException e) {
-            throw new JikkouRuntimeException("Couldn't write configuration file " + configFile + ".",
+            throw new JikkouRuntimeException(
+                    "Couldn't write configuration file " + configFile + ".",
                     e);
         }
     }

@@ -2,10 +2,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ main ]
 
 jobs:
   build:
@@ -22,6 +21,13 @@ jobs:
         check-latest: true
         cache: maven
 
+    - name: Cache Maven packages
+      uses: actions/cache@v3.3.1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
     - name: Cache SonarCloud packages
       uses: actions/cache@v1
       with:
@@ -36,4 +42,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=streamthoughts_jikkou
+      run: ./mvnw -ntp -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=streamthoughts_jikkou

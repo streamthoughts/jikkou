@@ -1,12 +1,9 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2022 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.api.io;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
@@ -28,12 +26,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ResourceLoader {
 
-    private ResourceReaderOptions options = new ResourceReaderOptions();
+    private ResourceReaderOptions options;
 
-    private ResourceReaderFactory factory = new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER);
+    private ResourceReaderFactory factory;
 
     /**
      * Helper method to create a default {@link ResourceLoader} for reading specification in YAML files.
@@ -41,7 +40,14 @@ public final class ResourceLoader {
      * @return a new {@link ResourceLoader}.
      */
     public static ResourceLoader create() {
-        return new ResourceLoader();
+        return new ResourceLoader(Jackson.YAML_OBJECT_MAPPER);
+    }
+
+    public ResourceLoader(final @Nullable ObjectMapper objectMapper) {
+        if (objectMapper != null) {
+            factory = new ResourceReaderFactory(objectMapper);
+        }
+        options = new ResourceReaderOptions();
     }
 
     public ResourceLoader withResourceReaderOptions(@NotNull final ResourceReaderOptions options) {
@@ -75,7 +81,6 @@ public final class ResourceLoader {
      * @return a new {@link GenericResourceListObject}.
      */
     public HasItems load(@NotNull final InputStream file) {
-
         return new GenericResourceListObject(factory.create(file).readAllResources(options));
     }
 

@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -21,23 +18,27 @@ package io.streamthoughts.jikkou.client.command;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.ResourceContext;
 import io.streamthoughts.jikkou.api.ResourceDescriptor;
-import io.streamthoughts.jikkou.client.ClientContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Comparator;
 import java.util.List;
 import picocli.CommandLine.Command;
 
 @Command(name = "resources", description = "List supported resources")
+@Singleton
 public class ResourcesCommand implements Runnable {
+
+    @Inject
+    private JikkouContext context;
 
     /** {@inheritDoc} **/
     @Override
     public void run() {
 
-        ClientContext clientContext = ClientContext.get();
-
-        ResourceContext resourceContext = clientContext.getResourceContext();
+        ResourceContext resourceContext = context.getResourceContext();
         List<ResourceDescriptor> descriptors = resourceContext
                 .getAllResourceDescriptors()
                 .stream()

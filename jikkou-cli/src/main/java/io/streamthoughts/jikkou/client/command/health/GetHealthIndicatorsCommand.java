@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -21,10 +18,12 @@ package io.streamthoughts.jikkou.client.command.health;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.api.health.HealthIndicator;
-import io.streamthoughts.jikkou.client.ClientContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Collection;
 import picocli.CommandLine.Command;
 
@@ -38,7 +37,11 @@ import picocli.CommandLine.Command;
         header = "Get all health indicators.",
         description = "Get all health indicators.",
         mixinStandardHelpOptions = true)
+@Singleton
 public class GetHealthIndicatorsCommand implements Runnable {
+
+    @Inject
+    private JikkouContext context;
 
     /**
      * {@inheritDoc}
@@ -46,7 +49,7 @@ public class GetHealthIndicatorsCommand implements Runnable {
     @Override
     public void run() {
 
-        ExtensionFactory factory = ClientContext.get().getExtensionFactory();
+        ExtensionFactory factory = context.getExtensionFactory();
         Collection<ExtensionDescriptor<HealthIndicator>> descriptors = factory
                 .getAllDescriptorsForType(HealthIndicator.class);
 

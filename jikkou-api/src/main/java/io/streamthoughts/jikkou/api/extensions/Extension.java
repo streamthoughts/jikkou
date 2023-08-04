@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,17 +15,17 @@
  */
 package io.streamthoughts.jikkou.api.extensions;
 
-import io.streamthoughts.jikkou.api.annotations.ExtensionDescription;
-import io.streamthoughts.jikkou.api.annotations.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.annotations.ExtensionName;
-import io.streamthoughts.jikkou.api.annotations.ExtensionType;
+import io.streamthoughts.jikkou.annotation.ExtensionDescription;
+import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
+import io.streamthoughts.jikkou.annotation.ExtensionName;
+import io.streamthoughts.jikkou.annotation.ExtensionType;
 import io.streamthoughts.jikkou.api.config.Configurable;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 
 /**
  * The top-level interface for extension.
@@ -40,7 +37,7 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
  * @see ResourceCollector
  * @see io.streamthoughts.jikkou.api.health.HealthIndicator
  */
-@InterfaceStability.Evolving
+@Evolving
 public interface Extension extends Configurable {
 
     /**

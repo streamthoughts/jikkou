@@ -1,12 +1,9 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2022 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -22,6 +19,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.streamthoughts.jikkou.annotation.Reflectable;
 import io.streamthoughts.jikkou.api.model.GenericResource;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.Resource;
@@ -34,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Reflectable
 public final class ResourceDeserializer extends JsonDeserializer<Resource> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceDeserializer.class);
@@ -51,8 +50,7 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
     /**
      * Creates a new {@link ResourceDeserializer} instance.
      */
-    public ResourceDeserializer() {
-    }
+    public ResourceDeserializer() {}
 
     /**
      * {@inheritDoc}

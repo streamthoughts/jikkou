@@ -1,12 +1,9 @@
 /*
- * Copyright 2020 StreamThoughts.
+ * Copyright 2020 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,16 +15,19 @@
  */
 package io.streamthoughts.jikkou.api.io;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class YAMLResourceWriter implements ResourceWriter {
 
-    private static final YAMLResourceWriter INSTANCE = new YAMLResourceWriter();
+    private final ObjectMapper objectMapper;
 
-    public static YAMLResourceWriter instance() {
-        return INSTANCE;
+    public YAMLResourceWriter(final @NotNull ObjectMapper objectMapper){
+       this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper should not be null");
     }
 
     /**
@@ -37,7 +37,7 @@ public class YAMLResourceWriter implements ResourceWriter {
     public void write(final List<? extends Object> items, final OutputStream os) {
         try(os) {
             for (Object item : items) {
-                Jackson.YAML_OBJECT_MAPPER.writeValue(os, item);
+                objectMapper.writeValue(os, item);
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to serialize object into YAML", e);

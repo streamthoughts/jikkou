@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -21,6 +18,8 @@ package io.streamthoughts.jikkou.client.command.get;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 
+import io.micronaut.context.ApplicationContext;
+import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.ResourceDescriptor;
 import io.streamthoughts.jikkou.api.config.ConfigPropertyDescriptor;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
@@ -28,12 +27,13 @@ import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.api.model.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.api.model.ResourceType;
-import io.streamthoughts.jikkou.client.ClientContext;
+import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi.Text;
 import picocli.CommandLine.Help.Column;
@@ -41,11 +41,21 @@ import picocli.CommandLine.Help.TextTable;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
+@Singleton
 public class GetCommandGenerator {
 
-    public CommandLine createGetCommandLine() {
+    private final ApplicationContext applicationContext;
 
-        ClientContext context = ClientContext.get();
+    private final JikkouContext context;
+
+    private CommandLine.IFactory factory;
+
+    public GetCommandGenerator(@NotNull ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.context = applicationContext.getBean(JikkouContext.class);
+    }
+
+    public CommandLine createGetCommandLine() {
         ExtensionFactory extensionFactory = context.getExtensionFactory();
         CommandLine cmd = new CommandLine(new GetCommand());
 
@@ -58,9 +68,9 @@ public class GetCommandGenerator {
 
             List<ResourceType> resources = HasMetadataAcceptable.getAcceptedResources(type);
             for (ResourceType resource : resources) {
-                GetResourceCommand command = new GetResourceCommand(resource);
+                GetResourceCommand command = applicationContext.getBean(GetResourceCommand.class);
+                command.setResourceType(resource);
                 CommandLine subcommand = new CommandLine(command);
-
                 ResourceDescriptor resourceDescriptor = context.getResourceContext().getResourceDescriptorByType(resource);
                 CommandSpec spec = subcommand.getCommandSpec();
                 String subCommandName = resourceDescriptor.pluralName().orElse(resourceDescriptor.singularName());

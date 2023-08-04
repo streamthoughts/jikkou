@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -63,37 +60,37 @@ public class KafkaExtensionProvider implements ExtensionProvider {
                                    @NotNull Configuration configuration) {
 
         // controllers
-        factory.register(KafkaBrokerHealthIndicator.class);
-        factory.register(AdminClientKafkaAclController.class);
-        factory.register(AdminClientKafkaTopicController.class);
-        factory.register(AdminClientKafkaQuotaController.class);
+        factory.register(KafkaBrokerHealthIndicator.class, KafkaBrokerHealthIndicator::new);
+        factory.register(AdminClientKafkaAclController.class, AdminClientKafkaAclController::new);
+        factory.register(AdminClientKafkaTopicController.class, AdminClientKafkaTopicController::new);
+        factory.register(AdminClientKafkaQuotaController.class, AdminClientKafkaQuotaController::new);
 
         // descriptors
-        factory.register(AdminClientKafkaBrokerCollector.class);
-        factory.register(AdminClientKafkaQuotaCollector.class);
-        factory.register(AdminClientKafkaTopicCollector.class);
-        factory.register(AdminClientKafkaAclCollector.class);
+        factory.register(AdminClientKafkaBrokerCollector.class, AdminClientKafkaBrokerCollector::new);
+        factory.register(AdminClientKafkaQuotaCollector.class, AdminClientKafkaQuotaCollector::new);
+        factory.register(AdminClientKafkaTopicCollector.class, AdminClientKafkaTopicCollector::new);
+        factory.register(AdminClientKafkaAclCollector.class, AdminClientKafkaAclCollector::new);
 
         // transformations
-        factory.register(KafkaPrincipalAuthorizationTransformation.class);
-        factory.register(KafkaTopicMaxRetentionMsTransformation.class);
-        factory.register(KafkaTopicMaxReplicasTransformation.class);
-        factory.register(KafkaTopicMaxNumPartitionsTransformation.class);
-        factory.register(KafkaTopicMinRetentionMsTransformation.class);
-        factory.register(KafkaTopicMinReplicasTransformation.class);
-        factory.register(KafkaTopicMinInSyncReplicasTransformation.class);
+        factory.register(KafkaPrincipalAuthorizationTransformation.class, KafkaPrincipalAuthorizationTransformation::new);
+        factory.register(KafkaTopicMaxRetentionMsTransformation.class, KafkaTopicMaxRetentionMsTransformation::new);
+        factory.register(KafkaTopicMaxReplicasTransformation.class, KafkaTopicMaxReplicasTransformation::new);
+        factory.register(KafkaTopicMaxNumPartitionsTransformation.class, KafkaTopicMaxNumPartitionsTransformation::new);
+        factory.register(KafkaTopicMinRetentionMsTransformation.class, KafkaTopicMinRetentionMsTransformation::new);
+        factory.register(KafkaTopicMinReplicasTransformation.class, KafkaTopicMinReplicasTransformation::new);
+        factory.register(KafkaTopicMinInSyncReplicasTransformation.class, KafkaTopicMinInSyncReplicasTransformation::new);
 
         // validations
-        factory.register(ClientQuotaValidation.class);
-        factory.register(NoDuplicatePrincipalRoleValidation.class);
-        factory.register(NoDuplicateTopicsAllowedValidation.class);
-        factory.register(NoDuplicatePrincipalAllowedValidation.class);
-        factory.register(TopicConfigKeysValidation.class);
-        factory.register(TopicMinReplicationFactorValidation.class);
-        factory.register(TopicMaxReplicationFactorValidation.class);
-        factory.register(TopicMinNumPartitionsValidation.class);
-        factory.register(TopicNameRegexValidation.class);
-        factory.register(TopicNamePrefixValidation.class);
-        factory.register(TopicNameSuffixValidation.class);
+        factory.register(ClientQuotaValidation.class, ClientQuotaValidation::new);
+        factory.register(NoDuplicatePrincipalRoleValidation.class, NoDuplicatePrincipalRoleValidation::new);
+        factory.register(NoDuplicateTopicsAllowedValidation.class, NoDuplicateTopicsAllowedValidation::new);
+        factory.register(NoDuplicatePrincipalAllowedValidation.class, NoDuplicatePrincipalAllowedValidation::new);
+        factory.register(TopicConfigKeysValidation.class, TopicConfigKeysValidation::new);
+        factory.register(TopicMinReplicationFactorValidation.class, TopicMinReplicationFactorValidation::new);
+        factory.register(TopicMaxReplicationFactorValidation.class, TopicMaxReplicationFactorValidation::new);
+        factory.register(TopicMinNumPartitionsValidation.class, TopicMinNumPartitionsValidation::new);
+        factory.register(TopicNameRegexValidation.class, TopicNameRegexValidation::new);
+        factory.register(TopicNamePrefixValidation.class, TopicNamePrefixValidation::new);
+        factory.register(TopicNameSuffixValidation.class, TopicNameSuffixValidation::new);
     }
 }

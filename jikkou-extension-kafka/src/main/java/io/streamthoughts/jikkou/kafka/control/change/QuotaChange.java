@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control.change;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -27,7 +25,9 @@ import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,14 @@ public final class QuotaChange implements Change {
     }
 
     @JsonProperty
-    public List<ConfigEntryChange> getConfigs() {
+    public Map<String, ConfigEntryChange> getConfigs() {
+        return  getConfigEntryChanges()
+                .stream()
+                .collect(Collectors.toMap(ConfigEntryChange::getName, it -> it));
+    }
+
+    @JsonIgnore
+    public List<ConfigEntryChange> getConfigEntryChanges() {
         return configs;
     }
 

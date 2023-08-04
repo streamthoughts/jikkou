@@ -20,6 +20,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

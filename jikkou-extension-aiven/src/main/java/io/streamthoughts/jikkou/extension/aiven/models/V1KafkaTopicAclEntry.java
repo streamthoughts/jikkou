@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -21,14 +18,15 @@ package io.streamthoughts.jikkou.extension.aiven.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.streamthoughts.jikkou.annotation.ApiVersion;
+import io.streamthoughts.jikkou.annotation.Description;
+import io.streamthoughts.jikkou.annotation.Kind;
+import io.streamthoughts.jikkou.annotation.Names;
+import io.streamthoughts.jikkou.annotation.Reflectable;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasSpec;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.Resource;
-import io.streamthoughts.jikkou.api.model.annotations.ApiVersion;
-import io.streamthoughts.jikkou.api.model.annotations.Description;
-import io.streamthoughts.jikkou.api.model.annotations.Kind;
-import io.streamthoughts.jikkou.api.model.annotations.Names;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -56,6 +54,7 @@ import lombok.extern.jackson.Jacksonized;
 @ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("KafkaTopicAclEntry")
 @Jacksonized
+@Reflectable
 @Generated("jsonschema2pojo")
 public class V1KafkaTopicAclEntry implements HasMetadata, HasSpec<V1KafkaTopicAclEntrySpec> , Resource
 {

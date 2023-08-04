@@ -1,12 +1,9 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2022 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -24,7 +21,7 @@ import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.models.ConfigMap;
+import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;

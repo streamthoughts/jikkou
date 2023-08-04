@@ -47,13 +47,9 @@
             <outputDirectory>./</outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/src/main/conf/logback.xml</source>
-            <outputDirectory>./etc/</outputDirectory>
-        </file>
-        <file>
-            <source>${project.build.directory}/jikkou-runner.jar</source>
-            <outputDirectory>./lib/</outputDirectory>
-            <destName>jikkou-runner.jar</destName>
+            <source>${project.build.directory}/${project.artifactId}-${project.version}-runner${executable-suffix}</source>
+            <outputDirectory>./bin/</outputDirectory>
+            <destName>jikkou${executable-suffix}</destName>
         </file>
     </files>
 </assembly>

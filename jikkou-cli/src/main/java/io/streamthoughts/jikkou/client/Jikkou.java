@@ -1,12 +1,9 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2021 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -20,6 +17,13 @@ package io.streamthoughts.jikkou.client;
 
 import static picocli.CommandLine.Model.CommandSpec;
 
+import ch.qos.logback.classic.LoggerContext;
+import io.micronaut.configuration.picocli.MicronautFactory;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.env.Environment;
+import io.micronaut.context.event.StartupEvent;
+import io.micronaut.runtime.event.annotation.EventListener;
+import io.streamthoughts.jikkou.api.JikkouInfo;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.client.banner.Banner;
 import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
@@ -36,14 +40,14 @@ import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCand
 import io.streamthoughts.jikkou.client.command.extension.ExtensionCommand;
 import io.streamthoughts.jikkou.client.command.get.GetCommandGenerator;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
-import java.io.IOException;
+import io.streamthoughts.jikkou.client.context.ConfigurationContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Enumeration;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -63,7 +67,7 @@ import picocli.CommandLine.Command;
         synopsisHeading = "%n",
         description = "Jikkou streamlines the management of the configurations that live on your data streams platform.%n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
         mixinStandardHelpOptions = true,
-        versionProvider = Jikkou.ManifestVersionProvider.class,
+        versionProvider = Jikkou.ResourcePropertiesVersionProvider.class,
         subcommands = {
                 CreateResourceCommand.class,
                 DeleteResourceCommand.class,
@@ -80,15 +84,29 @@ import picocli.CommandLine.Command;
                 ContextNamesCompletionCandidateCommand.class
         }
 )
+@Singleton
 public final class Jikkou {
 
     private static final Logger LOG = LoggerFactory.getLogger(Jikkou.class);
 
     static LocalDateTime START_TIME;
 
-    private Jikkou() {}
+    @Inject
+    private ConfigurationContext configurationContext;
+
+    @EventListener
+    public void onStartupEvent(StartupEvent event) {
+        if (!configurationContext.isExists()) {
+            System.err.println(
+                    "No configuration context has been defined." +
+                            " Run 'jikkou config set-context <context_name> --config=kafka.client.bootstrap.servers=localhost:9092" +
+                            " [--client-config=<config_string>] [--config-file=<config_file>].' to create a context."
+            );
+        }
+    }
 
     public static void main(final String... args) {
+        setRootLogLevelWithEnv();
         START_TIME = LocalDateTime.now();
         var printer = BannerPrinterBuilder.newBuilder()
                 .setLogger(LOG)
@@ -97,8 +115,34 @@ public final class Jikkou {
                 .build();
         printer.print(new JikkouBanner());
 
-        final Jikkou command = new Jikkou();
-        final CommandLine commandLine = new CommandLine(command)
+        System.exit(execute(args));
+    }
+
+    private static void setRootLogLevelWithEnv() {
+        String rootLogLevel = System.getenv("ROOT_LOG_LEVEL");
+        if (rootLogLevel != null) {
+            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+            ch.qos.logback.classic.Logger logger = loggerContext.getLogger("io.streamthoughts.jikkou");
+            logger.setLevel(ch.qos.logback.classic.Level.toLevel(rootLogLevel.toUpperCase(Locale.ROOT)));
+        }
+    }
+
+    public static int execute(String[] args) {
+        try (ApplicationContext context = ApplicationContext.builder(
+                Jikkou.class, Environment.CLI).start()) {
+            final CommandLine commandLine = createCommandLine(context);
+            if (args.length > 0) {
+                return commandLine.execute(args);
+            } else {
+                commandLine.usage(System.out);
+                return CommandLine.ExitCode.USAGE;
+            }
+        }
+    }
+
+    @NotNull
+    private static CommandLine createCommandLine(ApplicationContext context) {
+        final CommandLine commandLine = new CommandLine(Jikkou.class, new MicronautFactory(context))
                 .setCaseInsensitiveEnumValuesAllowed(true)
                 .setUsageHelpWidth(160)
                 .setExecutionStrategy(new CommandLine.RunLast() {
@@ -123,17 +167,12 @@ public final class Jikkou {
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
 
-        commandLine.addSubcommand(new GetCommandGenerator().createGetCommandLine());
+        GetCommandGenerator generator = context.getBean(GetCommandGenerator.class);
+        commandLine.addSubcommand(generator.createGetCommandLine());
 
         CommandLine gen = commandLine.getSubcommands().get("generate-completion");
         gen.getCommandSpec().usageMessage().hidden(true);
-
-        if (args.length > 0) {
-            final int exitCode = commandLine.execute(args);
-            System.exit(exitCode);
-        } else {
-            commandLine.usage(System.out);
-        }
+        return commandLine;
     }
 
     public static class ShortErrorMessageHandler implements CommandLine.IParameterExceptionHandler {
@@ -148,7 +187,7 @@ public final class Jikkou {
             PrintWriter err = cmd.getErr();
 
             // if tracing at DEBUG level, show the location of the issue
-            if ("DEBUG" .equalsIgnoreCase(System.getProperty("picocli.trace"))) {
+            if ("DEBUG".equalsIgnoreCase(System.getProperty("picocli.trace"))) {
                 err.println(cmd.getColorScheme().stackTraceText(ex));
             }
 
@@ -168,35 +207,14 @@ public final class Jikkou {
     }
 
     /**
-     * Returns version information from jar file's {@code /META-INF/MANIFEST.MF} file.
+     * Returns version information from resource file's {@code version.properties} file.
      */
-    static class ManifestVersionProvider implements CommandLine.IVersionProvider {
-        public String[] getVersion() throws Exception {
-            Enumeration<URL> resources = CommandLine.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                try {
-                    Manifest manifest = new Manifest(url.openStream());
-                    if (isApplicableManifest(manifest)) {
-                        Attributes attr = manifest.getMainAttributes();
-                        return new String[]{
-                                get(attr, "Implementation-Title") + " version v" + get(attr, "Implementation-Version")
-                        };
-                    }
-                } catch (IOException ex) {
-                    return new String[]{"Unable to read from " + url + ": " + ex};
-                }
-            }
-            return new String[0];
-        }
-
-        private boolean isApplicableManifest(Manifest manifest) {
-            Attributes attributes = manifest.getMainAttributes();
-            return Jikkou.class.getSimpleName().equals(get(attributes, "Implementation-Title"));
-        }
-
-        private static Object get(Attributes attributes, String key) {
-            return attributes.get(new Attributes.Name(key));
+    static class ResourcePropertiesVersionProvider implements CommandLine.IVersionProvider {
+        
+        public String[] getVersion() {
+            return new String[]{
+                    "Jikkou " + JikkouInfo.getVersion()
+            };
         }
     }
 }

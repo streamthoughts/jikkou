@@ -35,35 +35,39 @@
         <module>jikkou-extension-aiven</module>
         <module>jikkou-extension-schema-registry</module>
         <module>jikkou-extension-rest-client</module>
+        <module>jikkou-extension-core</module>
     </modules>
 
-    <name>Jikkou</name>
-
+    <name>Jikkou Project</name>
     <description>A command-line tool to help you automate the management of the configurations that live on your Apache
         Kafka clusters.
     </description>
+    <url>https://streamthoughts.github.io/jikkou/</url>
 
+    <inceptionYear>2023</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
     <developers>
         <developer>
-            <organization>streamthoughts</organization>
-            <organizationUrl>http://streamthoughts.io</organizationUrl>
+            <id>fhussonnois</id>
+            <name>Florian Hussonnois</name>
         </developer>
     </developers>
-
     <organization>
         <name>streamthoughts</name>
         <url>https://www.streamthoughts.io</url>
     </organization>
-
     <scm>
         <url>https://github.com/streamthoughts/jikkou</url>
         <connection>scm:git:git://github.com:streamthoughts/jikkou.git</connection>
         <developerConnection>scm:git:git@github.com:streamthoughts/jikkou.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-
-    <url>https://github.com/streamthoughts/jikkou</url>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -74,38 +78,25 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
     <properties>
+        <!-- JAVA -->
+        <jdk.version>17</jdk.version>
+        <release.version>${jdk.version}</release.version>
+        <maven.compiler.parameters>true</maven.compiler.parameters>
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
+        <maven.compiler.release>${jdk.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
-        <junit.version>5.10.0</junit.version>
-        <testcontainer.version>1.18.3</testcontainer.version>
-        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <vavr.version>0.10.4</vavr.version>
-        <kafka.version>3.5.1</kafka.version>
-        <picocli.version>4.7.4</picocli.version>
-        <jackson.version>2.15.2</jackson.version>
-        <jinjava.version>2.6.0</jinjava.version>
-        <reflections.version>0.10.2</reflections.version>
-        <lombok.version>1.18.28</lombok.version>
-        <spotless.version>2.38.0</spotless.version>
         <license.header.file>${project.basedir}/license-header</license.header.file>
+        <!-- SONAR -->
         <sonar.organization>streamthoughts</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.coverage.exclusions>**/models/**,**/*Exception*.*</sonar.coverage.exclusions>
         <sonar.java.binaries>target</sonar.java.binaries>
-        <sonar.java.source>${java.version}</sonar.java.source>
+        <sonar.java.source>${jdk.version}</sonar.java.source>
         <sonar.language>java</sonar.language>
         <config.version>1.4.2</config.version>
         <vavr-jackson.version>0.10.3</vavr-jackson.version>
@@ -119,13 +110,31 @@
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
         <!-- END Maven plugin versions -->
+        <junit.version>5.10.0</junit.version>
+        <junit-bom.version>5.10.0</junit-bom.version>
+        <testcontainer.version>1.18.3</testcontainer.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+        <vavr.version>0.10.4</vavr.version>
+        <kafka.version>3.5.1</kafka.version>
+        <picocli.version>4.7.4</picocli.version>
+        <jackson.version>2.15.2</jackson.version>
+        <jinjava.version>2.7.0</jinjava.version>
+        <reflections.version>0.10.2</reflections.version>
+        <lombok.version>1.18.28</lombok.version>
+        <spotless.version>2.38.0</spotless.version>
         <slf4j-api.version>2.0.7</slf4j-api.version>
-        <logback-classic.version>1.4.9</logback-classic.version>
+        <logback.version>1.4.9</logback.version>
         <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
+        <graal-sdk.version>23.0.1</graal-sdk.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.graalvm.sdk</groupId>
+                <artifactId>graal-sdk</artifactId>
+                <version>${graal-sdk.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
@@ -203,8 +212,13 @@
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>${logback-classic.version}</version>
+                <version>${logback.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.validation</groupId>
@@ -246,28 +260,11 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <!-- END dependencies for Tests -->
         </dependencies>
@@ -276,11 +273,6 @@
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -319,9 +311,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <parameters>true</parameters>
+                        <parameters>${maven.compiler.parameters}</parameters>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>

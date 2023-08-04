@@ -1,12 +1,9 @@
 /*
- * Copyright 2023 StreamThoughts.
+ * Copyright 2023 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -19,16 +16,23 @@
 package io.streamthoughts.jikkou.client.command.config;
 
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
-import java.util.Set;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import picocli.CommandLine.Command;
 
-@Command(name = "context-name-completions", hidden = true)
+@Command(
+        name = "context-name-completions",
+        hidden = true
+)
+@Singleton
 public class ContextNamesCompletionCandidateCommand implements Runnable {
+
+    @Inject
+    private ConfigurationContext configurationContext;
 
     /** {@inheritDoc} **/
     @Override
     public void run() {
-        Set<String> contexts = new ConfigurationContext().getContexts().keySet();
-        System.out.println(String.join(" ", contexts));
+        System.out.println(String.join(" ", configurationContext.getContexts().keySet()));
     }
 }

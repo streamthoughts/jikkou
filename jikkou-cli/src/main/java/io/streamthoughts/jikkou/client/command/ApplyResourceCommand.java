@@ -1,12 +1,9 @@
 /*
- * Copyright 2022 StreamThoughts.
+ * Copyright 2022 The original authors
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -20,12 +17,13 @@ package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import jakarta.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
-import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@CommandLine.Command(name = "apply",
+@Command(name = "apply",
         headerHeading = "Usage:%n%n",
         descriptionHeading = "%nDescription:%n%n",
         parameterListHeading = "%nParameters:%n%n",
@@ -35,6 +33,7 @@ import picocli.CommandLine.Option;
         header = "Update the resources as described by the resource definition files.",
         description = "Reconciles the target platform so that the resources match the resource definition files passed as arguments.",
         mixinStandardHelpOptions = true)
+@Singleton
 public class ApplyResourceCommand extends BaseResourceCommand {
 
     @Option(
@@ -54,4 +53,5 @@ public class ApplyResourceCommand extends BaseResourceCommand {
     protected ReconciliationMode getReconciliationMode() {
         return ReconciliationMode.APPLY_ALL;
     }
+
 }
