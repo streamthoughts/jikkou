@@ -1,0 +1,1 @@
+package io.streamthoughts.jikkou.rest.client;

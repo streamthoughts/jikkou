@@ -33,10 +33,10 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntriesResponse;
-import io.streamthoughts.jikkou.extension.aiven.api.restclient.RestClientResponseException;
 import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntryList;
+import io.streamthoughts.jikkou.rest.client.RestClientException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +97,7 @@ public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1Sche
                     .filter(new AggregateSelector(selectors)::apply)
                     .collect(Collectors.toList());
 
-        } catch (RestClientResponseException e) {
+        } catch (RestClientException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()

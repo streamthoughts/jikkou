@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.extension.aiven.api.restclient;
+package io.streamthoughts.jikkou.rest.client;
 
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import jakarta.ws.rs.WebApplicationException;
@@ -25,15 +25,15 @@ import jakarta.ws.rs.core.Response;
 /**
  * Top-level exception for the RestClient.
  */
-public class RestClientResponseException extends JikkouRuntimeException {
+public class RestClientException extends JikkouRuntimeException {
 
     private final WebApplicationException error;
     private final String requestMethod;
     private final String requestUrl;
 
-    public RestClientResponseException(WebApplicationException error,
-                                       String requestUrl,
-                                       String requestMethod) {
+    public RestClientException(WebApplicationException error,
+                               String requestUrl,
+                               String requestMethod) {
         super(error);
         this.requestUrl = requestUrl;
         this.requestMethod = requestMethod;
@@ -71,9 +71,9 @@ public class RestClientResponseException extends JikkouRuntimeException {
     }
 
     /**
-     * Get the response.
+     * Get the HTTP response.
      *
-     * @return the response.
+     * @return the HTTP response.
      */
     public Response response() {
         return error.getResponse();

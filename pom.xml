@@ -34,6 +34,7 @@
         <module>jikkou-extension-kafka</module>
         <module>jikkou-extension-aiven</module>
         <module>jikkou-extension-schema-registry</module>
+        <module>jikkou-extension-rest-client</module>
     </modules>
 
     <name>Jikkou</name>

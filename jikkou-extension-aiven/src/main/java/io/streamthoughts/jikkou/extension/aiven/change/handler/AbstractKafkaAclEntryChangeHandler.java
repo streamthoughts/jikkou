@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ErrorsResponse;
-import io.streamthoughts.jikkou.extension.aiven.api.restclient.RestClientResponseException;
+import io.streamthoughts.jikkou.rest.client.RestClientException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -57,7 +57,7 @@ public abstract class AbstractKafkaAclEntryChangeHandler<T> implements ChangeHan
                     try {
                         supplier.get();
                         return ChangeMetadata.empty();
-                    } catch (RestClientResponseException e) {
+                    } catch (RestClientException e) {
                         try {
                             ErrorsResponse entity = e.getResponseEntity(ErrorsResponse.class);
                             if (entity.errors().size() == 1) {

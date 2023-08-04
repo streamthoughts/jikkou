@@ -16,10 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.schema.registry.api.restclient;
+package io.streamthoughts.jikkou.rest.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.rest.client.internal.ProxyInvocationHandler;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
@@ -34,11 +35,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.logging.LoggingFeature;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
@@ -55,6 +58,8 @@ public class RestClientBuilder {
     private boolean enableClientDebugging = false;
 
     private final ClientBuilder clientBuilder;
+
+    private ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
 
     /**
      * Creates a new {@link RestClientBuilder} instance.
@@ -138,7 +143,7 @@ public class RestClientBuilder {
     }
 
     /**
-     * Adds header to request.
+     * Adds HTTP header to request.
      *
      * @param header the header name.
      * @param value  the header value.
@@ -146,6 +151,29 @@ public class RestClientBuilder {
      */
     public RestClientBuilder header(final String header, final Object value) {
         this.headers.computeIfAbsent(header, s -> new ArrayList<>()).add(value);
+        return this;
+    }
+
+    /**
+     * Adds HTTP headers to request.
+     *
+     * @param headers the HTTP headers
+     * @return {@code this}.
+     */
+    public RestClientBuilder headers(final Map<String, Object> headers) {
+        headers.forEach(this::header);
+        return this;
+    }
+
+    /**
+     * Sets a custom {@link ObjectMapper} to be used for
+     * serializing and deserializing HTTP request/response entity.
+     *
+     * @param objectMapper the {@link ObjectMapper}.
+     * @return {@code this}.
+     */
+    public RestClientBuilder objectMapper(final ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         return this;
     }
 
@@ -174,7 +202,7 @@ public class RestClientBuilder {
                     );
         }
         Client client = cb
-                .register(new CustomJacksonMapperProvider())
+                .register(new CustomJacksonMapperProvider(objectMapper))
                 .build();
 
         WebTarget webTarget = client.target(baseUri);
@@ -194,10 +222,10 @@ public class RestClientBuilder {
     @Provider
     public static class CustomJacksonMapperProvider implements ContextResolver<ObjectMapper> {
 
-        final ObjectMapper mapper;
+        private final ObjectMapper mapper;
 
-        public CustomJacksonMapperProvider() {
-            mapper = Jackson.JSON_OBJECT_MAPPER;
+        public CustomJacksonMapperProvider(final @NotNull ObjectMapper mapper) {
+            this.mapper = Objects.requireNonNull(mapper, "objectMapper cannot be null");
         }
 
         @Override

@@ -18,11 +18,11 @@
  */
 package io.streamthoughts.jikkou.schema.registry;
 
+import io.streamthoughts.jikkou.rest.client.RestClientBuilder;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryContainer;
-import io.streamthoughts.jikkou.schema.registry.api.restclient.RestClientBuilder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;

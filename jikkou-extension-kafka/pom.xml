@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jikkou-extension-kafka</artifactId>
+    <description>Integration between Apache Kafka and Jikkou</description>
 
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
