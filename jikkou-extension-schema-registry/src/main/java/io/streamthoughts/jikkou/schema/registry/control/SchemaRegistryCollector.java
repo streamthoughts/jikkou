@@ -165,8 +165,8 @@ public class SchemaRegistryCollector implements ResourceCollector<V1SchemaRegist
             specBuilder = specBuilder.withCompatibilityLevel(compatibilityLevels);
         }
 
-        V1SchemaRegistrySubject res = new V1SchemaRegistrySubject()
-                .toBuilder()
+        V1SchemaRegistrySubject res = V1SchemaRegistrySubject
+                .builder()
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(subjectSchema.subject())

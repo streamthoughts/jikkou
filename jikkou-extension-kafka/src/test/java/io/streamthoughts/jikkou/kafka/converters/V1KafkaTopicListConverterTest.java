@@ -36,16 +36,14 @@ class V1KafkaTopicListConverterTest {
     @Test
     void shouldConvertFromV1KafkaTopicList() {
         // Given
-        V1KafkaTopic topicA = new V1KafkaTopic()
-                .toBuilder()
+        V1KafkaTopic topicA = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TOPIC_A)
                         .build())
                 .build();
 
-        V1KafkaTopic topicB = new V1KafkaTopic()
-                .toBuilder()
+        V1KafkaTopic topicB = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TOPIC_B)
@@ -70,8 +68,7 @@ class V1KafkaTopicListConverterTest {
     @Test
     void shouldConvertFromV1KafkaTopicListWithLabels() {
         // Given
-        V1KafkaTopic topicA = new V1KafkaTopic()
-                .toBuilder()
+        V1KafkaTopic topicA = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TOPIC_A)

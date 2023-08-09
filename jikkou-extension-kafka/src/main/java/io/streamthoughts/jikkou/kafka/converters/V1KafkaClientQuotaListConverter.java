@@ -60,13 +60,12 @@ public class V1KafkaClientQuotaListConverter implements ResourceConverter<V1Kafk
                 .toList();
 
         return List.of(
-                new V1KafkaClientQuotaList()
+                V1KafkaClientQuotaList.builder()
                         .withMetadata(ObjectMeta.builder()
                                 .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)
-                        .toBuilder()
                         .build()
         );
     }

@@ -53,13 +53,12 @@ public class V1KafkaTopicListConverter implements ResourceConverter<V1KafkaTopic
                 .toList();
 
         return List.of(
-                new V1KafkaTopicList()
+                V1KafkaTopicList.builder()
                         .withMetadata(ObjectMeta.builder()
                                 .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)
-                        .toBuilder()
                         .build()
         );
     }

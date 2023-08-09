@@ -133,8 +133,9 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
         // Compute changes
         List<SchemaSubjectChange> changes = computer.computeChanges(actualSubjects, expectedSubjects);
 
-        return new V1SchemaRegistrySubjectChangeList()
-                .withItems(changes.stream().map(c -> V1SchemaRegistrySubjectChange.builder().withChange(c).build()).toList());
+        return V1SchemaRegistrySubjectChangeList.builder()
+                .withItems(changes.stream().map(c -> V1SchemaRegistrySubjectChange.builder().withChange(c).build()).toList())
+                .build();
     }
 
     /**

@@ -134,8 +134,8 @@ public final class AdminClientKafkaQuotaCollector extends AbstractAdminClientKaf
         private static V1KafkaClientQuota toV1KafkaClientQuota(ClientQuotaEntity entity,
                                                                Map<String, Double> configs) {
             Map<String, String> entries = entity.entries();
-            return new V1KafkaClientQuota()
-                    .toBuilder()
+            return V1KafkaClientQuota
+                    .builder()
                     .withMetadata(new ObjectMeta())
                     .withSpec(V1KafkaClientQuotaSpec
                             .builder()

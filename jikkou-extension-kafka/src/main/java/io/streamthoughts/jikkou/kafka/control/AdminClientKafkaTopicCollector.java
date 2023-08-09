@@ -213,8 +213,7 @@ public final class AdminClientKafkaTopicCollector extends AbstractAdminClientKaf
                                                final Config config,
                                                final Predicate<ConfigEntry> configEntryPredicate) {
             int rf = computeReplicationFactor(desc);
-            return new V1KafkaTopic()
-                    .toBuilder()
+            return V1KafkaTopic.builder()
                     .withMetadata(ObjectMeta.builder().withName(desc.name()).build())
                     .withSpec(V1KafkaTopicSpec.builder()
                             .withPartitions(desc.partitions().size())

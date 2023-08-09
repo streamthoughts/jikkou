@@ -59,7 +59,8 @@ public final class V1KafkaTopicSupport {
                             .withLabels(labels)
                             .withAnnotations(annotations)
                             .build();
-                    return new V1KafkaTopic().toBuilder()
+
+                    return V1KafkaTopic.builder()
                             .withMetadata(objectMeta)
                             .withSpec(object.getSpec())
                             .build();
@@ -68,7 +69,8 @@ public final class V1KafkaTopicSupport {
 
     public static Stream<V1KafkaTopic> stream(final Iterable<String> topicNames) {
         return StreamSupport.stream(topicNames.spliterator(), false)
-                .map(topicName -> new V1KafkaTopic().toBuilder()
+                .map(topicName -> V1KafkaTopic
+                        .builder()
                         .withMetadata(ObjectMeta.builder().withName(topicName).build())
                         .withSpec(V1KafkaTopicSpec.builder().build())
                         .build()

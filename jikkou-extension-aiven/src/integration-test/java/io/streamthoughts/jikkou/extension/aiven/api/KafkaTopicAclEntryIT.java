@@ -96,6 +96,8 @@ class KafkaTopicAclEntryIT {
         Assertions.assertEquals(1, results.size());
 
         V1KafkaTopicAclEntry entry = results.get(0);
+        Assertions.assertNotNull(entry.getKind());
+        Assertions.assertNotNull(entry.getApiVersion());
         Assertions.assertEquals(Permission.ADMIN, entry.getSpec().getPermission());
         Assertions.assertEquals("*", entry.getSpec().getTopic());
         Assertions.assertEquals("avnadmin", entry.getSpec().getUsername());

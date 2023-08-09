@@ -80,7 +80,7 @@ public final class V1KafkaPrincipalAuthorizationSupport {
                             });
                 }).toList();
 
-        return new V1KafkaPrincipalAuthorization().toBuilder()
+        return V1KafkaPrincipalAuthorization.builder()
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(principal)

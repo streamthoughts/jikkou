@@ -79,8 +79,8 @@ class KafkaAclEntryAdapterTest {
         // Then
         Assertions.assertNotNull(result);
 
-        V1KafkaTopicAclEntry expected = new V1KafkaTopicAclEntry()
-                .toBuilder()
+        V1KafkaTopicAclEntry expected = V1KafkaTopicAclEntry
+                .builder()
                 .withMetadata(ObjectMeta
                         .builder()
                         .withAnnotation(MetadataAnnotations.AIVEN_IO_KAFKA_ACL_ID, TEST_ACL_ENTRY_ID)

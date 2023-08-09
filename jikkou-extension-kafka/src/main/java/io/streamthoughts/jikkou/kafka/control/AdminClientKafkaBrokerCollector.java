@@ -147,8 +147,8 @@ public final class AdminClientKafkaBrokerCollector extends AbstractAdminClientKa
 
             try {
                 return futureTopicDesc.thenCombine(futureTopicConfig, (descriptions, configs) -> {
-                    return descriptions.values().stream().map(desc -> new V1KafkaBroker()
-                            .toBuilder()
+                    return descriptions.values().stream().map(desc -> V1KafkaBroker
+                            .builder()
                             .withMetadata(ObjectMeta
                                 .builder()
                                 .withName(desc.idString())

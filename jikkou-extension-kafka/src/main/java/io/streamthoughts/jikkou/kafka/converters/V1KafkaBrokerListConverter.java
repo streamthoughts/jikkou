@@ -59,14 +59,12 @@ public class V1KafkaBrokerListConverter implements ResourceConverter<V1KafkaBrok
                 )
                 .toList();
 
-        return List.of(
-                new V1KafkaBrokerList()
+        return List.of(V1KafkaBrokerList.builder()
                         .withMetadata(ObjectMeta.builder()
                                 .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)
-                        .toBuilder()
                         .build()
         );
     }

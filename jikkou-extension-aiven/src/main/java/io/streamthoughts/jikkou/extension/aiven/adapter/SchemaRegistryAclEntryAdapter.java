@@ -68,8 +68,7 @@ public final class SchemaRegistryAclEntryAdapter {
             objectMetaBuilder = objectMetaBuilder
                     .withAnnotation(AIVEN_IO_KAFKA_ACL_ID, entry.id());
         }
-        return new V1SchemaRegistryAclEntry()
-                .toBuilder()
+        return V1SchemaRegistryAclEntry.builder()
                 .withMetadata(objectMetaBuilder.build())
                 .withSpec(V1SchemaRegistryAclEntrySpec
                         .builder()

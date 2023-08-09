@@ -68,8 +68,8 @@ public final class KafkaAclEntryAdapter {
             objectMetaBuilder = objectMetaBuilder
                     .withAnnotation(AIVEN_IO_KAFKA_ACL_ID, entry.id());
         }
-        return new V1KafkaTopicAclEntry()
-                .toBuilder()
+        return V1KafkaTopicAclEntry
+                .builder()
                 .withMetadata(objectMetaBuilder.build())
                 .withSpec(V1KafkaTopicAclEntrySpec
                         .builder()

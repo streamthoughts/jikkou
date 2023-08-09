@@ -112,6 +112,8 @@ class SchemaRegistryAclEntryIT {
         Assertions.assertEquals(2, results.size());
 
         V1SchemaRegistryAclEntry entry1 = results.get(0);
+        Assertions.assertNotNull(entry1.getKind());
+        Assertions.assertNotNull(entry1.getApiVersion());
         Assertions.assertEquals(Permission.WRITE, entry1.getSpec().getPermission());
         Assertions.assertEquals("Config:", entry1.getSpec().getResource());
         Assertions.assertEquals("avnadmin", entry1.getSpec().getUsername());
