@@ -33,9 +33,7 @@ public final class ResourceLoader {
 
     private ResourceReaderOptions options = new ResourceReaderOptions();
 
-    private ResourceReaderFactory factory = new ResourceReaderFactory()
-            .setObjectMapper(Jackson.YAML_OBJECT_MAPPER)
-            .setTemplateEnable(false);
+    private ResourceReaderFactory factory = new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER);
 
     /**
      * Helper method to create a default {@link ResourceLoader} for reading specification in YAML files.

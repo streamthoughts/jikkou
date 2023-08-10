@@ -21,6 +21,7 @@ package io.streamthoughts.jikkou.api.io.readers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.streamthoughts.jikkou.api.error.InvalidResourceException;
 import io.streamthoughts.jikkou.api.error.InvalidResourceFileException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.GenericResource;
@@ -29,6 +30,7 @@ import io.streamthoughts.jikkou.api.model.ObjectTemplate;
 import io.streamthoughts.jikkou.api.model.Resource;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.template.TemplateBindings;
+import io.streamthoughts.jikkou.common.utils.IOUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -110,7 +112,7 @@ public final class TemplateResourceReader extends AbstractResourceReader {
                     location,
                     e.getLocalizedMessage()
             );
-            throw new InvalidResourceFileException(message, e);
+            throw new InvalidResourceException(message, e);
         }
     }
 
@@ -145,34 +147,34 @@ public final class TemplateResourceReader extends AbstractResourceReader {
     @NotNull
     private static InputStream objectNodeToInputStreams(ObjectMapper mapper,
                                                         ObjectNode object) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        mapper.writeValue(os, object);
-        os.flush();
-        return new ByteArrayInputStream(os.toByteArray());
+        try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            mapper.writeValue(os, object);
+            os.flush();
+            return new ByteArrayInputStream(os.toByteArray());
+        }
     }
 
     private InputStream renderTemplate(final @NotNull InputStream templateInputStream,
                                        final @NotNull TemplateBindings templateBindings) {
-        final String specification;
+        final String resource;
 
         try {
-            specification = new String(templateInputStream.readAllBytes(), StandardCharsets.UTF_8);
+            resource = new String(templateInputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new InvalidResourceFileException(e.getLocalizedMessage());
+            throw new InvalidResourceFileException(
+                    location,
+                    e.getLocalizedMessage());
         }
 
-        if (specification.isEmpty()) {
+        if (resource.isEmpty()) {
             throw new InvalidResourceFileException(
+                    location,
                     String.format("Resource file at location '%s' is empty", location)
             );
         }
 
-        final String rendered = renderer.render(specification, templateBindings);
+        final String rendered = renderer.render(resource, templateBindings);
 
-        return newInputStream(rendered);
-    }
-
-    private InputStream newInputStream(final String specification) {
-        return new ByteArrayInputStream(specification.getBytes(StandardCharsets.UTF_8));
+        return IOUtils.openStream(rendered);
     }
 }

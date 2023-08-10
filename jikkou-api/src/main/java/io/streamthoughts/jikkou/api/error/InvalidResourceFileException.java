@@ -18,21 +18,33 @@
  */
 package io.streamthoughts.jikkou.api.error;
 
+import java.net.URI;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Throws when a resource file cannot be read successfully.
+ */
 public class InvalidResourceFileException extends JikkouRuntimeException {
 
-    public InvalidResourceFileException() {
-        super();
+    private final URI location;
+
+    /**
+     * Creates a new {@link InvalidResourceFileException} instance.
+     *
+     * @param location   URI identifying the resource or null if not known.
+     * @param cause    a cause message
+     */
+    public InvalidResourceFileException(@Nullable final URI location, final String cause) {
+        super(cause);
+        this.location = location;
     }
 
-    public InvalidResourceFileException(final String message) {
-        super(message);
-    }
-
-    public InvalidResourceFileException(final String message, final Throwable throwable) {
-        super(message, throwable);
-    }
-
-    public InvalidResourceFileException(final Throwable throwable) {
-        super(throwable);
+    /**
+     * Returns the resource URI used to create this exception.
+     *
+     * @return  the URI (can be {@code null})
+     */
+    public URI getLocation() {
+        return location;
     }
 }

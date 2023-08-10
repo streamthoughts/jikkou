@@ -56,7 +56,7 @@ public class DirectoryResourceReader implements ResourceReader {
         return IOUtils.findMatching(directory, options.pattern())
                 .parallelStream()
                 .flatMap(path -> {
-                    try (var reader = readerFactory.create(path)) {
+                    try (var reader = readerFactory.create(path.toUri())) {
                         return reader.readAllResources(options).stream();
                     }
                 }).toList();

@@ -57,10 +57,7 @@ public final class YAMLResourceLoader {
 
     @NotNull
     public HasItems load(final @NotNull ResourceLoaderInputs inputs) {
-        ResourceReaderFactory factory = new ResourceReaderFactory()
-                .setTemplateEnable(true)
-                .setTemplateRenderer(renderer)
-                .setObjectMapper(objectMapper);
+        ResourceReaderFactory factory = new ResourceReaderFactory(objectMapper, renderer);
 
         ResourceReaderOptions readerOptions = new ResourceReaderOptions();
 

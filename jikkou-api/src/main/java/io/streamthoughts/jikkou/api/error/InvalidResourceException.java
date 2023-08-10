@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.jikkou.api.error;
 
+/**
+ * Throws when a resource cannot be processed.
+ */
 public class InvalidResourceException extends JikkouRuntimeException {
-
-    public InvalidResourceException() {
-        super();
-    }
 
     public InvalidResourceException(final String message) {
         super(message);
@@ -30,9 +29,5 @@ public class InvalidResourceException extends JikkouRuntimeException {
 
     public InvalidResourceException(final String message, final Throwable throwable) {
         super(message, throwable);
-    }
-
-    public InvalidResourceException(final Throwable throwable) {
-        super(throwable);
     }
 }

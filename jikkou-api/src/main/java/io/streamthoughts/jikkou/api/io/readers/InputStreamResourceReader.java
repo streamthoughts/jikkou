@@ -21,7 +21,7 @@ package io.streamthoughts.jikkou.api.io.readers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.streamthoughts.jikkou.api.error.InvalidResourceFileException;
+import io.streamthoughts.jikkou.api.error.InvalidResourceException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.Resource;
@@ -88,7 +88,7 @@ public class InputStreamResourceReader extends AbstractResourceReader {
                             location
                     ) :
                     "Failed to parse and/or render resource file.";
-            throw new InvalidResourceFileException(errorMessage, e);
+            throw new InvalidResourceException(errorMessage, e);
         }
     }
 }

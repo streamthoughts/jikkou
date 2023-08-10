@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.jikkou.kafka.model;
 
-import io.streamthoughts.jikkou.api.error.ExecutionException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import java.util.HashMap;
@@ -320,7 +319,7 @@ public enum KafkaClientQuotaType {
                 return type;
             }
         }
-        throw new ExecutionException("Failed to identify QuotaEntityType from: " + entries);
+        throw new JikkouRuntimeException("Failed to identify QuotaEntityType from: " + entries);
     }
 
     /**
