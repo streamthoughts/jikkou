@@ -14,19 +14,18 @@ jobs:
     - uses: actions/checkout@v3
     - uses: docker/setup-buildx-action@v2
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
+    - name: Set up GraalVM
+      uses: graalvm/setup-graalvm@v1
       with:
-        java-version: '17'
-        distribution: 'zulu'
-        check-latest: true
-        cache: maven
+        java-version: '17.0.7'
+        distribution: 'graalvm'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
      
     - name: Grant execute permission for gradlew
       run: chmod +x mvnw
 
     - name: Build with Maven Wrapper
-      run: ./mvnw -B clean package -Pdist
+      run: ./mvnw -B clean package -Pnative,dist
 
     - name: Set env PROJECT_VERSION
       run: echo "PROJECT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
@@ -58,7 +57,7 @@ jobs:
       run: echo "${{ env.DOCKER_TAG }}"
 
     - name: Copy Assembly distribution
-      run:  cp ./dist/jikkou-${{ env.PROJECT_VERSION }}-runner.zip ./docker/jikkou-${{ env.PROJECT_VERSION }}-runner.zip
+      run:  cp ./jikkou-cli/target/jikkou-cli-${{ env.PROJECT_VERSION }}-runner ./docker/jikkou-cli-${{ env.PROJECT_VERSION }}-runner
 
     - name: Login to DockerHub
       uses: docker/login-action@v2
