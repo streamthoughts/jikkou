@@ -413,6 +413,27 @@
                                         </changelog>
                                     </github>
                                 </release>
+                                <distributions>
+                                    <jikkou>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz</transform>
+                                                <platform>linux-x86_64</platform>
+                                            </artifact>
+                                            <artifact>
+                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip</transform>
+                                                <platform>linux-x86_64</platform>
+                                            </artifact>
+                                            <artifact>
+                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip</transform>
+                                                <platform>osx-x86_64</platform>
+                                            </artifact>
+                                        </artifacts>
+                                    </jikkou>
+                                </distributions>
                             </jreleaser>
                         </configuration>
                     </plugin>
@@ -443,11 +464,6 @@
         </profile>
         <profile>
             <id>deb</id>
-            <activation>
-                <file>
-                    <exists>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</exists>
-                </file>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -499,11 +515,6 @@
         </profile>
         <profile>
             <id>rpm</id>
-            <activation>
-                <file>
-                    <exists>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</exists>
-                </file>
-            </activation>
             <build>
                 <plugins>
                     <plugin>

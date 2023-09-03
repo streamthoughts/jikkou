@@ -12,21 +12,27 @@ on:
         required: true
         description: "Create a Tag"
         default: true
-
+env:
+  JAVA_VERSION: '17'
+  JAVA_DISTRO: 'zulu'
+  GRAAL_VERSION: '22.3.3'
 jobs:
   set-release-version:
     runs-on: ubuntu-latest
+    outputs:
+      HEAD: ${{ steps.version.outputs.HEAD }}
+      RELEASE_VERSION: ${{ steps.version.outputs.RELEASE_VERSION }}
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v3
         with:
           clean: true
 
-      - name: 'Set up JDK 17'
+      - name: 'Set up Java'
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
           check-latest: true
           cache: maven
 
@@ -55,10 +61,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: 'Push release version'
+        id: version
         if: "${{ github.event.inputs.createTag == 'true' }}"
         run: |
           find . -name 'pom.xml' | xargs git add
-          git commit -m "ci: release version ${{ RELEASE_VERSION }} 🎉"
+          git commit -m "ci: release version ${{ env.RELEASE_VERSION }} 🎉"
           git push --atomic origin HEAD:main
           HEAD=$(git rev-parse HEAD)
           echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
@@ -70,25 +77,29 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        os: [ ubuntu-latest, macOS-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.version.outputs.HEAD }}
+          ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
-
+          clean: true
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '17.0.7'
-          distribution: 'graalvm'
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.JAVA_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'Build Native Image (${{ runner.os }})'
-        run: |
-          ./mvnw -ntp -B --file pom.xml -Pdist package 
+      - name: 'Build Native Image (Linux)'
+        if: ${{ runner.os == 'Linux' }}
+        run: ./mvnw -ntp -B --file pom.xml -Pnative package
+
+      - name: 'Build Native Image (macOS)'
+        if: ${{ runner.os == 'macOS' }}
+        run: ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
       - name: 'Build Distribution'
         run: |
@@ -111,7 +122,7 @@ jobs:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.version.outputs.HEAD }}
+          ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
 
       - name: 'Download all artifacts'
@@ -129,6 +140,11 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
+      - name: 'Configure Git'
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: 'Release with JReleaser'
         env:
