@@ -14,15 +14,15 @@ on:
         default: true
 
 jobs:
-  set-maven-version:
+  set-release-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout GitHub Action Repo
+      - name: 'Checkout GitHub repository'
         uses: actions/checkout@v3
         with:
           clean: true
 
-      - name: Set up JDK 17
+      - name: 'Set up JDK 17'
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -44,62 +44,118 @@ jobs:
         run: |
           ./mvnw -q versions:set -DnewVersion=${{ github.event.inputs.newVersion }}
 
-      - name: Set env VERSION
+      - name: 'Set env RELEASE_VERSION'
         run: |
-          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          RELEASE_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
-      - name: Check VERSION
-        run: echo "${{ env.VERSION }}"
-
-      - name: Configure Git
+      - name: 'Configure Git'
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: Push release version
+      - name: 'Push release version'
         if: "${{ github.event.inputs.createTag == 'true' }}"
         run: |
           find . -name 'pom.xml' | xargs git add
-          git commit -m "ci: release version ${{ env.VERSION }} 🎉"
-          git push --atomic origin main
+          git commit -m "ci: release version ${{ RELEASE_VERSION }} 🎉"
+          git push --atomic origin HEAD:main
+          HEAD=$(git rev-parse HEAD)
+          echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Build Distributions
-        run: |
-          ./mvnw clean package -Pdist -DskipTests
-          (cd ./dist; sha1sum jikkou.deb > jikkou.deb.sha1)
-          (cd ./dist; sha1sum jikkou-${{ env.VERSION }}-runner.tar.gz > jikkou-${{ env.VERSION }}-runner.tar.gz.sha1)
-          (cd ./dist; sha1sum jikkou-${{ env.VERSION }}-runner.zip > jikkou-${{ env.VERSION }}-runner.zip.sha1)
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
+  build-distribution:
+    needs: [ set-release-version ]
+    name: 'Build with GraalVM on ${{ matrix.os }}'
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 'Checkout GitHub repository'
+        uses: actions/checkout@v3
         with:
-          name: "RELEASE-${{ env.VERSION }}"
-          tag_name: "v${{ env.VERSION }}"
-          token: ${{ secrets.PAT }}
-          generate_release_notes: true
-          draft: false
-          files: |
-            ./dist/jikkou.deb
-            ./dist/jikkou.deb.sha1
-            ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz
-            ./dist/jikkou-${{ env.VERSION }}-runner.tar.gz.sha1
-            ./dist/jikkou-${{ env.VERSION }}-runner.zip
-            ./dist/jikkou-${{ env.VERSION }}-runner.zip.sha1
-          prerelease: false
+          ref: ${{ needs.version.outputs.HEAD }}
+          fetch-depth: 0
 
-      - name: Bump version for next iteration
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17.0.7'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Build Native Image (${{ runner.os }})'
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pdist package 
+
+      - name: 'Build Distribution'
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
+
+      - name: 'Upload build artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: |
+            dist/*.zip
+            dist/*.tar.gz
+            dist/*.deb
+            dist/*.rpm
+
+  release-artifacts:
+    needs: [ set-release-version, build-distribution ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub repository'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.version.outputs.HEAD }}
+          fetch-depth: 0
+
+      - name: 'Download all artifacts'
+        uses: actions/download-artifact@v3
+
+      - name: 'Set up Java'
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - name: 'Cache Maven packages'
+        uses: actions/cache@v3.3.1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: 'Release with JReleaser'
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./mvnw -ntp -B --file ./jikkou-cli/pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
+
+      - name: 'JReleaser output'
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-logs
+          path: |
+            target/jreleaser/trace.log
+            target/jreleaser/output.properties
+
+      - name: 'Bump version for next iteration'
         if: "${{ github.event.inputs.newVersion == '' }}"
         run: |
           ./mvnw -q build-helper:parse-version versions:set \
             -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
             versions:commit
-          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          NEXT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
-      - name: Commit Bump Version
+      - name: 'Commit Bump Version'
         if: "${{ github.event.inputs.newVersion == '' }}"
         run: |
           find . -name 'pom.xml' | xargs git add
-          git commit -m "ci: bump version for next iteration to ${{ env.VERSION }} 🤖"
-          git push origin main
+          git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
+          git push origin HEAD:main 
