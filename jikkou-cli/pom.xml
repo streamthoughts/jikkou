@@ -27,7 +27,7 @@
         <micronaut-maven-plugin.version>4.0.4</micronaut-maven-plugin.version>
         <micronaut-picocli-bom.version>5.0.1</micronaut-picocli-bom.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
-        <jreleaser-maven-plugin.version>1.7.0</jreleaser-maven-plugin.version>
+        <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <executable-suffix/>
         <imageName>jikkou</imageName>
