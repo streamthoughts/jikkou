@@ -17,8 +17,8 @@ See: https://streamthoughts.github.io/jikkou/[official documentation]
 
 == Introduction
 
-**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an easier way to
-manage the configurations on your Data Stream platform.
+**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an efficient and easier way to
+manage and automate the configurations on your data stream platform.
 
 Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
 ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
@@ -26,6 +26,8 @@ ensuring that platform governance is no longer a boring and tedious task for bot
 Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schema** and even more with the use of YAML files called **_Resource Definitions_**.
 
 Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
+
+Jikkou can be used on on-premise Apache Kafka, https://aiven.io/kafka[Aiven], and https://www.confluent.io/confluent-cloud/[Confluent Cloud].
 
 == Motivation
 
@@ -52,26 +54,28 @@ See https://medium.com/@fhussonnois/why-is-managing-kafka-topics-still-such-a-pa
 
 == Quick Installation
 
-Jikkou is available:
+The latest stable release of jikkou (x86) for Linux, and macOScan be downloaded from  https://github.com/streamthoughts/jikkou/releases/tag/v0.25.0[GitHub Releases]
 
-* As a zip/tar.gz package from https://github.com/streamthoughts/jikkou/releases/tag/v0.21.0[GitHub Releases]
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.21.0/[Maven Central]
-* As a docker image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-* As a Debian package from https://github.com/streamthoughts/jikkou/releases/tag/v0.21.0[GitHub Releases]
+Alternatively, jikkou is also available:
+
+* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.25.0/[Maven Central]
+* As a Docker Image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
 
 [source, bash]
 ----
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.21.0/jikkou.deb
-sudo dpkg -i jikkou.deb
-----
+# Download and unzip the latest stable release
+RELEASE=jikkou-0.25.0-linux-x86_64.zip
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.25.0/$RELEASE && unzip $RELEASE
 
-NOTE: Jikkou will install itself in the directory :  `/opt/jikkou`
+# Run executable
+./jikkou-0.25.0-linux-x86_64/bin/jikkou
+----
 
 It is recommended to install the bash/zsh completion script `jikkou_completion`:
 
 [source, bash]
 ----
-wget https://raw.githubusercontent.com/streamthoughts/jikkou/master/jikkou_completion . jikkou_completion
+wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion . jikkou_completion
 ----
 
 or alternatively, run the following command for generation the completion script.
@@ -106,7 +110,7 @@ It will then take care of computing and applying the necessary changes directly 
 
 [source, bash]
 ----
-$ jikkou apply -f ./kafka-topics.yml
+$ jikkou apply --files ./kafka-topics.yml
 ----
 
 [source]
@@ -148,10 +152,6 @@ ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
 
 Most of the time, you will use Jikkou part of your CI/CD pipeline allowing you to version and ship your Apache Kafka resources directly from Git (more on https://about.gitlab.com/topics/gitops/[GitOps])
 
-Jikkou can be used with self-hosted Kafka, managed Kafka and Confluent Cloud.
-
-NOTE: you can use the environment variable `JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS` for connection to the Kafka cluster (instead of the CLI arg `--bootstrap-servers`)
-
 == Documentation
 
 Check the official https://streamthoughts.github.io/jikkou/[documentation] for further https://streamthoughts.github.io/jikkou/docs/introducion/_installation/[installation] and usage https://streamthoughts.github.io/jikkou/docs/user-guide/[instructions].
@@ -162,20 +162,27 @@ You need to have  http://www.oracle.com/technetwork/java/javase/downloads/index.
 
 === Dependencies
 
-**Jikkou modules are built with:**
+Jikkou CLI is built with https://micronaut.io/[Micronaut] and https://picocli.info/[Picocli]
+
+To build the project you will need:
 
 * Java 17
-* https://docs.confluent.io/platform/current/clients/index.html[Apache Kafka Client] (3.0.x)
+* https://www.graalvm.org/[GraalVM] 22.1.0 or newer to create native executable
+* https://testcontainers.com/[TestContainer] to run integration tests
 
 === Build project
 
 This project includes https://maven.apache.org/wrapper/[Maven Wrapper].
 
-For building distribution files.
+Below are the commands commonly used to build the project:
 
 [source,bash]
 ----
-$ ./mvnw clean package -Pdist
+# Build and run all tests
+./mvnw clean verify
+
+# Build and skip integration tests
+./mvnw clean verify -DskipTests
 ----
 
 === Build Docker Images (locally)
@@ -184,6 +191,29 @@ $ ./mvnw clean package -Pdist
 ----
 $ make
 ----
+
+=== Create Native Executable
+
+[source,bash]
+----
+# Build and run all tests
+./mvnw clean verify -Pnative
+----
+
+You can then execute the native executable with: `./jikkou-cli/target/jikkou-$PROJECT_VERSION-runner`
+
+=== Create Debian Package (on Linux)
+
+[source,bash]
+----
+# Build and run all tests
+./mvnw clean package -Pnative
+./mvnw package -Pdeb
+----
+
+You can then install the package with: `sudo dpkg -i ./dist/jikkou-$PROJECT_VERSION-linux-x86_64.deb`
+
+NOTE: Jikkou will install itself in the directory :  `/opt/jikkou`
 
 === Formats
 
@@ -216,10 +246,4 @@ Please ⭐ this repository to support us!
 
 == Licence
 
-Copyright 2022 StreamThoughts.
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.See the NOTICE file distributed with this work for additional information regarding copyright ownership.The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.See the License for the specific language governing permissions and limitations under the License
+This code base is available under the Apache License, version 2.

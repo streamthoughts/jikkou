@@ -34,10 +34,10 @@ clean-build:
 	rm -rf ./docker-build;
 
 build-dist: print-info
-	./mvnw clean -B package -Pdist
+	./mvnw clean -ntp -B --file ./pom.xml package -Pnative
 
 build-images: build-dist
-	cp ./dist/jikkou-${VERSION}-runner.zip ./docker/jikkou-${VERSION}-runner.zip
+	cp ./jikkou-cli/target/jikkou-cli-${VERSION}-runner ./docker/jikkou-cli-${VERSION}-runner
 	docker build --compress \
 	--build-arg jikkouVersion=${VERSION} \
 	--build-arg jikkouCommit=${GIT_COMMIT} \
@@ -50,5 +50,8 @@ build-images: build-dist
 
 docker-tag-latest: build-images
 	docker tag ${REPOSITORY}/${IMAGE}:${VERSION} ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
+
+changelog:
+    ./mvnw jreleaser:changelog -Prelease -f ./jikkou-cli/pom.xml
 
 clean: clean-containers clean-images clean-build
