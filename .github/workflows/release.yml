@@ -95,15 +95,22 @@ jobs:
 
       - name: 'Build Native Image (Linux)'
         if: ${{ runner.os == 'Linux' }}
-        run: ./mvnw -ntp -B --file pom.xml -Pnative package
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pnative package
 
       - name: 'Build Native Image (macOS)'
         if: ${{ runner.os == 'macOS' }}
-        run: ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
       - name: 'Build Distribution'
         run: |
           ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
+
+      - name: 'Build Debian Package (Linux)'
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pdeb package
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v3
@@ -148,7 +155,7 @@ jobs:
 
       - name: 'Release with JReleaser'
         env:
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
         run: ./mvnw -ntp -B --file ./jikkou-cli/pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
 
       - name: 'JReleaser output'
