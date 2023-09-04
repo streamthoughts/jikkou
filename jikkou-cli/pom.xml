@@ -42,7 +42,6 @@ limitations under the License.
         <micronaut-maven-plugin.version>4.0.6</micronaut-maven-plugin.version>
         <micronaut-picocli-bom.version>5.0.1</micronaut-picocli-bom.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
-        <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <executable-suffix/>
         <imageName>jikkou</imageName>
@@ -504,95 +503,6 @@ limitations under the License.
                                 <scriptFile>src/rpm/scripts/preremove</scriptFile>
                                 <fileEncoding>utf-8</fileEncoding>
                             </preremoveScriptlet>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jreleaser</groupId>
-                        <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>${jreleaser-maven-plugin.version}</version>
-                        <inherited>true</inherited>
-                        <configuration>
-                            <jreleaser>
-                                <project>
-                                    <snapshot>
-                                        <label>{{ projectVersionNumber }}-early-access</label>
-                                    </snapshot>
-                                </project>
-                                <release>
-                                    <github>
-                                        <changelog>
-                                            <formatted>ALWAYS</formatted>
-                                            <includeLabels>
-                                                <includeLabel>features</includeLabel>
-                                                <includeLabel>changes</includeLabel>
-                                                <includeLabel>dependencies</includeLabel>
-                                            </includeLabels>
-                                            <labelers>
-                                                <labeler>
-                                                    <label>features</label>
-                                                    <title>regex:^feat.+$</title>
-                                                </labeler>
-                                                <labeler>
-                                                    <label>changes</label>
-                                                    <title>regex:^(?!feat|build|ci).+$</title>
-                                                </labeler>
-                                                <labeler>
-                                                    <label>dependencies</label>
-                                                    <title>regex:^build\(deps\)\:.+$</title>
-                                                </labeler>
-                                            </labelers>
-                                            <categories>
-                                                <category>
-                                                    <title>🚀 New Features</title>
-                                                    <key>features</key>
-                                                    <labels>features</labels>
-                                                    <order>1</order>
-                                                </category>
-                                                <category>
-                                                    <title>🪛 Improvement and 🐞 Bug fixes</title>
-                                                    <key>changes</key>
-                                                    <labels>changes</labels>
-                                                    <order>2</order>
-                                                </category>
-                                                <category>
-                                                    <title>⬆️ Dependencies</title>
-                                                    <key>dependencies</key>
-                                                    <labels>dependencies</labels>
-                                                    <order>3</order>
-                                                </category>
-                                            </categories>
-                                        </changelog>
-                                    </github>
-                                </release>
-                                <distributions>
-                                    <jikkou>
-                                        <artifacts>
-                                            <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz</transform>
-                                                <platform>linux-x86_64</platform>
-                                            </artifact>
-                                            <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip</transform>
-                                                <platform>linux-x86_64</platform>
-                                            </artifact>
-                                            <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip</transform>
-                                                <platform>osx-x86_64</platform>
-                                            </artifact>
-                                        </artifacts>
-                                    </jikkou>
-                                </distributions>
-                            </jreleaser>
                         </configuration>
                     </plugin>
                 </plugins>

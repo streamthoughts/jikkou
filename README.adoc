@@ -1,4 +1,4 @@
-= Jikkou streamlines the management of the configurations that live on your data streams platform!
+= Jikkou!
 
 image:https://img.shields.io/github/license/streamthoughts/jikkou[]
 image:https://img.shields.io/github/issues/streamthoughts/jikkou[]
@@ -17,8 +17,8 @@ See: https://streamthoughts.github.io/jikkou/[official documentation]
 
 == Introduction
 
-**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an efficient and easier way to
-manage and automate the configurations on your data stream platform.
+**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an efficient and easy way to
+manage, automate, and provision resource configurations for Kafka, Schema Registry, etc.
 
 Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
 ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
@@ -54,21 +54,27 @@ See https://medium.com/@fhussonnois/why-is-managing-kafka-topics-still-such-a-pa
 
 == Quick Installation
 
-The latest stable release of jikkou (x86) for Linux, and macOScan be downloaded from  https://github.com/streamthoughts/jikkou/releases/tag/v0.25.0[GitHub Releases]
+The latest stable release of jikkou (x86) for Linux, and macOS can be downloaded from  https://github.com/streamthoughts/jikkou/releases/tag/v0.25.0[GitHub Releases]
 
 Alternatively, jikkou is also available:
 
 * As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.25.0/[Maven Central]
 * As a Docker Image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
 
+Download the jikkou binary from the https://github.com/streamthoughts/jikkou/releases[releases page], uncompress
+and copy to the desired location.
+
 [source, bash]
 ----
-# Download and unzip the latest stable release
-RELEASE=jikkou-0.25.0-linux-x86_64.zip
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.25.0/$RELEASE && unzip $RELEASE
+# Download the latest stable release
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.25.0/jikkou-0.25.0-linux-x86_64.zip
 
-# Run executable
-./jikkou-0.25.0-linux-x86_64/bin/jikkou
+# Uncompress
+unzip jikkou-0.25.0-linux-x86_64.zip
+
+# Copy to the desired location
+cp ./jikkou-0.25.0-linux-x86_64/bin/jikkou /usr/local/bin/
+
 ----
 
 It is recommended to install the bash/zsh completion script `jikkou_completion`:
@@ -87,12 +93,13 @@ source <(jikkou generate-completion)
 
 == Overview
 
-It allows you to define the desired current state of your **Topics**, **ACLs**, or **Quotas**, using one or more YAML resource definition files :
+Here is an example of how to create and manage a _Kafka topic_ using Jikkou:
 
-kafka-topics.yml:::
+* Create a resource file _kafka-topics.yaml_:
+kafka-topics.yaml:::
 [source,yaml]
 ----
-# file:./kafka-topics.yml
+# file:./kafka-topics.yaml
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaTopic'
 metadata:
@@ -106,13 +113,16 @@ spec:
     min.insync.replicas: 2
 ----
 
-It will then take care of computing and applying the necessary changes directly to your cluster.
+* Then run the following command:
 
 [source, bash]
 ----
-$ jikkou apply --files ./kafka-topics.yml
+$ jikkou apply --files ./kafka-topics.yaml
 ----
 
+Jikkou will then take care of computing and applying the necessary changes directly to your cluster.
+
+_(output)_:
 [source]
 ----
 TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, replicas=3) - CHANGED **********************
@@ -149,8 +159,6 @@ TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, repl
 EXECUTION in 2s 661ms (DRY_RUN)
 ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
 ----
-
-Most of the time, you will use Jikkou part of your CI/CD pipeline allowing you to version and ship your Apache Kafka resources directly from Git (more on https://about.gitlab.com/topics/gitops/[GitOps])
 
 == Documentation
 

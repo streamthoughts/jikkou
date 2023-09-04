@@ -106,6 +106,7 @@ limitations under the License.
         <maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
+        <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
         <!-- END Maven plugin versions -->
         <junit.version>5.10.0</junit.version>
         <junit-bom.version>5.10.0</junit-bom.version>
@@ -600,6 +601,99 @@ limitations under the License.
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <version>${jreleaser-maven-plugin.version}</version>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <jreleaser>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                    <armored>true</armored>
+                                </signing>
+                                <project>
+                                    <snapshot>
+                                        <label>{{ projectVersionNumber }}-early-access</label>
+                                    </snapshot>
+                                </project>
+                                <release>
+                                    <github>
+                                        <changelog>
+                                            <formatted>ALWAYS</formatted>
+                                            <includeLabels>
+                                                <includeLabel>features</includeLabel>
+                                                <includeLabel>changes</includeLabel>
+                                                <includeLabel>dependencies</includeLabel>
+                                            </includeLabels>
+                                            <labelers>
+                                                <labeler>
+                                                    <label>features</label>
+                                                    <title>regex:^feat.+$</title>
+                                                </labeler>
+                                                <labeler>
+                                                    <label>changes</label>
+                                                    <title>regex:^(?!feat|build|ci).+$</title>
+                                                </labeler>
+                                                <labeler>
+                                                    <label>dependencies</label>
+                                                    <title>regex:^build\(deps\)\:.+$</title>
+                                                </labeler>
+                                            </labelers>
+                                            <categories>
+                                                <category>
+                                                    <title>🚀 New Features</title>
+                                                    <key>features</key>
+                                                    <labels>features</labels>
+                                                    <order>1</order>
+                                                </category>
+                                                <category>
+                                                    <title>🪛 Improvement and 🐞 Bug fixes</title>
+                                                    <key>changes</key>
+                                                    <labels>changes</labels>
+                                                    <order>2</order>
+                                                </category>
+                                                <category>
+                                                    <title>⬆️ Dependencies</title>
+                                                    <key>dependencies</key>
+                                                    <labels>dependencies</labels>
+                                                    <order>3</order>
+                                                </category>
+                                            </categories>
+                                        </changelog>
+                                    </github>
+                                </release>
+                                <distributions>
+                                    <jikkou>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz</transform>
+                                                <platform>linux-x86_64</platform>
+                                            </artifact>
+                                            <artifact>
+                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip</transform>
+                                                <platform>linux-x86_64</platform>
+                                            </artifact>
+                                            <artifact>
+                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip</transform>
+                                                <platform>osx-x86_64</platform>
+                                            </artifact>
+                                        </artifacts>
+                                    </jikkou>
+                                </distributions>
+                            </jreleaser>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
