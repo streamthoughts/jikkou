@@ -8,7 +8,7 @@ spec:
   producerByteRate: 1048576
   requestPercentage: 25
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "KafkaQuota"
 spec:
   user: "avdnadmin"
