@@ -36,9 +36,11 @@ limitations under the License.
     </modules>
 
     <name>Jikkou Project</name>
-    <description>A command-line tool to help you automate the management of the configurations that live on your Apache
-        Kafka clusters.
+
+    <description>
+        Jikkou :: A tool designed to provide an efficient and easy way to manage, automate, and provision resource configurations for Kafka
     </description>
+
     <url>https://streamthoughts.github.io/jikkou/</url>
 
     <inceptionYear>2023</inceptionYear>

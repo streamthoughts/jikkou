@@ -27,9 +27,11 @@ limitations under the License.
     <artifactId>jikkou-cli</artifactId>
 
     <name>jikkou-cli</name>
-    <description>A command-line tool to help you automate the management of the configurations that live on your Apache
-        Kafka platform.
+
+    <description>
+        Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resource configurations for Kafka
     </description>
+
     <packaging>${packaging}</packaging>
 
     <properties>
