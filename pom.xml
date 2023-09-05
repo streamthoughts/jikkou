@@ -22,7 +22,7 @@ limitations under the License.
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou</artifactId>
     <packaging>pom</packaging>
-    <version>0.26.0-SNAPSHOT</version>
+    <version>0.26.0</version>
     <modules>
         <module>jikkou-resource-generator</module>
         <module>jikkou-api</module>
