@@ -28,11 +28,14 @@ public final class JikkouInfo {
 
     private static String VERSION = "unknown";
 
+    private static String BUILD_TIMESTAMP;
+
     static {
         try {
             Properties props = new Properties();
             props.load(JikkouInfo.class.getResourceAsStream("/jikkou-info.properties"));
             VERSION = props.getProperty("version", VERSION).trim();
+            BUILD_TIMESTAMP = props.getProperty("build.timestamp");
         } catch (Exception e) {
             LOG.warn("Error while loading version: ", e);
         }
@@ -40,5 +43,8 @@ public final class JikkouInfo {
 
     public static String getVersion() {
         return VERSION;
+    }
+    public static String getBuildTimestamp() {
+        return BUILD_TIMESTAMP;
     }
 }

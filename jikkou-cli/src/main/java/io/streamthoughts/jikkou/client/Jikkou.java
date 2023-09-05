@@ -217,7 +217,8 @@ public final class Jikkou {
         
         public String[] getVersion() {
             return new String[]{
-                    "Jikkou " + JikkouInfo.getVersion()
+                    "Jikkou version \"" + JikkouInfo.getVersion() + "\" " + JikkouInfo.getBuildTimestamp(),
+                    "JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})"
             };
         }
     }
