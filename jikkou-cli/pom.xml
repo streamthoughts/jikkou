@@ -29,7 +29,7 @@ limitations under the License.
     <name>jikkou-cli</name>
 
     <description>
-        Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resource configurations for Kafka
+        Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources for any kafka infrastructure
     </description>
 
     <packaging>${packaging}</packaging>

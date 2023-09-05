@@ -24,6 +24,7 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.streamthoughts.jikkou.api.JikkouInfo;
+import io.streamthoughts.jikkou.api.error.InvalidResourceFileException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.client.banner.Banner;
 import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
@@ -65,7 +66,7 @@ import picocli.CommandLine.Command;
         commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage: ",
         synopsisHeading = "%n",
-        description = "Jikkou streamlines the management of the configurations that live on your data streams platform.%n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
+        description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources for any kafka infrastructure. %n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
         mixinStandardHelpOptions = true,
         versionProvider = Jikkou.ResourcePropertiesVersionProvider.class,
         subcommands = {
@@ -162,6 +163,9 @@ public final class Jikkou {
                             ex.getClass().getName();
 
                     err.println(cmd.getColorScheme().errorText("Error: " + message));
+                    if (ex instanceof InvalidResourceFileException) {
+                        return CommandLine.ExitCode.USAGE;
+                    }
                     return cmd.getCommandSpec().exitCodeOnExecutionException();
                 })
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
