@@ -119,7 +119,7 @@ limitations under the License.
         <reflections.version>0.10.2</reflections.version>
         <lombok.version>1.18.28</lombok.version>
         <spotless.version>2.39.0</spotless.version>
-        <slf4j-api.version>2.0.7</slf4j-api.version>
+        <slf4j-api.version>2.0.9</slf4j-api.version>
         <logback.version>1.4.11</logback.version>
         <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
         <graal-sdk.version>23.0.1</graal-sdk.version>
