@@ -21,10 +21,11 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#204a87">cd&lt;/span> jikkou
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ ./up &lt;span style="color:#8f5902;font-style:italic"># use ./down for stopping the docker-compose stack&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="run-jikkou">Run Jikkou&lt;/h2>
-&lt;h3 id="download-the-latest-distribution">Download the latest distribution&lt;/h3>
+&lt;h3 id="download-the-latest-distribution-for-linux">Download the latest distribution (For Linux)&lt;/h3>
 &lt;p>Run the following commands to install the latest version:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/jikkou/releases/download/0.20.0/jikkou.deb &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>sudo dpkg -i jikkou.deb &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/jikkou/releases/download/v0.26.0/jikkou-0.26.0-linux-x86_64.zip &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>unzip jikkou-0.26.0-linux-x86_64.zip &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>cp jikkou-0.26.0-linux-x86_64/bin/jikkou &lt;span style="color:#000">$HOME&lt;/span>/.local/bin &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>jikkou --version
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="./installation.md">installation&lt;/a> guide.&lt;/p>
@@ -190,17 +191,16 @@ that will be executed by Jikkou before continuing.
 &lt;h3 id="releases">Releases&lt;/h3>
 &lt;p>Every &lt;a href="https://github.com/streamthoughts/jikkou/releases">&lt;code>release&lt;/code>&lt;/a> released versions of Jikkou is available:&lt;/p>
 &lt;ul>
-&lt;li>As a zip/tar.gz package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.20.0">GitHub Releases&lt;/a>&lt;/li>
-&lt;li>As a fatJar available from &lt;a href="https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.20.0/">Maven Central&lt;/a>&lt;/li>
+&lt;li>As a zip/tar.gz package from &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a> (for Linux, MacOS)&lt;/li>
+&lt;li>As a fatJar available from &lt;a href="https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.26.0/">Maven Central&lt;/a>&lt;/li>
 &lt;li>As a docker image available from &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a>.&lt;/li>
-&lt;li>As a Debian package from &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.20.0">GitHub Releases&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;p>These are the official ways to get Jikkou releases that you manually downloaded and installed.&lt;/p>
 &lt;h4 id="install-from-tarball-distribution">Install From Tarball distribution&lt;/h4>
 &lt;ol>
 &lt;li>Download your desired &lt;a href="https://github.com/streamthoughts/jikkou/releases">version&lt;/a>&lt;/li>
-&lt;li>Unpack it (&lt;code>tar -zxvf jikkou-0.20.0-runner.tar.gz&lt;/code>)&lt;/li>
-&lt;li>Move the unpacked directory to its desired destination (&lt;code>mv jikkou-0.20.0-runner /opt&lt;/code>)&lt;/li>
+&lt;li>Unpack it (&lt;code>unzip jikkou-0.26.0-linux-x86_64.zip&lt;/code>)&lt;/li>
+&lt;li>Move the unpacked directory to the desired destination (&lt;code>mv jikkou-0.26.0-linux-x86_64 /opt/jikkou&lt;/code>)&lt;/li>
 &lt;li>Add the executable to your PATH (&lt;code>export PATH=$PATH:/opt/jikkou/bin&lt;/code>)&lt;/li>
 &lt;/ol>
 &lt;h4 id="install-from-debian-distribution">Install From Debian distribution&lt;/h4>
@@ -209,8 +209,6 @@ that will be executed by Jikkou before continuing.
 &lt;/ol>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ wget https://github.com/streamthoughts/jikkou/releases/download/0.20.0/jikkou.deb
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ sudo dpkg -i jikkou.deb
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or just run the command:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -s https://raw.githubusercontent.com/streamthoughts/jikkou/main/get.sh &lt;span style="color:#000;font-weight:bold">|&lt;/span> sh
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>From there, you should be able to run the client: &lt;code>jikkou help&lt;/code>.&lt;/p>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Note&lt;/h4>
@@ -226,35 +224,30 @@ Jikkou will install itself in the directory : &lt;code>/opt/jikkou&lt;/code>
 &lt;p>Docker images are built and push to &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a> from the latest &lt;code>main&lt;/code> branch.
 They are not official releases, and may not be stable.
 However, they offer the opportunity to test the cutting edge features.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ docker run -it streamthoughts/jikkou:master
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ docker run -it streamthoughts/jikkou:main
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="from-source-linux-macos">From Source (Linux, macOS)&lt;/h3>
 &lt;p>Building Jikkou from source is slightly more work, but is the best way to go if you want to test the latest (pre-release) Jikkou version.&lt;/p>
 &lt;h4 id="prerequisites">Prerequisites&lt;/h4>
-&lt;p>You must have a working Java environment with a JDK 17 (i.e. &lt;code>$JAVA_HOME&lt;/code> environment variable is configured).&lt;/p>
-&lt;h4 id="build-tarball--debian-packages">Build Tarball / Debian packages&lt;/h4>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ git clone https://github.com/streamthoughts/jikkou.git
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#204a87">cd&lt;/span> jikkou
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ ./mvnw clean package -DskipTests -Pdist
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then, distributions will be available in the &lt;code>./dist&lt;/code> directory:&lt;/p>
-&lt;pre tabindex="0">&lt;code>.
-├── jikkou-&amp;lt;VERSION&amp;gt;-runner
-│ └── jikkou-&amp;lt;VERSION&amp;gt;-runner
-│ ├── bin
-│ │ ├── jikkou
-│ │ └── jikkou.bat
-│ ├── etc
-│ │ └── logback.xml
-│ ├── jikkou_completion
-│ ├── lib
-│ │ └── jikkou-runner.jar
-│ ├── LICENSE
-│ └── README.adoc
-├── jikkou-&amp;lt;VERSION&amp;gt;-runner.tar.gz
-├── jikkou-&amp;lt;VERSION&amp;gt;-runner.zip
-└── jikkou.deb
-&lt;/code>&lt;/pre>&lt;h4 id="build-rpm">Build RPM&lt;/h4>
-&lt;p>In addition to that, you may need to install Jikkou from an &lt;em>RPM&lt;/em> package. For doing that, you can run the following commands:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ ./mvnw clean package -DskipTests -Prpm
+&lt;p>To build the project you will need:&lt;/p>
+&lt;ul>
+&lt;li>Java 17 (i.e. &lt;code>$JAVA_HOME&lt;/code> environment variable is configured).&lt;/li>
+&lt;li>&lt;a href="https://www.graalvm.org/%5BGraalVM%5D">https://www.graalvm.org/[GraalVM]&lt;/a> 22.1.0 or newer to create native executable&lt;/li>
+&lt;li>&lt;a href="https://testcontainers.com/%5BTestContainer%5D">https://testcontainers.com/[TestContainer]&lt;/a> to run integration tests&lt;/li>
+&lt;/ul>
+&lt;h4 id="create-native-executable">Create Native Executable&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Build and run all tests&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./mvnw clean verify -Pnative
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can then execute the native executable with: &lt;code>./jikkou-cli/target/jikkou-$PROJECT_VERSION-runner&lt;/code>&lt;/p>
+&lt;h4 id="build-debian-package-deb">Build Debian Package (.deb)&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Build and run all tests&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./mvnw clean package -Pnative
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./mvnw package -Pdeb
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can then install the package with: &lt;code>sudo dpkg -i ./dist/jikkou-$PROJECT_VERSION-linux-x86_64.deb&lt;/code>&lt;/p>
+&lt;p>NOTE: Jikkou will install itself in the directory : &lt;code>/opt/jikkou&lt;/code>&lt;/p>
+&lt;h4 id="build-rpm-package">Build RPM Package&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Build and run all tests&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./mvnw clean package -Pnative
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./mvnw package -Prpm
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The RPM package will available in the &lt;code>./target/rpm/jikkou/RPMS/noarch/&lt;/code> directory.&lt;/p></description></item><item><title>Docs: Using Jikkou</title><link>https://streamthoughts.github.io/jikkou/docs/introduction/using_jikkou/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/introduction/using_jikkou/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>This guide explains the basics of using Jikkou to manage resource entities on your Apache Kafka cluster.
