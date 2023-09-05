@@ -48,7 +48,7 @@ limitations under the License.
         <executable-suffix/>
         <imageName>jikkou</imageName>
         <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
-        <micronaut-serde-processor.version>1.5.3</micronaut-serde-processor.version>
+        <micronaut-serde-processor.version>2.2.4</micronaut-serde-processor.version>
     </properties>
 
     <dependencyManagement>
