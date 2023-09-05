@@ -22,11 +22,10 @@ on:
 env:
   JAVA_VERSION: '17'
   JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '22.3.3'
 jobs:
-  build_docker_image:
+  build:
     if: github.repository == 'streamthoughts/jikkou'
-    name: Build docker image
+    name: 'Build Docker Image'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -35,55 +34,41 @@ jobs:
     - name: 'Set up GraalVM'
       uses: graalvm/setup-graalvm@v1
       with:
-        version: ${{ env.GRAAL_VERSION }}
         java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'graalvm'
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        components: 'native-image'
+        native-image-job-reports: 'true'
+        native-image-musl: 'true'
 
-    - name: Grant execute permission to MVN Wrapper
-      run: chmod +x ./mvnw
+    - name: 'Set Docker Image Build-Args'
+      run: |
+        echo "VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+        echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
 
-    - name: Build with Maven Wrapper
-      run: ./mvnw -ntp -B clean package -Pnative
+    - name: 'Build Native Executable'
+      run: |
+        chmod +x ./mvnw  && \
+        ./mvnw -ntp -B clean package -Pnative -Dgraalvm.build.arg="--static --libc=musl" -DskipTests && \
+        cp ./jikkou-cli/target/jikkou-cli-${{ env.VERSION }}-runner ./docker/jikkou-cli-${{ env.VERSION }}-runner
 
-    - name: Set env PROJECT_VERSION
-      run: echo "PROJECT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-
-    - name: Check PROJECT_VERSION    
-      run: echo "${{ env.PROJECT_VERSION }}"
-      
-    - name: Set env GIT_BRANCH
-      run: echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
-    - name: Check GIT_BRANCH
-      run: echo "${{ env.GIT_BRANCH }}"
-
-    - name: Set GIT_COMMIT
-      run: echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV     
-
-    - name: Check GIT_COMMIT   
-      run: echo "${{ env.GIT_COMMIT }}"
-
-    - name: Set DOCKER_IMAGE_TAG
+    - name: 'Set Docker Image Tag (Main)'
       if: github.ref_name == 'main'
       run: echo "DOCKER_TAG=main" >> $GITHUB_ENV
 
-    - name: Set DOCKER_IMAGE_TAG
+    - name: 'Set Docker Image Tag'
       if: startsWith(github.ref, 'refs/tags/v')
-      run: echo "DOCKER_TAG=${{ env.PROJECT_VERSION }}" >> $GITHUB_ENV
+      run: echo "DOCKER_TAG=${{ env.VERSION }}" >> $GITHUB_ENV
 
-    - name: Check DOCKER_IMAGE_TAG
-      run: echo "${{ env.DOCKER_TAG }}"
-
-    - name: Copy Assembly distribution
-      run:  cp ./jikkou-cli/target/jikkou-cli-${{ env.PROJECT_VERSION }}-runner ./docker/jikkou-cli-${{ env.PROJECT_VERSION }}-runner
-
-    - name: Login to DockerHub
+    - name: 'Login to DockerHub'
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}        
 
-    - name: Push to Docker Hub
+    - name: 'Build & Push to Docker Hub'
       uses: docker/build-push-action@v4
       with:
         context: docker
@@ -93,11 +78,12 @@ jobs:
         push: true
         tags: streamthoughts/jikkou:${{ env.DOCKER_TAG }}
         build-args: |
-          jikkouVersion=${{ env.PROJECT_VERSION }}
-          jikkouCommit=${{ env.GIT_COMMIT }}
-          jikkouBranch=${{ env.GIT_BRANCH }}
+          VERSION=${{ env.VERSION }}
+          COMMIT=${{ env.GIT_COMMIT }}
+          BRANCH=${{ env.GIT_BRANCH }}
+          CREATED=${{ env.CREATED }}
 
-    - name: Push to Docker Hub (latest)
+    - name: 'Build & Push to Docker Hub (Latest)'
       if: startsWith(github.ref, 'refs/tags/v')
       uses: docker/build-push-action@v4
       with:
@@ -108,6 +94,7 @@ jobs:
         push: true
         tags: streamthoughts/jikkou:latest
         build-args: |
-          jikkouVersion=${{ env.PROJECT_VERSION }}
-          jikkouCommit=${{ env.GIT_COMMIT }}
-          jikkouBranch=${{ env.GIT_BRANCH }}
+          VERSION=${{ env.VERSION }}
+          COMMIT=${{ env.GIT_COMMIT }}
+          BRANCH=${{ env.GIT_BRANCH }}
+          CREATED=${{ env.CREATED }}
