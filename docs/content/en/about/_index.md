@@ -23,20 +23,27 @@ ui.breadcrumb_disable: false
 <div class="row mt-5 mb-5">
 <div class="col-12 col-lg-8">
 
-[Jikkou](https://github.com/streamthoughts/jikkou) is an open-source tool to help you automate the
-management of the configurations that live on your [Apache Kafka](https://kafka.apache.org/documentation/) clusters.
-It was developed by Kafka ❤️ to make daily operations on an Apache Kafka cluster simpler for both **developers** and **administrators**.
+**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an efficient and easy way to
+manage, automate, and provision resource configurations for Kafka, Schema Registry, etc.
 
-It can efficiently manage configuration changes for **Topics**, **ACLs**, **Quotas** and more with the use of **_resource specification files_**.
-It is also applicable to quickly replicate the configuration of a production cluster to another with a few command lines or to initialize a new cluster for testing purpose.
+Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
+ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
+
+Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schema** and even more with the use of YAML files called **_Resource Definitions_**.
+
+Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
+
+Jikkou can be used on on-premise Apache Kafka, https://aiven.io/kafka[Aiven], and https://www.confluent.io/confluent-cloud/[Confluent Cloud].
 
 <h3>The main usage scenarios</h3>
 
-* Create new resource entities on an Apache Kafka cluster (i.e., _Topics_, _ACLs_, and _Quotas_).
+* Create new resource entities for Apache Kafka (i.e., _Topics_, _ACLs_, and _Quotas_).
 * Update the configurations of existing resource entities.
 * Delete resource entities which are not anymore managed.
 * Describe all the configuration defined for Brokers.
 * Describe all the configuration defined for _Topics_, _ACLs_, and _Quotas_.
+* Replicate configurations of a production cluster to another with a few command lines.
+* Initialize a new cluster for testing purpose.
 
 <h3>Core features that make it awesome</h3>
 

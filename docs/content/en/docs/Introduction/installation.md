@@ -22,26 +22,14 @@ Every [`release`](https://github.com/streamthoughts/jikkou/releases) released ve
 
 These are the official ways to get Jikkou releases that you manually downloaded and installed.
 
-#### Install From Tarball distribution
+#### Install From Release distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
 2. Unpack it (`unzip jikkou-0.26.0-linux-x86_64.zip`)
 3. Move the unpacked directory to the desired destination (`mv jikkou-0.26.0-linux-x86_64 /opt/jikkou`)
 4. Add the executable to your PATH (`export PATH=$PATH:/opt/jikkou/bin`)
 
-#### Install From Debian distribution
-
-1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
-```bash
-$ wget https://github.com/streamthoughts/jikkou/releases/download/0.20.0/jikkou.deb
-$ sudo dpkg -i jikkou.deb
-```
-
 From there, you should be able to run the client: `jikkou help`.
-
-{{% alert title="Note" color="info" %}}
-Jikkou will install itself in the directory :  `/opt/jikkou`
-{{% /alert %}}
 
 It is recommended to install the bash/zsh completion script `jikkou_completion`:
 
