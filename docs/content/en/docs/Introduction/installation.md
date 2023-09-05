@@ -16,18 +16,17 @@ Jikkou can be installed either from source, or from releases.
 
 Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available: 
 
-* As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases/tag/v0.20.0)
-* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.20.0/)
+* As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (for Linux, MacOS)
+* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.26.0/)
 * As a docker image available from [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou).
-* As a Debian package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases/tag/v0.20.0)
 
 These are the official ways to get Jikkou releases that you manually downloaded and installed.
 
 #### Install From Tarball distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
-2. Unpack it (`tar -zxvf jikkou-0.20.0-runner.tar.gz`)
-3. Move the unpacked directory to its desired destination (`mv jikkou-0.20.0-runner /opt`)
+2. Unpack it (`unzip jikkou-0.26.0-linux-x86_64.zip`)
+3. Move the unpacked directory to the desired destination (`mv jikkou-0.26.0-linux-x86_64 /opt/jikkou`)
 4. Add the executable to your PATH (`export PATH=$PATH:/opt/jikkou/bin`)
 
 #### Install From Debian distribution
@@ -36,12 +35,6 @@ These are the official ways to get Jikkou releases that you manually downloaded 
 ```bash
 $ wget https://github.com/streamthoughts/jikkou/releases/download/0.20.0/jikkou.deb
 $ sudo dpkg -i jikkou.deb
-```
-
-or just run the command:
-
-```bash
-curl -s https://raw.githubusercontent.com/streamthoughts/jikkou/main/get.sh | sh
 ```
 
 From there, you should be able to run the client: `jikkou help`.
@@ -73,7 +66,7 @@ They are not official releases, and may not be stable.
 However, they offer the opportunity to test the cutting edge features.
 
 ```bash
-$ docker run -it streamthoughts/jikkou:master
+$ docker run -it streamthoughts/jikkou:main
 ```
 
 ### From Source (Linux, macOS)
@@ -82,42 +75,39 @@ Building Jikkou from source is slightly more work, but is the best way to go if 
 
 #### Prerequisites
 
-You must have a working Java environment with a JDK 17 (i.e. `$JAVA_HOME` environment variable is configured).
+To build the project you will need:
 
-#### Build Tarball / Debian packages
+* Java 17 (i.e. `$JAVA_HOME` environment variable is configured).
+* https://www.graalvm.org/[GraalVM] 22.1.0 or newer to create native executable
+* https://testcontainers.com/[TestContainer] to run integration tests
 
-```bash
-$ git clone https://github.com/streamthoughts/jikkou.git
-$ cd jikkou
-$ ./mvnw clean package -DskipTests -Pdist
-```
-
-Then, distributions will be available in the `./dist` directory:
-```
-.
-├── jikkou-<VERSION>-runner
-│        └── jikkou-<VERSION>-runner
-│            ├── bin
-│            │       ├── jikkou
-│            │       └── jikkou.bat
-│            ├── etc
-│            │       └── logback.xml
-│            ├── jikkou_completion
-│            ├── lib
-│            │       └── jikkou-runner.jar
-│            ├── LICENSE
-│            └── README.adoc
-├── jikkou-<VERSION>-runner.tar.gz
-├── jikkou-<VERSION>-runner.zip
-└── jikkou.deb
-```
-
-#### Build RPM
-
-In addition to that, you may need to install Jikkou from an _RPM_ package. For doing that, you can run the following commands:
+#### Create Native Executable
 
 ```bash
-$ ./mvnw clean package -DskipTests -Prpm
+# Build and run all tests
+./mvnw clean verify -Pnative
+```
+
+You can then execute the native executable with: `./jikkou-cli/target/jikkou-$PROJECT_VERSION-runner`
+
+#### Build Debian Package (.deb)
+
+```bash
+# Build and run all tests
+./mvnw clean package -Pnative
+./mvnw package -Pdeb
+```
+
+You can then install the package with: `sudo dpkg -i ./dist/jikkou-$PROJECT_VERSION-linux-x86_64.deb`
+
+NOTE: Jikkou will install itself in the directory :  `/opt/jikkou`
+
+#### Build RPM Package
+
+```bash
+# Build and run all tests
+./mvnw clean package -Pnative
+./mvnw package -Prpm
 ```
 
 The RPM package will available in the `./target/rpm/jikkou/RPMS/noarch/` directory.

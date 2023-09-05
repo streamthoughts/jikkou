@@ -2,14 +2,14 @@
 categories: [ ]
 tags: [ "feature", "resources" ]
 title: "ACL for Aiven Apache Kafka®"
-linkTitle: "ACL for Apache Kafka® Topic"
+linkTitle: "ACL for Aiven Apache Kafka®"
 weight: 10
 description: >
-  Learn how to manage Access Control Lists for Aiven Apache Kafka®
+  Learn how to manage Access Control Lists (ACLs) in Aiven for Apache Kafka®
 ---
 
 {{% pageinfo color="info" %}}
-The `KafkaTopicAclEntry` resources are used to manage the Access Control Lists for Aiven Apache Kafka® service. A
+The `KafkaTopicAclEntry` resources are used to manage the Access Control Lists in Aiven for Apache Kafka®. A
 `KafkaTopicAclEntry` resource defines the permission to be granted to a user for one or more kafka topics.
 {{% /pageinfo %}}
 

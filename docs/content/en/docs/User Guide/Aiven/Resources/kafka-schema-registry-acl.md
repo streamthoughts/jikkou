@@ -2,14 +2,14 @@
 categories: [ ]
 tags: [ "feature", "resources" ]
 title: "ACL for Aiven Schema Registry"
-linkTitle: "ACL for Schema Registry"
+linkTitle: "ACL for Aiven Schema Registry"
 weight: 20
 description: >
-  Learn how to manage Access Control Lists for Aiven Schema Registry
+  Learn how to manage Access Control Lists (ACLs) in Aiven for Schema Registry
 ---
 
 {{% pageinfo color="info" %}}
-The `SchemaRegistryAclEntry` resources are used to manage the Access Control Lists for Aiven Schema Registry service. A
+The `SchemaRegistryAclEntry` resources are used to manage the Access Control Lists in Aiven for Schema Registry. A
 `SchemaRegistryAclEntry` resource defines the permission to be granted to a user for one or more Schema Registry
 Subjects.
 {{% /pageinfo %}}
