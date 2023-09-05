@@ -16,8 +16,10 @@
 package io.streamthoughts.jikkou.api.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.jikkou.annotation.Reflectable;
 import java.util.Objects;
 
+@Reflectable
 public record Status(String code) {
 
     public static final Status UNKNOWN = new Status("UNKNOWN");

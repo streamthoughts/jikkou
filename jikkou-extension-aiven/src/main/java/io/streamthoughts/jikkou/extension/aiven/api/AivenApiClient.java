@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ServiceInformationResponse;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,6 +48,16 @@ public class AivenApiClient implements AutoCloseable {
         this.project = Objects.requireNonNull(project, "project must not be null");
         this.service = Objects.requireNonNull(service, "service must not be null");
     }
+
+    /**
+     * Get service information
+     *
+     * @see AivenApi#getServiceInformation(String, String)
+     */
+    public ServiceInformationResponse getServiceInformation() {
+        return this.api.getServiceInformation(project, service);
+    }
+
 
     /**
      * Add a Kafka ACL entry.
@@ -115,7 +126,7 @@ public class AivenApiClient implements AutoCloseable {
     }
 
     /**
-     * List Kfka quota
+     * List Kafka quota
      *
      * @see AivenApi#listSchemaRegistryAclEntries(String, String)
      */

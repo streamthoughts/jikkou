@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.api.health;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.streamthoughts.jikkou.annotation.Reflectable;
 import java.util.Collections;
@@ -31,6 +32,11 @@ import org.jetbrains.annotations.Nullable;
  * The {@link Health} wraps information about a service or sub-system.
  */
 @Reflectable
+@JsonPropertyOrder({
+        "name",
+        "status",
+        "details",
+})
 @JsonInclude(Include.NON_EMPTY)
 public final class Health {
 
@@ -45,7 +51,7 @@ public final class Health {
     /**
      * Creates a new {@link Health} instance.
      *
-     * @param name      the status indicator name (may be {@code null}).
+     * @param name      the status indicator name (maybe {@code null}).
      * @param status    the {@link Status} instance (cannot be {@code null}).
      * @param details   the status indicator details (cannot be {@code null}).
      */

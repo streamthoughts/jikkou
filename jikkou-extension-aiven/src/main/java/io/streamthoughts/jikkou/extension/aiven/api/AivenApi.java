@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ServiceInformationResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -34,8 +35,20 @@ import jakarta.ws.rs.QueryParam;
 /**
  * REST API for Aiven (see <a href="https://api.aiven.io/doc/">https://api.aiven.io/doc/</a>)
  */
-@Path("/project/{project}/service/{service_name}/")
+@Path("/project/{project}/service/{service_name}")
 public interface AivenApi extends AutoCloseable {
+
+    /**
+     * Get service information
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @GET
+    @Path("")
+    @Produces("application/json")
+    ServiceInformationResponse getServiceInformation(@PathParam("project") String project,
+                                                     @PathParam("service_name") String service);
 
     /**
      * Add a Kafka ACL entry.
@@ -45,7 +58,7 @@ public interface AivenApi extends AutoCloseable {
      * @param entry   Kafka ACL entry
      */
     @POST
-    @Path("acl")
+    @Path("/acl")
     @Consumes("application/json")
     ListKafkaAclResponse addKafkaAclEntry(@PathParam("project") String project,
                                           @PathParam("service_name") String service,
@@ -58,7 +71,7 @@ public interface AivenApi extends AutoCloseable {
      * @param service Service name
      */
     @GET
-    @Path("acl")
+    @Path("/acl")
     @Produces("application/json")
     ListKafkaAclResponse listKafkaAclEntries(@PathParam("project") String project,
                                              @PathParam("service_name") String service);
@@ -71,7 +84,7 @@ public interface AivenApi extends AutoCloseable {
      * @param id      Kafka ACL Entry ID
      */
     @DELETE
-    @Path("acl/{kafka_acl_id}")
+    @Path("/acl/{kafka_acl_id}")
     @Produces("application/json")
     ListKafkaAclResponse deleteKafkaAclEntry(@PathParam("project") String project,
                                              @PathParam("service_name") String service,
@@ -84,7 +97,7 @@ public interface AivenApi extends AutoCloseable {
      * @param service Service name
      */
     @GET
-    @Path("kafka/schema-registry/acl")
+    @Path("/kafka/schema-registry/acl")
     @Produces("application/json")
     ListSchemaRegistryAclResponse listSchemaRegistryAclEntries(@PathParam("project") String project,
                                                                @PathParam("service_name") String service);
@@ -97,7 +110,7 @@ public interface AivenApi extends AutoCloseable {
      * @param entry   Schema Registry ACL entries
      */
     @POST
-    @Path("kafka/schema-registry/acl")
+    @Path("/kafka/schema-registry/acl")
     @Consumes("application/json")
     ListSchemaRegistryAclResponse addSchemaRegistryAclEntry(@PathParam("project") String project,
                                                             @PathParam("service_name") String service,
@@ -111,7 +124,7 @@ public interface AivenApi extends AutoCloseable {
      * @param id      Kafka ACL Entry ID
      */
     @DELETE
-    @Path("kafka/schema-registry/acl/{schema_registry_acl_id}")
+    @Path("/kafka/schema-registry/acl/{schema_registry_acl_id}")
     @Produces("application/json")
     ListSchemaRegistryAclResponse deleteSchemaRegistryAclEntry(@PathParam("project") String project,
                                                                @PathParam("service_name") String service,
@@ -124,7 +137,7 @@ public interface AivenApi extends AutoCloseable {
      * @param service Service name
      */
     @GET
-    @Path("quota")
+    @Path("/quota")
     @Produces("application/json")
     ListKafkaQuotaResponse listKafkaQuotas(@PathParam("project") String project,
                                            @PathParam("service_name") String service);
@@ -136,7 +149,7 @@ public interface AivenApi extends AutoCloseable {
      * @param service Service name
      */
     @POST
-    @Path("quota")
+    @Path("/quota")
     @Consumes("application/json")
     MessageErrorsResponse createKafkaQuota(@PathParam("project") String project,
                                            @PathParam("service_name") String service,
@@ -149,7 +162,7 @@ public interface AivenApi extends AutoCloseable {
      * @param service Service name
      */
     @DELETE
-    @Path("quota")
+    @Path("/quota")
     @Consumes("application/json")
     MessageErrorsResponse deleteKafkaQuota(@PathParam("project") String project,
                                            @PathParam("service_name") String service,

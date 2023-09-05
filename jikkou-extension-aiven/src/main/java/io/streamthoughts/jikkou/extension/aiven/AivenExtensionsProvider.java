@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryCollec
 import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryCollector;
 import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.health.AivenServiceHealthIndicator;
 import io.streamthoughts.jikkou.extension.aiven.validation.SchemaRegistryAclEntryValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,7 @@ public class AivenExtensionsProvider implements ExtensionProvider {
     @Override
     public void registerExtensions(@NotNull ExtensionFactory factory,
                                    @NotNull Configuration configuration) {
+        factory.register(AivenServiceHealthIndicator.class, AivenServiceHealthIndicator::new);
         factory.register(KafkaTopicAclEntryCollector.class, KafkaTopicAclEntryCollector::new);
         factory.register(KafkaTopicAclEntryController.class, KafkaTopicAclEntryController::new);
         factory.register(SchemaRegistryAclEntryCollector.class, SchemaRegistryAclEntryCollector::new);
