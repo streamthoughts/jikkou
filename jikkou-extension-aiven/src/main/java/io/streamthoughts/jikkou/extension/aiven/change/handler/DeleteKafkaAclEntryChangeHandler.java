@@ -21,12 +21,12 @@ import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.change.AclEntryChangeDescription;
+import io.streamthoughts.jikkou.extension.aiven.change.KafkaChangeDescriptions;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-public class DeleteKafkaAclEntryChangeHandler extends AbstractKafkaAclEntryChangeHandler<KafkaAclEntry> {
+public class DeleteKafkaAclEntryChangeHandler extends AbstractChangeHandler<KafkaAclEntry> {
 
     /**
      * Creates a new {@link DeleteKafkaAclEntryChangeHandler} instance.
@@ -52,6 +52,6 @@ public class DeleteKafkaAclEntryChangeHandler extends AbstractKafkaAclEntryChang
      */
     @Override
     public ChangeDescription getDescriptionFor(@NotNull ValueChange<KafkaAclEntry> change) {
-        return AclEntryChangeDescription.of(changeType, change.getBefore());
+        return KafkaChangeDescriptions.of(change.getChangeType(), change.getBefore());
     }
 }

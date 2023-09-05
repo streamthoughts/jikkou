@@ -15,9 +15,12 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api;
 
-import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntriesResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntriesResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +54,7 @@ public class AivenApiClient implements AutoCloseable {
      * @param entry Kafka ACL entry
      * @see AivenApi#addKafkaAclEntry(String, String, KafkaAclEntry)
      */
-    public KafkaAclEntriesResponse addKafkaAclEntry(final KafkaAclEntry entry) {
+    public ListKafkaAclResponse addKafkaAclEntry(final KafkaAclEntry entry) {
         return this.api.addKafkaAclEntry(project, service, entry);
     }
 
@@ -60,7 +63,7 @@ public class AivenApiClient implements AutoCloseable {
      *
      * @see AivenApi#listKafkaAclEntries(String, String)
      */
-    public KafkaAclEntriesResponse listKafkaAclEntries() {
+    public ListKafkaAclResponse listKafkaAclEntries() {
         return this.api.listKafkaAclEntries(project, service);
     }
 
@@ -69,7 +72,7 @@ public class AivenApiClient implements AutoCloseable {
      *
      * @see AivenApi#deleteKafkaAclEntry(String, String, String)
      */
-    public KafkaAclEntriesResponse deleteKafkaAclEntry(final String id) {
+    public ListKafkaAclResponse deleteKafkaAclEntry(final String id) {
         return this.api.deleteKafkaAclEntry(project, service, id);
     }
 
@@ -79,7 +82,7 @@ public class AivenApiClient implements AutoCloseable {
      * @param entry Kafka ACL entry
      * @see AivenApi#addSchemaRegistryAclEntry(String, String, SchemaRegistryAclEntry)
      */
-    public SchemaRegistryAclEntriesResponse addSchemaRegistryAclEntry(final SchemaRegistryAclEntry entry) {
+    public ListSchemaRegistryAclResponse addSchemaRegistryAclEntry(final SchemaRegistryAclEntry entry) {
         return this.api.addSchemaRegistryAclEntry(project, service, entry);
     }
 
@@ -88,7 +91,7 @@ public class AivenApiClient implements AutoCloseable {
      *
      * @see AivenApi#listSchemaRegistryAclEntries(String, String)
      */
-    public SchemaRegistryAclEntriesResponse listSchemaRegistryAclEntries() {
+    public ListSchemaRegistryAclResponse listSchemaRegistryAclEntries() {
         return this.api.listSchemaRegistryAclEntries(project, service);
     }
 
@@ -97,9 +100,38 @@ public class AivenApiClient implements AutoCloseable {
      *
      * @see AivenApi#deleteSchemaRegistryAclEntry(String, String, String)
      */
-    public SchemaRegistryAclEntriesResponse deleteSchemaRegistryAclEntry(final String id) {
+    public ListSchemaRegistryAclResponse deleteSchemaRegistryAclEntry(final String id) {
         return this.api.deleteSchemaRegistryAclEntry(project, service, id);
     }
+
+    /**
+     * Create Kafka quota
+     *
+     * @param entry Kafka ACL entry
+     * @see AivenApi#addSchemaRegistryAclEntry(String, String, SchemaRegistryAclEntry)
+     */
+    public MessageErrorsResponse createKafkaQuota(final KafkaQuotaEntry entry) {
+        return this.api.createKafkaQuota(project, service, entry);
+    }
+
+    /**
+     * List Kfka quota
+     *
+     * @see AivenApi#listSchemaRegistryAclEntries(String, String)
+     */
+    public ListKafkaQuotaResponse listKafkaQuotas() {
+        return this.api.listKafkaQuotas(project, service);
+    }
+
+    /**
+     * Delete Kafka quota.
+     *
+     * @see AivenApi#deleteKafkaQuota(String, String, String, String) (String, String, KafkaQuotaEntry)
+     */
+    public MessageErrorsResponse deleteKafkaQuota(final KafkaQuotaEntry entry) {
+        return this.api.deleteKafkaQuota(project, service, entry.clientId(), entry.user());
+    }
+
 
     /**
      * {@inheritDoc}

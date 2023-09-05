@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Reflectable
-public final class KafkaAclEntriesResponse {
+public final class ListKafkaAclResponse {
 
     /**
      * List of Kafka ACL entries.
@@ -42,9 +42,9 @@ public final class KafkaAclEntriesResponse {
     private final String message;
 
     @JsonCreator
-    public KafkaAclEntriesResponse(@JsonProperty("acl") List<KafkaAclEntry> acl,
-                                   @JsonProperty("errors") List<Error> errors,
-                                   @JsonProperty("message") String message) {
+    public ListKafkaAclResponse(@JsonProperty("acl") List<KafkaAclEntry> acl,
+                                @JsonProperty("errors") List<Error> errors,
+                                @JsonProperty("message") String message) {
         this.acl = acl;
         this.errors = errors;
         this.message = message;
@@ -67,7 +67,7 @@ public final class KafkaAclEntriesResponse {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        KafkaAclEntriesResponse that = (KafkaAclEntriesResponse) o;
+        ListKafkaAclResponse that = (ListKafkaAclResponse) o;
         return Objects.equals(acl, that.acl) && Objects.equals(errors, that.errors) && Objects.equals(message, that.message);
     }
 

@@ -18,9 +18,10 @@ package io.streamthoughts.jikkou.extension.aiven.change;
 import io.streamthoughts.jikkou.api.control.ChangeDescription;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 
-public final class AclEntryChangeDescription {
+public final class KafkaChangeDescriptions {
 
     public static ChangeDescription of(ChangeType type, KafkaAclEntry entry) {
         return () -> String.format("%s Kafka ACL Entry for user '%s' (topic=%s, permission=%s)",
@@ -37,6 +38,14 @@ public final class AclEntryChangeDescription {
                 entry.username(),
                 entry.resource(),
                 entry.permission()
+        );
+    }
+
+    public static ChangeDescription of(ChangeType type, KafkaQuotaEntry entry) {
+        return () -> String.format("%s Kafka quotas for user '%s' and client-id '%s'",
+                ChangeDescription.humanize(type),
+                entry.user(),
+                entry.clientId()
         );
     }
 }

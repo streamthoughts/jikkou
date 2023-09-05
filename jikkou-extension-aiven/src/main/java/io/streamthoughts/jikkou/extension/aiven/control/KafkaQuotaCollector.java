@@ -25,36 +25,36 @@ import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
+import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
-import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
-import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
-import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntryList;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
+import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaQuotaListConverter;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaList;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsResource(type = V1SchemaRegistryAclEntry.class)
-@AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
+@AcceptsResource(type = V1KafkaQuota.class)
+@AcceptsResource(type = V1KafkaQuotaList.class, converter = V1KafkaQuotaListConverter.class)
+public class KafkaQuotaCollector implements ResourceCollector<V1KafkaQuota> {
 
     private AivenApiClientConfig config;
 
     /**
-     * Creates a new {@link SchemaRegistryAclEntryCollector} instance.
+     * Creates a new {@link KafkaQuotaCollector} instance.
      */
-    public SchemaRegistryAclEntryCollector() {}
+    public KafkaQuotaCollector() {}
 
     /**
-     * Creates a new {@link SchemaRegistryAclEntryCollector} instance.
+     * Creates a new {@link KafkaQuotaCollector} instance.
      *
      * @param config the configuration.
      */
-    public SchemaRegistryAclEntryCollector(AivenApiClientConfig config) {
+    public KafkaQuotaCollector(AivenApiClientConfig config) {
         configure(config);
     }
 
@@ -74,11 +74,11 @@ public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1Sche
      * {@inheritDoc}
      **/
     @Override
-    public List<V1SchemaRegistryAclEntry> listAll(@NotNull Configuration configuration,
+    public List<V1KafkaQuota> listAll(@NotNull Configuration configuration,
                                               @NotNull List<ResourceSelector> selectors) {
-        AivenApiClient api = AivenApiClientFactory.create(config);
+        final AivenApiClient api = AivenApiClientFactory.create(config);
         try {
-            ListSchemaRegistryAclResponse response = api.listSchemaRegistryAclEntries();
+            ListKafkaQuotaResponse response = api.listKafkaQuotas();
 
             if (!response.errors().isEmpty()) {
                 throw new JikkouRuntimeException(
@@ -89,8 +89,9 @@ public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1Sche
                 );
             }
 
-            return SchemaRegistryAclEntryAdapter.map(response.acl())
+            return response.quotas()
                     .stream()
+                    .map(KafkaQuotaAdapter::map)
                     .filter(new AggregateSelector(selectors)::apply)
                     .collect(Collectors.toList());
 
@@ -103,7 +104,7 @@ public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1Sche
                 response = e.getResponseEntity();
             }
             throw new JikkouRuntimeException(String.format(
-                    "failed to list schema registry acl entries. %s:%n%s",
+                    "failed to list kafka quotas. %s:%n%s",
                     e.getLocalizedMessage(),
                     response
             ), e);

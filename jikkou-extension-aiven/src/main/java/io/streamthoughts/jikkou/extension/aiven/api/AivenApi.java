@@ -15,9 +15,12 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api;
 
-import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntriesResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntriesResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -26,6 +29,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 
 /**
  * REST API for Aiven (see <a href="https://api.aiven.io/doc/">https://api.aiven.io/doc/</a>)
@@ -43,9 +47,9 @@ public interface AivenApi extends AutoCloseable {
     @POST
     @Path("acl")
     @Consumes("application/json")
-    KafkaAclEntriesResponse addKafkaAclEntry(@PathParam("project") String project,
-                                             @PathParam("service_name") String service,
-                                             KafkaAclEntry entry);
+    ListKafkaAclResponse addKafkaAclEntry(@PathParam("project") String project,
+                                          @PathParam("service_name") String service,
+                                          KafkaAclEntry entry);
 
     /**
      * List Kafka ACL entries
@@ -56,8 +60,8 @@ public interface AivenApi extends AutoCloseable {
     @GET
     @Path("acl")
     @Produces("application/json")
-    KafkaAclEntriesResponse listKafkaAclEntries(@PathParam("project") String project,
-                                                @PathParam("service_name") String service);
+    ListKafkaAclResponse listKafkaAclEntries(@PathParam("project") String project,
+                                             @PathParam("service_name") String service);
 
     /**
      * Delete Kafka ACL entry.
@@ -69,9 +73,9 @@ public interface AivenApi extends AutoCloseable {
     @DELETE
     @Path("acl/{kafka_acl_id}")
     @Produces("application/json")
-    KafkaAclEntriesResponse deleteKafkaAclEntry(@PathParam("project") String project,
-                                                @PathParam("service_name") String service,
-                                                @PathParam("kafka_acl_id") String id);
+    ListKafkaAclResponse deleteKafkaAclEntry(@PathParam("project") String project,
+                                             @PathParam("service_name") String service,
+                                             @PathParam("kafka_acl_id") String id);
 
     /**
      * List Schema Registry ACL entries
@@ -82,8 +86,8 @@ public interface AivenApi extends AutoCloseable {
     @GET
     @Path("kafka/schema-registry/acl")
     @Produces("application/json")
-    SchemaRegistryAclEntriesResponse listSchemaRegistryAclEntries(@PathParam("project") String project,
-                                                                  @PathParam("service_name") String service);
+    ListSchemaRegistryAclResponse listSchemaRegistryAclEntries(@PathParam("project") String project,
+                                                               @PathParam("service_name") String service);
 
     /**
      * Add a Schema Registry ACL entries
@@ -95,9 +99,9 @@ public interface AivenApi extends AutoCloseable {
     @POST
     @Path("kafka/schema-registry/acl")
     @Consumes("application/json")
-    SchemaRegistryAclEntriesResponse addSchemaRegistryAclEntry(@PathParam("project") String project,
-                                                               @PathParam("service_name") String service,
-                                                               SchemaRegistryAclEntry entry);
+    ListSchemaRegistryAclResponse addSchemaRegistryAclEntry(@PathParam("project") String project,
+                                                            @PathParam("service_name") String service,
+                                                            SchemaRegistryAclEntry entry);
 
     /**
      * Delete Schema Registry ACL entries
@@ -109,9 +113,48 @@ public interface AivenApi extends AutoCloseable {
     @DELETE
     @Path("kafka/schema-registry/acl/{schema_registry_acl_id}")
     @Produces("application/json")
-    SchemaRegistryAclEntriesResponse deleteSchemaRegistryAclEntry(@PathParam("project") String project,
-                                                                  @PathParam("service_name") String service,
-                                                                  @PathParam("schema_registry_acl_id") String id);
+    ListSchemaRegistryAclResponse deleteSchemaRegistryAclEntry(@PathParam("project") String project,
+                                                               @PathParam("service_name") String service,
+                                                               @PathParam("schema_registry_acl_id") String id);
+
+    /**
+     * List Kafka quotas
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @GET
+    @Path("quota")
+    @Produces("application/json")
+    ListKafkaQuotaResponse listKafkaQuotas(@PathParam("project") String project,
+                                           @PathParam("service_name") String service);
+
+    /**
+     * Create Kafka quota
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @POST
+    @Path("quota")
+    @Consumes("application/json")
+    MessageErrorsResponse createKafkaQuota(@PathParam("project") String project,
+                                           @PathParam("service_name") String service,
+                                           KafkaQuotaEntry entry);
+
+    /**
+     * Delete Kafka quota
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @DELETE
+    @Path("quota")
+    @Consumes("application/json")
+    MessageErrorsResponse deleteKafkaQuota(@PathParam("project") String project,
+                                           @PathParam("service_name") String service,
+                                           @QueryParam("client-id") String client,
+                                           @QueryParam("user") String user);
 
     /**
      * Closes this client.

@@ -28,11 +28,11 @@ import java.util.List;
  * @param errors  the errors.
  */
 @Reflectable
-public record ErrorsResponse(String message, List<Error> errors) {
+public record MessageErrorsResponse(String message, List<Error> errors) {
 
     @JsonCreator
-    public ErrorsResponse(@JsonProperty("message") final String message,
-                          @JsonProperty("errors") final List<Error> errors) {
+    public MessageErrorsResponse(@JsonProperty("message") final String message,
+                                 @JsonProperty("errors") final List<Error> errors) {
         this.message = message;
         this.errors = errors;
     }

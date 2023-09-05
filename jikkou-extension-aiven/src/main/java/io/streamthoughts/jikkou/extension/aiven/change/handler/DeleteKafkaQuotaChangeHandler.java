@@ -20,31 +20,30 @@ import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
-import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.change.KafkaChangeDescriptions;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateSchemaRegistryAclEntryChangeHandler extends AbstractChangeHandler<SchemaRegistryAclEntry> {
+public class DeleteKafkaQuotaChangeHandler extends AbstractChangeHandler<KafkaQuotaEntry> {
 
     /**
-     * Creates a new {@link CreateSchemaRegistryAclEntryChangeHandler} instance.
+     * Creates a new {@link DeleteKafkaQuotaChangeHandler} instance.
      *
      * @param api the {@link AivenApiClient} instance.
      */
-    public CreateSchemaRegistryAclEntryChangeHandler(@NotNull final AivenApiClient api) {
-        super(api, ChangeType.ADD);
+    public DeleteKafkaQuotaChangeHandler(@NotNull final AivenApiClient api) {
+        super(api, ChangeType.DELETE);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ValueChange<SchemaRegistryAclEntry>>> apply(
-            @NotNull List<ValueChange<SchemaRegistryAclEntry>> changes) {
+    public List<ChangeResponse<ValueChange<KafkaQuotaEntry>>> apply(@NotNull List<ValueChange<KafkaQuotaEntry>> changes) {
         return changes.stream()
-                .map(change -> executeAsync(change, () -> api.addSchemaRegistryAclEntry(change.getAfter())))
+                .map(change -> executeAsync(change, () -> api.deleteKafkaQuota(change.getBefore())))
                 .collect(Collectors.toList());
     }
 
@@ -52,7 +51,7 @@ public class CreateSchemaRegistryAclEntryChangeHandler extends AbstractChangeHan
      * {@inheritDoc}
      */
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull ValueChange<SchemaRegistryAclEntry> change) {
-        return KafkaChangeDescriptions.of(change.getChangeType(), change.getAfter());
+    public ChangeDescription getDescriptionFor(@NotNull ValueChange<KafkaQuotaEntry> change) {
+        return KafkaChangeDescriptions.of(change.getChangeType(), change.getBefore());
     }
 }

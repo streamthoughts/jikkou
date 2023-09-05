@@ -52,6 +52,10 @@ docker-tag-latest: build-images
 	docker tag ${REPOSITORY}/${IMAGE}:${VERSION} ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
 
 changelog:
-    ./mvnw jreleaser:changelog -Prelease -f ./jikkou-cli/pom.xml
+	./mvnw jreleaser:changelog -Prelease -f ./jikkou-cli/pom.xml
+
+install:
+	./mvnw clean package -Pnative,deb -DskipTests 
+	sudo dpkg -i ./dist/jikkou-${VERSION}-linux-x86_64.deb
 
 clean: clean-containers clean-images clean-build

@@ -288,10 +288,12 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
             List<HasMetadata> result = resources.stream()
                     .map(resource -> {
-                        ObjectMeta.ObjectMetaBuilder objectMetaBuilder = resource.getMetadata().toBuilder();
-                        return resource.withMetadata(
-                                objectMetaBuilder.withAnnotation(ObjectMeta.ANNOT_GENERATED, Instant.now()).build()
-                        );
+                        ObjectMeta meta = resource
+                                .optionalMetadata()
+                                .orElse(new ObjectMeta()).toBuilder()
+                                .withAnnotation(ObjectMeta.ANNOT_GENERATED, Instant.now())
+                                .build();
+                        return resource.withMetadata(meta);
                     })
                     .toList();
             return converter.convertTo(result);
