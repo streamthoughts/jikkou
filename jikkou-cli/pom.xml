@@ -226,7 +226,7 @@ limitations under the License.
                         <path>
                             <groupId>io.micronaut.serde</groupId>
                             <artifactId>micronaut-serde-processor</artifactId>
-                            <version>1.5.3</version>
+                            <version>2.2.4</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
