@@ -135,8 +135,7 @@ public class ValueChangeComputer<T, V> implements ChangeComputer<T, ValueChange<
         return before == null ? ADD : after == null ? DELETE : UPDATE;
     }
 
-    private record BeforeAndAfter<T>(T before, T after) {
-    }
+    private record BeforeAndAfter<T>(T before, T after) { }
 
     @FunctionalInterface
     public interface ChangeValueMapper<T, V> {

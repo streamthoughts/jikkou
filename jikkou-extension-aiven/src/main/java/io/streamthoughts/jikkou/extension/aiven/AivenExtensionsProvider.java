@@ -17,6 +17,8 @@ package io.streamthoughts.jikkou.extension.aiven;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import io.streamthoughts.jikkou.extension.aiven.control.KafkaQuotaCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.KafkaQuotaController;
 import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryCollector;
 import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryCollector;
@@ -36,5 +38,7 @@ public class AivenExtensionsProvider implements ExtensionProvider {
         factory.register(SchemaRegistryAclEntryCollector.class, SchemaRegistryAclEntryCollector::new);
         factory.register(SchemaRegistryAclEntryController.class, SchemaRegistryAclEntryController::new);
         factory.register(SchemaRegistryAclEntryValidation.class, SchemaRegistryAclEntryValidation::new);
+        factory.register(KafkaQuotaCollector.class, KafkaQuotaCollector::new);
+        factory.register(KafkaQuotaController.class, KafkaQuotaController::new);
     }
 }

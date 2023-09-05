@@ -16,6 +16,8 @@
 package io.streamthoughts.jikkou.extension.aiven;
 
 import io.streamthoughts.jikkou.api.ResourceContext;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
@@ -31,5 +33,7 @@ public class AivenResourceProvider implements ResourceProvider {
         context.register(V1KafkaTopicAclEntryList.class);
         context.register(V1SchemaRegistryAclEntry.class);
         context.register(V1SchemaRegistryAclEntryList.class);
+        context.register(V1KafkaQuota.class);
+        context.register(V1KafkaQuotaList.class);
     }
 }

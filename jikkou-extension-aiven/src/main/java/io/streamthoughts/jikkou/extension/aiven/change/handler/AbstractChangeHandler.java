@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.api.control.ChangeResponse;
 import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
-import io.streamthoughts.jikkou.extension.aiven.api.data.ErrorsResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import java.util.Objects;
 import java.util.Set;
@@ -30,21 +30,31 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractKafkaAclEntryChangeHandler<T> implements ChangeHandler<ValueChange<T>> {
+public abstract class AbstractChangeHandler<T> implements ChangeHandler<ValueChange<T>> {
 
     protected final AivenApiClient api;
 
-    protected final ChangeType changeType;
+    protected final Set<ChangeType> supportedChangeTypes;
 
     /**
-     * Creates a new {@link AbstractKafkaAclEntryChangeHandler} instance.
+     * Creates a new {@link AbstractChangeHandler} instance.
      *
      * @param api the {@link AivenApiClient} instance.
      */
-    public AbstractKafkaAclEntryChangeHandler(@NotNull final AivenApiClient api,
-                                              @NotNull final ChangeType changeType) {
+    public AbstractChangeHandler(@NotNull final AivenApiClient api,
+                                 @NotNull final ChangeType changeType) {
+        this(api, Set.of(changeType));
+    }
+
+    /**
+     * Creates a new {@link AbstractChangeHandler} instance.
+     *
+     * @param api the {@link AivenApiClient} instance.
+     */
+    public AbstractChangeHandler(@NotNull final AivenApiClient api,
+                                 @NotNull final Set<ChangeType> supportedChangeTypes) {
         this.api = Objects.requireNonNull(api, "api must not be null");
-        this.changeType = Objects.requireNonNull(changeType, "changeType must not be null");
+        this.supportedChangeTypes = Objects.requireNonNull(supportedChangeTypes, "changeType must not be null");
     }
 
     protected <R> ChangeResponse<ValueChange<T>> executeAsync(final ValueChange<T> change,
@@ -56,9 +66,9 @@ public abstract class AbstractKafkaAclEntryChangeHandler<T> implements ChangeHan
                         return ChangeMetadata.empty();
                     } catch (RestClientException e) {
                         try {
-                            ErrorsResponse entity = e.getResponseEntity(ErrorsResponse.class);
+                            MessageErrorsResponse entity = e.getResponseEntity(MessageErrorsResponse.class);
                             if (entity.errors().size() == 1) {
-                                ErrorsResponse.Error error = entity.errors().get(0);
+                                MessageErrorsResponse.Error error = entity.errors().get(0);
                                 return new ChangeMetadata(new ChangeError(error.message(), error.status()));
                             } else {
                                 return new ChangeMetadata(new ChangeError(entity.message()));
@@ -76,6 +86,6 @@ public abstract class AbstractKafkaAclEntryChangeHandler<T> implements ChangeHan
      */
     @Override
     public Set<ChangeType> supportedChangeTypes() {
-        return Set.of(changeType);
+        return supportedChangeTypes;
     }
 }

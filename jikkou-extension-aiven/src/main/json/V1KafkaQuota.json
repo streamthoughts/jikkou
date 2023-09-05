@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "description": "Kafka Quota",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaQuotaSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "avn-kafka-quota",
+        "shortNames": [
+          "avnkq"
+        ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.aiven.io/v1beta1"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaQuota"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaQuotaSpec"
+    }
+  },
+  "$defs": {
+    "V1KafkaQuotaSpec": {
+      "type": "object",
+      "javaInterfaces": [],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "clientId",
+        "user"
+      ],
+      "properties": {
+        "clientId": {
+          "type": "string",
+          "description": "client-id",
+          "default": "default"
+        },
+        "user": {
+          "type": "string",
+          "description": "Username",
+          "default": "default"
+        },
+        "consumerByteRate": {
+          "type": "number",
+          "description": "The quota in bytes for restricting data consumption"
+        },
+        "producerByteRate": {
+          "type": "number",
+          "description": "The quota in bytes for restricting data production"
+        },
+        "requestPercentage": {
+          "type": "number",
+          "description": "The quota in percentage (%) of CPU throttling"
+        }
+      }
+    }
+  }
+}

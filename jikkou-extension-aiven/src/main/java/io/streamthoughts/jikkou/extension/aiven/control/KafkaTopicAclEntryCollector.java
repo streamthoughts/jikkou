@@ -29,7 +29,7 @@ import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
-import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntriesResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaAclEntryListConverter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
@@ -78,7 +78,7 @@ public class KafkaTopicAclEntryCollector implements ResourceCollector<V1KafkaTop
                                               @NotNull List<ResourceSelector> selectors) {
         AivenApiClient api = AivenApiClientFactory.create(config);
         try {
-            KafkaAclEntriesResponse response = api.listKafkaAclEntries();
+            ListKafkaAclResponse response = api.listKafkaAclEntries();
 
             if (!response.errors().isEmpty()) {
                 throw new JikkouRuntimeException(

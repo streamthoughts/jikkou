@@ -40,8 +40,8 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.change.AclEntryChangeDescription;
 import io.streamthoughts.jikkou.extension.aiven.change.KafkaAclEntryChangeComputer;
+import io.streamthoughts.jikkou.extension.aiven.change.KafkaChangeDescriptions;
 import io.streamthoughts.jikkou.extension.aiven.change.handler.CreateKafkaAclEntryChangeHandler;
 import io.streamthoughts.jikkou.extension.aiven.change.handler.DeleteKafkaAclEntryChangeHandler;
 import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaAclEntryListConverter;
@@ -104,7 +104,7 @@ public class KafkaTopicAclEntryController implements BaseResourceController<V1Ka
             List<ChangeHandler<ValueChange<KafkaAclEntry>>> handlers = List.of(
                     new CreateKafkaAclEntryChangeHandler(api),
                     new DeleteKafkaAclEntryChangeHandler(api),
-                    new ChangeHandler.None<>(it -> AclEntryChangeDescription.of(it.getChangeType(), it.getAfter()))
+                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(it.getChangeType(), it.getAfter()))
             );
             return new ChangeExecutor<>(handlers).execute(changes, dryRun);
         } finally {
