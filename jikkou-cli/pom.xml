@@ -47,7 +47,7 @@ limitations under the License.
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <executable-suffix/>
         <imageName>jikkou</imageName>
-        <graalvm.build.arg/>
+        <graalvm.build.arg>--verbose</graalvm.build.arg>
         <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
         <micronaut-serde-processor.version>1.5.3</micronaut-serde-processor.version>
     </properties>

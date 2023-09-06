@@ -26,7 +26,10 @@ ARG COMMIT
 ENV USER_ID=10000 \
     GROUP_ID=10001 \
     USER_NAME="appuser" \
-    GROUP_NAME="appuser"
+    GROUP_NAME="appuser" \
+    JIKKOUCONFIG="/etc/jikkou/config"
+
+RUN mkdir -p /etc/jikkou/
 
 WORKDIR /app
 

@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,16 +33,31 @@ public class ConfigurationContext {
     public static final String EMPTY_CONTEXT = "";
     private final ObjectMapper objectMapper;
 
-    private static final String CONFIG_FILE = ".jikkou/config";
-    private final File configFile;
+    private static final String JIKKOU_CONFIG_ENV = "JIKKOUCONFIG";
 
+    private static final String DEFAULT_CONFIG_FILE = ".jikkou/config";
+    private final File configFile;
+    
     public ConfigurationContext(ObjectMapper objectMapper) {
-        this(new File(System.getProperty("user.home")), objectMapper);
+        this(getDefaultConfigFile(), objectMapper);
     }
 
-    public ConfigurationContext(File configDirectory, ObjectMapper objectMapper) {
-        this.configFile = new File(configDirectory, CONFIG_FILE);
-        this.objectMapper = objectMapper;
+    @NotNull
+    private static File getDefaultConfigFile() {
+        return Optional.ofNullable(System.getenv(JIKKOU_CONFIG_ENV))
+                .map(File::new)
+                .orElse(new File(new File(System.getProperty("user.home")), DEFAULT_CONFIG_FILE));
+    }
+
+    /**
+     * Creates a new {@link ConfigurationContext} instance.
+     *
+     * @param configFile    the Jikkouconfig file.
+     * @param objectMapper  the objectMapper used to read the Jikkouconfig.
+     */
+    public ConfigurationContext(@NotNull final File configFile, @NotNull final ObjectMapper objectMapper) {
+        this.configFile = Objects.requireNonNull(configFile, "configFile cannot be null");
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper cannot be null");
     }
 
     public void setContext(String contextName, Context context) {
@@ -52,6 +69,10 @@ public class ConfigurationContext {
         var configuration = tryReadConfiguration();
 
         tryWriteConfiguration(configuration.addConfigurationContext(contextName, context));
+    }
+
+    public String getConfigFile() {
+        return configFile.getAbsolutePath();
     }
 
     public Context getContext(String contextName) {
@@ -124,7 +145,7 @@ public class ConfigurationContext {
             return objectMapper.readValue(configFile, Configuration.class);
         }
         catch (IOException e) {
-            throw new JikkouRuntimeException("Couldn't read configuration file ~/" + CONFIG_FILE + ".", e);
+            throw new JikkouRuntimeException("Couldn't read configuration file ~/" + DEFAULT_CONFIG_FILE + ".", e);
         }
     }
 

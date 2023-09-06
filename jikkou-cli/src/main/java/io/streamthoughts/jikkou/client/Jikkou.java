@@ -98,11 +98,11 @@ public final class Jikkou {
     @EventListener
     public void onStartupEvent(StartupEvent event) {
         if (!configurationContext.isExists()) {
-            System.err.println(
-                    "No configuration context has been defined." +
-                            " Run 'jikkou config set-context <context_name> --config=kafka.client.bootstrap.servers=localhost:9092" +
-                            " [--client-config=<config_string>] [--config-file=<config_file>].' to create a context."
-            );
+            System.err.printf(
+                    "No configuration context has been defined (file:%s)." +
+                            " Run 'jikkou config set-context <context_name> --config-props=kafka.client.bootstrap.servers=localhost:9092" +
+                            " [--config-props=<config_string>] [--config-file=<config_file>].' to create a context.%n",
+                    configurationContext.getConfigFile());
         }
     }
 
