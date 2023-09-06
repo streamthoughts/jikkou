@@ -33,28 +33,18 @@ Jikkou can be used on on-premise Apache Kafka, https://aiven.io/kafka[Aiven], an
 
 See https://medium.com/@fhussonnois/why-is-managing-kafka-topics-still-such-a-pain-introducing-jikkou-4ee9d5df948[this blog post] for more details.
 
-== The main usage scenarios
-
-* Create new resource entities on an Apache Kafka cluster (i.e., _Topics_, _ACLs_, and _Quotas_).
-* Update the configurations of existing resource entities.
-* Delete resource entities which are not anymore managed.
-* Describe all the configuration defined for Brokers.
-* Describe all the configuration defined for _Topics_, _ACLs_, and _Quotas_.
-* Replicate configurations of a production cluster to another with a few command lines.
-* Initialize a new cluster for testing purpose.
-
-== Core features that make it awesome
-
-* Simple command line interface (CLI) for end user.
-* Simple Java API on top of the Kafka's  https://kafka.apache.org/30/javadoc/org/apache/kafka/clients/admin/Admin.html[Java AdminClient].
-* Completely stateless and thus does not store any state (Basically: _Your kafka cluster is the state of Jikkou_).
-* Pluggable validation rules to ensure that resources meet your requirement before being created or updated ona target cluster.
-* Pluggable resource manager to extend Jikkou with cloud managed services for Apache Kafka which are supported out-of-the-box.
-* Simple templating mechanism using https://jinja.palletsprojects.com/en/3.0.x/[Jinja] notation.
-
-== Quick Installation
+== Installation
 
 The latest stable release of jikkou (x86) for Linux, and macOS can be downloaded from  https://github.com/streamthoughts/jikkou/releases/tag/v0.25.0[GitHub Releases]
+
+Below are the convenience links for the base downloads of Jikkou.
+
+[%header,format=csv]
+|===
+Platform,Link
+Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.26.0/jikkou-0.26.0-linux-x86_64.zip[download (jikkou-0.26.0-linux-x86_64.zip)]
+macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.26.0/jikkou-0.26.0-osx-x86_64.zip[download (jikkou-0.26.0-osx-x86_64.zip)]
+|===
 
 Alternatively, jikkou is also available:
 
@@ -67,14 +57,13 @@ and copy to the desired location.
 [source, bash]
 ----
 # Download the latest stable release
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.25.0/jikkou-0.25.0-linux-x86_64.zip
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.26.0/jikkou-0.26.0-linux-x86_64.zip
 
 # Uncompress
-unzip jikkou-0.25.0-linux-x86_64.zip
+unzip jikkou-0.26.0-linux-x86_64.zip
 
 # Copy to the desired location
-cp ./jikkou-0.25.0-linux-x86_64/bin/jikkou /usr/local/bin/
-
+cp jikkou-0.26.0-linux-x86_64/bin/jikkou $HOME/.local/bin
 ----
 
 It is recommended to install the bash/zsh completion script `jikkou_completion`:
@@ -90,6 +79,9 @@ or alternatively, run the following command for generation the completion script
 ----
 source <(jikkou generate-completion)
 ----
+
+WARNING: If you are using macOS you may need to remove the quarantine attribute from the bits before you can use them
+         To do this, run the following: `sudo xattr -r -d com.apple.quarantine path/to/jikkou/folder/`
 
 == Overview
 
