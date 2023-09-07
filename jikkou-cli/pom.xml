@@ -133,7 +133,6 @@ limitations under the License.
             </exclusions>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
@@ -143,6 +142,13 @@ limitations under the License.
             <artifactId>micronaut-picocli</artifactId>
         </dependency>
         <!-- END dependencies for Micronaut -->
+
+        <!-- Support for AWS MSK Apache Kafka Managed Service -->
+        <dependency>
+            <groupId>software.amazon.msk</groupId>
+            <artifactId>aws-msk-iam-auth</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- START dependencies for test -->
         <dependency>

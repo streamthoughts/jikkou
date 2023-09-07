@@ -1,0 +1,192 @@
+[
+  {
+    "name": "[Lcom.amazonaws.internal.config.HostRegexToRegionMappingJsonHelper;"
+  },
+  {
+    "name": "[Lcom.amazonaws.internal.config.JsonIndex;"
+  },
+  {
+    "name": "com.amazonaws.internal.config.Builder",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.amazonaws.internal.config.HostRegexToRegionMappingJsonHelper",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "setHostNameRegex",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setRegionName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.amazonaws.internal.config.HttpClientConfigJsonHelper",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "setRegionMetadataServiceName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setServiceName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.amazonaws.internal.config.InternalConfigJsonHelper",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "setDefaultSigner",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.SignerConfigJsonHelper"
+        ]
+      },
+      {
+        "name": "setHostRegexToRegionMappings",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.HostRegexToRegionMappingJsonHelper[]"
+        ]
+      },
+      {
+        "name": "setHttpClients",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.JsonIndex[]"
+        ]
+      },
+      {
+        "name": "setRegionSigners",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.JsonIndex[]"
+        ]
+      },
+      {
+        "name": "setServiceRegionSigners",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.JsonIndex[]"
+        ]
+      },
+      {
+        "name": "setServiceSigners",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.JsonIndex[]"
+        ]
+      },
+      {
+        "name": "setUserAgentTemplate",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.amazonaws.internal.config.JsonIndex",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "setConfig",
+        "parameterTypes": [
+          "com.amazonaws.internal.config.Builder"
+        ]
+      },
+      {
+        "name": "setKey",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.amazonaws.internal.config.SignerConfigJsonHelper",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "setSignerType",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "software.amazon.msk.auth.iam.IAMClientCallbackHandler",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "software.amazon.msk.auth.iam.IAMLoginModule",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "software.amazon.msk.auth.iam.internals.IAMSaslClient$ClassLoaderAwareIAMSaslClientFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "software.amazon.msk.auth.iam.internals.IAMSaslClient$IAMSaslClientFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]
