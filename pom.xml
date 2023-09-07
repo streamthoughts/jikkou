@@ -38,7 +38,8 @@ limitations under the License.
     <name>Jikkou Project</name>
 
     <description>
-        Jikkou :: A tool designed to provide an efficient and easy way to manage, automate, and provision resource configurations for Kafka
+        Jikkou :: A tool designed to provide an efficient and easy way to manage, automate, and provision resource
+        configurations for Kafka
     </description>
 
     <url>https://streamthoughts.github.io/jikkou/</url>
@@ -234,8 +235,8 @@ limitations under the License.
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
                 <version>1.2.1</version>
-	    </dependency>
-	    <dependency>
+            </dependency>
+            <dependency>
                 <groupId>software.amazon.msk</groupId>
                 <artifactId>aws-msk-iam-auth</artifactId>
                 <version>1.1.9</version>
@@ -437,8 +438,8 @@ limitations under the License.
                             <include>src/integration-test/java/**/*.java</include>
                         </includes>
 
-                        <importOrder /> <!-- standard import order -->
-                        <removeUnusedImports /> <!-- self-explanatory -->
+                        <importOrder/> <!-- standard import order -->
+                        <removeUnusedImports/> <!-- self-explanatory -->
                         <!-- no need to specify files, inferred automatically, but you can if you want -->
 
                         <!-- make sure every file has the following copyright header.
@@ -677,18 +678,30 @@ limitations under the License.
                                     <jikkou>
                                         <artifacts>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz
+                                                </transform>
                                                 <platform>linux-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip
+                                                </transform>
                                                 <platform>linux-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip
+                                                </transform>
                                                 <platform>osx-x86_64</platform>
                                             </artifact>
                                         </artifacts>

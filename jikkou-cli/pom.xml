@@ -111,10 +111,6 @@ limitations under the License.
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <dependency>
-            <groupId>software.amazon.msk</groupId>
-            <artifactId>aws-msk-iam-auth</artifactId>
-        </dependency>
         <!-- START dependencies for Micronaut/Picocli -->
         <dependency>
             <groupId>io.micronaut</groupId>
