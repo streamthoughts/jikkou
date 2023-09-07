@@ -6,6 +6,9 @@
       },
       {
         "pattern": "\\Qcom/amazonaws/sdk/versionInfo.properties\\E"
+      },
+      {
+        "pattern": "\\Qcom/amazonaws/partitions/endpoints.json\\E"
       }
     ]
   }
