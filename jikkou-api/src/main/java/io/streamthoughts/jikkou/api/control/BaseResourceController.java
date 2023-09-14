@@ -17,6 +17,8 @@ package io.streamthoughts.jikkou.api.control;
 
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
@@ -55,14 +57,10 @@ public interface BaseResourceController<
         }
 
         // Compute all changes
-        List<C> changes = computeReconciliationChanges(resources, mode, context)
+        List<HasMetadataChange<C>> filtered = computeReconciliationChanges(resources, mode, context)
                 .getItems()
                 .stream()
-                .map(HasMetadataChange::getChange)
-                .toList();
-
-        // Keep only changes relevant for this reconciliation mode.
-        List<C> filtered = changes.stream()
+                // Keep only changes relevant for this reconciliation mode.
                 .filter(mode::isSupported)
                 .collect(Collectors.toList());
 
@@ -77,7 +75,7 @@ public interface BaseResourceController<
      * @param dryRun  specify whether this operation should be executed in dry-run.
      * @return the list of all changes applied.
      */
-    List<ChangeResult<C>> execute(@NotNull List<C> changes,
+    List<ChangeResult<C>> execute(@NotNull List<HasMetadataChange<C>> changes,
                                   @NotNull final ReconciliationMode mode,
                                   boolean dryRun);
 

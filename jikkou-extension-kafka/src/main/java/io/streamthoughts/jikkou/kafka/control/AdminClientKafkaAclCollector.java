@@ -40,7 +40,7 @@ import org.apache.kafka.common.acl.AclBindingFilter;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
-public final class AdminClientKafkaAclCollector extends AbstractAdminClientKafkaController
+public final class AdminClientKafkaAclCollector extends AdminClientKafkaSupport
         implements ResourceCollector<V1KafkaPrincipalAuthorization> {
 
     /**

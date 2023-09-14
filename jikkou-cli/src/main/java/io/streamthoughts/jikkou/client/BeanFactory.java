@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.api.JikkouContext;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
+import io.streamthoughts.jikkou.api.reporter.ChangeReporterApiConfigurator;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformationApiConfigurator;
@@ -42,7 +43,8 @@ public final class BeanFactory {
     public JikkouApi jikkouApi(JikkouContext context) {
         ApiConfigurator[] configurators = {
                 new ResourceValidationApiConfigurator(context.getExtensionFactory()),
-                new ResourceTransformationApiConfigurator(context.getExtensionFactory())
+                new ResourceTransformationApiConfigurator(context.getExtensionFactory()),
+                new ChangeReporterApiConfigurator(context.getExtensionFactory())
         };
         return context.createApi(configurators);
     }

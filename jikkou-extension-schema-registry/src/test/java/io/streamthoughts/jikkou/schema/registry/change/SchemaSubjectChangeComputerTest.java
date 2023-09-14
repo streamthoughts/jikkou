@@ -15,8 +15,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.common.utils.Json;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
@@ -65,7 +66,8 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(), List.of(resource));
+        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(), List.of(resource))
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -88,10 +90,8 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(
-                List.of(resource),
-                List.of(resource)
-        );
+        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(resource), List.of(resource))
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -128,10 +128,8 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(
-                List.of(before),
-                List.of(after)
-        );
+        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(before), List.of(after))
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -173,10 +171,8 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(
-                List.of(before),
-                List.of(after)
-        );
+        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(before), List.of(after))
+                .stream().map(HasMetadataChange::getChange).toList();
         // Then
         Assertions.assertEquals(1, changes.size());
         Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).getChangeType());

@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.JsonValueChange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -73,20 +75,20 @@ class JsonValueChangeTest {
          { "filed1": "value1", "field2": "value2" }
         """;
         // When
-        JsonValueChange change = JsonValueChange.with(json, null);
+        JsonValueChange change = JsonValueChange.with( null, json);
 
         // Then
         Assertions.assertEquals(ChangeType.ADD, change.getChangeType());
     }
 
     @Test
-    void shouldGetDeleteChangeGivenNewJson() {
+    void shouldGetDeleteChangeGivenNullNewJson() {
         // Given
         var json = """
          { "filed1": "value1", "field2": "value2" }
         """;
         // When
-        JsonValueChange change = JsonValueChange.with( null, json);
+        JsonValueChange change = JsonValueChange.with( json, null);
 
         // Then
         Assertions.assertEquals(ChangeType.DELETE, change.getChangeType());

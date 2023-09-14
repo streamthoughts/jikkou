@@ -15,14 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.IGNORE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
-
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChangeComputer;
+import io.streamthoughts.jikkou.api.change.ValueChangeComputer;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
@@ -40,23 +33,6 @@ public class KafkaQuotaChangeComputer extends ValueChangeComputer<V1KafkaQuota, 
      */
     public KafkaQuotaChangeComputer(boolean deleteOrphans) {
         super(new KeyMapper(), new ValueMapper(), deleteOrphans);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    protected ChangeType getChangeType(V1KafkaQuota before, V1KafkaQuota after) {
-        if (before == null && after == null)
-            return IGNORE;
-
-        if (before == null)
-            return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? IGNORE : ADD;
-
-        if (after == null)
-            return DELETE;
-
-        return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? DELETE : UPDATE;
     }
 
     static class KeyMapper implements ChangeKeyMapper<V1KafkaQuota> {

@@ -15,6 +15,9 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

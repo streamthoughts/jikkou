@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.JikkouApi;
-import io.streamthoughts.jikkou.api.control.Change;
+import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.model.HasItems;

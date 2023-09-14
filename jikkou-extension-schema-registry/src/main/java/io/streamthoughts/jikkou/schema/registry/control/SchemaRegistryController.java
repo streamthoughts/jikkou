@@ -24,11 +24,11 @@ import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.control.ChangeExecutor;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
@@ -40,12 +40,14 @@ import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescription;
 import io.streamthoughts.jikkou.schema.registry.change.handler.CreateSchemaSubjectChangeHandler;
+import io.streamthoughts.jikkou.schema.registry.change.handler.DeleteSchemaSubjectChangeHandler;
 import io.streamthoughts.jikkou.schema.registry.change.handler.UpdateSchemaSubjectChangeHandler;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectChange;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectChangeList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
@@ -90,7 +92,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<SchemaSubjectChange> changes,
+    public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items,
                                                            @NotNull ReconciliationMode mode,
                                                            boolean dryRun) {
         SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
@@ -98,9 +100,10 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
             List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
                     new CreateSchemaSubjectChangeHandler(api),
                     new UpdateSchemaSubjectChangeHandler(api),
+                    new DeleteSchemaSubjectChangeHandler(api),
                     new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return new ChangeExecutor<>(handlers).execute(items, dryRun);
         } finally {
             api.close();
         }
@@ -128,11 +131,16 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();
 
         // Compute changes
-        List<SchemaSubjectChange> changes = computer.computeChanges(actualSubjects, expectedSubjects);
+        List<V1SchemaRegistrySubjectChange> changes = computer.computeChanges(actualSubjects, expectedSubjects)
+                .stream().map(it -> V1SchemaRegistrySubjectChange
+                        .builder()
+                        .withMetadata(it.getMetadata())
+                        .withChange(it.getChange())
+                        .build()
+                )
+                .collect(Collectors.toList());
 
-        return V1SchemaRegistrySubjectChangeList.builder()
-                .withItems(changes.stream().map(c -> V1SchemaRegistrySubjectChange.builder().withChange(c).build()).toList())
-                .build();
+        return V1SchemaRegistrySubjectChangeList.builder().withItems(changes).build();
     }
 
     /**

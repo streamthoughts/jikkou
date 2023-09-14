@@ -15,13 +15,14 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.model.Nameable;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.common.utils.CollectionUtils;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.HashMap;
 import java.util.List;
@@ -67,17 +68,18 @@ public final class CreateTopicChangeHandler implements KafkaTopicChangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<TopicChange>> apply(final @NotNull List<TopicChange> changes) {
-        List<NewTopic> topics = changes
+    public @NotNull List<ChangeResponse<TopicChange>> apply(final @NotNull List<HasMetadataChange<TopicChange>> items) {
+        List<NewTopic> topics = items
                 .stream()
-                .peek(c -> ChangeHandler.verify(this, c))
+                .peek(it -> ChangeHandler.verify(this, it))
                 .map(this::toNewTopic)
                 .collect(Collectors.toList());
 
         LOG.info("Creating new topics : {}", topics);
         CreateTopicsResult result = client.createTopics(topics, new CreateTopicsOptions());
 
-        Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);
+        Map<String, HasMetadataChange<TopicChange>> changesKeyedByTopicName = CollectionUtils
+                .keyBy(items, it -> it.getChange().getName());
 
         final Map<String, CompletableFuture<Void>> results = new HashMap<>(result.values())
                 .entrySet()
@@ -87,22 +89,23 @@ public final class CreateTopicChangeHandler implements KafkaTopicChangeHandler {
         return results.entrySet()
                 .stream()
                 .map(e -> new ChangeResponse<>(
-                                topicKeyedByName.get(e.getKey()),
+                                changesKeyedByTopicName.get(e.getKey()),
                                 e.getValue().thenApply(unused -> ChangeMetadata.empty())
                         )
                 )
                 .toList();
     }
 
-    private NewTopic toNewTopic(final TopicChange t) {
-        Map<String, String> configs = t.getConfigEntryChanges()
+    private NewTopic toNewTopic(final HasMetadataChange<TopicChange> t) {
+        TopicChange change = t.getChange();
+        Map<String, String> configs = change.getConfigEntryChanges()
                 .stream()
                 .collect(Collectors.toMap(ConfigEntryChange::getName, v -> String.valueOf(v.getValueChange().getAfter())));
 
         return new NewTopic(
-                t.getName(),
-                t.getPartitions().getAfter(),
-                t.getReplicas().getAfter())
+                change.getName(),
+                change.getPartitions().getAfter(),
+                change.getReplicas().getAfter())
                 .configs(configs);
     }
 }

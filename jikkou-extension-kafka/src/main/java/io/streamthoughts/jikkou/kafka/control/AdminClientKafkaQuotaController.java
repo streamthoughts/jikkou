@@ -24,20 +24,22 @@ import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.control.ChangeExecutor;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.error.ConfigException;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
-import io.streamthoughts.jikkou.kafka.control.change.QuotaChangeComputer;
-import io.streamthoughts.jikkou.kafka.control.handlers.quotas.AlterQuotasChangeHandlerKafka;
+import io.streamthoughts.jikkou.kafka.change.QuotaChange;
+import io.streamthoughts.jikkou.kafka.change.QuotaChangeComputer;
 import io.streamthoughts.jikkou.kafka.control.handlers.quotas.CreateQuotasChangeHandlerKafka;
 import io.streamthoughts.jikkou.kafka.control.handlers.quotas.DeleteQuotasChangeHandler;
 import io.streamthoughts.jikkou.kafka.control.handlers.quotas.QuotaChangeDescription;
+import io.streamthoughts.jikkou.kafka.control.handlers.quotas.UpdateQuotasChangeHandlerKafka;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaClientQuotaListConverter;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaChange;
@@ -45,6 +47,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaChangeList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -52,12 +55,12 @@ import org.jetbrains.annotations.VisibleForTesting;
 @AcceptsResource(type = V1KafkaClientQuota.class)
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
 @AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
-public final class AdminClientKafkaQuotaController extends AbstractAdminClientKafkaController
+public final class AdminClientKafkaQuotaController extends AdminClientKafkaSupport
         implements BaseResourceController<V1KafkaClientQuota, QuotaChange> {
 
     public static final String LIMITS_DELETE_ORPHANS_CONFIG_NAME = "limits-delete-orphans";
 
-    private AdminClientKafkaQuotaCollector descriptor;
+    private AdminClientKafkaQuotaCollector collector;
 
     /**
      * Creates a new {@link AdminClientKafkaQuotaController} instance.
@@ -91,7 +94,7 @@ public final class AdminClientKafkaQuotaController extends AbstractAdminClientKa
     @Override
     public void configure(@NotNull Configuration config) throws ConfigException {
         super.configure(config);
-        this.descriptor = new AdminClientKafkaQuotaCollector(this.adminClientContext);
+        this.collector = new AdminClientKafkaQuotaCollector(this.adminClientContext);
     }
 
     /**
@@ -103,31 +106,38 @@ public final class AdminClientKafkaQuotaController extends AbstractAdminClientKa
                                                                      @NotNull ReconciliationContext context) {
 
         // Get the list of described resource that are candidates for this reconciliation
-        final List<V1KafkaClientQuota> actualResource = descriptor.listAll();
+        List<V1KafkaClientQuota> expected = resources.stream()
+                .filter(new AggregateSelector(context.selectors())::apply)
+                .toList();
+
+        // Get the list of described resource that are candidates for this reconciliation
+        final List<V1KafkaClientQuota> actual = collector.listAll()
+                .stream()
+                .filter(new AggregateSelector(context.selectors())::apply)
+                .toList();
 
         boolean isLimitDeletionEnabled = isLimitDeletionEnabled(mode, context);
 
         // Compute state changes
-        List<QuotaChange> changes = new QuotaChangeComputer(isLimitDeletionEnabled).computeChanges(
-                actualResource,
-                resources
-        );
+        QuotaChangeComputer changeComputer = new QuotaChangeComputer(isLimitDeletionEnabled);
+        List<V1KafkaClientQuotaChange> changes = changeComputer.computeChanges(actual, expected).stream()
+                .map(it -> V1KafkaClientQuotaChange.builder().withChange(it.getChange()).build())
+                .collect(Collectors.toList());
 
-        return new V1KafkaClientQuotaChangeList()
-                .withItems(changes.stream().map(c -> V1KafkaClientQuotaChange.builder().withChange(c).build()).toList());
+        return V1KafkaClientQuotaChangeList.builder().withItems(changes).build();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult<QuotaChange>> execute(@NotNull List<QuotaChange> changes,
+    public List<ChangeResult<QuotaChange>> execute(@NotNull List<HasMetadataChange<QuotaChange>> changes,
                                                    @NotNull ReconciliationMode mode,
                                                    boolean dryRun) {
         AdminClient client = adminClientContext.client();
         List<ChangeHandler<QuotaChange>> handlers = List.of(
                 new CreateQuotasChangeHandlerKafka(client),
-                new AlterQuotasChangeHandlerKafka(client),
+                new UpdateQuotasChangeHandlerKafka(client),
                 new DeleteQuotasChangeHandler(client),
                 new ChangeHandler.None<>(QuotaChangeDescription::new)
         );

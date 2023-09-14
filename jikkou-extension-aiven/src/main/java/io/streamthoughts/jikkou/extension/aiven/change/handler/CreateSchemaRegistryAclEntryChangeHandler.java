@@ -15,10 +15,11 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change.handler;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.change.KafkaChangeDescriptions;
@@ -42,9 +43,9 @@ public class CreateSchemaRegistryAclEntryChangeHandler extends AbstractChangeHan
      */
     @Override
     public List<ChangeResponse<ValueChange<SchemaRegistryAclEntry>>> apply(
-            @NotNull List<ValueChange<SchemaRegistryAclEntry>> changes) {
+            @NotNull List<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> changes) {
         return changes.stream()
-                .map(change -> executeAsync(change, () -> api.addSchemaRegistryAclEntry(change.getAfter())))
+                .map(it -> executeAsync(it, () -> api.addSchemaRegistryAclEntry(it.getChange().getAfter())))
                 .collect(Collectors.toList());
     }
 
@@ -52,7 +53,8 @@ public class CreateSchemaRegistryAclEntryChangeHandler extends AbstractChangeHan
      * {@inheritDoc}
      */
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull ValueChange<SchemaRegistryAclEntry> change) {
+    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<ValueChange<SchemaRegistryAclEntry>> item) {
+        ValueChange<SchemaRegistryAclEntry> change = item.getChange();
         return KafkaChangeDescriptions.of(change.getChangeType(), change.getAfter());
     }
 }

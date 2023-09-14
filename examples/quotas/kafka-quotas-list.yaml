@@ -5,13 +5,13 @@ metadata:
   annotations: { }
 items:
   - spec:
-    type: 'CLIENT'
-    entity:
-      clientId: 'my-client'
-    configs:
-      requestPercentage: 10
-      producerByteRate: 1024
-      consumerByteRate: 1024
+      type: 'CLIENT'
+      entity:
+        clientId: 'my-client'
+      configs:
+        requestPercentage: 10
+        producerByteRate: 1024
+        consumerByteRate: 1024
 
   - spec:
       type: 'USER'

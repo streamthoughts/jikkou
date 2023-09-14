@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.api;
 
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.error.JikkouApiException;
@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.model.ResourceType;
+import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
@@ -53,7 +54,7 @@ public interface JikkouApi extends AutoCloseable {
          * Associate the given list of resource validations to the building {@link JikkouApi}.
          *
          * @param validations the list of validation to associate.
-         * @return this builder; never null
+         * @return this builder; never {@code null}
          */
         B withValidations(@NotNull List<ResourceValidation<HasMetadata>> validations);
 
@@ -61,7 +62,7 @@ public interface JikkouApi extends AutoCloseable {
          * Associate the given list of resource transformations to the building {@link JikkouApi}.
          *
          * @param transformations the list of transformations to associate.
-         * @return this builder; never null
+         * @return this builder; never {@code null}
          */
         B withTransformations(@NotNull List<ResourceTransformation<HasMetadata>> transformations);
 
@@ -69,7 +70,7 @@ public interface JikkouApi extends AutoCloseable {
          * Associate the given list of resource controllers to the building {@link JikkouApi}.
          *
          * @param controllers the list of controllers to associate.
-         * @return this builder; never null
+         * @return this builder; never {@code null}
          */
         @SuppressWarnings("rawtypes")
         B withControllers(final @NotNull List<ResourceController> controllers);
@@ -78,7 +79,7 @@ public interface JikkouApi extends AutoCloseable {
          * Associate the given list of resource collectors to the building {@link JikkouApi}.
          *
          * @param collectors the list of collectors to associate.
-         * @return this builder; never null
+         * @return this builder; never {@code null}
          */
         @SuppressWarnings("rawtypes")
         B withCollectors(@NotNull List<ResourceCollector> collectors);
@@ -86,24 +87,24 @@ public interface JikkouApi extends AutoCloseable {
         /**
          * Associate the given resource validation to the building {@link JikkouApi}.
          *
-         * @param validation the resource validation; should not be null.
-         * @return this builder; never null
+         * @param validation the resource validation; should not be {@code null}.
+         * @return this builder; never {@code null}
          */
         B withValidation(@NotNull ResourceValidation<? extends HasMetadata> validation);
 
         /**
          * Associate the given resource transformation to the building {@link JikkouApi}.
          *
-         * @param transformation the resource transformation; should not be null.
-         * @return this builder; never null
+         * @param transformation the resource transformation; should not be {@code null}.
+         * @return this builder; never {@code null}
          */
         B withTransformation(@NotNull ResourceTransformation<? extends HasMetadata> transformation);
 
         /**
          * Associate the given resource controller to the building {@link JikkouApi}.
          *
-         * @param controller the resource controller; should not be null.
-         * @return this builder; never null
+         * @param controller the resource controller; should not be {@code null}.
+         * @return this builder; never {@code null}
          */
         @SuppressWarnings("rawtypes")
         default B withController(final @NotNull ResourceController controller) {
@@ -111,20 +112,38 @@ public interface JikkouApi extends AutoCloseable {
         }
 
         /**
-         * Associate the given resource descriptor to the building {@link JikkouApi}.
+         * Associate the given resource collector to the building {@link JikkouApi}.
          *
-         * @param descriptor the resource descriptor; should not be null.
-         * @return this builder; never null
+         * @param collector the resource collector; should not be {@code null}.
+         * @return this builder; never {@code null}
          */
         @SuppressWarnings("rawtypes")
-        default B withCollector(final @NotNull ResourceCollector descriptor) {
-            return withCollectors(List.of(descriptor));
+        default B withCollector(final @NotNull ResourceCollector collector) {
+            return withCollectors(List.of(collector));
         }
+
+        /**
+         * Associate the given change reporter to the building {@link JikkouApi}.
+         *
+         * @param reporter the change reporter; should not be {@code null}.
+         * @return this builder; never {@code null}
+         */
+        default B withReporter(final @NotNull ChangeReporter reporter) {
+            return withReporters(List.of(reporter));
+        }
+
+        /**
+         * Associate the given resource reporters to the building {@link JikkouApi}.
+         *
+         * @param reporters the change reporters; should not be {@code null}.
+         * @return this builder; never {@code null}
+         */
+        B withReporters(final @NotNull List<ChangeReporter> reporters);
 
         /**
          * Build and return the {@link JikkouApi}.
          *
-         * @return the {@link JikkouApi}; never null
+         * @return the {@link JikkouApi}; never {@code null}
          */
         A build();
     }
@@ -140,7 +159,7 @@ public interface JikkouApi extends AutoCloseable {
     JikkouApi addValidation(@NotNull ResourceValidation<? extends HasMetadata> validation);
 
     /**
-     * Associate a {@link ResourceTransformation} to this api. Transformation will be executed in order
+     * Associate a {@link ResourceTransformation} to this api. Transformations will be executed in order
      * on the resources passed to the {@link #validate(HasItems)}, and
      * {@link #apply(HasItems, ReconciliationMode, ReconciliationContext)} method.
      *
@@ -148,6 +167,17 @@ public interface JikkouApi extends AutoCloseable {
      * @return this api object so methods can be chained together; never null
      */
     JikkouApi addTransformation(@NotNull ResourceTransformation<? extends HasMetadata> transformation);
+
+    /**
+     * Associate a {@link ChangeReporter} to this api. Reporters will be executed in order
+     * on the change results before the {@link #apply(HasItems, ReconciliationMode, ReconciliationContext)} method will return.
+     * Note that reporter are only invoked for reconciliation executed with dry-run equals to {@code false}.
+     *
+     * @param reporter the change reporter to associate to this api.
+     * @return this api object so methods can be chained together; never null
+     */
+    JikkouApi addReporter(@NotNull ChangeReporter reporter);
+
 
     /**
      * Execute the reconciliation for the given resources using

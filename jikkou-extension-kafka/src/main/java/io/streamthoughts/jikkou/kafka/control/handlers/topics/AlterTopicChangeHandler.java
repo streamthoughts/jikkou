@@ -15,14 +15,15 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.control.ValueChange;
-import io.streamthoughts.jikkou.api.model.Nameable;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.common.utils.CollectionUtils;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,16 +70,17 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<TopicChange>> apply(final @NotNull List<TopicChange> changes) {
+    public @NotNull List<ChangeResponse<TopicChange>> apply(final @NotNull List<HasMetadataChange<TopicChange>> items) {
 
         final Map<ConfigResource, Collection<AlterConfigOp>> alterConfigs = new HashMap<>();
         final Map<String, NewPartitions> newPartitions = new HashMap<>();
 
         final Map<String, List<CompletableFuture<Void>>> results = new HashMap<>();
-        for (TopicChange change : changes) {
-            ChangeHandler.verify(this, change);
-            results.put(change.getName(), new ArrayList<>());
+        for (HasMetadataChange<TopicChange> item : items) {
+            ChangeHandler.verify(this, item);
 
+            TopicChange change = item.getChange();
+            results.put(change.getName(), new ArrayList<>());
             if (change.hasConfigEntryChanges()) {
                 final List<AlterConfigOp> alters = new ArrayList<>(change.getConfigEntryChanges().size());
                 for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
@@ -112,12 +114,13 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
                     .forEach((k, v) -> results.get(k).add(Futures.toCompletableFuture(v)));
         }
 
-        Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);
+        Map<String, HasMetadataChange<TopicChange>> changesKeyedByTopicName = CollectionUtils
+                .keyBy(items, it -> it.getChange().getName());
 
         return results.entrySet()
                 .stream()
                 .map(e -> new ChangeResponse<>(
-                                topicKeyedByName.get(e.getKey()),
+                                changesKeyedByTopicName.get(e.getKey()),
                                 e.getValue().stream().map(f -> f.thenApply(unused -> ChangeMetadata.empty())).collect(Collectors.toList())
                         )
                 )

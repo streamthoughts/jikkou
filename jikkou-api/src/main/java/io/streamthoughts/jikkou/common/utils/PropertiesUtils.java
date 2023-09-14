@@ -60,8 +60,8 @@ public final class PropertiesUtils {
         return properties;
     }
 
-    public static Map<String, String> toMap(final Properties props) {
-        Map<String, String> builder = new LinkedHashMap<>();
+    public static Map<String, Object> toMap(final Properties props) {
+        Map<String, Object> builder = new LinkedHashMap<>();
         for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
             String key = (String) e.nextElement();
             builder.put(key, props.getProperty(key));

@@ -18,10 +18,10 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
@@ -174,9 +174,9 @@ class SchemaRegistryAclEntryIT {
         Assertions.assertNotNull(results);
         Assertions.assertEquals(1, results.size());
 
-        ChangeResult<ValueChange<SchemaRegistryAclEntry>> change = results.get(0);
-        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.ADD, change.data().getChangeType());
+        ChangeResult<ValueChange<SchemaRegistryAclEntry>> result = results.get(0);
+        Assertions.assertEquals(ChangeResult.Status.CHANGED, result.status());
+        Assertions.assertEquals(ChangeType.ADD, result.data().getChange().getChangeType());
     }
 
     @Test
@@ -233,9 +233,9 @@ class SchemaRegistryAclEntryIT {
         Assertions.assertNotNull(results);
         Assertions.assertEquals(1, results.size());
 
-        ChangeResult<ValueChange<SchemaRegistryAclEntry>> change = results.get(0);
-        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.data().getChangeType());
+        ChangeResult<ValueChange<SchemaRegistryAclEntry>> result = results.get(0);
+        Assertions.assertEquals(ChangeResult.Status.CHANGED, result.status());
+        Assertions.assertEquals(ChangeType.DELETE, result.data().getChange().getChangeType());
     }
 
 

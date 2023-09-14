@@ -15,12 +15,16 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -32,25 +36,40 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHandler {
 
     private final AdminClient client;
+    protected final Set<ChangeType> supportedChangeTypes;
 
     /**
-     * Creates a new {@link AlterQuotasChangeHandlerKafka} instance.
+     * Creates a new {@link UpdateQuotasChangeHandlerKafka} instance.
      *
      * @param client the {@link AdminClient}.
      */
-    public AbstractQuotaChangeHandler(@NotNull final AdminClient client) {
+    public AbstractQuotaChangeHandler(@NotNull final AdminClient client,
+                                      @NotNull final ChangeType supportedChangeType) {
+        this(client, Set.of(supportedChangeType));
+    }
+
+    /**
+     * Creates a new {@link UpdateQuotasChangeHandlerKafka} instance.
+     *
+     * @param client the {@link AdminClient}.
+     * @param supportedChangeTypes the set of supported change type.
+     */
+    public AbstractQuotaChangeHandler(@NotNull final AdminClient client,
+                                      @NotNull final Set<ChangeType> supportedChangeTypes) {
         this.client = client;
+        this.supportedChangeTypes = supportedChangeTypes;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<QuotaChange>> apply(@NotNull final List<QuotaChange> changes) {
-        final List<ClientQuotaAlteration> alterations = changes
-                .stream().map(quota -> {
-                    final ClientQuotaEntity entity = new ClientQuotaEntity(quota.getType().toEntities(quota.getEntity()));
-                    final List<ClientQuotaAlteration.Op> operations = quota.getConfigEntryChanges()
+    public @NotNull List<ChangeResponse<QuotaChange>> apply(@NotNull final List<HasMetadataChange<QuotaChange>> items) {
+        final List<ClientQuotaAlteration> alterations = items
+                .stream().map(item -> {
+                    QuotaChange change = item.getChange();
+                    final ClientQuotaEntity entity = new ClientQuotaEntity(change.getType().toEntities(change.getEntity()));
+                    final List<ClientQuotaAlteration.Op> operations = change.getConfigEntryChanges()
                             .stream()
                             .map(it -> new ClientQuotaAlteration.Op(it.getName(), (Double) it.getValueChange().getAfter()))
                             .collect(Collectors.toList());
@@ -64,8 +83,11 @@ public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHand
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> Futures.toCompletableFuture(e.getValue())));
 
-        Map<ClientQuotaEntity, QuotaChange> changeByQuotaEntity = changes.stream()
-                .collect(Collectors.toMap(c -> new ClientQuotaEntity(c.getType().toEntities(c.getEntity())), c -> c));
+        Map<ClientQuotaEntity, HasMetadataChange<QuotaChange>> changeByQuotaEntity = items.stream()
+                .collect(Collectors.toMap(
+                        it -> new ClientQuotaEntity(it.getChange().getType().toEntities(it.getChange().getEntity())),
+                        c -> c)
+                );
 
         return results.entrySet()
                 .stream()
@@ -75,5 +97,17 @@ public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHand
                         )
                 )
                 .toList();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<ChangeType> supportedChangeTypes() {
+        return supportedChangeTypes;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ChangeDescription getDescriptionFor(@NotNull final HasMetadataChange<QuotaChange> item) {
+        return new QuotaChangeDescription(item);
     }
 }

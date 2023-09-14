@@ -24,14 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents objects to put into scope for rendering template.
- *
- * @see JinjaTemplateRenderer
  */
-public class TemplateBindings {
+public final class TemplateBindings {
 
-    private final Map<String, String> systemEnv;
+    private final Map<String, Object> systemEnv;
 
-    private final Map<String, String> systemProps;
+    private final Map<String, Object> systemProps;
 
     private final Map<String, Object> values;
 
@@ -39,15 +37,15 @@ public class TemplateBindings {
 
     public static TemplateBindings defaults() {
         return new TemplateBindings(
-                System.getenv(),
+                new HashMap<>(System.getenv()),
                 toMap(System.getProperties()),
                 new LinkedHashMap<>(),
                 new LinkedHashMap<>()
         );
     }
 
-    private TemplateBindings(@NotNull final Map<String, String> systemEnv,
-                             @NotNull final Map<String, String> systemProps,
+    private TemplateBindings(@NotNull final Map<String, Object> systemEnv,
+                             @NotNull final Map<String, Object> systemProps,
                              @NotNull final Map<String, Object> values,
                              @NotNull final Map<String, Object> labels) {
         this.systemEnv = systemEnv;
@@ -74,11 +72,11 @@ public class TemplateBindings {
         return this.labels;
     }
 
-    public Map<String, String> getSystemEnv() {
+    public Map<String, Object> getSystemEnv() {
         return systemEnv;
     }
 
-    public Map<String, String> getSystemProps() {
+    public Map<String, Object> getSystemProps() {
         return systemProps;
     }
 

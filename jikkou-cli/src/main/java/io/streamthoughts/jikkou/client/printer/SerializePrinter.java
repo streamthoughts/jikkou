@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.client.printer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import java.util.List;
 

@@ -24,15 +24,14 @@ import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.control.ChangeExecutor;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.model.GenericResourceChange;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
@@ -96,16 +95,19 @@ public class KafkaQuotaController implements BaseResourceController<V1KafkaQuota
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<ValueChange<KafkaQuotaEntry>>> execute(@NotNull List<ValueChange<KafkaQuotaEntry>> changes,
-                                                                  @NotNull ReconciliationMode mode,
-                                                                  boolean dryRun) {
+    public List<ChangeResult<ValueChange<KafkaQuotaEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<KafkaQuotaEntry>>> changes,
+                                                                    @NotNull ReconciliationMode mode,
+                                                                    boolean dryRun) {
 
         AivenApiClient api = AivenApiClientFactory.create(config);
         try {
             List<ChangeHandler<ValueChange<KafkaQuotaEntry>>> handlers = List.of(
                     new CreateKafkaQuotaChangeHandler(api),
                     new DeleteKafkaQuotaChangeHandler(api),
-                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(it.getChangeType(), it.getAfter()))
+                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
+                            it.getChange().getChangeType(),
+                            it.getChange().getAfter())
+                    )
             );
             return new ChangeExecutor<>(handlers).execute(changes, dryRun);
         } finally {
@@ -135,15 +137,11 @@ public class KafkaQuotaController implements BaseResourceController<V1KafkaQuota
         Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.evaluate(context.configuration());
         KafkaQuotaChangeComputer computer = new KafkaQuotaChangeComputer(deleteOrphans);
 
-        List<GenericResourceChange<KafkaQuotaEntry>> changes = computer.computeChanges(actualResources, expectedResources)
-                .stream()
-                .map(change -> GenericResourceChange
-                        .<KafkaQuotaEntry>builder()
-                        .withChange(change)
-                        .build()).toList();
+        List<HasMetadataChange<ValueChange<KafkaQuotaEntry>>> changes = computer
+                .computeChanges(actualResources, expectedResources);
 
         return GenericResourceListObject
-                .<GenericResourceChange<KafkaQuotaEntry>>builder()
+                .<HasMetadataChange<ValueChange<KafkaQuotaEntry>>>builder()
                 .withItems(changes)
                 .build();
     }

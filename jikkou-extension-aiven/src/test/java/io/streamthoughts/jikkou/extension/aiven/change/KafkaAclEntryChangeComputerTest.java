@@ -16,8 +16,9 @@
 package io.streamthoughts.jikkou.extension.aiven.change;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.extension.aiven.MetadataAnnotations;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
@@ -52,7 +53,8 @@ class KafkaAclEntryChangeComputerTest {
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(false);
 
         // When
-        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(), List.of(after));
+        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(), List.of(after))
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -76,7 +78,8 @@ class KafkaAclEntryChangeComputerTest {
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(false);
 
         // When
-        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(entry), List.of(entry));
+        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(entry), List.of(entry))
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -123,7 +126,8 @@ class KafkaAclEntryChangeComputerTest {
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(true);
 
         // When
-        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(before), List.of(after));
+        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(before), List.of(after))
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -151,7 +155,8 @@ class KafkaAclEntryChangeComputerTest {
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(false);
 
         // When
-        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(before), List.of());
+        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(before), List.of())
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(0, changes.size());
@@ -173,7 +178,8 @@ class KafkaAclEntryChangeComputerTest {
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(true);
 
         // When
-        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(before), List.of());
+        List<ValueChange<KafkaAclEntry>> changes = computer.computeChanges(List.of(before), List.of())
+                .stream().map(HasMetadataChange::getChange).toList();
 
         // Then
         Assertions.assertEquals(1, changes.size());

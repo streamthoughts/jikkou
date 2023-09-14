@@ -15,13 +15,14 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
+import static io.streamthoughts.jikkou.api.change.ChangeType.ADD;
+import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
+import static io.streamthoughts.jikkou.api.change.ChangeType.UPDATE;
 
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
@@ -59,10 +60,11 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<SchemaSubjectChange>> apply(@NotNull List<SchemaSubjectChange> changes) {
+    public List<ChangeResponse<SchemaSubjectChange>> apply(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items) {
 
         List<ChangeResponse<SchemaSubjectChange>> results = new ArrayList<>();
-        for (SchemaSubjectChange change : changes) {
+        for (HasMetadataChange<SchemaSubjectChange> item : items) {
+            SchemaSubjectChange change = item.getChange();
             CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
             ValueChange<String> schema = change.getSchema();
 
@@ -78,7 +80,7 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
             if (DELETE == compatibilityLevels.getChangeType()) {
                 future = future.thenComposeAsync(unused -> deleteCompatibilityLevel(change));
             }
-            results.add(toChangeResponse(change, future));
+            results.add(toChangeResponse(item, future));
         }
         return results;
     }

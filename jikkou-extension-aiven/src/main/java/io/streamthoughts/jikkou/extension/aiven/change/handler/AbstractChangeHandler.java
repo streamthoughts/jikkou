@@ -15,12 +15,13 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change.handler;
 
-import io.streamthoughts.jikkou.api.control.ChangeError;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeError;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
@@ -57,7 +58,7 @@ public abstract class AbstractChangeHandler<T> implements ChangeHandler<ValueCha
         this.supportedChangeTypes = Objects.requireNonNull(supportedChangeTypes, "changeType must not be null");
     }
 
-    protected <R> ChangeResponse<ValueChange<T>> executeAsync(final ValueChange<T> change,
+    protected <R> ChangeResponse<ValueChange<T>> executeAsync(final HasMetadataChange<ValueChange<T>> change,
                                                               final Supplier<R> supplier) {
         CompletableFuture<ChangeMetadata> future = CompletableFuture
                 .supplyAsync(() -> {

@@ -15,6 +15,15 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +37,7 @@ class ChangeExecutorTest {
     void shouldNotExecuteHandlerForDryRunTrue() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.ADD);
-        Change change = () -> ChangeType.ADD;
+        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.ADD).build();
         ChangeExecutor<Change> executor = new ChangeExecutor<>(List.of(handler));
 
         // When
@@ -43,47 +52,45 @@ class ChangeExecutorTest {
     void shouldExecuteHandlerForSupportedType() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.ADD);
-        Change change = () -> ChangeType.ADD;
+        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.ADD).build();
         ChangeExecutor<Change> executor = new ChangeExecutor<>(List.of(handler));
 
         // When
-        List<Change> changes = List.of(change);
-        List<ChangeResult<Change>> results = executor.execute(changes, false);
+        List<ChangeResult<Change>> results = executor.execute(List.of(change), false);
 
         // Then
         Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(changes, handler.capturedChanges);
+        Assertions.assertEquals(List.of(change), handler.capturedChanges);
     }
 
     @Test
     void shouldNotExecuteHandlerForUnsupportedType() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.DELETE);
-        Change change = () -> ChangeType.ADD;
+        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.ADD).build();
         ChangeExecutor<Change> executor = new ChangeExecutor<>(List.of(handler));
 
         // When
-        List<Change> changes = List.of(change);
-        List<ChangeResult<Change>> results = executor.execute(changes, false);
+        List<ChangeResult<Change>> results = executor.execute(List.of(change), false);
 
         // Then
         Assertions.assertTrue(results.isEmpty());
+        Assertions.assertTrue(handler.capturedChanges.isEmpty());
     }
 
     @Test
     void shouldAlwaysReturnNoneChanges() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.NONE);
-        Change change = () -> ChangeType.NONE;
+        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.NONE).build();
         ChangeExecutor<Change> executor = new ChangeExecutor<>(List.of(handler));
 
         // When
-        List<Change> changes = List.of(change);
-        List<ChangeResult<Change>> results = executor.execute(changes, false);
+        List<ChangeResult<Change>> results = executor.execute(List.of(change), false);
 
         // Then
         Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(changes, handler.capturedChanges);
+        Assertions.assertEquals(List.of(change), handler.capturedChanges);
     }
 
 
@@ -91,7 +98,7 @@ class ChangeExecutorTest {
 
         final ChangeType type;
 
-        List<Change> capturedChanges = new ArrayList<>();
+        List<HasMetadataChange<Change>> capturedChanges = new ArrayList<>();
 
         public TestChangeHandler(ChangeType type) {
             this.type = type;
@@ -103,13 +110,13 @@ class ChangeExecutorTest {
         }
 
         @Override
-        public List<ChangeResponse<Change>> apply(@NotNull List<Change> changes) {
+        public List<ChangeResponse<Change>> apply(@NotNull List<HasMetadataChange<Change>> changes) {
             this.capturedChanges.addAll(changes);
             return changes.stream().map(ChangeResponse::new).toList();
         }
 
         @Override
-        public ChangeDescription getDescriptionFor(@NotNull Change change) {
+        public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<Change> item) {
             return type::name;
         }
     }

@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.api.model;
 
-import io.streamthoughts.jikkou.api.control.Change;
+import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 
 /**

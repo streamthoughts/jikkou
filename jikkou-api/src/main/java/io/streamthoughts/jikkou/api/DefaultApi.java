@@ -15,9 +15,10 @@
  */
 package io.streamthoughts.jikkou.api;
 
+import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.control.ResourceController;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
@@ -30,6 +31,8 @@ import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.model.ResourceType;
+import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
+import io.streamthoughts.jikkou.api.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformationChain;
@@ -68,6 +71,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         private final List<ResourceController> controllers = new LinkedList<>();
         @SuppressWarnings("rawtypes")
         private final List<ResourceCollector> collectors = new LinkedList<>();
+        private final List<ChangeReporter> reporters = new LinkedList<>();
 
         /**
          * {@inheritDoc}
@@ -125,6 +129,16 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             return this;
         }
 
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        public Builder withReporters(@NotNull List<ChangeReporter> reporters) {
+            this.reporters.addAll(reporters);
+            return this;
+        }
+
         /**
          * {@inheritDoc}
          **/
@@ -133,6 +147,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             DefaultApi api = new DefaultApi(controllers, collectors);
             validations.forEach(api::addValidation);
             transformations.forEach(api::addTransformation);
+            reporters.forEach(api::addReporter);
             return api;
         }
     }
@@ -144,6 +159,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     private final HasMetadataAcceptableList<ResourceController> controllers;
     @SuppressWarnings("rawtypes")
     private final HasMetadataAcceptableList<ResourceCollector> collectors;
+    private final List<ChangeReporter> reporters = new LinkedList<>();
 
     /**
      * Creates a new {@link DefaultApi} instance.
@@ -177,11 +193,20 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
+    public DefaultApi addReporter(@NotNull ChangeReporter reporter) {
+        this.reporters.add(reporter);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public List<ChangeResult<Change>> apply(@NotNull final HasItems resources,
                                             @NotNull final ReconciliationMode mode,
                                             @NotNull final ReconciliationContext context) {
         LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
-        return handleResources(resources, context.selectors())
+        List<ChangeResult<Change>> results = handleResources(resources, context.selectors())
                 .entrySet()
                 .stream()
                 .map(e -> {
@@ -190,6 +215,13 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 })
                 .flatMap(Collection::stream)
                 .toList();
+        if (!context.isDryRun() && !reporters.isEmpty()) {
+            List<ChangeResult<Change>> reportable = results.stream()
+                    .filter(t -> !JikkouMetadataAnnotations.isAnnotatedWithNoReport(t.data()))
+                    .toList();
+            new CombineChangeReporter(reporters).report(reportable);
+        }
+        return results;
     }
 
     /**
@@ -368,5 +400,6 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      */
     @Override
     public void close() {
+        new CombineChangeReporter(reporters).close();
     }
 }

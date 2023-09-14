@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

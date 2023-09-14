@@ -15,8 +15,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
@@ -53,9 +54,10 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<SchemaSubjectChange>> apply(@NotNull List<SchemaSubjectChange> changes) {
+    public List<ChangeResponse<SchemaSubjectChange>> apply(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items) {
         List<ChangeResponse<SchemaSubjectChange>> results = new ArrayList<>();
-        for (SchemaSubjectChange change : changes) {
+        for (HasMetadataChange<SchemaSubjectChange> item : items) {
+            SchemaSubjectChange change = item.getChange();
             String subject = change.getSubject();
             SchemaSubjectChangeOptions options = change.getOptions();
             CompletableFuture<Void> future = api.deleteSubjectVersions(subject, options.isPermanentDeleteEnabled())
@@ -69,7 +71,7 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
                     }
                     return null;
                 });
-            results.add(toChangeResponse(change, future));
+            results.add(toChangeResponse(item, future));
         }
         return results;
     }

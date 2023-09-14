@@ -15,10 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
-import java.util.Set;
+import io.streamthoughts.jikkou.api.change.ChangeType;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,17 +30,6 @@ public class DeleteQuotasChangeHandler extends AbstractQuotaChangeHandler {
      * @param client    the {@link AdminClient}.
      */
     public DeleteQuotasChangeHandler(@NotNull final AdminClient client) {
-       super(client);
-    }
-
-    @Override
-    public Set<ChangeType> supportedChangeTypes() {
-        return Set.of( ChangeType.DELETE);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ChangeDescription getDescriptionFor(@NotNull final QuotaChange change) {
-        return new QuotaChangeDescription(change);
+       super(client, ChangeType.DELETE);
     }
 }

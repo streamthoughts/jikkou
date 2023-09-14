@@ -18,10 +18,10 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
@@ -152,7 +152,7 @@ class KafkaTopicAclEntryIT {
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.ADD, change.data().getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, change.data().getChange().getChangeType());
     }
 
     @Test
@@ -195,7 +195,7 @@ class KafkaTopicAclEntryIT {
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.data().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().getChangeType());
     }
 
 

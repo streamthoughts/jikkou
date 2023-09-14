@@ -15,10 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.control.ValueChange;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,17 +27,23 @@ import org.junit.jupiter.api.Test;
 class TopicChangeDescriptionTest {
 
     @Test
-    void shouldReturnTextualDescription() {
-        var desc = new TopicChangeDescription(
-                TopicChange.builder()
-                        .withName("test")
-                        .withOperation(ChangeType.ADD)
-                        .withPartitions(ValueChange.withAfterValue(1))
-                        .withReplicas(ValueChange.withAfterValue((short) 1))
-                        .withConfigs(List.of(new ConfigEntryChange("key", ValueChange.withAfterValue("value"))))
-                        .build()
+    void shouldGetTextualDescription() {
+        // Given
+        TopicChange change = TopicChange.builder()
+                .withName("test")
+                .withOperation(ChangeType.ADD)
+                .withPartitions(ValueChange.withAfterValue(1))
+                .withReplicas(ValueChange.withAfterValue((short) 1))
+                .withConfigs(List.of(new ConfigEntryChange("key", ValueChange.withAfterValue("value"))))
+                .build();
+
+        // When
+        var desc = new TopicChangeDescription(GenericResourceChange.<TopicChange>builder().withChange(change).build());
+
+        // Then
+        Assertions.assertEquals(
+                "Add topic 'test' (partitions=1, replicas=1, configs=[key=value])",
+                desc.textual()
         );
-        String textual = desc.textual();
-        Assertions.assertEquals("Add topic 'test' (partitions=1, replicas=1, configs=[key=value])", textual);
     }
 }

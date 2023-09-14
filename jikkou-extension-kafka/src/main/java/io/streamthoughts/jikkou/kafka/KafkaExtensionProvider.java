@@ -25,6 +25,7 @@ import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaController;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicCollector;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter;
 import io.streamthoughts.jikkou.kafka.transform.KafkaPrincipalAuthorizationTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxReplicasTransformation;
@@ -92,5 +93,8 @@ public class KafkaExtensionProvider implements ExtensionProvider {
         factory.register(TopicNameRegexValidation.class, TopicNameRegexValidation::new);
         factory.register(TopicNamePrefixValidation.class, TopicNamePrefixValidation::new);
         factory.register(TopicNameSuffixValidation.class, TopicNameSuffixValidation::new);
+
+        // reporters
+        factory.register(KafkaChangeReporter.class, KafkaChangeReporter::new);
     }
 }

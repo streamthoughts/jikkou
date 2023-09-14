@@ -15,6 +15,12 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -33,13 +39,20 @@ class ChangeHandlerTest {
         Assertions.assertEquals(1, supportedChangeTypes.size());
         Assertions.assertEquals(ChangeType.NONE, handler.supportedChangeTypes().iterator().next());
 
-        // When / Then
-        List<ChangeResponse<Change>> applied = handler.apply(List.of(change));
-        Assertions.assertEquals(1, applied.size());
-        Assertions.assertEquals(change, applied.iterator().next().getChange());
+        // When
+        GenericResourceChange<Change> input = GenericResourceChange
+                .builder()
+                .withChange(change)
+                .build();
+
+        List<ChangeResponse<Change>> result = handler.apply(List.of(input));
+
+        // Then
+        List<ChangeResponse<Change>> expected = List.of(new ChangeResponse<>(input));
+        Assertions.assertEquals(expected, result);
 
         // When / Then
-        ChangeDescription description = handler.getDescriptionFor(change);
+        ChangeDescription description = handler.getDescriptionFor(input);
         Assertions.assertNotNull(description);
         Assertions.assertEquals("NONE", description.textual());
     }

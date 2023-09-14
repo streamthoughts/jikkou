@@ -18,9 +18,9 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
@@ -139,7 +139,7 @@ class KafkaQuotaEntryIT {
 
         // Then
         ValueChange<KafkaQuotaEntry> expected = ValueChange.withAfterValue(KafkaQuotaAdapter.map(entry));
-        Assertions.assertEquals(expected, results.get(0).data());
+        Assertions.assertEquals(expected, results.get(0).data().getChange());
     }
 
 
@@ -183,6 +183,6 @@ class KafkaQuotaEntryIT {
 
         // Then
         ValueChange<KafkaQuotaEntry> expected = ValueChange.withBeforeValue(KafkaQuotaAdapter.map(entry));
-        Assertions.assertEquals(expected, results.get(0).data());
+        Assertions.assertEquals(expected, results.get(0).data().getChange());
     }
 }

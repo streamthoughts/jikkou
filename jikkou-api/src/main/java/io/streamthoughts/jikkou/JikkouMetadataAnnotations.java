@@ -24,9 +24,13 @@ public final class JikkouMetadataAnnotations {
     public static final String JIKKOU_IO_IGNORE = "jikkou.io/ignore";
     public static final String JIKKOU_IO_DELETE = "jikkou.io/delete";
     public static final String JIKKOU_BYPASS_VALIDATIONS = "jikkou.io/bypass-validations";
+    public static final String JIKKOU_NO_REPORT = "jikkou.io/no-report";
     public static final String JIKKOU_IO_TRANSFORM_PREFIX = "transform.jikkou.io";
 
-    private JikkouMetadataAnnotations() {
+    private JikkouMetadataAnnotations() {}
+
+    public static boolean isAnnotatedWithNoReport(final HasMetadata resource) {
+        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_NO_REPORT);
     }
 
     public static boolean isAnnotatedWithByPassValidation(final HasMetadata resource) {

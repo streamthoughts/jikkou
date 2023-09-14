@@ -50,7 +50,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthoughts.jikkou.kafka.control.change.QuotaChange> , Resource
+public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthoughts.jikkou.kafka.change.QuotaChange> , Resource
 {
 
     /**
@@ -77,7 +77,7 @@ public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthou
     @JsonProperty("metadata")
     private ObjectMeta metadata;
     @JsonProperty("change")
-    private io.streamthoughts.jikkou.kafka.control.change.QuotaChange change;
+    private io.streamthoughts.jikkou.kafka.change.QuotaChange change;
 
     /**
      * No args constructor for use in serialization
@@ -99,7 +99,7 @@ public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthou
         "metadata",
         "change"
     })
-    public V1KafkaClientQuotaChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.kafka.control.change.QuotaChange change) {
+    public V1KafkaClientQuotaChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.kafka.change.QuotaChange change) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -138,7 +138,7 @@ public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthou
     }
 
     @JsonProperty("change")
-    public io.streamthoughts.jikkou.kafka.control.change.QuotaChange getChange() {
+    public io.streamthoughts.jikkou.kafka.change.QuotaChange getChange() {
         return change;
     }
 

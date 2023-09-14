@@ -20,8 +20,8 @@ import io.streamthoughts.jikkou.api.BaseApiConfigurator;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.extensions.ExtensionConfigDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.extensions.ResourceInterceptorDescriptor;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import java.util.Collections;
 import java.util.List;
@@ -40,9 +40,9 @@ public class ResourceTransformationApiConfigurator extends BaseApiConfigurator {
 
     public static final String TRANSFORMATIONS_CONFIG_NAME = "transformations";
 
-    public static final ConfigProperty<List<ResourceInterceptorDescriptor>> TRANSFORMATION_CONFIG = ConfigProperty
+    public static final ConfigProperty<List<ExtensionConfigDescriptor>> TRANSFORMATION_CONFIG = ConfigProperty
             .ofConfigList(TRANSFORMATIONS_CONFIG_NAME)
-            .map(configs -> configs.stream().map(ResourceInterceptorDescriptor::of).collect(Collectors.toList()))
+            .map(configs -> configs.stream().map(ExtensionConfigDescriptor::of).collect(Collectors.toList()))
             .orElse(Collections.emptyList());
 
     /**
@@ -61,7 +61,7 @@ public class ResourceTransformationApiConfigurator extends BaseApiConfigurator {
     public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder) {
 
         LOG.info("Loading all resource transformations from config settings");
-        List<ResourceInterceptorDescriptor> extensions = getPropertyValue(TRANSFORMATION_CONFIG);
+        List<ExtensionConfigDescriptor> extensions = getPropertyValue(TRANSFORMATION_CONFIG);
         List<ResourceTransformation<HasMetadata>> transformations = extensions.stream()
                 .peek(extension -> LOG.info(
                         "Configure transformation for type {} (name={}, priority={}):\n\t{}",

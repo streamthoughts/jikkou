@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 
 /**
  * Represents an operation to apply on client-quotas.

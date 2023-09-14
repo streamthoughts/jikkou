@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  *
  */
-public class ConfigValue implements Nameable {
+public class ConfigValue {
 
     private final String name;
 
@@ -58,10 +58,6 @@ public class ConfigValue implements Nameable {
         this.isDeletable = isDeletable;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getName() {
         return name;
     }

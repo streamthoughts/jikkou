@@ -17,6 +17,8 @@ package io.streamthoughts.jikkou.api.control;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +42,7 @@ class ValueChangeTest {
     @Test
     void shouldReturnUpdateForNotEqualsValues() {
         // Given
-        ValueChange<String> change = ValueChange.with(AFTER_VALUE, BEFORE_VALUE);
+        ValueChange<String> change = ValueChange.with(BEFORE_VALUE, AFTER_VALUE);
 
         // When
         ChangeType type = change.getChangeType();
@@ -54,7 +56,7 @@ class ValueChangeTest {
     @Test
     void shouldReturnAddForBeforeNull() {
         // Given
-        ValueChange<String> change = ValueChange.with(AFTER_VALUE, null);
+        ValueChange<String> change = ValueChange.with(null, AFTER_VALUE);
 
         // When
         ChangeType type = change.getChangeType();
@@ -68,7 +70,7 @@ class ValueChangeTest {
     @Test
     void shouldReturnAddForAfterNull() {
         // Given
-        ValueChange<String> change = ValueChange.with(null, BEFORE_VALUE);
+        ValueChange<String> change = ValueChange.with(BEFORE_VALUE, null);
 
         // When
         ChangeType type = change.getChangeType();

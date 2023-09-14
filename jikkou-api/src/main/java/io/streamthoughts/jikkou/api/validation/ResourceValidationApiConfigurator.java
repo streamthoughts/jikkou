@@ -19,8 +19,8 @@ import io.streamthoughts.jikkou.api.BaseApiConfigurator;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.extensions.ExtensionConfigDescriptor;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.extensions.ResourceInterceptorDescriptor;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +33,9 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
     private static final Logger LOG = LoggerFactory.getLogger(ResourceValidationApiConfigurator.class);
 
     public static final String VALIDATIONS_CONFIG_NAME = "validations";
-    public static final ConfigProperty<List<ResourceInterceptorDescriptor>> VALIDATIONS_CONFIG = ConfigProperty
+    public static final ConfigProperty<List<ExtensionConfigDescriptor>> VALIDATIONS_CONFIG = ConfigProperty
             .ofConfigList(VALIDATIONS_CONFIG_NAME)
-            .map(configs -> configs.stream().map(ResourceInterceptorDescriptor::of).collect(Collectors.toList()))
+            .map(configs -> configs.stream().map(ExtensionConfigDescriptor::of).collect(Collectors.toList()))
             .orElse(Collections.emptyList());
 
     /**
@@ -50,8 +50,8 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
     @Override
     public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder) {
         LOG.info("Loading all resource validations from config settings");
-        List<ResourceInterceptorDescriptor> extensions = getPropertyValue(VALIDATIONS_CONFIG);
-        List<ResourceValidation<HasMetadata>> transformations = extensions.stream()
+        List<ExtensionConfigDescriptor> extensions = getPropertyValue(VALIDATIONS_CONFIG);
+        List<ResourceValidation<HasMetadata>> validations = extensions.stream()
                 .peek(extension -> LOG.info(
                         "Configure validation for type {} (name={}, priority={}):\n\t{}",
                         extension.extensionClass(),
@@ -71,6 +71,6 @@ public class ResourceValidationApiConfigurator extends BaseApiConfigurator {
                     return validation;
                 }).toList();
 
-        return builder.withValidations(transformations);
+        return builder.withValidations(validations);
     }
 }

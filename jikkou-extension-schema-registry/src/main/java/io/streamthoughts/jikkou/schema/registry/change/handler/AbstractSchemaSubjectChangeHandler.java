@@ -15,11 +15,12 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeError;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeError;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
@@ -93,7 +94,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 });
     }
 
-    public ChangeResponse<SchemaSubjectChange> toChangeResponse(SchemaSubjectChange change,
+    public ChangeResponse<SchemaSubjectChange> toChangeResponse(HasMetadataChange<SchemaSubjectChange> change,
                                                                 CompletableFuture<?> future) {
         CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
             if (throwable == null) {
@@ -113,7 +114,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
      * {@inheritDoc}
      */
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull SchemaSubjectChange change) {
-        return new SchemaSubjectChangeDescription(change);
+    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<SchemaSubjectChange> item) {
+        return new SchemaSubjectChangeDescription(item);
     }
 }

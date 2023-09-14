@@ -24,7 +24,9 @@ import io.streamthoughts.jikkou.common.utils.Classes;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -267,6 +269,21 @@ public final class JikkouConfig implements Configuration {
         }
         return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see Config#getConfig(String)
+     */
+    @Override
+    public List<Configuration> getConfigList(@NotNull final String key,
+                                              @Nullable final Supplier<List<Configuration>> defaultValueSupplier) {
+        if (config.hasPath(key)) {
+            return new ArrayList<>(config.getConfigList(key).stream().map(JikkouConfig::new).toList());
+        }
+        return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
+    }
+
 
     /**
      * {@inheritDoc}

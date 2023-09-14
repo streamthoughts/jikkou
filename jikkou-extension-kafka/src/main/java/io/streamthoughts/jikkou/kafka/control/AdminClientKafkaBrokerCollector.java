@@ -50,7 +50,7 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1KafkaBroker.class)
 @AcceptsResource(type = V1KafkaBrokerList.class, converter = V1KafkaBrokerListConverter.class)
-public final class AdminClientKafkaBrokerCollector extends AbstractAdminClientKafkaController
+public final class AdminClientKafkaBrokerCollector extends AdminClientKafkaSupport
         implements ResourceCollector<V1KafkaBroker> {
 
     /**

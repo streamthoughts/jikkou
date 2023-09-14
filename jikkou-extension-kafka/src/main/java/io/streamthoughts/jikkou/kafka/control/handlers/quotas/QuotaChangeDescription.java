@@ -15,21 +15,25 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.quotas;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.kafka.control.change.QuotaChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.kafka.change.QuotaChange;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 public class QuotaChangeDescription implements ChangeDescription {
 
-    private final QuotaChange change;
+    private final HasMetadataChange<QuotaChange> item;
 
-    public QuotaChangeDescription(QuotaChange change) {
-        this.change = change;
+    public QuotaChangeDescription(final @NotNull HasMetadataChange<QuotaChange> item) {
+        this.item = Objects.requireNonNull(item, "item must not be null");
     }
 
     /** {@inheritDoc} **/
     @Override
     public String textual() {
+        QuotaChange change = item.getChange();
         return  String.format("%s quotas %s with entity=[%s], constraints=[%s])",
                 ChangeDescription.humanize(change.getChangeType()),
                 change.getType(),

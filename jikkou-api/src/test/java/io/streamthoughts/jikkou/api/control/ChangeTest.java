@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeType;
 import org.junit.jupiter.api.Test;
 
 class ChangeTest {
