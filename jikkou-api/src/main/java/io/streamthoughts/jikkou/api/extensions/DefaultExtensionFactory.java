@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.common.utils.Classes;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -180,7 +181,7 @@ public class DefaultExtensionFactory implements ExtensionFactory {
      */
     @Override
     public <T extends Extension> Collection<ExtensionDescriptor<T>> getAllDescriptorsForType(@NotNull final Class<T> type) {
-        List<ExtensionDescriptor<?>> descriptors = descriptorsByTypes.get(type);
+        List<ExtensionDescriptor<?>> descriptors = descriptorsByTypes.getOrDefault(type, Collections.emptyList());
         return new TreeSet<>(CollectionUtils.cast(descriptors));
     }
 

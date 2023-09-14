@@ -16,8 +16,7 @@
 package io.streamthoughts.jikkou.kafka.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.streamthoughts.jikkou.api.model.Nameable;
-import java.io.Serializable;
+import io.streamthoughts.jikkou.annotation.Reflectable;
 import java.util.Objects;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
@@ -25,7 +24,8 @@ import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 
-public class KafkaAclBinding implements Serializable, Nameable {
+@Reflectable
+public class KafkaAclBinding {
 
     private static final String PRINCIPAL_TYPE_SEPARATOR = ":";
 
@@ -48,7 +48,7 @@ public class KafkaAclBinding implements Serializable, Nameable {
     /**
      * Flag to indicate this binding should be deleted.
      */
-    private  boolean delete;
+    private boolean delete;
 
     public static Builder builder() {
         return new Builder();
@@ -163,7 +163,7 @@ public class KafkaAclBinding implements Serializable, Nameable {
     public void isDelete(boolean delete) {
         this.delete = delete;
     }
-
+    
     @JsonIgnore
     public boolean isDelete() {
         return delete;
@@ -240,12 +240,5 @@ public class KafkaAclBinding implements Serializable, Nameable {
                 ", permission=" + type +
                 ", host='" + host + '\'' +
                 '}';
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    @JsonIgnore
-    public String getName() {
-        return principalName;
     }
 }

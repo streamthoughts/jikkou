@@ -15,12 +15,12 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeComputer;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.JsonValueChange;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeComputer;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.JsonValueChange;
+import io.streamthoughts.jikkou.api.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
@@ -30,77 +30,40 @@ import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SchemaSubjectChangeComputer implements ChangeComputer<V1SchemaRegistrySubject, SchemaSubjectChange> {
+public class SchemaSubjectChangeComputer extends ResourceChangeComputer<V1SchemaRegistrySubject, V1SchemaRegistrySubject, SchemaSubjectChange>
+
+        implements ChangeComputer<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
 
     /**
      * Creates a new {@link SchemaSubjectChangeComputer} instance.
      */
     public SchemaSubjectChangeComputer() {
+        super(new ChangeKeyMapper<>() {
+            @Override
+            public @NotNull Object apply(@NotNull V1SchemaRegistrySubject object) {
+                return object.getMetadata().getName(); // Subject
+            }
+        }, new IdentityChangeValueMapper<>(), false);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
-    public List<SchemaSubjectChange> computeChanges(Iterable<V1SchemaRegistrySubject> actualStates,
-                                                    Iterable<V1SchemaRegistrySubject> expectedStates) {
-
-        Map<String, V1SchemaRegistrySubject> actualStateGroupBySubject = StreamSupport
-                .stream(actualStates.spliterator(), false)
-                .collect(Collectors.toMap(it -> it.getMetadata().getName(), it -> it));
-
-        Map<String, V1SchemaRegistrySubject> expectedStateGroupBySubject = StreamSupport
-                .stream(expectedStates.spliterator(), false)
-                .collect(Collectors.toMap(it -> it.getMetadata().getName(), it -> it));
-
-        return expectedStateGroupBySubject.entrySet()
-                .stream()
-                .flatMap(entry -> {
-                    V1SchemaRegistrySubject before = actualStateGroupBySubject.get(entry.getKey());
-                    V1SchemaRegistrySubject after = entry.getValue();
-                    return getSchemaSubjectChange(before, after).stream();
-                })
-                .collect(Collectors.toList());
-    }
-
-    @NotNull
-    private Optional<SchemaSubjectChange> getSchemaSubjectChange(V1SchemaRegistrySubject before,
-                                                                 V1SchemaRegistrySubject after) {
-
-        boolean isAnnotatedWithDelete = JikkouMetadataAnnotations.isAnnotatedWithDelete(after);
-        if (before != null && isAnnotatedWithDelete) {
-            return Optional.of(getChangeForDeleteSubject(after));
-        }
-
-        if (before != null) {
-            return Optional.of(getChangeForExistingSubject(before, after));
-        }
-
-        if (!isAnnotatedWithDelete) {
-            return Optional.of(getChangeForNewSubject(after));
-        }
-
-        return Optional.empty();
-    }
-
-    private SchemaSubjectChange getChangeForDeleteSubject(@NotNull final V1SchemaRegistrySubject resource) {
-        return SchemaSubjectChange.builder()
-                .withSubject(resource.getMetadata().getName())
+    public List<SchemaSubjectChange> buildChangeForDeleting(V1SchemaRegistrySubject before) {
+        SchemaSubjectChange change = SchemaSubjectChange.builder()
+                .withSubject(before.getMetadata().getName())
                 .withChangeType(ChangeType.DELETE)
-                .withOptions(getOptions(resource))
+                .withOptions(getOptions(before))
                 .build();
+        return List.of(change);
     }
-
-    private SchemaSubjectChange getChangeForExistingSubject(V1SchemaRegistrySubject before,
-                                                            V1SchemaRegistrySubject after) {
+    /** {@inheritDoc} **/
+    @Override
+    public List<SchemaSubjectChange> buildChangeForUpdating(V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
         // Compute change for Schema
         var changeForSchema = getChangeForSchema(
                 before, after);
@@ -120,7 +83,7 @@ public class SchemaSubjectChangeComputer implements ChangeComputer<V1SchemaRegis
         var changeType = Change.computeChangeTypeFrom(
                 changeForSchema, changeForCompatibility, changeForReferences, changeForSchemaType);
 
-        return SchemaSubjectChange.builder()
+        SchemaSubjectChange change = SchemaSubjectChange.builder()
                 .withSubject(before.getMetadata().getName())
                 .withChangeType(changeType)
                 .withSchemaType(changeForSchemaType)
@@ -129,25 +92,36 @@ public class SchemaSubjectChangeComputer implements ChangeComputer<V1SchemaRegis
                 .withCompatibilityLevels(changeForCompatibility)
                 .withOptions(getOptions(after))
                 .build();
+
+        return List.of(change);
     }
 
-    private SchemaSubjectChange getChangeForNewSubject(V1SchemaRegistrySubject resource) {
-        V1SchemaRegistrySubjectSpec spec = resource.getSpec();
+    /** {@inheritDoc} **/
+    @Override
+    public List<SchemaSubjectChange> buildChangeForNone(V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
+        return null;
+    }
+    /** {@inheritDoc} **/
+    @Override
+    public List<SchemaSubjectChange> buildChangeForCreating(V1SchemaRegistrySubject after) {
+        V1SchemaRegistrySubjectSpec spec = after.getSpec();
 
         ValueChange<CompatibilityLevels> compatibilityLevels = Optional
                 .ofNullable(spec.getCompatibilityLevel())
                 .map(ValueChange::withAfterValue)
                 .orElse(null);
 
-        return SchemaSubjectChange.builder()
+        SchemaSubjectChange change = SchemaSubjectChange.builder()
                 .withChangeType(ChangeType.ADD)
-                .withSubject(resource.getMetadata().getName())
+                .withSubject(after.getMetadata().getName())
                 .withSchemaType(ValueChange.withAfterValue(spec.getSchemaType()))
-                .withSchema(getChangeForSchema(null, resource))
+                .withSchema(getChangeForSchema(null, after))
                 .withReferences(ValueChange.withAfterValue(spec.getReferences()))
                 .withCompatibilityLevels(compatibilityLevels)
-                .withOptions(getOptions(resource))
+                .withOptions(getOptions(after))
                 .build();
+
+        return List.of(change);
     }
 
     @NotNull
@@ -161,14 +135,14 @@ public class SchemaSubjectChangeComputer implements ChangeComputer<V1SchemaRegis
     private ValueChange<List<SubjectSchemaReference>> getChangeForReferences(
             @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
 
-        return ValueChange.with(after.getSpec().getReferences(), before.getSpec().getReferences());
+        return ValueChange.with(before.getSpec().getReferences(), after.getSpec().getReferences());
     }
 
     @NotNull
     private ValueChange<SchemaType> getChangeForSchemaType(
             @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
 
-        return ValueChange.with(after.getSpec().getSchemaType(), before.getSpec().getSchemaType());
+        return ValueChange.with(before.getSpec().getSchemaType(), after.getSpec().getSchemaType());
     }
 
 
@@ -176,7 +150,7 @@ public class SchemaSubjectChangeComputer implements ChangeComputer<V1SchemaRegis
     private ValueChange<CompatibilityLevels> getChangeForCompatibility(
             @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
 
-        return ValueChange.with(after.getSpec().getCompatibilityLevel(), before.getSpec().getCompatibilityLevel());
+        return ValueChange.with(before.getSpec().getCompatibilityLevel(), after.getSpec().getCompatibilityLevel());
     }
 
     @NotNull
@@ -195,9 +169,9 @@ public class SchemaSubjectChangeComputer implements ChangeComputer<V1SchemaRegis
 
         return switch (afterSchemaAndType.type()) {
             case AVRO, JSON -> JsonValueChange
-                    .with(afterSchemaAndType.schema(), beforeSchemaAndType.schema());
+                    .with(beforeSchemaAndType.schema(), afterSchemaAndType.schema());
             case PROTOBUF -> ValueChange
-                    .with(afterSchemaAndType.schema(), beforeSchemaAndType.schema());
+                    .with(beforeSchemaAndType.schema(), afterSchemaAndType.schema());
             case INVALID -> throw new JikkouRuntimeException("unsupported schema type");
         };
     }

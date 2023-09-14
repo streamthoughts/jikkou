@@ -15,12 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.acls;
 
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
-import io.streamthoughts.jikkou.kafka.control.change.AclChange;
+import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.vavr.Tuple2;
 import io.vavr.concurrent.Future;
@@ -57,11 +58,11 @@ public class CreateAclChangeHandler implements KafkaAclChangeHandler {
 
     /** {@inheritDoc} */
     @Override
-    public List<ChangeResponse<AclChange>> apply(@NotNull List<AclChange> changes) {
-        Map<KafkaAclBinding, AclChange> data = changes
+    public List<ChangeResponse<AclChange>> apply(@NotNull List<HasMetadataChange<AclChange>> items) {
+        Map<KafkaAclBinding, HasMetadataChange<AclChange>> data = items
                 .stream()
-                .peek(c -> ChangeHandler.verify(this, c))
-                .map(c -> new Tuple2<>(c.getAclBindings(), c))
+                .peek(it -> ChangeHandler.verify(this, it))
+                .map(it -> new Tuple2<>(it.getChange().getAclBindings(), it))
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
 
         List<AclBinding> bindings = data.keySet().stream()
@@ -78,7 +79,7 @@ public class CreateAclChangeHandler implements KafkaAclChangeHandler {
                 .map(t -> t.map2(Future::fromJavaFuture))
                 .map(t -> t.map2(List::of))
                 .map(t -> {
-                    AclChange change = data.get(t._1());
+                    HasMetadataChange<AclChange> change = data.get(t._1());
                     List<CompletableFuture<ChangeMetadata>> futures = t._2().stream()
                             .map(Future::toCompletableFuture)
                             .map(f -> f.thenApply(unused -> ChangeMetadata.empty()))

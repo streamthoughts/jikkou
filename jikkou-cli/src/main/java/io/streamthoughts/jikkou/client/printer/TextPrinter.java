@@ -16,10 +16,10 @@
 package io.streamthoughts.jikkou.client.printer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import java.io.PrintStream;
@@ -75,7 +75,7 @@ public class TextPrinter implements Printer {
             }
 
             String color = TextPrinter.ANSI_WHITE;
-            ChangeType changeType = result.data().getChangeType();
+            ChangeType changeType = result.data().getChange().getChangeType();
             if (result.isChanged()) {
                 switch (changeType) {
                     case ADD -> {
@@ -98,7 +98,7 @@ public class TextPrinter implements Printer {
                 ok++;
             }
 
-            TextPrinter.printTask(result.data().getChangeType(), result.description(), result.status().name());
+            TextPrinter.printTask(result.data().getChange().getChangeType(), result.description(), result.status().name());
             if (printChangeDetail) {
                 TextPrinter.PS.printf("%s%s%n", TextPrinter.isColor() ? color : "", json);
             }

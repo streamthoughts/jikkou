@@ -109,10 +109,10 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
         CollectionUtils.toFlattenMap(bindings.getLabels(), labels, null);
         bindingsMap.put(Scopes.LABELS.key(), labels);
 
-        Map<String, Map<String, String>> systemValues = Map.of(
-                Scopes.ENV.key(), bindings.getSystemEnv(),
-                Scopes.PROPS.key(), bindings.getSystemProps()
-        );
+        Map<String, Map<String, Object>> systemValues = new HashMap<>();
+        systemValues.put(Scopes.ENV.key(), bindings.getSystemEnv());
+        systemValues.put(Scopes.PROPS.key(), bindings.getSystemProps());
+
         bindingsMap.put(Scopes.SYSTEM.key(), systemValues);
         return bindingsMap;
     }

@@ -15,9 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import org.jetbrains.annotations.NotNull;
 
 public interface KafkaTopicChangeHandler extends ChangeHandler<TopicChange> {
@@ -26,7 +27,7 @@ public interface KafkaTopicChangeHandler extends ChangeHandler<TopicChange> {
      * {@inheritDoc}
      */
     @Override
-    default ChangeDescription getDescriptionFor(@NotNull final TopicChange change) {
-        return new TopicChangeDescription(change);
+    default ChangeDescription getDescriptionFor(@NotNull final HasMetadataChange<TopicChange> item) {
+        return new TopicChangeDescription(item);
     }
 }

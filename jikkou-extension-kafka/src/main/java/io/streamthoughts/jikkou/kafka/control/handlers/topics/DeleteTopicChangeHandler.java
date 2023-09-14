@@ -15,12 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeMetadata;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.model.Nameable;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeMetadata;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.common.utils.CollectionUtils;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
     /**
      * Creates a new {@link DeleteTopicChangeHandler} instance.
      *
-     * @param client    the {@link AdminClient} to be used.
+     * @param client the {@link AdminClient} to be used.
      */
     public DeleteTopicChangeHandler(final AdminClient client) {
         this.client = client;
@@ -63,11 +64,11 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<TopicChange>> apply(final @NotNull List<TopicChange> changes) {
-        List<String> topics = changes
+    public @NotNull List<ChangeResponse<TopicChange>> apply(final @NotNull List<HasMetadataChange<TopicChange>> items) {
+        List<String> topics = items
                 .stream()
-                .peek(c -> ChangeHandler.verify(this, c))
-                .map(TopicChange::getName)
+                .peek(it -> ChangeHandler.verify(this, it))
+                .map(it -> it.getChange().getName())
                 .collect(Collectors.toList());
 
         LOG.info("Deleting topics: {}", topics);
@@ -76,11 +77,13 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> Futures.toCompletableFuture(e.getValue())));
 
-        Map<String, TopicChange> topicKeyedByName = Nameable.keyByName(changes);
+        Map<String, HasMetadataChange<TopicChange>> changesKeyedByTopicName = CollectionUtils
+                .keyBy(items, it -> it.getChange().getName());
+
         return results.entrySet()
                 .stream()
                 .map(e -> new ChangeResponse<>(
-                                topicKeyedByName.get(e.getKey()),
+                                changesKeyedByTopicName.get(e.getKey()),
                                 e.getValue().thenApply(unused -> ChangeMetadata.empty())
                         )
                 )

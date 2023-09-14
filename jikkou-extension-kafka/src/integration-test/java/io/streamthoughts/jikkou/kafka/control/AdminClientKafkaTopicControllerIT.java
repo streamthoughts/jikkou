@@ -19,18 +19,18 @@ import io.streamthoughts.jikkou.api.DefaultApi;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ChangeType;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
-import io.streamthoughts.jikkou.api.model.Nameable;
 import io.streamthoughts.jikkou.api.testcontainer.RedpandaContainerConfig;
 import io.streamthoughts.jikkou.api.testcontainer.RedpandaKafkaContainer;
+import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import java.util.List;
@@ -130,8 +130,8 @@ public class AdminClientKafkaTopicControllerIT {
             Assertions.assertEquals(expected.getSpec().getReplicas(), actual.getSpec().getReplicas());
 
             // Explicitly validate each config because Redpanda returns additional config properties.
-            Map<String, ConfigValue> expectedConfigByName = Nameable.keyByName(expected.getSpec().getConfigs());
-            Map<String, ConfigValue> actualConfigByName = Nameable.keyByName(actual.getSpec().getConfigs());
+            Map<String, ConfigValue> expectedConfigByName = CollectionUtils.keyBy(expected.getSpec().getConfigs(), ConfigValue::getName);
+            Map<String, ConfigValue> actualConfigByName = CollectionUtils.keyBy(actual.getSpec().getConfigs(), ConfigValue::getName);
 
             expectedConfigByName.forEach((configName, expectedConfigValue) -> {
                 ConfigValue actualConfigValue = actualConfigByName.get(configName);
@@ -172,7 +172,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         ChangeResult<?> change = results.iterator().next();
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.data().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().getChangeType());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class AdminClientKafkaTopicControllerIT {
                 "Invalid number of changes");
 
         Map<String, TopicChange> changeKeyedByTopicName = results.stream()
-                .map(o -> ((TopicChange) o.data()))
+                .map(o -> ((TopicChange) o.data().getChange()))
                 .collect(Collectors.toMap(TopicChange::getName, o -> o));
 
         Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_A));
@@ -244,7 +244,7 @@ public class AdminClientKafkaTopicControllerIT {
                 "Invalid number of changes");
 
         boolean delete = results.stream()
-                .map(it -> it.data().getChangeType())
+                .map(it -> it.data().getChange().getChangeType())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertFalse(delete);
@@ -281,7 +281,7 @@ public class AdminClientKafkaTopicControllerIT {
 
         Assertions.assertEquals(1, initialTopicList.getItems().size());
         boolean delete = results.stream()
-                .map(it -> it.data().getChangeType())
+                .map(it -> it.data().getChange().getChangeType())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertTrue(delete);

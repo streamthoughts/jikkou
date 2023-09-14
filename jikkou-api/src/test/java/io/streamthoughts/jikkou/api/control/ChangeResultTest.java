@@ -15,13 +15,21 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeError;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ChangeResultTest {
 
-    Change change = () -> ChangeType.NONE;
+    HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.NONE).build();
+
     ChangeDescription description = () -> "test";
 
     @Test

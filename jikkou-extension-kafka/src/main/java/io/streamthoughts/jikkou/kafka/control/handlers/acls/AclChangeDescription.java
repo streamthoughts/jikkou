@@ -15,21 +15,23 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.acls;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.kafka.control.change.AclChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 
 public class AclChangeDescription implements ChangeDescription {
 
-    private final AclChange change;
+    private final HasMetadataChange<AclChange> item;
 
-    public AclChangeDescription(AclChange change) {
-        this.change = change;
+    public AclChangeDescription(HasMetadataChange<AclChange> item) {
+        this.item = item;
     }
 
     /** {@inheritDoc} **/
     @Override
     public String textual() {
+        AclChange change = item.getChange();
         KafkaAclBinding policy = change.getAclBindings();
         return String.format("%s ACL to %s '%s' to execute operation(s) '%s' on resource(s) '%s:%s:%s'",
                 ChangeDescription.humanize(change.getChangeType()),

@@ -24,17 +24,18 @@ import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.control.ChangeExecutor;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
 import io.streamthoughts.jikkou.api.error.ConfigException;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChangeComputer;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.change.TopicChangeComputer;
 import io.streamthoughts.jikkou.kafka.control.handlers.topics.AlterTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.control.handlers.topics.CreateTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.control.handlers.topics.DeleteTopicChangeHandler;
@@ -46,6 +47,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChangeList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -54,8 +56,8 @@ import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaTopic.class)
 @AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
-@AcceptsReconciliationModes( { CREATE, DELETE, UPDATE, APPLY_ALL})
-public final class AdminClientKafkaTopicController extends AbstractAdminClientKafkaController
+@AcceptsReconciliationModes({CREATE, DELETE, UPDATE, APPLY_ALL})
+public final class AdminClientKafkaTopicController extends AdminClientKafkaSupport
         implements BaseResourceController<V1KafkaTopic, TopicChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
@@ -106,12 +108,11 @@ public final class AdminClientKafkaTopicController extends AbstractAdminClientKa
         }
     }
 
-
     /**
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<TopicChange>> execute(@NotNull List<TopicChange> changes,
+    public List<ChangeResult<TopicChange>> execute(@NotNull List<HasMetadataChange<TopicChange>> changes,
                                                    @NotNull ReconciliationMode mode,
                                                    boolean dryRun) {
         AdminClient client = adminClientContext.client();
@@ -145,19 +146,24 @@ public final class AdminClientKafkaTopicController extends AbstractAdminClientKa
                 .asConfiguration();
 
         // Get the list of remote resources that are candidates for this reconciliation
-        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration, context.selectors());
-
+        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration)
+                .stream()
+                .filter(new AggregateSelector(context.selectors())::apply)
+                .toList();
 
         boolean isConfigDeletionEnabled = isConfigDeletionEnabled(mode, context);
 
         TopicChangeComputer changeComputer = new TopicChangeComputer(isConfigDeletionEnabled);
 
-        List<TopicChange> changes = changeComputer.computeChanges(
-                actualKafkaTopics,
-                expectedKafkaTopics);
-
-        return new V1KafkaTopicChangeList()
-                .withItems(changes.stream().map(c -> V1KafkaTopicChange.builder().withChange(c).build()).toList());
+        // Compute changes
+        List<V1KafkaTopicChange> changes = changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics)
+                .stream()
+                .map(it -> V1KafkaTopicChange.builder()
+                        .withMetadata(it.getMetadata())
+                        .withChange(it.getChange())
+                        .build()
+                ).collect(Collectors.toList());
+        return V1KafkaTopicChangeList.builder().withItems(changes).build();
     }
 
     @VisibleForTesting

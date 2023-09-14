@@ -25,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.TopicListing;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,8 +52,13 @@ public class KafkaUtils {
         return new KafkaBrokersReady(options).waitForBrokers(client);
     }
 
+
     public static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
         return getConfigsForKeys(configs, AdminClientConfig.configNames());
+    }
+
+    public static Map<String, Object> getProducerClientConfigs(final Map<String, Object> configs) {
+        return getConfigsForKeys(configs, ProducerConfig.configNames());
     }
 
     private static Map<String, Object> getConfigsForKeys(final Map<String, Object> configs,

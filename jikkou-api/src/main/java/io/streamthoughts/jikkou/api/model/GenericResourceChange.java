@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.annotation.ApiVersion;
 import io.streamthoughts.jikkou.annotation.Description;
 import io.streamthoughts.jikkou.annotation.Kind;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.Change;
 import java.beans.ConstructorProperties;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,13 +40,16 @@ import lombok.With;
 })
 @ApiVersion("core.jikkou.io/v1beta2")
 @Kind("GenericResourceChange")
-public class GenericResourceChange<T> implements HasMetadataChange<ValueChange<T>> {
+public class GenericResourceChange<T extends Change> implements HasMetadataChange<T> {
 
     private final String kind;
     private final String apiVersion;
     private final ObjectMeta metadata;
-    private final ValueChange<T> change;
+    private final T change;
 
+    public GenericResourceChange(final T change) {
+        this(null, null, null, change);
+    }
 
     @ConstructorProperties({
             "apiVersion",
@@ -57,7 +60,7 @@ public class GenericResourceChange<T> implements HasMetadataChange<ValueChange<T
     public GenericResourceChange(final String kind,
                                  final String apiVersion,
                                  final ObjectMeta metadata,
-                                 final ValueChange<T> change) {
+                                 final T change) {
         this.kind = kind;
         this.apiVersion = apiVersion;
         this.metadata = metadata;
@@ -96,7 +99,7 @@ public class GenericResourceChange<T> implements HasMetadataChange<ValueChange<T
      **/
     @JsonProperty("change")
     @Override
-    public ValueChange<T> getChange() {
+    public T getChange() {
         return change;
     }
 
@@ -118,5 +121,15 @@ public class GenericResourceChange<T> implements HasMetadataChange<ValueChange<T
     @Override
     public int hashCode() {
         return Objects.hash(kind, apiVersion, metadata, change);
+    }
+
+    @Override
+    public String toString() {
+        return "GenericResourceChange{" +
+                "kind='" + kind + '\'' +
+                ", apiVersion='" + apiVersion + '\'' +
+                ", metadata=" + metadata +
+                ", change=" + change +
+                '}';
     }
 }

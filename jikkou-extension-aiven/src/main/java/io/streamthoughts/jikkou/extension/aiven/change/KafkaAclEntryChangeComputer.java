@@ -15,14 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.IGNORE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
-
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChangeComputer;
+import io.streamthoughts.jikkou.api.change.ValueChangeComputer;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
@@ -42,23 +35,6 @@ public class KafkaAclEntryChangeComputer extends ValueChangeComputer<V1KafkaTopi
         super(new KeyMapper(), new ValueMapper(), deleteOrphans);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    protected ChangeType getChangeType(V1KafkaTopicAclEntry before, V1KafkaTopicAclEntry after) {
-        if (before == null && after == null)
-            return IGNORE;
-
-        if (before == null)
-            return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? IGNORE : ADD;
-
-        if (after == null)
-            return DELETE;
-
-        return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? DELETE : UPDATE;
-    }
-
     record Key(String username, String topic, Permission permission) {}
 
     static class KeyMapper implements ChangeKeyMapper<V1KafkaTopicAclEntry> {
@@ -75,7 +51,7 @@ public class KafkaAclEntryChangeComputer extends ValueChangeComputer<V1KafkaTopi
         @Override
         public @NotNull KafkaAclEntry apply(@Nullable V1KafkaTopicAclEntry before,
                                             @Nullable V1KafkaTopicAclEntry after) {
-            if (before == null && after != null)
+            if (after != null)
                 return KafkaAclEntryAdapter.map(after);
             if (before != null) {
                 return KafkaAclEntryAdapter.map(before);

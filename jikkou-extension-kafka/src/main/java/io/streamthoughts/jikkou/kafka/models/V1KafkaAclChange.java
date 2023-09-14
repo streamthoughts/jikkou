@@ -50,7 +50,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaAclChange implements HasMetadataChange<io.streamthoughts.jikkou.kafka.control.change.AclChange> , Resource
+public class V1KafkaAclChange implements HasMetadataChange<io.streamthoughts.jikkou.kafka.change.AclChange> , Resource
 {
 
     /**
@@ -77,7 +77,7 @@ public class V1KafkaAclChange implements HasMetadataChange<io.streamthoughts.jik
     @JsonProperty("metadata")
     private ObjectMeta metadata;
     @JsonProperty("change")
-    private io.streamthoughts.jikkou.kafka.control.change.AclChange change;
+    private io.streamthoughts.jikkou.kafka.change.AclChange change;
 
     /**
      * No args constructor for use in serialization
@@ -99,7 +99,7 @@ public class V1KafkaAclChange implements HasMetadataChange<io.streamthoughts.jik
         "metadata",
         "change"
     })
-    public V1KafkaAclChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.kafka.control.change.AclChange change) {
+    public V1KafkaAclChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.kafka.change.AclChange change) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -138,7 +138,7 @@ public class V1KafkaAclChange implements HasMetadataChange<io.streamthoughts.jik
     }
 
     @JsonProperty("change")
-    public io.streamthoughts.jikkou.kafka.control.change.AclChange getChange() {
+    public io.streamthoughts.jikkou.kafka.change.AclChange getChange() {
         return change;
     }
 

@@ -15,9 +15,16 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.api.change.ConfigEntryChangeComputer;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,91 +35,100 @@ class ConfigEntryChangeComputerTest {
     @Test
     void shouldGetAddChangeForNewValue() {
         // Given
-        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer();
-        computer.isConfigDeletionEnabled(true);
-        List<ConfigValue> expected = List.of(new ConfigValue("key", "value"));
+        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer(true);
+        List<ConfigValue> after = List.of(new ConfigValue("key", "value"));
 
         // When
-        List<ConfigEntryChange> changes = computer.computeChanges(EMPTY_LIST, expected);
+        List<HasMetadataChange<ConfigEntryChange>> result = computer.computeChanges(EMPTY_LIST, after);
 
         // Then
-        Assertions.assertNotNull(changes);
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.iterator().next().getChangeType());
+        List<HasMetadataChange<ConfigEntryChange>> expected = after.stream()
+                .map(it -> GenericResourceChange.<ConfigEntryChange>builder()
+                        .withMetadata(new ObjectMeta())
+                        .withChange(new ConfigEntryChange(it.getName(), ValueChange.withAfterValue(it.value())))
+                        .build()
+                )
+                .collect(Collectors.toList());
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
     void shouldGetAddChangeForNewValueAndExistingNullValue() {
         // Given
-        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer();
-        computer.isConfigDeletionEnabled(true);
-        List<ConfigValue> expected = List.of(new ConfigValue("key", "value"));
-        List<ConfigValue> actual = List.of(new ConfigValue("key", null));
+        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer(true);
+        List<ConfigValue> before = List.of(new ConfigValue("key", null));
+        List<ConfigValue> after = List.of(new ConfigValue("key", "value"));
 
         // When
-        List<ConfigEntryChange> changes = computer.computeChanges(actual, expected);
+        List<HasMetadataChange<ConfigEntryChange>> result = computer.computeChanges(before, after);
 
         // Then
-        Assertions.assertNotNull(changes);
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.iterator().next().getChangeType());
+        List<HasMetadataChange<ConfigEntryChange>> expected = after.stream()
+                .map(it -> GenericResourceChange.<ConfigEntryChange>builder()
+                        .withMetadata(new ObjectMeta())
+                        .withChange(new ConfigEntryChange(it.getName(), ValueChange.withAfterValue(it.value())))
+                        .build()
+                )
+                .collect(Collectors.toList());
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
     void shouldGetUpdateChangeForNewValue() {
         // Given
-        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer();
-        computer.isConfigDeletionEnabled(true);
+        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer(true);
         ConfigValue newConfigValue = new ConfigValue("key", "new");
         ConfigValue oldConfigValue = new ConfigValue("key", "old");
 
         // When
-        List<ConfigEntryChange> changes = computer.computeChanges(
+        List<HasMetadataChange<ConfigEntryChange>> result = computer.computeChanges(
                 List.of(oldConfigValue),
                 List.of(newConfigValue)
         );
 
         // Then
-        Assertions.assertNotNull(changes);
-        Assertions.assertEquals(1, changes.size());
-
-        ConfigEntryChange change = changes.iterator().next();
-        Assertions.assertEquals(ChangeType.UPDATE, change.getChangeType());
-        Assertions.assertEquals(oldConfigValue.value(), change.getValueChange().getBefore());
-        Assertions.assertEquals(newConfigValue.value(), change.getValueChange().getAfter());
+        List<HasMetadataChange<ConfigEntryChange>> expected = List.of(
+                        GenericResourceChange.<ConfigEntryChange>builder()
+                                .withMetadata(new ObjectMeta())
+                                .withChange(new ConfigEntryChange("key", ValueChange.with( "old", "new")))
+                                .build()
+                );
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
     void shouldGetDeleteChangeForMissingValueGivenDeletionTrue() {
         // Given
-        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer();
-        computer.isConfigDeletionEnabled(true);
+        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer(true);
 
         // When
         List<ConfigValue> actual = List.of(new ConfigValue("key", "value"));
 
-        List<ConfigEntryChange> changes = computer.computeChanges(actual, EMPTY_LIST);
+        List<HasMetadataChange<ConfigEntryChange>> result = computer.computeChanges(actual, EMPTY_LIST);
 
         // Then
-        Assertions.assertNotNull(changes);
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.DELETE, changes.iterator().next().getChangeType());
+        List<HasMetadataChange<ConfigEntryChange>> expected = List.of(
+                GenericResourceChange.<ConfigEntryChange>builder()
+                        .withMetadata(new ObjectMeta())
+                        .withChange(new ConfigEntryChange("key", ValueChange.withBeforeValue("value")))
+                        .build()
+        );
+        Assertions.assertEquals(expected, result);
     }
 
     @Test
     void shouldGetNoDeleteChangeForMissingValueGivenDeletionFalse() {
         // Given
-        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer();
-        computer.isConfigDeletionEnabled(false);
+        ConfigEntryChangeComputer computer = new ConfigEntryChangeComputer(false);
 
         // When
         List<ConfigValue> actual = List.of(new ConfigValue("key", "value"));
 
-        List<ConfigEntryChange> changes = computer.computeChanges(actual, EMPTY_LIST);
+        List<HasMetadataChange<ConfigEntryChange>> result = computer.computeChanges(actual, EMPTY_LIST);
 
         // Then
-        Assertions.assertNotNull(changes);
-        Assertions.assertTrue(changes.isEmpty());
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.isEmpty());
     }
 
 }

@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.api.extensions.ExtensionResolver;
 import io.streamthoughts.jikkou.api.extensions.ExternalExtension;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
+import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
@@ -193,7 +194,8 @@ public class JikkouContext {
                     .withControllers(getAllEnabledExtensionsForType(ResourceController.class, configuration))
                     .withCollectors(getAllEnabledExtensionsForType(ResourceCollector.class, configuration))
                     .withValidations(cast(getAllEnabledExtensionsForType(ResourceValidation.class, configuration)))
-                    .withTransformations(cast(getAllEnabledExtensionsForType(ResourceTransformation.class, configuration)));
+                    .withTransformations(cast(getAllEnabledExtensionsForType(ResourceTransformation.class, configuration)))
+                    .withReporters(cast(getAllEnabledExtensionsForType(ChangeReporter.class, configuration)));
         }
 
         private <T extends Extension> java.util.List<T> getAllEnabledExtensionsForType(Class<T> type, Configuration configuration) {

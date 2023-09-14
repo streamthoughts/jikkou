@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.api;
 
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import java.util.Set;
 
 /**
@@ -65,8 +65,8 @@ public enum ReconciliationMode {
      * @param change    the change to test.
      * @return  {@code true} if the change is supported, otherwise {@code false}.
      */
-    public boolean isSupported(Change change) {
-        ChangeType changeType = change.getChangeType();
+    public boolean isSupported(HasMetadataChange<?> change) {
+        ChangeType changeType = change.getChange().getChangeType();
         return changeType == ChangeType.NONE || changeTypes.contains(changeType);
     }
 }

@@ -15,9 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.topics;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ValueChange;
-import io.streamthoughts.jikkou.kafka.control.change.TopicChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class TopicChangeDescription implements ChangeDescription {
 
-    private final TopicChange change;
+    private final HasMetadataChange<TopicChange> object;
 
-    public TopicChangeDescription(final @NotNull TopicChange change) {
-        this.change = Objects.requireNonNull(change, "change must not be null");
+    public TopicChangeDescription(final @NotNull HasMetadataChange<TopicChange> object) {
+        this.object = Objects.requireNonNull(object, "change must not be null");
     }
 
     /**
@@ -36,6 +37,7 @@ public class TopicChangeDescription implements ChangeDescription {
      **/
     @Override
     public String textual() {
+        TopicChange change = object.getChange();
         return String.format("%s topic '%s' (partitions=%d, replicas=%d, configs=[%s])",
                 ChangeDescription.humanize(change.getChangeType()),
                 change.getName(),

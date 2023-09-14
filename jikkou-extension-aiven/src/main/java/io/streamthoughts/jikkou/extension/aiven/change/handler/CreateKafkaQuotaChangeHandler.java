@@ -15,10 +15,11 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change.handler;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeResponse;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeResponse;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.change.KafkaChangeDescriptions;
@@ -42,9 +43,9 @@ public class CreateKafkaQuotaChangeHandler extends AbstractChangeHandler<KafkaQu
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ValueChange<KafkaQuotaEntry>>> apply(@NotNull List<ValueChange<KafkaQuotaEntry>> changes) {
-        return changes.stream()
-                .map(change -> executeAsync(change, () -> api.createKafkaQuota(change.getAfter()))).
+    public List<ChangeResponse<ValueChange<KafkaQuotaEntry>>> apply(@NotNull List<HasMetadataChange<ValueChange<KafkaQuotaEntry>>> items) {
+        return items.stream()
+                .map(it -> executeAsync(it, () -> api.createKafkaQuota(it.getChange().getAfter()))).
                 collect(Collectors.toList());
     }
 
@@ -52,7 +53,8 @@ public class CreateKafkaQuotaChangeHandler extends AbstractChangeHandler<KafkaQu
      * {@inheritDoc}
      */
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull ValueChange<KafkaQuotaEntry> change) {
+    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<ValueChange<KafkaQuotaEntry>> item) {
+        ValueChange<KafkaQuotaEntry> change = item.getChange();
         return KafkaChangeDescriptions.of(change.getChangeType(), change.getAfter());
     }
 }

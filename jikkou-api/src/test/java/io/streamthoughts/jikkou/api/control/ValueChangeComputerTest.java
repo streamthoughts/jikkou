@@ -15,6 +15,13 @@
  */
 package io.streamthoughts.jikkou.api.control;
 
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.change.ValueChangeComputer;
+import io.streamthoughts.jikkou.api.model.GenericResource;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +30,23 @@ import org.junit.jupiter.api.Test;
 
 class ValueChangeComputerTest {
 
-    public record KeyValue(String key, String value) {}
+    public static class KeyValue extends GenericResource {
+        public String key;
+        public String value;
+
+        KeyValue(String key, String value) {
+            super(null, null, null, null);
+            this.key = key;
+            this.value = value;
+        }
+        public String key() { return  key; }
+        public String value() { return  value; }
+
+        @Override
+        public String toString() {
+            return "[" + key + ", " + value + ']';
+        }
+    }
 
     private static final ValueChangeComputer.ChangeValueMapper<KeyValue, KeyValue> VALUE_MAPPER =
             new ValueChangeComputer.ChangeValueMapper<>() {
@@ -44,12 +67,12 @@ class ValueChangeComputerTest {
         ValueChangeComputer<KeyValue, KeyValue> computer = new ValueChangeComputer<>(KeyValue::key, VALUE_MAPPER, false);
 
         // When
-        List<ValueChange<KeyValue>> changes = computer.computeChanges(List.of(), List.of(after));
+        List<HasMetadataChange<ValueChange<KeyValue>>> changes = computer.computeChanges(List.of(), List.of(after));
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChangeType());
-        Assertions.assertEquals(after, changes.get(0).getAfter());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChange().getChangeType());
+        Assertions.assertEquals(after, changes.get(0).getChange().getAfter());
     }
 
     @Test
@@ -59,13 +82,13 @@ class ValueChangeComputerTest {
         ValueChangeComputer<KeyValue, KeyValue> computer = new ValueChangeComputer<>(KeyValue::key, VALUE_MAPPER, false);
 
         // When
-        List<ValueChange<KeyValue>> changes = computer.computeChanges(List.of(value), List.of(value));
+        List<HasMetadataChange<ValueChange<KeyValue>>> changes = computer.computeChanges(List.of(value), List.of(value));
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChangeType());
-        Assertions.assertEquals(value, changes.get(0).getBefore());
-        Assertions.assertEquals(value, changes.get(0).getAfter());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChange().getChangeType());
+        Assertions.assertEquals(value, changes.get(0).getChange().getBefore());
+        Assertions.assertEquals(value, changes.get(0).getChange().getAfter());
     }
 
     @Test
@@ -76,13 +99,16 @@ class ValueChangeComputerTest {
         ValueChangeComputer<KeyValue, KeyValue> computer = new ValueChangeComputer<>(KeyValue::key, VALUE_MAPPER, false);
 
         // When
-        List<ValueChange<KeyValue>> changes = computer.computeChanges(List.of(before), List.of(after));
+        List<HasMetadataChange<ValueChange<KeyValue>>> changes = computer.computeChanges(List.of(before), List.of(after));
 
         // Then
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).getChangeType());
-        Assertions.assertEquals(before, changes.get(0).getBefore());
-        Assertions.assertEquals(after, changes.get(0).getAfter());
+        List<GenericResourceChange<Change>> expected = List.of(GenericResourceChange
+                .builder()
+                        .withMetadata(null)
+                        .withChange(ValueChange.with(before, after))
+                .build()
+        );
+        Assertions.assertEquals(expected, changes);
     }
 
     @Test
@@ -92,7 +118,7 @@ class ValueChangeComputerTest {
         ValueChangeComputer<KeyValue, KeyValue> computer = new ValueChangeComputer<>(KeyValue::key, VALUE_MAPPER, false);
 
         // When
-        List<ValueChange<KeyValue>> changes = computer.computeChanges(List.of(before), List.of());
+        List<HasMetadataChange<ValueChange<KeyValue>>> changes = computer.computeChanges(List.of(before), List.of());
 
         // Then
         Assertions.assertEquals(0, changes.size());;
@@ -105,12 +131,12 @@ class ValueChangeComputerTest {
         ValueChangeComputer<KeyValue, KeyValue> computer = new ValueChangeComputer<>(KeyValue::key, VALUE_MAPPER, true);
 
         // When
-        List<ValueChange<KeyValue>> changes = computer.computeChanges(List.of(before), List.of());
+        List<HasMetadataChange<ValueChange<KeyValue>>> changes = computer.computeChanges(List.of(before), List.of());
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChangeType());
-        Assertions.assertEquals(before, changes.get(0).getBefore());
-        Assertions.assertNull(changes.get(0).getAfter());
+        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChange().getChangeType());
+        Assertions.assertEquals(before, changes.get(0).getChange().getBefore());
+        Assertions.assertNull(changes.get(0).getChange().getAfter());
     }
 }

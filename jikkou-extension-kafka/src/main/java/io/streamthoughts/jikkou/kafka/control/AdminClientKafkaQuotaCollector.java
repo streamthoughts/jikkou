@@ -20,6 +20,7 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
@@ -43,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1KafkaClientQuota.class)
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
-public final class AdminClientKafkaQuotaCollector extends AbstractAdminClientKafkaController
+public final class AdminClientKafkaQuotaCollector extends AdminClientKafkaSupport
         implements ResourceCollector<V1KafkaClientQuota> {
 
     /**
@@ -86,7 +87,10 @@ public final class AdminClientKafkaQuotaCollector extends AbstractAdminClientKaf
         }
 
         String clusterId = adminClientContext.getClusterId();
-        return resources.stream().map(resource -> resource
+        return resources
+                .stream()
+                .filter(new AggregateSelector(selectors)::apply)
+                .map(resource -> resource
                         .toBuilder()
                         .withMetadata(resource.getMetadata()
                                 .toBuilder()

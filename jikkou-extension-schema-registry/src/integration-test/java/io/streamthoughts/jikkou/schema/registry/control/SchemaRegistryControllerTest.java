@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.schema.registry.control;
 
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ChangeType;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
@@ -61,11 +61,9 @@ class SchemaRegistryControllerTest extends AbstractIntegrationTest {
                 ReconciliationContext.with(false)
         );
         // Then
-        Assertions.assertNotNull(results);
         Assertions.assertEquals(1, results.size());
-
         ChangeResult<SchemaSubjectChange> change = results.get(0);
-        Assertions.assertEquals(ChangeType.ADD, change.data().getChangeType());
-        Assertions.assertEquals(SchemaType.AVRO, change.data().getSchemaType().getAfter());
+        Assertions.assertEquals(ChangeType.ADD, change.data().getChange().getChangeType());
+        Assertions.assertEquals(SchemaType.AVRO, change.data().getChange().getSchemaType().getAfter());
     }
 }

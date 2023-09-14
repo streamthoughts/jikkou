@@ -104,6 +104,16 @@ public final class ConfigProperty<T> {
     }
 
     /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link Configuration} value
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static ConfigProperty<Configuration> ofConfig(final @NotNull String path) {
+        return new ConfigProperty<>(path, (p, config) -> config.findConfig(p));
+    }
+
+    /**
      * Static helper method to create a new {@link ConfigProperty} with an expected {@link List} of {@link Configuration}.
      *
      * @param path the option string path.

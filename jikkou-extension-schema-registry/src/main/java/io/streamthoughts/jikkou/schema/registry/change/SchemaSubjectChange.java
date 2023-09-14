@@ -16,10 +16,11 @@
 package io.streamthoughts.jikkou.schema.registry.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.streamthoughts.jikkou.api.control.Change;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.Change;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
@@ -73,6 +74,11 @@ public class SchemaSubjectChange implements Change {
     @JsonIgnore
     public SchemaSubjectChangeOptions getOptions() {
         return options;
+    }
+
+    @JsonProperty("operation")
+    public ChangeType getChangeType() {
+        return changeType;
     }
 
     /**

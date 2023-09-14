@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
         defaultValue = "false",
         type = Boolean.class
 )
-public final class AdminClientKafkaTopicCollector extends AbstractAdminClientKafkaController
+public final class AdminClientKafkaTopicCollector extends AdminClientKafkaSupport
         implements ResourceCollector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);

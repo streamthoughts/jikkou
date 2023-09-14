@@ -15,18 +15,19 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ValueChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class SchemaSubjectChangeDescription implements ChangeDescription {
 
-    private final SchemaSubjectChange change;
+    private final HasMetadataChange<SchemaSubjectChange> item;
 
-    public SchemaSubjectChangeDescription(final @NotNull SchemaSubjectChange change) {
-        this.change = Objects.requireNonNull(change, "change must not be null");
+    public SchemaSubjectChangeDescription(final @NotNull HasMetadataChange<SchemaSubjectChange> item) {
+        this.item = Objects.requireNonNull(item, "change must not be null");
     }
 
     /**
@@ -34,6 +35,7 @@ public class SchemaSubjectChangeDescription implements ChangeDescription {
      **/
     @Override
     public String textual() {
+        SchemaSubjectChange change = item.getChange();
         return String.format("%s subject '%s' (type=%s, compatibilityLevel=%s)",
                 ChangeDescription.humanize(change.getChangeType()),
                 change.getSubject(),

@@ -15,8 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.acls;
 
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.kafka.control.change.AclChange;
+import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
@@ -29,23 +30,29 @@ class AclChangeDescriptionTest {
 
     @Test
     void shouldReturnTextualDescription() {
-        var desc = new AclChangeDescription(
-                AclChange.builder()
-                        .withOperation(ChangeType.ADD)
-                        .withAcl(KafkaAclBinding.builder()
-                                .withPrincipal("User:test")
-                                .withPatternType(PatternType.LITERAL)
-                                .withOperation(AclOperation.ALL)
-                                .withType(AclPermissionType.ALLOW)
-                                .withResourcePattern("test")
-                                .withResourceType(ResourceType.TOPIC)
-                                .withHost("*")
-                                .build()
-                        )
+        // Given
+        AclChange change = AclChange.builder()
+                .withOperation(ChangeType.ADD)
+                .withAcl(KafkaAclBinding.builder()
+                        .withPrincipal("User:test")
+                        .withPatternType(PatternType.LITERAL)
+                        .withOperation(AclOperation.ALL)
+                        .withType(AclPermissionType.ALLOW)
+                        .withResourcePattern("test")
+                        .withResourceType(ResourceType.TOPIC)
+                        .withHost("*")
                         .build()
+                )
+                .build();
+
+        // When
+        var desc = new AclChangeDescription(GenericResourceChange.<AclChange>builder().withChange(change).build());
+
+        // Then
+        Assertions.assertEquals(
+                "Add ACL to ALLOW 'User:test' to execute operation(s) 'ALL' on resource(s) 'TOPIC:LITERAL:test'",
+                desc.textual()
         );
-        String textual = desc.textual();
-        Assertions.assertEquals("Add ACL to ALLOW 'User:test' to execute operation(s) 'ALL' on resource(s) 'TOPIC:LITERAL:test'", textual);
     }
 
 }

@@ -15,9 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.control.handlers.acls;
 
-import io.streamthoughts.jikkou.api.control.ChangeDescription;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.kafka.control.change.AclChange;
+import io.streamthoughts.jikkou.api.change.ChangeDescription;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.kafka.change.AclChange;
 import org.jetbrains.annotations.NotNull;
 
 public interface KafkaAclChangeHandler extends ChangeHandler<AclChange> {
@@ -26,7 +27,7 @@ public interface KafkaAclChangeHandler extends ChangeHandler<AclChange> {
      * {@inheritDoc}
      */
     @Override
-    default ChangeDescription getDescriptionFor(@NotNull final AclChange change) {
-        return new AclChangeDescription(change);
+    default ChangeDescription getDescriptionFor(@NotNull final HasMetadataChange<AclChange> item) {
+        return new AclChangeDescription(item);
     }
 }

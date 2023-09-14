@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public final class NamedValue implements Nameable {
+public final class NamedValue {
 
     /**
      * Create an empty set of named values.
@@ -136,7 +136,6 @@ public final class NamedValue implements Nameable {
         this.value = Objects.requireNonNull(value, "value should not be null");
     }
 
-    /** {@inheritDoc} **/
     public String getName() {
         return name;
     }

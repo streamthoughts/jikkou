@@ -15,18 +15,39 @@
  */
 package io.streamthoughts.jikkou.common.utils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Utility class to manipulate collections.
  */
 public final class CollectionUtils {
 
-    private CollectionUtils() {}
+    private CollectionUtils() {
+    }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    /**
+     * Helper method to key all objects by a computed key.
+     *
+     * @param items the list of items.
+     * @param <V>   the value-type.
+     * @return the Map of keyed objects.
+     */
+    public static <K, V> Map<K, V> keyBy(final Iterable<V> items, final Function<V, K> keyMapper) {
+        if (items == null) return Collections.emptyMap();
+        return new TreeMap<>(StreamSupport
+                .stream(items.spliterator(), false)
+                .collect(Collectors.toMap(keyMapper, it -> it))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends E, E> List<T> cast(List<E> list) {
         return (List) list;
     }
@@ -35,10 +56,11 @@ public final class CollectionUtils {
                                     final Map<String, Object> result) {
         toFlattenMap(source, result, null);
     }
+
     @SuppressWarnings("unchecked")
     public static void toFlattenMap(final Map<String, Object> source,
-                                     final Map<String, Object> result,
-                                     final String key) {
+                                    final Map<String, Object> result,
+                                    final String key) {
         source.forEach((k, v) -> {
             final String currKey = key == null ? k : key + '.' + k;
             if (v instanceof Map) {

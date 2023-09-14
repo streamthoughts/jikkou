@@ -3,7 +3,7 @@
   "description": "",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadataChange<io.streamthoughts.jikkou.kafka.control.change.QuotaChange>"
+    "io.streamthoughts.jikkou.api.model.HasMetadataChange<io.streamthoughts.jikkou.kafka.change.QuotaChange>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -31,7 +31,7 @@
       "type": "object"
     },
     "change": {
-     "existingJavaType": "io.streamthoughts.jikkou.kafka.control.change.QuotaChange",
+     "existingJavaType": "io.streamthoughts.jikkou.kafka.change.QuotaChange",
       "type": "object"
     }
   }

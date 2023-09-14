@@ -23,15 +23,14 @@ import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.control.ChangeExecutor;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.model.GenericResourceChange;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
@@ -94,7 +93,7 @@ public class SchemaRegistryAclEntryController implements BaseResourceController<
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> execute(@NotNull List<ValueChange<SchemaRegistryAclEntry>> changes,
+    public List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> items,
                                                                            @NotNull ReconciliationMode mode,
                                                                            boolean dryRun) {
 
@@ -103,9 +102,11 @@ public class SchemaRegistryAclEntryController implements BaseResourceController<
             List<ChangeHandler<ValueChange<SchemaRegistryAclEntry>>> handlers = List.of(
                     new CreateSchemaRegistryAclEntryChangeHandler(api),
                     new DeleteSchemaRegistryAclEntryChangeHandler(api),
-                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(it.getChangeType(), it.getAfter()))
+                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
+                            it.getChange().getChangeType(),
+                            it.getChange().getAfter()))
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return new ChangeExecutor<>(handlers).execute(items, dryRun);
         } finally {
             api.close();
         }
@@ -134,15 +135,11 @@ public class SchemaRegistryAclEntryController implements BaseResourceController<
         Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.evaluate(context.configuration());
         SchemaRegistryAclEntryChangeComputer computer = new SchemaRegistryAclEntryChangeComputer(deleteOrphans);
 
-        List<GenericResourceChange<SchemaRegistryAclEntry>> changes = computer.computeChanges(actualResources, expectedResources)
-                .stream()
-                .map(change -> GenericResourceChange
-                        .<SchemaRegistryAclEntry>builder()
-                        .withChange(change)
-                        .build()).toList();
+        List<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> changes =
+                computer.computeChanges(actualResources, expectedResources);
 
         return GenericResourceListObject
-                .<GenericResourceChange<SchemaRegistryAclEntry>>builder()
+                .<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>>builder()
                 .withItems(changes)
                 .build();
     }

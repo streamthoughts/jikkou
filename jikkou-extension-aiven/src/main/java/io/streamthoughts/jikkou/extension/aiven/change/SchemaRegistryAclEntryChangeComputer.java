@@ -15,14 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import static io.streamthoughts.jikkou.api.control.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.control.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.IGNORE;
-import static io.streamthoughts.jikkou.api.control.ChangeType.UPDATE;
-
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
-import io.streamthoughts.jikkou.api.control.ChangeType;
-import io.streamthoughts.jikkou.api.control.ValueChangeComputer;
+import io.streamthoughts.jikkou.api.change.ValueChangeComputer;
 import io.streamthoughts.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
@@ -42,26 +35,7 @@ public class SchemaRegistryAclEntryChangeComputer extends ValueChangeComputer<V1
         super(new KeyMapper(), new ValueMapper(), deleteOrphans);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    protected ChangeType getChangeType(V1SchemaRegistryAclEntry before, V1SchemaRegistryAclEntry after) {
-        if (before == null && after == null)
-            return IGNORE;
-
-        if (before == null)
-            return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? IGNORE : ADD;
-
-        if (after == null)
-            return DELETE;
-
-        return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? DELETE : UPDATE;
-    }
-
-
-    record Key(String username, String resource, Permission permission) {
-    }
+    record Key(String username, String resource, Permission permission) { }
 
     static class KeyMapper implements ChangeKeyMapper<V1SchemaRegistryAclEntry> {
         /**

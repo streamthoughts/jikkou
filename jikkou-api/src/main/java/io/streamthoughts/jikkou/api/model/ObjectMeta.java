@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 })
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-public final class ObjectMeta implements Serializable, Nameable {
+public final class ObjectMeta implements Serializable {
 
     public static final String ANNOT_RESOURCE = "jikkou.io/resource-location";
     public static final String ANNOT_GENERATED = "jikkou.io/resource-generated";
@@ -54,6 +54,10 @@ public final class ObjectMeta implements Serializable, Nameable {
 
     public ObjectMeta() {
         this(null, null, null);
+    }
+
+    public ObjectMeta(@Nullable final String name) {
+        this(name, null, null);
     }
 
     @ConstructorProperties({

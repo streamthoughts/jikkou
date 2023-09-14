@@ -23,15 +23,14 @@ import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.api.change.ChangeExecutor;
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
+import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.control.ChangeExecutor;
-import io.streamthoughts.jikkou.api.control.ChangeHandler;
-import io.streamthoughts.jikkou.api.control.ChangeResult;
-import io.streamthoughts.jikkou.api.control.ValueChange;
 import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.model.GenericResourceChange;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
@@ -95,7 +94,7 @@ public class KafkaTopicAclEntryController implements BaseResourceController<V1Ka
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<ValueChange<KafkaAclEntry>>> execute(@NotNull List<ValueChange<KafkaAclEntry>> changes,
+    public List<ChangeResult<ValueChange<KafkaAclEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<KafkaAclEntry>>> items,
                                                                   @NotNull ReconciliationMode mode,
                                                                   boolean dryRun) {
 
@@ -104,9 +103,12 @@ public class KafkaTopicAclEntryController implements BaseResourceController<V1Ka
             List<ChangeHandler<ValueChange<KafkaAclEntry>>> handlers = List.of(
                     new CreateKafkaAclEntryChangeHandler(api),
                     new DeleteKafkaAclEntryChangeHandler(api),
-                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(it.getChangeType(), it.getAfter()))
+                    new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
+                            it.getChange().getChangeType(),
+                            it.getChange().getAfter())
+                    )
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return new ChangeExecutor<>(handlers).execute(items, dryRun);
         } finally {
             api.close();
         }
@@ -134,15 +136,11 @@ public class KafkaTopicAclEntryController implements BaseResourceController<V1Ka
         Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.evaluate(context.configuration());
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(deleteOrphans);
 
-        List<GenericResourceChange<KafkaAclEntry>> changes = computer.computeChanges(actualResources, expectedResources)
-                .stream()
-                .map(change -> GenericResourceChange
-                        .<KafkaAclEntry>builder()
-                        .withChange(change)
-                        .build()).toList();
+        List<HasMetadataChange<ValueChange<KafkaAclEntry>>> changes = computer
+                .computeChanges(actualResources, expectedResources);
 
         return GenericResourceListObject
-                .<GenericResourceChange<KafkaAclEntry>>builder()
+                .<HasMetadataChange<ValueChange<KafkaAclEntry>>>builder()
                 .withItems(changes)
                 .build();
     }

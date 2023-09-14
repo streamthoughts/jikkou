@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.api.extensions;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.model.HasPriority;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,13 +27,13 @@ class ExtensionConfigTest {
     void shouldGetExtensionConfigGivenCompleteConfiguration(){
         // Given
         Configuration configuration = Configuration.from(Map.of(
-                ResourceInterceptorDescriptor.TYPE_CONFIG, "Type",
-                ResourceInterceptorDescriptor.PRIORITY_CONFIG, 100,
-                ResourceInterceptorDescriptor.NAME_CONFIG, "Name",
-                ResourceInterceptorDescriptor.CONFIGURATION_CONFIG, Configuration.of("k1", "v1")
+                ExtensionConfigDescriptor.TYPE_CONFIG.key(), "Type",
+                ExtensionConfigDescriptor.PRIORITY_CONFIG.key(), 100,
+                ExtensionConfigDescriptor.NAME_CONFIG.key(), "Name",
+                ExtensionConfigDescriptor.CONFIGURATION_CONFIG.key(), Configuration.of("k1", "v1")
         ));
         // When
-        ResourceInterceptorDescriptor extensionConfig = ResourceInterceptorDescriptor.of(configuration);
+        ExtensionConfigDescriptor extensionConfig = ExtensionConfigDescriptor.of(configuration);
 
         // Then
         Assertions.assertEquals("Type", extensionConfig.extensionClass());
@@ -45,17 +46,17 @@ class ExtensionConfigTest {
     void shouldGetExtensionConfigGivenConfigurationWithNoPriority(){
         // Given
         Configuration configuration = Configuration.from(Map.of(
-                ResourceInterceptorDescriptor.TYPE_CONFIG, "Type",
-                ResourceInterceptorDescriptor.NAME_CONFIG, "Name",
-                ResourceInterceptorDescriptor.CONFIGURATION_CONFIG, Configuration.of("k1", "v1")
+                ExtensionConfigDescriptor.TYPE_CONFIG.key(), "Type",
+                ExtensionConfigDescriptor.NAME_CONFIG.key(), "Name",
+                ExtensionConfigDescriptor.CONFIGURATION_CONFIG.key(), Configuration.of("k1", "v1")
         ));
         // When
-        ResourceInterceptorDescriptor extensionConfig = ResourceInterceptorDescriptor.of(configuration);
+        ExtensionConfigDescriptor extensionConfig = ExtensionConfigDescriptor.of(configuration);
 
         // Then
         Assertions.assertEquals("Type", extensionConfig.extensionClass());
         Assertions.assertEquals("Name", extensionConfig.name());
-        Assertions.assertNull(extensionConfig.priority());
+        Assertions.assertEquals(HasPriority.NO_ORDER, extensionConfig.priority());
         Assertions.assertEquals(Configuration.of("k1", "v1"), extensionConfig.config());
     }
 
@@ -63,12 +64,12 @@ class ExtensionConfigTest {
     void shouldGetExtensionConfigGivenConfigurationWithNoConfig(){
         // Given
         Configuration configuration = Configuration.from(Map.of(
-                ResourceInterceptorDescriptor.TYPE_CONFIG, "Type",
-                ResourceInterceptorDescriptor.NAME_CONFIG, "Name",
-                ResourceInterceptorDescriptor.PRIORITY_CONFIG, 100
+                ExtensionConfigDescriptor.TYPE_CONFIG.key(), "Type",
+                ExtensionConfigDescriptor.NAME_CONFIG.key(), "Name",
+                ExtensionConfigDescriptor.PRIORITY_CONFIG.key(), 100
         ));
         // When
-        ResourceInterceptorDescriptor extensionConfig = ResourceInterceptorDescriptor.of(configuration);
+        ExtensionConfigDescriptor extensionConfig = ExtensionConfigDescriptor.of(configuration);
 
         // Then
         Assertions.assertEquals("Type", extensionConfig.extensionClass());
