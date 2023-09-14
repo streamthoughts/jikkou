@@ -47,11 +47,15 @@ import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaBroker.class)
 @AcceptsResource(type = V1KafkaBrokerList.class, converter = V1KafkaBrokerListConverter.class)
 public final class AdminClientKafkaBrokerCollector extends AbstractAdminClientKafkaController
         implements ResourceCollector<V1KafkaBroker> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaBrokerCollector.class);
 
     /**
      * Creates a new {@link AdminClientKafkaBrokerCollector} instance.
@@ -85,6 +89,7 @@ public final class AdminClientKafkaBrokerCollector extends AbstractAdminClientKa
     public List<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
                                        @NotNull final List<ResourceSelector> selectors) {
 
+        LOG.info("Listing all kafka brokers");
         var options = new ConfigDescribeConfiguration(configuration);
 
         var predicate = new KafkaConfigPredicate()

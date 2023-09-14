@@ -1,110 +1,7 @@
 [
   {
-    "name" : "org.apache.kafka.common.config.TopicConfig",
-    "allDeclaredFields" : true
-  },
-  {
-    "name":"com.sun.security.sasl.ClientFactoryImpl",
-    "allDeclaredMethods":true,
-    "allDeclaredConstructors":true
-  },
-  {
-    "name":"java.util.zip.CRC32C",
-    "allDeclaredMethods":true,
-    "allDeclaredConstructors":true
-  },
-  {
-    "name":"sun.security.pkcs.SignerInfo[]"
-  },
-  {
-    "name":"sun.security.pkcs12.PKCS12KeyStore",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.provider.JavaKeyStore$JKS",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.provider.NativePRNG",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.provider.SHA",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.provider.X509Factory",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.rsa.RSAKeyFactory$Legacy",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.ssl.SSLContextImpl$TLSContext",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.ssl.TrustManagerFactoryImpl$PKIXFactory",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.util.ObjectIdentifier"
-  },
-  {
-    "name":"sun.security.x509.AuthorityInfoAccessExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.AuthorityKeyIdentifierExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.BasicConstraintsExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.CRLDistributionPointsExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.CertificateExtensions"
-  },
-  {
-    "name":"sun.security.x509.CertificatePoliciesExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.ExtendedKeyUsageExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.IssuerAlternativeNameExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.KeyUsageExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.NetscapeCertTypeExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.PrivateKeyUsageExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.SubjectAlternativeNameExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
-  },
-  {
-    "name":"sun.security.x509.SubjectKeyIdentifierExtension",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]
+    "name": "org.apache.kafka.common.config.TopicConfig",
+    "allDeclaredFields": true
   },
   {
     "name": "com.sun.security.sasl.ClientFactoryImpl",
@@ -112,32 +9,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "org.apache.kafka.clients.consumer.RangeAssignor",
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "org.apache.kafka.clients.producer.internals.DefaultPartitioner",
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "org.apache.kafka.common.security.authenticator.AbstractLogin$DefaultLoginCallbackHandler",
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "org.apache.kafka.common.security.authenticator.DefaultLogin",
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "org.apache.kafka.common.security.authenticator.SaslClientCallbackHandler",
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "org.apache.kafka.common.security.plain.PlainLoginModule",
+    "name": "java.util.zip.CRC32C",
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
@@ -182,6 +54,319 @@
   },
   {
     "name": "sun.security.provider.SHA",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.X509Factory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.rsa.RSAKeyFactory$Legacy",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.ssl.SSLContextImpl$TLSContext",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.ssl.TrustManagerFactoryImpl$PKIXFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.util.ObjectIdentifier"
+  },
+  {
+    "name": "sun.security.x509.AuthorityInfoAccessExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.AuthorityKeyIdentifierExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.BasicConstraintsExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.CRLDistributionPointsExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.CertificateExtensions"
+  },
+  {
+    "name": "sun.security.x509.CertificatePoliciesExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.ExtendedKeyUsageExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.IssuerAlternativeNameExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.KeyUsageExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.NetscapeCertTypeExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.PrivateKeyUsageExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.SubjectAlternativeNameExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.security.x509.SubjectKeyIdentifierExtension",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.Boolean",
+          "java.lang.Object"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.sun.security.sasl.ClientFactoryImpl",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.clients.consumer.RangeAssignor",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.clients.producer.internals.DefaultPartitioner",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.common.security.authenticator.AbstractLogin$DefaultLoginCallbackHandler",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.common.security.authenticator.DefaultLogin",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.common.security.authenticator.SaslClientCallbackHandler",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.common.security.plain.PlainLoginModule",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.common.security.scram.ScramLoginModule",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.kafka.common.security.scram.internals.ScramSaslClient$ScramSaslClientFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.kafka.common.utils.AppInfoParser$AppInfo",
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "org.apache.kafka.common.utils.AppInfoParser$AppInfoMBean",
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "sun.security.pkcs.SignerInfo[]"
+  },
+  {
+    "name": "sun.security.pkcs12.PKCS12KeyStore",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.JavaKeyStore$JKS",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.NativePRNG",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.SHA",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.SHA2$SHA256",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.SHA5$SHA512",
     "methods": [
       {
         "name": "<init>",

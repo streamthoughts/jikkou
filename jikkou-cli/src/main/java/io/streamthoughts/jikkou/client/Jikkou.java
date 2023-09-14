@@ -123,7 +123,7 @@ public final class Jikkou {
         String rootLogLevel = System.getenv("ROOT_LOG_LEVEL");
         if (rootLogLevel != null) {
             LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ch.qos.logback.classic.Logger logger = loggerContext.getLogger("io.streamthoughts.jikkou");
+            ch.qos.logback.classic.Logger logger = loggerContext.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
             logger.setLevel(ch.qos.logback.classic.Level.toLevel(rootLogLevel.toUpperCase(Locale.ROOT)));
         }
     }
