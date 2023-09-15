@@ -10,7 +10,7 @@ with Jikkou.&lt;/p>
 &lt;li>Using Docker, &lt;a href="https://docs.docker.com/compose/">Docker Compose&lt;/a> is the easiest way to use it.&lt;/li>
 &lt;/ul>
 &lt;/li>
-&lt;li>Java 17&lt;/li>
+&lt;li>Java 17 (not required when using the binary version).&lt;/li>
 &lt;/ul>
 &lt;h2 id="start-your-local-apache-kafka-cluster">Start your local Apache Kafka Cluster&lt;/h2>
 &lt;p>You must have access to an Apache Kafka cluster for using Jikkou.
@@ -208,7 +208,26 @@ that will be executed by Jikkou before continuing.
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://raw.githubusercontent.com/streamthoughts/jikkou/master/jikkou_completion . jikkou_completion
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or alternatively, run the following command for generation the completion script.&lt;/p>
 &lt;pre tabindex="0">&lt;code>$ source &amp;lt;(jikkou generate-completion)
-&lt;/code>&lt;/pre>&lt;h2 id="development-builds">Development Builds&lt;/h2>
+&lt;/code>&lt;/pre>&lt;h4 id="using-docker-image">Using Docker Image&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create a Jikkou configfile (i.e., jikkouconfig)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cat &lt;span style="color:#4e9a06">&amp;lt;&amp;lt; EOF &amp;gt;jikkouconfig
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">{
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> &amp;#34;currentContext&amp;#34; : &amp;#34;localhost&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> &amp;#34;localhost&amp;#34; : {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> &amp;#34;configFile&amp;#34; : null,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> &amp;#34;configProps&amp;#34; : {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> &amp;#34;kafka.client.bootstrap.servers&amp;#34; : &amp;#34;localhost:9092&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">}
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">EOF&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Run Docker&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker run -it &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--net host &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--mount &lt;span style="color:#000">type&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>bind,source&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&lt;/span>&lt;span style="color:#204a87;font-weight:bold">$(&lt;/span>&lt;span style="color:#204a87">pwd&lt;/span>&lt;span style="color:#204a87;font-weight:bold">)&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&lt;/span>/jikkouconfig,target&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>/etc/jikkou/config &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>streamthoughts/jikkou:latest -V
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="development-builds">Development Builds&lt;/h2>
 &lt;p>In addition to releases you can download or install development snapshots of Jikkou.&lt;/p>
 &lt;h3 id="from-docker-hub">From Docker Hub&lt;/h3>
 &lt;p>Docker images are built and push to &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a> from the latest &lt;code>main&lt;/code> branch.
