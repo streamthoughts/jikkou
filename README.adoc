@@ -23,11 +23,11 @@ manage, automate, and provision resource configurations for Kafka, Schema Regist
 Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
 ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
 
-Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schema** and even more with the use of YAML files called **_Resource Definitions_**.
+Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schemas** and even more with the use of YAML files called **_Resource Definitions_**.
 
 Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
 
-Jikkou can be used on on-premise Apache Kafka, https://aiven.io/kafka[Aiven], and https://www.confluent.io/confluent-cloud/[Confluent Cloud].
+Jikkou can be used with https://kafka.apache.org/[Apache Kafka], https://aiven.io/kafka[Aiven], https://aws.amazon.com/fr/msk/[MSK], and https://www.confluent.io/confluent-cloud/[Confluent Cloud].
 
 == Motivation
 

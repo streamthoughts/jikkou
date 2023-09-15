@@ -15,7 +15,7 @@ Make sure the following is installed:
 
 * An Apache Kafka cluster.
   * Using Docker, [Docker Compose](https://docs.docker.com/compose/) is the easiest way to use it.
-* Java 17
+* Java 17 (not required when using the binary version).
 
 ## Start your local Apache Kafka Cluster 
 

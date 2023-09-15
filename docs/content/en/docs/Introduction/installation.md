@@ -43,6 +43,29 @@ or alternatively, run the following command for generation the completion script
 $ source <(jikkou generate-completion)
 ```
 
+#### Using Docker Image
+
+```bash
+# Create a Jikkou configfile (i.e., jikkouconfig)
+cat << EOF >jikkouconfig
+{
+  "currentContext" : "localhost",
+  "localhost" : {
+    "configFile" : null,
+    "configProps" : {
+      "kafka.client.bootstrap.servers" : "localhost:9092"
+    }
+  }
+}
+EOF
+
+# Run Docker
+docker run -it \
+--net host \
+--mount type=bind,source="$(pwd)"/jikkouconfig,target=/etc/jikkou/config \
+streamthoughts/jikkou:latest -V
+```
+
 ## Development Builds
 
 In addition to releases you can download or install development snapshots of Jikkou.
