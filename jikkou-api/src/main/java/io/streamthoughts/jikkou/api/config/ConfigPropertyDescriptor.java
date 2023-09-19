@@ -19,14 +19,11 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ConfigPropertyDescriptor {
-
-    private final String name;
-    private final String description;
-    private final boolean isRequired;
-    private final String defaultValue;
-
-    private final Class<?> type;
+public record ConfigPropertyDescriptor(String name,
+                                       Class<?> type,
+                                       String description,
+                                       String defaultValue,
+                                       boolean isRequired) {
 
     public ConfigPropertyDescriptor(@NotNull final String name,
                                     @NotNull final Class<?> type,
@@ -38,25 +35,5 @@ public final class ConfigPropertyDescriptor {
         this.description = description;
         this.isRequired = isRequired;
         this.defaultValue = defaultValue;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public Class<?> type() {
-        return type;
-    }
-
-    public String description() {
-        return description;
-    }
-
-    public boolean isRequired() {
-        return isRequired;
-    }
-
-    public String defaultValue() {
-        return defaultValue;
     }
 }

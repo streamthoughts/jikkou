@@ -26,9 +26,8 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
-import io.streamthoughts.jikkou.api.testcontainer.RedpandaContainerConfig;
-import io.streamthoughts.jikkou.api.testcontainer.RedpandaKafkaContainer;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
+import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
@@ -36,19 +35,13 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
-@Tag("integration")
-public class AdminClientKafkaTopicControllerIT {
+public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationTest {
 
     public static final String CLASSPATH_RESOURCE_TOPICS = "test-kafka-topics.yaml";
     public static final String CLASSPATH_RESOURCE_TOPIC_ALL_DELETE = "test-kafka-topics-with-all-delete.yaml";
@@ -56,14 +49,6 @@ public class AdminClientKafkaTopicControllerIT {
     public static final String TOPIC_TEST_A = "topic-test-A";
     public static final String TOPIC_TEST_B = "topic-test-B";
     public static final String TOPIC_TEST_C = "topic-test-C";
-
-    @Container
-    public RedpandaKafkaContainer kafka = new RedpandaKafkaContainer(
-            new RedpandaContainerConfig()
-                    .withKafkaApiFixedExposedPort(9092)
-                    .withAttachContainerOutputLog(true)
-                    .withTransactionEnabled(false)
-    );
 
     private volatile JikkouApi api;
 
@@ -75,11 +60,11 @@ public class AdminClientKafkaTopicControllerIT {
     @BeforeEach
     public void setUp() {
         var controller = new AdminClientKafkaTopicController(new AdminClientContext(() ->
-                AdminClient.create(Map.of(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers())))
+                AdminClient.create(clientConfig()))
         );
 
         var descriptor = new AdminClientKafkaTopicCollector(new AdminClientContext(() ->
-                AdminClient.create(Map.of(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers())))
+                AdminClient.create(clientConfig()))
         );
 
         api = DefaultApi.builder()
@@ -87,7 +72,6 @@ public class AdminClientKafkaTopicControllerIT {
                 .withCollector(descriptor)
                 .build();
     }
-
 
     @Test
     public void shouldReconcileKafkaTopicsGivenModeCreate() {
@@ -144,8 +128,8 @@ public class AdminClientKafkaTopicControllerIT {
     public void shouldReconcileKafkaTopicsForModeDeleteWithDeleteAnnotations() {
 
         // GIVEN
-        kafka.createTopic(TOPIC_TEST_A);
-        kafka.createTopic(TOPIC_TEST_B);
+        createTopic(TOPIC_TEST_A);
+        createTopic(TOPIC_TEST_B);
 
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_ALL_DELETE);
@@ -179,7 +163,7 @@ public class AdminClientKafkaTopicControllerIT {
     public void shouldReconcileKafkaTopicsForModeUpdate() {
 
         // GIVEN
-        kafka.createTopic(TOPIC_TEST_A);
+        createTopic(TOPIC_TEST_A);
 
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
@@ -218,7 +202,7 @@ public class AdminClientKafkaTopicControllerIT {
     public void shouldReconcileKafkaTopicsGivenModeApply() {
 
         // GIVEN
-        kafka.createTopic(TOPIC_TEST_C);
+        createTopic(TOPIC_TEST_C);
 
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
@@ -254,7 +238,7 @@ public class AdminClientKafkaTopicControllerIT {
     public void shouldReconcileKafkaTopicForModeApplyAndDeleteOrphansTrue() {
 
         // GIVEN
-        kafka.createTopic(TOPIC_TEST_C);
+        createTopic(TOPIC_TEST_C);
 
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE);

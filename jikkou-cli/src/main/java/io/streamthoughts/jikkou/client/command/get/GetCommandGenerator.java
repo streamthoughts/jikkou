@@ -88,19 +88,7 @@ public class GetCommandGenerator {
 
                 List<ConfigPropertyDescriptor> configs = ResourceCollector.getConfigPropertyDescriptors(type);
                 for (ConfigPropertyDescriptor config : configs) {
-                    spec.addOption(CommandLine.Model.OptionSpec
-                            .builder("--" + config.name())
-                            .type(config.type())
-                            .description(config.description())
-                            .defaultValue(config.defaultValue())
-                            .required(config.isRequired())
-                            .setter(new CommandLine.Model.ISetter() {
-                                @Override
-                                public <T> T set(T value) {
-                                    return command.addOptions(config.name(), value);
-                                }
-                            })
-                            .build()
+                    spec.addOption(createOptionSpec(config, command)
                     );
                 }
                 cmd.addSubcommand(subcommand);
@@ -114,6 +102,22 @@ public class GetCommandGenerator {
         cmd.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST, renderer);
 
         return cmd;
+    }
+
+    private CommandLine.Model.OptionSpec createOptionSpec(ConfigPropertyDescriptor config, GetResourceCommand command) {
+        return CommandLine.Model.OptionSpec
+                .builder("--" + config.name().replaceAll("\\.", "-"))
+                .type(config.type())
+                .description(config.description())
+                .defaultValue(config.isRequired() ? null : config.defaultValue())
+                .required(config.isRequired())
+                .setter(new CommandLine.Model.ISetter() {
+                    @Override
+                    public <T> T set(T value) {
+                        return command.addOptions(config.name(), value);
+                    }
+                })
+                .build();
     }
 
     /**

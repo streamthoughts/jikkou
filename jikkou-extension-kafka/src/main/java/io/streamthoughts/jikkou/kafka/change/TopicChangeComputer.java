@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.jetbrains.annotations.NotNull;
 
 public class TopicChangeComputer extends ResourceChangeComputer<V1KafkaTopic, V1KafkaTopic, TopicChange> {
     private final boolean isConfigDeletionEnabled;
@@ -48,22 +47,8 @@ public class TopicChangeComputer extends ResourceChangeComputer<V1KafkaTopic, V1
      * @param isConfigDeletionEnabled {@code true} to delete orphaned config entries.
      */
     public TopicChangeComputer(boolean isConfigDeletionEnabled) {
-        super(
-                new KeyMapper(),
-                new IdentityChangeValueMapper<>(),
-                false
-        );
+        super(metadataNameKeyMapper(), identityChangeValueMapper(), false);
         this.isConfigDeletionEnabled = isConfigDeletionEnabled;
-    }
-
-    static class KeyMapper implements ChangeKeyMapper<V1KafkaTopic> {
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public @NotNull Object apply(@NotNull V1KafkaTopic resource) {
-            return resource.getMetadata().getName();
-        }
     }
 
     /**
@@ -126,12 +111,12 @@ public class TopicChangeComputer extends ResourceChangeComputer<V1KafkaTopic, V1
 
         return List.of(
                 TopicChange.builder()
-                .withName(after.getMetadata().getName())
-                .withPartitions(partitions)
-                .withReplicas(replication)
-                .withOperation(op)
-                .withConfigs(configEntryChanges.stream().map(HasMetadataChange::getChange).collect(Collectors.toList()))
-                .build()
+                        .withName(after.getMetadata().getName())
+                        .withPartitions(partitions)
+                        .withReplicas(replication)
+                        .withOperation(op)
+                        .withConfigs(configEntryChanges.stream().map(HasMetadataChange::getChange).collect(Collectors.toList()))
+                        .build()
         );
     }
 
@@ -149,12 +134,12 @@ public class TopicChangeComputer extends ResourceChangeComputer<V1KafkaTopic, V1
 
         return List.of(
                 TopicChange.builder()
-                .withName(after.getMetadata().getName())
-                .withPartitions(withAfterValue(getPartitionsOrDefault(after)))
-                .withReplicas(withAfterValue(getReplicationFactorOrDefault(after)))
-                .withOperation(ChangeType.ADD)
-                .withConfigs(configEntryChanges)
-                .build()
+                        .withName(after.getMetadata().getName())
+                        .withPartitions(withAfterValue(getPartitionsOrDefault(after)))
+                        .withReplicas(withAfterValue(getReplicationFactorOrDefault(after)))
+                        .withOperation(ChangeType.ADD)
+                        .withConfigs(configEntryChanges)
+                        .build()
         );
     }
 

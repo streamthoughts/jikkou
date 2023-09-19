@@ -43,12 +43,7 @@ public class SchemaSubjectChangeComputer extends ResourceChangeComputer<V1Schema
      * Creates a new {@link SchemaSubjectChangeComputer} instance.
      */
     public SchemaSubjectChangeComputer() {
-        super(new ChangeKeyMapper<>() {
-            @Override
-            public @NotNull Object apply(@NotNull V1SchemaRegistrySubject object) {
-                return object.getMetadata().getName(); // Subject
-            }
-        }, new IdentityChangeValueMapper<>(), false);
+        super(metadataNameKeyMapper(), identityChangeValueMapper(), false);
     }
 
     /** {@inheritDoc} **/

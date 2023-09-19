@@ -17,52 +17,41 @@ package io.streamthoughts.jikkou.kafka.health;
 
 import io.streamthoughts.jikkou.api.health.Health;
 import io.streamthoughts.jikkou.api.health.Status;
-import io.streamthoughts.jikkou.api.testcontainer.RedpandaContainerConfig;
-import io.streamthoughts.jikkou.api.testcontainer.RedpandaKafkaContainer;
+import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @Tag("integration")
-class KafkaBrokerHealthIndicatorIT {
-
-    @Container
-    public RedpandaKafkaContainer kafka = new RedpandaKafkaContainer(
-            new RedpandaContainerConfig()
-                    .withKafkaApiFixedExposedPort(9092)
-                    .withAttachContainerOutputLog(true)
-                    .withTransactionEnabled(false)
-    );
+class KafkaBrokerHealthIndicatorIT extends AbstractKafkaIntegrationTest {
 
     private AdminClientContext context;
 
     @BeforeEach
     public void setUp() {
-        context = new AdminClientContext(() ->
-                AdminClient.create(
-                        Map.of(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers())
-                )
-        );
+        context = new AdminClientContext(() -> AdminClient.create(clientConfig()) );
     }
 
     @Test
-    void should_get_kafka_health() {
+    void shouldGetKafkaHealth() {
         var indicator = new KafkaBrokerHealthIndicator(context);
         Health health = indicator.getHealth(Duration.ofSeconds(30));
         Assertions.assertNotNull(health);
         Assertions.assertEquals(Status.UP, health.getStatus());
         Assertions.assertTrue(((String) health.getDetails().get("resource")).startsWith("urn:kafka:cluster:id:"));
         Assertions.assertEquals(1, ((List) health.getDetails().get("brokers")).size());
-        Assertions.assertEquals(("{id=0, host=localhost, port=9092}"), ((List) health.getDetails().get("brokers")).get(0).toString());
+        Assertions.assertEquals(
+                ("{id=1, host=" + getBrokerHost() + ", port=" + getBrokerPort() + "}"),
+                ((List) health.getDetails().get("brokers"))
+                        .get(0)
+                        .toString()
+        );
     }
 }

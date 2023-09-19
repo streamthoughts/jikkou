@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.kafka.change;
 import static java.util.function.Predicate.not;
 
 import io.streamthoughts.jikkou.api.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.kafka.control.handlers.acls.KafkaAclBindingBuilder;
+import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.util.ArrayList;

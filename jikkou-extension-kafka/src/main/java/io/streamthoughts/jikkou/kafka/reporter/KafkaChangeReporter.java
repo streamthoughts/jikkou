@@ -26,13 +26,15 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.common.utils.CompletablePromise;
-import io.streamthoughts.jikkou.common.utils.CompletablePromiseContext;
+import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
+import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
+import io.streamthoughts.jikkou.kafka.internals.producer.KafkaRecordSender;
+import io.streamthoughts.jikkou.kafka.internals.producer.ProducerFactory;
+import io.streamthoughts.jikkou.kafka.internals.producer.ProducerRequestResult;
 import io.streamthoughts.jikkou.kafka.reporter.ce.CloudEventEntity;
 import io.streamthoughts.jikkou.kafka.reporter.ce.CloudEventEntityBuilder;
 import io.streamthoughts.jikkou.kafka.reporter.ce.CloudEventExtension;
-import io.streamthoughts.jikkou.kafka.reporter.ce.KafkaRecord;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -41,14 +43,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicExistsException;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.jetbrains.annotations.NotNull;
@@ -62,13 +60,12 @@ import org.slf4j.LoggerFactory;
 public class KafkaChangeReporter implements ChangeReporter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaChangeReporter.class);
-    public static final int DEFAULT_KAFKA_TIMEOUT = 30;
 
     private KafkaChangeReporterConfig configuration;
 
     private ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
 
-    private Supplier<Producer<byte[], byte[]>> producerSupplier;
+    private ProducerFactory<byte[], byte[]> producerFactory;
 
     /**
      * Creates a new {@link KafkaChangeReporter} instance.
@@ -89,14 +86,13 @@ public class KafkaChangeReporter implements ChangeReporter {
     /**
      * Creates a new {@link KafkaChangeReporter} instance.
      *
-     * @param producerSupplier the producer-client to be used for sending events.
+     * @param producerFactory the producer-client to be used for sending events.
      */
-    public KafkaChangeReporter(final @NotNull Supplier<Producer<byte[], byte[]>> producerSupplier,
+    public KafkaChangeReporter(final @NotNull ProducerFactory<byte[], byte[]> producerFactory,
                                final @NotNull ObjectMapper objectMapper) {
-        this.producerSupplier = Objects.requireNonNull(producerSupplier, "producerSupplier cannot be null");
+        this.producerFactory = Objects.requireNonNull(producerFactory, "producerFactory cannot be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper cannot be null");
     }
-
 
     /**
      * {@inheritDoc}
@@ -106,8 +102,8 @@ public class KafkaChangeReporter implements ChangeReporter {
         LOG.info("Configuration");
         this.configuration = new KafkaChangeReporterConfig(configuration);
         Map<String, Object> clientConfig = this.configuration.clientConfig();
-        if (producerSupplier == null) {
-            producerSupplier = () -> new KafkaProducer<>(
+        if (producerFactory == null) {
+            producerFactory = new DefaultProducerFactory<>(
                     KafkaUtils.getProducerClientConfigs(clientConfig),
                     new ByteArraySerializer(),
                     new ByteArraySerializer()
@@ -135,7 +131,7 @@ public class KafkaChangeReporter implements ChangeReporter {
         final String source = configuration.eventSource();
 
         Stream<ChangeResult<Change>> stream = filterRelevantChangeResults(results);
-        List<ProducerRecord<byte[], byte[]>> records = stream.map(result -> {
+        List<KafkaRecord<byte[], byte[]>> records = stream.map(result -> {
                     CloudEventEntity<Object> entity = CloudEventEntityBuilder.newBuilder()
                             .withSpecVersion("1.0")
                             .withId("uuid:" + UUID.randomUUID())
@@ -152,52 +148,27 @@ public class KafkaChangeReporter implements ChangeReporter {
                                 .header("content-type", "application/cloudevents+json; charset=UTF-8")
                                 .value(value)
                                 .topic(topic)
-                                .build()
-                                .toProducerRecord();
+                                .build();
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
                 })
                 .toList();
-        try (var producer = producerSupplier.get()) {
-            try (CompletablePromiseContext context = CompletablePromiseContext.eventLoop()) {
-                List<CompletableFuture<Void>> futures = records
-                        .stream()
-                        .map(r -> this.send(producer, r, context))
-                        .toList();
-                CompletableFuture<List<Void>> all = AsyncUtils.waitForAll(futures);
-                try {
-                    producer.flush();
-                    all.get(DEFAULT_KAFKA_TIMEOUT, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                } catch (Exception ex) {
-                    // ignore - there is nothing useful we can do here
-                } finally {
-                    LOG.info("Completed reporting for {} change events", futures.size());
-                }
-            }
-        }
-    }
 
-    private CompletableFuture<Void> send(final Producer<byte[], byte[]> producer,
-                                         final ProducerRecord<byte[], byte[]> record,
-                                         final CompletablePromiseContext promiseContext) {
-        return new CompletablePromise<>(producer.send(record), promiseContext)
-                .handle((metadata, e) -> {
-                    if (e == null) {
-                        LOG.info(
-                                "Changed event was successfully sent to kafka topic {}-{} ",
-                                metadata.topic(),
-                                metadata.partition()
-                        );
-                    } else {
-                        LOG.warn("Failed to report change event into kafka topic {}",
-                                metadata.topic(),
-                                e);
-                    }
-                    return null;
-                });
+        List<CompletableFuture<ProducerRequestResult<byte[], byte[]>>> futures;
+        try (Producer<byte[], byte[]> producer = producerFactory.createProducer()) {
+            futures = new KafkaRecordSender<>(producer).send(records);
+            LOG.debug("Flushing any pending requests in producer");
+            producer.flush();
+        }
+        try {
+            AsyncUtils.waitForAll(futures).get();
+            LOG.debug("Sending completed for {} records", results.size());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException ignore) {
+            // There is nothing we can do here
+        }
     }
 
     private Stream<ChangeResult<Change>> filterRelevantChangeResults(List<ChangeResult<Change>> results) {
@@ -227,5 +198,6 @@ public class KafkaChangeReporter implements ChangeReporter {
      * {@inheritDoc}
      **/
     @Override
-    public void close() {}
+    public void close() {
+    }
 }

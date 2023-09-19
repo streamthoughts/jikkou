@@ -31,7 +31,7 @@ public @interface AcceptsConfigProperty {
 
     String name();
     String description() default "";
-    String defaultValue();
+    String defaultValue() default "";
     Class<?> type();
     boolean isRequired() default true;
 }

@@ -71,4 +71,14 @@ public abstract class ResourceChangeComputer<T extends HasMetadata, V, C extends
     public abstract List<C> buildChangeForNone(V before, V after);
 
     public abstract List<C> buildChangeForCreating(V after);
+
+    public static <T extends HasMetadata> ChangeKeyMapper<T> metadataNameKeyMapper() {
+        return new ChangeKeyMapper<T>() {
+
+            @Override
+            public @NotNull Object apply(@NotNull T object) {
+                return object.getMetadata().getName();
+            }
+        };
+    }
 }
