@@ -13,8 +13,7 @@ Here, you will find the list of resources supported for Apache Kafka.
 ## Configuration
 
 The Apache Kafka extension is built on top of the Kafka Admin Client. You can configure the properties to be passed to
-kafka client
-through the Jikkou client configuration property `jikkou.kafka.client`.
+kafka client  through the Jikkou client configuration property `jikkou.kafka.client`.
 
 **Example:**
 
