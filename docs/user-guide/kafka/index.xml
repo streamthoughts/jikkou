@@ -4,8 +4,7 @@
 &lt;/div>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;p>The Apache Kafka extension is built on top of the Kafka Admin Client. You can configure the properties to be passed to
-kafka client
-through the Jikkou client configuration property &lt;code>jikkou.kafka.client&lt;/code>.&lt;/p>
+kafka client through the Jikkou client configuration property &lt;code>jikkou.kafka.client&lt;/code>.&lt;/p>
 &lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
 kafka {
@@ -205,4 +204,16 @@ waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 &lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
 &lt;h4 id="kafkajikkouiocluster-id">&lt;code>kafka.jikkou.io/cluster-id&lt;/code>&lt;/h4>
 &lt;p>Used by jikkou.&lt;/p>
-&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item></channel></rss>
+&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item><item><title>Docs: Compatibility</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/compatibility/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/compatibility/</guid><description>
+&lt;p>The Apache Kafka extension for Jikkou utilizes the &lt;a href="https://kafka.apache.org/documentation/#adminapi">Kafka Admin Client&lt;/a>
+which is compatible with any Kafka infrastructure, such as :&lt;/p>
+&lt;ul>
+&lt;li>Aiven&lt;/li>
+&lt;li>Apache Kafka&lt;/li>
+&lt;li>Confluent Cloud&lt;/li>
+&lt;li>MSK&lt;/li>
+&lt;li>Redpanda&lt;/li>
+&lt;li>etc.&lt;/li>
+&lt;/ul>
+&lt;p>In addition, &lt;a href="https://kafka.apache.org/protocol.html">Kafka Protocol&lt;/a> has a &amp;ldquo;bidirectional&amp;rdquo; client compatibility policy.
+In other words, new clients can talk to old servers, and old clients can talk to new servers.&lt;/p></description></item></channel></rss>
