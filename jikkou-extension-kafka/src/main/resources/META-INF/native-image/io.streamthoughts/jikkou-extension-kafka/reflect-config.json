@@ -1,5 +1,14 @@
 [
   {
+    "name": "org.apache.kafka.clients.consumer.CooperativeStickyAssignor",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "org.apache.kafka.common.config.TopicConfig",
     "allDeclaredFields": true
   },

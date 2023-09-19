@@ -22,6 +22,8 @@ import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaAclController;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaBrokerCollector;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaCollector;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaController;
+import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTableCollector;
+import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTableController;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicCollector;
 import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
@@ -66,11 +68,13 @@ public class KafkaExtensionProvider implements ExtensionProvider {
         factory.register(AdminClientKafkaTopicController.class, AdminClientKafkaTopicController::new);
         factory.register(AdminClientKafkaQuotaController.class, AdminClientKafkaQuotaController::new);
 
-        // descriptors
+        // collectors
         factory.register(AdminClientKafkaBrokerCollector.class, AdminClientKafkaBrokerCollector::new);
         factory.register(AdminClientKafkaQuotaCollector.class, AdminClientKafkaQuotaCollector::new);
         factory.register(AdminClientKafkaTopicCollector.class, AdminClientKafkaTopicCollector::new);
         factory.register(AdminClientKafkaAclCollector.class, AdminClientKafkaAclCollector::new);
+        factory.register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new);
+        factory.register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new);
 
         // transformations
         factory.register(KafkaPrincipalAuthorizationTransformation.class, KafkaPrincipalAuthorizationTransformation::new);

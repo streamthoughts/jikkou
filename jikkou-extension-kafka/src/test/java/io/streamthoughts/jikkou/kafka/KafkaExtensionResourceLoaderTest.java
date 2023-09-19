@@ -15,6 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.model.Configs;
@@ -22,8 +25,14 @@ import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
+import io.streamthoughts.jikkou.kafka.model.DataFormat;
+import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
+import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
@@ -136,5 +145,77 @@ class KafkaExtensionResourceLoaderTest {
                         .build()
                 ).build(), topicObjects.get(2)
         );
+    }
+
+    @Test
+    void shouldLoadResourcesForKafkaRecordHavingStringValue() throws JsonProcessingException {
+        ResourceDeserializer.registerKind(V1KafkaTableRecord.class);
+
+        HasItems resources = loader
+                .loadFromClasspath("datasets/resource-kafka-record-string-value.yaml");
+        Assertions.assertNotNull(resources);
+        Assertions.assertFalse(resources.getItems().isEmpty());
+
+        List<V1KafkaTableRecord> results = resources.getAllByClass(V1KafkaTableRecord.class);
+
+        JsonNode value = Jackson.JSON_OBJECT_MAPPER.readTree("""
+                {
+                  "favorite_color": "red"
+                }
+                """);
+        V1KafkaTableRecord expected = V1KafkaTableRecord
+                .builder()
+                .withMetadata(new ObjectMeta("topic-compacted"))
+                .withSpec(V1KafkaTableRecordSpec
+                        .builder()
+                        .withKeyFormat(DataFormat.STRING)
+                        .withValueFormat(DataFormat.JSON)
+                        .withRecord(KafkaRecordData
+                                .builder()
+                                .withHeader(new KafkaRecordHeader("content-type", "application/json"))
+                                .withKey(DataHandle.of("test"))
+                                .withValue(new DataHandle(value))
+                                .build()
+                        )
+                        .build()
+                )
+                .build();
+        Assertions.assertEquals(List.of(expected), results);
+    }
+
+    @Test
+    void shouldLoadResourcesForKafkaRecordHavingRefValue() throws JsonProcessingException {
+        ResourceDeserializer.registerKind(V1KafkaTableRecord.class);
+
+        HasItems resources = loader
+                .loadFromClasspath("datasets/resource-kafka-record-ref-value.yaml");
+        Assertions.assertNotNull(resources);
+        Assertions.assertFalse(resources.getItems().isEmpty());
+
+        List<V1KafkaTableRecord> results = resources.getAllByClass(V1KafkaTableRecord.class);
+
+        JsonNode value = Jackson.JSON_OBJECT_MAPPER.readTree("""
+                {
+                  "favorite_color": "red"
+                }
+                """);
+        V1KafkaTableRecord expected = V1KafkaTableRecord
+                .builder()
+                .withMetadata(new ObjectMeta("topic-compacted"))
+                .withSpec(V1KafkaTableRecordSpec
+                        .builder()
+                        .withKeyFormat(DataFormat.STRING)
+                        .withValueFormat(DataFormat.JSON)
+                        .withRecord(KafkaRecordData
+                                .builder()
+                                .withHeader(new KafkaRecordHeader("content-type", "application/json"))
+                                .withKey(DataHandle.of("test"))
+                                .withValue(new DataHandle(value))
+                                .build()
+                        )
+                        .build()
+                )
+                .build();
+        Assertions.assertEquals(List.of(expected), results);
     }
 }

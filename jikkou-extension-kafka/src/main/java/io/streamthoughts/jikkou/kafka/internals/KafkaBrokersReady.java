@@ -19,10 +19,10 @@ import io.streamthoughts.jikkou.common.utils.Time;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.Nonnull;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.common.Node;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +81,12 @@ public final class KafkaBrokersReady {
 
     private final Options options;
 
-    public KafkaBrokersReady(@Nonnull final Options options) {
+    public KafkaBrokersReady(@NotNull final Options options) {
         this.options = options;
+    }
+
+    public KafkaBrokersReady() {
+        this(Options.withDefaults());
     }
 
     public boolean waitForBrokers(final AdminClient adminClient) {

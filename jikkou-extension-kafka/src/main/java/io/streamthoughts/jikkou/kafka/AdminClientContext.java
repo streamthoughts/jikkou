@@ -18,14 +18,12 @@ package io.streamthoughts.jikkou.kafka;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
-import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
+import io.streamthoughts.jikkou.kafka.control.KafkaClientConfig;
 import io.streamthoughts.jikkou.kafka.control.KafkaFunction;
 import io.streamthoughts.jikkou.kafka.internals.KafkaBrokersReady;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -45,13 +43,6 @@ public class AdminClientContext implements AutoCloseable {
     private static final int DEFAULT_MIN_AVAILABLE_BROKERS = 1;
     private static final long DEFAULT_TIMEOUT_MS = 60000L;
     private static final long DEFAULT_RETRY_BACKOFF_MS = 1000L;
-    public static final String ADMIN_CLIENT_CONFIG_NAME = "kafka.client";
-
-    public static final ConfigProperty<Properties> ADMIN_CLIENT_CONFIG = ConfigProperty
-            .ofMap(ADMIN_CLIENT_CONFIG_NAME)
-            .orElse(HashMap::new)
-            .map(KafkaUtils::getAdminClientConfigs)
-            .map(PropertiesUtils::fromMap);
 
     public static final ConfigProperty<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigProperty
             .ofBoolean("kafka.brokers.waitForEnabled")
@@ -107,7 +98,7 @@ public class AdminClientContext implements AutoCloseable {
      * @param config the {@link Configuration}.
      */
     public AdminClientContext(final @NotNull Configuration config) {
-        adminClientSupplier = () -> KafkaUtils.newAdminClient(ADMIN_CLIENT_CONFIG.evaluate(config));
+        adminClientSupplier = () -> KafkaUtils.newAdminClient(KafkaClientConfig.ADMIN_CLIENT_CONFIG.evaluate(config));
         withWaitForKafkaBrokersEnabled(KAFKA_BROKERS_WAIT_FOR_ENABLED.evaluate(config));
         if (isWaitForKafkaBrokersEnabled) {
             withWaitForRetryBackoff(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.evaluate(config));

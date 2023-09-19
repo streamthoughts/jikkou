@@ -51,7 +51,7 @@ public final class QuotaChangeComputer
      * @param isLimitDeletionEnabled {@code true} to delete orphaned limits.
      */
     public QuotaChangeComputer(boolean isLimitDeletionEnabled) {
-        super(new KeyMapper(), new IdentityChangeValueMapper<>(), false);
+        super(new KeyMapper(), identityChangeValueMapper(), false);
         isLimitDeletionEnabled(isLimitDeletionEnabled);
     }
 

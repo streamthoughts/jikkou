@@ -192,7 +192,11 @@ public abstract class AbstractChangeComputer<T, V, C extends Change> implements 
         @NotNull V apply(@Nullable T before, @Nullable T after);
     }
 
-    public static class IdentityChangeValueMapper<T> implements ChangeValueMapper<T, T> {
+    public static <T> ChangeValueMapper<T, T> identityChangeValueMapper() {
+        return new IdentityChangeValueMapper<>();
+    }
+
+    static class IdentityChangeValueMapper<T> implements ChangeValueMapper<T, T> {
 
         @Override
         public @NotNull T apply(@Nullable T before, @Nullable T after) {

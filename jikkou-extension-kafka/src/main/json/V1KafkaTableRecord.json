@@ -1,0 +1,105 @@
+{
+  "type": "object",
+  "description": "",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaTableRecordSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names" : {
+        "singular": "ktable-record"
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1beta1"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaTableRecord"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "type": "object"
+    },
+    "template": {
+      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaTableRecordSpec"
+    }
+  },
+  "$defs": {
+    "V1KafkaTableRecordSpec": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "keyFormat",
+        "valueFormat",
+        "record"
+      ],
+      "properties": {
+        "keyFormat": {
+          "type": "string",
+          "existingJavaType": "io.streamthoughts.jikkou.kafka.model.DataFormat"
+        },
+        "valueFormat": {
+          "type": "string",
+          "existingJavaType": "io.streamthoughts.jikkou.kafka.model.DataFormat"
+        },
+        "record": {
+          "type": "object",
+          "$ref": "#/$defs/KafkaRecordData"
+        }
+      }
+    },
+    "KafkaRecordData": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "headers": {
+          "type": "array",
+          "description": "The record header.",
+          "items": {
+            "type": "object",
+            "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader"
+          }
+        },
+        "key": {
+          "type": "object",
+          "description": "The record key.",
+          "existingJavaType": "io.streamthoughts.jikkou.kafka.model.DataHandle"
+        },
+        "value": {
+          "type": "object",
+          "description": "The record value.",
+          "existingJavaType": "io.streamthoughts.jikkou.kafka.model.DataHandle"
+        }
+      }
+    }
+  }
+}

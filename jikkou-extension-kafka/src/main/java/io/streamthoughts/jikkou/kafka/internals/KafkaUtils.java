@@ -16,25 +16,35 @@
 package io.streamthoughts.jikkou.kafka.internals;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.clients.admin.TopicListing;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.config.TopicConfig;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class which is used to create a new {@link AdminClient} instance using tool arguments.
  */
-public class KafkaUtils {
+public final class KafkaUtils {
 
-    public static AdminClient newAdminClient(@NotNull final Properties clientConfigProps){
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaUtils.class);
+
+    public static AdminClient newAdminClient(@NotNull final Map<String, Object> clientConfigProps) {
         return AdminClient.create(clientConfigProps);
     }
 
@@ -52,6 +62,34 @@ public class KafkaUtils {
         return new KafkaBrokersReady(options).waitForBrokers(client);
     }
 
+    public static boolean isTopicCleanupPolicyCompact(final AdminClient client,
+                                                      final String topic,
+                                                      final boolean defaultValue) {
+        ConfigResource resource = new ConfigResource(ConfigResource.Type.TOPIC, topic);
+        Collection<ConfigResource> cr = Collections.singleton(resource);
+        DescribeConfigsResult ConfigsResult = client.describeConfigs(cr);
+        try {
+            org.apache.kafka.clients.admin.Config config = ConfigsResult.all().get().get(resource);
+            ConfigEntry configEntry = config.get(TopicConfig.CLEANUP_POLICY_CONFIG);
+            if (configEntry != null) {
+                return configEntry.value().contains(TopicConfig.CLEANUP_POLICY_COMPACT);
+            }
+        } catch (InterruptedException e) {
+            LOG.debug("Interrupted while checking if topic '{}' is configured with {}={}",
+                    topic,
+                    TopicConfig.CLEANUP_POLICY_CONFIG,
+                    TopicConfig.CLEANUP_POLICY_COMPACT
+            );
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            LOG.debug("Failed to check if topic '{}' is configured with {}={}",
+                    topic,
+                    TopicConfig.CLEANUP_POLICY_CONFIG,
+                    TopicConfig.CLEANUP_POLICY_COMPACT
+            );
+        }
+        return defaultValue;
+    }
 
     public static Map<String, Object> getAdminClientConfigs(final Map<String, Object> configs) {
         return getConfigsForKeys(configs, AdminClientConfig.configNames());
@@ -59,6 +97,10 @@ public class KafkaUtils {
 
     public static Map<String, Object> getProducerClientConfigs(final Map<String, Object> configs) {
         return getConfigsForKeys(configs, ProducerConfig.configNames());
+    }
+
+    public static Map<String, Object> getConsumerClientConfigs(final Map<String, Object> configs) {
+        return getConfigsForKeys(configs, ConsumerConfig.configNames());
     }
 
     private static Map<String, Object> getConfigsForKeys(final Map<String, Object> configs,
@@ -71,4 +113,4 @@ public class KafkaUtils {
         }
         return parsed;
     }
- }
+}

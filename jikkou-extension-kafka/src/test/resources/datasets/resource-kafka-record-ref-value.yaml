@@ -1,0 +1,21 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta1"
+kind: "KafkaTableRecord"
+metadata:
+  # The name of the kafka table topic.
+  name: "topic-compacted"
+spec:
+  keyFormat: string
+  valueFormat: json
+  record:
+    # The record headers
+    headers:
+      - key: "content-type"
+        value: "application/json"
+    # The record key (string)
+    key: |
+      "test"
+    # The record value (string)
+    value:
+      $ref: classpath://datasets/value.json
+
