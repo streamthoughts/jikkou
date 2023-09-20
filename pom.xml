@@ -124,7 +124,7 @@ limitations under the License.
         <jackson.version>2.15.2</jackson.version>
         <jinjava.version>2.7.1</jinjava.version>
         <reflections.version>0.10.2</reflections.version>
-        <lombok.version>1.18.28</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <spotless.version>2.39.0</spotless.version>
         <slf4j-api.version>2.0.9</slf4j-api.version>
         <logback.version>1.4.11</logback.version>
