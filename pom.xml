@@ -129,7 +129,7 @@ limitations under the License.
         <slf4j-api.version>2.0.9</slf4j-api.version>
         <logback.version>1.4.11</logback.version>
         <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
-        <graal-sdk.version>23.0.1</graal-sdk.version>
+        <graal-sdk.version>23.1.0</graal-sdk.version>
     </properties>
 
     <dependencyManagement>
