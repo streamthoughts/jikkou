@@ -144,7 +144,7 @@ class KafkaTopicAclEntryIT {
 
         // When
         List<ChangeResult<ValueChange<KafkaAclEntry>>> results = CONTROLLER
-                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.with(false));
+                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
         Assertions.assertNotNull(results);
@@ -187,7 +187,7 @@ class KafkaTopicAclEntryIT {
 
         // When
         List<ChangeResult<ValueChange<KafkaAclEntry>>> results = CONTROLLER
-                .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.with(false));
+                .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
         Assertions.assertNotNull(results);
@@ -227,7 +227,7 @@ class KafkaTopicAclEntryIT {
 
         // When
         List<ChangeResult<ValueChange<KafkaAclEntry>>> results = CONTROLLER
-                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.with(false));
+                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
 
         Assertions.assertEquals(1, results.size());

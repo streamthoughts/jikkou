@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.Builder;
 
 
@@ -170,5 +171,22 @@ public class GenericResource implements HasMetadata {
         this.additionalProperties.put(name, value);
     }
 
+    /** {@inheritDoc} **/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GenericResource resource = (GenericResource) o;
+        return Objects.equals(apiVersion, resource.apiVersion) &&
+            Objects.equals(kind, resource.kind) &&
+            Objects.equals(metadata, resource.metadata) &&
+            Objects.equals(template, resource.template) &&
+            Objects.equals(additionalProperties, resource.additionalProperties);
+    }
 
+    /** {@inheritDoc} **/
+    @Override
+    public int hashCode() {
+        return Objects.hash(apiVersion, kind, metadata, template, additionalProperties);
+    }
 }

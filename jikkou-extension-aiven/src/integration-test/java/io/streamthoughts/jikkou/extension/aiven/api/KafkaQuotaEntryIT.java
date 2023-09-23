@@ -135,7 +135,7 @@ class KafkaQuotaEntryIT {
 
         // When
         List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = CONTROLLER
-                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.with(false));
+                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
         ValueChange<KafkaQuotaEntry> expected = ValueChange.withAfterValue(KafkaQuotaAdapter.map(entry));
@@ -179,7 +179,7 @@ class KafkaQuotaEntryIT {
 
         // When
         List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = CONTROLLER
-                .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.with(false));
+                .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
         ValueChange<KafkaQuotaEntry> expected = ValueChange.withBeforeValue(KafkaQuotaAdapter.map(entry));

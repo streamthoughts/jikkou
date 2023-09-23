@@ -28,11 +28,11 @@ import org.jetbrains.annotations.NotNull;
 public interface Configurable {
 
     /**
-     * Configures the given class with the given config.
+     * Configures this class with the given configuration.
      *
      * @param config    the {@link Configuration}.
      */
     default void configure(@NotNull Configuration config) throws ConfigException {
-
+        // intentionally left blank
     }
 }

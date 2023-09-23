@@ -79,7 +79,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var context = ReconciliationContext.with(Configuration.empty(), false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
@@ -134,7 +136,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_ALL_DELETE);
 
-        var context = ReconciliationContext.with(false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
@@ -168,7 +172,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var context = ReconciliationContext.with(false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
@@ -207,7 +213,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var context = ReconciliationContext.with( false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
@@ -243,7 +251,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE);
 
-        var context = ReconciliationContext.with( false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();

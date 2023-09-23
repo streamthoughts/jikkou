@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.api.transform;
 
+import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasPriority;
@@ -25,11 +26,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Transform an input {@link HasMetadata} into one ore multiple {@link HasMetadata}.
  */
 public class ResourceTransformationChain implements ResourceTransformation<HasMetadata> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceTransformationChain.class);
 
     private final List<ResourceTransformation<HasMetadata>> transformations;
 
@@ -45,10 +50,11 @@ public class ResourceTransformationChain implements ResourceTransformation<HasMe
                 .collect(Collectors.toList());
     }
 
-    public @NotNull List<HasMetadata> transformAll(@NotNull List<HasMetadata> toTransform,
-                                                   @NotNull HasItems otherResources) {
+    public @NotNull List<HasMetadata> transformAll(final @NotNull List<HasMetadata> toTransform,
+                                                   final @NotNull HasItems otherResources,
+                                                   final @NotNull ReconciliationContext context) {
         return toTransform.stream()
-                .map(resource -> transform(resource, otherResources))
+                .map(resource -> transform(resource, otherResources, context))
                 .flatMap(Optional::stream)
                 .toList();
     }
@@ -57,13 +63,16 @@ public class ResourceTransformationChain implements ResourceTransformation<HasMe
      * {@inheritDoc}
      **/
     @Override
-    public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata resource, @NotNull HasItems otherResources) {
+    public @NotNull Optional<HasMetadata> transform(final @NotNull HasMetadata resource,
+                                                    final @NotNull HasItems otherResources,
+                                                    final @NotNull ReconciliationContext context) {
         Optional<HasMetadata> result = Optional.of(resource);
         Iterator<ResourceTransformation<HasMetadata>> iterator = transformations.iterator();
         while (iterator.hasNext() && result.isPresent()) {
             ResourceTransformation<HasMetadata> transformation = iterator.next();
             if (transformation.canAccept(ResourceType.create(resource))) {
-                result = transformation.transform(result.get(), otherResources);
+                LOG.debug("Executing resource transformation '{}'.", transformation.getName());
+                result = transformation.transform(result.get(), otherResources, context);
             }
         }
         return result;

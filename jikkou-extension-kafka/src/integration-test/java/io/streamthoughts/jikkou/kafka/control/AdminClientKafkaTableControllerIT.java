@@ -25,7 +25,6 @@ import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
@@ -94,7 +93,9 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var context = ReconciliationContext.with(Configuration.empty(), false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         List<Change> actual = api.apply(resources, ReconciliationMode.APPLY_ALL, context)
@@ -139,7 +140,9 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
         var resources = ResourceLoader.create()
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
-        var context = ReconciliationContext.with(Configuration.empty(), false);
+        var context = ReconciliationContext.builder()
+                .dryRun(false)
+                .build();
 
         // WHEN
         List<Change> actual = api.apply(resources, ReconciliationMode.APPLY_ALL, context)

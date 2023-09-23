@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.JikkouApi;
+import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
 import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasItems;
@@ -59,8 +60,18 @@ public class ValidateCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() {
+        ReconciliationContext context = ReconciliationContext.builder()
+                .dryRun(true)
+                .selectors(selectorOptions.getResourceSelectors())
+                .labels(fileOptions.getLabels())
+                .annotations(fileOptions.getAnnotations())
+                .build();
+
         HasItems resources = loader.load(fileOptions);
-        HasItems validated = api.validate(resources, selectorOptions.getResourceSelectors());
+        HasItems validated = api.validate(
+                resources,
+                context
+        );
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         writer.write(validated.getItems(), baos);
         System.out.println(baos);

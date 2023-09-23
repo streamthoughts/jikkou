@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.api.transform;
 
+import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.TestResource;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasItems;
@@ -43,13 +44,14 @@ class ResourceTransformationChainTest {
                 newTransformation(1, () -> calls.add(1))
         ));
         // When
-        chain.transform(new TestResource(), new GenericResourceListObject(Collections.emptyList()));
+        chain.transform(
+                new TestResource(),
+                new GenericResourceListObject<>(Collections.emptyList()),
+                ReconciliationContext.Default.EMPTY
+        );
 
         // Then
-        Assertions.assertEquals(4, calls.size());
-        for (int i = 0; i < calls.size(); i++) {
-            Assertions.assertEquals(i, calls.get(i));
-        }
+        Assertions.assertEquals(List.of(0, 1, 2, 3), calls);
     }
 
     private ResourceTransformation<HasMetadata> newTransformation(int priority, Runnable onTransformation) {

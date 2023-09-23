@@ -68,8 +68,6 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
     private final ObjectMeta metadata;
     private final List<T> items;
 
-
-
     /**
      * Creates a new {@link GenericResourceListObject} instance.
      */

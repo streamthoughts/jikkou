@@ -110,6 +110,7 @@ public final class NamedValue {
             return new Set(all);
         }
 
+        /** {@inheritDoc} **/
         @Override
         public Iterator<NamedValue> iterator() {
             return valuesByName.values().iterator();
@@ -119,6 +120,10 @@ public final class NamedValue {
             return valuesByName.values()
                     .stream()
                     .collect(Collectors.toMap(NamedValue::getName, NamedValue::getValue));
+        }
+
+        public boolean isEmpty() {
+            return valuesByName.isEmpty();
         }
     }
 

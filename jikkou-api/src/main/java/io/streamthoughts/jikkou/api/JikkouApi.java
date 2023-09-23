@@ -186,6 +186,9 @@ public interface JikkouApi extends AutoCloseable {
      * @param mode      the reconciliation mode.
      * @param context   the context to be used for conciliation.
      * @return the list of all changes applied on the target system.
+     *
+     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
      */
     List<ChangeResult<Change>> apply(@NotNull HasItems resources,
                                      @NotNull ReconciliationMode mode,
@@ -196,22 +199,25 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @return the validated {@link GenericResourceListObject}.
+     *
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources) {
-        return validate(resources, Collections.emptyList());
+        return validate(resources, ReconciliationContext.Default.EMPTY);
     }
 
     /**
      * Execute validations on the given resources.
      *
      * @param resources the list of resource to create.
+     * @param context   the reconciliation context.
      * @return the validated {@link GenericResourceListObject}.
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources, final @NotNull List<ResourceSelector> selectors);
+    GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources,
+                                                    @NotNull ReconciliationContext context);
 
     /**
      * Get the resources associated to the given type.
@@ -221,7 +227,7 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default List<HasMetadata> getResources(final @NotNull Class<? extends HasMetadata> resourceClass) {
+    default List<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass) {
         return getResources(resourceClass, Collections.emptyList(), Configuration.empty());
     }
 
@@ -233,8 +239,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default List<HasMetadata> getResources(final @NotNull Class<? extends HasMetadata> resourceClass,
-                                           final @NotNull List<ResourceSelector> selectors) {
+    default List<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
+                                           @NotNull List<ResourceSelector> selectors) {
         return getResources(resourceClass, selectors, Configuration.empty());
     }
 
@@ -246,8 +252,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default <T extends HasMetadata> List<T> getResources(final @NotNull Class<? extends HasMetadata> resourceClass,
-                                                         final @NotNull Configuration configuration) {
+    default <T extends HasMetadata> List<T> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
+                                                         @NotNull Configuration configuration) {
         return getResources(resourceClass, Collections.emptyList(), configuration);
     }
 
@@ -274,8 +280,8 @@ public interface JikkouApi extends AutoCloseable {
      * @param resources the list of resource to be reconciled.
      * @return the {@link HasMetadata}.
      */
-    List<ResourceListObject<HasMetadataChange<Change>>> getDiff(@NotNull final HasItems resources,
-                                                                @NotNull final List<ResourceSelector> selectors);
+    List<ResourceListObject<HasMetadataChange<Change>>> getDiff(@NotNull HasItems resources,
+                                                                @NotNull ReconciliationContext context);
 
     /**
      * Get the resource associated to the given type.
@@ -283,8 +289,8 @@ public interface JikkouApi extends AutoCloseable {
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default List<HasMetadata> getResources(final @NotNull ResourceType resourceType,
-                                           final @NotNull List<ResourceSelector> selectors) {
+    default List<HasMetadata> getResources(@NotNull ResourceType resourceType,
+                                           @NotNull List<ResourceSelector> selectors) {
         return getResources(resourceType, selectors, Configuration.empty());
     }
 
@@ -296,8 +302,8 @@ public interface JikkouApi extends AutoCloseable {
      * @return the {@link HasMetadata}.
      */
     @SuppressWarnings("unchecked")
-    default <T extends HasMetadata> List<T> getResources(final @NotNull ResourceType resourceType,
-                                                         final @NotNull Configuration configuration) {
+    default <T extends HasMetadata> List<T> getResources(@NotNull ResourceType resourceType,
+                                                         @NotNull Configuration configuration) {
         return (List<T>) getResources(resourceType, Collections.emptyList(), configuration);
     }
 

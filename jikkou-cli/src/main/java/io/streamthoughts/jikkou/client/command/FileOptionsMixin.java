@@ -50,12 +50,15 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
     )
     public List<String> valuesFiles = new LinkedList<>();
 
-
     @Option(names = { "--set-label", "-l" },
-            description = "Set labels on the command line (can specify multiple values: -s key1=val1 -s key2=val2)"
+            description = "Set labels on the command line (can specify multiple values)."
     )
     public Map<String, Object> clientLabels = new HashMap<>();
 
+    @Option(names = { "--set-annotation"},
+            description = "Set annotations on the command line (can specify multiple)."
+    )
+    public Map<String, Object> clientAnnotations = new HashMap<>();
 
     @Option(names = { "--set-value", "-v" },
             description = "Set variables on the command line to pass into the template engine built-in object 'Values' (can specify multiple values: -v key1=val1 -v key2=val2)"
@@ -84,6 +87,10 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
     @Override
     public Iterable<NamedValue> getLabels() {
         return NamedValue.setOf(clientLabels);
+    }
+
+    public Iterable<NamedValue> getAnnotations() {
+        return NamedValue.setOf(clientAnnotations);
     }
 
     /** {@inheritDoc} **/

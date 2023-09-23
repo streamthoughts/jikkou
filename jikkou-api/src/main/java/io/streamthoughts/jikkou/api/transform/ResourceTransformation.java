@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.api.transform;
 
 import io.streamthoughts.jikkou.annotation.ExtensionType;
+import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.extensions.ResourceInterceptor;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
@@ -39,6 +40,21 @@ public interface ResourceTransformation<T extends HasMetadata> extends ResourceI
      *
      * @return            the list of resources resulting from that transformation.
      */
-    @NotNull Optional<T> transform(@NotNull T toTransform, @NotNull HasItems resources);
+    default @NotNull Optional<T> transform(@NotNull T toTransform,
+                                           @NotNull HasItems resources,
+                                           @NotNull ReconciliationContext context) {
+        return transform(toTransform, resources);
+    }
 
+    /**
+     * Applies this transformation on the given {@link HasMetadata} object.
+     *
+     * @param toTransform  the {@link HasMetadata} to be transformed.
+     * @param resources    the {@link ResourceListObject} involved in the current operation.
+     *
+     * @return            the list of resources resulting from that transformation.
+     */
+    default @NotNull Optional<T> transform(@NotNull T toTransform, @NotNull HasItems resources) {
+        throw new UnsupportedOperationException();
+    }
 }

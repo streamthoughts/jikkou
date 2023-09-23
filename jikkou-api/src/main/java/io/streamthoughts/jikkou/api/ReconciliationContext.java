@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.api;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ResourceController;
+import io.streamthoughts.jikkou.api.model.NamedValue;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import java.util.Collections;
@@ -26,71 +26,190 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents the context of a reconciliation operation.
  *
- * @see ResourceController
+ * @see JikkouApi
  */
 @InterfaceStability.Evolving
 public interface ReconciliationContext {
 
     /**
      * Returns the {@link ResourceSelector} used for restricting the
-     * resources that should be included in the current operation.
+     * resources that will be included in the current reconciliation operation.
      *
      * @return the {@link ResourceSelector}.
      */
     @NotNull List<ResourceSelector> selectors();
 
     /**
-     * Returns the {@link Configuration} used for executing
-     * a specific resource reconciliation operation.
+     * Returns the {@link Configuration} used for executing a specific resource reconciliation operation.
      *
      * @return the options to be used for computing resource changes.
      */
     @NotNull Configuration configuration();
 
     /**
+     * Returns the 'labels' to be applied on the metadata of the resources to be reconciled.
+     *
+     * @return the labels.
+     */
+    @NotNull NamedValue.Set labels();
+
+    /**
+     * Returns the 'annotations' to be applied on the metadata of the resources to be reconciled.
+     *
+     * @return the annotations.
+     */
+    @NotNull NamedValue.Set annotations();
+
+    /**
      * Checks whether this operation should be run in dry-run.
      *
-     * @return {@code true} if the update operation should be run in dry-mode. Otherwise {@code false}.
+     * @return {@code true} if the reconciliation operation should be run in dry-mode. Otherwise {@code false}.
      */
     boolean isDryRun();
 
     /**
-     * Helper method to create a new {@link ReconciliationContext} for the given arguments.
+     * Gets a new ReconciliationContext builder.
      *
-     * @param isDryRun      specify if the update should be run in dry-run.
-     * @return a new {@link ReconciliationContext}
+     * @return a new {@link Builder} instance.
      */
-    @NotNull
-    static ReconciliationContext with(final boolean isDryRun) {
-        return with(Collections.emptyList(), Configuration.empty(), isDryRun);
+    static Builder builder() {
+        return new Builder();
     }
 
     /**
-     * Helper method to create a new {@link ReconciliationContext} for the given arguments.
-     *
-     * @param configuration the options for computing resource changes.
-     * @param isDryRun      specify if the update should be run in dry-run.
-     * @return a new {@link ReconciliationContext}
+     * An immutable class for building a new ReconciliationContext.
      */
-    @NotNull
-    static ReconciliationContext with(@NotNull final Configuration configuration,
-                                      final boolean isDryRun) {
-        return with(Collections.emptyList(), configuration, isDryRun);
-    }
+    class Builder {
 
-    /**
-     * Helper method to create a new {@link ReconciliationContext} for the given arguments.
-     *
-     * @param selectors the selectors to filter resources to be included in the reconciliation.
-     * @param config    the config for computing resource changes.
-     * @param isDryRun  specify if the reconciliation should be run in dry-run.
-     * @return a new {@link ReconciliationContext}
-     */
-    @NotNull
-    static ReconciliationContext with(@NotNull final List<ResourceSelector> selectors,
-                                      @NotNull final Configuration config,
-                                      final boolean isDryRun) {
-        return new Default(selectors, config, isDryRun);
+        private final ReconciliationContext internal;
+
+        private Builder() {
+            this(Default.EMPTY);
+        }
+
+        private Builder(ReconciliationContext context) {
+            this.internal = context;
+        }
+
+        /**
+         * Returns a new builder with the given configuration.
+         *
+         * @param configuration the configuration
+         * @return a new {@link Builder}
+         */
+        public Builder configuration(Configuration configuration) {
+            return new Builder(new Default(
+                    internal.selectors(),
+                    configuration,
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given dryRun.
+         *
+         * @param dryRun the selectors
+         * @return a new {@link Builder}
+         */
+        public Builder dryRun(boolean dryRun) {
+            return new Builder(new Default(
+                    internal.selectors(),
+                    internal.configuration(),
+                    dryRun,
+                    internal.labels(),
+                    internal.annotations()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given selectors.
+         *
+         * @param selectors the selectors
+         * @return a new {@link Builder}
+         */
+        public Builder selectors(List<ResourceSelector> selectors) {
+            return new Builder(new Default(
+                    selectors,
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given labels.
+         *
+         * @param labels the labels
+         * @return a new {@link Builder}
+         */
+        public Builder labels(Iterable<NamedValue> labels) {
+            return new Builder(new Default(
+                    internal.selectors(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    NamedValue.setOf(labels),
+                    internal.annotations()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given single label.
+         *
+         * @param label the labels
+         * @return a new {@link Builder}
+         */
+        public Builder label(NamedValue label) {
+            return new Builder(new Default(
+                    internal.selectors(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    NamedValue.setOf(internal.labels()).with(label),
+                    internal.annotations()
+            ));
+        }
+
+        /**
+         * Builds a new {@link ReconciliationContext} instance.
+         *
+         * @return {@link ReconciliationContext} instance.
+         */
+        public Builder annotations(Iterable<NamedValue> annotations) {
+            return new Builder(new Default(
+                    internal.selectors(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    NamedValue.setOf(annotations)
+            ));
+        }
+
+        /**
+         * Builds a new {@link ReconciliationContext} instance.
+         *
+         * @return {@link ReconciliationContext} instance.
+         */
+        public Builder annotation(NamedValue annotation) {
+            return new Builder(new Default(
+                    internal.selectors(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    NamedValue.setOf(internal.annotations()).with(annotation)
+            ));
+        }
+
+        /**
+         * Builds a new {@link ReconciliationContext} instance.
+         *
+         * @return {@link ReconciliationContext} instance.
+         */
+        public ReconciliationContext build() {
+            return internal;
+        }
+
     }
 
     /**
@@ -102,7 +221,17 @@ public interface ReconciliationContext {
      */
     record Default(List<ResourceSelector> selectors,
                    Configuration configuration,
-                   boolean isDryRun)
+                   boolean isDryRun,
+                   NamedValue.Set labels,
+                   NamedValue.Set annotations)
             implements ReconciliationContext {
+
+        public static Default EMPTY = new Default(
+                Collections.emptyList(),
+                Configuration.empty(),
+                true,
+                NamedValue.emptySet(),
+                NamedValue.emptySet()
+        );
     }
 }

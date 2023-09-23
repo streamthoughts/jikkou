@@ -62,15 +62,16 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
 
         HasItems resources = loadResources();
 
-        final List<ChangeResult<Change>> results = api.apply(
-                resources,
-                getReconciliationMode(),
-                ReconciliationContext.with(
-                        selectorOptions.getResourceSelectors(),
-                        getReconciliationConfiguration(),
-                        isDryRun()
-                ));
+        ReconciliationContext context = ReconciliationContext.builder()
+                .configuration(getReconciliationConfiguration())
+                .dryRun(isDryRun())
+                .selectors(selectorOptions.getResourceSelectors())
+                .labels(fileOptions.getLabels())
+                .annotations(fileOptions.getAnnotations())
+                .build();
 
+        final List<ChangeResult<Change>> results = api.apply(resources, getReconciliationMode(), context);
+        
         return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
     }
 

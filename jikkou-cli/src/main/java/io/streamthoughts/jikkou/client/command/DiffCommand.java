@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.JikkouApi;
+import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
@@ -72,14 +73,26 @@ public class DiffCommand implements Callable<Integer> {
 
         List<ResourceListObject<HasMetadataChange<Change>>> changes = api.getDiff(
                 resources,
-                selectorOptions.getResourceSelectors()
+                ReconciliationContext
+                        .builder()
+                        .dryRun(true)
+                        .selectors(selectorOptions.getResourceSelectors())
+                        .labels(fileOptions.getLabels())
+                        .annotations(fileOptions.getAnnotations())
+                        .build()
+
         );
+        return writeConsoleOutput(changes, format);
+    }
+
+    private static int writeConsoleOutput(final List<? extends ResourceListObject<?>> items,
+                                          final Formats format) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             var objectMapper = switch (format) {
                 case JSON -> Jackson.JSON_OBJECT_MAPPER;
                 case YAML -> Jackson.YAML_OBJECT_MAPPER;
             };
-            for (Object item : changes) {
+            for (Object item : items) {
                 objectMapper.writeValue(baos, item);
             }
             System.out.println(baos);

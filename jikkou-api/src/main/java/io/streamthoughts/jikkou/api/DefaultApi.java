@@ -206,7 +206,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                                             @NotNull final ReconciliationMode mode,
                                             @NotNull final ReconciliationContext context) {
         LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
-        List<ChangeResult<Change>> results = handleResources(resources, context.selectors())
+        List<ChangeResult<Change>> results = handleResources(resources, context)
                 .entrySet()
                 .stream()
                 .map(e -> {
@@ -229,8 +229,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      **/
     @Override
     public GenericResourceListObject<HasMetadata> validate(final @NotNull HasItems resources,
-                                                           final @NotNull List<ResourceSelector> selectors) {
-        return GenericResourceListObject.of(handleResources(resources, selectors)
+                                                           final @NotNull ReconciliationContext context) {
+        return GenericResourceListObject.of(handleResources(resources, context)
                 .values()
                 .stream()
                 .flatMap(Collection::stream)
@@ -242,16 +242,9 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      **/
     @Override
     public List<ResourceListObject<HasMetadataChange<Change>>> getDiff(@NotNull final HasItems resources,
-                                                                       @NotNull final List<ResourceSelector> selectors) {
+                                                                       final @NotNull ReconciliationContext context) {
 
-        ReconciliationContext.Default context = new ReconciliationContext.Default(
-                selectors,
-                Configuration.empty(),
-                true
-
-        );
-
-        return handleResources(resources, selectors)
+        return handleResources(resources, context)
                 .entrySet()
                 .stream()
                 .map(e -> {
@@ -269,7 +262,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
 
     @NotNull
     private Map<ResourceType, List<HasMetadata>> handleResources(@NotNull HasItems resources,
-                                                                 @NotNull List<ResourceSelector> selectors) {
+                                                                 @NotNull ReconciliationContext context) {
 
         List<HasMetadata> converted = resources.groupByType()
                 .entrySet()
@@ -292,9 +285,9 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .stream()
                 .map(Tuple2::of)
                 .map(t -> t.mapRight(resource -> {
-                    return transformationChain.transformAll(resource, new GenericResourceListObject<>(converted));
+                    return transformationChain.transformAll(resource, new GenericResourceListObject<>(converted), context);
                 }))
-                .map(t -> t.mapRight(resource -> new GenericResourceListObject<>(t._2()).getAllMatching(selectors)))
+                .map(t -> t.mapRight(resource -> new GenericResourceListObject<>(t._2()).getAllMatching(context.selectors())))
                 .filter(t -> !t._1().isTransient())
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
 
@@ -319,17 +312,19 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             List<HasMetadata> resources = collector.listAll(configuration, selectors);
             ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
             List<HasMetadata> result = resources.stream()
-                    .map(resource -> {
-                        ObjectMeta meta = resource
-                                .optionalMetadata()
-                                .orElse(new ObjectMeta()).toBuilder()
-                                .withAnnotation(ObjectMeta.ANNOT_GENERATED, Instant.now())
-                                .build();
-                        return resource.withMetadata(meta);
-                    })
+                    .map(DefaultApi::enrichWithGeneratedAnnotation)
                     .toList();
             return converter.convertTo(result);
         }
+    }
+
+    private static HasMetadata enrichWithGeneratedAnnotation(HasMetadata resource) {
+        ObjectMeta meta = resource
+                .optionalMetadata()
+                .orElse(new ObjectMeta()).toBuilder()
+                .withAnnotation(ObjectMeta.ANNOT_GENERATED, Instant.now())
+                .build();
+        return resource.withMetadata(meta);
     }
 
     /**

@@ -58,7 +58,7 @@ class SchemaRegistryControllerTest extends AbstractIntegrationTest {
         List<ChangeResult<SchemaSubjectChange>> results = controller.reconcile(
                 List.of(resource),
                 ReconciliationMode.CREATE,
-                ReconciliationContext.with(false)
+                ReconciliationContext.builder().dryRun(false).build()
         );
         // Then
         Assertions.assertEquals(1, results.size());
