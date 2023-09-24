@@ -18,16 +18,18 @@ package io.streamthoughts.jikkou.client.command;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
+import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
+import io.streamthoughts.jikkou.api.io.ResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -45,60 +47,55 @@ import picocli.CommandLine.Mixin;
 @Singleton
 public class DiffCommand implements Callable<Integer> {
 
+    // COMMAND OPTIONS
     @Mixin
     FileOptionsMixin fileOptions;
-
     @Mixin
     SelectorOptionsMixin selectorOptions;
+    @Mixin
+    FormatOptionsMixin formatOptions;
+    @Mixin
+    ConfigOptionsMixin configOptionsMixin;
 
-    enum Formats { JSON, YAML }
-
-    @CommandLine.Option(names = { "--output", "-o" },
-            defaultValue = "YAML",
-            description = "Prints the output in the specified format. Allowed values: json, yaml (default yaml)."
-    )
-    Formats format;
-
+    // API
     @Inject
     JikkouApi api;
-
-    @Inject YAMLResourceLoader loader;
+    @Inject
+    ResourceLoaderFacade loader;
+    @Inject ResourceWriter writer;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Integer call() {
-        HasItems resources = loader.load(fileOptions);
+    public Integer call() throws IOException {
 
-        List<ResourceListObject<HasMetadataChange<Change>>> changes = api.getDiff(
-                resources,
-                ReconciliationContext
-                        .builder()
-                        .dryRun(true)
-                        .selectors(selectorOptions.getResourceSelectors())
-                        .labels(fileOptions.getLabels())
-                        .annotations(fileOptions.getAnnotations())
-                        .build()
-
+        List<ResourceListObject<HasMetadataChange<Change>>> result = api.getDiff(
+                getResources(),
+                getReconciliationContext()
         );
-        return writeConsoleOutput(changes, format);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            writer.write(formatOptions.format, result, baos);
+            System.out.println(baos);
+            return CommandLine.ExitCode.OK;
+        }
     }
 
-    private static int writeConsoleOutput(final List<? extends ResourceListObject<?>> items,
-                                          final Formats format) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            var objectMapper = switch (format) {
-                case JSON -> Jackson.JSON_OBJECT_MAPPER;
-                case YAML -> Jackson.YAML_OBJECT_MAPPER;
-            };
-            for (Object item : items) {
-                objectMapper.writeValue(baos, item);
-            }
-            System.out.println(baos);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize object", e);
-        }
-        return CommandLine.ExitCode.OK;
+    @NotNull
+    private HasItems getResources() {
+        return loader.load(fileOptions);
+    }
+
+    @NotNull
+    private  ReconciliationContext getReconciliationContext() {
+        return ReconciliationContext
+                .builder()
+                .dryRun(true)
+                .configuration(configOptionsMixin.getConfiguration())
+                .selectors(selectorOptions.getResourceSelectors())
+                .labels(fileOptions.getLabels())
+                .annotations(fileOptions.getAnnotations())
+                .build();
     }
 }

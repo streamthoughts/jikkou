@@ -18,23 +18,23 @@ package io.streamthoughts.jikkou.client.command.get;
 import io.micronaut.context.annotation.Prototype;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
+import io.streamthoughts.jikkou.api.io.ResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ResourceType;
 import io.streamthoughts.jikkou.api.selector.ExpressionResourceSelectorFactory;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
+import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Option;
 import picocli.CommandLine.Spec;
 
 @Command(headerHeading = "Usage:%n%n",
@@ -50,21 +50,22 @@ import picocli.CommandLine.Spec;
 @Prototype
 public class GetResourceCommand implements Callable<Integer> {
 
+    // COMMAND OPTIONS
     @Spec
     private CommandSpec commandSpec;
-
-    @Option(names = { "--selector", "-s" },
-            description = "The selector expression use for including or excluding resources.")
-    private final List<String> selectors = new ArrayList<>();
+    @Mixin
+    SelectorOptionsMixin selectorOptions;
+    @Mixin
+    FormatOptionsMixin formatOptions;
 
     private final Map<String, Object> options = new HashMap<>();
-
     private ResourceType resourceType;
 
+    // SERVICES
     @Inject
     JikkouApi api;
     @Inject
-    YAMLResourceWriter writer;
+    ResourceWriter writer;
 
     // Picocli require an empty constructor to generate the completion file
     public GetResourceCommand() {}
@@ -72,21 +73,20 @@ public class GetResourceCommand implements Callable<Integer> {
     /** {@inheritDoc} **/
     @Override
     public Integer call() throws Exception {
-        List<ResourceSelector> resourceSelectors = new ExpressionResourceSelectorFactory().make(selectors);
-        try {
-            List<HasMetadata> resources = api.getResources(
-                    resourceType,
-                    resourceSelectors,
-                    Configuration.from(options)
-            );
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                writer.write(resources, baos);
-                System.out.println(baos);
-                return CommandLine.ExitCode.OK;
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        List<HasMetadata> resources = api.getResources(
+                resourceType,
+                getResourceSelectors(),
+                Configuration.from(options)
+        );
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            writer.write(formatOptions.format(), resources, baos);
+            System.out.println(baos);
+            return CommandLine.ExitCode.OK;
         }
+    }
+
+    private List<ResourceSelector> getResourceSelectors() {
+        return new ExpressionResourceSelectorFactory().make(selectorOptions.expressions);
     }
 
     public void setResourceType(ResourceType resourceType) {

@@ -23,8 +23,10 @@ import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
+import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
@@ -49,6 +51,8 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
     public static final String TOPIC_TEST_A = "topic-test-A";
     public static final String TOPIC_TEST_B = "topic-test-B";
     public static final String TOPIC_TEST_C = "topic-test-C";
+
+    private final ResourceLoader loader = new ResourceLoader(new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER));
 
     private volatile JikkouApi api;
 
@@ -76,7 +80,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
     @Test
     public void shouldReconcileKafkaTopicsGivenModeCreate() {
         // GIVEN
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
@@ -133,7 +137,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         createTopic(TOPIC_TEST_A);
         createTopic(TOPIC_TEST_B);
 
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_ALL_DELETE);
 
         var context = ReconciliationContext.builder()
@@ -169,7 +173,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         // GIVEN
         createTopic(TOPIC_TEST_A);
 
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
@@ -210,7 +214,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         // GIVEN
         createTopic(TOPIC_TEST_C);
 
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
@@ -248,7 +252,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         // GIVEN
         createTopic(TOPIC_TEST_C);
 
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE);
 
         var context = ReconciliationContext.builder()

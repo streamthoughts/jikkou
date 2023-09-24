@@ -15,7 +15,6 @@
  */
 package io.streamthoughts.jikkou.api.io;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
@@ -26,42 +25,35 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class ResourceLoader {
 
-    private ResourceReaderOptions options;
-
-    private ResourceReaderFactory factory;
+    private final ResourceReaderOptions options;
+    private final ResourceReaderFactory factory;
 
     /**
-     * Helper method to create a default {@link ResourceLoader} for reading specification in YAML files.
+     * Creates a new {@link ResourceLoader} instance.
      *
-     * @return a new {@link ResourceLoader}.
+     * @param factory   the ResourceReader factory.
      */
-    public static ResourceLoader create() {
-        return new ResourceLoader(Jackson.YAML_OBJECT_MAPPER);
-    }
-
-    public ResourceLoader(final @Nullable ObjectMapper objectMapper) {
-        if (objectMapper != null) {
-            factory = new ResourceReaderFactory(objectMapper);
-        }
-        options = new ResourceReaderOptions();
-    }
-
-    public ResourceLoader withResourceReaderOptions(@NotNull final ResourceReaderOptions options) {
-        this.options = options;
-        return this;
-    }
-
-    public ResourceLoader withResourceReaderFactory(@NotNull final ResourceReaderFactory factory) {
-        this.factory = factory;
-        return this;
+    public ResourceLoader(final @NotNull ResourceReaderFactory factory) {
+        this(factory, new ResourceReaderOptions());
     }
 
     /**
-     * Loads specifications for Kafka resources from the classpath resource.
+     * Creates a new {@link ResourceLoader} instance.
+     *
+     * @param factory   the ResourceReader factory.
+     * @param options   the ResourceReader options.
+     */
+    public ResourceLoader(final @NotNull ResourceReaderFactory factory,
+                          final @NotNull ResourceReaderOptions options) {
+        this.options = options;
+        this.factory = factory;
+    }
+
+    /**
+     * Loads resource definitions from the given classpath resource.
      *
      * @param resourceName name of the classpath resource to load.
      * @return a new {@link GenericResourceListObject}.
@@ -75,27 +67,27 @@ public final class ResourceLoader {
     }
 
     /**
-     * Loads specifications for Kafka resources from the given {@code InputStream}.
+     * Loads resource definitions from the given {@code InputStream}.
      *
      * @param file the input stream.
      * @return a new {@link GenericResourceListObject}.
      */
     public HasItems load(@NotNull final InputStream file) {
-        return new GenericResourceListObject(factory.create(file).readAllResources(options));
+        return new GenericResourceListObject<>(factory.create(file).readAllResources(options));
     }
 
     /**
-     * Loads specifications for Kafka resources from YAML files, directories or URLs.
+     * Loads resource definitions from the given locations, e.g., files, directories, or URLs.
      *
-     * @param locations locations from which to load specifications.
+     * @param locations locations from which to resource definitions.
      * @return a list of {@link GenericResourceListObject}.
      */
     public HasItems load(final @NotNull List<String> locations) {
         if (locations.isEmpty()) {
-            throw new JikkouRuntimeException("No resource specification file loaded");
+            throw new JikkouRuntimeException("No resource definition file loaded");
         }
 
-        return new GenericResourceListObject(locations.stream()
+        return new GenericResourceListObject<>(locations.stream()
                 .map(location -> factory.create(URI.create(location)))
                 .flatMap(reader -> reader.readAllResources(options).stream())
                 .toList()

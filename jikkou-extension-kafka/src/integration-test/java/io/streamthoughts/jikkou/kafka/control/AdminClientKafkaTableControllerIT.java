@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
+import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.RecordChange;
@@ -64,6 +65,7 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
              """;
     public static final KafkaRecordHeader KAFKA_RECORD_HEADER = new KafkaRecordHeader("content-type", "application/json");
 
+    private final ResourceLoader loader = new ResourceLoader(new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER));
     private volatile JikkouApi api;
 
     @BeforeAll
@@ -90,7 +92,7 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
     @Test
     public void shouldApplyReconciliationForCreateMode() throws JsonProcessingException {
         // GIVEN
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
@@ -137,7 +139,7 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
             producer.send(record.toProducerRecord()).get();
         }
 
-        var resources = ResourceLoader.create()
+        var resources = loader
                 .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()

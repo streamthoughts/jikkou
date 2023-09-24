@@ -16,21 +16,29 @@
 package io.streamthoughts.jikkou.api.io;
 
 import io.streamthoughts.jikkou.api.model.Resource;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.io.OutputStream;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Default interface to write a cluster specification.
+ * Default interface to write resource.
  */
-@InterfaceStability.Evolving
+@Evolving
 public interface ResourceWriter {
 
+    enum Format {
+        JSON, YAML
+    }
+
     /**
-     * Writes the cluster specification into the specified output stream.
+     * Writes the given list of resource for the specified format.
      *
+     * @param format the output format.
      * @param items  the list of {@link Resource} to write.
-     * @param os        the output stream.
+     * @param os     the output stream to write to
      */
-    void write(final List<? extends Object> items, final OutputStream os);
+    void write(@NotNull final Format format,
+               @NotNull final List<? extends Resource> items,
+               @NotNull final OutputStream os);
 }

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
+import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
@@ -42,8 +43,7 @@ import org.junit.jupiter.api.Test;
 
 class KafkaExtensionResourceLoaderTest {
 
-
-    private final ResourceLoader loader = ResourceLoader.create();
+    private final ResourceLoader loader = new ResourceLoader(new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER));
 
     @Test
     void shouldLoadResourcesForKafkaPrincipalRoles() {

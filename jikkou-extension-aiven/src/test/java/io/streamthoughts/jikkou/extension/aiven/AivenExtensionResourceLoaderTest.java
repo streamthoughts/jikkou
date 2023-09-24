@@ -15,8 +15,10 @@
  */
 package io.streamthoughts.jikkou.extension.aiven;
 
+import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
+import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
@@ -29,8 +31,7 @@ import org.junit.jupiter.api.Test;
 
 class AivenExtensionResourceLoaderTest {
 
-
-    private final ResourceLoader loader = ResourceLoader.create();
+    private final ResourceLoader loader = new ResourceLoader(new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER));
 
     @Test
     void shouldLoadKafkaTopicAclEntry() {

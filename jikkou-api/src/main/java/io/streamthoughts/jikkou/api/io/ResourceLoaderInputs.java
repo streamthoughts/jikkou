@@ -19,7 +19,9 @@ import io.streamthoughts.jikkou.api.model.NamedValue;
 import java.util.List;
 
 /**
- * Represents the
+ * Inputs for loading resources.
+ *
+ * @see ResourceLoaderFacade
  */
 public interface ResourceLoaderInputs {
 

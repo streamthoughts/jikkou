@@ -15,19 +15,20 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.selector.ExpressionResourceSelectorFactory;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import java.util.List;
-import picocli.CommandLine;
+import io.streamthoughts.jikkou.api.config.Configuration;
+import java.util.HashMap;
+import java.util.Map;
+import picocli.CommandLine.Option;
 
-public final class SelectorOptionsMixin {
+public final class ConfigOptionsMixin {
 
-    @CommandLine.Option(names = { "--selector", "-s" },
-            description = "The selector expression use for including or excluding resources.")
-    public String[] expressions;
+    @Option(
+            names = {"--options"},
+            description = "Set the configuration options to be used for computing resource reconciliation (can specify multiple values)"
+    )
+    public Map<String, Object> options = new HashMap<>();
 
-
-    public List<ResourceSelector> getResourceSelectors() {
-        return new ExpressionResourceSelectorFactory().make(expressions);
+    public Configuration getConfiguration() {
+        return Configuration.from(options);
     }
 }

@@ -16,8 +16,8 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.config.Configuration;
 import jakarta.inject.Singleton;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
 @Command(name = "create",
@@ -36,13 +36,7 @@ public class CreateResourceCommand extends BaseResourceCommand {
 
     /** {@inheritDoc} **/
     @Override
-    protected Configuration getReconciliationConfiguration() {
-        return Configuration.empty();
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    protected ReconciliationMode getReconciliationMode() {
+    protected @NotNull ReconciliationMode getReconciliationMode() {
         return ReconciliationMode.CREATE;
     }
 }

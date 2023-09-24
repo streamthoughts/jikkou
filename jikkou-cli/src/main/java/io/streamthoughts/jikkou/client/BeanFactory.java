@@ -21,9 +21,10 @@ import io.micronaut.context.annotation.Factory;
 import io.streamthoughts.jikkou.api.ApiConfigurator;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.JikkouContext;
+import io.streamthoughts.jikkou.api.io.DefaultResourceWriter;
 import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
-import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
+import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
+import io.streamthoughts.jikkou.api.io.ResourceWriter;
 import io.streamthoughts.jikkou.api.reporter.ChangeReporterApiConfigurator;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.api.template.ResourceTemplateRenderer;
@@ -69,16 +70,16 @@ public final class BeanFactory {
 
     @Bean
     @Singleton
-    public YAMLResourceWriter resourceWriter() {
-        return new YAMLResourceWriter(Jackson.YAML_OBJECT_MAPPER);
+    public ResourceWriter defaultResourceWriter() {
+        return new DefaultResourceWriter();
     }
 
     @Bean
     @Singleton
-    public YAMLResourceLoader resourceLoader() {
+    public ResourceLoaderFacade resourceLoaderFacade() {
         ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
                 .withPreserveRawTags(false)
                 .withFailOnUnknownTokens(false);
-        return new YAMLResourceLoader(renderer, Jackson.YAML_OBJECT_MAPPER);
+        return new ResourceLoaderFacade(renderer, Jackson.YAML_OBJECT_MAPPER);
     }
 }

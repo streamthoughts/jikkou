@@ -15,19 +15,18 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.selector.ExpressionResourceSelectorFactory;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import java.util.List;
+import io.streamthoughts.jikkou.api.io.ResourceWriter;
 import picocli.CommandLine;
 
-public final class SelectorOptionsMixin {
+public final class FormatOptionsMixin {
 
-    @CommandLine.Option(names = { "--selector", "-s" },
-            description = "The selector expression use for including or excluding resources.")
-    public String[] expressions;
+    @CommandLine.Option(names = { "--output", "-o" },
+            defaultValue = "YAML",
+            description = "Prints the output in the specified format. Allowed values: json, yaml (default yaml)."
+    )
+    ResourceWriter.Format format;
 
-
-    public List<ResourceSelector> getResourceSelectors() {
-        return new ExpressionResourceSelectorFactory().make(expressions);
+    public ResourceWriter.Format format() {
+        return format;
     }
 }

@@ -61,19 +61,22 @@ import org.slf4j.LoggerFactory;
         name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
         description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
         defaultValue = "false",
-        type = Boolean.class
+        type = Boolean.class,
+        isRequired = false
 )
 @AcceptsConfigProperty(
         name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
         description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
         defaultValue = "false",
-        type = Boolean.class
+        type = Boolean.class,
+        isRequired = false
 )
 @AcceptsConfigProperty(
         name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
         description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
         defaultValue = "false",
-        type = Boolean.class
+        type = Boolean.class,
+        isRequired = false
 )
 public final class AdminClientKafkaTopicCollector extends AdminClientKafkaSupport
         implements ResourceCollector<V1KafkaTopic> {

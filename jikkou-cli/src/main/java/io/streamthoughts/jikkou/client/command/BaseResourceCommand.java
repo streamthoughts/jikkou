@@ -20,8 +20,7 @@ import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
+import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.client.Jikkou;
 import jakarta.inject.Inject;
@@ -39,20 +38,21 @@ import picocli.CommandLine.Mixin;
         mixinStandardHelpOptions = true)
 public abstract class BaseResourceCommand implements Callable<Integer> {
 
+    // COMMAND OPTIONS
     @Mixin
     ExecOptionsMixin execOptions;
-
     @Mixin
     FileOptionsMixin fileOptions;
-
     @Mixin
     SelectorOptionsMixin selectorOptions;
+    @Mixin
+    ConfigOptionsMixin configOptionsMixin;
 
+    // SERVICES
     @Inject
     JikkouApi api;
-
     @Inject
-    YAMLResourceLoader loader;
+    ResourceLoaderFacade loader;
     
     /**
      * {@inheritDoc}
@@ -60,28 +60,30 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
     @Override
     public Integer call() {
 
-        HasItems resources = loadResources();
+        final List<ChangeResult<Change>> results = api.apply(
+                loadResources(),
+                getReconciliationMode(),
+                getReconciliationContext()
+        );
+        
+        return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
+    }
 
-        ReconciliationContext context = ReconciliationContext.builder()
-                .configuration(getReconciliationConfiguration())
+    private @NotNull ReconciliationContext getReconciliationContext() {
+        return ReconciliationContext.builder()
                 .dryRun(isDryRun())
+                .configuration(configOptionsMixin.getConfiguration())
                 .selectors(selectorOptions.getResourceSelectors())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .build();
-
-        final List<ChangeResult<Change>> results = api.apply(resources, getReconciliationMode(), context);
-        
-        return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
     }
 
     protected @NotNull HasItems loadResources() {
         return loader.load(fileOptions);
     }
 
-    protected abstract Configuration getReconciliationConfiguration();
-
-    protected abstract ReconciliationMode getReconciliationMode();
+    protected abstract @NotNull ReconciliationMode getReconciliationMode();
 
     public boolean isDryRun() {
         return execOptions.dryRun;

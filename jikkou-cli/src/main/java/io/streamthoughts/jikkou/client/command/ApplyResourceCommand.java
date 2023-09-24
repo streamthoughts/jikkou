@@ -16,12 +16,9 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.config.Configuration;
 import jakarta.inject.Singleton;
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 @Command(name = "apply",
         headerHeading = "Usage:%n%n",
@@ -36,21 +33,9 @@ import picocli.CommandLine.Option;
 @Singleton
 public class ApplyResourceCommand extends BaseResourceCommand {
 
-    @Option(
-            names = {"--options"},
-            description = "Set the options to be used for computing resource reconciliation (can specify multiple values: --options key1=val1 --options key2=val2)"
-    )
-    Map<String, Object> options = new HashMap<>();
-
     /** {@inheritDoc } **/
     @Override
-    protected Configuration getReconciliationConfiguration() {
-        return Configuration.from(options);
-    }
-
-    /** {@inheritDoc } **/
-    @Override
-    protected ReconciliationMode getReconciliationMode() {
+    protected @NotNull ReconciliationMode getReconciliationMode() {
         return ReconciliationMode.APPLY_ALL;
     }
 

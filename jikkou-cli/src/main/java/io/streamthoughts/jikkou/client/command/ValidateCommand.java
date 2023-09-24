@@ -17,13 +17,15 @@ package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.io.YAMLResourceLoader;
-import io.streamthoughts.jikkou.api.io.YAMLResourceWriter;
+import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
+import io.streamthoughts.jikkou.api.io.ResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.concurrent.Callable;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -41,40 +43,51 @@ import picocli.CommandLine.Mixin;
 @Singleton
 public class ValidateCommand implements Callable<Integer> {
 
+    // COMMAND OPTIONS
     @Mixin
     FileOptionsMixin fileOptions;
-
     @Mixin
     SelectorOptionsMixin selectorOptions;
+    @Mixin
+    FormatOptionsMixin formatOptions;
+    @Mixin
+    ConfigOptionsMixin configOptionsMixin;
 
+    // SERVICES
     @Inject
     JikkouApi api;
-
     @Inject
-    YAMLResourceLoader loader;
+    ResourceLoaderFacade loader;
     @Inject
-    YAMLResourceWriter writer;
+    ResourceWriter writer;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Integer call() {
-        ReconciliationContext context = ReconciliationContext.builder()
+    public Integer call() throws IOException {
+        HasItems result = api.validate(getResources(), getReconciliationContext());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            writer.write(formatOptions.format, result.getItems(), baos);
+            System.out.println(baos);
+            return CommandLine.ExitCode.OK;
+        }
+    }
+
+    @NotNull
+    private HasItems getResources() {
+        return loader.load(fileOptions);
+    }
+
+    @NotNull
+    private ReconciliationContext getReconciliationContext() {
+        return ReconciliationContext.builder()
                 .dryRun(true)
+                .configuration(configOptionsMixin.getConfiguration())
                 .selectors(selectorOptions.getResourceSelectors())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .build();
-
-        HasItems resources = loader.load(fileOptions);
-        HasItems validated = api.validate(
-                resources,
-                context
-        );
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writer.write(validated.getItems(), baos);
-        System.out.println(baos);
-        return CommandLine.ExitCode.OK;
     }
 }
