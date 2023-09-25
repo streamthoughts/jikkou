@@ -33,7 +33,6 @@ import io.streamthoughts.jikkou.api.control.BaseResourceController;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.AlterTopicChangeHandler;
@@ -41,6 +40,8 @@ import io.streamthoughts.jikkou.kafka.change.handlers.topics.CreateTopicChangeHa
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.DeleteTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.TopicChangeDescription;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaTopicListConverter;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChangeList;
@@ -57,54 +58,40 @@ import org.slf4j.LoggerFactory;
 @AcceptsResource(type = V1KafkaTopic.class)
 @AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
 @AcceptsReconciliationModes({CREATE, DELETE, UPDATE, APPLY_ALL})
-public final class AdminClientKafkaTopicController extends AdminClientKafkaSupport
+public final class AdminClientKafkaTopicController
         implements BaseResourceController<V1KafkaTopic, TopicChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 
     public static final String CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME = "config-delete-orphans";
 
-    private AdminClientKafkaTopicCollector collector;
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaTopicController} instance.
+     * CLI requires any empty constructor.
      */
     public AdminClientKafkaTopicController() {
         super();
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaTopicController} instance with the specified
-     * application's configuration.
-     *
-     * @param config the application's configuration.
-     */
-    public AdminClientKafkaTopicController(final @NotNull Configuration config) {
-        configure(config);
-    }
-
-    /**
      * Creates a new {@link AdminClientKafkaTopicController} instance with the specified {@link AdminClientContext}.
      *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     * @param adminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
      */
-    public AdminClientKafkaTopicController(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
-        setInternalDescriptor(adminClientContext);
+    public AdminClientKafkaTopicController(final @NotNull AdminClientContextFactory adminClientContextFactory) {
+        this.adminClientContextFactory = adminClientContextFactory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        super.configure(config);
-        setInternalDescriptor(adminClientContext);
-    }
-
-    private void setInternalDescriptor(@NotNull AdminClientContext adminClientContext) {
-        if (collector == null) {
-            this.collector = new AdminClientKafkaTopicCollector(adminClientContext);
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
         }
     }
 
@@ -115,14 +102,17 @@ public final class AdminClientKafkaTopicController extends AdminClientKafkaSuppo
     public List<ChangeResult<TopicChange>> execute(@NotNull List<HasMetadataChange<TopicChange>> changes,
                                                    @NotNull ReconciliationMode mode,
                                                    boolean dryRun) {
-        AdminClient client = adminClientContext.client();
-        List<ChangeHandler<TopicChange>> handlers = List.of(
-                new CreateTopicChangeHandler(client),
-                new AlterTopicChangeHandler(client),
-                new DeleteTopicChangeHandler(client),
-                new ChangeHandler.None<>(TopicChangeDescription::new)
-        );
-        return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = context.getAdminClient();
+            List<ChangeHandler<TopicChange>> handlers = List.of(
+                    new CreateTopicChangeHandler(adminClient),
+                    new AlterTopicChangeHandler(adminClient),
+                    new DeleteTopicChangeHandler(adminClient),
+                    new ChangeHandler.None<>(TopicChangeDescription::new)
+            );
+            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        }
     }
 
     @Override
@@ -146,6 +136,7 @@ public final class AdminClientKafkaTopicController extends AdminClientKafkaSuppo
                 .asConfiguration();
 
         // Get the list of remote resources that are candidates for this reconciliation
+        AdminClientKafkaTopicCollector collector = new AdminClientKafkaTopicCollector(adminClientContextFactory);
         List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration)
                 .stream()
                 .filter(new AggregateSelector(context.selectors())::apply)

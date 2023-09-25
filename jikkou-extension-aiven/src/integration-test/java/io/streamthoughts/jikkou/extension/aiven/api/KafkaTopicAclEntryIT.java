@@ -70,8 +70,6 @@ class KafkaTopicAclEntryIT {
 
     @AfterAll
     static void tearDown() throws IOException {
-        COLLECTOR.close();
-        CONTROLLER.close();
         SERVER.shutdown();
     }
 

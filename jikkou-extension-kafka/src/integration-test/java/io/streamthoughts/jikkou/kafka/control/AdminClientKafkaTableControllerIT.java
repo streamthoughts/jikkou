@@ -76,10 +76,10 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
     @BeforeEach
     public void setUp() {
         var controller = new AdminClientKafkaTableController();
-        controller.configure(KafkaClientConfig.PRODUCER_CLIENT_CONFIG.asConfiguration(clientConfig()));
+        controller.configure(KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.asConfiguration(clientConfig()));
 
         var collector = new AdminClientKafkaTableCollector();
-        controller.configure(KafkaClientConfig.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig()));
+        controller.configure(KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig()));
 
         api = DefaultApi.builder()
                 .withController(controller)

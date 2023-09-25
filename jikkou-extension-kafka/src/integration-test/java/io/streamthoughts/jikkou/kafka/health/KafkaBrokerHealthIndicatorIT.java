@@ -15,10 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.health;
 
+import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.health.Health;
 import io.streamthoughts.jikkou.api.health.Status;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import java.time.Duration;
 import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -32,16 +33,19 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("integration")
 class KafkaBrokerHealthIndicatorIT extends AbstractKafkaIntegrationTest {
 
-    private AdminClientContext context;
+    private AdminClientContextFactory factory;
 
     @BeforeEach
     public void setUp() {
-        context = new AdminClientContext(() -> AdminClient.create(clientConfig()) );
+        factory = new AdminClientContextFactory(
+                Configuration.empty(),
+                () -> AdminClient.create(clientConfig())
+        );
     }
 
     @Test
     void shouldGetKafkaHealth() {
-        var indicator = new KafkaBrokerHealthIndicator(context);
+        var indicator = new KafkaBrokerHealthIndicator(factory);
         Health health = indicator.getHealth(Duration.ofSeconds(30));
         Assertions.assertNotNull(health);
         Assertions.assertEquals(Status.UP, health.getStatus());

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * Interface used to report changes applied by Jikkou to a third-party system.
  */
 @Reflectable
-public interface ChangeReporter extends Extension, AutoCloseable {
+public interface ChangeReporter extends Extension {
 
     /**
      * Reports the given change results.
@@ -43,8 +43,4 @@ public interface ChangeReporter extends Extension, AutoCloseable {
      */
     @Override
     default void configure(final @NotNull Configuration configuration) {}
-
-    /** Close any resource used by this reporter **/
-    @Override
-    default void close() {}
 }

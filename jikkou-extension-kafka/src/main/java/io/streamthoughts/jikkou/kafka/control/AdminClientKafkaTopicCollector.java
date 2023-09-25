@@ -19,17 +19,19 @@ import io.streamthoughts.jikkou.annotation.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaTopicSupport;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaTopicListConverter;
 import io.streamthoughts.jikkou.kafka.internals.ConfigsBuilder;
 import io.streamthoughts.jikkou.kafka.internals.KafkaConfigPredicate;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
@@ -78,10 +80,12 @@ import org.slf4j.LoggerFactory;
         type = Boolean.class,
         isRequired = false
 )
-public final class AdminClientKafkaTopicCollector extends AdminClientKafkaSupport
+public final class AdminClientKafkaTopicCollector
         implements ResourceCollector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);
+
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaTopicCollector} instance.
@@ -91,22 +95,23 @@ public final class AdminClientKafkaTopicCollector extends AdminClientKafkaSuppor
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaTopicCollector} instance with the specified
-     * application's configuration.
+     * Creates a new {@link AdminClientKafkaTopicCollector} instance.
      *
-     * @param config the application's configuration.
+     * @param AdminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
      */
-    public AdminClientKafkaTopicCollector(final @NotNull Configuration config) {
-        configure(config);
+    public AdminClientKafkaTopicCollector(final @NotNull AdminClientContextFactory AdminClientContextFactory) {
+        this.adminClientContextFactory = AdminClientContextFactory;
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaTopicCollector} instance with the specified {@link AdminClientContext}.
-     *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     * {@inheritDoc}
      */
-    public AdminClientKafkaTopicCollector(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
+    @Override
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
     }
 
     /**
@@ -128,29 +133,31 @@ public final class AdminClientKafkaTopicCollector extends AdminClientKafkaSuppor
                 .withDynamicBrokerConfig(options.isDescribeDynamicBrokerConfigs())
                 .withStaticBrokerConfig(options.isDescribeStaticBrokerConfigs());
 
-        KafkaFunction<List<V1KafkaTopic>> function = client -> new KafkaTopicsClient(client).listAll(predicate);
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
 
-        List<V1KafkaTopic> resources = adminClientContext.invoke(function);
+            List<V1KafkaTopic> resources = new KafkaTopicsClient(context.getAdminClient())
+                    .listAll(predicate);
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Found '{}' kafka topics matching the given selector(s).", resources.size());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Found '{}' kafka topics matching the given selector(s).", resources.size());
+            }
+
+            String clusterId = context.getClusterId();
+
+            return resources
+                    .stream()
+                    .filter(new AggregateSelector(selectors)::apply)
+                    .map(resource -> resource
+                            .toBuilder()
+                            .withMetadata(resource.getMetadata()
+                                    .toBuilder()
+                                    .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .toList();
         }
-
-        String clusterId = adminClientContext.getClusterId();
-
-        return resources
-                .stream()
-                .filter(new AggregateSelector(selectors)::apply)
-                .map(resource -> resource
-                        .toBuilder()
-                        .withMetadata(resource.getMetadata()
-                                .toBuilder()
-                                .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
-                                .build()
-                        )
-                        .build()
-                )
-                .toList();
     }
 
     /**

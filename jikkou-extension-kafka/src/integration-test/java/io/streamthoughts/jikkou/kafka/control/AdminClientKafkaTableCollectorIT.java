@@ -49,7 +49,7 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
             .header("k", "v")
             .build();
 
-    static final KafkaRecord<String,String> RECORD_KEY_V2 = KafkaRecord.<String, String>builder()
+    static final KafkaRecord<String, String> RECORD_KEY_V2 = KafkaRecord.<String, String>builder()
             .topic(TEST_TOPIC_NAME)
             .key(TEST_RECORD_KEY)
             .value("v2")
@@ -68,39 +68,39 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         }
 
         // When
-        Configuration config = KafkaClientConfig.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
-        try(AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config)) {
-            List<V1KafkaTableRecord> result = collector.listAll(Configuration.of(
-                    AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                    AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME, DataFormat.STRING,
-                    AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME, DataFormat.STRING)
-            );
-            // Then
-            var expected = V1KafkaTableRecord
-                    .builder()
-                    .withMetadata(ObjectMeta.builder()
-                            .withName(TEST_TOPIC_NAME)
-                            .withAnnotation("kafka.jikkou.io/record-partition", metadata.partition())
-                            .withAnnotation("kafka.jikkou.io/record-offset", metadata.offset())
-                            .withAnnotation("kafka.jikkou.io/record-timestamp", metadata.timestamp())
-                            .build()
-                    )
-                    .withSpec(V1KafkaTableRecordSpec
-                            .builder()
-                            .withKeyFormat(DataFormat.STRING)
-                            .withValueFormat(DataFormat.STRING)
-                            .withRecord(KafkaRecordData
-                                    .builder()
-                                    .withHeader(new KafkaRecordHeader("k", "v"))
-                                    .withKey(new DataHandle(new TextNode(RECORD_KEY_V2.key())))
-                                    .withValue(new DataHandle(new TextNode(RECORD_KEY_V2.value())))
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .build();
-            Assertions.assertEquals(List.of(expected), result);
-        }
+        Configuration config = KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
+        AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
+        List<V1KafkaTableRecord> result = collector.listAll(Configuration.of(
+                AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
+                AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME, DataFormat.STRING,
+                AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME, DataFormat.STRING)
+        );
+        // Then
+        var expected = V1KafkaTableRecord
+                .builder()
+                .withMetadata(ObjectMeta.builder()
+                        .withName(TEST_TOPIC_NAME)
+                        .withAnnotation("kafka.jikkou.io/record-partition", metadata.partition())
+                        .withAnnotation("kafka.jikkou.io/record-offset", metadata.offset())
+                        .withAnnotation("kafka.jikkou.io/record-timestamp", metadata.timestamp())
+                        .build()
+                )
+                .withSpec(V1KafkaTableRecordSpec
+                        .builder()
+                        .withKeyFormat(DataFormat.STRING)
+                        .withValueFormat(DataFormat.STRING)
+                        .withRecord(KafkaRecordData
+                                .builder()
+                                .withHeader(new KafkaRecordHeader("k", "v"))
+                                .withKey(new DataHandle(new TextNode(RECORD_KEY_V2.key())))
+                                .withValue(new DataHandle(new TextNode(RECORD_KEY_V2.value())))
+                                .build()
+                        )
+                        .build()
+                )
+                .build();
+        Assertions.assertEquals(List.of(expected), result);
+
     }
 
     @Test
@@ -109,15 +109,14 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         createTopic(TEST_TOPIC_NAME, Map.of(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
 
         // When
-        Configuration config = KafkaClientConfig.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
-        try(AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config)) {
-            Assertions.assertThrows(JikkouRuntimeException.class, () -> {
-                collector.listAll(Configuration.of(
-                        AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                        AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME, DataFormat.STRING,
-                        AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME, DataFormat.STRING)
-                );
-            });
-        }
+        Configuration config = KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
+        AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
+        Assertions.assertThrows(JikkouRuntimeException.class, () -> {
+            collector.listAll(Configuration.of(
+                    AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
+                    AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME, DataFormat.STRING,
+                    AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME, DataFormat.STRING)
+            );
+        });
     }
 }

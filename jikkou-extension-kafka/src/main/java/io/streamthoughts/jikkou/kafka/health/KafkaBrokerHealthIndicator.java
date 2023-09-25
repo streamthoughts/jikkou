@@ -22,7 +22,9 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.health.Health;
 import io.streamthoughts.jikkou.api.health.HealthIndicator;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.control.KafkaClientConfiguration;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -41,52 +43,47 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
 
     private static final String HEALTH_NAME = "kafka";
 
-    private AdminClientContext adminClientContext;
+    private AdminClientContextFactory adminClientContextFactory;
 
-    private Duration timeout;
+    private KafkaClientConfiguration configuration;
 
     /**
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
      * Empty constructor required for CLI.
      */
-    public KafkaBrokerHealthIndicator() {}
-
-    /**
-     * Creates a new {@link KafkaBrokerHealthIndicator} instance.
-     * @param adminClientContext the context used to get an AdminClient instance.
-     */
-    public KafkaBrokerHealthIndicator(@NotNull AdminClientContext adminClientContext) {
-        this.adminClientContext = adminClientContext;
-    }
+    public KafkaBrokerHealthIndicator() { }
 
     /**
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
      *
-     * @param configuration the context configuration.
+     * @param adminClientContextFactory the AdminClientContext factory.
      */
-    public KafkaBrokerHealthIndicator(@NotNull Configuration configuration) {
-        configure(configuration);
+    public KafkaBrokerHealthIndicator(final @NotNull AdminClientContextFactory adminClientContextFactory) {
+        this.adminClientContextFactory = adminClientContextFactory;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        adminClientContext = new AdminClientContext(config);
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
+        this.configuration = new KafkaClientConfiguration(configuration);
     }
 
     /** {@inheritDoc} */
     @Override
     public Health getHealth(final Duration timeout) {
-        if (adminClientContext == null) {
-            throw new IllegalStateException("must be configured!");
+        if (adminClientContextFactory == null) {
+            throw new IllegalStateException("not configured");
         }
-        this.timeout = timeout;
-        return adminClientContext
-                .withWaitForKafkaBrokersEnabled(false)
-                .invokeAndClose(this::getHealth);
+        try(AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+            return getHealth(context.getAdminClient(), timeout);
+        }
     }
 
-    private Health getHealth(final AdminClient client) {
+    private Health getHealth(@NotNull final AdminClient client,
+                             @NotNull final Duration timeout) {
         try {
             DescribeClusterResult result = client.describeCluster(
                     new DescribeClusterOptions().timeoutMs((int)timeout.toMillis()));

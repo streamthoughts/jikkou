@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 @Evolving
 @ExtensionType("Collector")
 public interface ResourceCollector<R extends HasMetadata>
-        extends HasMetadataAcceptable, Extension, Configurable, AutoCloseable {
+        extends HasMetadataAcceptable, Extension, Configurable {
 
     /**
      * Gets all the resources that exist into the managed system.
@@ -85,13 +85,6 @@ public interface ResourceCollector<R extends HasMetadata>
     default List<R> listAll() {
         return listAll(Collections.emptyList());
     }
-
-    /**
-     * Closes any I/O resources.
-     */
-    @Override
-    default void close() {}
-
 
     static List<ConfigPropertyDescriptor> getConfigPropertyDescriptors(ResourceCollector<?> collector) {
         return getConfigPropertyDescriptors(collector.getClass());

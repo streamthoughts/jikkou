@@ -21,8 +21,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultAdminClientFactory implements AdminClientFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultAdminClientFactory.class);
 
     private final Supplier<Map<String, Object>> clientPropertiesSupplier;
 

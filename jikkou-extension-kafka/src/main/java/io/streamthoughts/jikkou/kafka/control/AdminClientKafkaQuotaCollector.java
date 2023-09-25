@@ -18,14 +18,16 @@ package io.streamthoughts.jikkou.kafka.control;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaClientQuotaListConverter;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
@@ -41,11 +43,17 @@ import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.apache.kafka.common.quota.ClientQuotaFilter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaClientQuota.class)
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
-public final class AdminClientKafkaQuotaCollector extends AdminClientKafkaSupport
+public final class AdminClientKafkaQuotaCollector
         implements ResourceCollector<V1KafkaClientQuota> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaQuotaCollector.class);
+
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaQuotaCollector} instance.
@@ -55,22 +63,23 @@ public final class AdminClientKafkaQuotaCollector extends AdminClientKafkaSuppor
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaQuotaCollector} instance with the specified
-     * application's configuration.
+     * Creates a new {@link AdminClientKafkaQuotaCollector} instance with the specified {@link AdminClientContext}.
      *
-     * @param config the application's configuration.
+     * @param adminClientContextFactory the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
      */
-    public AdminClientKafkaQuotaCollector(final @NotNull Configuration config) {
-        super(config);
+    public AdminClientKafkaQuotaCollector(final @NotNull AdminClientContextFactory adminClientContextFactory) {
+        this.adminClientContextFactory = adminClientContextFactory;
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaQuotaCollector} instance with the specified {@link AdminClientContext}.
-     *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     * {@inheritDoc}
      */
-    public AdminClientKafkaQuotaCollector(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
+    @Override
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
     }
 
     /**
@@ -79,27 +88,23 @@ public final class AdminClientKafkaQuotaCollector extends AdminClientKafkaSuppor
     @Override
     public List<V1KafkaClientQuota> listAll(@NotNull final Configuration configuration,
                                             @NotNull final List<ResourceSelector> selectors) {
-        final List<V1KafkaClientQuota> resources;
-        if (adminClientContext.isInitialized()) {
-            resources = new DescribeQuotas(adminClientContext.client()).describe();
-        } else {
-            resources = adminClientContext.invoke(adminClient -> new DescribeQuotas(adminClient).describe());
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+            final List<V1KafkaClientQuota> resources = new DescribeQuotas(context.getAdminClient()).describe();
+            String clusterId = context.getClusterId();
+            return resources
+                    .stream()
+                    .filter(new AggregateSelector(selectors)::apply)
+                    .map(resource -> resource
+                            .toBuilder()
+                            .withMetadata(resource.getMetadata()
+                                    .toBuilder()
+                                    .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .toList();
         }
-
-        String clusterId = adminClientContext.getClusterId();
-        return resources
-                .stream()
-                .filter(new AggregateSelector(selectors)::apply)
-                .map(resource -> resource
-                        .toBuilder()
-                        .withMetadata(resource.getMetadata()
-                                .toBuilder()
-                                .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
-                                .build()
-                        )
-                        .build()
-                )
-                .toList();
     }
 
     public static final class DescribeQuotas {

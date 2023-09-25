@@ -30,8 +30,8 @@ import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import java.util.List;
@@ -63,17 +63,17 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
     @BeforeEach
     public void setUp() {
-        var controller = new AdminClientKafkaTopicController(new AdminClientContext(() ->
-                AdminClient.create(clientConfig()))
+        AdminClientContextFactory factory = new AdminClientContextFactory(
+                Configuration.empty(),
+                () -> AdminClient.create(clientConfig())
         );
 
-        var descriptor = new AdminClientKafkaTopicCollector(new AdminClientContext(() ->
-                AdminClient.create(clientConfig()))
-        );
+        var controller = new AdminClientKafkaTopicController(factory);
+        var collector = new AdminClientKafkaTopicCollector(factory);
 
         api = DefaultApi.builder()
                 .withController(controller)
-                .withCollector(descriptor)
+                .withCollector(collector)
                 .build();
     }
 

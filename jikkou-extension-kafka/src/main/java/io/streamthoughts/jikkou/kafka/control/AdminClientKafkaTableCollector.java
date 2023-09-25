@@ -15,8 +15,6 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import static io.streamthoughts.jikkou.kafka.internals.KafkaUtils.isTopicCleanupPolicyCompact;
-
 import io.streamthoughts.jikkou.annotation.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
@@ -28,6 +26,7 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientFactory;
 import io.streamthoughts.jikkou.kafka.internals.admin.DefaultAdminClientFactory;
 import io.streamthoughts.jikkou.kafka.internals.consumer.ConsumerFactory;
@@ -135,7 +134,7 @@ public final class AdminClientKafkaTableCollector
 
         if (adminClientFactory == null) {
             adminClientFactory = new DefaultAdminClientFactory(() ->
-                    KafkaClientConfig.ADMIN_CLIENT_CONFIG.evaluate(configuration)
+                    KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.evaluate(configuration)
             );
         }
     }
@@ -150,8 +149,8 @@ public final class AdminClientKafkaTableCollector
         final Config config = new Config(configuration);
         String topic = config.topicName();
         LOG.debug("Checking if kafka topic {} is compacted", topic);
-        try (var client = adminClientFactory.createAdminClient()) {
-            boolean isCompacted = isTopicCleanupPolicyCompact(client, topic, true);
+        try (AdminClientContext client = new AdminClientContext(adminClientFactory)) {
+            boolean isCompacted = client.isTopicCleanupPolicyCompact(topic, true);
             if (!isCompacted) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -352,7 +351,7 @@ public final class AdminClientKafkaTableCollector
         }
 
         public Map<String, Object> clientConfig() {
-            return KafkaClientConfig.CONSUMER_CLIENT_CONFIG.evaluate(configuration);
+            return KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.evaluate(configuration);
         }
     }
 }

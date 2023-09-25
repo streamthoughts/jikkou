@@ -16,11 +16,13 @@
 package io.streamthoughts.jikkou.kafka.control;
 
 import io.streamthoughts.jikkou.api.config.ConfigProperty;
+import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class KafkaClientConfig {
+public final class KafkaClientConfiguration {
 
     public static final String KAFKA_CLIENT_CONFIG_NAME = "kafka.client";
 
@@ -39,4 +41,18 @@ public final class KafkaClientConfig {
             .orElse(HashMap::new)
             .map(KafkaUtils::getAdminClientConfigs);
 
+    public static final ConfigProperty<Duration> KAFKA_DEFAULT_TIMEOUT_CONFIG = ConfigProperty
+            .ofLong(KAFKA_CLIENT_CONFIG_NAME + ".defaultTimeoutMs")
+            .map(Duration::ofMillis)
+            .orElse(Duration.ofSeconds(30));
+
+    private final Configuration configuration;
+
+    public KafkaClientConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Duration getClientDefaultTimeout() {
+        return KAFKA_DEFAULT_TIMEOUT_CONFIG.evaluate(configuration);
+    }
 }

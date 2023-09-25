@@ -36,6 +36,11 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
 
     private final List<ResourceValidation<HasMetadata>> validations;
 
+    /**
+     * Creates a new {@link ResourceValidationChain} instance.
+     *
+     * @param validations   the list of validations.
+     */
     public ResourceValidationChain(final List<ResourceValidation<HasMetadata>> validations) {
         this.validations = validations
                 .stream()
@@ -46,22 +51,18 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
     /** {@inheritDoc} **/
     @Override
     public void validate(@NotNull final List<HasMetadata> resources) {
+        validate(new GenericResourceListObject<>(resources).groupByType());
+    }
 
-        List<HasMetadata> filtered = resources.stream()
-                .filter(Predicate.not(JikkouMetadataAnnotations::isAnnotatedWithByPassValidation))
-                .collect(Collectors.toList());
-
-        Map<ResourceType, List<HasMetadata>> grouped = new GenericResourceListObject(filtered)
-                .groupByType();
-
+    public void validate(@NotNull final Map<ResourceType, List<HasMetadata>> resources) {
         List<ValidationException> exceptions = new ArrayList<>(resources.size());
-        for (Map.Entry<ResourceType, List<HasMetadata>> entry : grouped.entrySet()) {
+        for (Map.Entry<ResourceType, List<HasMetadata>> entry : resources.entrySet()) {
             ResourceType type = entry.getKey();
             List<HasMetadata> resourcesHavingSameType = entry.getValue();
             for (ResourceValidation<HasMetadata> validation : validations) {
                 try {
                     if (validation.canAccept(type)) {
-                        validation.validate(resourcesHavingSameType);
+                        validation.validate(filterCandidateToValidation(resourcesHavingSameType));
                     }
                 } catch (ValidationException e) {
                     exceptions.add(e);
@@ -71,5 +72,12 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
         if (!exceptions.isEmpty()) {
             throw new ValidationException(exceptions);
         }
+    }
+
+    @NotNull
+    private static List<HasMetadata> filterCandidateToValidation(@NotNull List<HasMetadata> resources) {
+        return resources.stream()
+                .filter(Predicate.not(JikkouMetadataAnnotations::isAnnotatedWithByPassValidation))
+                .collect(Collectors.toList());
     }
 }

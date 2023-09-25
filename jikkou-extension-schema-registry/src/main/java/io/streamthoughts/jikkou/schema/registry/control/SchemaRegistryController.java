@@ -54,9 +54,7 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistryController implements BaseResourceController<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
-    private SchemaRegistryCollector collector;
-
-    private SchemaRegistryClientConfig config;
+    private SchemaRegistryClientConfig configuration;
 
     /**
      * Creates a new {@link SchemaRegistryController} instance.
@@ -67,10 +65,10 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     /**
      * Creates a new {@link SchemaRegistryController} instance.
      *
-     * @param config the schema registry client configuration.
+     * @param configuration the schema registry client configuration.
      */
-    public SchemaRegistryController(@NotNull SchemaRegistryClientConfig config) {
-        configure(config);
+    public SchemaRegistryController(@NotNull SchemaRegistryClientConfig configuration) {
+        configure(configuration);
     }
 
     /**
@@ -82,10 +80,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     }
 
     private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
-        this.config = config;
-        this.collector = new SchemaRegistryCollector(config)
-                .prettyPrintSchema(false)
-                .defaultToGlobalCompatibilityLevel(false);
+        this.configuration = config;
     }
 
     /**
@@ -95,7 +90,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items,
                                                            @NotNull ReconciliationMode mode,
                                                            boolean dryRun) {
-        SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
+        SchemaRegistryApi api = SchemaRegistryApiFactory.create(configuration);
         try {
             List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
                     new CreateSchemaSubjectChangeHandler(api),
@@ -124,6 +119,10 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
                 .toList();
 
         // Get existing resources from the environment.
+        SchemaRegistryCollector collector = new SchemaRegistryCollector(configuration)
+                .prettyPrintSchema(false)
+                .defaultToGlobalCompatibilityLevel(false);
+
         List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration()).stream()
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .toList();
@@ -141,15 +140,5 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
                 .collect(Collectors.toList());
 
         return V1SchemaRegistrySubjectChangeList.builder().withItems(changes).build();
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public void close() {
-        if (collector != null) {
-            collector.close();
-        }
     }
 }

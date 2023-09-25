@@ -51,11 +51,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaTableRecord.class)
 @AcceptsReconciliationModes({CREATE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaTableController
         implements BaseResourceController<V1KafkaTableRecord, RecordChange> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTableController.class);
 
     private ProducerFactory<byte[], byte[]> producerFactory;
 
@@ -86,25 +90,15 @@ public final class AdminClientKafkaTableController
         this.adminClientFactory = adminClientFactory;
     }
 
-
-    /**
-     * Creates a new {@link AdminClientKafkaTableController} instance with the specified
-     * application's configuration.
-     *
-     * @param config the application's configuration.
-     */
-    public AdminClientKafkaTableController(final @NotNull Configuration config) {
-        configure(config);
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(@NotNull Configuration config) throws ConfigException {
+        LOG.info("Configuring");
         if (producerFactory == null) {
             producerFactory = new DefaultProducerFactory<>(
-                    () -> KafkaClientConfig.PRODUCER_CLIENT_CONFIG.evaluate(config),
+                    () -> KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.evaluate(config),
                     new ByteArraySerializer(),
                     new ByteArraySerializer()
             );

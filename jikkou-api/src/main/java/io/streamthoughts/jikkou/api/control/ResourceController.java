@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 public interface ResourceController<
         R extends HasMetadata,
         C extends Change>
-        extends HasMetadataAcceptable, Extension, AutoCloseable {
+        extends HasMetadataAcceptable, Extension {
 
     /**
      * Gets the set of reconciliation modes supported by this controller.
@@ -92,12 +92,4 @@ public interface ResourceController<
     ResourceListObject<? extends HasMetadataChange<C>> computeReconciliationChanges(@NotNull Collection<R> resources,
                                                                                     @NotNull ReconciliationMode mode,
                                                                                     @NotNull ReconciliationContext context);
-
-    /**
-     * Closes any I/O resources.
-     */
-    @Override
-    default void close() {
-    }
-
 }

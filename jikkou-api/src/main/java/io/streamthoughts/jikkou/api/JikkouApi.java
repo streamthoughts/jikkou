@@ -178,7 +178,6 @@ public interface JikkouApi extends AutoCloseable {
      */
     JikkouApi addReporter(@NotNull ChangeReporter reporter);
 
-
     /**
      * Execute the reconciliation for the given resources using
      *

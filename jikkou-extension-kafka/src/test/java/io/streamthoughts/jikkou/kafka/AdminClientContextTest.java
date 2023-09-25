@@ -15,12 +15,14 @@
  */
 package io.streamthoughts.jikkou.kafka;
 
-import static io.streamthoughts.jikkou.kafka.AdminClientContext.KAFKA_BROKERS_WAIT_FOR_ENABLED;
-import static io.streamthoughts.jikkou.kafka.AdminClientContext.KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE;
-import static io.streamthoughts.jikkou.kafka.AdminClientContext.KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS;
-import static io.streamthoughts.jikkou.kafka.AdminClientContext.KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS;
+import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory.KAFKA_BROKERS_WAIT_FOR_ENABLED;
+import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory.KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE;
+import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory.KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS;
+import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory.KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,13 +31,13 @@ class AdminClientContextTest {
     @Test
     void shouldOverrideOptionsForWaitFalse() {
         // Given
-        Configuration configuration = KAFKA_BROKERS_WAIT_FOR_ENABLED.asConfiguration(false);
-        try(AdminClientContext context = new AdminClientContext(configuration)) {
+        Configuration configuration = KAFKA_BROKERS_WAIT_FOR_ENABLED.asConfiguration(true);
+        try(AdminClientContext context = new AdminClientContextFactory(configuration).createAdminClientContext()) {
             // When
             boolean result = context.isWaitForKafkaBrokersEnabled();
 
             // Then
-            Assertions.assertFalse(result);
+            Assertions.assertTrue(result);
         }
     }
 
@@ -44,7 +46,7 @@ class AdminClientContextTest {
     void shouldOverrideOptionsForWaitMinAvailable() {
         // Given
         Configuration configuration = KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.asConfiguration(42);
-        try(AdminClientContext context = new AdminClientContext(configuration)) {
+        try(AdminClientContext context = new AdminClientContextFactory(configuration).createAdminClientContext()) {
             // When
             int result = context.getOptions().minAvailableBrokers();
 
@@ -57,7 +59,8 @@ class AdminClientContextTest {
     void shouldOverrideOptionsForWaitRetryBackMs() {
         // Given
         Configuration configuration = KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.asConfiguration(42L);
-        try(AdminClientContext context = new AdminClientContext(configuration)) {
+        ;
+        try(AdminClientContext context = new AdminClientContextFactory(configuration).createAdminClientContext()) {
             // When
             long result = context.getOptions().retryBackoffMs();
 
@@ -70,7 +73,7 @@ class AdminClientContextTest {
     void shouldOverrideOptionsForWaitRetryTimeoutMs() {
         // Given
         Configuration configuration = KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.asConfiguration(42L);
-        try(AdminClientContext context = new AdminClientContext(configuration)) {
+        try(AdminClientContext context = new AdminClientContextFactory(configuration).createAdminClientContext()) {
             // When
             long result = context.getOptions().timeoutMs();
 

@@ -51,6 +51,11 @@ public class KafkaChangeReporterConfig {
             .orElse(HashMap::new)
             .map(KafkaUtils::getProducerClientConfigs);
 
+    public static final ConfigProperty<Map<String, Object>> ADMIN_CLIENT_CONFIG = ConfigProperty
+            .ofMap("kafka.client")
+            .orElse(HashMap::new)
+            .map(KafkaUtils::getAdminClientConfigs);
+
     private final Configuration configuration;
 
     /**
@@ -66,8 +71,12 @@ public class KafkaChangeReporterConfig {
         return KAFKA_TOPIC_CONFIG.evaluate(configuration);
     }
 
-    public Map<String, Object> clientConfig() {
+    public Map<String, Object> producerConfig() {
         return PRODUCER_CLIENT_CONFIG.evaluate(configuration);
+    }
+
+    public Map<String, Object> adminClientConfig() {
+        return ADMIN_CLIENT_CONFIG.evaluate(configuration);
     }
 
     public String eventSource() {

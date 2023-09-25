@@ -33,6 +33,10 @@ public final class KafkaBrokersReady {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBrokersReady.class);
 
+    public static final int DEFAULT_MIN_AVAILABLE_BROKERS = 1;
+    public static final long DEFAULT_TIMEOUT_MS = 60_000L;
+    public static final long DEFAULT_RETRY_BACKOFF_MS = 1_000L;
+
     public static class Options {
         private final int minAvailableBrokers;
         private final long timeoutMs;
@@ -43,7 +47,7 @@ public final class KafkaBrokersReady {
         }
 
         public Options() {
-            this(1, 60_000L, 1_000);
+            this(DEFAULT_MIN_AVAILABLE_BROKERS, DEFAULT_TIMEOUT_MS, DEFAULT_RETRY_BACKOFF_MS);
         }
 
         public Options(final int minAvailableBrokers,

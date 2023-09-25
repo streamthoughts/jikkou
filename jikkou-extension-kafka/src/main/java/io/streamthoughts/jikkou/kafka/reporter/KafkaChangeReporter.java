@@ -27,7 +27,7 @@ import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
-import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
 import io.streamthoughts.jikkou.kafka.internals.producer.KafkaRecordSender;
 import io.streamthoughts.jikkou.kafka.internals.producer.ProducerFactory;
@@ -38,16 +38,13 @@ import io.streamthoughts.jikkou.kafka.reporter.ce.CloudEventExtension;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.common.errors.TopicExistsException;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -60,6 +57,7 @@ import org.slf4j.LoggerFactory;
 public class KafkaChangeReporter implements ChangeReporter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaChangeReporter.class);
+    public static final int NUM_PARTITIONS = 1;
 
     private KafkaChangeReporterConfig configuration;
 
@@ -101,23 +99,12 @@ public class KafkaChangeReporter implements ChangeReporter {
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         LOG.info("Configuration");
         this.configuration = new KafkaChangeReporterConfig(configuration);
-        Map<String, Object> clientConfig = this.configuration.clientConfig();
         if (producerFactory == null) {
             producerFactory = new DefaultProducerFactory<>(
-                    KafkaUtils.getProducerClientConfigs(clientConfig),
+                    this.configuration.producerConfig(),
                     new ByteArraySerializer(),
                     new ByteArraySerializer()
             );
-        }
-
-        if (this.configuration.isTopicCreationEnabled()) {
-            try (var adminClient = AdminClient.create(KafkaUtils.getAdminClientConfigs(clientConfig))) {
-                createTopics(
-                        adminClient,
-                        this.configuration.topicName(),
-                        (short) this.configuration.defaultReplicationFactor()
-                );
-            }
         }
     }
 
@@ -127,9 +114,11 @@ public class KafkaChangeReporter implements ChangeReporter {
     @Override
     public void report(List<ChangeResult<Change>> results) {
         LOG.info("Starting reporting for {} changes", results.size());
+
+        checkIfTopicNeedToBeCreated();
+
         final String topic = configuration.topicName();
         final String source = configuration.eventSource();
-
         Stream<ChangeResult<Change>> stream = filterRelevantChangeResults(results);
         List<KafkaRecord<byte[], byte[]>> records = stream.map(result -> {
                     CloudEventEntity<Object> entity = CloudEventEntityBuilder.newBuilder()
@@ -175,29 +164,15 @@ public class KafkaChangeReporter implements ChangeReporter {
         return results.stream().filter(it -> it.isChanged() && !it.isFailed());
     }
 
-    private void createTopics(final AdminClient client,
-                              final String topic,
-                              final short replicas) {
-        LOG.info("Creating reporting topic: {}", topic);
-        try {
-            client.createTopics(List.of(new NewTopic(topic, 1, replicas))).all().get();
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
-            if (cause != null & cause instanceof TopicExistsException) {
-                LOG.info("Cannot auto create topic {} - topics already exists. Error can be ignored.", topic);
-            } else {
-                LOG.error("Cannot auto create topic {}", topic, e);
+    private void checkIfTopicNeedToBeCreated() {
+        if (this.configuration.isTopicCreationEnabled()) {
+            try (var adminClient = AdminClient.create(this.configuration.adminClientConfig())) {
+                new AdminClientContext(adminClient).createTopic(
+                        this.configuration.topicName(),
+                        NUM_PARTITIONS,
+                        (short) this.configuration.defaultReplicationFactor()
+                );
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            // ignore and attempts to proceed anyway;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public void close() {
     }
 }

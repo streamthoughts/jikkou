@@ -32,7 +32,6 @@ import io.streamthoughts.jikkou.api.control.BaseResourceController;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.change.AclChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.AclChangeDescription;
@@ -41,6 +40,8 @@ import io.streamthoughts.jikkou.kafka.change.handlers.acls.DeleteAclChangeHandle
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.builder.LiteralKafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.builder.TopicMatchingAclRulesBuilder;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaAclChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaAclChangeList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
@@ -49,17 +50,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
 @AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
-public final class AdminClientKafkaAclController extends AdminClientKafkaSupport
+public final class AdminClientKafkaAclController
         implements BaseResourceController<V1KafkaPrincipalAuthorization, AclChange> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaAclController.class);
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
             .orElse(false);
 
-    private AdminClientKafkaAclCollector collector;
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaAclController} instance.
@@ -71,28 +76,21 @@ public final class AdminClientKafkaAclController extends AdminClientKafkaSupport
     /**
      * Creates a new {@link AdminClientKafkaAclController} instance.
      *
-     * @param config the application's configuration.
+     * @param AdminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
      */
-    public AdminClientKafkaAclController(final @NotNull Configuration config) {
-        super(config);
-    }
-
-    /**
-     * Creates a new {@link AdminClientKafkaAclController} instance.
-     *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
-     */
-    public AdminClientKafkaAclController(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
+    public AdminClientKafkaAclController(final @NotNull AdminClientContextFactory AdminClientContextFactory) {
+        this.adminClientContextFactory = AdminClientContextFactory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        super.configure(config);
-        this.collector = new AdminClientKafkaAclCollector(adminClientContext);
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
     }
 
     /**
@@ -103,36 +101,40 @@ public final class AdminClientKafkaAclController extends AdminClientKafkaSupport
                                                              @NotNull ReconciliationMode mode,
                                                              @NotNull ReconciliationContext context) {
 
-        AdminClient adminClient = adminClientContext.client();
-
         // Get the list of remote resources that are candidates for this reconciliation
         List<V1KafkaPrincipalAuthorization> expectedStates = resources
                 .stream()
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .toList();
 
-        // Get the actual state from the cluster.
-        List<V1KafkaPrincipalAuthorization> actualStates = collector.listAll(adminClient)
-                .stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
-                .toList();
+        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
 
-        // Compute state changes
-        final KafkaAclBindingBuilder builder = KafkaAclBindingBuilder.combines(
-                new LiteralKafkaAclBindingBuilder(),
-                new TopicMatchingAclRulesBuilder(adminClient)
-        );
+            final AdminClient adminClient = clientContext.getAdminClient();
 
-        AclChangeComputer computer = new AclChangeComputer(DELETE_ORPHANS_OPTIONS.evaluate(context.configuration()), builder);
-        List<V1KafkaAclChange> changes = computer.computeChanges(actualStates, expectedStates)
-                .stream()
-                .map(it -> V1KafkaAclChange.builder()
-                        .withMetadata(it.getMetadata())
-                        .withChange(it.getChange())
-                        .build()
-                ).collect(Collectors.toList());
+            // Get the actual state from the cluster.
+            AdminClientKafkaAclCollector collector = new AdminClientKafkaAclCollector(adminClientContextFactory);
+            List<V1KafkaPrincipalAuthorization> actualStates = collector.listAll(adminClient)
+                    .stream()
+                    .filter(new AggregateSelector(context.selectors())::apply)
+                    .toList();
 
-        return new V1KafkaAclChangeList().withItems(changes);
+            // Compute state changes
+            final KafkaAclBindingBuilder builder = KafkaAclBindingBuilder.combines(
+                    new LiteralKafkaAclBindingBuilder(),
+                    new TopicMatchingAclRulesBuilder(adminClient)
+            );
+
+            AclChangeComputer computer = new AclChangeComputer(DELETE_ORPHANS_OPTIONS.evaluate(context.configuration()), builder);
+            List<V1KafkaAclChange> changes = computer.computeChanges(actualStates, expectedStates)
+                    .stream()
+                    .map(it -> V1KafkaAclChange.builder()
+                            .withMetadata(it.getMetadata())
+                            .withChange(it.getChange())
+                            .build()
+                    ).collect(Collectors.toList());
+
+            return new V1KafkaAclChangeList().withItems(changes);
+        }
     }
 
     private V1KafkaAclChange toModelChange(AclChange c) {
@@ -146,13 +148,14 @@ public final class AdminClientKafkaAclController extends AdminClientKafkaSupport
     public List<ChangeResult<AclChange>> execute(@NotNull List<HasMetadataChange<AclChange>> changes,
                                                  @NotNull ReconciliationMode mode,
                                                  boolean dryRun) {
-        AdminClient client = adminClientContext.client();
-        List<ChangeHandler<AclChange>> handlers = List.of(
-                new CreateAclChangeHandler(client),
-                new DeleteAclChangeHandler(client),
-                new ChangeHandler.None<>(AclChangeDescription::new)
-        );
-        return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = context.getAdminClient();
+            List<ChangeHandler<AclChange>> handlers = List.of(
+                    new CreateAclChangeHandler(adminClient),
+                    new DeleteAclChangeHandler(adminClient),
+                    new ChangeHandler.None<>(AclChangeDescription::new)
+            );
+            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        }
     }
-
 }

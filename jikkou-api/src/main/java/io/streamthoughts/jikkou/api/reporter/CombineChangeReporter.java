@@ -49,15 +49,4 @@ public final class CombineChangeReporter implements ChangeReporter {
             }
         }
     }
-    /** {@inheritDoc} **/
-    @Override
-    public void close() {
-        for (ChangeReporter reporter : reporters) {
-            try {
-                reporter.close();
-            } catch (Exception e) {
-                LOG.error("Failed to close reporter: '{}'", reporter.getName(), e);
-            }
-        }
-    }
 }

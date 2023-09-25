@@ -39,12 +39,15 @@ import io.streamthoughts.jikkou.api.transform.ResourceTransformationChain;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidationChain;
 import io.streamthoughts.jikkou.common.utils.Tuple2;
+
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +80,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          * {@inheritDoc}
          **/
         @Override
-        public Builder withValidations(@NotNull List<ResourceValidation<HasMetadata>> validations) {
+        public Builder withValidations(final @NotNull List<ResourceValidation<HasMetadata>> validations) {
             this.validations.addAll(validations);
             return this;
         }
@@ -86,7 +89,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          * {@inheritDoc}
          **/
         @Override
-        public Builder withTransformations(@NotNull List<ResourceTransformation<HasMetadata>> transformations) {
+        public Builder withTransformations(final @NotNull List<ResourceTransformation<HasMetadata>> transformations) {
             this.transformations.addAll(transformations);
             return this;
         }
@@ -115,7 +118,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          * {@inheritDoc}
          **/
         @Override
-        public Builder withValidation(@NotNull ResourceValidation<? extends HasMetadata> validation) {
+        public Builder withValidation(final @NotNull ResourceValidation<? extends HasMetadata> validation) {
             this.validations.add(validation);
             return this;
         }
@@ -124,17 +127,16 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          * {@inheritDoc}
          **/
         @Override
-        public Builder withTransformation(@NotNull ResourceTransformation<? extends HasMetadata> transformation) {
+        public Builder withTransformation(final @NotNull ResourceTransformation<? extends HasMetadata> transformation) {
             this.transformations.add(transformation);
             return this;
         }
-
 
         /**
          * {@inheritDoc}
          **/
         @Override
-        public Builder withReporters(@NotNull List<ChangeReporter> reporters) {
+        public Builder withReporters(final @NotNull List<ChangeReporter> reporters) {
             this.reporters.addAll(reporters);
             return this;
         }
@@ -153,7 +155,6 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     private final List<ResourceValidation<HasMetadata>> validations = new LinkedList<>();
-
     private final List<ResourceTransformation<HasMetadata>> transformations = new LinkedList<>();
     @SuppressWarnings("rawtypes")
     private final HasMetadataAcceptableList<ResourceController> controllers;
@@ -241,7 +242,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public List<ResourceListObject<HasMetadataChange<Change>>> getDiff(@NotNull final HasItems resources,
+    public List<ResourceListObject<HasMetadataChange<Change>>> getDiff(final @NotNull HasItems resources,
                                                                        final @NotNull ReconciliationContext context) {
 
         return handleResources(resources, context)
@@ -261,8 +262,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     @NotNull
-    private Map<ResourceType, List<HasMetadata>> handleResources(@NotNull HasItems resources,
-                                                                 @NotNull ReconciliationContext context) {
+    private Map<ResourceType, List<HasMetadata>> handleResources(final @NotNull HasItems resources,
+                                                                 final @NotNull ReconciliationContext context) {
 
         List<HasMetadata> converted = resources.groupByType()
                 .entrySet()
@@ -278,28 +279,37 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     }
                 }).toList();
 
-        ResourceTransformationChain transformationChain = new ResourceTransformationChain(transformations);
+        GenericResourceListObject<HasMetadata> allResources = new GenericResourceListObject<>(converted);
 
-        Map<ResourceType, List<HasMetadata>> result = GenericResourceListObject.of(converted).groupByType()
+        Stream<Tuple2<ResourceType, List<HasMetadata>>> stream = allResources.groupByType()
                 .entrySet()
                 .stream()
-                .map(Tuple2::of)
-                .map(t -> t.mapRight(resource -> {
-                    return transformationChain.transformAll(resource, new GenericResourceListObject<>(converted), context);
-                }))
-                .map(t -> t.mapRight(resource -> new GenericResourceListObject<>(t._2()).getAllMatching(context.selectors())))
+                .map(Tuple2::of);
+
+        // Execute transformation
+        ResourceTransformationChain transformationChain = new ResourceTransformationChain(transformations);
+        stream = stream
+                .map(t -> t.mapRight(resource ->
+                        transformationChain.transformAll(resource, allResources, context)
+                ));
+
+        // Execute selectors
+        stream = stream
                 .filter(t -> !t._1().isTransient())
+                .map(t -> t.mapRight(resource -> {
+                    List<ResourceSelector> selectors = context.selectors();
+                    return new GenericResourceListObject<>(t._2()).getAllMatching(selectors);
+                }));
+
+        Map<ResourceType, List<HasMetadata>> transformed = stream
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
 
+        // Execute validations
         ResourceValidationChain validationChain = new ResourceValidationChain(validations);
-        validationChain.validate(result.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .toList());
+        validationChain.validate(transformed);
 
-        return result;
+        return transformed;
     }
-
 
     /**
      * {@inheritDoc}
@@ -308,14 +318,13 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     public List<HasMetadata> getResources(final @NotNull ResourceType resourceType,
                                           final @NotNull List<ResourceSelector> selectors,
                                           final @NotNull Configuration configuration) {
-        try (ResourceCollector<HasMetadata> collector = getResourceCollectorForType(resourceType)) {
-            List<HasMetadata> resources = collector.listAll(configuration, selectors);
-            ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
-            List<HasMetadata> result = resources.stream()
-                    .map(DefaultApi::enrichWithGeneratedAnnotation)
-                    .toList();
-            return converter.convertTo(result);
-        }
+        ResourceCollector<HasMetadata> collector = getResourceCollectorForType(resourceType);
+        List<HasMetadata> resources = collector.listAll(configuration, selectors);
+        ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
+        List<HasMetadata> result = resources.stream()
+                .map(DefaultApi::enrichWithGeneratedAnnotation)
+                .toList();
+        return converter.convertTo(result);
     }
 
     private static HasMetadata enrichWithGeneratedAnnotation(HasMetadata resource) {
@@ -336,14 +345,15 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .withTransformations(transformations)
                 .withValidations(validations)
                 .withControllers(controllers.getItems())
-                .withCollectors(collectors.getItems());
+                .withCollectors(collectors.getItems())
+                .withReporters(reporters);
     }
 
     private ResourceCollector<HasMetadata> getResourceCollectorForType(@NotNull ResourceType resource) {
 
-        var acceptedDescriptors = collectors.allResourcesAccepting(resource);
+        var collectors = this.collectors.allResourcesAccepting(resource);
 
-        if (acceptedDescriptors.isEmpty()) {
+        if (collectors.isEmpty()) {
             throw new JikkouApiException(String.format(
                     "No resource collector found for version=%s and kind=%s ",
                     resource.getApiVersion(),
@@ -351,7 +361,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             ));
         }
 
-        int numMatchingHandlers = acceptedDescriptors.size();
+        int numMatchingHandlers = collectors.size();
         if (numMatchingHandlers > 1) {
             throw new JikkouApiException(String.format(
                     "Expected single matching resource collector for version=%s and kind=%s but found %s",
@@ -360,9 +370,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     numMatchingHandlers
             ));
         }
-        return acceptedDescriptors.first();
+        return collectors.first();
     }
-
 
     private ResourceController<HasMetadata, Change> getControllerForResource(@NotNull ResourceType resource) {
         var result = controllers.allResourcesAccepting(resource);
@@ -395,6 +404,6 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      */
     @Override
     public void close() {
-        new CombineChangeReporter(reporters).close();
+        // intentionally left blank - this class is not responsible for closing any instances (for the moment).
     }
 }

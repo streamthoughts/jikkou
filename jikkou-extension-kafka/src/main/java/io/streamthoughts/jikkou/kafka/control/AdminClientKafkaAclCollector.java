@@ -18,13 +18,15 @@ package io.streamthoughts.jikkou.kafka.control;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaPrincipalAuthorizationSupport;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.util.ArrayList;
@@ -38,34 +40,43 @@ import org.apache.kafka.clients.admin.DescribeAclsResult;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
-public final class AdminClientKafkaAclCollector extends AdminClientKafkaSupport
+public final class AdminClientKafkaAclCollector
         implements ResourceCollector<V1KafkaPrincipalAuthorization> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaAclCollector.class);
+
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaAclCollector} instance.
+     * CLI requires any empty constructor.
      */
     public AdminClientKafkaAclCollector() {
         super();
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaAclCollector} instance.
+     * Creates a new {@link AdminClientKafkaAclCollector} instance with the specified {@link AdminClientContext}.
      *
-     * @param config the application's configuration.
+     * @param adminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
      */
-    public AdminClientKafkaAclCollector(final @NotNull Configuration config) {
-        super(config);
+    public AdminClientKafkaAclCollector(final @NotNull AdminClientContextFactory adminClientContextFactory) {
+        this.adminClientContextFactory = adminClientContextFactory;
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaAclCollector} instance.
-     *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     * {@inheritDoc}
      */
-    public AdminClientKafkaAclCollector(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
+    @Override
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
     }
 
     /**
@@ -75,26 +86,26 @@ public final class AdminClientKafkaAclCollector extends AdminClientKafkaSupport
     public List<V1KafkaPrincipalAuthorization> listAll(@NotNull final Configuration configuration,
                                                        @NotNull final List<ResourceSelector> selectors) {
 
-        KafkaFunction<List<V1KafkaPrincipalAuthorization>> function = client -> {
-            return listAll(client)
+
+        try (AdminClientContext adminClientContext = adminClientContextFactory.createAdminClientContext()) {
+
+            List<V1KafkaPrincipalAuthorization> resources = listAll(adminClientContext.getAdminClient())
                     .stream()
                     .filter(new AggregateSelector(selectors)::apply)
                     .toList();
-        };
 
-        List<V1KafkaPrincipalAuthorization> resources = adminClientContext.invoke(function);
-
-        String clusterId = adminClientContext.getClusterId();
-        return resources.stream().map(resource -> resource
-                        .toBuilder()
-                        .withMetadata(resource.getMetadata()
-                                .toBuilder()
-                                .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
-                                .build()
-                        )
-                        .build()
-                )
-                .toList();
+            String clusterId = adminClientContext.getClusterId();
+            return resources.stream().map(resource -> resource
+                            .toBuilder()
+                            .withMetadata(resource.getMetadata()
+                                    .toBuilder()
+                                    .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .toList();
+        }
     }
 
     List<V1KafkaPrincipalAuthorization> listAll(final @NotNull AdminClient client) {

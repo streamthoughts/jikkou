@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The original authors
+ * Copyright 2023 The original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.kafka.control;
+package io.streamthoughts.jikkou.common.memory;
 
-import java.util.function.Function;
-import org.apache.kafka.clients.admin.AdminClient;
+/**
+ * A {@code MemoryResourceDisposer} can be used to dispose a shared
+ * resource after it is not used anymore.
+ *
+ * @see OpaqueMemoryResource
+ */
 
 @FunctionalInterface
-public interface KafkaFunction<O> extends Function<AdminClient, O> {
+public interface ResourceDisposer<E extends Throwable> {
 
+    /**
+     * Release the memory shared resource.
+     */
+    void dispose() throws E;
 }

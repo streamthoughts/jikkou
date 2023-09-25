@@ -33,7 +33,6 @@ import io.streamthoughts.jikkou.api.control.BaseResourceController;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.change.QuotaChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.quotas.CreateQuotasChangeHandlerKafka;
@@ -41,6 +40,8 @@ import io.streamthoughts.jikkou.kafka.change.handlers.quotas.DeleteQuotasChangeH
 import io.streamthoughts.jikkou.kafka.change.handlers.quotas.QuotaChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.handlers.quotas.UpdateQuotasChangeHandlerKafka;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaClientQuotaListConverter;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaChangeList;
@@ -51,16 +52,20 @@ import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaClientQuota.class)
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
 @AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
-public final class AdminClientKafkaQuotaController extends AdminClientKafkaSupport
+public final class AdminClientKafkaQuotaController
         implements BaseResourceController<V1KafkaClientQuota, QuotaChange> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaQuotaController.class);
 
     public static final String LIMITS_DELETE_ORPHANS_CONFIG_NAME = "limits-delete-orphans";
 
-    private AdminClientKafkaQuotaCollector collector;
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaQuotaController} instance.
@@ -70,31 +75,23 @@ public final class AdminClientKafkaQuotaController extends AdminClientKafkaSuppo
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaQuotaController} instance with the specified
-     * application's configuration.
+     * Creates a new {@link AdminClientKafkaQuotaCollector} instance.
      *
-     * @param config the application's configuration.
+     * @param AdminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
      */
-    public AdminClientKafkaQuotaController(final @NotNull Configuration config) {
-        super(config);
-    }
-
-    /**
-     * Creates a new {@link AdminClientKafkaQuotaController} instance with the specified {@link AdminClientContext}.
-     *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
-     */
-    public AdminClientKafkaQuotaController(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
+    public AdminClientKafkaQuotaController(final @NotNull AdminClientContextFactory AdminClientContextFactory) {
+        this.adminClientContextFactory = AdminClientContextFactory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        super.configure(config);
-        this.collector = new AdminClientKafkaQuotaCollector(this.adminClientContext);
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
     }
 
     /**
@@ -111,6 +108,8 @@ public final class AdminClientKafkaQuotaController extends AdminClientKafkaSuppo
                 .toList();
 
         // Get the list of described resource that are candidates for this reconciliation
+        AdminClientKafkaQuotaCollector collector = new AdminClientKafkaQuotaCollector(adminClientContextFactory);
+
         final List<V1KafkaClientQuota> actual = collector.listAll()
                 .stream()
                 .filter(new AggregateSelector(context.selectors())::apply)
@@ -134,14 +133,16 @@ public final class AdminClientKafkaQuotaController extends AdminClientKafkaSuppo
     public List<ChangeResult<QuotaChange>> execute(@NotNull List<HasMetadataChange<QuotaChange>> changes,
                                                    @NotNull ReconciliationMode mode,
                                                    boolean dryRun) {
-        AdminClient client = adminClientContext.client();
-        List<ChangeHandler<QuotaChange>> handlers = List.of(
-                new CreateQuotasChangeHandlerKafka(client),
-                new UpdateQuotasChangeHandlerKafka(client),
-                new DeleteQuotasChangeHandler(client),
-                new ChangeHandler.None<>(QuotaChangeDescription::new)
-        );
-        return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = context.getAdminClient();
+            List<ChangeHandler<QuotaChange>> handlers = List.of(
+                    new CreateQuotasChangeHandlerKafka(adminClient),
+                    new UpdateQuotasChangeHandlerKafka(adminClient),
+                    new DeleteQuotasChangeHandler(adminClient),
+                    new ChangeHandler.None<>(QuotaChangeDescription::new)
+            );
+            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        }
     }
 
     @VisibleForTesting

@@ -18,17 +18,19 @@ package io.streamthoughts.jikkou.kafka.control;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
+import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.kafka.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaBrokerListConverter;
 import io.streamthoughts.jikkou.kafka.internals.ConfigsBuilder;
 import io.streamthoughts.jikkou.kafka.internals.KafkaConfigPredicate;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBrokersSpec;
@@ -52,10 +54,12 @@ import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaBroker.class)
 @AcceptsResource(type = V1KafkaBrokerList.class, converter = V1KafkaBrokerListConverter.class)
-public final class AdminClientKafkaBrokerCollector extends AdminClientKafkaSupport
+public final class AdminClientKafkaBrokerCollector
         implements ResourceCollector<V1KafkaBroker> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaBrokerCollector.class);
+
+    private AdminClientContextFactory adminClientContextFactory;
 
     /**
      * Creates a new {@link AdminClientKafkaBrokerCollector} instance.
@@ -65,21 +69,23 @@ public final class AdminClientKafkaBrokerCollector extends AdminClientKafkaSuppo
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaBrokerCollector} instance.
+     * Creates a new {@link AdminClientKafkaQuotaCollector} instance.
      *
-     * @param config the application's configuration.
+     * @param AdminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
      */
-    public AdminClientKafkaBrokerCollector(final @NotNull Configuration config) {
-        super(config);
+    public AdminClientKafkaBrokerCollector(final @NotNull AdminClientContextFactory AdminClientContextFactory) {
+        this.adminClientContextFactory = AdminClientContextFactory;
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaBrokerCollector} instance.
-     *
-     * @param adminClientContext the {@link AdminClientContext} to use for acquiring a new {@link AdminClient}.
+     * {@inheritDoc}
      */
-    public AdminClientKafkaBrokerCollector(final @NotNull AdminClientContext adminClientContext) {
-        super(adminClientContext);
+    @Override
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        LOG.info("Configuring");
+        if (adminClientContextFactory == null) {
+            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+        }
     }
 
     /**
@@ -90,6 +96,15 @@ public final class AdminClientKafkaBrokerCollector extends AdminClientKafkaSuppo
                                        @NotNull final List<ResourceSelector> selectors) {
 
         LOG.info("Listing all kafka brokers");
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+            return listAll(configuration, selectors, context);
+        }
+    }
+
+    @NotNull
+    List<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
+                                @NotNull final List<ResourceSelector> selectors,
+                                @NotNull final AdminClientContext context) {
         var options = new ConfigDescribeConfiguration(configuration);
 
         var predicate = new KafkaConfigPredicate()
@@ -97,10 +112,8 @@ public final class AdminClientKafkaBrokerCollector extends AdminClientKafkaSuppo
                 .withDynamicBrokerConfig(options.isDescribeDynamicBrokerConfigs())
                 .withStaticBrokerConfig(options.isDescribeStaticBrokerConfigs());
 
-        var resources = adminClientContext.invoke(client -> new KafkaBrokerClient(client).listAll(predicate));
-
-        String clusterId = adminClientContext.getClusterId();
-
+        List<V1KafkaBroker> resources = new KafkaBrokerClient(context.getAdminClient()).listAll(predicate);
+        final String clusterId = context.getClusterId();
         return resources
                 .stream()
                 .filter(new AggregateSelector(selectors)::apply)
@@ -152,9 +165,9 @@ public final class AdminClientKafkaBrokerCollector extends AdminClientKafkaSuppo
                     return descriptions.values().stream().map(desc -> V1KafkaBroker
                             .builder()
                             .withMetadata(ObjectMeta
-                                .builder()
-                                .withName(desc.idString())
-                                .build()
+                                    .builder()
+                                    .withName(desc.idString())
+                                    .build()
                             )
                             .withSpec(V1KafkaBrokersSpec
                                     .builder()
