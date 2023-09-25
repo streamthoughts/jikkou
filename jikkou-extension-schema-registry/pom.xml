@@ -28,7 +28,7 @@ limitations under the License.
 
     <properties>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
-        <avro.version>1.11.2</avro.version>
+        <avro.version>1.11.3</avro.version>
     </properties>
 
     <dependencies>
