@@ -104,7 +104,7 @@ class AsyncSchemaRegistryApiTest {
                 .baseUri(SCHEMA_REGISTRY.getSchemaRegistryUrl())
                 .enableClientDebugging(true)
                 .build(SchemaRegistryApi.class);
-        async = new AsyncSchemaRegistryApi(api);
+        async = new DefaultAsyncSchemaRegistryApi(api);
     }
 
     @Order(1)
@@ -161,7 +161,7 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldUpdateCompatibilityForExistingSubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityObject> future = async.updateConfigCompatibility(
+        CompletableFuture<CompatibilityObject> future = async.updateSubjectCompatibilityLevel(
                 TEST_SUBJECT,
                 new CompatibilityObject(CompatibilityLevels.FULL_TRANSITIVE.name())
         );
@@ -175,7 +175,7 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetCompatibilityForExistingSubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getConfigCompatibility(TEST_SUBJECT, false);
+        CompletableFuture<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel(TEST_SUBJECT, false);
 
         // Then
         CompatibilityLevelObject result = future.get();
@@ -186,7 +186,7 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetErrorCompatibilityForNotExistingSubjectAndDefaultToGlobalFalse() {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getConfigCompatibility("unknown", false);
+        CompletableFuture<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", false);
 
         // Then
         RestClientException exception = Assertions
@@ -198,7 +198,7 @@ class AsyncSchemaRegistryApiTest {
                     }
                 });
 
-        ErrorResponse response =  exception.getResponseEntity(ErrorResponse.class);
+        ErrorResponse response = exception.getResponseEntity(ErrorResponse.class);
         Assertions.assertEquals(40408, response.errorCode());
         Assertions.assertEquals("Subject 'unknown' does not have subject-level compatibility configured", response.message());
     }
@@ -207,7 +207,7 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetGlobalCompatibilityForNotExistingSubjectAndDefaultToGlobalTrue() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getConfigCompatibility("unknown", true);
+        CompletableFuture<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", true);
 
         // Then
         CompatibilityLevelObject result = future.get();
@@ -220,7 +220,7 @@ class AsyncSchemaRegistryApiTest {
         // When
         CompletableFuture<CompatibilityCheck> future = async.testCompatibility(
                 TEST_SUBJECT,
-                -1,
+                "-1",
                 true,
                 new SubjectSchemaRegistration(AVRO_SCHEMA, SchemaType.AVRO)
         );
@@ -237,7 +237,7 @@ class AsyncSchemaRegistryApiTest {
         // When
         CompletableFuture<CompatibilityCheck> future = async.testCompatibility(
                 TEST_SUBJECT,
-                -1,
+                "-1",
                 true,
                 new SubjectSchemaRegistration(AVRO_SCHEMA_NOT_COMPATIBLE, SchemaType.AVRO)
         );

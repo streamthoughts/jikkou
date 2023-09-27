@@ -15,9 +15,11 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
 import io.streamthoughts.jikkou.api.change.ChangeResponse;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
@@ -29,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler {
+public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<SchemaSubjectChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteSchemaSubjectChangeHandler.class);
 
@@ -38,7 +40,7 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
      *
      * @param api the {@link SchemaRegistryApi} instance.
      */
-    public DeleteSchemaSubjectChangeHandler(@NotNull final SchemaRegistryApi api) {
+    public DeleteSchemaSubjectChangeHandler(@NotNull final AsyncSchemaRegistryApi api) {
         super(api);
     }
 
@@ -64,7 +66,7 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
                 .thenApplyAsync(versions -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
-                                "Deleted versions for subject '{}': {}",
+                                "Deleted all versions for Schema Registry subject '{}': {}",
                                 subject,
                                 versions
                         );

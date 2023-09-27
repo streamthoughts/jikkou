@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistryCollector;
-import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistryController;
+import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectCollector;
+import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchemaTransformation;
 import io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
@@ -31,8 +31,8 @@ public class SchemaRegistryExtensionsProvider implements ExtensionProvider {
     @Override
     public void registerExtensions(@NotNull ExtensionFactory factory,
                                    @NotNull Configuration configuration) {
-        factory.register(SchemaRegistryCollector.class, SchemaRegistryCollector::new);
-        factory.register(SchemaRegistryController.class, SchemaRegistryController::new);
+        factory.register(SchemaRegistrySubjectCollector.class, SchemaRegistrySubjectCollector::new);
+        factory.register(SchemaRegistrySubjectController.class, SchemaRegistrySubjectController::new);
         factory.register(AvroSchemaValidation.class, AvroSchemaValidation::new);
         factory.register(SchemaCompatibilityValidation.class, SchemaCompatibilityValidation::new);
         factory.register(NormalizeSubjectSchemaTransformation.class, NormalizeSubjectSchemaTransformation::new);

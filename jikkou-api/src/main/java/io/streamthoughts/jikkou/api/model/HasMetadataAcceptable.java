@@ -20,10 +20,14 @@ import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.utils.Classes;
+import io.streamthoughts.jikkou.common.utils.Strings;
 import java.util.List;
 import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ *
+ */
 public interface HasMetadataAcceptable {
 
     /**
@@ -37,7 +41,7 @@ public interface HasMetadataAcceptable {
     }
 
     default ResourceConverter<HasMetadata, HasMetadata> getResourceConverter(@NotNull HasMetadata resource) {
-        return getResourceConverter(ResourceType.create(resource.getClass()));
+        return getResourceConverter(ResourceType.create(resource));
     }
 
     @SuppressWarnings("unchecked")
@@ -49,7 +53,7 @@ public interface HasMetadataAcceptable {
                 .filter(annot -> {
                     var type = annot.type() != HasMetadata.class ?
                             ResourceType.create(annot.type()) :
-                            ResourceType.create(annot.kind(), annot.version());
+                            ResourceType.create(annot.kind(), annot.apiVersion());
                     return type.canAccept(resource);
                 })
                 .findFirst()
@@ -68,15 +72,26 @@ public interface HasMetadataAcceptable {
      * @return      the list of acceptable types.
      */
     static List<ResourceType> getAcceptedResources(final Class<?> clazz) {
-        List<AcceptsResource> acceptsResources = AnnotationResolver
+        List<AcceptsResource> annotations = AnnotationResolver
                 .findAllAnnotationsByType(clazz, AcceptsResource.class);
 
-        return acceptsResources.stream()
+        return annotations.stream()
                 .map(accept -> {
                     if (accept.type() != HasMetadata.class) {
                         return ResourceType.create(accept.type());
                     }
-                    return ResourceType.create(accept.kind(), accept.version());
+                    if (!Strings.isBlank(accept.apiVersion())) {
+                        return ResourceType.create(accept.kind(), accept.apiVersion());
+                    }
+
+                    if (!Strings.isBlank(accept.kind())) {
+                        return ResourceType.create(accept.kind());
+                    }
+
+                    throw new IllegalArgumentException(
+                            "Invalid 'AcceptsResource' annotation on class '" + clazz.getName() + "'." +
+                            " At least one of the following must be specified: type, apiVersion or kind."
+                    );
                 })
                 .toList();
     }

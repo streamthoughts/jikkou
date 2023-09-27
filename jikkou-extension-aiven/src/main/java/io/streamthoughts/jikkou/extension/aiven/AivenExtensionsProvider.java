@@ -17,30 +17,38 @@ package io.streamthoughts.jikkou.extension.aiven;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaQuotaCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaQuotaController;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryController;
-import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaQuotaCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaQuotaController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaTopicAclEntryCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaTopicAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistryAclEntryCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistryAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistrySubjectCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.extension.aiven.health.AivenServiceHealthIndicator;
+import io.streamthoughts.jikkou.extension.aiven.validation.AivenSchemaCompatibilityValidation;
 import io.streamthoughts.jikkou.extension.aiven.validation.SchemaRegistryAclEntryValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
 public class AivenExtensionsProvider implements ExtensionProvider {
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void registerExtensions(@NotNull ExtensionFactory factory,
                                    @NotNull Configuration configuration) {
         factory.register(AivenServiceHealthIndicator.class, AivenServiceHealthIndicator::new);
-        factory.register(KafkaTopicAclEntryCollector.class, KafkaTopicAclEntryCollector::new);
-        factory.register(KafkaTopicAclEntryController.class, KafkaTopicAclEntryController::new);
-        factory.register(SchemaRegistryAclEntryCollector.class, SchemaRegistryAclEntryCollector::new);
-        factory.register(SchemaRegistryAclEntryController.class, SchemaRegistryAclEntryController::new);
+        factory.register(AivenKafkaTopicAclEntryCollector.class, AivenKafkaTopicAclEntryCollector::new);
+        factory.register(AivenKafkaTopicAclEntryController.class, AivenKafkaTopicAclEntryController::new);
+        factory.register(AivenSchemaRegistryAclEntryCollector.class, AivenSchemaRegistryAclEntryCollector::new);
+        factory.register(AivenSchemaRegistryAclEntryController.class, AivenSchemaRegistryAclEntryController::new);
+        factory.register(AivenSchemaRegistrySubjectCollector.class, AivenSchemaRegistrySubjectCollector::new);
+        factory.register(AivenSchemaRegistrySubjectController.class, AivenSchemaRegistrySubjectController::new);
         factory.register(SchemaRegistryAclEntryValidation.class, SchemaRegistryAclEntryValidation::new);
-        factory.register(KafkaQuotaCollector.class, KafkaQuotaCollector::new);
-        factory.register(KafkaQuotaController.class, KafkaQuotaController::new);
+        factory.register(AivenKafkaQuotaCollector.class, AivenKafkaQuotaCollector::new);
+        factory.register(AivenKafkaQuotaController.class, AivenKafkaQuotaController::new);
+        factory.register(AivenSchemaCompatibilityValidation.class, AivenSchemaCompatibilityValidation::new);
     }
 }

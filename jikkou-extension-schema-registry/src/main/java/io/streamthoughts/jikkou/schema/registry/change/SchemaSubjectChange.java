@@ -37,38 +37,35 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonPropertyOrder({"subject", "compatibilityLevels", "schemaType", "schema"})
 @Getter
-public class SchemaSubjectChange implements Change {
+public final class SchemaSubjectChange implements Change {
 
     /**
      * The change-type.
      */
     private final ChangeType changeType;
-
     /**
      * The name of the subject.
      */
     private final String subject;
-
     /**
      * The schema type.
      */
     private final ValueChange<SchemaType> schemaType;
-
     /**
      * The string schema.
      */
     private final ValueChange<String> schema;
-
     /**
      * The compatibility level for this subject.
      */
     private final ValueChange<CompatibilityLevels> compatibilityLevels;
-
     /**
      * The references for teh schema.
      */
     private final ValueChange<List<SubjectSchemaReference>> references;
-
+    /**
+     * The options.
+     */
     private final SchemaSubjectChangeOptions options;
 
     @JsonIgnore

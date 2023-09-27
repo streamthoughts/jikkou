@@ -51,14 +51,18 @@ public interface HasMetadata extends Resource {
      *
      * @return the API Version of this resource.
      */
-    String getApiVersion();
+    default String getApiVersion() {
+        return getApiVersion(this.getClass());
+    }
 
     /**
      * Gets resource kind.
      *
      * @return the kind of this resource.
      */
-    String getKind();
+    default String getKind() {
+        return getKind(this.getClass());
+    }
 
     /**
      * Check whether this resource should not be part of the reconciliation process.

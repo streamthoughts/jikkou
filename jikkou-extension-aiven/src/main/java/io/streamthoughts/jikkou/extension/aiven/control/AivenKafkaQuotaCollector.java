@@ -21,40 +21,40 @@ import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.control.ResourceCollector;
 import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.io.Jackson;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
-import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
+import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientException;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
-import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
-import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaAclEntryListConverter;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
+import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
+import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaQuotaListConverter;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaList;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsResource(type = V1KafkaTopicAclEntry.class)
-@AcceptsResource(type = V1KafkaTopicAclEntryList.class, converter = V1KafkaAclEntryListConverter.class)
-public class KafkaTopicAclEntryCollector implements ResourceCollector<V1KafkaTopicAclEntry> {
+@AcceptsResource(type = V1KafkaQuota.class)
+@AcceptsResource(type = V1KafkaQuotaList.class, converter = V1KafkaQuotaListConverter.class)
+public class AivenKafkaQuotaCollector implements ResourceCollector<V1KafkaQuota> {
 
     private AivenApiClientConfig config;
 
     /**
-     * Creates a new {@link KafkaTopicAclEntryCollector} instance.
+     * Creates a new {@link AivenKafkaQuotaCollector} instance.
      */
-    public KafkaTopicAclEntryCollector() {}
+    public AivenKafkaQuotaCollector() {}
 
     /**
-     * Creates a new {@link KafkaTopicAclEntryCollector} instance.
+     * Creates a new {@link AivenKafkaQuotaCollector} instance.
      *
      * @param config the configuration.
      */
-    public KafkaTopicAclEntryCollector(AivenApiClientConfig config) {
+    public AivenKafkaQuotaCollector(AivenApiClientConfig config) {
         configure(config);
     }
 
@@ -74,14 +74,14 @@ public class KafkaTopicAclEntryCollector implements ResourceCollector<V1KafkaTop
      * {@inheritDoc}
      **/
     @Override
-    public List<V1KafkaTopicAclEntry> listAll(@NotNull Configuration configuration,
+    public List<V1KafkaQuota> listAll(@NotNull Configuration configuration,
                                               @NotNull List<ResourceSelector> selectors) {
-        AivenApiClient api = AivenApiClientFactory.create(config);
+        final AivenApiClient api = AivenApiClientFactory.create(config);
         try {
-            ListKafkaAclResponse response = api.listKafkaAclEntries();
+            ListKafkaQuotaResponse response = api.listKafkaQuotas();
 
             if (!response.errors().isEmpty()) {
-                throw new JikkouRuntimeException(
+                throw new AivenApiClientException(
                         String.format("failed to list kafka acl entries. %s (%s)",
                                 response.message(),
                                 response.errors()
@@ -89,8 +89,9 @@ public class KafkaTopicAclEntryCollector implements ResourceCollector<V1KafkaTop
                 );
             }
 
-            return KafkaAclEntryAdapter.map(response.acl())
+            return response.quotas()
                     .stream()
+                    .map(KafkaQuotaAdapter::map)
                     .filter(new AggregateSelector(selectors)::apply)
                     .collect(Collectors.toList());
 
@@ -102,8 +103,8 @@ public class KafkaTopicAclEntryCollector implements ResourceCollector<V1KafkaTop
             } catch (JsonProcessingException ex) {
                 response = e.getResponseEntity();
             }
-            throw new JikkouRuntimeException(String.format(
-                    "failed to list kafka acl entries. %s:%n%s",
+            throw new AivenApiClientException(String.format(
+                    "failed to list kafka quotas. %s:%n%s",
                     e.getLocalizedMessage(),
                     response
             ), e);

@@ -215,7 +215,7 @@ public final class JikkouConfig implements Configuration {
     public JikkouConfig(@NotNull final Config config, final boolean doLog) {
         this.config = Objects.requireNonNull(config, "'config' cannot be null");
         if (doLog) {
-            LOG.info("Created new {}:\n\t{}", this.getClass().getName(), toPrettyString());
+            LOG.info("Created new {}:\n\t{}", this.getClass().getName(), toPrettyString("\n\t"));
         }
     }
 

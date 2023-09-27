@@ -30,13 +30,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-class SchemaRegistryCollectorTest extends AbstractIntegrationTest {
+class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
 
-    private SchemaRegistryCollector collector;
+    private SchemaRegistrySubjectCollector collector;
 
     @BeforeEach
     public void beforeEach() throws ExecutionException, InterruptedException {
-        collector = new SchemaRegistryCollector(getSchemaRegistryClientConfiguration());
+        collector = new SchemaRegistrySubjectCollector(getSchemaRegistryClientConfiguration());
         collector.prettyPrintSchema(false);
 
         AsyncSchemaRegistryApi api = getAsyncSchemaRegistryApi();

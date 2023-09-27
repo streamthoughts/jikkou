@@ -35,6 +35,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Aiven Service Health indicator.
+ */
 @ExtensionName("avnservice")
 @ExtensionDescription("Get the health of an Aiven service")
 public final class AivenServiceHealthIndicator implements HealthIndicator, Configurable {
@@ -42,8 +45,6 @@ public final class AivenServiceHealthIndicator implements HealthIndicator, Confi
     private static final String HEALTH_NAME = "avnservice";
 
     private AivenApiClientConfig config;
-
-    private Duration timeout;
 
     /**
      * Creates a new {@link AivenServiceHealthIndicator} instance.

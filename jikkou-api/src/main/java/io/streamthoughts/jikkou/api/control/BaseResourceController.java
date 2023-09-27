@@ -46,7 +46,6 @@ public interface BaseResourceController<
     default List<ChangeResult<C>> reconcile(@NotNull final List<R> resources,
                                             @NotNull final ReconciliationMode mode,
                                             @NotNull final ReconciliationContext context) {
-
         if (!supportedReconciliationModes().contains(mode)) {
             throw new JikkouRuntimeException(
                     String.format(
@@ -65,6 +64,7 @@ public interface BaseResourceController<
                 .collect(Collectors.toList());
 
         // Execute changes
+
         return execute(filtered, mode, context.isDryRun());
     }
 

@@ -22,9 +22,14 @@ import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntryList;
+import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.spi.ResourceProvider;
 
-public class AivenResourceProvider implements ResourceProvider {
+public final class AivenResourceProvider implements ResourceProvider {
+
+    public static final String SCHEMA_REGISTRY_API_VERSION = "kafka.aiven.io/v1beta1";
+    public static final String SCHEMA_REGISTRY_KIND = "SchemaRegistrySubject";
+
 
     /** {@inheritDoc} **/
     @Override
@@ -35,5 +40,9 @@ public class AivenResourceProvider implements ResourceProvider {
         context.register(V1SchemaRegistryAclEntryList.class);
         context.register(V1KafkaQuota.class);
         context.register(V1KafkaQuotaList.class);
+        context.register(V1SchemaRegistrySubject.class, SCHEMA_REGISTRY_API_VERSION)
+                .setSingularName("avn-schemaregistrysubject")
+                .setPluralName(null)
+                .setShortNames(null);
     }
 }

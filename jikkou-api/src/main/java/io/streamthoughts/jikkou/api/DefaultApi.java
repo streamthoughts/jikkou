@@ -39,7 +39,6 @@ import io.streamthoughts.jikkou.api.transform.ResourceTransformationChain;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidationChain;
 import io.streamthoughts.jikkou.common.utils.Tuple2;
-
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -47,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,10 +208,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         List<ChangeResult<Change>> results = handleResources(resources, context)
                 .entrySet()
                 .stream()
-                .map(e -> {
-                    ResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
-                    return controller.reconcile(e.getValue(), mode, context);
-                })
+                .map(e -> executeReconciliation(mode, context, e.getKey(), e.getValue()))
                 .flatMap(Collection::stream)
                 .toList();
         if (!context.isDryRun() && !reporters.isEmpty()) {
@@ -223,6 +218,27 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             new CombineChangeReporter(reporters).report(reportable);
         }
         return results;
+    }
+
+    private List<ChangeResult<Change>> executeReconciliation(@NotNull ReconciliationMode mode,
+                                                             @NotNull ReconciliationContext context,
+                                                             @NotNull ResourceType resourceType,
+                                                             @NotNull List<HasMetadata> resources) {
+        ResourceController<HasMetadata, Change> controller = getControllerForResource(resourceType);
+        LOG.info("Starting reconciliation using controller: '{}' (mode: {}, dryRun: {})",
+                controller.getName(),
+                mode,
+                context.isDryRun()
+        );
+
+        List<ChangeResult<Change>> changes = controller.reconcile(resources, mode, context);
+
+        LOG.info("Reconciliation completed using controller: '{}' (mode: {}, dryRun: {})",
+                controller.getName(),
+                mode,
+                context.isDryRun()
+        );
+        return changes;
     }
 
     /**
@@ -350,12 +366,17 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     private ResourceCollector<HasMetadata> getResourceCollectorForType(@NotNull ResourceType resource) {
-
+        LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
+                resource.getGroup(),
+                resource.getApiVersion(),
+                resource.getKind()
+        );
         var collectors = this.collectors.allResourcesAccepting(resource);
 
         if (collectors.isEmpty()) {
             throw new JikkouApiException(String.format(
-                    "No resource collector found for version=%s and kind=%s ",
+                    "Cannot find collector for resource type: group=%s, version=%s and kind=%s ",
+                    resource.getGroup(),
                     resource.getApiVersion(),
                     resource.getKind()
             ));
@@ -364,7 +385,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         int numMatchingHandlers = collectors.size();
         if (numMatchingHandlers > 1) {
             throw new JikkouApiException(String.format(
-                    "Expected single matching resource collector for version=%s and kind=%s but found %s",
+                    "Expected single matching resource collector for: group=%s, version=%s and kind=%s but found %s",
+                    resource.getGroup(),
                     resource.getApiVersion(),
                     resource.getKind(),
                     numMatchingHandlers
@@ -374,6 +396,11 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     private ResourceController<HasMetadata, Change> getControllerForResource(@NotNull ResourceType resource) {
+        LOG.info("Looking for a controller accepting resource type: group={}, version={} and kind={}",
+                resource.getGroup(),
+                resource.getApiVersion(),
+                resource.getKind()
+        );
         var result = controllers.allResourcesAccepting(resource);
         if (result.isEmpty()) {
             throw new JikkouApiException(String.format(

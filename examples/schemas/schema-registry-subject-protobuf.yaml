@@ -1,0 +1,27 @@
+---
+apiVersion: "schemaregistry.jikkou.io/v1beta2"
+kind: "SchemaRegistrySubject"
+metadata:
+  name: "PersonProto"
+  labels: { }
+  annotations:
+    schemaregistry.jikkou.io/normalize-schema: true
+spec:
+  compatibilityLevel: "FULL_TRANSITIVE"
+  schemaType: "PROTOBUF"
+  schema: |
+    syntax = "proto3";
+    
+    package example;
+    message Person {
+      // The person's unique ID (required)
+      int32 id = 1;
+      // The person's legal firstname (required)
+      string firstname = 2;
+      // The person's legal lastname (required)
+      string lastname = 2;  
+      // The person's age (optional)
+      int32 age = 3;
+      // The person's height measures in centimeters (optional)
+      int32 height = 4;
+    }

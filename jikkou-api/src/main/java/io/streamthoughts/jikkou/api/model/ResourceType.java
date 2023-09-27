@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.api.model;
 
+import io.streamthoughts.jikkou.common.utils.Strings;
 import java.util.Objects;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +28,27 @@ public final class ResourceType implements HasMetadataAcceptable {
     private final String apiVersion;
     private final boolean isTransient;
 
+    /**
+     * Static helper method to create a new {@link ResourceType} from the given resource.
+     *
+     * @param resource the resource.
+     * @return a new {@link ResourceType}.
+     */
     public static ResourceType create(@NotNull HasMetadata resource) {
-        return create(resource.getClass());
+        if (resource == null) throw new IllegalArgumentException("resource must no be null");
+        return create(
+                resource.getKind(),
+                resource.getApiVersion(),
+                HasMetadata.isTransient(resource.getClass())
+        );
     }
 
+    /**
+     * Static helper method to create a new {@link ResourceType} from the given resource.
+     *
+     * @param resource the resource.
+     * @return a new {@link ResourceType}.
+     */
     public static ResourceType create(@NotNull Class<? extends HasMetadata> resource) {
         return create(
                 HasMetadata.getKind(resource),
@@ -39,16 +57,41 @@ public final class ResourceType implements HasMetadataAcceptable {
         );
     }
 
+    /**
+     * Static helper method to create a new {@link ResourceType} for the given Kind and ApiVersion.
+     *
+     * @param kind       the resource Kind.
+     * @param apiVersion the resource ApiVersion.
+     * @return a new {@link ResourceType}.
+     */
     public static ResourceType create(@NotNull final String kind,
                                       @Nullable final String apiVersion) {
         return create(kind, apiVersion, false);
     }
 
+    /**
+     * Static helper method to create a new {@link ResourceType} for the given Kind .
+     *
+     * @param kind       the resource Kind.
+     * @return a new {@link ResourceType}.
+     */
+    public static ResourceType create(@NotNull final String kind) {
+        return create(kind, null, false);
+    }
+
+    /**
+     * Static helper method to create a new {@link ResourceType} for the given Kind and ApiVersion.
+     *
+     * @param kind        the resource Kind.
+     * @param apiVersion  the resource ApiVersion.
+     * @param isTransient flag indicating if the resource is transient.
+     * @return a new {@link ResourceType}.
+     */
     public static ResourceType create(@NotNull final String kind,
                                       @Nullable final String apiVersion,
                                       final boolean isTransient) {
         Objects.requireNonNull(kind, "'kind' should not be null");
-        if (apiVersion == null) {
+        if (Strings.isBlank(apiVersion)) {
             return new ResourceType(kind, null, null, isTransient);
         } else {
             String[] versionParts = new String[]{null, apiVersion};
@@ -62,9 +105,9 @@ public final class ResourceType implements HasMetadataAcceptable {
     /**
      * Creates a new {@link ResourceType} instance.
      *
-     * @param kind      the kind of the resource.
-     * @param group     the group of the resource.
-     * @param version   the version of the resource.
+     * @param kind    the kind of the resource.
+     * @param group   the group of the resource.
+     * @param version the version of the resource.
      */
     public ResourceType(@NotNull final String kind,
                         @Nullable final String group,
@@ -75,9 +118,9 @@ public final class ResourceType implements HasMetadataAcceptable {
     /**
      * Creates a new {@link ResourceType} instance.
      *
-     * @param kind      the kind of the resource.
-     * @param group     the group of the resource.
-     * @param version   the version of the resource.
+     * @param kind    the kind of the resource.
+     * @param group   the group of the resource.
+     * @param version the version of the resource.
      */
     public ResourceType(@NotNull final String kind,
                         @Nullable final String group,
@@ -90,6 +133,16 @@ public final class ResourceType implements HasMetadataAcceptable {
     }
 
     /**
+     * Gets a new {@link ResourceType} with the given version.
+     *
+     * @param version the resource version.
+     * @return a new {@link ResourceType}.
+     */
+    public ResourceType withVersion(String version) {
+        return ResourceType.create(kind, version);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -98,9 +151,15 @@ public final class ResourceType implements HasMetadataAcceptable {
             return true;
         }
 
+        if (that.group != null && this.group != null) {
+            return Objects.equals(group, that.group) &&
+                    Objects.equals(kind, that.kind) &&
+                    Objects.equals(apiVersion, that.apiVersion);
+        }
+
         if (that.apiVersion != null && this.apiVersion != null) {
             return Objects.equals(kind, that.kind) &&
-                   Objects.equals(apiVersion, that.apiVersion);
+                    Objects.equals(apiVersion, that.apiVersion);
         }
 
         return Objects.equals(kind, that.kind);

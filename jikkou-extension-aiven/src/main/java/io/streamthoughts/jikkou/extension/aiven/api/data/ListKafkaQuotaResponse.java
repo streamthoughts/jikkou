@@ -15,81 +15,34 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * List Kafka quotas - HTTP Response
+ *
+ * see <a href="https://api.aiven.io/doc/#tag/Service:_Kafka/operation/ServiceKafkaQuotaList">...</a>
+ *
+ * @param quotas  List of Kafka quot entries.
+ * @param errors  List of errors occurred during request processing.
+ * @param message Printable result of the request.
+ */
 @Reflectable
-public final class ListKafkaQuotaResponse {
+public record ListKafkaQuotaResponse(List<KafkaQuotaEntry> quotas, List<Error> errors, String message) {
 
-    /**
-     * List of Kafka quot entries.
-     */
-    private final List<KafkaQuotaEntry> quotas;
-
-    /**
-     * List of errors occurred during request processing
-     */
-    private final List<Error> errors;
-
-    /**
-     * Printable result of the request
-     */
-    private final String message;
-
-    @JsonCreator
-    public ListKafkaQuotaResponse(@JsonProperty("quotas") List<KafkaQuotaEntry> quotas,
-                                  @JsonProperty("errors") List<Error> errors,
-                                  @JsonProperty("message") String message) {
-        this.quotas = quotas;
-        this.errors = errors;
-        this.message = message;
+    @ConstructorProperties({
+            "quotas",
+            "errors",
+            "message"
+    })
+    public ListKafkaQuotaResponse {
     }
 
-    public List<KafkaQuotaEntry> quotas() {
-        return quotas;
-    }
-
+    @Override
     public List<Error> errors() {
         return Optional.ofNullable(errors).orElseGet(Collections::emptyList);
-    }
-
-    public String message() {
-        return message;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ListKafkaQuotaResponse that = (ListKafkaQuotaResponse) o;
-        return Objects.equals(quotas, that.quotas) && Objects.equals(errors, that.errors) && Objects.equals(message, that.message);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(quotas, errors, message);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return "KafkaQuotaEntriesResponse{" +
-                "acl=" + quotas +
-                ", errors=" + errors +
-                ", message='" + message + '\'' +
-                '}';
     }
 }

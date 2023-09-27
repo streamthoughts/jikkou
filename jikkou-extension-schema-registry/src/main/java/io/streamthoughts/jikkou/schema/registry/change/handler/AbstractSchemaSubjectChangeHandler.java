@@ -49,18 +49,21 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
      *
      * @param api the {@link SchemaRegistryApi} instance.
      */
-    public AbstractSchemaSubjectChangeHandler(@NotNull final SchemaRegistryApi api) {
-        this.api = new AsyncSchemaRegistryApi(Objects.requireNonNull(api, "api must not be null"));
+    public AbstractSchemaSubjectChangeHandler(@NotNull final AsyncSchemaRegistryApi api) {
+        this.api = Objects.requireNonNull(api, "api must not be null");
     }
 
     protected CompletableFuture<Void> updateCompatibilityLevel(SchemaSubjectChange change) {
         CompatibilityLevels compatibilityLevels = change.getCompatibilityLevels().getAfter();
+        LOG.info("Updating compatibility-level for Schema Registry subject '{}'.",
+                change.getSubject()
+        );
         return api
-                .updateConfigCompatibility(change.getSubject(), new CompatibilityObject(compatibilityLevels.name()))
-                .thenApplyAsync(compatibilityObject -> {
+                .updateSubjectCompatibilityLevel(change.getSubject(), new CompatibilityObject(compatibilityLevels.name()))
+                .thenApply(compatibilityObject -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
-                                "Updated compatibility for subject '{}' to '{}'",
+                                "Updated compatibility-level for Schema Registry subject '{}' to '{}'.",
                                 change.getSubject(),
                                 compatibilityObject.compatibility());
                     }
@@ -68,27 +71,47 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 });
     }
 
-    protected CompletableFuture<Void> registerSubjectSchema(@NotNull SchemaSubjectChange change) {
+    protected CompletableFuture<Void> registerSubjectVersion(@NotNull SchemaSubjectChange change) {
         String schema = change.getSchema().getAfter();
         SchemaType type = change.getSchemaType().getAfter();
         SchemaSubjectChangeOptions options = change.getOptions();
-        LOG.info("Registering new schema: subject '{}', optimization={}, schema={}",
-                change.getSubject(),
+
+        final String subject = change.getSubject();
+        LOG.info("Registering new Schema Registry subject version: subject '{}', optimization={}, schema={}.",
+                subject,
                 options.isSchemaOptimizationEnabled(),
                 schema
         );
-        return api.registerSubjectVersion(
-                        change.getSubject(),
+        return api
+                .registerSubjectVersion(
+                        subject,
                         new SubjectSchemaRegistration(schema, type, change.getReferences().getAfter()),
                         options.isSchemaOptimizationEnabled()
                 )
-                .thenApplyAsync(subjectSchemaId -> {
+                .thenApply(subjectSchemaId -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
-                                "Registered new schema: subject '{}', id '{}'",
-                                change.getSubject(),
+                                "Registered Schema Registry subject version: subject '{}', id '{}'.",
+                                subject,
                                 subjectSchemaId.id()
                         );
+                    }
+                    return null;
+                });
+    }
+
+    protected CompletableFuture<Void> deleteCompatibilityLevel(@NotNull SchemaSubjectChange change) {
+        LOG.info("Deleting compatibility-level for Schema Registry subject '{}'.",
+                change.getSubject()
+        );
+        return api
+                .deleteSubjectCompatibilityLevel(change.getSubject())
+                .thenApplyAsync(compatibilityObject -> {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info(
+                                "Deleted compatibility-level for Schema Registry subject '{}' to '{}'.",
+                                change.getSubject(),
+                                compatibilityObject.compatibility());
                     }
                     return null;
                 });
@@ -100,6 +123,11 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
             if (throwable == null) {
                 return ChangeMetadata.empty();
             }
+
+            if (throwable.getCause() != null) {
+                throwable = throwable.getCause();
+            }
+
             if (throwable instanceof RestClientException e) {
                 ErrorResponse error = e.getResponseEntity(ErrorResponse.class);
                 return new ChangeMetadata(new ChangeError(error.message(), error.errorCode()));

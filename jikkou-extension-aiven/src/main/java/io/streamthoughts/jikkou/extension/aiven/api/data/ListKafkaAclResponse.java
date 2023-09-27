@@ -15,75 +15,34 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * List Kafka ACL entries - HTTP Response.
+ *
+ * see <a href="https://api.aiven.io/doc/#tag/Service:_Kafka/operation/ServiceKafkaAclList">...</a>
+ *
+ * @param acl     List of Kafka ACL entries.
+ * @param errors  List of errors occurred during request processing.
+ * @param message Printable result of the request.
+ */
 @Reflectable
-public final class ListKafkaAclResponse {
+public record ListKafkaAclResponse(List<KafkaAclEntry> acl, List<Error> errors, String message) {
 
-    /**
-     * List of Kafka ACL entries.
-     */
-    private final List<KafkaAclEntry> acl;
-
-    /**
-     * List of errors occurred during request processing
-     */
-    private final List<Error> errors;
-
-    /**
-     * Printable result of the request
-     */
-    private final String message;
-
-    @JsonCreator
-    public ListKafkaAclResponse(@JsonProperty("acl") List<KafkaAclEntry> acl,
-                                @JsonProperty("errors") List<Error> errors,
-                                @JsonProperty("message") String message) {
-        this.acl = acl;
-        this.errors = errors;
-        this.message = message;
+    @ConstructorProperties({
+            "acl",
+            "errors",
+            "message"
+    })
+    public ListKafkaAclResponse {
     }
 
-    public List<KafkaAclEntry> acl() {
-        return acl;
-    }
-
+    @Override
     public List<Error> errors() {
         return Optional.ofNullable(errors).orElseGet(Collections::emptyList);
-    }
-
-    public String message() {
-        return message;
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ListKafkaAclResponse that = (ListKafkaAclResponse) o;
-        return Objects.equals(acl, that.acl) && Objects.equals(errors, that.errors) && Objects.equals(message, that.message);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(acl, errors, message);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return "KafkaAclEntriesResponse{" +
-                "acl=" + acl +
-                ", errors=" + errors +
-                ", message='" + message + '\'' +
-                '}';
     }
 }

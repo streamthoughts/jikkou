@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientException;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
@@ -40,21 +41,21 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
 @AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
+public class AivenSchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
 
     private AivenApiClientConfig config;
 
     /**
-     * Creates a new {@link SchemaRegistryAclEntryCollector} instance.
+     * Creates a new {@link AivenSchemaRegistryAclEntryCollector} instance.
      */
-    public SchemaRegistryAclEntryCollector() {}
+    public AivenSchemaRegistryAclEntryCollector() {}
 
     /**
-     * Creates a new {@link SchemaRegistryAclEntryCollector} instance.
+     * Creates a new {@link AivenSchemaRegistryAclEntryCollector} instance.
      *
      * @param config the configuration.
      */
-    public SchemaRegistryAclEntryCollector(AivenApiClientConfig config) {
+    public AivenSchemaRegistryAclEntryCollector(AivenApiClientConfig config) {
         configure(config);
     }
 
@@ -81,7 +82,7 @@ public class SchemaRegistryAclEntryCollector implements ResourceCollector<V1Sche
             ListSchemaRegistryAclResponse response = api.listSchemaRegistryAclEntries();
 
             if (!response.errors().isEmpty()) {
-                throw new JikkouRuntimeException(
+                throw new AivenApiClientException(
                         String.format("failed to list kafka acl entries. %s (%s)",
                                 response.message(),
                                 response.errors()

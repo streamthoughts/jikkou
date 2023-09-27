@@ -45,7 +45,6 @@ public class ProxyInvocationHandler implements InvocationHandler {
     private static final Form EMPTY_FORM = new Form();
     public static final List<Object> EMPTY_COOKIES = Collections.emptyList();
     private final Client client;
-
     private final WebTarget target;
     private final WebResourceFactory webResourceFactory;
     private final AtomicBoolean closed = new AtomicBoolean(false);

@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.rest.client.RestClientBuilder;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryContainer;
@@ -78,7 +79,7 @@ public class AbstractIntegrationTest {
                 .newBuilder()
                 .baseUri(schemaRegistry.getSchemaRegistryUrl())
                 .build(SchemaRegistryApi.class);
-        return new AsyncSchemaRegistryApi(api);
+        return new DefaultAsyncSchemaRegistryApi(api);
     }
 
     public SchemaRegistryClientConfig getSchemaRegistryClientConfiguration() {

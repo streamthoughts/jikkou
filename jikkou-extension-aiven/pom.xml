@@ -49,6 +49,11 @@ limitations under the License.
         </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-extension-schema-registry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
             <artifactId>jikkou-api</artifactId>
             <version>${project.version}</version>
         </dependency>

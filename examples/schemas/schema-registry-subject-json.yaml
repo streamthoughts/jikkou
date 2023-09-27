@@ -1,0 +1,46 @@
+---
+apiVersion: "schemaregistry.jikkou.io/v1beta2"
+kind: "SchemaRegistrySubject"
+metadata:
+  name: "PersonJson"
+  labels: { }
+  annotations:
+    schemaregistry.jikkou.io/normalize-schema: true
+spec:
+#  compatibilityLevel: "FULL_TRANSITIVE"
+  schemaType: "JSON"
+  schema: |
+    {
+    	"$id": "https://example.com/person.schema.json",
+    	"$schema": "",
+    	"title": "Person",
+    	"type": "object",
+    	"required": [
+    		"id",
+    		"firstname",
+    		"lastname",
+    		"spec"
+    	],
+    	"properties": {
+    		"id": {
+    			"type": "number",
+    			"description": "The person 's unique ID (required)"
+    		},
+    		"firstname": {
+    			"type": "string",
+    			"description": "The person's legal firstname (required)"
+    		},
+    		"lastname": {
+    			"type": "string",
+    			"description": "The person's legal firstname (required)"
+    		},
+    		"age": {
+    			"type": "number",
+    			"description": "The person's age (optional)"
+    		},
+    		"height": {
+    			"type": "number",
+    			"description": "The person's height measures in centimeters (optional)"
+    		}
+    	}
+    }

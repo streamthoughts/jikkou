@@ -34,7 +34,7 @@ import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsResource(type = V1SchemaRegistrySubject.class)
+@AcceptsResource(kind = "SchemaRegistrySubject")
 @ExtensionEnabled(value = false)
 public class AvroSchemaValidation implements ResourceValidation<V1SchemaRegistrySubject> {
 

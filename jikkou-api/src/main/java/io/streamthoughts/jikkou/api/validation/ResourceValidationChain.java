@@ -28,18 +28,22 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Transform an input {@link HasMetadata} into one ore multiple {@link HasMetadata}.
  */
 public class ResourceValidationChain implements ResourceValidation<HasMetadata> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceValidationChain.class);
+
     private final List<ResourceValidation<HasMetadata>> validations;
 
     /**
      * Creates a new {@link ResourceValidationChain} instance.
      *
-     * @param validations   the list of validations.
+     * @param validations the list of validations.
      */
     public ResourceValidationChain(final List<ResourceValidation<HasMetadata>> validations) {
         this.validations = validations
@@ -48,9 +52,12 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
                 .toList();
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void validate(@NotNull final List<HasMetadata> resources) {
+        LOG.info("Starting validation-chain execution on {} resources", resources.size());
         validate(new GenericResourceListObject<>(resources).groupByType());
     }
 
@@ -63,6 +70,12 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
                 try {
                     if (validation.canAccept(type)) {
                         validation.validate(filterCandidateToValidation(resourcesHavingSameType));
+                        LOG.info("Completed validation {} on resources of type: group={}, version={} and kind={}",
+                                validation.getName(),
+                                type.getGroup(),
+                                type.getApiVersion(),
+                                type.getKind()
+                        );
                     }
                 } catch (ValidationException e) {
                     exceptions.add(e);

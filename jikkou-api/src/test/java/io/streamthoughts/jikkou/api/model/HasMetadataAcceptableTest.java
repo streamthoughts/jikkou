@@ -18,7 +18,6 @@ package io.streamthoughts.jikkou.api.model;
 import static io.streamthoughts.jikkou.api.model.HasMetadataAcceptable.getAcceptedResources;
 
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.annotation.AcceptsResources;
 import io.streamthoughts.jikkou.api.TestResource;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import java.util.List;
@@ -60,16 +59,20 @@ class HasMetadataAcceptableTest {
         Assertions.assertEquals(TestResourceConverter.class, converter.getClass());
     }
 
-    @AcceptsResources(
-            {
-                    @AcceptsResource( type = TestResource.class,
-                    converter = TestResourceConverter.class
-            )}
+    @Test
+    void shouldAcceptResourceForKindOnly() {
+        // Given
+        TestHasMetadataAcceptableWithKindOnly acceptable = new TestHasMetadataAcceptableWithKindOnly();
 
-    )
-    public static class TestHasMetadataAcceptable implements HasMetadataAcceptable {
-
+        // When / Then
+        Assertions.assertTrue(acceptable.canAccept(ResourceType.create(TestResource.class)));
     }
+
+    @AcceptsResource(type = TestResource.class, converter = TestResourceConverter.class)
+    public static class TestHasMetadataAcceptable implements HasMetadataAcceptable { }
+
+    @AcceptsResource(kind = "Test")
+    public static class TestHasMetadataAcceptableWithKindOnly implements HasMetadataAcceptable { }
 
     public static class TestResourceConverter implements ResourceConverter<TestResource, TestResource> {
 

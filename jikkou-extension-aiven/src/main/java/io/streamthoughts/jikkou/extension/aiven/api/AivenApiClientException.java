@@ -18,4 +18,12 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 
 public class AivenApiClientException extends JikkouRuntimeException {
+
+    public AivenApiClientException(final String message) {
+        super(message);
+    }
+
+    public AivenApiClientException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

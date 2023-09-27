@@ -38,41 +38,42 @@ import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
-import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.change.KafkaAclEntryChangeComputer;
 import io.streamthoughts.jikkou.extension.aiven.change.KafkaChangeDescriptions;
-import io.streamthoughts.jikkou.extension.aiven.change.SchemaRegistryAclEntryChangeComputer;
-import io.streamthoughts.jikkou.extension.aiven.change.handler.CreateSchemaRegistryAclEntryChangeHandler;
-import io.streamthoughts.jikkou.extension.aiven.change.handler.DeleteSchemaRegistryAclEntryChangeHandler;
-import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
-import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.change.handler.CreateKafkaAclEntryChangeHandler;
+import io.streamthoughts.jikkou.extension.aiven.change.handler.DeleteKafkaAclEntryChangeHandler;
+import io.streamthoughts.jikkou.extension.aiven.converter.V1KafkaAclEntryListConverter;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
 import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
-@AcceptsResource(type = V1SchemaRegistryAclEntry.class)
-@AcceptsResource(type = V1SchemaRegistryAclEntry.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public class SchemaRegistryAclEntryController implements BaseResourceController<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
+@AcceptsResource(type = V1KafkaTopicAclEntry.class)
+@AcceptsResource(type = V1KafkaTopicAclEntryList.class, converter = V1KafkaAclEntryListConverter.class)
+public class AivenKafkaTopicAclEntryController implements BaseResourceController<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
             .orElse(false);
 
     private AivenApiClientConfig config;
-    private SchemaRegistryAclEntryCollector collector;
+    private AivenKafkaTopicAclEntryCollector collector;
 
     /**
-     * Creates a new {@link SchemaRegistryAclEntryController} instance.
+     * Creates a new {@link AivenKafkaTopicAclEntryController} instance.
      */
-    public SchemaRegistryAclEntryController() {
+    public AivenKafkaTopicAclEntryController() {
     }
 
     /**
-     * Creates a new {@link SchemaRegistryAclEntryController} instance.
+     * Creates a new {@link AivenKafkaTopicAclEntryController} instance.
      *
      * @param config the schema registry client configuration.
      */
-    public SchemaRegistryAclEntryController(@NotNull AivenApiClientConfig config) {
+    public AivenKafkaTopicAclEntryController(@NotNull AivenApiClientConfig config) {
         configure(config);
     }
 
@@ -86,60 +87,60 @@ public class SchemaRegistryAclEntryController implements BaseResourceController<
 
     private void configure(@NotNull AivenApiClientConfig config) throws ConfigException {
         this.config = config;
-        this.collector = new SchemaRegistryAclEntryCollector(config);
+        this.collector = new AivenKafkaTopicAclEntryCollector(config);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> items,
-                                                                           @NotNull ReconciliationMode mode,
-                                                                           boolean dryRun) {
+    public List<ChangeResult<ValueChange<KafkaAclEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<KafkaAclEntry>>> items,
+                                                                  @NotNull ReconciliationMode mode,
+                                                                  boolean dryRun) {
 
         AivenApiClient api = AivenApiClientFactory.create(config);
         try {
-            List<ChangeHandler<ValueChange<SchemaRegistryAclEntry>>> handlers = List.of(
-                    new CreateSchemaRegistryAclEntryChangeHandler(api),
-                    new DeleteSchemaRegistryAclEntryChangeHandler(api),
+            List<ChangeHandler<ValueChange<KafkaAclEntry>>> handlers = List.of(
+                    new CreateKafkaAclEntryChangeHandler(api),
+                    new DeleteKafkaAclEntryChangeHandler(api),
                     new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
                             it.getChange().getChangeType(),
-                            it.getChange().getAfter()))
+                            it.getChange().getAfter())
+                    )
             );
             return new ChangeExecutor<>(handlers).execute(items, dryRun);
         } finally {
             api.close();
         }
-
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<? extends HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> computeReconciliationChanges(
-            @NotNull Collection<V1SchemaRegistryAclEntry> resources,
+    public ResourceListObject<? extends HasMetadataChange<ValueChange<KafkaAclEntry>>> computeReconciliationChanges(
+            @NotNull Collection<V1KafkaTopicAclEntry> resources,
             @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
 
         // Get existing resources from the environment.
-        List<V1SchemaRegistryAclEntry> actualResources = collector.listAll(context.configuration()).stream()
+        List<V1KafkaTopicAclEntry> actualResources = collector.listAll(context.configuration()).stream()
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .toList();
 
         // Get expected resources which are candidates for this reconciliation.
-        List<V1SchemaRegistryAclEntry> expectedResources = resources.stream()
+        List<V1KafkaTopicAclEntry> expectedResources = resources.stream()
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .toList();
 
         Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.evaluate(context.configuration());
-        SchemaRegistryAclEntryChangeComputer computer = new SchemaRegistryAclEntryChangeComputer(deleteOrphans);
+        KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(deleteOrphans);
 
-        List<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> changes =
-                computer.computeChanges(actualResources, expectedResources);
+        List<HasMetadataChange<ValueChange<KafkaAclEntry>>> changes = computer
+                .computeChanges(actualResources, expectedResources);
 
         return GenericResourceListObject
-                .<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>>builder()
+                .<HasMetadataChange<ValueChange<KafkaAclEntry>>>builder()
                 .withItems(changes)
                 .build();
     }

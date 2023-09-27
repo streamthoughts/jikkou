@@ -15,54 +15,36 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
-import java.util.Objects;
+import java.beans.ConstructorProperties;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * CompatibilityObject.
+ *
+ * @param compatibility a compatibility level string.
+ */
 @Reflectable
-public final class CompatibilityObject {
-
-    private final String compatibility;
+public record CompatibilityObject(@NotNull String compatibility) {
 
     /**
      * Creates a new {@link CompatibilityObject} instance.
-     *
-     * @param compatibility a compatibility level string.
      */
-    @JsonCreator
-    public CompatibilityObject(@JsonProperty("compatibility") String compatibility) {
-        this.compatibility = compatibility;
-    }
+    @ConstructorProperties({
+            "compatibility",
+    })
+    public CompatibilityObject { }
 
     /**
      * Gets the compatibility level.
      *
-     * @return  a compatibility level string.
+     * @return a compatibility level string.
      */
+    @Override
     @JsonProperty("compatibility")
     public String compatibility() {
         return compatibility;
     }
 
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CompatibilityObject that = (CompatibilityObject) o;
-        return Objects.equals(compatibility, that.compatibility);
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(compatibility);
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return "{" +
-                "compatibility=" + compatibility +
-                '}';
-    }
 }

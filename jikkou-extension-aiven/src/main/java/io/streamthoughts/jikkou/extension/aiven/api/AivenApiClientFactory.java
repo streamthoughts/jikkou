@@ -32,7 +32,11 @@ public class AivenApiClientFactory {
      */
     public static AivenApiClient create(AivenApiClientConfig config) {
         URI baseUri = URI.create(config.getApiUrl());
-        LOG.info("Create new REST client for Aiven API: {}", baseUri);
+        LOG.info(
+                "Create new REST client for Aiven API: {} (debugLoggingEnabled: {})",
+                baseUri,
+                config.getDebugLoggingEnabled()
+        );
         RestClientBuilder builder = RestClientBuilder
                 .newBuilder()
                 .enableClientDebugging(config.getDebugLoggingEnabled())

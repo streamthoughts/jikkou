@@ -40,7 +40,6 @@ public final class SubjectSchemaRegistration {
         this(schema, schemaType, Collections.emptyList());
     }
 
-
     /**
      * Creates a new {@link SubjectSchemaRegistration} instance.
      *

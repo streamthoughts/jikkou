@@ -21,6 +21,8 @@ import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;
 
 /**
+ * Schema Registry Subject Version.
+ *
  * @param subject    Name of the subject that this schema is registered under
  * @param id         Globally unique identifier of the schema.
  * @param version    Version of the returned schema.
@@ -31,6 +33,10 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 @Reflectable
-public record SubjectSchema(String subject, int id, int version, String schemaType, String schema,
-                            List<String> references) {
+public record SubjectSchemaVersion(String subject,
+                                   int id,
+                                   int version,
+                                   String schemaType,
+                                   String schema,
+                                   List<String> references) {
 }

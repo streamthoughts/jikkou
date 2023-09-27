@@ -25,8 +25,8 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaQuotaCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaQuotaController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaQuotaCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaQuotaController;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaSpec;
 import java.io.IOException;
@@ -47,8 +47,8 @@ class KafkaQuotaEntryIT {
 
     public static MockWebServer SERVER;
 
-    private static KafkaQuotaController CONTROLLER;
-    private static KafkaQuotaCollector COLLECTOR;
+    private static AivenKafkaQuotaController CONTROLLER;
+    private static AivenKafkaQuotaCollector COLLECTOR;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -63,8 +63,8 @@ class KafkaQuotaEntryIT {
                 .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
                 .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
                 .build();
-        COLLECTOR = new KafkaQuotaCollector(new AivenApiClientConfig(configuration));
-        CONTROLLER = new KafkaQuotaController(new AivenApiClientConfig(configuration));
+        COLLECTOR = new AivenKafkaQuotaCollector(new AivenApiClientConfig(configuration));
+        CONTROLLER = new AivenKafkaQuotaController(new AivenApiClientConfig(configuration));
     }
 
     @AfterAll

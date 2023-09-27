@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@AcceptsResource(type = V1SchemaRegistrySubject.class)
+@AcceptsResource(kind = "SchemaRegistrySubject")
 @ExtensionEnabled
 public class NormalizeSubjectSchemaTransformation implements ResourceTransformation<V1SchemaRegistrySubject> {
 

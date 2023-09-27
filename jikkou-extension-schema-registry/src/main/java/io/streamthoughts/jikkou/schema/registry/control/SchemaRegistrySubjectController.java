@@ -33,7 +33,8 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
@@ -52,22 +53,22 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
-public class SchemaRegistryController implements BaseResourceController<V1SchemaRegistrySubject, SchemaSubjectChange> {
+public class SchemaRegistrySubjectController implements BaseResourceController<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
     private SchemaRegistryClientConfig configuration;
 
     /**
-     * Creates a new {@link SchemaRegistryController} instance.
+     * Creates a new {@link SchemaRegistrySubjectController} instance.
      */
-    public SchemaRegistryController() {
+    public SchemaRegistrySubjectController() {
     }
 
     /**
-     * Creates a new {@link SchemaRegistryController} instance.
+     * Creates a new {@link SchemaRegistrySubjectController} instance.
      *
      * @param configuration the schema registry client configuration.
      */
-    public SchemaRegistryController(@NotNull SchemaRegistryClientConfig configuration) {
+    public SchemaRegistrySubjectController(@NotNull SchemaRegistryClientConfig configuration) {
         configure(configuration);
     }
 
@@ -90,7 +91,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
     public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items,
                                                            @NotNull ReconciliationMode mode,
                                                            boolean dryRun) {
-        SchemaRegistryApi api = SchemaRegistryApiFactory.create(configuration);
+        AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration));
         try {
             List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
                     new CreateSchemaSubjectChangeHandler(api),
@@ -119,7 +120,7 @@ public class SchemaRegistryController implements BaseResourceController<V1Schema
                 .toList();
 
         // Get existing resources from the environment.
-        SchemaRegistryCollector collector = new SchemaRegistryCollector(configuration)
+        SchemaRegistrySubjectCollector collector = new SchemaRegistrySubjectCollector(configuration)
                 .prettyPrintSchema(false)
                 .defaultToGlobalCompatibilityLevel(false);
 

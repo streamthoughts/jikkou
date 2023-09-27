@@ -19,12 +19,13 @@ import static io.streamthoughts.jikkou.api.change.ChangeType.ADD;
 import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
 import static io.streamthoughts.jikkou.api.change.ChangeType.UPDATE;
 
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
 import io.streamthoughts.jikkou.api.change.ChangeResponse;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler {
+public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<SchemaSubjectChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSchemaSubjectChangeHandler.class);
 
@@ -44,7 +45,7 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
      *
      * @param api the {@link SchemaRegistryApi} instance.
      */
-    public UpdateSchemaSubjectChangeHandler(@NotNull final SchemaRegistryApi api) {
+    public UpdateSchemaSubjectChangeHandler(@NotNull final AsyncSchemaRegistryApi api) {
         super(api);
     }
 
@@ -69,7 +70,7 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
             ValueChange<String> schema = change.getSchema();
 
             if (UPDATE == schema.getChangeType()) {
-                future = future.thenComposeAsync(unused -> registerSubjectSchema(change));
+                future = future.thenComposeAsync(unused -> registerSubjectVersion(change));
             }
 
             ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();
@@ -83,20 +84,5 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
             results.add(toChangeResponse(item, future));
         }
         return results;
-    }
-
-    private CompletableFuture<Void> deleteCompatibilityLevel(SchemaSubjectChange change) {
-        CompatibilityLevels compatibilityLevels = change.getCompatibilityLevels().getAfter();
-        return api
-                .updateConfigCompatibility(change.getSubject(), new CompatibilityObject(compatibilityLevels.name()))
-                .thenApplyAsync(compatibilityObject -> {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info(
-                                "Deleted compatibility for subject '{}' to '{}'",
-                                change.getSubject(),
-                                compatibilityObject.compatibility());
-                    }
-                    return null;
-                });
     }
 }

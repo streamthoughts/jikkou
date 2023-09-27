@@ -15,9 +15,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.List;
 
 /**
@@ -30,11 +29,11 @@ import java.util.List;
 @Reflectable
 public record MessageErrorsResponse(String message, List<Error> errors) {
 
-    @JsonCreator
-    public MessageErrorsResponse(@JsonProperty("message") final String message,
-                                 @JsonProperty("errors") final List<Error> errors) {
-        this.message = message;
-        this.errors = errors;
+    @ConstructorProperties({
+            "message",
+            "errors"
+    })
+    public MessageErrorsResponse {
     }
 
     /**
@@ -46,26 +45,13 @@ public record MessageErrorsResponse(String message, List<Error> errors) {
      */
     public record Error(String message, int status, String errorCode) {
 
-        @JsonCreator
-        public Error(@JsonProperty("message") final String message,
-                     @JsonProperty("status") final int status,
-                     @JsonProperty("error_code") final String errorCode) {
-            this.message = message;
-            this.status = status;
-            this.errorCode = errorCode;
+        @ConstructorProperties({
+                "message",
+                "status",
+                "error_code"
+        })
+        public Error {
         }
 
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public String toString() {
-            return "{" +
-                    "\"message\":\"" + message + "\"" +
-                    ", \"status\": " + status +
-                    ", \"errorCode\": \" " + errorCode
-                    + "\"}";
-        }
     }
-
 }

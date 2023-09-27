@@ -15,33 +15,32 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 /**
  * Kafka Topic ACL entry
+ *
+ * @param permission Kafka permission
+ * @param topic      Topic name pattern
+ * @param username   Username
+ * @param id         ID
  */
 @Reflectable
-public final class KafkaAclEntry {
+public record KafkaAclEntry(String permission, String topic, String username, String id) {
 
     /**
-     * Kafka permission
+     * Creates a new {@link KafkaAclEntry} instance.
      */
-    private final String permission;
-    /**
-     * Topic name pattern
-     */
-    private final String topic;
-    /**
-     * Username
-     */
-    private final String username;
-    /**
-     * ID
-     */
-    private final String id;
+    @ConstructorProperties({
+            "permission",
+            "topic",
+            "username",
+            "id"
+    })
+    public KafkaAclEntry {}
 
     /**
      * Creates a new {@link KafkaAclEntry} instance.
@@ -56,40 +55,25 @@ public final class KafkaAclEntry {
         this(permission, topic, username, null);
     }
 
-    /**
-     * Creates a new {@link KafkaAclEntry} instance.
-     *
-     * @param permission Kafka permission
-     * @param topic      Topic name pattern
-     * @param username   Username
-     * @param id         Username
-     */
-    @JsonCreator
-    public KafkaAclEntry(@JsonProperty("permission") final String permission,
-                         @JsonProperty("topic") final String topic,
-                         @JsonProperty("username") final String username,
-                         @JsonProperty("id") final String id) {
-        this.permission = permission;
-        this.topic = topic;
-        this.username = username;
-        this.id = id;
-    }
-
+    @Override
     @JsonProperty("permission")
     public String permission() {
         return permission;
     }
 
+    @Override
     @JsonProperty("topic")
     public String topic() {
         return topic;
     }
 
+    @Override
     @JsonProperty("username")
     public String username() {
         return username;
     }
 
+    @Override
     @JsonProperty("id")
     public String id() {
         return id;

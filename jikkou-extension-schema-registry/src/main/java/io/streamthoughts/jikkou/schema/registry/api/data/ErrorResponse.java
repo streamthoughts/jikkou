@@ -15,57 +15,25 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
-import java.util.Objects;
+import java.beans.ConstructorProperties;
 
+/**
+ * Schema Registry - Error Response
+ *
+ * @param errorCode the error code.
+ * @param message   the error message.
+ */
 @Reflectable
-public final class ErrorResponse {
-
-    private final int errorCode;
-    private final String message;
+public record ErrorResponse(int errorCode, String message) {
 
     /**
      * Creates a new {@link ErrorResponse} instance.
-     *
-     * @param errorCode the error code.
-     * @param message   the error message.
      */
-    public ErrorResponse(@JsonProperty("error_code") int errorCode,
-                         @JsonProperty("message") String message) {
-        this.errorCode = errorCode;
-        this.message = message;
-    }
+    @ConstructorProperties({
+            "error_code",
+            "message"
+    })
+    public ErrorResponse { }
 
-    public int errorCode() {
-        return errorCode;
-    }
-
-    public String message() {
-        return message;
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ErrorResponse that = (ErrorResponse) o;
-        return errorCode == that.errorCode && Objects.equals(message, that.message);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(errorCode, message);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return "{" +
-                "errorCode=" + errorCode +
-                ", message=" + message +
-                '}';
-    }
 }

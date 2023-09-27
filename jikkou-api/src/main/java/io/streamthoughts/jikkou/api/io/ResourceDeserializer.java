@@ -37,8 +37,7 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceDeserializer.class);
 
-    record TypeKey(String kind, String group, String version) {
-    }
+    record TypeKey(String kind, String group, String version) { }
 
     private static final String KIND = "kind";
     private static final String API_VERSION = "apiVersion";

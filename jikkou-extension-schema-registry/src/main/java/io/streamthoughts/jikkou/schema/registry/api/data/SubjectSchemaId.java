@@ -15,57 +15,20 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
-import java.util.Objects;
+import java.beans.ConstructorProperties;
 
 /**
  * A globally unique identifier of the schema
+ *
+ * @param id a schema's id
  */
 @Reflectable
-public final class SubjectSchemaId {
+public record SubjectSchemaId(int id) {
 
-    private final int id;
+    @ConstructorProperties({
+            "id",
+    })
+    public SubjectSchemaId {}
 
-    /**
-     * Creates a new {@link SubjectSchemaId} instance.
-     *
-     * @param id a schema's id
-     */
-    @JsonCreator
-    public SubjectSchemaId(@JsonProperty("id") int id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets a schema .
-     *
-     * @return a schema string.
-     */
-    public int id() {
-        return id;
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SubjectSchemaId that = (SubjectSchemaId) o;
-        return Objects.equals(id, that.id);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public String
-    toString() {
-        return "{ id=" + id +  '}';
-    }
 }

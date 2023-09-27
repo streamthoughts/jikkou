@@ -90,9 +90,11 @@ public class JikkouContext {
                 });
 
         resourceContext.getAllResourceDescriptors()
-                .stream()
-                .map(ResourceDescriptor::resourceClass)
-                .forEach(ResourceDeserializer::registerKind);
+                .forEach(desc -> ResourceDeserializer.registerKind(
+                        desc.group() + "/" + desc.apiVersion(),
+                        desc.kind(),
+                        desc.resourceClass())
+                );
     }
 
     public ExtensionFactory getExtensionFactory() {
@@ -103,7 +105,7 @@ public class JikkouContext {
         return resourceContext;
     }
 
-    public JikkouApi createApi(ApiConfigurator...configurators) {
+    public JikkouApi createApi(ApiConfigurator... configurators) {
         return ApiConfigurator.emptyList()
                 .with(configurators)
                 .with(new ExtensionsApiConfigurator(extensionFactory))
@@ -124,11 +126,11 @@ public class JikkouContext {
     /**
      * Loads all services for the given type using the standard Java {@link java.util.ServiceLoader} mechanism.
      *
-     * @param type  the service Class type.
-     * @param <T>   the service type.
-     * @return      the services implementing the given type.
+     * @param type the service Class type.
+     * @param <T>  the service type.
+     * @return the services implementing the given type.
      */
-    private  <T> List<T> loadAllServices(final Class<T> type, final Set<ClassLoader> classLoaders) {
+    private <T> List<T> loadAllServices(final Class<T> type, final Set<ClassLoader> classLoaders) {
         final List<T> loaded = new LinkedList<>();
         final Set<Class<? extends T>> types = new HashSet<>();
         for (ClassLoader cl : classLoaders) {
@@ -143,6 +145,7 @@ public class JikkouContext {
         }
         return loaded;
     }
+
     private Set<ClassLoader> getClassLoadersForPath(List<String> extensionPaths) {
         Set<ClassLoader> classLoaders = new HashSet<>();
         for (final String path : extensionPaths) {
@@ -180,13 +183,15 @@ public class JikkouContext {
         /**
          * Creates a new {@link ExtensionsApiConfigurator} instance.
          *
-         * @param extensionFactory  the {@link ExtensionFactory} instance.
+         * @param extensionFactory the {@link ExtensionFactory} instance.
          */
         public ExtensionsApiConfigurator(@NotNull ExtensionFactory extensionFactory) {
             this.extensionFactory = extensionFactory;
         }
 
-        /** {@inheritDoc} **/
+        /**
+         * {@inheritDoc}
+         **/
         @Override
         public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder,
                                                                                        Configuration configuration) {

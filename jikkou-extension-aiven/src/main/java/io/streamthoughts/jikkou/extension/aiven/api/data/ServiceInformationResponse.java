@@ -15,75 +15,33 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * HTTP Response.
+ *
+ * @param service The service information
+ * @param errors  List of errors occurred during request processing
+ * @param message Printable result of the request
+ */
 @Reflectable
-public final class ServiceInformationResponse {
+public record ServiceInformationResponse(Map<String, Object> service, List<Error> errors, String message) {
 
-    /**
-     * The service information
-     */
-    private final Map<String, Object> service;
-
-    /**
-     * List of errors occurred during request processing
-     */
-    private final List<Error> errors;
-
-    /**
-     * Printable result of the request
-     */
-    private final String message;
-
-    @JsonCreator
-    public ServiceInformationResponse(@JsonProperty("service") Map<String, Object> service,
-                                      @JsonProperty("errors") List<Error> errors,
-                                      @JsonProperty("message") String message) {
-        this.service = service;
-        this.errors = errors;
-        this.message = message;
+    @ConstructorProperties({
+            "service",
+            "errors",
+            "message",
+    })
+    public ServiceInformationResponse {
     }
 
-    public Map<String, Object> service() {
-        return service;
-    }
-
+    @Override
     public List<Error> errors() {
         return Optional.ofNullable(errors).orElseGet(Collections::emptyList);
-    }
-
-    public String message() {
-        return message;
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ServiceInformationResponse that = (ServiceInformationResponse) o;
-        return Objects.equals(service, that.service) && Objects.equals(errors, that.errors) && Objects.equals(message, that.message);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(service, errors, message);
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return "ServiceInformation{" +
-                "service=" + service +
-                ", errors=" + errors +
-                ", message='" + message + '\'' +
-                '}';
     }
 }

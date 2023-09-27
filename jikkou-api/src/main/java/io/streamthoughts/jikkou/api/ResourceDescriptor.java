@@ -36,20 +36,29 @@ public final class ResourceDescriptor {
     public static final String DEFAULT_DESCRIPTION = "";
     private final ResourceType type;
     private final String description;
-    private final String singularName;
-    private final String pluralName;
-    private final Set<String> shortNames;
     private final Class<? extends HasMetadata> clazz;
+    private String singularName;
+    private String pluralName;
+    private Set<String> shortNames;
 
     /**
      * Creates a new {@link ResourceDescriptor} instance.
      *
-     * @param clazz the resource type.
+     * @param clazz the resource class.
      */
     public ResourceDescriptor(Class<? extends HasMetadata> clazz) {
-        this.type = ResourceType.create(clazz);
-        this.clazz = clazz;
+        this(ResourceType.create(clazz), clazz);
+    }
 
+    /**
+     * Creates a new {@link ResourceDescriptor} instance.
+     *
+     * @param type the resource type.
+     * @param clazz the resource class.
+     */
+    public ResourceDescriptor(ResourceType type, Class<? extends HasMetadata> clazz) {
+        this.type = type;
+        this.clazz = clazz;
         this.description = Optional.ofNullable(clazz.getAnnotation(Description.class))
                 .map(Description::value)
                 .orElse(DEFAULT_DESCRIPTION);
@@ -86,6 +95,18 @@ public final class ResourceDescriptor {
                 .orElse(type.getKind().toLowerCase(Locale.ROOT));
     }
 
+
+    /**
+     * Sets the singular name of the described resource.
+     *
+     * @param singularName the singular name.
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setSingularName(final String singularName) {
+        this.singularName = singularName;
+        return this;
+    }
+
     /**
      * Gets the plural name of the described resource.
      *
@@ -96,14 +117,41 @@ public final class ResourceDescriptor {
     }
 
     /**
+     * Sets the plural name of the described resource.
+     *
+     * @param pluralName the plural name.
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setPluralName(final String pluralName) {
+        this.pluralName = pluralName;
+        return this;
+    }
+
+    /**
      * Gets the short names of the described resource.
      *
      * @return  the short names.
      */
     public Set<String> shortNames() {
-        return this.shortNames;
+        return Optional.ofNullable(this.shortNames).orElse(Collections.emptySet());
     }
 
+    /**
+     * Sets the short names of the described resource.
+     *
+     * @param shortNames the short names.
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setShortNames(Set<String> shortNames) {
+        this.shortNames = shortNames;
+        return this;
+    }
+
+    /**
+     * Gets the class representing the described resource.
+     *
+     * @return  the resource class.
+     */
     public Class<? extends HasMetadata> resourceClass() {
         return clazz;
     }
@@ -158,6 +206,4 @@ public final class ResourceDescriptor {
     public int hashCode() {
         return Objects.hash(type);
     }
-
-
 }

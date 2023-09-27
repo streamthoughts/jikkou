@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Repeatable(AcceptsResources.class)
 public @interface AcceptsResource {
     String kind() default "";
-    String version() default "";
+    String apiVersion() default "";
     Class<? extends HasMetadata> type() default HasMetadata.class;
 
     Class<? extends ResourceConverter> converter() default IdentityResourceConverter.class;

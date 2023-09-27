@@ -31,13 +31,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SchemaRegistryControllerTest extends AbstractIntegrationTest {
+class SchemaRegistrySubjectControllerTest extends AbstractIntegrationTest {
 
-    private SchemaRegistryController controller;
+    private SchemaRegistrySubjectController controller;
 
     @BeforeEach
     void beforeEach() {
-        controller = new SchemaRegistryController(getSchemaRegistryClientConfiguration());
+        controller = new SchemaRegistrySubjectController(getSchemaRegistryClientConfiguration());
     }
 
     @Test

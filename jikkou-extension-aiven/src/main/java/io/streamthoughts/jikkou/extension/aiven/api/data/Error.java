@@ -15,9 +15,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 
 /**
  * Represents an error occurred during request processing.
@@ -30,14 +29,11 @@ import io.streamthoughts.jikkou.annotation.Reflectable;
 @Reflectable
 public record Error(String message, String moreInfo, int status, String errorCode) {
 
-    @JsonCreator
-    public Error(@JsonProperty("message") final String message,
-                 @JsonProperty("more_info") final String moreInfo,
-                 @JsonProperty("status") final int status,
-                 @JsonProperty("error_code") final String errorCode) {
-        this.message = message;
-        this.moreInfo = moreInfo;
-        this.status = status;
-        this.errorCode = errorCode;
-    }
+    @ConstructorProperties({
+            "message",
+            "more_info",
+            "status",
+            "error_code"
+    })
+    public Error {}
 }

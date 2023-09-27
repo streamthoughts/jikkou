@@ -26,8 +26,8 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.KafkaTopicAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaTopicAclEntryCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaTopicAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec;
 import java.io.IOException;
@@ -48,8 +48,8 @@ class KafkaTopicAclEntryIT {
 
     public static MockWebServer SERVER;
 
-    private static KafkaTopicAclEntryController CONTROLLER;
-    private static KafkaTopicAclEntryCollector COLLECTOR;
+    private static AivenKafkaTopicAclEntryController CONTROLLER;
+    private static AivenKafkaTopicAclEntryCollector COLLECTOR;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -64,8 +64,8 @@ class KafkaTopicAclEntryIT {
                 .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
                 .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
                 .build();
-        COLLECTOR = new KafkaTopicAclEntryCollector(new AivenApiClientConfig(configuration));
-        CONTROLLER = new KafkaTopicAclEntryController(new AivenApiClientConfig(configuration));
+        COLLECTOR = new AivenKafkaTopicAclEntryCollector(new AivenApiClientConfig(configuration));
+        CONTROLLER = new AivenKafkaTopicAclEntryController(new AivenApiClientConfig(configuration));
     }
 
     @AfterAll

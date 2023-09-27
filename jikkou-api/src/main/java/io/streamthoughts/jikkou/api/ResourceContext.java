@@ -41,19 +41,54 @@ public class ResourceContext {
     }
 
     /**
+     * Registers the resource for the given type to the context.
+     *
+     * @param type    the resource type associated to the class.
+     * @param resource the resource class to register.
+     *
+     * @return the resource descriptor.
+     */
+    public ResourceDescriptor register(Class<? extends HasMetadata> resource, ResourceType type) {
+        return register(new ResourceDescriptor(type, resource));
+    }
+
+    /**
+     * Registers the resource for the given version to the context.
+     *
+     * @param version the resource version associated to the class.
+     * @param resource the resource class to register.
+     *
+     * @return the resource descriptor.
+     */
+    public ResourceDescriptor register(Class<? extends HasMetadata> resource, String version) {
+        return register(resource, ResourceType.create(resource).withVersion(version));
+    }
+
+    /**
      * Registers the given resource type to the context.
      *
-     * @param resource  the resource class to register.
+     * @param resource the resource class to register.
+     * @return the resource descriptor.
      */
-    public void register(Class<? extends HasMetadata> resource) {
-        ResourceDescriptor descriptor = new ResourceDescriptor(resource);
+    public ResourceDescriptor register(Class<? extends HasMetadata> resource) {
+        return register(new ResourceDescriptor(resource));
+    }
+
+    /**
+     * Registers the given resource descriptor to the context.
+     *
+     * @param descriptor the resource descriptor.
+     */
+    public ResourceDescriptor register(final ResourceDescriptor descriptor) {
+        if (descriptor == null) throw new IllegalArgumentException("descriptor must not be null");
         ResourceDescriptor existing = descriptorsByType.putIfAbsent(descriptor.resourceType(), descriptor);
         if (existing != null) {
             throw new JikkouRuntimeException(
-                "Cannot register resource for class '{" + resource.getName() + "}'. " +
-                "Class already registered for " + descriptor.resourceType() + ": " + existing.resourceClass().getName());
+                    "Cannot register resource for class '{" + descriptor.resourceClass().getName() + "}'. " +
+                    "Class already registered for " + descriptor.resourceType() + ": " + existing.resourceClass().getName());
         }
         this.descriptors.add(descriptor);
+        return descriptor;
     }
 
     public ResourceDescriptor getResourceDescriptorByType(final @NotNull ResourceType type) {
@@ -66,7 +101,7 @@ public class ResourceContext {
     /**
      * Gets all the resources register to the context.
      *
-     * @return  all the registered resource type.
+     * @return all the registered resource type.
      */
     public List<ResourceDescriptor> getAllResourceDescriptors() {
         return new ArrayList<>(descriptors);

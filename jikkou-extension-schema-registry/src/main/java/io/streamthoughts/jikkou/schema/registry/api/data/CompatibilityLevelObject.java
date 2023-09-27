@@ -15,54 +15,38 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
-import java.util.Objects;
+import java.beans.ConstructorProperties;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * CompatibilityLevelObject.
+ *
+ * @param compatibilityLevel a compatibility level string.
+ */
 @Reflectable
-public final class CompatibilityLevelObject {
-
-    private final String compatibilityLevel;
+public record CompatibilityLevelObject(@NotNull String compatibilityLevel) {
 
     /**
      * Creates a new {@link CompatibilityLevelObject} instance.
      *
      * @param compatibilityLevel a compatibility level string.
      */
-    @JsonCreator
-    public CompatibilityLevelObject(@JsonProperty("compatibilityLevel") String compatibilityLevel) {
-        this.compatibilityLevel = compatibilityLevel;
-    }
+    @ConstructorProperties({
+            "compatibilityLevel",
+    })
+    public CompatibilityLevelObject {}
 
     /**
      * Gets the compatibility level.
      *
-     * @return  a compatibility level string.
+     * @return a compatibility level string.
      */
+    @Override
     @JsonProperty("compatibilityLevel")
     public String compatibilityLevel() {
         return compatibilityLevel;
     }
 
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CompatibilityLevelObject that = (CompatibilityLevelObject) o;
-        return Objects.equals(compatibilityLevel, that.compatibilityLevel);
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(compatibilityLevel);
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return "{" +
-                "compatibilityLevel=" + compatibilityLevel +
-                '}';
-    }
 }

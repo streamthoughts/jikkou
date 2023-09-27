@@ -19,9 +19,9 @@ import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.SchemaString;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectVersion;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -109,32 +109,32 @@ public interface SchemaRegistryApi extends AutoCloseable {
     @Path("subjects/{subject}")
     @Produces("application/vnd.schemaregistry.v1+json")
     @Consumes({"application/vnd.schemaregistry.v1+json", "application/vnd.schemaregistry+json", "application/json"})
-    SubjectSchema checkSubjectVersion(@PathParam("subject") String subject,
-                                      SubjectSchemaRegistration schema,
-                                      @DefaultValue("false") @QueryParam("normalize") boolean normalize);
+    SubjectSchemaVersion checkSubjectVersion(@PathParam("subject") String subject,
+                                             SubjectSchemaRegistration schema,
+                                             @DefaultValue("false") @QueryParam("normalize") boolean normalize);
 
     /**
      * Get the latest version of the schema registered under the specified subject.
      *
      * @param subject name of the subject
-     * @return a {@link SubjectSchema} object.
+     * @return a {@link SubjectSchemaVersion} object.
      */
     @GET
     @Path("subjects/{subject}/versions/latest")
     @Produces("application/vnd.schemaregistry.v1+json")
-    SubjectSchema getLatestSubjectSchema(@PathParam("subject") String subject);
+    SubjectSchemaVersion getLatestSubjectSchema(@PathParam("subject") String subject);
 
     /**
      * Get a specific version of the schema registered under the specified subject.
      *
      * @param subject name of the subject
      * @param version version of the schema to be returned.
-     * @return a {@link SubjectSchema} object.
+     * @return a {@link SubjectSchemaVersion} object.
      */
     @GET
     @Path("subjects/{subject}/versions/{version: [0-9]+}")
     @Produces("application/vnd.schemaregistry.v1+json")
-    SubjectSchema getSchemaByVersion(@PathParam("subject") String subject, @PathParam("version") int version);
+    SubjectSchemaVersion getSchemaByVersion(@PathParam("subject") String subject, @PathParam("version") int version);
 
     /*
      * ----------------------------------------------------------------------------------------------------------------
@@ -212,7 +212,7 @@ public interface SchemaRegistryApi extends AutoCloseable {
      *
      * @param subject       the name of the subject.
      * @param compatibility the new compatibility level for the subject.
-     * @return the uptated compatibility level.
+     * @return the updated compatibility level.
      */
     @PUT
     @Path("config/{subject}")

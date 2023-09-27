@@ -26,8 +26,8 @@ import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.SchemaRegistryAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistryAclEntryCollector;
+import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistryAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec;
 import java.io.IOException;
@@ -66,8 +66,8 @@ class SchemaRegistryAclEntryIT {
 
     public static MockWebServer SERVER;
 
-    private static SchemaRegistryAclEntryController CONTROLLER;
-    private static SchemaRegistryAclEntryCollector COLLECTOR;
+    private static AivenSchemaRegistryAclEntryController CONTROLLER;
+    private static AivenSchemaRegistryAclEntryCollector COLLECTOR;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -82,8 +82,8 @@ class SchemaRegistryAclEntryIT {
                 .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
                 .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
                 .build();
-        COLLECTOR = new SchemaRegistryAclEntryCollector(new AivenApiClientConfig(configuration));
-        CONTROLLER = new SchemaRegistryAclEntryController(new AivenApiClientConfig(configuration));
+        COLLECTOR = new AivenSchemaRegistryAclEntryCollector(new AivenApiClientConfig(configuration));
+        CONTROLLER = new AivenSchemaRegistryAclEntryController(new AivenApiClientConfig(configuration));
     }
 
     @AfterAll

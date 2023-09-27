@@ -53,6 +53,7 @@ public class ResourceTransformationChain implements ResourceTransformation<HasMe
     public @NotNull List<HasMetadata> transformAll(final @NotNull List<HasMetadata> toTransform,
                                                    final @NotNull HasItems otherResources,
                                                    final @NotNull ReconciliationContext context) {
+        LOG.info("Starting transformation-chain execution on {} resources", toTransform.size());
         return toTransform.stream()
                 .map(resource -> transform(resource, otherResources, context))
                 .flatMap(Optional::stream)
@@ -70,9 +71,15 @@ public class ResourceTransformationChain implements ResourceTransformation<HasMe
         Iterator<ResourceTransformation<HasMetadata>> iterator = transformations.iterator();
         while (iterator.hasNext() && result.isPresent()) {
             ResourceTransformation<HasMetadata> transformation = iterator.next();
-            if (transformation.canAccept(ResourceType.create(resource))) {
-                LOG.debug("Executing resource transformation '{}'.", transformation.getName());
+            ResourceType type = ResourceType.create(resource);
+            if (transformation.canAccept(type)) {
                 result = transformation.transform(result.get(), otherResources, context);
+                LOG.info("Completed transformation '{}' on resource of type: group={}, version={} and kind={}",
+                        transformation.getName(),
+                        type.getGroup(),
+                        type.getApiVersion(),
+                        type.getKind()
+                );
             }
         }
         return result;

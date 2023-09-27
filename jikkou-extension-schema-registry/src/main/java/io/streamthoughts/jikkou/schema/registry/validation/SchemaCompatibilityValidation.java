@@ -23,15 +23,19 @@ import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
+import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.ErrorCode;
 import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
 
 @ExtensionEnabled(value = false)
@@ -53,34 +57,53 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
      */
     @Override
     public void validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
-        String subjectName = resource.getMetadata().getName();
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();
         if (spec == null) return;
+        validate(resource, new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config)), this);
+    }
+
+    public static void validate(@NotNull V1SchemaRegistrySubject resource,
+                                @NotNull AsyncSchemaRegistryApi api,
+                                @NotNull ResourceValidation<?> validation) throws ValidationException {
+
+        String subjectName = resource.getMetadata().getName();
+        V1SchemaRegistrySubjectSpec spec = resource.getSpec();
 
         SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
                 spec.getSchema().value(),
                 spec.getSchemaType(),
                 spec.getReferences()
         );
-        SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
         try {
-            var check = api.testCompatibilityLatest(subjectName, true, registration);
+            CompletableFuture<CompatibilityCheck> future = api.testCompatibilityLatest(subjectName, true, registration);
+            CompatibilityCheck check = future.get();
             if (!check.isCompatible()) {
                 throw new ValidationException(String.format(
                         "Schema for subject '%s' is not compatible with latest version: %s",
                         subjectName,
                         check.getMessages()
                 )
-                        , this);
+                        , validation);
             }
-        } catch (RestClientException e) {
-            ErrorResponse response = e.getResponseEntity(ErrorResponse.class);
-            List<Integer> shippableErrors = List.of(ErrorCode.SUBJECT_NOT_FOUND, ErrorCode.VERSION_NOT_FOUND);
-            if (!shippableErrors.contains(response.errorCode())) {
-                throw new JikkouRuntimeException("Failed to test schema compatibility: " + response.message());
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RestClientException clientException) {
+                ErrorResponse response = clientException.getResponseEntity(ErrorResponse.class);
+                List<Integer> shippableErrors = List.of(ErrorCode.SUBJECT_NOT_FOUND, ErrorCode.VERSION_NOT_FOUND);
+                if (!shippableErrors.contains(response.errorCode())) {
+                    fail(response.message());
+                }
             }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            fail("Thread was interrupted");
         } finally {
             api.close();
         }
+    }
+
+    private static void fail(String error) {
+        throw new JikkouRuntimeException("Failed to test schema compatibility: " + error);
     }
 }

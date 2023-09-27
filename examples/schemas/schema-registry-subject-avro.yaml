@@ -1,0 +1,52 @@
+---
+apiVersion: "schemaregistry.jikkou.io/v1beta2"
+kind: "SchemaRegistrySubject"
+metadata:
+  name: "PersonAvro"
+  labels: { }
+  annotations:
+    schemaregistry.jikkou.io/normalize-schema: true
+spec:
+#  compatibilityLevel: "FULL_TRANSITIVE"
+  schemaType: "AVRO"
+  schema: |
+    {
+      "namespace": "example",
+      "type": "record",
+      "name": "Person",
+      "fields": [
+        {
+          "name": "id",
+          "type":  "int",
+          "doc": "The person's unique ID (required)"
+        },
+        {
+          "name": "firstname",
+          "type": "string",
+          "doc": "The person's legal firstname (required)"
+        },
+        {
+          "name": "lastname",
+          "type": "string",
+          "doc": " The person's legal lastname (required)"
+        },
+        {
+          "name": "age",
+          "type": [ "null", "int"],
+          "default": null,
+          "doc": "The person's age (optional)"
+        },
+        {
+          "name": "height",
+          "type": [ "null", "int"],
+          "default": null,
+          "doc": "The person's height measures in centimeters (optional)"
+        },
+            {
+          "name": "any",
+          "type": [ "null", "int"],
+          "default": null,
+          "doc": "The person's height measures in centimeters (optional)"
+        }
+      ]
+    }

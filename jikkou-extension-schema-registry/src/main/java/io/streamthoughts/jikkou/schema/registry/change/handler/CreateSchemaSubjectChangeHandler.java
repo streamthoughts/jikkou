@@ -15,10 +15,12 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
+import io.streamthoughts.jikkou.api.change.ChangeHandler;
 import io.streamthoughts.jikkou.api.change.ChangeResponse;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
@@ -28,14 +30,14 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler {
+public class CreateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<SchemaSubjectChange> {
 
     /**
      * Creates a new {@link CreateSchemaSubjectChangeHandler} instance.
      *
      * @param api the {@link SchemaRegistryApi} instance.
      */
-    public CreateSchemaSubjectChangeHandler(@NotNull final SchemaRegistryApi api) {
+    public CreateSchemaSubjectChangeHandler(@NotNull final AsyncSchemaRegistryApi api) {
         super(api);
     }
 
@@ -57,7 +59,7 @@ public class CreateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
         for (HasMetadataChange<SchemaSubjectChange> item : items) {
 
             SchemaSubjectChange change = item.getChange();
-            CompletableFuture<Void> future = registerSubjectSchema(change);
+            CompletableFuture<Void> future = registerSubjectVersion(change);
             ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();
             if (compatibilityLevels != null) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));

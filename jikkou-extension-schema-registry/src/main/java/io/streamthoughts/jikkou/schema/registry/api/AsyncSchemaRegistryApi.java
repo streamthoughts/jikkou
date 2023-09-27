@@ -18,156 +18,101 @@ package io.streamthoughts.jikkou.schema.registry.api;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.SchemaString;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchema;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectVersion;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A wrapper around the REST API {@link SchemaRegistryApi} to provide asynchronous methods.
+ * Asynchronous Schema Registry Api.
  */
-public final class AsyncSchemaRegistryApi implements AutoCloseable {
-
-    private final SchemaRegistryApi api;
+public interface AsyncSchemaRegistryApi extends AutoCloseable {
 
     /**
-     * Creates a new {@link AsyncSchemaRegistryApi} instance.
+     * Gets a list of registered subjects.
      *
-     * @param api the {@link SchemaRegistryApi} to delegate methods called.
+     * @return a list of registered subjects.
      */
-    public AsyncSchemaRegistryApi(final @NotNull SchemaRegistryApi api) {
-        this.api = Objects.requireNonNull(api, "api must not be null");
-    }
+    CompletableFuture<List<String>> listSubjects();
 
     /**
-     * @see SchemaRegistryApi#listSubjects()
+     * Deletes the specified subject and its associated compatibility level if registered.
+     *
+     * @param subject   the name of the subject
+     * @param permanent flag to specify a hard delete of the subject, which removes
+     *                  all associated metadata including the schema ID.
+     * @return a list of versions
      */
-    public CompletableFuture<List<String>> listSubjects() {
-        return CompletableFuture.supplyAsync(api::listSubjects);
-    }
+    CompletableFuture<List<Integer>> deleteSubjectVersions(@NotNull String subject,
+                                                           boolean permanent);
 
     /**
-     * @see SchemaRegistryApi#deleteSubjectVersions(String, boolean)
+     * Register a new schema under the specified subject.
+     *
+     * @param subject   the name of the subject.
+     * @param schema    the schema to be registered.
+     * @param normalize whether to normalize the given schema
+     * @return the globally unique identifier of the schema.
      */
-    public CompletableFuture<List<Integer>> deleteSubjectVersions(String subject, boolean permanent) {
-        return  CompletableFuture.supplyAsync(() -> api.deleteSubjectVersions(subject, permanent));
-    }
+    CompletableFuture<SubjectSchemaId> registerSubjectVersion(@NotNull String subject,
+                                                              @NotNull SubjectSchemaRegistration schema,
+                                                              boolean normalize);
 
     /**
-     * @see SchemaRegistryApi#getAllSubjectVersions(String)
+     * Get the latest version of the schema registered under the specified subject.
+     *
+     * @param subject name of the subject
+     * @return a {@link SubjectSchemaVersion} object.
      */
-    public CompletableFuture<List<Integer>> getSubjectVersions(String subject) {
-        return CompletableFuture.supplyAsync(() -> api.getAllSubjectVersions(subject));
-    }
+    CompletableFuture<SubjectSchemaVersion> getLatestSubjectSchema(@NotNull String subject);
 
     /**
-     * @see SchemaRegistryApi#registerSchema(String, SubjectSchemaRegistration, boolean)
+     * Gets the schema registry global compatibility level.
+     *
+     * @return the compatibility level.
      */
-    public CompletableFuture<SubjectSchemaId> registerSubjectVersion(String subject,
-                                                                     SubjectSchemaRegistration schema,
-                                                                     boolean normalize) {
-        return CompletableFuture.supplyAsync(() -> api.registerSchema(subject, schema, normalize));
-    }
+    CompletableFuture<CompatibilityLevelObject> getGlobalCompatibility();
 
     /**
-     * @see SchemaRegistryApi#checkSubjectVersion(String, SubjectSchemaRegistration, boolean)
+     * Gets compatibility level for the specified subject.
+     *
+     * @param subject         the name of the subject.
+     * @param defaultToGlobal flag to default to global compatibility.
+     * @return the compatibility level.
      */
-    public CompletableFuture<SubjectSchema> checkSubjectVersion(String subject,
-                                                                SubjectSchemaRegistration schema,
-                                                                boolean normalize) {
-        return CompletableFuture.supplyAsync(() -> api.checkSubjectVersion(subject, schema, normalize));
-    }
+    CompletableFuture<CompatibilityLevelObject> getSubjectCompatibilityLevel(@NotNull String subject,
+                                                                             boolean defaultToGlobal);
 
     /**
-     * @see SchemaRegistryApi#getLatestSubjectSchema(String)
+     * Updates compatibility level for the specified subject.
+     *
+     * @param subject       the name of the subject.
+     * @param compatibility the new compatibility level for the subject.
+     * @return the updated compatibility level.
      */
-    public CompletableFuture<SubjectSchema> getLatestSubjectSchema(String subject) {
-        return  CompletableFuture.supplyAsync(() -> api.getLatestSubjectSchema(subject));
-    }
+    CompletableFuture<CompatibilityObject> updateSubjectCompatibilityLevel(@NotNull String subject,
+                                                                           @NotNull CompatibilityObject compatibility);
 
     /**
-     * @see SchemaRegistryApi#getSchemaByVersion(String, int)
+     * Deletes the specified subject-level compatibility level config and reverts to the global default.
+     *
+     * @param subject the name of the subject.
+     * @return the compatibility level.
      */
-    public CompletableFuture<SubjectSchema> getSubjectSchemaByVersion(String subject, int version) {
-        return CompletableFuture.supplyAsync(() -> api.getSchemaByVersion(subject, version));
-    }
+    CompletableFuture<CompatibilityObject> deleteSubjectCompatibilityLevel(@NotNull String subject);
 
-    /**
-     * @see SchemaRegistryApi#getSchemasTypes()
-     */
-    public CompletableFuture<List<String>> getSchemasTypes() {
-        return CompletableFuture.supplyAsync(api::getSchemasTypes);
-    }
+    CompletableFuture<CompatibilityCheck> testCompatibility(@NotNull String subject,
+                                                            String version,
+                                                            boolean verbose,
+                                                            @NotNull SubjectSchemaRegistration schema);
 
-    /**
-     * @see SchemaRegistryApi#getSchemasTypes()
-     */
-    public CompletableFuture<SchemaString> getSchemaById(String id) {
-        return CompletableFuture.supplyAsync(() -> api.getSchemaById(id));
-    }
-
-    /**
-     * @see SchemaRegistryApi#getSchemaOnlyById(String)
-     */
-    public CompletableFuture<String> getSchemaOnlyById(String id) {
-        return CompletableFuture.supplyAsync(() -> api.getSchemaOnlyById(id));
-    }
-
-    /**
-     * @see SchemaRegistryApi#getVersionSchemaById(String)
-     */
-    public CompletableFuture<List<SubjectVersion>> getSchemaVersionsById(String id) {
-        return  CompletableFuture.supplyAsync(() -> api.getVersionSchemaById(id));
-    }
-
-
-    /**
-     * @see SchemaRegistryApi#getGlobalCompatibility()
-     */
-    public CompletableFuture<CompatibilityLevelObject> getGlobalCompatibility() {
-        return CompletableFuture.supplyAsync(api::getGlobalCompatibility);
-    }
-
-    /**
-     * @see SchemaRegistryApi#getConfigCompatibility(String, boolean)
-     */
-    public CompletableFuture<CompatibilityLevelObject> getConfigCompatibility(String subject, boolean defaultToGlobal) {
-        return CompletableFuture.supplyAsync(() -> api.getConfigCompatibility(subject, defaultToGlobal));
-    }
-
-    /**
-     * @see SchemaRegistryApi#updateConfigCompatibility(String, CompatibilityObject)
-     */
-    public CompletableFuture<CompatibilityObject> updateConfigCompatibility(String subject,
-                                                                            CompatibilityObject compatibility) {
-        return  CompletableFuture.supplyAsync(() -> api.updateConfigCompatibility(subject, compatibility));
-    }
-
-    /**
-     * @see SchemaRegistryApi#deleteConfigCompatibility(String)
-     */
-    public CompletableFuture<CompatibilityObject> deleteConfigCompatibility(String subject) {
-        return CompletableFuture.supplyAsync(() -> api.deleteConfigCompatibility(subject));
-
-    }
-
-    /**
-     * @see SchemaRegistryApi#deleteConfigCompatibility(String)
-     */
-    public CompletableFuture<CompatibilityCheck> testCompatibility(String subject,
-                                                                   int version,
-                                                                   boolean verbose,
-                                                                   SubjectSchemaRegistration schema) {
-        return CompletableFuture.supplyAsync(() -> api.testCompatibility(subject, version, verbose, schema));
-    }
+    CompletableFuture<CompatibilityCheck> testCompatibilityLatest(@NotNull String subject,
+                                                                  boolean verbose,
+                                                                  @NotNull SubjectSchemaRegistration schema);
 
     @Override
-    public void close() {
-        this.api.close();
+    default void close() {
     }
 }
