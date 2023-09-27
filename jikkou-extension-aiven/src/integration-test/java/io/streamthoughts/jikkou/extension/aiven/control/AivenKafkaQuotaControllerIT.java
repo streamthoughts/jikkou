@@ -13,105 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.extension.aiven.api;
+package io.streamthoughts.jikkou.extension.aiven.control;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
-import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaQuotaCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaQuotaController;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaSpec;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("integration")
-class KafkaQuotaEntryIT {
+class AivenKafkaQuotaControllerIT extends AbstractAivenIntegrationTest {
 
-    public static final List<ResourceSelector> NO_SELECTOR = Collections.emptyList();
+    private static AivenKafkaQuotaController controller;
 
-    public static MockWebServer SERVER;
-
-    private static AivenKafkaQuotaController CONTROLLER;
-    private static AivenKafkaQuotaCollector COLLECTOR;
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        SERVER = new MockWebServer();
-        SERVER.start();
-
-        Configuration configuration = new Configuration
-                .Builder()
-                .with(AivenApiClientConfig.AIVEN_API_URL.key(), SERVER.url("/"))
-                .with(AivenApiClientConfig.AIVEN_PROJECT.key(), "project")
-                .with(AivenApiClientConfig.AIVEN_SERVICE.key(), "service")
-                .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
-                .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
-                .build();
-        COLLECTOR = new AivenKafkaQuotaCollector(new AivenApiClientConfig(configuration));
-        CONTROLLER = new AivenKafkaQuotaController(new AivenApiClientConfig(configuration));
-    }
-
-    @AfterAll
-    static void tearDown() throws IOException {
-        SERVER.shutdown();
-    }
-
-    @Test
-    void shouldListKafkaQuotaEntries() {
-        // Given
-        SERVER.enqueue(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {"quotas":[{"client-id":"default","consumer_byte_rate":1048576.0,"producer_byte_rate":1048576.0,"request_percentage":25.0,"user":"default"}]}
-                        """
-                ));
-        // When
-        List<V1KafkaQuota> results = COLLECTOR.listAll(Configuration.empty(), NO_SELECTOR);
-
-        // Then
-        Assertions.assertNotNull(results);
-        V1KafkaQuota expected = V1KafkaQuota.builder()
-                .withSpec(V1KafkaQuotaSpec
-                        .builder()
-                        .withUser("default")
-                        .withClientId("default")
-                        .withProducerByteRate(1048576.0)
-                        .withConsumerByteRate(1048576.0)
-                        .withRequestPercentage(25.0)
-                        .build()
-                )
-                .build();
-        Assertions.assertEquals(List.of(expected), results);
+    @BeforeEach
+    public void beforeEach() {
+        controller = new AivenKafkaQuotaController(getAivenApiConfig());
     }
 
     @Test
     void shouldCreateKafkaQuota() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
                         {"quotas":[{"client-id":"default","consumer_byte_rate":1048576.0,"producer_byte_rate":1048576.0,"request_percentage":25.0,"user":"default"}]}
                         """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -132,7 +74,7 @@ class KafkaQuotaEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -144,14 +86,14 @@ class KafkaQuotaEntryIT {
     @Test
     void shouldDeleteKafkaQuota() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
                         {"quotas":[{"client-id":"default","consumer_byte_rate":1048576.0,"producer_byte_rate":1048576.0,"request_percentage":25.0,"user":"default"}]}
                         """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -176,7 +118,7 @@ class KafkaQuotaEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then

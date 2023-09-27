@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.extension.aiven.api;
+package io.streamthoughts.jikkou.extension.aiven.control;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
@@ -21,94 +21,40 @@ import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
-import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaTopicAclEntryCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.AivenKafkaTopicAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("integration")
-class KafkaTopicAclEntryIT {
+class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
 
-    public static final List<ResourceSelector> NO_SELECTOR = Collections.emptyList();
+    private static AivenKafkaTopicAclEntryController controller;
 
-    public static MockWebServer SERVER;
-
-    private static AivenKafkaTopicAclEntryController CONTROLLER;
-    private static AivenKafkaTopicAclEntryCollector COLLECTOR;
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        SERVER = new MockWebServer();
-        SERVER.start();
-
-        Configuration configuration = new Configuration
-                .Builder()
-                .with(AivenApiClientConfig.AIVEN_API_URL.key(), SERVER.url("/"))
-                .with(AivenApiClientConfig.AIVEN_PROJECT.key(), "project")
-                .with(AivenApiClientConfig.AIVEN_SERVICE.key(), "service")
-                .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
-                .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
-                .build();
-        COLLECTOR = new AivenKafkaTopicAclEntryCollector(new AivenApiClientConfig(configuration));
-        CONTROLLER = new AivenKafkaTopicAclEntryController(new AivenApiClientConfig(configuration));
-    }
-
-    @AfterAll
-    static void tearDown() throws IOException {
-        SERVER.shutdown();
-    }
-
-    @Test
-    void shouldListKafkaAclEntries() {
-        // Given
-        SERVER.enqueue(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {"acl":[{"id":"default","permission":"admin","topic":"*","username":"avnadmin"}]}
-                        """
-                ));
-        // When
-        List<V1KafkaTopicAclEntry> results = COLLECTOR.listAll(Configuration.empty(), NO_SELECTOR);
-
-        // Then
-        Assertions.assertNotNull(results);
-        Assertions.assertEquals(1, results.size());
-
-        V1KafkaTopicAclEntry entry = results.get(0);
-        Assertions.assertNotNull(entry.getKind());
-        Assertions.assertNotNull(entry.getApiVersion());
-        Assertions.assertEquals(Permission.ADMIN, entry.getSpec().getPermission());
-        Assertions.assertEquals("*", entry.getSpec().getTopic());
-        Assertions.assertEquals("avnadmin", entry.getSpec().getUsername());
+    @BeforeEach
+    public void beforeEach() {
+        controller = new AivenKafkaTopicAclEntryController(getAivenApiConfig());
     }
 
     @Test
     void shouldCreateKafkaAclEntries() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
                         {"acl":[{"id":"default","permission":"admin","topic":"*","username":"avnadmin"}]}
                         """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -141,7 +87,7 @@ class KafkaTopicAclEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -156,14 +102,14 @@ class KafkaTopicAclEntryIT {
     @Test
     void shouldDeleteKafkaAclEntries() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
                         {"acl":[{"id":"default","permission":"admin","topic":"*","username":"avnadmin"}]}
                         """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -184,7 +130,7 @@ class KafkaTopicAclEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -200,14 +146,14 @@ class KafkaTopicAclEntryIT {
     @Test
     void shouldHandleError() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
                         {"acl":[]}
                         """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(409)
                 .setBody("""
@@ -224,7 +170,7 @@ class KafkaTopicAclEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
 

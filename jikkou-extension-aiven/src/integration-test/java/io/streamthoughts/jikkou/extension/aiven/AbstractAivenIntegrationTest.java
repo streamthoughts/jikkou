@@ -16,8 +16,11 @@
 package io.streamthoughts.jikkou.extension.aiven;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -27,6 +30,7 @@ import org.junit.jupiter.api.Tag;
 @Tag("integration")
 public class AbstractAivenIntegrationTest {
 
+    public static final List<ResourceSelector> NO_SELECTOR = Collections.emptyList();
     static MockWebServer SERVER;
 
     static AivenApiClientConfig AIVEN_API_CONFIG;

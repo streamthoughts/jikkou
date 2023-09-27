@@ -52,7 +52,7 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public class AivenSchemaRegistryAclEntryController implements BaseResourceController<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
+public final class AivenSchemaRegistryAclEntryController implements BaseResourceController<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")

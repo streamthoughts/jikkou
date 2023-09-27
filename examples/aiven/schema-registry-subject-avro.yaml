@@ -41,12 +41,6 @@ spec:
           "type": [ "null", "int"],
           "default": null,
           "doc": "The person's height measures in centimeters (optional)"
-        },
-            {
-          "name": "any",
-          "type": [ "null", "int"],
-          "default": null,
-          "doc": "The person's height measures in centimeters (optional)"
         }
       ]
     }

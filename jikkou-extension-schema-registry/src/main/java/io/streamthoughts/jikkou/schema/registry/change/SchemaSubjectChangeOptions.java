@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
@@ -36,5 +37,27 @@ public class SchemaSubjectChangeOptions {
      */
     public SchemaSubjectChangeOptions() {
         this(false, false);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SchemaSubjectChangeOptions that = (SchemaSubjectChangeOptions) o;
+        return isPermanentDeleteEnabled == that.isPermanentDeleteEnabled &&
+                isSchemaOptimizationEnabled == that.isSchemaOptimizationEnabled;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isPermanentDeleteEnabled, isSchemaOptimizationEnabled);
+    }
+
+    @Override
+    public String toString() {
+        return "SchemaSubjectChangeOptions{" +
+                "isPermanentDeleteEnabled=" + isPermanentDeleteEnabled +
+                ", isSchemaOptimizationEnabled=" + isSchemaOptimizationEnabled +
+                '}';
     }
 }

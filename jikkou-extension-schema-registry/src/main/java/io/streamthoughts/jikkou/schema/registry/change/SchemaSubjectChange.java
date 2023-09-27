@@ -100,4 +100,17 @@ public final class SchemaSubjectChange implements Change {
     public int hashCode() {
         return Objects.hash(changeType, subject, schemaType, schema, compatibilityLevels);
     }
+
+    @Override
+    public String toString() {
+        return "SchemaSubjectChange{" +
+                "changeType=" + changeType +
+                ", subject='" + subject + '\'' +
+                ", schemaType=" + schemaType +
+                ", schema=" + schema +
+                ", compatibilityLevels=" + compatibilityLevels +
+                ", references=" + references +
+                ", options=" + options +
+                '}';
+    }
 }

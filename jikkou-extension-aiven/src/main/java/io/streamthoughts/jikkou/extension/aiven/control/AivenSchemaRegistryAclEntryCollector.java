@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
 @AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public class AivenSchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
+public final class AivenSchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
 
     private AivenApiClientConfig config;
 

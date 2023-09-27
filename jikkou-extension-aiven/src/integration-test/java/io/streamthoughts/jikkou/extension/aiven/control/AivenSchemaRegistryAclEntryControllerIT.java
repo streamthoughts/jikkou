@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.extension.aiven.api;
+package io.streamthoughts.jikkou.extension.aiven.control;
 
 import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
@@ -21,30 +21,22 @@ import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
-import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistryAclEntryCollector;
-import io.streamthoughts.jikkou.extension.aiven.control.AivenSchemaRegistryAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("integration")
-class SchemaRegistryAclEntryIT {
+public class AivenSchemaRegistryAclEntryControllerIT extends AbstractAivenIntegrationTest {
 
-    public static final List<ResourceSelector> NO_SELECTOR = Collections.emptyList();
     public static final String DEFAULT_AIVEN_ACL_ENTRIES = """
              {
                "acl": [
@@ -64,70 +56,24 @@ class SchemaRegistryAclEntryIT {
              }
             """;
 
-    public static MockWebServer SERVER;
+    private AivenSchemaRegistryAclEntryController controller;
 
-    private static AivenSchemaRegistryAclEntryController CONTROLLER;
-    private static AivenSchemaRegistryAclEntryCollector COLLECTOR;
 
-    @BeforeAll
-    static void setUp() throws IOException {
-        SERVER = new MockWebServer();
-        SERVER.start();
-
-        Configuration configuration = new Configuration
-                .Builder()
-                .with(AivenApiClientConfig.AIVEN_API_URL.key(), SERVER.url("/"))
-                .with(AivenApiClientConfig.AIVEN_PROJECT.key(), "project")
-                .with(AivenApiClientConfig.AIVEN_SERVICE.key(), "service")
-                .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
-                .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
-                .build();
-        COLLECTOR = new AivenSchemaRegistryAclEntryCollector(new AivenApiClientConfig(configuration));
-        CONTROLLER = new AivenSchemaRegistryAclEntryController(new AivenApiClientConfig(configuration));
+    @BeforeEach
+    public void beforeEach() {
+        controller = new AivenSchemaRegistryAclEntryController(getAivenApiConfig());
     }
 
-    @AfterAll
-    static void tearDown() throws IOException {
-        SERVER.shutdown();
-    }
-
-    @Test
-    void shouldListSchemaRegistryAclEntries() {
-        // Given
-        SERVER.enqueue(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody(DEFAULT_AIVEN_ACL_ENTRIES)
-        );
-        // When
-        List<V1SchemaRegistryAclEntry> results = COLLECTOR.listAll(Configuration.empty(), NO_SELECTOR);
-
-        // Then
-        Assertions.assertNotNull(results);
-        Assertions.assertEquals(2, results.size());
-
-        V1SchemaRegistryAclEntry entry1 = results.get(0);
-        Assertions.assertNotNull(entry1.getKind());
-        Assertions.assertNotNull(entry1.getApiVersion());
-        Assertions.assertEquals(Permission.WRITE, entry1.getSpec().getPermission());
-        Assertions.assertEquals("Config:", entry1.getSpec().getResource());
-        Assertions.assertEquals("avnadmin", entry1.getSpec().getUsername());
-
-        V1SchemaRegistryAclEntry entry2 = results.get(1);
-        Assertions.assertEquals(Permission.WRITE, entry2.getSpec().getPermission());
-        Assertions.assertEquals("Subject:*", entry2.getSpec().getResource());
-        Assertions.assertEquals("avnadmin", entry2.getSpec().getUsername());
-    }
 
     @Test
     void shouldCreateSchemaRegistryAclEntries() {
         // Given
-        SERVER.enqueue(new MockResponse()
+       enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody(DEFAULT_AIVEN_ACL_ENTRIES)
         );
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -165,7 +111,7 @@ class SchemaRegistryAclEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -180,7 +126,7 @@ class SchemaRegistryAclEntryIT {
     @Test
     void shouldDeleteSchemaRegistryAclEntries() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -203,7 +149,7 @@ class SchemaRegistryAclEntryIT {
                 }
                 """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
@@ -224,7 +170,7 @@ class SchemaRegistryAclEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -240,14 +186,14 @@ class SchemaRegistryAclEntryIT {
     @Test
     void shouldThrowExceptionForInvalidResource() {
         // Given
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(200)
                 .setBody("""
                         {"acl":[]}
                         """
                 ));
-        SERVER.enqueue(new MockResponse()
+        enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
                 .setResponseCode(409)
                 .setBody("""
@@ -272,7 +218,7 @@ class SchemaRegistryAclEntryIT {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = CONTROLLER
+        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = controller
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         Assertions.assertEquals(1, results.size());

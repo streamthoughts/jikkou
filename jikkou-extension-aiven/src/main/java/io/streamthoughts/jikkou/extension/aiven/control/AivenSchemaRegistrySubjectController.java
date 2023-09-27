@@ -34,6 +34,7 @@ import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenAsyncSchemaRegistryApi;
@@ -44,6 +45,7 @@ import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescri
 import io.streamthoughts.jikkou.schema.registry.change.handler.CreateSchemaSubjectChangeHandler;
 import io.streamthoughts.jikkou.schema.registry.change.handler.DeleteSchemaSubjectChangeHandler;
 import io.streamthoughts.jikkou.schema.registry.change.handler.UpdateSchemaSubjectChangeHandler;
+import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectChange;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectChangeList;
@@ -51,6 +53,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,10 +72,13 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
 
     private AivenApiClientConfig configuration;
 
+    private CompatibilityLevels globalCompatibilityLevel = null;
+
     /**
      * Creates a new {@link AivenSchemaRegistrySubjectController} instance.
      */
-    public AivenSchemaRegistrySubjectController() {}
+    public AivenSchemaRegistrySubjectController() {
+    }
 
     /**
      * Creates a new {@link AivenSchemaRegistrySubjectCollector} instance.
@@ -94,6 +100,7 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
     private void configure(@NotNull AivenApiClientConfig configuration) throws ConfigException {
         this.configuration = configuration;
     }
+
     /**
      * {@inheritDoc}
      **/
@@ -127,6 +134,7 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
         // Get described resources that are candidates for this reconciliation.
         List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
                 .filter(new AggregateSelector(context.selectors())::apply)
+                .map(this::useGlobalCompatibilityLevelIfUnspecified)
                 .toList();
 
         // Get existing resources from the environment.
@@ -150,5 +158,29 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
                 .collect(Collectors.toList());
 
         return V1SchemaRegistrySubjectChangeList.builder().withItems(changes).build();
+    }
+
+    @NotNull
+    private V1SchemaRegistrySubject useGlobalCompatibilityLevelIfUnspecified(final @NotNull V1SchemaRegistrySubject item) {
+        CompatibilityLevels compatibilityLevel = item.getSpec().getCompatibilityLevel();
+        if (compatibilityLevel == null) {
+            return item.withSpec(
+                    item.getSpec()
+                            .withCompatibilityLevel(getGlobalCompatibilityLevel())
+            );
+        }
+        return item;
+    }
+
+    @Nullable
+    private CompatibilityLevels getGlobalCompatibilityLevel() {
+        if (globalCompatibilityLevel == null) {
+            try (AivenApiClient api = AivenApiClientFactory.create(configuration);) {
+                globalCompatibilityLevel = api.getSchemaRegistryGlobalCompatibility().compatibilityLevel();
+            } catch (Exception e) {
+                LOG.error("Failed to get to Schema Registry global compatibility level.", e);
+            }
+        }
+        return globalCompatibilityLevel;
     }
 }

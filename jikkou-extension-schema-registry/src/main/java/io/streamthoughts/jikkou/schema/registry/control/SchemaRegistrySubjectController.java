@@ -91,8 +91,7 @@ public class SchemaRegistrySubjectController implements BaseResourceController<V
     public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items,
                                                            @NotNull ReconciliationMode mode,
                                                            boolean dryRun) {
-        AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration));
-        try {
+        try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration))) {
             List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
                     new CreateSchemaSubjectChangeHandler(api),
                     new UpdateSchemaSubjectChangeHandler(api),
@@ -100,8 +99,6 @@ public class SchemaRegistrySubjectController implements BaseResourceController<V
                     new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
             );
             return new ChangeExecutor<>(handlers).execute(items, dryRun);
-        } finally {
-            api.close();
         }
     }
 
