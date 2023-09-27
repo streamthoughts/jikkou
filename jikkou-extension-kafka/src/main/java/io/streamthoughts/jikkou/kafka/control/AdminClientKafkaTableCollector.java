@@ -265,7 +265,7 @@ public final class AdminClientKafkaTableCollector
                 ByteBuffer keyByteBuffer = Optional.ofNullable(data)
                         .map(ByteBuffer::wrap).orElse(null);
 
-                return format.getDataSerdes()
+                return format.getDataSerde()
                         .deserialize(record.topic(), keyByteBuffer, EMPTY_CONFIG, isKey)
                         .or(() -> Optional.of(DataHandle.NULL));
 

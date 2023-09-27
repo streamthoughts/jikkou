@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.streamthoughts.jikkou.annotation.Reflectable;
@@ -40,6 +41,10 @@ public record DataHandle(JsonNode value) {
 
     public static DataHandle of(@NotNull String value) {
         return new DataHandle(new TextNode(value));
+    }
+
+    public static DataHandle of(@NotNull Long value) {
+        return new DataHandle(new LongNode(value));
     }
 
     /**

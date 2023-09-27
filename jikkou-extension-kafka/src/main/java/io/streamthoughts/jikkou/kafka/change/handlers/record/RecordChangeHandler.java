@@ -97,7 +97,7 @@ public final class RecordChangeHandler implements ChangeHandler<RecordChange> {
         DataFormat keyFormat = change.getKeyFormat();
 
         ChangeType changeType = change.getChangeType();
-        Optional<ByteBuffer> rawKey = keyFormat.getDataSerdes().serialize(
+        Optional<ByteBuffer> rawKey = keyFormat.getDataSerde().serialize(
                 change.getTopic(),
                 change.getRecord().getAfter().getKey(),
                 Collections.emptyMap(),
@@ -108,7 +108,7 @@ public final class RecordChangeHandler implements ChangeHandler<RecordChange> {
 
         if (changeType != ChangeType.DELETE) {
             DataFormat valueFormat = change.getValueFormat();
-            rawValue = valueFormat.getDataSerdes().serialize(
+            rawValue = valueFormat.getDataSerde().serialize(
                     change.getTopic(),
                     change.getRecord().getAfter().getValue(),
                     Collections.emptyMap(),

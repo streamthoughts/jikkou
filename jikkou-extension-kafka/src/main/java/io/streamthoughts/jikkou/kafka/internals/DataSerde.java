@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Optional;
 
-public interface DataSerdes {
+public interface DataSerde {
 
     Optional<ByteBuffer> serialize(String topicName,
                                    DataHandle data,
