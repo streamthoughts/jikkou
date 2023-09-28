@@ -248,7 +248,7 @@ function _picocli_jikkou_create() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -271,10 +271,16 @@ function _picocli_jikkou_create() {
     --set-label|-l)
       return
       ;;
+    --set-annotation)
+      return
+      ;;
     --set-value|-v)
       return
       ;;
     --selector|-s)
+      return
+      ;;
+    --options)
       return
       ;;
   esac
@@ -296,7 +302,7 @@ function _picocli_jikkou_delete() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -319,10 +325,16 @@ function _picocli_jikkou_delete() {
     --set-label|-l)
       return
       ;;
+    --set-annotation)
+      return
+      ;;
     --set-value|-v)
       return
       ;;
     --selector|-s)
+      return
+      ;;
+    --options)
       return
       ;;
   esac
@@ -344,7 +356,7 @@ function _picocli_jikkou_update() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -367,10 +379,16 @@ function _picocli_jikkou_update() {
     --set-label|-l)
       return
       ;;
+    --set-annotation)
+      return
+      ;;
     --set-value|-v)
       return
       ;;
     --selector|-s)
+      return
+      ;;
+    --options)
       return
       ;;
   esac
@@ -392,7 +410,7 @@ function _picocli_jikkou_apply() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s --options"
+  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -413,6 +431,9 @@ function _picocli_jikkou_apply() {
       return
       ;;
     --set-label|-l)
+      return
+      ;;
+    --set-annotation)
       return
       ;;
     --set-value|-v)
@@ -497,7 +518,7 @@ function _picocli_jikkou_diff() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s --output -o"
+  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --output -o --options"
   local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -515,6 +536,9 @@ function _picocli_jikkou_diff() {
     --set-label|-l)
       return
       ;;
+    --set-annotation)
+      return
+      ;;
     --set-value|-v)
       return
       ;;
@@ -525,6 +549,9 @@ function _picocli_jikkou_diff() {
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
       return $?
+      ;;
+    --options)
+      return
       ;;
   esac
 
@@ -545,7 +572,8 @@ function _picocli_jikkou_validate() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-value -v --selector -s"
+  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --output -o --options"
+  local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
@@ -562,10 +590,21 @@ function _picocli_jikkou_validate() {
     --set-label|-l)
       return
       ;;
+    --set-annotation)
+      return
+      ;;
     --set-value|-v)
       return
       ;;
     --selector|-s)
+      return
+      ;;
+    --output|-o)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    --options)
       return
       ;;
   esac
