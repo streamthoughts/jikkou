@@ -3,30 +3,23 @@ apiVersion: "kafka.jikkou.io/v1beta1"
 kind: "KafkaTableRecord"
 metadata:
   # The name of the kafka table topic.
-  name: "my-topic-changelog"
+  name: "datamesh-dataproducts-catalog"
 spec:
-  keyFormat: string
-  valueFormat: json
-  record:
-    # The record headers
-    headers:
-      - key: "ce_specversion"
-        value: "1.0"
-      - key: "ce_type"
-        value: "io.jikkou.data.mesh.product.definition.eventstream"
-      - key: "ce_source"
-        value: "/jikkou/client"
-      - key: "ce_time"
-        value: "{{ date }}"
-      - key: "content-type"
-        value: "application/json"
+  # The record headers
+  headers:
+    - name: "content-type"
+      value: "application/json"
 
-    # The record key (string)
-    key: |
+  # The record key (string)
+  key:
+    type: STRING
+    data : |
       "my-event-stream-name"
 
-    # The record value (string)
-    value: |
+  # The record value (JSON)
+  value:
+    type: JSON
+    data: |
       {
         "name": "Name of this data product",
         "summary": "A short description",
@@ -107,4 +100,3 @@ spec:
           "description": "Find more info here"
         }
       }
-

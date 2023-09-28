@@ -5,19 +5,19 @@ metadata:
   # The name of the kafka table topic.
   name: "topic-compacted"
 spec:
-  keyFormat: string
-  valueFormat: json
-  record:
-    # The record headers
-    headers:
-      - key: "content-type"
-        value: "application/json"
-    # The record key (string)
-    key: |
+  # The record headers
+  headers:
+    - name: "content-type"
+      value: "application/json"
+  # The record key (string)
+  key:
+    type: string
+    data: |
       "test"
-    # The record value (string)
-    value: |
+  # The record value (string)
+  value:
+    type: json
+    data: |
       {
         "favorite_color": "red"
       }
-

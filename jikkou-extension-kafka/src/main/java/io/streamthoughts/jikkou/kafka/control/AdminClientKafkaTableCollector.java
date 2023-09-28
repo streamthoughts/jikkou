@@ -33,10 +33,10 @@ import io.streamthoughts.jikkou.kafka.internals.consumer.ConsumerFactory;
 import io.streamthoughts.jikkou.kafka.internals.consumer.ConsumerRecordCallback;
 import io.streamthoughts.jikkou.kafka.internals.consumer.DefaultConsumerFactory;
 import io.streamthoughts.jikkou.kafka.internals.consumer.KafkaLogToEndConsumer;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataType;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.nio.ByteBuffer;
@@ -65,13 +65,13 @@ import org.slf4j.LoggerFactory;
         type = String.class
 )
 @AcceptsConfigProperty(
-        name = AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME,
-        description = AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_DESCRIPTION,
+        name = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME,
+        description = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_DESCRIPTION,
         type = String.class
 )
 @AcceptsConfigProperty(
-        name = AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME,
-        description = AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_DESCRIPTION,
+        name = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME,
+        description = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_DESCRIPTION,
         type = String.class
 )
 @AcceptsConfigProperty(
@@ -150,7 +150,7 @@ public final class AdminClientKafkaTableCollector
         String topic = config.topicName();
         LOG.debug("Checking if kafka topic {} is compacted", topic);
         try (AdminClientContext client = new AdminClientContext(adminClientFactory)) {
-            boolean isCompacted = client.isTopicCleanupPolicyCompact(topic, true);
+            boolean isCompacted = client.isTopicCleanupPolicyCompact(topic, false);
             if (!isCompacted) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -167,8 +167,8 @@ public final class AdminClientKafkaTableCollector
         KafkaLogToEndConsumer<byte[], byte[]> consumer = new KafkaLogToEndConsumer<>(consumerFactory);
 
         InternalConsumerRecordCallback callback = new InternalConsumerRecordCallback(
-                config.keyFormat(),
-                config.valueFormat(),
+                config.keyType(),
+                config.valueType(),
                 config.skipMessageOnError()
         );
 
@@ -178,8 +178,8 @@ public final class AdminClientKafkaTableCollector
                 .stream()
                 .filter(item -> {
                     // record with key null must be filtered out
-                    DataHandle keyHandle = item.getSpec().getRecord().getKey();
-                    return keyHandle != null && !keyHandle.isNull();
+                    DataValue key = item.getSpec().getKey();
+                    return key != null && !key.data().isNull();
                 })
                 .filter(new AggregateSelector(selectors)::apply)
                 .collect(Collectors.toList());
@@ -189,15 +189,15 @@ public final class AdminClientKafkaTableCollector
 
         private final Map<DataHandle, V1KafkaTableRecord> accumulator;
 
-        private final DataFormat keyFormat;
-        private final DataFormat valueFormat;
+        private final DataType keyType;
+        private final DataType valueType;
         private final boolean skipMessageOnError;
 
-        public InternalConsumerRecordCallback(DataFormat keyFormat,
-                                              DataFormat valueFormat,
+        public InternalConsumerRecordCallback(DataType keyType,
+                                              DataType valueType,
                                               boolean skipMessageOnError) {
-            this.keyFormat = keyFormat;
-            this.valueFormat = valueFormat;
+            this.keyType = keyType;
+            this.valueType = valueType;
             this.skipMessageOnError = skipMessageOnError;
             this.accumulator = new LinkedHashMap<>();
         }
@@ -214,52 +214,68 @@ public final class AdminClientKafkaTableCollector
                     record.offset()
             );
 
-            final Optional<DataHandle> optionalKey = deserialize(record, record.key(), keyFormat, true);
-            final Optional<DataHandle> optionalValue = deserialize(record, record.value(), valueFormat, false);
-
-            if (optionalKey.isEmpty() || optionalValue.isEmpty())
+            if (record.key() == null) {
+                LOG.debug("Skipping record with key 'null' from {}-{} at offset {}",
+                        record.topic(),
+                        record.partition(),
+                        record.offset()
+                );
                 return;
-
-            if (optionalValue.get().isNull()) {
-                accumulator.remove(optionalValue.get());
-            } else {
-                List<KafkaRecordHeader> headers = StreamSupport
-                        .stream(record.headers().spliterator(), false)
-                        .map(h -> new KafkaRecordHeader(h.key(), new String(h.value(), StandardCharsets.UTF_8)))
-                        .toList();
-
-                V1KafkaTableRecord data = V1KafkaTableRecord
-                        .builder()
-                        .withMetadata(ObjectMeta
-                                .builder()
-                                .withName(record.topic())
-                                .withAnnotation("kafka.jikkou.io/record-partition", record.partition())
-                                .withAnnotation("kafka.jikkou.io/record-offset", record.offset())
-                                .withAnnotation("kafka.jikkou.io/record-timestamp", record.timestamp())
-                                .build()
-
-                        )
-                        .withSpec(V1KafkaTableRecordSpec
-                                .builder()
-                                .withKeyFormat(keyFormat)
-                                .withValueFormat(valueFormat)
-                                .withRecord(KafkaRecordData
-                                        .builder()
-                                        .withHeaders(headers)
-                                        .withKey(optionalKey.get())
-                                        .withValue(optionalValue.get())
-                                        .build())
-                                .build()
-                        )
-                        .build();
-                accumulator.put(optionalKey.get(), data);
             }
+
+            final DataHandle key = deserialize(record, record.key(), keyType, true)
+                    .get();
+
+            if (record.value() == null) {
+                LOG.debug("Detecting tombstone record for key '{}' from {}-{} at offset {}",
+                        key,
+                        record.topic(),
+                        record.partition(),
+                        record.offset()
+                );
+                accumulator.remove(key);
+                return;
+            }
+
+            final DataHandle value = deserialize(record, record.value(), valueType, false)
+                    .get();
+
+            List<KafkaRecordHeader> headers = StreamSupport
+                    .stream(record.headers().spliterator(), false)
+                    .map(h -> new KafkaRecordHeader(h.key(), new String(h.value(), StandardCharsets.UTF_8)))
+                    .toList();
+
+            V1KafkaTableRecord data = V1KafkaTableRecord
+                    .builder()
+                    .withMetadata(ObjectMeta
+                            .builder()
+                            .withName(record.topic())
+                            .withAnnotation("kafka.jikkou.io/record-partition", record.partition())
+                            .withAnnotation("kafka.jikkou.io/record-offset", record.offset())
+                            .withAnnotation("kafka.jikkou.io/record-timestamp", record.timestamp())
+                            .build()
+                    )
+                    .withSpec(V1KafkaTableRecordSpec
+                            .builder()
+                            .withKey(new DataValue(
+                                    keyType,
+                                    key
+                            ))
+                            .withValue(new DataValue(
+                                    valueType,
+                                    value
+                            ))
+                            .withHeaders(headers)
+                            .build()
+                    )
+                    .build();
+            accumulator.put(key, data);
         }
 
         private Optional<DataHandle> deserialize(
                 final KafkaRecord<byte[], byte[]> record,
                 final byte[] data,
-                final DataFormat format,
+                final DataType format,
                 final boolean isKey) {
             try {
                 ByteBuffer keyByteBuffer = Optional.ofNullable(data)
@@ -304,17 +320,17 @@ public final class AdminClientKafkaTableCollector
                 .ofString(TOPIC_CONFIG_NAME)
                 .description(TOPIC_CONFIG_DESCRIPTION);
 
-        public static final String KEY_FORMAT_CONFIG_NAME = "key-format";
-        public static final String KEY_FORMAT_CONFIG_DESCRIPTION = "The record key format.";
-        public static ConfigProperty<String> KEY_FORMAT_CONFIG = ConfigProperty
-                .ofString(KEY_FORMAT_CONFIG_NAME)
-                .description(KEY_FORMAT_CONFIG_DESCRIPTION);
+        public static final String KEY_TYPE_CONFIG_NAME = "key-type";
+        public static final String KEY_TYPE_CONFIG_DESCRIPTION = "The record key type.";
+        public static ConfigProperty<String> KEY_TYPE_CONFIG = ConfigProperty
+                .ofString(KEY_TYPE_CONFIG_NAME)
+                .description(KEY_TYPE_CONFIG_DESCRIPTION);
 
-        public static final String VALUE_FORMAT_CONFIG_NAME = "value-format";
-        public static final String VALUE_FORMAT_CONFIG_DESCRIPTION = "The record value format.";
-        public static ConfigProperty<String> VALUE_FORMAT_CONFIG = ConfigProperty
-                .ofString(VALUE_FORMAT_CONFIG_NAME)
-                .description(VALUE_FORMAT_CONFIG_DESCRIPTION);
+        public static final String VALUE_TYPE_CONFIG_NAME = "value-type";
+        public static final String VALUE_TYPE_CONFIG_DESCRIPTION = "The record value type.";
+        public static ConfigProperty<String> VALUE_TYPE_CONFIG = ConfigProperty
+                .ofString(VALUE_TYPE_CONFIG_NAME)
+                .description(VALUE_TYPE_CONFIG_DESCRIPTION);
 
         public static final String SKIP_MESSAGE_ON_ERROR_CONFIG_NAME = "skip-message-on-error";
         public static final String SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION = "If there is an error when processing a message, skip it instead of halt.";
@@ -342,12 +358,12 @@ public final class AdminClientKafkaTableCollector
             return TOPIC_NAME_CONFIG.evaluate(configuration);
         }
 
-        public DataFormat keyFormat() {
-            return DataFormat.valueOf(KEY_FORMAT_CONFIG.evaluate(configuration).toUpperCase(Locale.ROOT));
+        public DataType keyType() {
+            return DataType.valueOf(KEY_TYPE_CONFIG.evaluate(configuration).toUpperCase(Locale.ROOT));
         }
 
-        public DataFormat valueFormat() {
-            return DataFormat.valueOf(VALUE_FORMAT_CONFIG.evaluate(configuration).toUpperCase(Locale.ROOT));
+        public DataType valueType() {
+            return DataType.valueOf(VALUE_TYPE_CONFIG.evaluate(configuration).toUpperCase(Locale.ROOT));
         }
 
         public Map<String, Object> clientConfig() {

@@ -21,26 +21,19 @@ import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataType;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class RecordChangeComputerTest {
+class KafkaTableRecordChangeComputerTest {
 
     static final String TEST_TOPIC_NAME = "test";
-
-    static final KafkaRecordData KAFKA_RECORD_DATA = KafkaRecordData
-            .builder()
-            .withHeader(new KafkaRecordHeader("k", "v"))
-            .withKey(new DataHandle(new TextNode("key")))
-            .withValue(new DataHandle(new TextNode("value")))
-            .build();
 
     static final V1KafkaTableRecord KAFKA_TABLE_RECORD = V1KafkaTableRecord
             .builder()
@@ -50,11 +43,10 @@ class RecordChangeComputerTest {
             )
             .withSpec(V1KafkaTableRecordSpec
                     .builder()
-                    .withKeyFormat(DataFormat.STRING)
-                    .withValueFormat(DataFormat.STRING)
-                    .withRecord(KAFKA_RECORD_DATA)
-                    .build()
-            )
+                    .withHeader(new KafkaRecordHeader("k", "v"))
+                    .withKey(new DataValue(DataType.STRING, new DataHandle(new TextNode("key"))))
+                    .withValue(new DataValue(DataType.STRING, new DataHandle(new TextNode("value"))))
+                    .build())
             .build();
 
 
@@ -62,19 +54,17 @@ class RecordChangeComputerTest {
     void shouldReturnNoneChangeForIdentityResource() {
         // Given
         // When
-        RecordChangeComputer computer = new RecordChangeComputer();
-        List<RecordChange> actual = computer.computeChanges(List.of(KAFKA_TABLE_RECORD), List.of(KAFKA_TABLE_RECORD))
+        KafkaTableRecordChangeComputer computer = new KafkaTableRecordChangeComputer();
+        List<KafkaTableRecordChange> actual = computer.computeChanges(List.of(KAFKA_TABLE_RECORD), List.of(KAFKA_TABLE_RECORD))
                 .stream()
                 .map(HasMetadataChange::getChange)
                 .toList();
         // Then
-        List<RecordChange> expected = List.of(RecordChange
+        List<KafkaTableRecordChange> expected = List.of(KafkaTableRecordChange
                 .builder()
                 .withTopic(TEST_TOPIC_NAME)
                 .withChangeType(ChangeType.NONE)
-                .withKeyFormat(DataFormat.STRING)
-                .withValueFormat(DataFormat.STRING)
-                .withRecord(ValueChange.none(KAFKA_RECORD_DATA))
+                .withRecord(ValueChange.none(KAFKA_TABLE_RECORD.getSpec()))
                 .build()
         );
         Assertions.assertEquals(expected, actual);
@@ -85,21 +75,19 @@ class RecordChangeComputerTest {
         // Given
 
         // When
-        RecordChangeComputer computer = new RecordChangeComputer();
+        KafkaTableRecordChangeComputer computer = new KafkaTableRecordChangeComputer();
 
-        List<RecordChange> actual = computer.computeChanges(List.of(), List.of(KAFKA_TABLE_RECORD))
+        List<KafkaTableRecordChange> actual = computer.computeChanges(List.of(), List.of(KAFKA_TABLE_RECORD))
                 .stream()
                 .map(HasMetadataChange::getChange)
                 .toList();
 
         // Then
-        List<RecordChange> expected = List.of(RecordChange
+        List<KafkaTableRecordChange> expected = List.of(KafkaTableRecordChange
                 .builder()
                 .withTopic(TEST_TOPIC_NAME)
                 .withChangeType(ChangeType.ADD)
-                .withKeyFormat(DataFormat.STRING)
-                .withValueFormat(DataFormat.STRING)
-                .withRecord(ValueChange.withAfterValue(KAFKA_RECORD_DATA))
+                .withRecord(ValueChange.withAfterValue(KAFKA_TABLE_RECORD.getSpec()))
                 .build()
         );
         Assertions.assertEquals(expected, actual);
@@ -119,21 +107,19 @@ class RecordChangeComputerTest {
         List<V1KafkaTableRecord> after = List.of(recordToDelete);
 
         // When
-        RecordChangeComputer computer = new RecordChangeComputer();
+        KafkaTableRecordChangeComputer computer = new KafkaTableRecordChangeComputer();
 
-        List<RecordChange> actual = computer.computeChanges(before, after)
+        List<KafkaTableRecordChange> actual = computer.computeChanges(before, after)
                 .stream()
                 .map(HasMetadataChange::getChange)
                 .toList();
 
         // Then
-        List<RecordChange> expected = List.of(RecordChange
+        List<KafkaTableRecordChange> expected = List.of(KafkaTableRecordChange
                 .builder()
                 .withTopic(TEST_TOPIC_NAME)
                 .withChangeType(ChangeType.DELETE)
-                .withKeyFormat(DataFormat.STRING)
-                .withValueFormat(DataFormat.STRING)
-                .withRecord(ValueChange.withBeforeValue(KAFKA_RECORD_DATA))
+                .withRecord(ValueChange.withBeforeValue(KAFKA_TABLE_RECORD.getSpec()))
                 .build()
         );
         Assertions.assertEquals(expected, actual);

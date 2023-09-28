@@ -28,37 +28,16 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class DataFormatTest {
+class DataTypeTest {
 
     public static final Map<String, Object> EMPTY_PROPS = Collections.emptyMap();
     public static final String TOPIC = "topic";
 
     @Test
-    void shouldSerializeDeserializeLongForNonNull() {
-        // Given
-        DataSerde serde = DataFormat.LONG.getDataSerde();
-        DataHandle value = DataHandle.of(42L);
-
-        // When / Then
-        Optional<ByteBuffer> serialized = serde.serialize(
-                TOPIC,
-                value,
-                EMPTY_PROPS,
-                false
-        );
-        Assertions.assertTrue(serialized.isPresent());
-
-        // When / Then
-        Optional<DataHandle> deserialize = serde.deserialize(TOPIC, serialized.get(), EMPTY_PROPS, false);
-        Assertions.assertTrue(deserialize.isPresent());
-        Assertions.assertEquals(deserialize.get(), value);
-    }
-
-    @Test
     void shouldSerializeDeserializeStringForNonNull() {
         // Given
-        DataSerde serde = DataFormat.STRING.getDataSerde();
-        DataHandle value = DataHandle.of("value");
+        DataSerde serde = DataType.STRING.getDataSerde();
+        DataHandle value = DataHandle.ofString("value");
 
         // When / Then
         Optional<ByteBuffer> serialized = serde.serialize(
@@ -79,8 +58,8 @@ class DataFormatTest {
     void shouldSerializeDeserializeBinaryForNonNull() {
         // Given
         String encoded = Base64.getEncoder().encodeToString("value".getBytes(StandardCharsets.UTF_8));
-        DataSerde serde = DataFormat.BINARY.getDataSerde();
-        DataHandle value = DataHandle.of(encoded);
+        DataSerde serde = DataType.BINARY.getDataSerde();
+        DataHandle value = DataHandle.ofString(encoded);
 
         // When / Then
         Optional<ByteBuffer> serialized = serde.serialize(
@@ -100,7 +79,7 @@ class DataFormatTest {
     @Test
     void shouldSerializeDeserializeJsonForNonNull() throws IOException {
         // Given
-        DataSerde serde = DataFormat.JSON.getDataSerde();
+        DataSerde serde = DataType.JSON.getDataSerde();
         JsonNode jsonNode = new ObjectMapper().readTree("""
                 {
                     "key": "value"

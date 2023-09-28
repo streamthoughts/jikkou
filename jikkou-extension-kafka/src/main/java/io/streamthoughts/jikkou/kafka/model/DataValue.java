@@ -18,38 +18,34 @@ package io.streamthoughts.jikkou.kafka.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
 import java.beans.ConstructorProperties;
+import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a string key/value record header.
+ * Wraps a type and a value.
  *
- * @param name    of the header. Must not be {@code null}.
- * @param value   of the header. Must not be {@code null}.
+ * @param type  the data type.
+ * @param data  the data value.
  */
 @Reflectable
-public record KafkaRecordHeader(String name, String value) {
+public record DataValue(@NotNull DataType type, @Nullable DataHandle data) {
 
     @ConstructorProperties({
-            "name",
-            "value",
+            "type",
+            "data",
     })
-    public KafkaRecordHeader {}
+    public DataValue {}
 
-    @JsonProperty("name")
-    public String name() {
-        return name;
+    @JsonProperty("type")
+    @Override
+    public DataType type() {
+        return type;
     }
 
+    @JsonProperty("data")
     @Override
-    @JsonProperty("value")
-    public String value() {
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return "(name=" + name + ", value='" + value + ')';
+    public DataHandle data() {
+        return Optional.ofNullable(data).orElse(DataHandle.NULL);
     }
 }

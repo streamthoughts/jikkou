@@ -15,43 +15,51 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.record;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.GenericResourceChange;
-import io.streamthoughts.jikkou.kafka.change.RecordChange;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
+import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
+import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataType;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class RecordChangeDescriptionTest {
+class KafkaTableKafkaTableRecordChangeHandlerTest {
 
     @Test
-    void shouldGetTextualDescription() {
+    void shouldMapChangeToKafkaRecordForAddChangeType() {
         // Given
-        RecordChange change = RecordChange
+        KafkaTableRecordChange change = KafkaTableRecordChange
                 .builder()
                 .withTopic("test")
                 .withChangeType(ChangeType.ADD)
-                .withKeyFormat(DataFormat.STRING)
-                .withValueFormat(DataFormat.STRING)
-                .withRecord(ValueChange.withAfterValue(KafkaRecordData
+                .withRecord(ValueChange.withAfterValue(V1KafkaTableRecordSpec
                         .builder()
                         .withHeader(new KafkaRecordHeader("k", "v"))
-                        .withKey(new DataHandle(new TextNode("key")))
-                        .withValue(new DataHandle(new TextNode("value")))
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("key")))
+                        .withValue(new DataValue(DataType.STRING, DataHandle.ofString("value")))
                         .build()
                 ))
                 .build();
-
         // When
-        RecordChangeDescription description = new RecordChangeDescription(new GenericResourceChange<>(change));
-        String textual = description.textual();
+        KafkaRecord< ByteBuffer, ByteBuffer> actual = KafkaTableRecordChangeHandler.toKafkaRecord(new GenericResourceChange<>(change));
+
+        KafkaRecord<ByteBuffer, ByteBuffer> expected = KafkaRecord
+                .<ByteBuffer, ByteBuffer>builder()
+                .topic("test")
+                .key(ByteBuffer.wrap("key".getBytes(StandardCharsets.UTF_8)))
+                .value(ByteBuffer.wrap("value".getBytes(StandardCharsets.UTF_8)))
+                .header("k", "v")
+                .build();
 
         // Then
-        Assertions.assertEquals("Add record for key '\"key\"' into topic 'test'", textual);
+        Assertions.assertEquals(expected, actual);
     }
+  
 }

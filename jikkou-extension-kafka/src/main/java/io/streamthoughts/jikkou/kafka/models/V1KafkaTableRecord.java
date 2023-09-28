@@ -36,6 +36,9 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
+ * V1KafkaTableRecord
+ * <p>
+ * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

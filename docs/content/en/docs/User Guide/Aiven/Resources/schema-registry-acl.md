@@ -3,7 +3,7 @@ categories: [ ]
 tags: [ "feature", "resources" ]
 title: "ACL for Aiven Schema Registry"
 linkTitle: "ACL for Aiven Schema Registry"
-weight: 20
+weight: 30
 description: >
   Learn how to manage Access Control Lists (ACLs) in Aiven for Schema Registry
 ---
@@ -47,13 +47,10 @@ _`file: schema-registry-acl-entry.yaml`_
 ---
 apiVersion: "kafka.aiven.io/v1beta1"
 kind: "SchemaRegistryAclEntry"
-metadata:
-  labels: { }
-  annotations: { }
 spec:
-  permission: "WRITE"
-  username: "alice"
-  topic: "Subject:*"
+  permission: "READ"
+  username: "Alice"
+  resource: "Subject:*"
 ```
 
 ## `SchemaRegistryAclEntryList`
@@ -92,5 +89,5 @@ items:
   - spec:
       permission: "WRITE"
       username: "alice"
-      topic: "Subject:*"
+      resource: "Subject:*"
 ```

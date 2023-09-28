@@ -20,11 +20,13 @@ import io.streamthoughts.jikkou.api.change.ChangeHandler;
 import io.streamthoughts.jikkou.api.change.ChangeMetadata;
 import io.streamthoughts.jikkou.api.change.ChangeResponse;
 import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.kafka.change.RecordChange;
+import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.internals.producer.KafkaRecordSender;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -41,16 +43,19 @@ import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class RecordChangeHandler implements ChangeHandler<RecordChange> {
+/**
+ * Handler for {@link KafkaTableRecordChange}.
+ */
+public final class KafkaTableRecordChangeHandler implements ChangeHandler<KafkaTableRecordChange> {
 
     private final Producer<byte[], byte[]> producer;
 
     /**
-     * Creates a new {@link RecordChangeHandler} instance.
+     * Creates a new {@link KafkaTableRecordChangeHandler} instance.
      *
      * @param producer   the Producer.
      */
-    public RecordChangeHandler(@NotNull Producer<byte[], byte[]> producer) {
+    public KafkaTableRecordChangeHandler(@NotNull Producer<byte[], byte[]> producer) {
         this.producer = Objects.requireNonNull(producer, "producerFactory must not be null");
     }
 
@@ -62,13 +67,13 @@ public final class RecordChangeHandler implements ChangeHandler<RecordChange> {
 
     /** {@inheritDoc} **/
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<RecordChange> item) {
-        return new RecordChangeDescription(item);
+    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<KafkaTableRecordChange> item) {
+        return new KafkaTableRecordChangeDescription(item);
     }
 
     /** {@inheritDoc} **/
     @Override
-    public List<ChangeResponse<RecordChange>> apply(@NotNull List<HasMetadataChange<RecordChange>> items) {
+    public List<ChangeResponse<KafkaTableRecordChange>> apply(@NotNull List<HasMetadataChange<KafkaTableRecordChange>> items) {
         KafkaRecordSender<byte[], byte[]> sender = new KafkaRecordSender<>(producer);
         return items.stream()
                 .map(item -> send(item, sender))
@@ -76,8 +81,8 @@ public final class RecordChangeHandler implements ChangeHandler<RecordChange> {
     }
 
     @NotNull
-    private static ChangeResponse<RecordChange> send(HasMetadataChange<RecordChange> item,
-                                                     KafkaRecordSender<byte[], byte[]> sender) {
+    private static ChangeResponse<KafkaTableRecordChange> send(HasMetadataChange<KafkaTableRecordChange> item,
+                                                               KafkaRecordSender<byte[], byte[]> sender) {
 
         KafkaRecord<byte[], byte[]> record = toKafkaRecord(item)
                 .mapKey(k -> Optional.ofNullable(k).map(ByteBuffer::array).orElse(null))
@@ -92,38 +97,43 @@ public final class RecordChangeHandler implements ChangeHandler<RecordChange> {
     }
 
     @VisibleForTesting
-    static KafkaRecord<ByteBuffer, ByteBuffer> toKafkaRecord(final HasMetadataChange<RecordChange> item) {
-        RecordChange change = item.getChange();
-        DataFormat keyFormat = change.getKeyFormat();
-
+    static KafkaRecord<ByteBuffer, ByteBuffer> toKafkaRecord(final HasMetadataChange<KafkaTableRecordChange> item) {
+        KafkaTableRecordChange change = item.getChange();
         ChangeType changeType = change.getChangeType();
-        Optional<ByteBuffer> rawKey = keyFormat.getDataSerde().serialize(
-                change.getTopic(),
-                change.getRecord().getAfter().getKey(),
+
+        ValueChange<V1KafkaTableRecordSpec> spec = change.getRecord();
+
+        DataValue key = changeType == ChangeType.ADD ?
+                spec.getAfter().getKey() :
+                spec.getBefore().getKey();
+
+        final String topic = change.getTopic();
+        Optional<ByteBuffer> rawKey = key.type().getDataSerde().serialize(
+                topic,
+                key.data(),
                 Collections.emptyMap(),
                 true
         );
 
         Optional<ByteBuffer> rawValue = Optional.empty();
-
         if (changeType != ChangeType.DELETE) {
-            DataFormat valueFormat = change.getValueFormat();
-            rawValue = valueFormat.getDataSerde().serialize(
-                    change.getTopic(),
-                    change.getRecord().getAfter().getValue(),
+            DataValue value = spec.getAfter().getValue();
+            rawValue = value.type().getDataSerde().serialize(
+                    topic,
+                    value.data(),
                     Collections.emptyMap(),
                     false
             );
         }
 
-        List<Header> headers = change.getRecord()
+        List<Header> headers = spec
                 .getAfter().getHeaders()
-                .stream().map(h -> new RecordHeader(h.key(), h.value().getBytes(StandardCharsets.UTF_8)))
+                .stream().map(h -> new RecordHeader(h.name(), h.value().getBytes(StandardCharsets.UTF_8)))
                 .collect(Collectors.toList());
 
         return KafkaRecord
                 .<ByteBuffer, ByteBuffer>builder()
-                .topic(change.getTopic())
+                .topic(topic)
                 .headers(new RecordHeaders(headers))
                 .key(rawKey.orElse(null))
                 .value(rawValue.orElse(null))

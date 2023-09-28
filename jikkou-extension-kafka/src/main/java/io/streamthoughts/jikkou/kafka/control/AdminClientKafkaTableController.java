@@ -33,21 +33,20 @@ import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.kafka.change.RecordChange;
-import io.streamthoughts.jikkou.kafka.change.RecordChangeComputer;
-import io.streamthoughts.jikkou.kafka.change.handlers.record.RecordChangeDescription;
-import io.streamthoughts.jikkou.kafka.change.handlers.record.RecordChangeHandler;
+import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
+import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChangeComputer;
+import io.streamthoughts.jikkou.kafka.change.handlers.record.KafkaTableRecordChangeDescription;
+import io.streamthoughts.jikkou.kafka.change.handlers.record.KafkaTableRecordChangeHandler;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientFactory;
 import io.streamthoughts.jikkou.kafka.internals.consumer.ConsumerFactory;
 import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
 import io.streamthoughts.jikkou.kafka.internals.producer.ProducerFactory;
-import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +56,7 @@ import org.slf4j.LoggerFactory;
 @AcceptsResource(type = V1KafkaTableRecord.class)
 @AcceptsReconciliationModes({CREATE, UPDATE, APPLY_ALL})
 public final class AdminClientKafkaTableController
-        implements BaseResourceController<V1KafkaTableRecord, RecordChange> {
+        implements BaseResourceController<V1KafkaTableRecord, KafkaTableRecordChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTableController.class);
 
@@ -112,12 +111,12 @@ public final class AdminClientKafkaTableController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult<RecordChange>> execute(@NotNull List<HasMetadataChange<RecordChange>> changes,
-                                                    @NotNull ReconciliationMode mode, boolean dryRun) {
+    public List<ChangeResult<KafkaTableRecordChange>> execute(@NotNull List<HasMetadataChange<KafkaTableRecordChange>> changes,
+                                                              @NotNull ReconciliationMode mode, boolean dryRun) {
         try (var producer = producerFactory.createProducer()) {
-            List<ChangeHandler<RecordChange>> handlers = List.of(
-                    new RecordChangeHandler(producer),
-                    new ChangeHandler.None<>(RecordChangeDescription::new)
+            List<ChangeHandler<KafkaTableRecordChange>> handlers = List.of(
+                    new KafkaTableRecordChangeHandler(producer),
+                    new ChangeHandler.None<>(KafkaTableRecordChangeDescription::new)
             );
             return new ChangeExecutor<>(handlers).execute(changes, dryRun);
         }
@@ -127,47 +126,38 @@ public final class AdminClientKafkaTableController
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<? extends HasMetadataChange<RecordChange>> computeReconciliationChanges(
+    public ResourceListObject<? extends HasMetadataChange<KafkaTableRecordChange>> computeReconciliationChanges(
             @NotNull Collection<V1KafkaTableRecord> resources,
             @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
 
         Map<String, List<V1KafkaTableRecord>> resourcesByTopic = resources.stream()
                 .filter(AdminClientKafkaTableController::recordWithNonEmptyKey)
-                .map(AdminClientKafkaTableController::wrapRecordNonNullValue)
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .collect(Collectors.groupingBy(it -> it.getMetadata().getName(), Collectors.toList()));
 
-        List<HasMetadataChange<RecordChange>> changes = new ArrayList<>();
+        List<HasMetadataChange<KafkaTableRecordChange>> changes = new ArrayList<>();
 
-        RecordChangeComputer changeComputer = new RecordChangeComputer();
         for (var entry : resourcesByTopic.entrySet()) {
             String topicName = entry.getKey();
             // assuming that all the records in a theme have the same key/value format.
             V1KafkaTableRecord first = entry.getValue().get(0);
             Configuration configuration = Configuration.from(Map.of(
                     AdminClientKafkaTableCollector.Config.TOPIC_NAME_CONFIG.key(), topicName,
-                    AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG.key(), first.getSpec().getKeyFormat().name(),
-                    AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG.key(), first.getSpec().getValueFormat().name(),
+                    AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG.key(), first.getSpec().getKey().type().name(),
+                    AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG.key(), first.getSpec().getValue().type().name(),
                     AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG.key(), true
             ));
             List<V1KafkaTableRecord> actual = collector.listAll(configuration, context.selectors());
+
+            KafkaTableRecordChangeComputer changeComputer = new KafkaTableRecordChangeComputer();
             changes.addAll(changeComputer.computeChanges(actual, entry.getValue()));
         }
         return new GenericResourceListObject<>(changes);
     }
 
-    private static V1KafkaTableRecord wrapRecordNonNullValue(@NotNull V1KafkaTableRecord item) {
-        var record = item.getSpec().getRecord();
-        return item.withSpec(item.getSpec().withRecord(
-                record
-                    .withKey(Optional.ofNullable(record.getKey()).orElse(DataHandle.NULL))
-                    .withValue(Optional.ofNullable(record.getValue()).orElse(DataHandle.NULL)))
-        );
-    }
-
     private static boolean recordWithNonEmptyKey(@NotNull V1KafkaTableRecord item) {
-        DataHandle keyHandle = item.getSpec().getRecord().getKey();
-        return keyHandle != null && !keyHandle.isNull();
+        DataValue keyValue = item.getSpec().getKey();
+        return keyValue != null && !keyValue.data().isNull();
     }
 }

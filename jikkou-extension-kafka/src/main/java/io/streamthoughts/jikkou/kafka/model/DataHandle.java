@@ -24,27 +24,35 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.streamthoughts.jikkou.annotation.Reflectable;
 import io.streamthoughts.jikkou.common.utils.IOUtils;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * Used for wrapping a JSON value.
+ * 
+ * @param value the Json value.
+ */
 @JsonDeserialize(using = DataHandle.PayloadHandleDeserializer.class)
 @Reflectable
 public record DataHandle(JsonNode value) {
 
     public static DataHandle NULL = new DataHandle(NullNode.getInstance());
 
-    public static DataHandle of(@NotNull String value) {
+    /**
+     * Static helper method to create a {@link DataHandle} for the given value.
+     *
+     * @param value a text value.
+     * @return  a new {@link DataHandle} instance.
+     */
+    public static DataHandle ofString(@NotNull String value) {
         return new DataHandle(new TextNode(value));
-    }
-
-    public static DataHandle of(@NotNull Long value) {
-        return new DataHandle(new LongNode(value));
     }
 
     /**
@@ -53,15 +61,27 @@ public record DataHandle(JsonNode value) {
      * @param value the JSON value.
      */
     @JsonCreator
-    public DataHandle(@NotNull JsonNode value) {
-        this.value = Objects.requireNonNull(value, "value must not be null");
+    public DataHandle(@Nullable JsonNode value) {
+        this.value = Optional.ofNullable(value).orElse(NullNode.getInstance());
     }
 
+    /**
+     * Gets the JSON string.
+     *
+     * @return  the raw json value.
+     */
     @JsonValue
     public String rawValue() {
         return rawValue(true);
     }
 
+    /**
+     * Gets the JSON string.
+     *
+     * @param prettyString using pretty-printer.
+     *
+     * @return  the raw json value.
+     */
     public String rawValue(boolean prettyString) {
         return isNull() ? null : prettyString ? value.toPrettyString() : value.toString();
     }

@@ -18,25 +18,25 @@ package io.streamthoughts.jikkou.kafka.change.handlers.record;
 import io.streamthoughts.jikkou.api.change.ChangeDescription;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.kafka.change.RecordChange;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
+import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Provides textual description for {@link RecordChange}.
+ * Provides textual description for {@link KafkaTableRecordChange}.
  */
-public class RecordChangeDescription implements ChangeDescription {
+public class KafkaTableRecordChangeDescription implements ChangeDescription {
 
-    private final HasMetadataChange<RecordChange> item;
+    private final HasMetadataChange<KafkaTableRecordChange> item;
 
     /**
-     * Creates a new {@link RecordChangeDescription} instance.
+     * Creates a new {@link KafkaTableRecordChangeDescription} instance.
      *
-     * @param item  the item change.
+     * @param item the item change.
      */
-    public RecordChangeDescription(final @NotNull HasMetadataChange<RecordChange> item) {
+    public KafkaTableRecordChangeDescription(final @NotNull HasMetadataChange<KafkaTableRecordChange> item) {
         this.item = Objects.requireNonNull(item, "change must not be null");
     }
 
@@ -45,15 +45,12 @@ public class RecordChangeDescription implements ChangeDescription {
      **/
     @Override
     public String textual() {
-        RecordChange change = item.getChange();
-        ValueChange<KafkaRecordData> record = change.getRecord();
-
-        String key = Optional
-                .ofNullable(record.getAfter())
-                .orElse(record.getBefore()).getKey().rawValue();
+        KafkaTableRecordChange change = item.getChange();
+        ValueChange<V1KafkaTableRecordSpec> record = change.getRecord();
+        String keyRawValue = Optional.ofNullable(record.getAfter()).orElse(record.getBefore()).getKey().data().rawValue();
         return String.format("%s record for key '%s' into topic '%s'",
                 ChangeDescription.humanize(change.getChangeType()),
-                key,
+                keyRawValue,
                 change.getTopic()
         );
     }

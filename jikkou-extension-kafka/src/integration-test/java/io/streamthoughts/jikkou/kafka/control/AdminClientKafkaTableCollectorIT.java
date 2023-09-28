@@ -15,16 +15,15 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataType;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.util.List;
@@ -72,8 +71,8 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
         List<V1KafkaTableRecord> result = collector.listAll(Configuration.of(
                 AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME, DataFormat.STRING,
-                AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME, DataFormat.STRING)
+                AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING,
+                AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING)
         );
         // Then
         var expected = V1KafkaTableRecord
@@ -87,15 +86,9 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
                 )
                 .withSpec(V1KafkaTableRecordSpec
                         .builder()
-                        .withKeyFormat(DataFormat.STRING)
-                        .withValueFormat(DataFormat.STRING)
-                        .withRecord(KafkaRecordData
-                                .builder()
-                                .withHeader(new KafkaRecordHeader("k", "v"))
-                                .withKey(new DataHandle(new TextNode(RECORD_KEY_V2.key())))
-                                .withValue(new DataHandle(new TextNode(RECORD_KEY_V2.value())))
-                                .build()
-                        )
+                        .withHeader(new KafkaRecordHeader("k", "v"))
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString(RECORD_KEY_V2.key())))
+                        .withValue(new DataValue(DataType.STRING, DataHandle.ofString(RECORD_KEY_V2.value())))
                         .build()
                 )
                 .build();
@@ -114,8 +107,8 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         Assertions.assertThrows(JikkouRuntimeException.class, () -> {
             collector.listAll(Configuration.of(
                     AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                    AdminClientKafkaTableCollector.Config.KEY_FORMAT_CONFIG_NAME, DataFormat.STRING,
-                    AdminClientKafkaTableCollector.Config.VALUE_FORMAT_CONFIG_NAME, DataFormat.STRING)
+                    AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING,
+                    AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING)
             );
         });
     }

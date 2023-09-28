@@ -31,13 +31,14 @@ import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
-import io.streamthoughts.jikkou.kafka.change.RecordChange;
+import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataType;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -109,19 +110,17 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
         // THEN
 
         JsonNode value = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_AFTER_VALUE);
-        RecordChange expected = RecordChange.builder()
+        KafkaTableRecordChange expected = KafkaTableRecordChange.builder()
                 .withChangeType(ChangeType.ADD)
                 .withTopic(TEST_TOPIC_COMPACTED)
-                .withKeyFormat(DataFormat.STRING)
-                .withValueFormat(DataFormat.JSON)
-                .withRecord(ValueChange.withAfterValue(
-                        KafkaRecordData
+                .withRecord(ValueChange.withAfterValue(V1KafkaTableRecordSpec
                                 .builder()
                                 .withHeader(KAFKA_RECORD_HEADER)
-                                .withKey(DataHandle.of("test"))
-                                .withValue(new DataHandle(value))
+                                .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                                .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
                                 .build()
-                ))
+                        )
+                )
                 .build();
         Assertions.assertEquals(List.of(expected), actual);
     }
@@ -157,23 +156,21 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
 
         JsonNode beforeValue = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_RECORD_VALUE);
         JsonNode afterValue = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_AFTER_VALUE);
-        RecordChange expected = RecordChange.builder()
+        KafkaTableRecordChange expected = KafkaTableRecordChange.builder()
                 .withChangeType(ChangeType.UPDATE)
                 .withTopic(TEST_TOPIC_COMPACTED)
-                .withKeyFormat(DataFormat.STRING)
-                .withValueFormat(DataFormat.JSON)
                 .withRecord(ValueChange.with(
-                        KafkaRecordData
+                        V1KafkaTableRecordSpec
                                 .builder()
                                 .withHeader(KAFKA_RECORD_HEADER)
-                                .withKey(DataHandle.of("test"))
-                                .withValue(new DataHandle(beforeValue))
+                                .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                                .withValue(new DataValue(DataType.JSON, new DataHandle(beforeValue)))
                                 .build(),
-                        KafkaRecordData
+                        V1KafkaTableRecordSpec
                                 .builder()
                                 .withHeader(KAFKA_RECORD_HEADER)
-                                .withKey(DataHandle.of("test"))
-                                .withValue(new DataHandle(afterValue))
+                                .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                                .withValue(new DataValue(DataType.JSON, new DataHandle(afterValue)))
                                 .build()
                 ))
                 .build();

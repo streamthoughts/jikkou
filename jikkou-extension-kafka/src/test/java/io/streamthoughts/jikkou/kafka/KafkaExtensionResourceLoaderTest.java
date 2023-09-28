@@ -26,10 +26,10 @@ import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
-import io.streamthoughts.jikkou.kafka.model.DataFormat;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
+import io.streamthoughts.jikkou.kafka.model.DataType;
+import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader;
-import io.streamthoughts.jikkou.kafka.models.KafkaRecordData;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
@@ -168,15 +168,9 @@ class KafkaExtensionResourceLoaderTest {
                 .withMetadata(new ObjectMeta("topic-compacted"))
                 .withSpec(V1KafkaTableRecordSpec
                         .builder()
-                        .withKeyFormat(DataFormat.STRING)
-                        .withValueFormat(DataFormat.JSON)
-                        .withRecord(KafkaRecordData
-                                .builder()
-                                .withHeader(new KafkaRecordHeader("content-type", "application/json"))
-                                .withKey(DataHandle.of("test"))
-                                .withValue(new DataHandle(value))
-                                .build()
-                        )
+                        .withHeader(new KafkaRecordHeader("content-type", "application/json"))
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                        .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
                         .build()
                 )
                 .build();
@@ -204,15 +198,9 @@ class KafkaExtensionResourceLoaderTest {
                 .withMetadata(new ObjectMeta("topic-compacted"))
                 .withSpec(V1KafkaTableRecordSpec
                         .builder()
-                        .withKeyFormat(DataFormat.STRING)
-                        .withValueFormat(DataFormat.JSON)
-                        .withRecord(KafkaRecordData
-                                .builder()
-                                .withHeader(new KafkaRecordHeader("content-type", "application/json"))
-                                .withKey(DataHandle.of("test"))
-                                .withValue(new DataHandle(value))
-                                .build()
-                        )
+                        .withHeader(new KafkaRecordHeader("content-type", "application/json"))
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                        .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
                         .build()
                 )
                 .build();

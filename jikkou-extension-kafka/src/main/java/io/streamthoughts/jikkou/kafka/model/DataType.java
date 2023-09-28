@@ -16,7 +16,6 @@
 package io.streamthoughts.jikkou.kafka.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.streamthoughts.jikkou.kafka.internals.DataSerde;
 import io.streamthoughts.jikkou.kafka.internals.serdes.KafkaJsonSerdes;
@@ -24,15 +23,13 @@ import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.kafka.common.serialization.LongDeserializer;
-import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 /**
- * The formats supported by key/value Kafka record.
+ * The data type supported for a key/value Kafka record.
  */
-public enum DataFormat {
+public enum DataType {
 
     BINARY {
         /** {@inheritDoc} **/
@@ -54,13 +51,6 @@ public enum DataFormat {
         public DataSerde getDataSerde() {
             return new JsonSerde();
         }
-    },
-    LONG {
-        /** {@inheritDoc} **/
-        @Override
-        public DataSerde getDataSerde() {
-            return new LongSerde();
-        }
     };
 
     /**
@@ -79,7 +69,7 @@ public enum DataFormat {
                                               DataHandle data,
                                               Map<String, Object> properties,
                                               boolean isForRecordKey) {
-            if (data == null) return Optional.empty();
+            if (data == null || data.isNull()) return Optional.empty();
             try (KafkaJsonSerdes serdes = new KafkaJsonSerdes(properties, isForRecordKey)) {
                 byte[] bytes = serdes.serialize(topicName, data.value());
                 return Optional.of(ByteBuffer.wrap(bytes));
@@ -100,35 +90,6 @@ public enum DataFormat {
     }
 
     /**
-     * Data Serde for Long.
-     */
-    static class LongSerde implements DataSerde {
-        @Override
-        public Optional<ByteBuffer> serialize(String topicName,
-                                              DataHandle data,
-                                              Map<String, Object> properties,
-                                              boolean isForRecordKey) {
-            if (data == null) return Optional.empty();
-            try (var serializer = new LongSerializer()) {
-                byte[] bytes = serializer.serialize(topicName, data.value().asLong());
-                return Optional.of(ByteBuffer.wrap(bytes));
-            }
-        }
-
-        @Override
-        public Optional<DataHandle> deserialize(String topicName,
-                                                ByteBuffer data,
-                                                Map<String, Object> properties,
-                                                boolean isForRecordKey) {
-            if (data == null) return Optional.empty();
-            try (var deserializer = new LongDeserializer()) {
-                Long deserialize = deserializer.deserialize(topicName, data.array());
-                return Optional.of(new LongNode(deserialize)).map(DataHandle::new);
-            }
-        }
-    }
-
-    /**
      * Data Serde for binary content encoded in base64.
      */
     static class BinarySerde implements DataSerde {
@@ -137,7 +98,7 @@ public enum DataFormat {
                                               DataHandle data,
                                               Map<String, Object> properties,
                                               boolean isForRecordKey) {
-            if (data == null) return Optional.empty();
+            if (data == null || data.isNull()) return Optional.empty();
             String encoded = data.value().asText();
             return Optional.of(ByteBuffer.wrap(Base64.getDecoder().decode(encoded)));
         }
@@ -166,7 +127,7 @@ public enum DataFormat {
                                               DataHandle data,
                                               Map<String, Object> properties,
                                               boolean isForRecordKey) {
-            if (data == null) return Optional.empty();
+            if (data == null || data.isNull()) return Optional.empty();
             try (StringSerializer serializer = new StringSerializer()) {
                 serializer.configure(properties, isForRecordKey);
                 byte[] bytes = serializer.serialize(topicName, data.value().asText());

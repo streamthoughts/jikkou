@@ -3,7 +3,7 @@ categories: [ ]
 tags: [ "feature", "resources" ]
 title: "Quotas for Aiven Apache Kafka®"
 linkTitle: "Quotas for Aiven Apache Kafka®"
-weight: 30
+weight: 20
 description: >
   Learn how to manage Quotas in Aiven for Apache Kafka®
 ---
