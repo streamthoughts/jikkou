@@ -64,6 +64,44 @@ class SchemaRegistryAclEntryValidationTest {
     }
 
     @Test
+    void shouldNotThrowExceptionForValidPatternIncludingNoSpecialCharacter() {
+        // Given
+        SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
+
+        // When - Then
+        Assertions.assertDoesNotThrow(() -> validation.validate(V1SchemaRegistryAclEntry
+                        .builder()
+                        .withSpec(
+                                V1SchemaRegistryAclEntrySpec
+                                        .builder()
+                                        .withResource("Subject:__thisIs_A_Test-topic.json-value")
+                                        .build()
+                        )
+                        .build()
+                )
+        );
+    }
+
+    @Test
+    void shouldNotThrowExceptionForValidPatternIncludingGlobCharacter() {
+        // Given
+        SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
+
+        // When - Then
+        Assertions.assertDoesNotThrow(() -> validation.validate(V1SchemaRegistryAclEntry
+                        .builder()
+                        .withSpec(
+                                V1SchemaRegistryAclEntrySpec
+                                        .builder()
+                                        .withResource("Subject:__*-?-value")
+                                        .build()
+                        )
+                        .build()
+                )
+        );
+    }
+
+    @Test
     void shouldThrowExceptionForInvalidResourcePrefix() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();

@@ -29,19 +29,24 @@ import org.jetbrains.annotations.NotNull;
 public class SchemaRegistryAclEntryValidation implements ResourceValidation<V1SchemaRegistryAclEntry> {
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile(
-            "^(Config|Subject):([A-Za-z|0-9|\\-_*?]*)$"
+            "^(Config|Subject):([A-Za-z|0-9|\\.\\-_*?]*)$"
     );
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void validate(@NotNull V1SchemaRegistryAclEntry resource) throws ValidationException {
-        Matcher matcher = RESOURCE_PATTERN.matcher(resource.getSpec().getResource());
-        if (!matcher.matches()) {
-            throw new ValidationException(
-                    "Invalid input for resource: Config: or Subject:<subject_name> where subject_name must " +
-                     "consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'",
-                    this);
+        String schemaRegistryResource = resource.getSpec().getResource();
+        if (schemaRegistryResource != null) {
+            Matcher matcher = RESOURCE_PATTERN.matcher(schemaRegistryResource);
+            if (!matcher.matches()) {
+                throw new ValidationException(
+                        "Invalid input for resource (" + schemaRegistryResource + "): Config: or " +
+                        "Subject:<subject_name> where subject_name must " +
+                        "consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'",
+                        this);
+            }
         }
     }
 }

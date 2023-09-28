@@ -45,13 +45,14 @@ import io.streamthoughts.jikkou.extension.aiven.change.handler.CreateSchemaRegis
 import io.streamthoughts.jikkou.extension.aiven.change.handler.DeleteSchemaRegistryAclEntryChangeHandler;
 import io.streamthoughts.jikkou.extension.aiven.converter.V1SchemaRegistryAclEntryListConverter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntryList;
 import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
-@AcceptsResource(type = V1SchemaRegistryAclEntry.class, converter = V1SchemaRegistryAclEntryListConverter.class)
+@AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
 public final class AivenSchemaRegistryAclEntryController implements BaseResourceController<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty

@@ -4,11 +4,11 @@ kind: "SchemaRegistryAclEntry"
 spec:
   permission: "WRITE"
   username: "alice"
-  topic: "public.sales.*-value"
+  resource: "Subject:public.sales.*-value"
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1beta1"
 kind: "SchemaRegistryAclEntry"
 spec:
   permission: "READ"
   username: "bob"
-  topic: "*"
+  resource: "Subject:*"
