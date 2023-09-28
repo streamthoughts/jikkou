@@ -21,7 +21,7 @@ limitations under the License.
     <parent>
         <groupId>io.streamthoughts</groupId>
         <artifactId>jikkou</artifactId>
-        <version>0.28.0</version>
+        <version>0.29.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jikkou-extension-core</artifactId>
