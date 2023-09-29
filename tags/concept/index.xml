@@ -218,15 +218,15 @@ accepted by a validation, it is passed to the next validation in the chain.
 This process continues until a suitable validation is found or until all validations have been attempted.&lt;/p>
 &lt;h3 id="configuration">Configuration&lt;/h3>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-# The list of transformations to execute
+# The list of validations to execute
 validations: [
 {
 # Custom name for the validation rule
 name = &amp;#34;&amp;#34;
-# Simple or fully qualified class name of the transformation extension.
+# Simple or fully qualified class name of the validation extension.
 type = &amp;#34;&amp;#34;
 config = {
-# Configuration properties for this transformation
+# Configuration properties for this validation
 }
 }
 ]

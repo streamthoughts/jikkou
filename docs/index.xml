@@ -740,15 +740,15 @@ accepted by a validation, it is passed to the next validation in the chain.
 This process continues until a suitable validation is found or until all validations have been attempted.&lt;/p>
 &lt;h3 id="configuration">Configuration&lt;/h3>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-# The list of transformations to execute
+# The list of validations to execute
 validations: [
 {
 # Custom name for the validation rule
 name = &amp;#34;&amp;#34;
-# Simple or fully qualified class name of the transformation extension.
+# Simple or fully qualified class name of the validation extension.
 type = &amp;#34;&amp;#34;
 config = {
-# Configuration properties for this transformation
+# Configuration properties for this validation
 }
 }
 ]
@@ -1260,7 +1260,65 @@ only once.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">data&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">cleanup.policy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;delete&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Authorizations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/acls/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Reporters</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;strong>&lt;em>Reporters&lt;/em>&lt;/strong> can be used to report changes applied by Jikkou to a third-party system.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>Jikkou allows you to configure multiple reporters as follows:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The list of reporters to execute
+reporters: [
+{
+# Custom name for the reporter
+name = &amp;#34;&amp;#34;
+# Simple or fully qualified class name of the transformation extension.
+type = &amp;#34;&amp;#34;
+config = {
+# Configuration properties for this reporter
+}
+}
+]
+}
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Tips&lt;/h4>
+The &lt;code>config&lt;/code> object passed to a &lt;em>reporter&lt;/em> will fallback on the top-level &lt;code>jikkou&lt;/code> config.
+This allows you to globally declare some configuration settings.
+&lt;/div>
+&lt;h3 id="built-in-implementations">Built-in implementations&lt;/h3>
+&lt;p>Jikkou packs with some built-in &lt;code>ChangeReporter&lt;/code> implementations:&lt;/p>
+&lt;h3 id="kafkachangereporter">&lt;code>KafkaChangeReporter&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>KafkaChangeReporter&lt;/code> can be used to send change results into a given kafka topic. Changes will be published
+as Cloud Events.&lt;/p>
+&lt;h4 id="configuration-1">Configuration&lt;/h4>
+&lt;p>The below example shows how to configure the &lt;code>KafkaChangeReporter&lt;/code>.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The default custom reporters to report applied changes.
+reporters = [
+{
+name = &amp;#34;kafka-reporter&amp;#34;
+type = io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+config = {
+# The &amp;#39;source&amp;#39; of the event that will be generated.
+event.source = &amp;#34;jikkou/cli&amp;#34;
+kafka = {
+# If &amp;#39;true&amp;#39;, topic will be automatically created if it does not already exist.
+topic.creation.enabled = true
+# The default replication factor used for creating topic.
+topic.creation.defaultReplicationFactor = 1
+# The name of the topic the events will be sent.
+topic.name = &amp;#34;jikkou-resource-change-event&amp;#34;
+# The configuration settings for Kafka Producer and AdminClient
+client = ${jikkou.kafka.client} {
+client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
+}
+}
+}
+}
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Kafka Authorizations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/resources/acls/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaPrincipalAuthorization resources are used to define Access Control Lists (ACLs) for principals authenticated
 to your Kafka Cluster.&lt;/p>
