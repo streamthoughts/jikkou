@@ -50,8 +50,8 @@
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;p>To set up the configuration settings used by Jikkou CLI, you will need create a &lt;em>jikkou config file&lt;/em>, which is created
 automatically when you create a configuration context using:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context &amp;lt;context-name&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-gile&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-value&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>By default, the configuration of &lt;code>jikkou&lt;/code> is located under the path &lt;code>~/.jikkou/config&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context &amp;lt;context-name&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-gile&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-value&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>By default, the configuration of &lt;code>jikkou&lt;/code> is located under the path &lt;code>$HOME/.jikkou/config&lt;/code>.&lt;/p>
 &lt;p>This &lt;em>jikkou config file&lt;/em> defines all the contexts that can be used by jikkou CLI.&lt;/p>
 &lt;p>For example, below is the config file created during the &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
@@ -64,8 +64,7 @@ automatically when you create a configuration context using:&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Most of the time, a &lt;em>context&lt;/em> does not directly contain the configuration properties to be used, but rather points to a
-specific
-&lt;a href="https://github.com/lightbend/config">HOCON (Human-Optimized Config Object Notation)&lt;/a> through the (&lt;code>configFile&lt;/code>).&lt;/p>
+specific &lt;a href="https://github.com/lightbend/config">HOCON (Human-Optimized Config Object Notation)&lt;/a> through the &lt;code>configFile&lt;/code> property.&lt;/p>
 &lt;p>Then, the &lt;code>configProps&lt;/code> allows you to override some of the property define by this file.&lt;/p>
 &lt;p>In addition, if no configuration file path is specified, Jikkou will lookup for an &lt;code>application.conf&lt;/code> to
 those following locations:&lt;/p>
@@ -73,14 +72,16 @@ those following locations:&lt;/p>
 &lt;li>&lt;code>./application.conf&lt;/code>&lt;/li>
 &lt;li>&lt;code>$HOME/.jikkou/application.conf&lt;/code>&lt;/li>
 &lt;/ul>
-&lt;p>Finally, Jikkou always fallback to a reference configuration (
-see &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf">reference.conf&lt;/a>).&lt;/p>
+&lt;p>Finally, Jikkou always fallback
+to a &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf">reference.conf&lt;/a>
+file that you can use as a template to define your own configuration.&lt;/p>
+&lt;p>&lt;strong>&lt;em>reference.conf&lt;/em>&lt;/strong>:&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
 # The paths from which to load extensions
 extension.paths = [${?JIKKOU_EXTENSION_PATH}]
 # Kafka Extension
 kafka {
-# The default Kafka AdminClient configuration
+# The default Kafka Client configuration
 client {
 bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
 bootstrap.servers = ${?JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS}
@@ -99,6 +100,10 @@ waitForRetryBackoffMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
 waitForTimeoutMs = 60000
 waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 }
+}
+schemaRegistry {
+url = &amp;#34;http://localhost:8081&amp;#34;
+url = ${?JIKKOU_DEFAULT_SCHEMA_REGISTRY_URL}
 }
 # The default custom transformations to apply on any resources.
 transformations = []
@@ -132,9 +137,44 @@ topicMinReplicationFactor = ${?VALIDATION_DEFAULT_TOPIC_MIN_REPLICATION_FACTOR}
 }
 }
 ]
+# The default custom reporters to report applied changes.
+reporters = [
+# Uncomment following lines to enable default kafka reporter
+# {
+# name = &amp;#34;default&amp;#34;
+# type = io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+# config = {
+# event.source = &amp;#34;jikkou/cli&amp;#34;
+# kafka = {
+# topic.creation.enabled = true
+# topic.creation.defaultReplicationFactor = 1
+# topic.name = &amp;#34;jikkou-resource-change-event&amp;#34;
+# client = ${jikkou.kafka.client} {
+# client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
+# }
+# }
+# }
+# }
+]
 }
-&lt;/code>&lt;/pre>&lt;h3 id="verify-current-configuration">Verify current configuration&lt;/h3>
-&lt;p>You can use &lt;code>jikkou config view&lt;/code> to show the configuration currently used by your client.&lt;/p>
+&lt;/code>&lt;/pre>&lt;h3 id="listing-contexts">Listing Contexts&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou config get-contexts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> NAME
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> localhost *
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> development
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> staging
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> production
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="verify-current-context">Verify Current Context&lt;/h3>
+&lt;p>You can use &lt;code>jikkou config current-context&lt;/code> command to show the context currently used by Jikkou CLI.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou config current-context
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Using context &lt;span style="color:#4e9a06">&amp;#39;localhost&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> KEY VALUE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigFile
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigProps &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;kafka.client.bootstrap.servers&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="verify-current-configuration">Verify Current Configuration&lt;/h3>
+&lt;p>You can use &lt;code>jikkou config view&lt;/code> command to show the configuration currently used by Jikkou CLI.&lt;/p>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Tips&lt;/h4>
 To debug the configuration use by Jikkou, you can run the following command: &lt;code>jikkou config view --comments&lt;/code>
