@@ -75,7 +75,6 @@ public final class CreateTopicChangeHandler implements KafkaTopicChangeHandler {
                 .map(this::toNewTopic)
                 .collect(Collectors.toList());
 
-        LOG.info("Creating new topics : {}", topics);
         CreateTopicsResult result = client.createTopics(topics, new CreateTopicsOptions());
 
         Map<String, HasMetadataChange<TopicChange>> changesKeyedByTopicName = CollectionUtils
@@ -88,11 +87,22 @@ public final class CreateTopicChangeHandler implements KafkaTopicChangeHandler {
 
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(
-                                changesKeyedByTopicName.get(e.getKey()),
-                                e.getValue().thenApply(unused -> ChangeMetadata.empty())
-                        )
-                )
+                .map(e -> {
+                    HasMetadataChange<TopicChange> item = changesKeyedByTopicName.get(e.getKey());
+                    CompletableFuture<ChangeMetadata> future = e.getValue().thenApply(
+                            unused -> {
+                                if (LOG.isInfoEnabled()) {
+                                    TopicChange change = item.getChange();
+                                    LOG.info("Completed topic creation with: name={}, partitions={}, replicas={}",
+                                            change.getName(),
+                                            change.getPartitions().getAfter(),
+                                            change.getReplicas().getAfter()
+                                    );
+                                }
+                                return ChangeMetadata.empty();
+                            });
+                    return new ChangeResponse<>(item, future);
+                })
                 .toList();
     }
 

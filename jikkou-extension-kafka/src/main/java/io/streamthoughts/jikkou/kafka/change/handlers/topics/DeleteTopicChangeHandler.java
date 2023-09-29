@@ -71,7 +71,6 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
                 .map(it -> it.getChange().getName())
                 .collect(Collectors.toList());
 
-        LOG.info("Deleting topics: {}", topics);
         final Map<String, CompletableFuture<Void>> results = new HashMap<>(client.deleteTopics(topics).topicNameValues())
                 .entrySet()
                 .stream()
@@ -82,11 +81,16 @@ public final class DeleteTopicChangeHandler implements KafkaTopicChangeHandler {
 
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(
-                                changesKeyedByTopicName.get(e.getKey()),
-                                e.getValue().thenApply(unused -> ChangeMetadata.empty())
-                        )
-                )
+                .map(e -> {
+                    CompletableFuture<ChangeMetadata> future = e.getValue().thenApply(unused -> {
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Completed deletion of Kafka topic {}", e.getKey());
+                        }
+                        return ChangeMetadata.empty();
+                    });
+                    HasMetadataChange<TopicChange> item = changesKeyedByTopicName.get(e.getKey());
+                    return new ChangeResponse<>(item, future);
+                })
                 .toList();
     }
 }

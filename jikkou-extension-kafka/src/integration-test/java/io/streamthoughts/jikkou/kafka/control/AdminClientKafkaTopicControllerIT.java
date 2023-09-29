@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -231,10 +232,14 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         Assertions.assertEquals(
                 1,
                 initialTopicList.getItems().size(),
-                "Invalid number of topics [before reconciliation]");
+                "Invalid number of topics [before reconciliation]: " +
+                        topicNames(initialTopicList)
+        );
         Assertions.assertEquals(
                 3, actualTopicList.getItems().size(),
-                "Invalid number of topics [after reconciliation]");
+                "Invalid number of topics [after reconciliation]:" +
+                        topicNames(actualTopicList)
+        );
         Assertions.assertEquals(
                 2,
                 results.size(),
@@ -248,7 +253,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
     }
 
     @Test
-    public void shouldReconcileKafkaTopicForModeApplyAndDeleteOrphansTrue() {
+    public void shouldReconcileKafkaTopicForModeApplyAndDeleteOrphansTrue() throws InterruptedException {
 
         // GIVEN
         createTopic(TOPIC_TEST_C);
@@ -263,19 +268,21 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
         List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
+
+        Thread.sleep(500); // Let's wait for KRaft to remove topic
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN
         Assertions.assertEquals(
                 1,
                 initialTopicList.getItems().size(),
-                "Invalid number of topics" +
-                        initialTopicList.getItems().stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList()
+                "Invalid number of topics [before reconciliation]: " +
+                        topicNames(initialTopicList)
         );
         Assertions.assertEquals(
                 2, actualTopicList.getItems().size(),
-                "Invalid number of topics: " +
-                        actualTopicList.getItems().stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList()
+                "Invalid number of topics [after reconciliation]: " +
+                        topicNames(actualTopicList)
         );
         Assertions.assertEquals(
                 3,
@@ -288,6 +295,11 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertTrue(delete);
+    }
+
+    @NotNull
+    private static List<String> topicNames(V1KafkaTopicList items) {
+        return items.getItems().stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList();
     }
 
     private V1KafkaTopicList getResource() {

@@ -34,27 +34,30 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default command to alter multiple topics.
  */
-public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
+public final class UpdateTopicChangeHandler implements KafkaTopicChangeHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateTopicChangeHandler.class);
 
     private final AdminClient client;
 
     /**
-     * Creates a new {@link AlterTopicChangeHandler} instance.
+     * Creates a new {@link UpdateTopicChangeHandler} instance.
      *
      * @param client the {@link AdminClient} to be used.
      */
-    public AlterTopicChangeHandler(final @NotNull AdminClient client) {
+    public UpdateTopicChangeHandler(final @NotNull AdminClient client) {
         this.client = Objects.requireNonNull(client, "'client' cannot be null");
     }
 
@@ -76,9 +79,9 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
         final Map<String, NewPartitions> newPartitions = new HashMap<>();
 
         final Map<String, List<CompletableFuture<Void>>> results = new HashMap<>();
+        
         for (HasMetadataChange<TopicChange> item : items) {
             ChangeHandler.verify(this, item);
-
             TopicChange change = item.getChange();
             results.put(change.getName(), new ArrayList<>());
             if (change.hasConfigEntryChanges()) {
@@ -104,26 +107,45 @@ public final class AlterTopicChangeHandler implements KafkaTopicChangeHandler {
 
         }
 
+        // Update topic's configs
         if (!alterConfigs.isEmpty()) {
             client.incrementalAlterConfigs(alterConfigs).values()
-                    .forEach((k, v) -> results.get(k.name()).add(Futures.toCompletableFuture(v)));
+                    .forEach((k, v) -> {
+                        CompletableFuture<Void> future = Futures.toCompletableFuture(v);
+                        if (LOG.isDebugEnabled()) {
+                            future = future.thenAccept(unused -> {
+                                LOG.debug("Completed config changes for topic: {}", k.name());
+                            });
+                        }
+                        results.get(k.name()).add(future);
+                    });
         }
-
+        // Update topic's partitions
         if (!newPartitions.isEmpty()) {
             client.createPartitions(newPartitions).values()
-                    .forEach((k, v) -> results.get(k).add(Futures.toCompletableFuture(v)));
+                    .forEach((k, v) -> {
+                        CompletableFuture<Void> future = Futures.toCompletableFuture(v);
+                        if (LOG.isDebugEnabled()) {
+                            future = future.thenAccept(unused -> {
+                                LOG.debug("Completed partitions creation for topic: {}", k);
+                            });
+                        }
+                        results.get(k).add(future);
+                    });
         }
 
-        Map<String, HasMetadataChange<TopicChange>> changesKeyedByTopicName = CollectionUtils
+        Map<String, HasMetadataChange<TopicChange>> changesByTopicName = CollectionUtils
                 .keyBy(items, it -> it.getChange().getName());
 
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(
-                                changesKeyedByTopicName.get(e.getKey()),
-                                e.getValue().stream().map(f -> f.thenApply(unused -> ChangeMetadata.empty())).collect(Collectors.toList())
-                        )
-                )
+                .map(e -> {
+                    HasMetadataChange<TopicChange> item = changesByTopicName.get(e.getKey());
+                    List<CompletableFuture<ChangeMetadata>> futures = e.getValue().stream()
+                            .map(f -> f.thenApply(unused -> ChangeMetadata.empty()))
+                            .toList();
+                    return new ChangeResponse<>(item, futures);
+                })
                 .toList();
     }
 

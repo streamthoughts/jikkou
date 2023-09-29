@@ -35,10 +35,10 @@ import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChangeComputer;
-import io.streamthoughts.jikkou.kafka.change.handlers.topics.AlterTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.CreateTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.DeleteTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.TopicChangeDescription;
+import io.streamthoughts.jikkou.kafka.change.handlers.topics.UpdateTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaTopicListConverter;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -107,7 +107,7 @@ public final class AdminClientKafkaTopicController
             final AdminClient adminClient = context.getAdminClient();
             List<ChangeHandler<TopicChange>> handlers = List.of(
                     new CreateTopicChangeHandler(adminClient),
-                    new AlterTopicChangeHandler(adminClient),
+                    new UpdateTopicChangeHandler(adminClient),
                     new DeleteTopicChangeHandler(adminClient),
                     new ChangeHandler.None<>(TopicChangeDescription::new)
             );
