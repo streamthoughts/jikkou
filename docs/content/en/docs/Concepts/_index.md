@@ -1,7 +1,7 @@
 ---
 title: "Concepts"
 linkTitle: "Concepts"
-weight: 2
+weight: 4
 description: >
   Learn the differents concepts used within Jikkou
 ---

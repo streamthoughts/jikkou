@@ -1,23 +1,24 @@
 ---
-title: "Getting Started"
+title: "Jikkou Getting Started"
 weight: 1
 description: >
-    This guide covers how you can quickly get started using Jikkou.
+  This guide covers how you can quickly get started using Jikkou.
 ---
 
 This document will guide you through setting up Jikkou in a few minutes and managing your first resources
 with Jikkou.
 
 ## Prerequisites
+
 The following prerequisites are required for a successful and properly use of Jikkou.
 
 Make sure the following is installed:
 
 * An Apache Kafka cluster.
-  * Using Docker, [Docker Compose](https://docs.docker.com/compose/) is the easiest way to use it.
+    * Using Docker, [Docker Compose](https://docs.docker.com/compose/) is the easiest way to use it.
 * Java 17 (not required when using the binary version).
 
-## Start your local Apache Kafka Cluster 
+## Start your local Apache Kafka Cluster
 
 You must have access to an Apache Kafka cluster for using Jikkou.
 Most of the time, the latest version of Jikkou is always built for working with the most recent version of Apache Kafka.
@@ -46,7 +47,7 @@ source <(jikkou generate-completion) && \
 jikkou --version
 ```
 
-For more details, or for other options, see the [installation](./installation.md) guide.
+For more details, or for other options, see the [installation]({{% relref "../Install" %}}) guide.
 
 ## Configure Jikkou for your local Apache Kafka cluster
 
@@ -55,13 +56,14 @@ Set configuration context for localhost
 ```bash
 jikkou config set-context localhost --config-props=kafka.client.bootstrap.servers=localhost:9092
 ```
+
 Show the complete configuration.
 
 ```bash
 jikkou config view --name localhost
 ```
 
-Finally, let's check if your cluster is accessible: 
+Finally, let's check if your cluster is accessible:
 
 ```bash
 jikkou health get kafkabroker
@@ -69,7 +71,7 @@ jikkou health get kafkabroker
 
 _(output_)
 
-If OK, you should get an output similar to : 
+If OK, you should get an output similar to :
 
 ```yaml
 ---
@@ -88,6 +90,7 @@ details:
 First, create a resource YAML file describing the topics you want to create on your cluster:
 
 _file: kafka-topics.yaml_
+
 ```yaml
 apiVersion: "kafka.jikkou.io/v1beta2"
 kind: "KafkaTopicList"
@@ -116,55 +119,60 @@ jikkou create -f ./kafka-topics.yaml
 ```
 
 (output)
+
 ```yaml
-TASK [ADD] Add topic 'my-first-topic' (partitions=5, replicas=-1, configs=[cleanup.policy=compact]) - CHANGED 
-{
-  "changed" : true,
-  "end" : 1683986528117,
-  "resource" : {
-    "name" : "my-first-topic",
-    "partitions" : {
-      "after" : 5
+TASK [ADD] Add topic 'my-first-topic' (partitions=5, replicas=-1, configs=[cleanup.policy=compact]) - CHANGED
+  {
+    "changed": true,
+    "end": 1683986528117,
+    "resource": {
+      "name": "my-first-topic",
+      "partitions": {
+        "after": 5
+      },
+      "replicas": {
+        "after": -1
+      },
+      "configs": {
+        "cleanup.policy": {
+          "after": "compact",
+          "operation": "ADD"
+        }
+      },
+      "operation": "ADD"
     },
-    "replicas" : {
-      "after" : -1
+    "failed": false,
+    "status": "CHANGED"
+  }
+  TASK [ADD] Add topic 'my-second-topic' (partitions=4, replicas=-1, configs=[cleanup.policy=delete]) - CHANGED
+  {
+    "changed": true,
+    "end": 1683986528117,
+    "resource": {
+      "name": "my-second-topic",
+      "partitions": {
+        "after": 4
+      },
+      "replicas": {
+        "after": -1
+      },
+      "configs": {
+        "cleanup.policy": {
+          "after": "delete",
+          "operation": "ADD"
+        }
+      },
+      "operation": "ADD"
     },
-    "configs" : {
-      "cleanup.policy" : {
-        "after" : "compact",
-        "operation" : "ADD"
-      }
-    },
-    "operation" : "ADD"
-  },
-  "failed" : false,
-  "status" : "CHANGED"
-}
-TASK [ADD] Add topic 'my-second-topic' (partitions=4, replicas=-1, configs=[cleanup.policy=delete]) - CHANGED 
-{
-  "changed" : true,
-  "end" : 1683986528117,
-  "resource" : {
-    "name" : "my-second-topic",
-    "partitions" : {
-      "after" : 4
-    },
-    "replicas" : {
-      "after" : -1
-    },
-    "configs" : {
-      "cleanup.policy" : {
-        "after" : "delete",
-        "operation" : "ADD"
-      }
-    },
-    "operation" : "ADD"
-  },
-  "failed" : false,
-  "status" : "CHANGED"
-}
-EXECUTION in 772ms 
-ok : 0, created : 2, altered : 0, deleted : 0 failed : 0
+    "failed": false,
+    "status": "CHANGED"
+  }
+  EXECUTION in 772ms
+ok:
+  0, created:
+    2, altered:
+      0, deleted:
+        0 failed: 0
 ```
 
 {{% alert title="Tips" color="info" %}}
@@ -221,7 +229,7 @@ items:
         cleanup.policy: 'delete'
 ```
 
-Then, run the following command: 
+Then, run the following command:
 
 ```bash
 $ jikkou apply \
@@ -235,8 +243,9 @@ Using the `dry-run` option, give you the possibility to check the changes that w
 Now, rerun the above command without the `--dry-run` option to definitively delete the topics.
 
 {{% alert title="Recommendation" color="warning" %}}
-When working in a production environment, we strongly recommend running commands with a `--selector` option to ensure 
-that changes are only applied to a specific set of resources. Also, always run your command in `--dry-run` mode to verify the changes
+When working in a production environment, we strongly recommend running commands with a `--selector` option to ensure
+that changes are only applied to a specific set of resources. Also, always run your command in `--dry-run` mode to
+verify the changes
 that will be executed by Jikkou before continuing.
 {{% /alert %}}
 
@@ -253,6 +262,7 @@ $ jikkou help get
 Now, you're ready to use Jikkou!🚀
 
 As next steps, we suggest reading the following documentation in this order:
+
 * Learn Jikkou [concepts]({{% relref "../Concepts" %}})
 * Read the Developer Guide to understand how to use the Jikkou API for Java
 * Look at the [examples](https://github.com/streamthoughts/jikkou/tree/main/examples)

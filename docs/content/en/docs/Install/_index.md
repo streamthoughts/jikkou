@@ -1,9 +1,9 @@
 ---
-title: "Installing Jikkou"
-linkTitle: "Installing Jikkou"
-weight: 2
+title: "Install Jikkou"
+linkTitle: "Install"
+weight: 1
 description: >
-    This guide shows how to install the Jikkou CLI.
+  This guide shows how to install the Jikkou CLI.
 ---
 
 {{% pageinfo %}}
@@ -14,7 +14,7 @@ Jikkou can be installed either from source, or from releases.
 
 ### Releases
 
-Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available: 
+Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available:
 
 * As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (for Linux, MacOS)
 * As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.26.0/)
@@ -72,8 +72,9 @@ In addition to releases you can download or install development snapshots of Jik
 
 ### From Docker Hub
 
-Docker images are built and push to [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou) from the latest `main` branch. 
-They are not official releases, and may not be stable. 
+Docker images are built and push to [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou) from the latest `main`
+branch.
+They are not official releases, and may not be stable.
 However, they offer the opportunity to test the cutting edge features.
 
 ```bash
@@ -82,7 +83,8 @@ $ docker run -it streamthoughts/jikkou:main
 
 ### From Source (Linux, macOS)
 
-Building Jikkou from source is slightly more work, but is the best way to go if you want to test the latest (pre-release) Jikkou version.
+Building Jikkou from source is slightly more work, but is the best way to go if you want to test the latest (
+pre-release) Jikkou version.
 
 #### Prerequisites
 

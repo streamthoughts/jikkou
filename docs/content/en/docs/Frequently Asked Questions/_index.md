@@ -1,7 +1,7 @@
 ---
 title: "Frequently Asked Questions"
 linkTitle: "Frequently Asked Questions"
-weight: 6
+weight: 10
 description: >
 
 ---

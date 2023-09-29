@@ -1,7 +1,7 @@
 ---
 title: "Community"
 linkTitle: "Community"
-weight: 5
+weight: 20
 description: >
   What does your user need to know to try your project?
 ---

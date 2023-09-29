@@ -85,7 +85,7 @@ items:
   - spec:
       permission: "READ"
       username: "alice"
-      resource: "Config:*"
+      resource: "Config:"
   - spec:
       permission: "WRITE"
       username: "alice"
