@@ -1,0 +1,142 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Jikkou CLI Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/</link><description>Recent content in Jikkou CLI Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/jikkou-cli/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Basic CLI Features</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
+&lt;/div>
+&lt;p>The command line interface to &lt;strong>Jikkou&lt;/strong> is the &lt;code>jikkou&lt;/code> command, which accepts a variety of subcommands such as
+&lt;code>jikkou apply&lt;/code> or &lt;code>jikkou validate&lt;/code>.&lt;/p>
+&lt;p>To view a list of the commands available in your current Jikkou version, run &lt;code>jikkou&lt;/code> with no additional arguments:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Usage:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> any kafka infrastructure.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Find more information at: https://streamthoughts.github.io/jikkou/.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Options:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Commands:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> create Create resources from the resource definition files &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>only non-existing resources will be created&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete resources that are no longer described by the resource definition files.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> update Create or update resources from the resource definition files
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Update the resources as described by the resource definition files.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> resources List supported resources
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> extensions List or describe the extensions of Jikkou
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> config Sets or retrieves the configuration of this client
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> diff Display all resource changes.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> validate Validate resource definition files.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> health Print or describe health indicators.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Display &lt;span style="color:#204a87">help&lt;/span> information about the specified command.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> get List and describe all resources of a specific kind.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>(The output from your current Jikkou version may be different than the above example.)&lt;/p>
+&lt;h2 id="checking-jikkou-version">Checking Jikkou Version&lt;/h2>
+&lt;p>Run the &lt;code>jikkou --version&lt;/code> to display your current installation version:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Jikkou version &lt;span style="color:#4e9a06">&amp;#34;0.29.0&amp;#34;&lt;/span> 2023-09-29
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>JVM: 17.0.7 &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>Oracle Corporation Substrate VM 17.0.7+8-LTS&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="shell-tab-completion">Shell Tab-completion&lt;/h2>
+&lt;p>It is recommended to install the bash/zsh completion script &lt;code>jikkou_completion&lt;/code>.&lt;/p>
+&lt;p>The completion script can be downloaded from the project Github repository:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion . jikkou_completion
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or alternatively, you can run the following command to generate it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: CLI Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/cli-configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/cli-configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>To set up the configuration settings used by Jikkou CLI, you will need create a &lt;em>jikkou config file&lt;/em>, which is created
+automatically when you create a configuration context using:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context &amp;lt;context-name&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-gile&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-value&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>By default, the configuration of &lt;code>jikkou&lt;/code> is located under the path &lt;code>~/.jikkou/config&lt;/code>.&lt;/p>
+&lt;p>This &lt;em>jikkou config file&lt;/em> defines all the contexts that can be used by jikkou CLI.&lt;/p>
+&lt;p>For example, below is the config file created during the &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;currentContext&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;localhost&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;localhost&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;configFile&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;configProps&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;kafka.client.bootstrap.servers&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Most of the time, a &lt;em>context&lt;/em> does not directly contain the configuration properties to be used, but rather points to a
+specific
+&lt;a href="https://github.com/lightbend/config">HOCON (Human-Optimized Config Object Notation)&lt;/a> through the (&lt;code>configFile&lt;/code>).&lt;/p>
+&lt;p>Then, the &lt;code>configProps&lt;/code> allows you to override some of the property define by this file.&lt;/p>
+&lt;p>In addition, if no configuration file path is specified, Jikkou will lookup for an &lt;code>application.conf&lt;/code> to
+those following locations:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>./application.conf&lt;/code>&lt;/li>
+&lt;li>&lt;code>$HOME/.jikkou/application.conf&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>Finally, Jikkou always fallback to a reference configuration (
+see &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/src/main/resources/reference.conf">reference.conf&lt;/a>).&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# The paths from which to load extensions
+extension.paths = [${?JIKKOU_EXTENSION_PATH}]
+# Kafka Extension
+kafka {
+# The default Kafka AdminClient configuration
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+bootstrap.servers = ${?JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS}
+}
+brokers {
+# If &amp;#39;True&amp;#39;
+waitForEnabled = true
+waitForEnabled = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_ENABLED}
+# The minimal number of brokers that should be alive for the CLI stops waiting.
+waitForMinAvailable = 1
+waitForMinAvailable = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE}
+# The amount of time to wait before verifying that brokers are available.
+waitForRetryBackoffMs = 1000
+waitForRetryBackoffMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
+# Wait until brokers are available or this timeout is reached.
+waitForTimeoutMs = 60000
+waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
+}
+}
+# The default custom transformations to apply on any resources.
+transformations = []
+# The default custom validations to apply on any resources.
+validations = [
+{
+name = &amp;#34;topicMustHaveValidName&amp;#34;
+type = io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation
+priority = 100
+config = {
+topicNameRegex = &amp;#34;[a-zA-Z0-9\\._\\-]+&amp;#34;
+topicNameRegex = ${?VALIDATION_DEFAULT_TOPIC_NAME_REGEX}
+}
+},
+{
+name = &amp;#34;topicMustHaveParitionsEqualsOrGreaterThanOne&amp;#34;
+type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+priority = 100
+config = {
+topicMinNumPartitions = 1
+topicMinNumPartitions = ${?VALIDATION_DEFAULT_TOPIC_MIN_NUM_PARTITIONS}
+}
+},
+{
+name = &amp;#34;topicMustHaveReplicasEqualsOrGreaterThanOne&amp;#34;
+type = io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation
+priority = 100
+config = {
+topicMinReplicationFactor = 1
+topicMinReplicationFactor = ${?VALIDATION_DEFAULT_TOPIC_MIN_REPLICATION_FACTOR}
+}
+}
+]
+}
+&lt;/code>&lt;/pre>&lt;h3 id="verify-current-configuration">Verify current configuration&lt;/h3>
+&lt;p>You can use &lt;code>jikkou config view&lt;/code> to show the configuration currently used by your client.&lt;/p>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Tips&lt;/h4>
+To debug the configuration use by Jikkou, you can run the following command: &lt;code>jikkou config view --comments&lt;/code>
+or &lt;code>jikkou config view --debug&lt;/code>
+&lt;/div></description></item><item><title>Docs: Automating Jikkou</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/</guid><description/></item></channel></rss>
