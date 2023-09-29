@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.api.io.ResourceLoader;
 import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
+import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
@@ -268,10 +269,14 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         Assertions.assertEquals(
                 1,
                 initialTopicList.getItems().size(),
-                "Invalid number of topics");
+                "Invalid number of topics" +
+                        initialTopicList.getItems().stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList()
+        );
         Assertions.assertEquals(
                 2, actualTopicList.getItems().size(),
-                "Invalid number of topics");
+                "Invalid number of topics: " +
+                        actualTopicList.getItems().stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList()
+        );
         Assertions.assertEquals(
                 3,
                 results.size(),

@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
+import static io.streamthoughts.jikkou.common.utils.AsyncUtils.getValueOrThrowException;
+
 import io.streamthoughts.jikkou.annotation.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.config.Configuration;
@@ -26,9 +28,9 @@ import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
-import io.streamthoughts.jikkou.kafka.adapters.V1KafkaTopicSupport;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaTopicListConverter;
 import io.streamthoughts.jikkou.kafka.internals.ConfigsBuilder;
+import io.streamthoughts.jikkou.kafka.internals.Futures;
 import io.streamthoughts.jikkou.kafka.internals.KafkaConfigPredicate;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -42,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -185,35 +186,23 @@ public final class AdminClientKafkaTopicCollector
          */
         public List<V1KafkaTopic> listAll(@NotNull final Predicate<ConfigEntry> configEntryPredicate) {
 
-            final Collection<String> topicNames;
-            try {
-                Set<String> topics = client.listTopics().names().get();
-                topicNames = V1KafkaTopicSupport.stream(topics)
-                        .map(topic -> topic.getMetadata().getName())
-                        .toList();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new JikkouRuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new JikkouRuntimeException(e);
-            }
+            // Gather all topic names
+            Set<String> topicNames = getValueOrThrowException(
+                    Futures.toCompletableFuture(client.listTopics().names()),
+                    e -> new JikkouRuntimeException("Failed to list kafka topics", e)
+            );
 
-            final CompletableFuture<Map<String, TopicDescription>> futureTopicDesc = describeTopics(topicNames);
-            final CompletableFuture<Map<String, Config>> futureTopicConfig = describeConfigs(topicNames);
-
-            try {
-                return futureTopicDesc.thenCombine(futureTopicConfig, (descriptions, configs) -> {
-                    return descriptions.values()
+            // Gather description and configuration for all topics
+            CompletableFuture<List<V1KafkaTopic>> results = getDescriptionForTopics(topicNames)
+                    .thenCombine(getConfigForTopics(topicNames), (descriptions, configs) -> descriptions.values()
                             .stream()
                             .map(desc -> newTopicResources(desc, configs.get(desc.name()), configEntryPredicate))
-                            .toList();
-                }).get();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new JikkouRuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new JikkouRuntimeException(e);
-            }
+                            .toList());
+
+            return getValueOrThrowException(
+                    results,
+                    e -> new JikkouRuntimeException("Failed to retrieve kafka topic descriptions/or configurations.", e)
+            );
         }
 
         private V1KafkaTopic newTopicResources(final TopicDescription desc,
@@ -250,40 +239,25 @@ public final class AdminClientKafkaTopicCollector
             return rf;
         }
 
-        private CompletableFuture<Map<String, Config>> describeConfigs(final Collection<String> topicNames) {
-            return CompletableFuture.supplyAsync(() -> {
-                try {
-                    final ConfigsBuilder builder = new ConfigsBuilder();
-                    topicNames.forEach(topicName ->
-                            builder.newResourceConfig()
-                                    .setType(ConfigResource.Type.TOPIC)
-                                    .setName(topicName));
-                    DescribeConfigsResult rs = client.describeConfigs(builder.build().keySet());
-                    Map<ConfigResource, Config> configs = rs.all().get();
-                    return configs.entrySet()
+        private CompletableFuture<Map<String, Config>> getConfigForTopics(final Collection<String> topicNames) {
+            final ConfigsBuilder builder = new ConfigsBuilder();
+            topicNames.forEach(topicName ->
+                    builder.newResourceConfig()
+                            .setType(ConfigResource.Type.TOPIC)
+                            .setName(topicName)
+            );
+
+            Set<ConfigResource> resources = builder.build().keySet();
+            DescribeConfigsResult result = client.describeConfigs(resources);
+            return Futures.toCompletableFuture(result.all())
+                    .thenApply(configs -> configs.entrySet()
                             .stream()
-                            .collect(Collectors.toMap(entry -> entry.getKey().name(), Map.Entry::getValue));
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new JikkouRuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new JikkouRuntimeException(e);
-                }
-            });
+                            .collect(Collectors.toMap(entry -> entry.getKey().name(), Map.Entry::getValue)));
         }
 
-        private CompletableFuture<Map<String, TopicDescription>> describeTopics(final Collection<String> topicNames) {
-            return CompletableFuture.supplyAsync(() -> {
-                try {
-                    DescribeTopicsResult describeTopicsResult = client.describeTopics(topicNames);
-                    return describeTopicsResult.allTopicNames().get();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new JikkouRuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new JikkouRuntimeException(e);
-                }
-            });
+        private CompletableFuture<Map<String, TopicDescription>> getDescriptionForTopics(final Collection<String> topicNames) {
+            DescribeTopicsResult result = client.describeTopics(topicNames);
+            return Futures.toCompletableFuture(result.allTopicNames());
         }
     }
 }

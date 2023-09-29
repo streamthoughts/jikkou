@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
@@ -57,6 +58,9 @@ public class AsyncUtils {
         try {
             res = future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception ex) {
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             LOG.error("getValue for async result failed", ex);
         }
         return Optional.ofNullable(res);
@@ -67,6 +71,7 @@ public class AsyncUtils {
             try {
                 future.get();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 return Optional.of(e);
             } catch (ExecutionException e) {
                 return Optional.ofNullable(e.getCause());
@@ -75,6 +80,20 @@ public class AsyncUtils {
         return Optional.empty();
     }
 
+    public static <T> T getValueOrThrowException(CompletableFuture<T> future,
+                                                  Function<Exception, RuntimeException> mapper) {
+        if (future != null) {
+            try {
+                return future.get();
+            } catch (Exception e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                throw mapper.apply(e);
+            }
+        }
+        return null;
+    }
 
     public static boolean isSuccessFuture(CompletableFuture<?> future) {
         return future.isDone() && !future.isCompletedExceptionally() && !future.isCancelled();
