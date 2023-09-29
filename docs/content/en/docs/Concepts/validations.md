@@ -32,15 +32,15 @@ This process continues until a suitable validation is found or until all validat
 
 ```hocon
 jikkou {
-  # The list of transformations to execute
+  # The list of validations to execute
   validations: [
     {
       # Custom name for the validation rule
       name = ""
-      # Simple or fully qualified class name of the transformation extension.
+      # Simple or fully qualified class name of the validation extension.
       type = ""
       config = {
-        # Configuration properties for this transformation
+        # Configuration properties for this validation
       }
     }
   ]
