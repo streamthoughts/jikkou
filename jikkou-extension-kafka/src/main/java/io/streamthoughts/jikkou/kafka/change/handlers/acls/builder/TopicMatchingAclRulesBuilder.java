@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls.builder;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
@@ -73,7 +73,7 @@ public class TopicMatchingAclRulesBuilder extends AbstractKafkaAclBindingBuilder
                                     topic.name(),
                                     PatternType.LITERAL,
                                     ResourceType.TOPIC,
-                                    JikkouMetadataAnnotations.isAnnotatedWithDelete(resource)
+                                    CoreAnnotations.isAnnotatedWithDelete(resource)
                             ).stream();
                         })
                         .toList()

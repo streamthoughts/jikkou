@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.converters;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
@@ -58,7 +58,7 @@ public class V1KafkaBrokerListConverter implements ResourceConverter<V1KafkaBrok
 
         return List.of(V1KafkaBrokerList.builder()
                         .withMetadata(ObjectMeta.builder()
-                                .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
+                                .withAnnotation(CoreAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)

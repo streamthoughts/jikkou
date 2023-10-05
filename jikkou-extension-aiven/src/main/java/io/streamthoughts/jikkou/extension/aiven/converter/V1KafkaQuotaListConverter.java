@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.converter;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.converter.AbstractResourceListConverter;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
@@ -42,7 +42,7 @@ public class V1KafkaQuotaListConverter extends AbstractResourceListConverter<V1K
         return List.of(
                 V1KafkaQuotaList.builder()
                         .withMetadata(ObjectMeta.builder()
-                                .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
+                                .withAnnotation(CoreAnnotations.JIKKOU_IO_ITEMS_COUNT, objects.size())
                                 .build()
                         )
                         .withItems(objects)

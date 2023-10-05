@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.control;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
@@ -104,7 +104,7 @@ class AivenKafkaQuotaControllerIT extends AbstractAivenIntegrationTest {
         // When
         V1KafkaQuota entry = V1KafkaQuota.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build())
                 .withSpec(V1KafkaQuotaSpec
                         .builder()

@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
@@ -36,19 +36,22 @@ class ClientQuotaValidationTest {
     }
 
     @Test
-    void shouldThrowExceptionGivenNoQuotaType() {
+    void shouldReturnErrorForNoQuotaType() {
+        // Given
         var resource = V1KafkaClientQuota.builder()
                 .withApiVersion(HasMetadata.getApiVersion(V1KafkaTopicList.class))
                 .withKind(HasMetadata.getKind(V1KafkaTopicList.class))
                 .build();
-        ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-            validation.validate(resource);
-        });
-        exception.printStackTrace();
+        // When
+        ValidationResult result = validation.validate(resource);
+
+        // Then
+        Assertions.assertFalse(result.isValid());
     }
 
     @Test
-    void shouldThrowExceptionForQuotaTypeClientWithNoEntity() {
+    void shouldReturnErrorForQuotaTypeClientWithNoEntity() {
+        // Given
         var resource = V1KafkaClientQuota.builder()
                 .withApiVersion(HasMetadata.getApiVersion(V1KafkaTopicList.class))
                 .withKind(HasMetadata.getKind(V1KafkaTopicList.class))
@@ -58,14 +61,15 @@ class ClientQuotaValidationTest {
                         .withEntity(V1KafkaClientQuotaEntity.builder().build())
                         .build())
                 .build();
-        ValidationException exception = Assertions.assertThrows(ValidationException.class, () -> {
-            validation.validate(resource);
-        });
-        exception.printStackTrace();
+        // When
+        ValidationResult result = validation.validate(resource);
+        // Then
+        Assertions.assertFalse(result.isValid());
     }
 
     @Test
-    void shouldNotThrowExceptionForQuotaTypeClientWithEntity() {
+    void shouldNotReturnErrorForQuotaTypeClientWithEntity() {
+        // Given
         var resource = V1KafkaClientQuota.builder()
                 .withApiVersion(HasMetadata.getApiVersion(V1KafkaTopicList.class))
                 .withKind(HasMetadata.getKind(V1KafkaTopicList.class))
@@ -79,6 +83,9 @@ class ClientQuotaValidationTest {
                         )
                         .build())
                 .build();
-        Assertions.assertDoesNotThrow(() -> validation.validate(resource));
+        // When
+        ValidationResult result = validation.validate(resource);
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 }

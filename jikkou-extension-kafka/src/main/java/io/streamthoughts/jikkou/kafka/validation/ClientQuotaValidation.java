@@ -18,6 +18,8 @@ package io.streamthoughts.jikkou.kafka.validation;
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaSpec;
 import org.jetbrains.annotations.NotNull;
@@ -28,23 +30,29 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsResource(type = V1KafkaClientQuota.class)
 public class ClientQuotaValidation implements ResourceValidation<V1KafkaClientQuota> {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void validate(@NotNull V1KafkaClientQuota resource) throws ValidationException {
+    public ValidationResult validate(@NotNull V1KafkaClientQuota resource) throws ValidationException {
         V1KafkaClientQuotaSpec spec = resource.getSpec();
 
         if (spec == null) {
-            throw new ValidationException("spec is missing", this);
+            return ValidationResult.failure(
+                    new ValidationError(getName(), resource, "spec is missing"));
         }
         if (spec.getType() == null) {
-            throw new ValidationException("spec.type is missing", this);
+            return ValidationResult.failure(
+                    new ValidationError(getName(), resource, "spec.type is missing"));
         }
 
         try {
             spec.getType().validate(spec.getEntity());
         } catch (Exception e) {
-            throw new ValidationException(e.getMessage(), this);
+            return ValidationResult.failure(new ValidationError(getName(), resource, e.getMessage()));
         }
+
+        return ValidationResult.success();
     }
 
 }

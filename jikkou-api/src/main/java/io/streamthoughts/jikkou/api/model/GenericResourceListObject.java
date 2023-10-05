@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.api.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.annotation.ApiVersion;
 import io.streamthoughts.jikkou.annotation.Description;
 import io.streamthoughts.jikkou.annotation.Kind;
@@ -121,7 +121,7 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
     @Override
     public ObjectMeta getMetadata() {
         return Optional.ofNullable(metadata).orElse(new ObjectMeta()).toBuilder()
-                .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_ITEMS_COUNT, items.size())
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_ITEMS_COUNT, items.size())
                 .build();
     }
 

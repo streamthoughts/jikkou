@@ -20,6 +20,8 @@ import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -47,17 +49,19 @@ public class TopicNameSuffixValidation extends TopicValidation {
 
     /** {@inheritDoc} */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
         final boolean matched = suffixes.stream()
                 .filter(prefix -> resource.getMetadata().getName().endsWith(prefix))
                 .findAny()
                 .isEmpty();
         if (matched) {
-            throw new ValidationException(String.format(
+            String error = String.format(
                     "Name for topic '%s' does not end with one of the configured suffixes: %s",
                     resource.getMetadata().getName(),
                     suffixes
-            ), this);
+            );
+            return ValidationResult.failure(new ValidationError(getName(), resource, error));
         }
+        return ValidationResult.success();
     }
 }

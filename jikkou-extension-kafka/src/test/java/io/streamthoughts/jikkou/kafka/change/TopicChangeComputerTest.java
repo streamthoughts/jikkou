@@ -20,7 +20,7 @@ import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
 import static io.streamthoughts.jikkou.api.change.ChangeType.NONE;
 import static io.streamthoughts.jikkou.api.change.ChangeType.UPDATE;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.model.ConfigValue;
 import io.streamthoughts.jikkou.api.model.Configs;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
@@ -51,7 +51,7 @@ class TopicChangeComputerTest {
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_TOPIC)
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, false)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, false)
                         .build()
                 )
                 .withSpec(V1KafkaTopicSpec
@@ -83,7 +83,7 @@ class TopicChangeComputerTest {
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_TOPIC)
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build()
                 )
                 .withSpec(V1KafkaTopicSpec
@@ -118,7 +118,7 @@ class TopicChangeComputerTest {
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_TOPIC)
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build()
                 )
                 .withSpec(V1KafkaTopicSpec

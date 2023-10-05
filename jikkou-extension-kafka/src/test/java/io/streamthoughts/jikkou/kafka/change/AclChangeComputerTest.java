@@ -19,7 +19,7 @@ import static io.streamthoughts.jikkou.api.change.ChangeType.ADD;
 import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
 import static io.streamthoughts.jikkou.api.change.ChangeType.NONE;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
@@ -232,7 +232,7 @@ class AclChangeComputerTest {
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_PRINCIPAL)
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, delete)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, delete)
                         .build()
                 )
                 .withSpec(V1KafkaPrincipalAuthorizationSpec

@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -51,11 +52,11 @@ public class AivenSchemaCompatibilityValidation implements ResourceValidation<V1
      * {@inheritDoc}
      */
     @Override
-    public void validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
+    public ValidationResult validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();
-        if (spec == null) return;
+        if (spec == null) return ValidationResult.success();
 
-        SchemaCompatibilityValidation.validate(
+        return SchemaCompatibilityValidation.validate(
                 resource,
                 new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(config)),
                 this

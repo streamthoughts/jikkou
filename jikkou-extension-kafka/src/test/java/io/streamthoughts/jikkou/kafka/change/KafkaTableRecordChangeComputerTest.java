@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.change;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
@@ -101,7 +101,7 @@ class KafkaTableRecordChangeComputerTest {
         V1KafkaTableRecord recordToDelete = KAFKA_TABLE_RECORD.withMetadata(
                 KAFKA_TABLE_RECORD
                         .getMetadata().toBuilder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build()
         );
         List<V1KafkaTableRecord> after = List.of(recordToDelete);

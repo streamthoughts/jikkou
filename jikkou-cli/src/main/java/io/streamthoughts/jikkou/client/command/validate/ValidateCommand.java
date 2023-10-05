@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client.command;
+package io.streamthoughts.jikkou.client.command.validate;
 
+import io.streamthoughts.jikkou.api.ApiResourceValidationResult;
 import io.streamthoughts.jikkou.api.JikkouApi;
 import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.api.io.ResourceWriter;
 import io.streamthoughts.jikkou.api.model.HasItems;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
+import io.streamthoughts.jikkou.api.model.ResourceListObject;
+import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
+import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
+import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
+import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
@@ -66,13 +73,18 @@ public class ValidateCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() throws IOException {
-        HasItems result = api.validate(getResources(), getReconciliationContext());
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            writer.write(formatOptions.format, result.getItems(), baos);
-            System.out.println(baos);
-            return CommandLine.ExitCode.OK;
+        ApiResourceValidationResult result = api.validate(getResources(), getReconciliationContext());
+        if (result.isValid()) {
+            ResourceListObject<HasMetadata> resources = result.get();
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                writer.write(formatOptions.format(), resources.getItems(), baos);
+                System.out.println(baos);
+                return CommandLine.ExitCode.OK;
+            }
         }
+
+        System.out.println(ValidationErrorsWriter.write(result.errors()));
+        return CommandLine.ExitCode.SOFTWARE;
     }
 
     @NotNull

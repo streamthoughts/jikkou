@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
-import static io.streamthoughts.jikkou.JikkouMetadataAnnotations.JIKKOU_IO_TRANSFORM_PREFIX;
+import static io.streamthoughts.jikkou.CoreAnnotations.JIKKOU_IO_TRANSFORM_PREFIX;
 
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.annotation.ExtensionEnabled;

@@ -20,6 +20,8 @@ import io.streamthoughts.jikkou.api.error.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -27,15 +29,20 @@ import org.jetbrains.annotations.NotNull;
 @AcceptsResource(type = V1KafkaPrincipalRole.class)
 public class NoDuplicatePrincipalRoleValidation implements ResourceValidation<V1KafkaPrincipalRole> {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void validate(@NotNull List<V1KafkaPrincipalRole> resources) throws ValidationException {
-        GenericResourceListObject list = new GenericResourceListObject(resources);
+    public ValidationResult validate(@NotNull List<V1KafkaPrincipalRole> resources) throws ValidationException {
+        GenericResourceListObject<V1KafkaPrincipalRole> list = new GenericResourceListObject<>(resources);
         try {
             list.verifyNoDuplicateMetadataName();
+            return ValidationResult.success();
         } catch (DuplicateMetadataNameException e) {
-            throw new ValidationException(
-                    "Duplicate V1KafkaPrincipalRole for metadata.name: " + e.duplicates(), this);
+            return ValidationResult.failure(new ValidationError(
+                    getName(),
+                    "Duplicate V1KafkaPrincipalRole for metadata.name: " + e.duplicates())
+            );
         }
     }
 }

@@ -20,9 +20,10 @@ import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @ExtensionEnabled(value = false)
@@ -36,10 +37,12 @@ public class TopicMaxNumPartitionsValidation extends TopicValidation {
     /**
      * Empty constructor used by {@link Configuration}.
      */
-    public TopicMaxNumPartitionsValidation(){}
+    public TopicMaxNumPartitionsValidation() {
+    }
 
     /**
      * Creates a new {@link TopicMaxNumPartitionsValidation}
+     *
      * @param maxNumPartitions the min number of partitions.
      */
     public TopicMaxNumPartitionsValidation(final int maxNumPartitions) {
@@ -65,16 +68,20 @@ public class TopicMaxNumPartitionsValidation extends TopicValidation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
-        Optional.ofNullable(resource.getSpec().getPartitions()).ifPresent(p -> {
-            if (!p.equals(KafkaTopics.NO_NUM_PARTITIONS) && p > maxNumPartitions) {
-                throw new ValidationException(String.format(
-                        "Number of partitions for topic '%s' is greater than the maximum required: %d > %d",
-                        resource.getMetadata().getName(),
-                        p,
-                        maxNumPartitions
-                ), this);
-            }
-        });
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+        Integer partitions = resource.getSpec().getPartitions();
+        if (partitions == null)
+            return ValidationResult.success();
+
+        if (!partitions.equals(KafkaTopics.NO_NUM_PARTITIONS) && partitions > maxNumPartitions) {
+            String error = String.format(
+                    "Number of partitions for topic '%s' is greater than the maximum required: %d > %d",
+                    resource.getMetadata().getName(),
+                    partitions,
+                    maxNumPartitions
+            );
+            return ValidationResult.failure(new ValidationError(getName(), resource, error));
+        }
+        return ValidationResult.success();
     }
 }

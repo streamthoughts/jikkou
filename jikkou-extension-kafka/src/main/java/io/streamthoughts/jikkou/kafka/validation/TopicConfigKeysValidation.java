@@ -17,12 +17,14 @@ package io.streamthoughts.jikkou.kafka.validation;
 
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.Configs;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import io.vavr.collection.Array;
-import io.vavr.collection.List;
-import io.vavr.control.Option;
-import io.vavr.control.Try;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.apache.kafka.common.config.TopicConfig;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,35 +35,45 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TopicConfigKeysValidation extends TopicValidation {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
 
         Configs configs = resource.getSpec().getConfigs();
         if (configs == null || configs.isEmpty())
-            return;
+            return ValidationResult.success();
 
-        final Array<String> definedStaticConfigKeys = Array
-                .of(TopicConfig.class.getDeclaredFields())
-                .flatMap(f -> f.trySetAccessible() ? Try.of(() -> f.get(null).toString()).toOption() : Option.none());
+        final List<String> definedStaticConfigKeys = Arrays
+                .stream(TopicConfig.class.getDeclaredFields())
+                .flatMap(f -> {
+                    try {
+                        return f.trySetAccessible() ? Optional.ofNullable(f.get(null)).map(Object::toString).stream() : Stream.empty();
+                    } catch (IllegalAccessException e) {
+                        return Stream.empty();
+                    }
+                })
+                .toList();
 
         final Map<String, Object> topicConfigs = configs.toMap();
-        final List<ValidationException> errors = List
-                .ofAll(topicConfigs.entrySet())
-                .flatMap(e -> definedStaticConfigKeys.contains(e.getKey()) ?
-                        Option.none() :
-                        Option.of(newValidationError(resource.getMetadata().getName(), e.getKey()))
-                );
+        final List<ValidationError> errors = topicConfigs.keySet()
+                .stream()
+                .filter(o -> !definedStaticConfigKeys.contains(o))
+                .map(o -> newValidationError(resource, o))
+                .toList();
 
         if (!errors.isEmpty()) {
-            throw new ValidationException(errors.toJavaList());
+            return new ValidationResult(errors);
         }
+        return ValidationResult.success();
     }
 
     @NotNull
-    private ValidationException newValidationError(final @NotNull String topicName,
-                                                   final @NotNull String configKey) {
+    private ValidationError newValidationError(final @NotNull V1KafkaTopic resource,
+                                               final @NotNull String configKey) {
+        var topicName = resource.getMetadata().getName();
         var message = String.format("Config key '%s' for topic '%s' is not valid", configKey, topicName);
-        return new ValidationException(message, this);
+        return new ValidationError(getName(), resource, message);
     }
 }

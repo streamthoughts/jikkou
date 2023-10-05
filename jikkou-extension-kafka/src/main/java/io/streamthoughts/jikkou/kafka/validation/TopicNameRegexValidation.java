@@ -20,6 +20,8 @@ import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -94,13 +96,15 @@ public class TopicNameRegexValidation extends TopicValidation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
         if (!pattern.matcher(resource.getMetadata().getName()).matches()) {
-            throw new ValidationException(String.format(
+            String error = String.format(
                     "Name for topic '%s' does not match the configured regex: %s",
                     resource.getMetadata().getName(),
                     pattern
-            ), this);
+            );
+            return ValidationResult.failure(new ValidationError(getName(), resource, error));
         }
+        return ValidationResult.success();
     }
 }

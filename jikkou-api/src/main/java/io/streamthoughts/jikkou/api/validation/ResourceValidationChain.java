@@ -15,14 +15,14 @@
  */
 package io.streamthoughts.jikkou.api.validation;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.HasPriority;
 import io.streamthoughts.jikkou.api.model.ResourceType;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -56,20 +56,21 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
      * {@inheritDoc}
      **/
     @Override
-    public void validate(@NotNull final List<HasMetadata> resources) {
+    public ValidationResult validate(@NotNull final List<HasMetadata> resources) {
         LOG.info("Starting validation-chain execution on {} resources", resources.size());
-        validate(new GenericResourceListObject<>(resources).groupByType());
+        return validate(new GenericResourceListObject<>(resources).groupByType());
     }
 
-    public void validate(@NotNull final Map<ResourceType, List<HasMetadata>> resources) {
-        List<ValidationException> exceptions = new ArrayList<>(resources.size());
+    public ValidationResult validate(@NotNull final Map<ResourceType, List<HasMetadata>> resources) {
+        List<ValidationError> errors = new LinkedList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resources.entrySet()) {
             ResourceType type = entry.getKey();
             List<HasMetadata> resourcesHavingSameType = entry.getValue();
             for (ResourceValidation<HasMetadata> validation : validations) {
                 try {
                     if (validation.canAccept(type)) {
-                        validation.validate(filterCandidateToValidation(resourcesHavingSameType));
+                        ValidationResult rs = validation.validate(filterCandidateToValidation(resourcesHavingSameType));
+                        errors.addAll(rs.errors());
                         LOG.info("Completed validation {} on resources of type: group={}, version={} and kind={}",
                                 validation.getName(),
                                 type.getGroup(),
@@ -78,19 +79,19 @@ public class ResourceValidationChain implements ResourceValidation<HasMetadata> 
                         );
                     }
                 } catch (ValidationException e) {
-                    exceptions.add(e);
+                    errors.add(new ValidationError(e.getLocalizedMessage()));
                 }
             }
         }
-        if (!exceptions.isEmpty()) {
-            throw new ValidationException(exceptions);
-        }
+        if (errors.isEmpty()) return ValidationResult.success();
+
+        return new ValidationResult(errors);
     }
 
     @NotNull
     private static List<HasMetadata> filterCandidateToValidation(@NotNull List<HasMetadata> resources) {
         return resources.stream()
-                .filter(Predicate.not(JikkouMetadataAnnotations::isAnnotatedWithByPassValidation))
+                .filter(Predicate.not(CoreAnnotations::isAnnotatedWithByPassValidation))
                 .collect(Collectors.toList());
     }
 }

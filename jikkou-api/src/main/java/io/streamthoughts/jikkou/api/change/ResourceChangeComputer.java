@@ -20,7 +20,7 @@ import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
 import static io.streamthoughts.jikkou.api.change.ChangeType.IGNORE;
 import static io.streamthoughts.jikkou.api.change.ChangeType.UPDATE;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import java.util.List;
@@ -56,12 +56,12 @@ public abstract class ResourceChangeComputer<T extends HasMetadata, V, C extends
             return IGNORE;
 
         if (before == null)
-            return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? IGNORE : ADD;
+            return CoreAnnotations.isAnnotatedWithDelete(after) ? IGNORE : ADD;
 
         if (after == null)
             return DELETE;
 
-        return JikkouMetadataAnnotations.isAnnotatedWithDelete(after) ? DELETE : UPDATE;
+        return CoreAnnotations.isAnnotatedWithDelete(after) ? DELETE : UPDATE;
     }
 
     public abstract List<C> buildChangeForDeleting(V before);

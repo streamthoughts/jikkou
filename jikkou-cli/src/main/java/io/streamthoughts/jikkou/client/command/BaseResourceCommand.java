@@ -20,13 +20,17 @@ import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
+import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.api.model.HasItems;
 import io.streamthoughts.jikkou.client.Jikkou;
+import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import jakarta.inject.Inject;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
@@ -58,15 +62,19 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
      * {@inheritDoc}
      */
     @Override
-    public Integer call() {
+    public Integer call() throws IOException {
 
-        final List<ChangeResult<Change>> results = api.apply(
-                loadResources(),
-                getReconciliationMode(),
-                getReconciliationContext()
-        );
-        
-        return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
+        try {
+            final List<ChangeResult<Change>> results = api.apply(
+                    getResources(),
+                    getReconciliationMode(),
+                    getReconciliationContext()
+            );
+            return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
+        } catch (ValidationException exception) {
+            System.out.println(ValidationErrorsWriter.write(exception.errors()));
+            return CommandLine.ExitCode.SOFTWARE;
+        }
     }
 
     private @NotNull ReconciliationContext getReconciliationContext() {
@@ -79,7 +87,7 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
                 .build();
     }
 
-    protected @NotNull HasItems loadResources() {
+    protected @NotNull HasItems getResources() {
         return loader.load(fileOptions);
     }
 

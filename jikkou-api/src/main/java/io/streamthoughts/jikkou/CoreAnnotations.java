@@ -18,31 +18,41 @@ package io.streamthoughts.jikkou;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import org.jetbrains.annotations.NotNull;
 
-public final class JikkouMetadataAnnotations {
+/**
+ * Core Metadata Annotations.
+ */
+public final class CoreAnnotations {
 
-    public static String JIKKOU_IO_ITEMS_COUNT = "jikkou.io/items-count";
-    public static final String JIKKOU_IO_IGNORE = "jikkou.io/ignore";
-    public static final String JIKKOU_IO_DELETE = "jikkou.io/delete";
-    public static final String JIKKOU_BYPASS_VALIDATIONS = "jikkou.io/bypass-validations";
-    public static final String JIKKOU_NO_REPORT = "jikkou.io/no-report";
+    /**
+     * The jikkou.io/ prefix is reserved for use by Jikkou core components.
+     */
+    public static final String PREFIX = "jikkou.io/";
+
+    public static final String JKKOU_IO_MANAGED_BY_LOCATION = PREFIX + "managed-by-location";
+    public static final String JKKOU_IO_RESOURCE_GENERATED = PREFIX + "generated";
+    public static final String JIKKOU_IO_ITEMS_COUNT = PREFIX + "items-count";
+    public static final String JIKKOU_IO_IGNORE = PREFIX + "ignore";
+    public static final String JIKKOU_IO_DELETE = PREFIX + "delete";
+    public static final String JIKKOU_BYPASS_VALIDATIONS = PREFIX + "bypass-validations";
+    public static final String JIKKOU_NO_REPORT = PREFIX + "no-report";
     public static final String JIKKOU_IO_TRANSFORM_PREFIX = "transform.jikkou.io";
 
-    private JikkouMetadataAnnotations() {}
+    private CoreAnnotations() {}
 
     public static boolean isAnnotatedWithNoReport(final HasMetadata resource) {
-        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_NO_REPORT);
+        return isAnnotatedWith(resource, CoreAnnotations.JIKKOU_NO_REPORT);
     }
 
     public static boolean isAnnotatedWithByPassValidation(final HasMetadata resource) {
-        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_BYPASS_VALIDATIONS);
+        return isAnnotatedWith(resource, CoreAnnotations.JIKKOU_BYPASS_VALIDATIONS);
     }
 
     public static boolean isAnnotatedWithIgnore(final HasMetadata resource) {
-        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_IO_IGNORE);
+        return isAnnotatedWith(resource, CoreAnnotations.JIKKOU_IO_IGNORE);
     }
 
     public static boolean isAnnotatedWithDelete(final HasMetadata resource) {
-        return isAnnotatedWith(resource, JikkouMetadataAnnotations.JIKKOU_IO_DELETE);
+        return isAnnotatedWith(resource, CoreAnnotations.JIKKOU_IO_DELETE);
     }
 
     @NotNull
@@ -52,5 +62,4 @@ public final class JikkouMetadataAnnotations {
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }
-
 }

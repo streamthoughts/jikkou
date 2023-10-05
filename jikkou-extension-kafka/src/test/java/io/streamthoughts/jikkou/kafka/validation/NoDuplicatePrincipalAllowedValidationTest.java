@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -27,23 +27,30 @@ class NoDuplicatePrincipalAllowedValidationTest {
     private final NoDuplicatePrincipalAllowedValidation validation = new NoDuplicatePrincipalAllowedValidation();
 
     @Test
-    void shouldThrowExceptionForDuplicate() {
-        Assertions.assertThrows(ValidationException.class, () -> {
-            validation.validate(List.of(
-                    V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("foo").build()).build(),
-                    V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("foo").build()).build()
-            ));
-        });
+    void shouldReturnErrorGivenDuplicates() {
+        // Given
+        var resources = List.of(
+                V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("foo").build()).build(),
+                V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("foo").build()).build()
+        );
+        // When
+        ValidationResult result = validation.validate(resources);
+        // Then
+        Assertions.assertFalse(result.isValid());
+
     }
 
     @Test
-    void shouldNotThrowExceptionForNoDuplicate() {
-        Assertions.assertDoesNotThrow(() -> {
-            validation.validate(List.of(
-                    V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("foo").build()).build(),
-                    V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("bar").build()).build()
-                    ));
-        });
+    void shouldNotReturnErrorGivenNoDuplicate() {
+        // Given
+        var resources = List.of(
+                V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("foo").build()).build(),
+                V1KafkaPrincipalAuthorization.builder().withMetadata(ObjectMeta.builder().withName("bar").build()).build()
+        );
+        // Then
+        ValidationResult result = validation.validate(resources);
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
 }

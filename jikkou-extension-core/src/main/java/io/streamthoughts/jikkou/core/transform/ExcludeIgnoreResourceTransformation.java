@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.annotation.AcceptsResources;
 import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
 import io.streamthoughts.jikkou.annotation.Priority;
@@ -35,7 +35,7 @@ public class ExcludeIgnoreResourceTransformation implements ResourceTransformati
     @Override
     public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata toTransform,
                                                     @NotNull HasItems resources) {
-        return JikkouMetadataAnnotations.isAnnotatedWithIgnore(toTransform) ?
+        return CoreAnnotations.isAnnotatedWithIgnore(toTransform) ?
                 Optional.empty() : Optional.of(toTransform);
     }
 }

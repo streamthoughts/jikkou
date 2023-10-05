@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
@@ -109,7 +109,7 @@ class SchemaRegistryAclEntryChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build()
                 )
                 .withSpec(V1SchemaRegistryAclEntrySpec

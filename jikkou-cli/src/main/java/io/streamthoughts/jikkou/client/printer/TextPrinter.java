@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
+import static io.streamthoughts.jikkou.client.printer.Ansi.isColor;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeDescription;
@@ -33,15 +35,7 @@ public class TextPrinter implements Printer {
 
     private static final String PADDING = "********************************************************************************";
 
-    private static final String JIKKOU_COLOR_ENABLED = "JIKKOU_COLOR_ENABLED";
-
     private static final PrintStream PS = System.out;
-
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_WHITE = "\u001B[37m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-    private static final String ANSI_BLUE = "\u001B[36m";
 
     private final boolean printChangeDetail;
 
@@ -74,38 +68,38 @@ public class TextPrinter implements Printer {
                 throw new JikkouRuntimeException(e);
             }
 
-            String color = TextPrinter.ANSI_WHITE;
+            String color = Ansi.Color.WHITE;
             ChangeType changeType = result.data().getChange().getChangeType();
             if (result.isChanged()) {
                 switch (changeType) {
                     case ADD -> {
-                        color = TextPrinter.ANSI_GREEN;
+                        color = Ansi.Color.GREEN;
                         created++;
                     }
                     case UPDATE -> {
-                        color = TextPrinter.ANSI_YELLOW;
+                        color = Ansi.Color.YELLOW;
                         changed++;
                     }
                     case DELETE -> {
-                        color = TextPrinter.ANSI_RED;
+                        color = Ansi.Color.RED;
                         deleted++;
                     }
                 }
             } else if (result.isFailed()) {
                 failed++;
             } else {
-                color = TextPrinter.ANSI_BLUE;
+                color = Ansi.Color.BLUE;
                 ok++;
             }
 
             TextPrinter.printTask(result.data().getChange().getChangeType(), result.description(), result.status().name());
             if (printChangeDetail) {
-                TextPrinter.PS.printf("%s%s%n", TextPrinter.isColor() ? color : "", json);
+                TextPrinter.PS.printf("%s%s%n", isColor() ? color : "", json);
             }
         }
 
-        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", formatExecutionTime(executionTimeMs), dryRun ? "(DRY_RUN)" : "");
-        TextPrinter.PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", TextPrinter.isColor() ? TextPrinter.ANSI_WHITE : "", ok, created, changed, deleted, failed);
+        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", isColor() ? Ansi.Color.WHITE : "", formatExecutionTime(executionTimeMs), dryRun ? "(DRY_RUN)" : "");
+        TextPrinter.PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", isColor() ? Ansi.Color.WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }
 
@@ -114,12 +108,7 @@ public class TextPrinter implements Printer {
                                   final String status) {
         String text = description.textual();
         String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
-        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? ANSI_WHITE : "", changeType, text, status, padding);
-    }
-
-    private static boolean isColor() {
-        String enabled = System.getenv(JIKKOU_COLOR_ENABLED);
-        return enabled == null || "true".equalsIgnoreCase(enabled);
+        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? Ansi.Color.WHITE : "", changeType, text, status, padding);
     }
 
     private String formatExecutionTime(long execTimeInMillis) {

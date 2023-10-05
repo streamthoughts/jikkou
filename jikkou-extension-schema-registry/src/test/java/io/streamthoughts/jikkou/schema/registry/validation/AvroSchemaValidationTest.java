@@ -15,10 +15,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -67,105 +66,99 @@ class AvroSchemaValidationTest {
             """;
 
     @Test
-    void shouldThrowExceptionForMissingDocField() {
+    void shouldReturnErrorForMissingDocField() {
         // Given
         AvroSchemaValidation validation = new AvroSchemaValidation();
         validation.configure(AvroSchemaValidation.RECORD_FIELD_MUST_HAVE_DOC.asConfiguration(true));
 
         // When
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            validation.validate(V1SchemaRegistrySubject
-                    .builder()
-                    .withMetadata(ObjectMeta
-                            .builder()
-                            .withName("test")
-                            .build()
-                    )
-                    .withSpec(V1SchemaRegistrySubjectSpec
-                            .builder()
-                            .withSchemaType(SchemaType.AVRO)
-                            .withSchema(new SchemaHandle(TEST_SCHEMA))
-                            .build()
-                    )
-                    .build()
-            );
-        });
+        ValidationResult result = validation.validate(V1SchemaRegistrySubject
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName("test")
+                        .build()
+                )
+                .withSpec(V1SchemaRegistrySubjectSpec
+                        .builder()
+                        .withSchemaType(SchemaType.AVRO)
+                        .withSchema(new SchemaHandle(TEST_SCHEMA))
+                        .build()
+                )
+                .build()
+        );
 
         // Then
-        List<ValidationException> exceptions = exception.getExceptions();
+        List<ValidationError> exceptions = result.errors();
         Assertions.assertEquals(5, exceptions.size());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for record: 'ExampleRecord'", exceptions.get(0).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for field: 'field2'", exceptions.get(1).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for field: 'nestedRecord'", exceptions.get(2).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for record: 'NestedRecord'", exceptions.get(3).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for field: 'nestedRecord.nestedField2'", exceptions.get(4).getMessage());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for record: 'ExampleRecord'", exceptions.get(0).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for field: 'field2'", exceptions.get(1).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for field: 'nestedRecord'", exceptions.get(2).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for record: 'NestedRecord'", exceptions.get(3).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing 'doc' field for field: 'nestedRecord.nestedField2'", exceptions.get(4).message());
     }
 
     @Test
-    void shouldThrowExceptionForNonNullableFields() {
+    void shouldReturnErrorForNonNullableFields() {
         // Given
         AvroSchemaValidation validation = new AvroSchemaValidation();
         validation.configure(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_NULLABLE.asConfiguration(true));
 
         // When
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            validation.validate(V1SchemaRegistrySubject
-                    .builder()
-                            .withMetadata(ObjectMeta
-                                    .builder()
-                                    .withName("test")
-                                    .build()
-                            )
-                    .withSpec(V1SchemaRegistrySubjectSpec
-                            .builder()
-                            .withSchemaType(SchemaType.AVRO)
-                            .withSchema(new SchemaHandle(TEST_SCHEMA))
-                            .build()
-                    )
-                    .build()
-            );
-        });
+        ValidationResult result = validation.validate(V1SchemaRegistrySubject
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName("test")
+                        .build()
+                )
+                .withSpec(V1SchemaRegistrySubjectSpec
+                        .builder()
+                        .withSchemaType(SchemaType.AVRO)
+                        .withSchema(new SchemaHandle(TEST_SCHEMA))
+                        .build()
+                )
+                .build()
+        );
 
         // Then
-        List<ValidationException> exceptions = exception.getExceptions();
-        Assertions.assertEquals(4, exceptions.size());
-        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: field2", exceptions.get(0).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: nestedRecord", exceptions.get(1).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: nestedRecord.nestedField1", exceptions.get(2).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: nestedRecord.nestedField2", exceptions.get(3).getMessage());
+        List<ValidationError> errors = result.errors();
+        Assertions.assertEquals(4, errors.size());
+        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: field2", errors.get(0).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: nestedRecord", errors.get(1).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: nestedRecord.nestedField1", errors.get(2).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Non-nullable field found: nestedRecord.nestedField2", errors.get(3).message());
     }
 
     @Test
-    void shouldThrowExceptionForNonOptionalFields() {
+    void shouldReturnErrorForNonOptionalFields() {
         // Given
         AvroSchemaValidation validation = new AvroSchemaValidation();
         validation.configure(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_OPTIONAL.asConfiguration(true));
 
         // When
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            validation.validate(V1SchemaRegistrySubject
-                    .builder()
-                    .withMetadata(ObjectMeta
-                            .builder()
-                            .withName("test")
-                            .build()
-                    )
-                    .withSpec(V1SchemaRegistrySubjectSpec
-                            .builder()
-                            .withSchemaType(SchemaType.AVRO)
-                            .withSchema(new SchemaHandle(TEST_SCHEMA))
-                            .build()
-                    )
-                    .build()
-            );
-        });
+        ValidationResult result = validation.validate(V1SchemaRegistrySubject
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName("test")
+                        .build()
+                )
+                .withSpec(V1SchemaRegistrySubjectSpec
+                        .builder()
+                        .withSchemaType(SchemaType.AVRO)
+                        .withSchema(new SchemaHandle(TEST_SCHEMA))
+                        .build()
+                )
+                .build()
+        );
 
         // Then
-        List<ValidationException> exceptions = exception.getExceptions();
-        Assertions.assertEquals(4, exceptions.size());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: field2", exceptions.get(0).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: nestedRecord", exceptions.get(1).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: nestedRecord.nestedField1", exceptions.get(2).getMessage());
-        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: nestedRecord.nestedField2", exceptions.get(3).getMessage());
+        List<ValidationError> errors = result.errors();
+        Assertions.assertEquals(4, errors.size());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: field2", errors.get(0).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: nestedRecord", errors.get(1).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: nestedRecord.nestedField1", errors.get(2).message());
+        Assertions.assertEquals("Invalid subject schema 'test'. Missing default value for field: nestedRecord.nestedField2", errors.get(3).message());
     }
 }
