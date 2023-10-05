@@ -104,6 +104,19 @@ public final class IOUtils {
         );
     }
 
+    public static String getFileName(URI path) {
+        return getFileName(path.normalize().getPath());
+    }
+
+    public static String getFileName(String path) {
+        int idx = path.lastIndexOf("/");
+        String filename = path;
+        if (idx >= 0) {
+            filename = path.substring(idx + 1);
+        }
+        return filename;
+    }
+
     public static InputStream openStream(final String resource) {
         return new ByteArrayInputStream(resource.getBytes(StandardCharsets.UTF_8));
     }

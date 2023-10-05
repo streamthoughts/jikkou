@@ -22,6 +22,8 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.schema.registry.avro.AvroSchema;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
@@ -83,72 +85,74 @@ public class AvroSchemaValidation implements ResourceValidation<V1SchemaRegistry
      * {@inheritDoc}
      */
     @Override
-    public void validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
+    public ValidationResult validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
         V1SchemaRegistrySubjectSpec spec
                 = resource.getSpec();
         if (isAvroSchema(resource) && hasNotReferences(resource)) {
             try {
                 AvroSchema avroSchema = new AvroSchema(spec.getSchema().value());
 
-                List<ValidationException> exceptions = new ArrayList<>();
+                List<ValidationError> errors = new ArrayList<>();
                 if (recordFieldsMustHaveDoc) {
-                    exceptions.addAll(validateDocFields(resource, avroSchema.schema()));
+                    errors.addAll(validateDocFields(resource, avroSchema.schema()));
                 }
 
                 if (recordFieldsMustBeNullable) {
-                    exceptions.addAll(validateFieldsAreNullable(resource, avroSchema.schema()));
+                    errors.addAll(validateFieldsAreNullable(resource, avroSchema.schema()));
                 }
 
                 if (recordFieldsMustBeOptional) {
-                    exceptions.addAll(validateFieldsAreOptional(resource, avroSchema.schema()));
+                    errors.addAll(validateFieldsAreOptional(resource, avroSchema.schema()));
                 }
 
-                if (!exceptions.isEmpty()) {
-                    throw new ValidationException(exceptions);
+                if (!errors.isEmpty()) {
+                    return new ValidationResult(errors);
                 }
+
 
             } catch (AvroRuntimeException e) {
-                throw new ValidationException(
-                        String.format(
-                                "Failed to parse subject schema '%s'. Cause: %s",
-                                resource.getMetadata().getName(),
-                                e.getLocalizedMessage()
-                        ),
-                        this
+                String error = String.format(
+                        "Failed to parse subject schema '%s'. Cause: %s",
+                        resource.getMetadata().getName(),
+                        e.getLocalizedMessage()
                 );
+                return ValidationResult.failure(new ValidationError(getName(), resource, error));
             }
         }
+        return ValidationResult.success();
     }
 
-    private List<ValidationException> validateDocFields(V1SchemaRegistrySubject subject, Schema schema) {
+    private List<ValidationError> validateDocFields(V1SchemaRegistrySubject subject, Schema schema) {
         return validateDocFields(subject, schema, "");
     }
 
-    private List<ValidationException> validateDocFields(V1SchemaRegistrySubject subject,
-                                                        Schema schema,
-                                                        String parentPath) {
-        List<ValidationException> errors = new ArrayList<>();
+    private List<ValidationError> validateDocFields(V1SchemaRegistrySubject subject,
+                                                    Schema schema,
+                                                    String parentPath) {
+        List<ValidationError> errors = new ArrayList<>();
         if (schema.getType() == Schema.Type.RECORD) {
             if (Strings.isBlank(schema.getDoc())) {
-                errors.add(new ValidationException(
+                errors.add(new ValidationError(
+                        getName(),
+                        subject,
                         String.format(
                                 "Invalid subject schema '%s'. Missing 'doc' field for record: '%s'",
                                 subject.getMetadata().getName(),
                                 schema.getFullName()
-                        ),
-                        this
+                        )
                 ));
             }
             for (Schema.Field field : schema.getFields()) {
                 String fieldPath = parentPath.isEmpty() ? field.name() : parentPath + "." + field.name();
                 if (Strings.isBlank(field.doc())) {
-                    errors.add(new ValidationException(
+                    errors.add(new ValidationError(
+                            getName(),
+                            subject,
                             String.format(
                                     "Invalid subject schema '%s'. Missing 'doc' field for field: '%s'",
                                     subject.getMetadata().getName(),
                                     fieldPath
-                            ),
-                            this)
+                            ))
                     );
                 }
                 errors.addAll(validateDocFields(subject, field.schema(), fieldPath));
@@ -161,25 +165,27 @@ public class AvroSchemaValidation implements ResourceValidation<V1SchemaRegistry
         return errors;
     }
 
-    private List<ValidationException> validateFieldsAreNullable(V1SchemaRegistrySubject subject,
-                                                                Schema schema) {
+    private List<ValidationError> validateFieldsAreNullable(V1SchemaRegistrySubject subject,
+                                                            Schema schema) {
         return validateFieldsAreNullable(subject, schema, "");
     }
 
-    private List<ValidationException> validateFieldsAreNullable(V1SchemaRegistrySubject subject,
-                                                                Schema schema,
-                                                                String parentPath) {
-        List<ValidationException> errors = new ArrayList<>();
+    private List<ValidationError> validateFieldsAreNullable(V1SchemaRegistrySubject subject,
+                                                            Schema schema,
+                                                            String parentPath) {
+        List<ValidationError> errors = new ArrayList<>();
         if (schema.getType() == Schema.Type.RECORD) {
             for (Schema.Field field : schema.getFields()) {
                 String fieldPath = parentPath.isEmpty() ? field.name() : parentPath + "." + field.name();
                 if (!isFieldNullable(field.schema())) {
-                    errors.add(new ValidationException(
+                    errors.add(new ValidationError(
+                            getName(),
+                            subject,
                             String.format(
                                     "Invalid subject schema '%s'. Non-nullable field found: %s",
                                     subject.getMetadata().getName(),
                                     fieldPath
-                            ), this)
+                            ))
                     );
                 }
                 errors.addAll(validateFieldsAreNullable(subject, field.schema(), fieldPath));
@@ -192,26 +198,27 @@ public class AvroSchemaValidation implements ResourceValidation<V1SchemaRegistry
         return errors;
     }
 
-    private List<ValidationException> validateFieldsAreOptional(V1SchemaRegistrySubject subject,
-                                                                Schema schema) {
+    private List<ValidationError> validateFieldsAreOptional(V1SchemaRegistrySubject subject,
+                                                            Schema schema) {
         return validateFieldsAreOptional(subject, schema, "");
     }
 
-    private List<ValidationException> validateFieldsAreOptional(V1SchemaRegistrySubject subject,
-                                                                Schema schema,
-                                                                String parentPath) {
-        List<ValidationException> errors = new ArrayList<>();
+    private List<ValidationError> validateFieldsAreOptional(V1SchemaRegistrySubject subject,
+                                                            Schema schema,
+                                                            String parentPath) {
+        List<ValidationError> errors = new ArrayList<>();
         if (schema.getType() == Schema.Type.RECORD) {
             for (Schema.Field field : schema.getFields()) {
                 String fieldPath = parentPath.isEmpty() ? field.name() : parentPath + "." + field.name();
                 if (!field.hasDefaultValue()) {
-                    errors.add(new ValidationException(
+                    errors.add(new ValidationError(
+                            getName(),
+                            subject,
                             String.format(
                                     "Invalid subject schema '%s'. Missing default value for field: %s",
                                     subject.getMetadata().getName(),
                                     fieldPath
-                            ),
-                            this)
+                            ))
                     );
                 }
                 errors.addAll(validateFieldsAreOptional(subject, field.schema(), fieldPath));

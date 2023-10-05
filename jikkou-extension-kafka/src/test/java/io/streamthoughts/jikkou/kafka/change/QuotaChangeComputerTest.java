@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.change.ChangeType;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
@@ -101,7 +101,7 @@ class QuotaChangeComputerTest {
 
         V1KafkaClientQuota actual = V1KafkaClientQuota.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build()
                 )
                 .withSpec(V1KafkaClientQuotaSpec
@@ -134,7 +134,7 @@ class QuotaChangeComputerTest {
 
         V1KafkaClientQuota actual = V1KafkaClientQuota.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_IO_DELETE, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
                         .build()
                 )
                 .withSpec(V1KafkaClientQuotaSpec

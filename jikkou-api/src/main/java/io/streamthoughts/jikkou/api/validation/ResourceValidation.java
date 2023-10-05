@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.api.extensions.ResourceInterceptor;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,18 +45,19 @@ public interface ResourceValidation<T extends HasMetadata> extends ResourceInter
      * @param resources              the resource objects to validate.
      * @throws ValidationException   if the given {@link HasMetadata} object is not valid.
      */
-    default void validate(@NotNull final List<T> resources) throws ValidationException {
-        List<ValidationException> exceptions = new ArrayList<>(resources.size());
+    default ValidationResult validate(@NotNull final List<T> resources) {
+        List<ValidationError> errors = new LinkedList<>();
         for (T resource : resources) {
             try {
-                validate(resource);
+                ValidationResult rs = validate(resource);
+                errors.addAll(rs.errors());
             } catch (ValidationException e) {
-                exceptions.add(e);
+                errors.add(new ValidationError(getName(), resource, e.getLocalizedMessage()));
             }
         }
-        if (!exceptions.isEmpty()) {
-            throw new ValidationException(exceptions);
-        }
+        if (errors.isEmpty()) return ValidationResult.success();
+
+        return new ValidationResult(errors);
     }
 
     /**
@@ -65,5 +66,7 @@ public interface ResourceValidation<T extends HasMetadata> extends ResourceInter
      * @param resource              the resource object to validate.
      * @throws ValidationException  if the given {@link HasMetadata} object is not valid.
      */
-    default void validate(@NotNull final T resource) throws ValidationException {}
+    default ValidationResult validate(@NotNull final T resource)  {
+        return ValidationResult.success();
+    }
 }

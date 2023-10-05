@@ -58,7 +58,6 @@ public class ResourcesCommand implements Runnable {
 
         String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
                 new Column[]{
-
                         new Column().header("KIND").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("APIGROUP").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),

@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import org.junit.jupiter.api.Assertions;
@@ -34,59 +34,67 @@ class TopicMinReplicationFactorValidationTest {
 
     @Test
     void shouldThrowExceptionForInvalidMinReplicationFactor() {
-        Assertions.assertThrows(ValidationException.class, () -> {
-            var topic = V1KafkaTopic.builder()
-                    .withMetadata(ObjectMeta
-                            .builder()
-                            .withName("test")
-                            .build()
-                    )
-                    .withSpec(V1KafkaTopicSpec.builder()
-                            .withPartitions(1)
-                            .withReplicas((short) 0)
-                            .build()
-                    )
-                    .build();
-            validation.validate(topic);
-        });
+        // Given
+        var topic = V1KafkaTopic.builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName("test")
+                        .build()
+                )
+                .withSpec(V1KafkaTopicSpec.builder()
+                        .withPartitions(1)
+                        .withReplicas((short) 0)
+                        .build()
+                )
+                .build();
+        // When
+        ValidationResult result = validation.validate(topic);
+
+        // Then
+        Assertions.assertFalse(result.isValid());
     }
 
     @Test
     void shouldNotThrowExceptionForTopicWithNoReplicationFactor() {
-        Assertions.assertDoesNotThrow(() -> {
-            var topic = V1KafkaTopic.builder()
-                    .withMetadata(ObjectMeta
-                            .builder()
-                            .withName("test")
-                            .build()
-                    )
-                    .withSpec(V1KafkaTopicSpec.builder()
-                            .withPartitions(1)
-                            .withReplicas((short) -1)
-                            .build()
-                    )
-                    .build();
-            validation.validate(topic);
-        });
+        // Given
+        var topic = V1KafkaTopic.builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName("test")
+                        .build()
+                )
+                .withSpec(V1KafkaTopicSpec.builder()
+                        .withPartitions(1)
+                        .withReplicas((short) -1)
+                        .build()
+                )
+                .build();
+        // When
+        ValidationResult result = validation.validate(topic);
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
     @Test
     void shouldNotThrowExceptionForTopicWithValidReplicationFactor() {
-        Assertions.assertDoesNotThrow(() -> {
-            var topic = V1KafkaTopic.builder()
-                    .withMetadata(ObjectMeta
-                            .builder()
-                            .withName("test")
-                            .build()
-                    )
-                    .withSpec(V1KafkaTopicSpec.builder()
-                            .withPartitions(1)
-                            .withReplicas((short) 1)
-                            .build()
-                    )
-                    .build();
-            validation.validate(topic);
-        });
+        // Given
+        var topic = V1KafkaTopic.builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName("test")
+                        .build()
+                )
+                .withSpec(V1KafkaTopicSpec.builder()
+                        .withPartitions(1)
+                        .withReplicas((short) 1)
+                        .build()
+                )
+                .build();
+        // When
+        ValidationResult result = validation.validate(topic);
+
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
 }

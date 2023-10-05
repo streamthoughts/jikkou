@@ -15,38 +15,36 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.List;
 import lombok.Getter;
 
+/**
+ * Represents a response for a compatibility check.
+ *
+ * @param isCompatible {@code true}, if compatible. {@code false} otherwise.
+ * @param messages      the error messages if not compatible.
+ */
 @Reflectable
-public final class CompatibilityCheck {
-
-    private final boolean isCompatible;
-
-    @Getter
-    private final List<String> messages;
-
+public record CompatibilityCheck(boolean isCompatible, @Getter List<String> messages) {
 
     /**
      * Creates a new {@link CompatibilityObject} instance.
-     *
-     * @param isCompatible {@code true}, if compatible. {@code false} otherwise.
      */
-    @JsonCreator
-    public CompatibilityCheck(@JsonProperty("is_compatible") boolean isCompatible,
-                              @JsonProperty("messages") List<String> messages) {
-        this.isCompatible = isCompatible;
-        this.messages = messages;
-    }
+    @ConstructorProperties({
+            "is_compatible",
+            "messages"
+    })
+    public CompatibilityCheck {}
 
     /**
      * Gets the compatibility check test.
      *
-     * @return  a compatibility level string.
+     * @return a compatibility level string.
      */
+    @Override
     @JsonProperty("is_compatible")
     public boolean isCompatible() {
         return isCompatible;
@@ -55,8 +53,9 @@ public final class CompatibilityCheck {
     /**
      * Gets the error message.
      *
-     * @return  the error message.
+     * @return the error message.
      */
+    @Override
     @JsonProperty("messages")
     public List<String> messages() {
         return this.messages;

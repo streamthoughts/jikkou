@@ -20,9 +20,10 @@ import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @ExtensionEnabled(value = false)
@@ -37,10 +38,12 @@ public class TopicMinReplicationFactorValidation extends TopicValidation {
     /**
      * Empty constructor used by {@link Configuration}.
      */
-    public TopicMinReplicationFactorValidation(){}
+    public TopicMinReplicationFactorValidation() {
+    }
 
     /**
      * Creates a new {@link TopicMinReplicationFactorValidation}
+     *
      * @param minReplicationFactor the min replication factor.
      */
     public TopicMinReplicationFactorValidation(final int minReplicationFactor) {
@@ -66,16 +69,21 @@ public class TopicMinReplicationFactorValidation extends TopicValidation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
-        Optional.ofNullable(resource.getSpec().getReplicas()).ifPresent(p -> {
-            if (!p.equals(KafkaTopics.NO_REPLICATION_FACTOR) && p < minReplicationFactor) {
-                throw new ValidationException(String.format(
-                        "Replication factor for topic '%s' is less than the minimum required: %d < %d",
-                        resource.getMetadata().getName(),
-                        p,
-                        minReplicationFactor
-                ), this);
-            }
-        });
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+        Short replicas = resource.getSpec().getReplicas();
+        if (replicas == null)
+            return ValidationResult.success();
+
+        if (!replicas.equals(KafkaTopics.NO_REPLICATION_FACTOR) && replicas < minReplicationFactor) {
+            String error = String.format(
+                    "Replication factor for topic '%s' is less than the minimum required: %d < %d",
+                    resource.getMetadata().getName(),
+                    replicas,
+                    minReplicationFactor
+            );
+            return ValidationResult.failure(new ValidationError(getName(), resource, error));
+        }
+
+        return ValidationResult.success();
     }
 }

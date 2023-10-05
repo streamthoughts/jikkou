@@ -20,6 +20,8 @@ import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +67,7 @@ public class TopicNamePrefixValidation extends TopicValidation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
         if (prefixes == null) {
             throw new IllegalStateException("No prefix was configured");
         }
@@ -74,11 +76,13 @@ public class TopicNamePrefixValidation extends TopicValidation {
                 .findAny()
                 .isEmpty();
         if (matched) {
-            throw new ValidationException(String.format(
+            String error = String.format(
                     "Name for topic '%s' does not start with one of the configured prefixes: %s",
                     resource.getMetadata().getName(),
                     prefixes
-            ), this);
+            );
+            return ValidationResult.failure(new ValidationError(getName(), resource, error));
         }
+        return ValidationResult.success();
     }
 }

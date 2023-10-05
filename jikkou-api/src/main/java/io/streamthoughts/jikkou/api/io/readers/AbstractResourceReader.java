@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.api.io.readers;
 
-import static io.streamthoughts.jikkou.api.model.ObjectMeta.ANNOT_RESOURCE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.io.ResourceReader;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,19 +54,11 @@ public abstract class AbstractResourceReader implements ResourceReader {
         if (location == null) {
             return resource;
         }
-
-        ObjectMeta om = resource
+        ObjectMeta meta = resource
                 .optionalMetadata()
-                .or(() -> Optional.of(ObjectMeta.builder().build()))
-                .map(m -> ObjectMeta
-                        .builder()
-                        .withName(m.getName())
-                        .withLabels(m.getLabels())
-                        .withAnnotations(m.getAnnotations())
-                        .withAnnotation(ANNOT_RESOURCE, location.toString())
-                        .build()
-                ).get();
-        return resource.withMetadata(om);
-
+                .orElse(new ObjectMeta()).toBuilder()
+                .withAnnotation(CoreAnnotations.JKKOU_IO_MANAGED_BY_LOCATION, location.toString())
+                .build();
+        return resource.withMetadata(meta);
     }
 }

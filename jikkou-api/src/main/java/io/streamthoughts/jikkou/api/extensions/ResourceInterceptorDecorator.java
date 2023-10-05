@@ -20,7 +20,7 @@ import io.streamthoughts.jikkou.api.converter.ResourceConverter;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ResourceType;
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @see ResourceInterceptor
  */
-@InterfaceStability.Evolving
+@Evolving
 public class ResourceInterceptorDecorator<E extends ResourceInterceptor, D extends ResourceInterceptorDecorator<E, D>> implements ResourceInterceptor {
 
     protected final E extension;

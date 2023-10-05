@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -35,12 +35,18 @@ class NoDuplicatePrincipalRoleValidationTest {
     private final NoDuplicatePrincipalRoleValidation validation = new NoDuplicatePrincipalRoleValidation();
 
     @Test
-    void shouldThrowExceptionDuplicate() {
-        Assertions.assertThrows(ValidationException.class, () -> validation.validate(List.of(TEST_ROLE, TEST_ROLE)));
+    void shouldReturnErrorGivenDuplicates() {
+        // When
+        ValidationResult result = validation.validate(List.of(TEST_ROLE, TEST_ROLE));
+        // Then
+        Assertions.assertFalse(result.isValid());
     }
 
     @Test
-    void shouldNotThrowExceptionDuplicate() {
-        Assertions.assertDoesNotThrow(() -> validation.validate(List.of(TEST_ROLE)));
+    void shouldNotReturnErrorGivenNoDuplicate() {
+        // When
+        ValidationResult result = validation.validate(List.of(TEST_ROLE));
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 }

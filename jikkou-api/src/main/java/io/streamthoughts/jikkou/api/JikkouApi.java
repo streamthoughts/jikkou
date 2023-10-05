@@ -185,7 +185,6 @@ public interface JikkouApi extends AutoCloseable {
      * @param mode      the reconciliation mode.
      * @param context   the context to be used for conciliation.
      * @return the list of all changes applied on the target system.
-     *
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
@@ -198,11 +197,10 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @return the validated {@link GenericResourceListObject}.
-     *
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources) {
+    default ApiResourceValidationResult validate(@NotNull HasItems resources) {
         return validate(resources, ReconciliationContext.Default.EMPTY);
     }
 
@@ -215,8 +213,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    GenericResourceListObject<HasMetadata> validate(@NotNull HasItems resources,
-                                                    @NotNull ReconciliationContext context);
+    ApiResourceValidationResult validate(@NotNull HasItems resources,
+                                         @NotNull ReconciliationContext context);
 
     /**
      * Get the resources associated to the given type.

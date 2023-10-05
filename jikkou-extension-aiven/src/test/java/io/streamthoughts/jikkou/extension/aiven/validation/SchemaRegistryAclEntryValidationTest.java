@@ -15,9 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec;
 import org.junit.jupiter.api.Assertions;
@@ -26,12 +24,12 @@ import org.junit.jupiter.api.Test;
 class SchemaRegistryAclEntryValidationTest {
 
     @Test
-    void shouldNotThrowExceptionForValidSubjectPattern() {
+    void shouldNotReturnErrorForValidSubjectPattern() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
 
-        // When - Then
-        Assertions.assertDoesNotThrow(() -> validation.validate(V1SchemaRegistryAclEntry
+        // When
+        ValidationResult result = validation.validate(V1SchemaRegistryAclEntry
                 .builder()
                 .withSpec(
                         V1SchemaRegistryAclEntrySpec
@@ -40,103 +38,109 @@ class SchemaRegistryAclEntryValidationTest {
                                 .build()
                 )
                 .build()
-                )
         );
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
     @Test
-    void shouldNotThrowExceptionForValidConfigPattern() {
+    void shouldNotReturnErrorForValidConfigPattern() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
 
-        // When - Then
-        Assertions.assertDoesNotThrow(() -> validation.validate(V1SchemaRegistryAclEntry
-                        .builder()
-                        .withSpec(
-                                V1SchemaRegistryAclEntrySpec
-                                        .builder()
-                                        .withResource("Config:")
-                                        .build()
-                        )
-                        .build()
+        // When
+        ValidationResult result = validation.validate(V1SchemaRegistryAclEntry
+                .builder()
+                .withSpec(
+                        V1SchemaRegistryAclEntrySpec
+                                .builder()
+                                .withResource("Config:")
+                                .build()
                 )
+                .build()
         );
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
     @Test
-    void shouldNotThrowExceptionForValidPatternIncludingNoSpecialCharacter() {
+    void shouldNotReturnErrorForValidPatternIncludingNoSpecialCharacter() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
 
-        // When - Then
-        Assertions.assertDoesNotThrow(() -> validation.validate(V1SchemaRegistryAclEntry
-                        .builder()
-                        .withSpec(
-                                V1SchemaRegistryAclEntrySpec
-                                        .builder()
-                                        .withResource("Subject:__thisIs_A_Test-topic.json-value")
-                                        .build()
-                        )
-                        .build()
+        // When
+        ValidationResult result = validation.validate(V1SchemaRegistryAclEntry
+                .builder()
+                .withSpec(
+                        V1SchemaRegistryAclEntrySpec
+                                .builder()
+                                .withResource("Subject:__thisIs_A_Test-topic.json-value")
+                                .build()
                 )
+                .build()
         );
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
     @Test
-    void shouldNotThrowExceptionForValidPatternIncludingGlobCharacter() {
+    void shouldNotReturnErrorForValidPatternIncludingGlobCharacter() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
 
-        // When - Then
-        Assertions.assertDoesNotThrow(() -> validation.validate(V1SchemaRegistryAclEntry
-                        .builder()
-                        .withSpec(
-                                V1SchemaRegistryAclEntrySpec
-                                        .builder()
-                                        .withResource("Subject:__*-?-value")
-                                        .build()
-                        )
-                        .build()
+        // When
+        ValidationResult result = validation.validate(V1SchemaRegistryAclEntry
+                .builder()
+                .withSpec(
+                        V1SchemaRegistryAclEntrySpec
+                                .builder()
+                                .withResource("Subject:__*-?-value")
+                                .build()
                 )
+                .build()
         );
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 
     @Test
-    void shouldThrowExceptionForInvalidResourcePrefix() {
+    void shouldReturnErrorForInvalidResourcePrefix() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
 
-        // When - Then
-        Assertions.assertThrows(ValidationException.class, () -> validation.validate(V1SchemaRegistryAclEntry
-                        .builder()
-                        .withSpec(
-                                V1SchemaRegistryAclEntrySpec
-                                        .builder()
-                                        .withResource("Invalid:")
-                                        .build()
-                        )
-                        .build()
+        // When
+        ValidationResult result = validation.validate(V1SchemaRegistryAclEntry
+                .builder()
+                .withSpec(
+                        V1SchemaRegistryAclEntrySpec
+                                .builder()
+                                .withResource("Invalid:")
+                                .build()
                 )
+                .build()
         );
+        // Then
+        Assertions.assertFalse(result.isValid());
+
     }
 
     @Test
-    void shouldThrowExceptionForInvalidResourcePattern() {
+    void shouldReturnErrorForInvalidResourcePattern() {
         // Given
         SchemaRegistryAclEntryValidation validation = new SchemaRegistryAclEntryValidation();
 
-        // When - Then
-        Assertions.assertThrows(ValidationException.class, () -> validation.validate(V1SchemaRegistryAclEntry
-                        .builder()
-                        .withSpec(
-                                V1SchemaRegistryAclEntrySpec
-                                        .builder()
-                                        .withResource("<this is invalid>")
-                                        .build()
-                        )
-                        .build()
+        // When
+        ValidationResult result = validation.validate(V1SchemaRegistryAclEntry
+                .builder()
+                .withSpec(
+                        V1SchemaRegistryAclEntrySpec
+                                .builder()
+                                .withResource("<this is invalid>")
+                                .build()
                 )
-        );
+                .build());
+        // Then
+        Assertions.assertFalse(result.isValid());
     }
 
 }

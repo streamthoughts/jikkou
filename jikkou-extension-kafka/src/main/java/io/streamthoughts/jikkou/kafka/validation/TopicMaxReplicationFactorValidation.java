@@ -20,9 +20,10 @@ import io.streamthoughts.jikkou.api.config.ConfigProperty;
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @ExtensionEnabled(value = false)
@@ -36,10 +37,12 @@ public class TopicMaxReplicationFactorValidation extends TopicValidation {
     /**
      * Empty constructor used by {@link Configuration}.
      */
-    public TopicMaxReplicationFactorValidation(){}
+    public TopicMaxReplicationFactorValidation() {
+    }
 
     /**
      * Creates a new {@link TopicMaxReplicationFactorValidation}
+     *
      * @param maxReplicationFactor the min replication factor.
      */
     public TopicMaxReplicationFactorValidation(final int maxReplicationFactor) {
@@ -65,16 +68,20 @@ public class TopicMaxReplicationFactorValidation extends TopicValidation {
      * {@inheritDoc}
      */
     @Override
-    public void validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
-        Optional.ofNullable(resource.getSpec().getReplicas()).ifPresent(p -> {
-            if (!p.equals(KafkaTopics.NO_REPLICATION_FACTOR) && p > maxReplicationFactor) {
-                throw new ValidationException(String.format(
-                        "Replication factor for topic '%s' is greater than the maximum required: %d > %d",
-                        resource.getMetadata().getName(),
-                        p,
-                        maxReplicationFactor
-                ), this);
-            }
-        });
+    public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
+        Short replicas = resource.getSpec().getReplicas();
+        if (replicas == null)
+            return ValidationResult.success();
+
+        if (!replicas.equals(KafkaTopics.NO_REPLICATION_FACTOR) && replicas > maxReplicationFactor) {
+            String error = String.format(
+                    "Replication factor for topic '%s' is greater than the maximum required: %d > %d",
+                    resource.getMetadata().getName(),
+                    replicas,
+                    maxReplicationFactor
+            );
+            return ValidationResult.failure(new ValidationError(getName(), resource, error));
+        }
+        return ValidationResult.success();
     }
 }

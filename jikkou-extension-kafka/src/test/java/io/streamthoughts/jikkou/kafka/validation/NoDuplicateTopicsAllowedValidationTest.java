@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -35,11 +35,17 @@ class NoDuplicateTopicsAllowedValidationTest {
 
     @Test
     void shouldThrowExceptionForDuplicate() {
-        Assertions.assertThrows(ValidationException.class, () -> validation.validate(List.of(TEST_TOPIC, TEST_TOPIC)));
+        // When
+        ValidationResult result = validation.validate(List.of(TEST_TOPIC, TEST_TOPIC));
+        // Then
+        Assertions.assertFalse(result.isValid());
     }
 
     @Test
-    void shouldNotThrowExceptionForDuplicate() {
-        Assertions.assertDoesNotThrow(() -> validation.validate(List.of(TEST_TOPIC)));
+    void shouldNotReturnErrorForDuplicate() {
+        // When
+        ValidationResult result = validation.validate(List.of(TEST_TOPIC));
+        // Then
+        Assertions.assertTrue(result.isValid());
     }
 }

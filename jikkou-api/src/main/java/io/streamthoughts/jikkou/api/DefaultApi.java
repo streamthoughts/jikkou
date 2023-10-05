@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.api;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.change.Change;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.config.Configuration;
@@ -38,6 +38,7 @@ import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformationChain;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
 import io.streamthoughts.jikkou.api.validation.ResourceValidationChain;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.common.utils.Tuple2;
 import java.time.Instant;
 import java.util.Collection;
@@ -205,7 +206,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                                             @NotNull final ReconciliationMode mode,
                                             @NotNull final ReconciliationContext context) {
         LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
-        List<ChangeResult<Change>> results = handleResources(resources, context)
+        Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
+        List<ChangeResult<Change>> results = resourcesByType
                 .entrySet()
                 .stream()
                 .map(e -> executeReconciliation(mode, context, e.getKey(), e.getValue()))
@@ -213,7 +215,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .toList();
         if (!context.isDryRun() && !reporters.isEmpty()) {
             List<ChangeResult<Change>> reportable = results.stream()
-                    .filter(t -> !JikkouMetadataAnnotations.isAnnotatedWithNoReport(t.data()))
+                    .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.data()))
                     .toList();
             new CombineChangeReporter(reporters).report(reportable);
         }
@@ -245,41 +247,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public GenericResourceListObject<HasMetadata> validate(final @NotNull HasItems resources,
-                                                           final @NotNull ReconciliationContext context) {
-        return GenericResourceListObject.of(handleResources(resources, context)
-                .values()
-                .stream()
-                .flatMap(Collection::stream)
-                .toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<ResourceListObject<HasMetadataChange<Change>>> getDiff(final @NotNull HasItems resources,
-                                                                       final @NotNull ReconciliationContext context) {
-
-        return handleResources(resources, context)
-                .entrySet()
-                .stream()
-                .map(e -> {
-                    ResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
-                    List<HasMetadata> resource = e.getValue();
-                    ResourceListObject<? extends HasMetadataChange<Change>> changes = controller.computeReconciliationChanges(
-                            resource,
-                            ReconciliationMode.APPLY_ALL,
-                            context
-                    );
-                    return (ResourceListObject<HasMetadataChange<Change>>) changes;
-                })
-                .toList();
-    }
-
-    @NotNull
-    private Map<ResourceType, List<HasMetadata>> handleResources(final @NotNull HasItems resources,
-                                                                 final @NotNull ReconciliationContext context) {
+    public ApiResourceValidationResult validate(final @NotNull HasItems resources,
+                                                final @NotNull ReconciliationContext context) {
 
         List<HasMetadata> converted = resources.groupByType()
                 .entrySet()
@@ -322,9 +291,38 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
 
         // Execute validations
         ResourceValidationChain validationChain = new ResourceValidationChain(validations);
-        validationChain.validate(transformed);
 
-        return transformed;
+        ValidationResult result = validationChain.validate(transformed);
+        if (result.isValid()) {
+            List<HasMetadata> list = transformed.values().stream().flatMap(Collection::stream).toList();
+            return new ApiResourceValidationResult(new GenericResourceListObject<>(list));
+        }
+
+        return new ApiResourceValidationResult(result.errors());
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ResourceListObject<HasMetadataChange<Change>>> getDiff(final @NotNull HasItems resources,
+                                                                       final @NotNull ReconciliationContext context) {
+
+        Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
+
+        return resourcesByType.entrySet()
+                .stream()
+                .map(e -> {
+                    ResourceController<HasMetadata, Change> controller = getControllerForResource(e.getKey());
+                    List<HasMetadata> resource = e.getValue();
+                    ResourceListObject<? extends HasMetadataChange<Change>> changes = controller.computeReconciliationChanges(
+                            resource,
+                            ReconciliationMode.APPLY_ALL,
+                            context
+                    );
+                    return (ResourceListObject<HasMetadataChange<Change>>) changes;
+                })
+                .toList();
     }
 
     /**
@@ -347,7 +345,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         ObjectMeta meta = resource
                 .optionalMetadata()
                 .orElse(new ObjectMeta()).toBuilder()
-                .withAnnotation(ObjectMeta.ANNOT_GENERATED, Instant.now())
+                .withAnnotation(CoreAnnotations.JKKOU_IO_RESOURCE_GENERATED, Instant.now())
                 .build();
         return resource.withMetadata(meta);
     }

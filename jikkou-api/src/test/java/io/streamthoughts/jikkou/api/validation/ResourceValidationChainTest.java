@@ -15,8 +15,10 @@
  */
 package io.streamthoughts.jikkou.api.validation;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.api.TestResource;
+import io.streamthoughts.jikkou.api.model.HasMetadata;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.api.model.ResourceType;
 import java.util.List;
@@ -33,7 +35,7 @@ class ResourceValidationChainTest {
         TestResource resource = new TestResource()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_BYPASS_VALIDATIONS, true)
+                        .withAnnotation(CoreAnnotations.JIKKOU_BYPASS_VALIDATIONS, true)
                         .build()
                 );
         // When
@@ -48,22 +50,23 @@ class ResourceValidationChainTest {
     @Test
     void shouldRunValidationForResourceAnnotatedWithByPassFalse() {
         // Given
-        ResourceValidation mkValidation = Mockito.mock(ResourceValidation.class);
-        Mockito.when(mkValidation.canAccept(Mockito.any(ResourceType.class)))
+        ResourceValidation<HasMetadata> validation = Mockito.spy(new ResourceValidation<>() {});
+
+        Mockito.when(validation.canAccept(Mockito.any(ResourceType.class)))
                 .thenReturn(true);
 
         TestResource resource = new TestResource()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withAnnotation(JikkouMetadataAnnotations.JIKKOU_BYPASS_VALIDATIONS, false)
+                        .withAnnotation(CoreAnnotations.JIKKOU_BYPASS_VALIDATIONS, false)
                         .build()
                 );
         // When
-        ResourceValidationChain chain = new ResourceValidationChain(List.of(mkValidation));
+        ResourceValidationChain chain = new ResourceValidationChain(List.of(validation));
 
         chain.validate(List.of(resource));
 
         // Then
-        Mockito.verify(mkValidation, Mockito.times(1)).validate(Mockito.anyList());
+        Mockito.verify(validation, Mockito.times(1)).validate(Mockito.anyList());
     }
 }

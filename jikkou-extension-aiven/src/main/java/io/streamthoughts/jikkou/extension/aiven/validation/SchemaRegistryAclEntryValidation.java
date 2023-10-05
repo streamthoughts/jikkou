@@ -17,8 +17,9 @@ package io.streamthoughts.jikkou.extension.aiven.validation;
 
 import io.streamthoughts.jikkou.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,17 +37,20 @@ public class SchemaRegistryAclEntryValidation implements ResourceValidation<V1Sc
      * {@inheritDoc}
      */
     @Override
-    public void validate(@NotNull V1SchemaRegistryAclEntry resource) throws ValidationException {
+    public ValidationResult validate(@NotNull V1SchemaRegistryAclEntry resource) {
         String schemaRegistryResource = resource.getSpec().getResource();
         if (schemaRegistryResource != null) {
             Matcher matcher = RESOURCE_PATTERN.matcher(schemaRegistryResource);
             if (!matcher.matches()) {
-                throw new ValidationException(
+                return ValidationResult.failure(new ValidationError(
+                        getName(),
+                        resource,
                         "Invalid input for resource (" + schemaRegistryResource + "): Config: or " +
-                        "Subject:<subject_name> where subject_name must " +
-                        "consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'",
-                        this);
+                                "Subject:<subject_name> where subject_name must " +
+                                "consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'"
+                ));
             }
         }
+        return ValidationResult.success();
     }
 }

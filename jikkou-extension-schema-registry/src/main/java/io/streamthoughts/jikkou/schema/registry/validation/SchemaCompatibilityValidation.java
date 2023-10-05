@@ -22,6 +22,8 @@ import io.streamthoughts.jikkou.api.error.ConfigException;
 import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
 import io.streamthoughts.jikkou.api.error.ValidationException;
 import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.api.validation.ValidationError;
+import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
@@ -56,15 +58,15 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
      * {@inheritDoc}
      */
     @Override
-    public void validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
+    public ValidationResult validate(@NotNull V1SchemaRegistrySubject resource) throws ValidationException {
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();
-        if (spec == null) return;
-        validate(resource, new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config)), this);
+        if (spec == null) return ValidationResult.success();
+        return validate(resource, new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config)), this);
     }
 
-    public static void validate(@NotNull V1SchemaRegistrySubject resource,
-                                @NotNull AsyncSchemaRegistryApi api,
-                                @NotNull ResourceValidation<?> validation) throws ValidationException {
+    public static ValidationResult validate(@NotNull V1SchemaRegistrySubject resource,
+                                            @NotNull AsyncSchemaRegistryApi api,
+                                            @NotNull ResourceValidation<?> validation) throws ValidationException {
 
         String subjectName = resource.getMetadata().getName();
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();
@@ -78,12 +80,15 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
             CompletableFuture<CompatibilityCheck> future = api.testCompatibilityLatest(subjectName, true, registration);
             CompatibilityCheck check = future.get();
             if (!check.isCompatible()) {
-                throw new ValidationException(String.format(
-                        "Schema for subject '%s' is not compatible with latest version: %s",
-                        subjectName,
-                        check.getMessages()
-                )
-                        , validation);
+                return ValidationResult.failure(new ValidationError(
+                        validation.getName(),
+                        resource,
+                        String.format(
+                                "Schema for subject '%s' is not compatible with latest version: %s",
+                                subjectName,
+                                check.messages()
+                        )
+                ));
             }
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
@@ -101,6 +106,8 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
         } finally {
             api.close();
         }
+
+        return ValidationResult.success();
     }
 
     private static void fail(String error) {

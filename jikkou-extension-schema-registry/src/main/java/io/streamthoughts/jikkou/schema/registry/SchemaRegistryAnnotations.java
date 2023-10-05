@@ -32,7 +32,7 @@ package io.streamthoughts.jikkou.schema.registry;/*
  * limitations under the License.
  */
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 
 public final class SchemaRegistryAnnotations {
@@ -46,10 +46,10 @@ public final class SchemaRegistryAnnotations {
     public static final String JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID = SCHEMAREGISTRY_JIKKOU_IO + "schema-id";
 
     public static boolean isAnnotatedWithNormalizeSchema(V1SchemaRegistrySubject subject) {
-        return JikkouMetadataAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_NORMALIZE_SCHEMA);
+        return CoreAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_NORMALIZE_SCHEMA);
     }
 
     public static boolean isAnnotatedWitPermananteDelete(V1SchemaRegistrySubject subject) {
-        return JikkouMetadataAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_PERMANANTE_DELETE);
+        return CoreAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_PERMANANTE_DELETE);
     }
 }

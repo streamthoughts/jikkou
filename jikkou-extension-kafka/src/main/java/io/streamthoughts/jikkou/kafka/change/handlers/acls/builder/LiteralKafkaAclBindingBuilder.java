@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls.builder;
 
-import io.streamthoughts.jikkou.JikkouMetadataAnnotations;
+import io.streamthoughts.jikkou.CoreAnnotations;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
@@ -49,7 +49,7 @@ public class LiteralKafkaAclBindingBuilder extends AbstractKafkaAclBindingBuilde
                 null,
                 null,
                 null,
-                JikkouMetadataAnnotations.isAnnotatedWithDelete(resource)
+                CoreAnnotations.isAnnotatedWithDelete(resource)
         );
     }
 
