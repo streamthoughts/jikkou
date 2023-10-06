@@ -277,6 +277,24 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "org.apache.kafka.common.security.kerberos.KerberosClientCallbackHandler",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.kafka.common.security.kerberos.KerberosLogin",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "org.apache.kafka.common.security.authenticator.DefaultLogin",
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -293,6 +311,15 @@
   },
   {
     "name": "org.apache.kafka.common.security.scram.ScramLoginModule",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.sun.security.auth.module.Krb5LoginModule",
     "methods": [
       {
         "name": "<init>",
