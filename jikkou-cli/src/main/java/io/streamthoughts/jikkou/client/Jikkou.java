@@ -120,7 +120,7 @@ public final class Jikkou {
     }
 
     private static void setRootLogLevelWithEnv() {
-        String rootLogLevel = System.getenv("ROOT_LOG_LEVEL");
+        String rootLogLevel = System.getenv("JIKKOU_CLI_LOG_LEVEL");
         if (rootLogLevel != null) {
             LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
             ch.qos.logback.classic.Logger logger = loggerContext.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
