@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.api.change.ChangeMetadata;
 import io.streamthoughts.jikkou.api.change.ChangeResponse;
 import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
@@ -71,7 +72,8 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 });
     }
 
-    protected CompletableFuture<Void> registerSubjectVersion(@NotNull SchemaSubjectChange change) {
+    protected CompletableFuture<Void> registerSubjectVersion(@NotNull HasMetadataChange<SchemaSubjectChange> item) {
+        SchemaSubjectChange change = item.getChange();
         String schema = change.getSchema().getAfter();
         SchemaType type = change.getSchemaType().getAfter();
         SchemaSubjectChangeOptions options = change.getOptions();
@@ -95,6 +97,11 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                                 subject,
                                 subjectSchemaId.id()
                         );
+                        item.getMetadata()
+                                .addAnnotationIfAbsent(
+                                        SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID,
+                                        subjectSchemaId.id()
+                                );
                     }
                     return null;
                 });

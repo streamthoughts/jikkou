@@ -83,7 +83,7 @@ class V1KafkaAclEntryListConverterTest {
         Assertions.assertEquals(1, results.size());
         V1KafkaTopicAclEntry item = results.get(0);
 
-        Assertions.assertTrue(item.getMetadata().getAnnotation("test/annotation").isPresent());
+        Assertions.assertTrue(item.getMetadata().findAnnotationByKey("test/annotation").isPresent());
         Assertions.assertEquals(entry.getSpec(), item.getSpec());
     }
 }

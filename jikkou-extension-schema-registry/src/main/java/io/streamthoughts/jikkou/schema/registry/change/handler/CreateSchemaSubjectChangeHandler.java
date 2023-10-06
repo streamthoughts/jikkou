@@ -30,7 +30,9 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<SchemaSubjectChange> {
+public final class CreateSchemaSubjectChangeHandler
+        extends AbstractSchemaSubjectChangeHandler
+        implements ChangeHandler<SchemaSubjectChange> {
 
     /**
      * Creates a new {@link CreateSchemaSubjectChangeHandler} instance.
@@ -59,7 +61,7 @@ public class CreateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
         for (HasMetadataChange<SchemaSubjectChange> item : items) {
 
             SchemaSubjectChange change = item.getChange();
-            CompletableFuture<Void> future = registerSubjectVersion(change);
+            CompletableFuture<Void> future = registerSubjectVersion(item);
             ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();
             if (compatibilityLevels != null) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));

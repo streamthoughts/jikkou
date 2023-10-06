@@ -33,12 +33,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<SchemaSubjectChange> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateSchemaSubjectChangeHandler.class);
+public final class UpdateSchemaSubjectChangeHandler
+        extends AbstractSchemaSubjectChangeHandler
+        implements ChangeHandler<SchemaSubjectChange> {
 
     /**
      * Creates a new {@link UpdateSchemaSubjectChangeHandler} instance.
@@ -70,7 +68,7 @@ public class UpdateSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
             ValueChange<String> schema = change.getSchema();
 
             if (UPDATE == schema.getChangeType()) {
-                future = future.thenComposeAsync(unused -> registerSubjectVersion(change));
+                future = future.thenComposeAsync(unused -> registerSubjectVersion(item));
             }
 
             ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();

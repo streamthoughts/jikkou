@@ -121,7 +121,7 @@ public interface HasMetadata extends Resource {
                                                   @NotNull String annotationKey) {
         return resource.optionalMetadata()
                 .stream()
-                .map(meta -> meta.getAnnotation(annotationKey))
+                .map(meta -> meta.findAnnotationByKey(annotationKey))
                 .flatMap(Optional::stream)
                 .findFirst();
     }

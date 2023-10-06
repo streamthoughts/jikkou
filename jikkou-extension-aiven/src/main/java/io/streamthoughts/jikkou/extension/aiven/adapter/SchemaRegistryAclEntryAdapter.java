@@ -35,7 +35,7 @@ public final class SchemaRegistryAclEntryAdapter {
         V1SchemaRegistryAclEntrySpec spec = entry.getSpec();
         if (id == null) {
             id = entry.optionalMetadata()
-                    .flatMap(objectMeta -> objectMeta.getAnnotation(AIVEN_IO_KAFKA_ACL_ID))
+                    .flatMap(objectMeta -> objectMeta.findAnnotationByKey(AIVEN_IO_KAFKA_ACL_ID))
                     .map(Object::toString)
                     .orElse(null);
         }

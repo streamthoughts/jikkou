@@ -19,14 +19,17 @@ import io.streamthoughts.jikkou.api.ReconciliationContext;
 import io.streamthoughts.jikkou.api.ReconciliationMode;
 import io.streamthoughts.jikkou.api.change.ChangeResult;
 import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +66,9 @@ class SchemaRegistrySubjectControllerTest extends AbstractIntegrationTest {
         // Then
         Assertions.assertEquals(1, results.size());
         ChangeResult<SchemaSubjectChange> change = results.get(0);
-        Assertions.assertEquals(ChangeType.ADD, change.data().getChange().getChangeType());
-        Assertions.assertEquals(SchemaType.AVRO, change.data().getChange().getSchemaType().getAfter());
+        HasMetadataChange<SchemaSubjectChange> data = change.data();
+        Assertions.assertEquals(Optional.of(1), data.getMetadata().findAnnotationByKey(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID));
+        Assertions.assertEquals(ChangeType.ADD, data.getChange().getChangeType());
+        Assertions.assertEquals(SchemaType.AVRO, data.getChange().getSchemaType().getAfter());
     }
 }

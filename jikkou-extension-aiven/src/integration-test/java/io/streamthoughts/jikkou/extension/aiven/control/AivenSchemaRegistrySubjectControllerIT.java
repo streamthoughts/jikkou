@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.api.change.JsonValueChange;
 import io.streamthoughts.jikkou.api.change.ValueChange;
 import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
@@ -129,7 +130,12 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
         Assertions.assertNotNull(results);
         V1SchemaRegistrySubjectChange change = V1SchemaRegistrySubjectChange
                 .builder()
-                .withMetadata(new ObjectMeta(TEST_SUBJECT))
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_SUBJECT)
+                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID, 1)
+                        .build()
+                )
                 .withChange(SchemaSubjectChange
                         .builder()
                         .withChangeType(ChangeType.ADD)
@@ -213,7 +219,12 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
         Assertions.assertNotNull(results);
         V1SchemaRegistrySubjectChange change = V1SchemaRegistrySubjectChange
                 .builder()
-                .withMetadata(new ObjectMeta(TEST_SUBJECT))
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_SUBJECT)
+                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID, 1)
+                        .build()
+                )
                 .withChange(SchemaSubjectChange
                         .builder()
                         .withChangeType(ChangeType.UPDATE)
