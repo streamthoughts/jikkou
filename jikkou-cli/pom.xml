@@ -41,7 +41,7 @@ limitations under the License.
         <ascii-table.version>1.8.0</ascii-table.version>
         <micronaut.version>3.10.1</micronaut.version>
         <micronaut-parent.version>3.10.1</micronaut-parent.version>
-        <micronaut-maven-plugin.version>4.0.6</micronaut-maven-plugin.version>
+        <micronaut-maven-plugin.version>4.0.7</micronaut-maven-plugin.version>
         <micronaut-picocli-bom.version>5.0.1</micronaut-picocli-bom.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
