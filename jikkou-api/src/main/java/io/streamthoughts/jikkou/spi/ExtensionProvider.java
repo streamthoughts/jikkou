@@ -17,12 +17,21 @@ package io.streamthoughts.jikkou.spi;
 
 import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
 
 public interface ExtensionProvider {
 
-    default String getExtensionName() {
-        return getClass().getSimpleName().replace("ExtensionProvider", "");
+    /**
+     * Gets the name of this provider.
+     *
+     * @return the string name.
+     */
+    default String getName() {
+        return this.getClass()
+                .getSimpleName()
+                .replace(ExtensionProvider.class.getSimpleName(), "")
+                .toLowerCase(Locale.ROOT);
     }
 
     /**

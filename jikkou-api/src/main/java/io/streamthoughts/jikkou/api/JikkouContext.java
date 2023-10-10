@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -47,7 +48,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JikkouContext {
+public final class JikkouContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(JikkouContext.class);
 
@@ -77,16 +78,33 @@ public class JikkouContext {
         Set<ClassLoader> cls = getAllClassLoaders();
         loadAllServices(ExtensionProvider.class, cls)
                 .forEach(provider -> {
-                    String name = provider.getExtensionName();
-                    LOG.info("Loading all '{}' extensions", name);
-                    provider.registerExtensions(extensionFactory, configuration);
+                    final String name = provider.getName();
+                    if (isExtensionEnabled(configuration, name)) {
+                        LOG.info("Loading all '{}' extensions", name);
+                        provider.registerExtensions(extensionFactory, configuration);
+                    } else {
+                        LOG.info(
+                                "Extensions for group '{}' are ignored (config setting 'extensions.provider.{}.enabled' is set to 'false').",
+                                name,
+                                name
+                        );
+                    }
                 });
 
         loadAllServices(ResourceProvider.class, cls)
                 .forEach(provider -> {
-                    String name = provider.getProviderName();
-                    LOG.info("Loading all '{}' resources", name);
-                    provider.registerAll(resourceContext);
+                    final String name = provider.getName();
+                    if (isExtensionEnabled(configuration, name)) {
+                        LOG.info("Loading all '{}' resources", name);
+                        provider.registerAll(resourceContext);
+                    } else {
+                        LOG.info(
+                                "Resources for group '{}' are ignored (config setting 'extensions.provider.{}.enabled' is set to 'false').",
+                                name,
+                                name
+                        );
+                    }
+
                 });
 
         resourceContext.getAllResourceDescriptors()
@@ -97,11 +115,27 @@ public class JikkouContext {
                 );
     }
 
-    public ExtensionFactory getExtensionFactory() {
+    @NotNull
+    private static Boolean isExtensionEnabled(@NotNull Configuration configuration, String name) {
+        String property = String.format("extensions.provider.%s.enabled", name.toLowerCase(Locale.ROOT));
+        return configuration.findBoolean(property).orElse(true);
+    }
+
+    /**
+     * Gets the extension factory.
+     *
+     * @return an {@link ExtensionFactory} instance.
+     */
+    public @NotNull ExtensionFactory getExtensionFactory() {
         return extensionFactory;
     }
 
-    public ResourceContext getResourceContext() {
+    /**
+     * Gets the resource context.
+     *
+     * @return an {@link ResourceContext} instance.
+     */
+    public @NotNull ResourceContext getResourceContext() {
         return resourceContext;
     }
 

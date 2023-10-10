@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.spi;
 
 import io.streamthoughts.jikkou.api.ResourceContext;
+import java.util.Locale;
 
 /**
  * Interface used to register
@@ -23,14 +24,15 @@ import io.streamthoughts.jikkou.api.ResourceContext;
 public interface ResourceProvider {
 
     /**
-     * Get the name of this provider.
+     * Gets the name of this provider.
      *
      * @return  the string name.
      */
-    default String getProviderName() {
+    default String getName() {
         return this.getClass()
                 .getSimpleName()
-                .replace("ResourceProvider", "");
+                .replace(ResourceProvider.class.getSimpleName(), "")
+                .toLowerCase(Locale.ROOT);
     }
 
     /**

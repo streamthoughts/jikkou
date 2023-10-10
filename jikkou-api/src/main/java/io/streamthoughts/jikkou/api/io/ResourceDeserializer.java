@@ -156,7 +156,7 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
                                  final String kind,
                                  final Class<? extends Resource> clazz) {
             TypeKey key = createKey(apiVersion, kind);
-            LOG.info("Register {} for group={} apiVersion={}, kind={}",
+            LOG.info("Register class {} for group='{}' apiVersion='{}', kind='{}'",
                     clazz.getSimpleName(),
                     key.group(),
                     key.version(),

@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.extension.aiven.validation.SchemaRegistryAclEntr
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class AivenExtensionsProvider implements ExtensionProvider {
+public class AivenExtensionProvider implements ExtensionProvider {
 
     /**
      * {@inheritDoc}

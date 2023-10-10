@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityVa
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class SchemaRegistryExtensionsProvider implements ExtensionProvider {
+public class SchemaRegistryExtensionProvider implements ExtensionProvider {
 
     /** {@inheritDoc} **/
     @Override

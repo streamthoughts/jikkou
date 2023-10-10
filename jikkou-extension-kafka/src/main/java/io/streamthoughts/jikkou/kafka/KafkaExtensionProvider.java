@@ -53,7 +53,7 @@ public class KafkaExtensionProvider implements ExtensionProvider {
 
     /** {@inheritDoc} **/
     @Override
-    public String getExtensionName() {
+    public String getName() {
         return "kafka";
     }
 

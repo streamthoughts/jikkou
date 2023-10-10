@@ -26,8 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ResourceContext {
+public final class ResourceContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceContext.class);
 
     private final Map<ResourceType, ResourceDescriptor> descriptorsByType;
     private final Set<ResourceDescriptor> descriptors;
@@ -87,6 +91,11 @@ public class ResourceContext {
                     "Cannot register resource for class '{" + descriptor.resourceClass().getName() + "}'. " +
                     "Class already registered for " + descriptor.resourceType() + ": " + existing.resourceClass().getName());
         }
+        LOG.info("Registered resource for group='{}', version='{}' and kind='{}'",
+                descriptor.group(),
+                descriptor.apiVersion(),
+                descriptor.kind()
+        );
         this.descriptors.add(descriptor);
         return descriptor;
     }

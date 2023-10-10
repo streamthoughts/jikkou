@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.api.ResourceContext;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.spi.ResourceProvider;
 
-public class SchemaRegistryResourcesProvider implements ResourceProvider {
+public class SchemaRegistryResourceProvider implements ResourceProvider {
 
     /** {@inheritDoc} **/
     @Override
