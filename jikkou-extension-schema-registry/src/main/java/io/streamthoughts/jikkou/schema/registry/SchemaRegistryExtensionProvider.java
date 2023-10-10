@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectCon
 import io.streamthoughts.jikkou.schema.registry.health.SchemaRegistryHealthIndicator;
 import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchemaTransformation;
 import io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation;
+import io.streamthoughts.jikkou.schema.registry.validation.CompatibilityLevelValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +33,22 @@ public class SchemaRegistryExtensionProvider implements ExtensionProvider {
     @Override
     public void registerExtensions(@NotNull ExtensionFactory factory,
                                    @NotNull Configuration configuration) {
+        // Collectors
         factory.register(SchemaRegistrySubjectCollector.class, SchemaRegistrySubjectCollector::new);
+
+        // Controllers
         factory.register(SchemaRegistrySubjectController.class, SchemaRegistrySubjectController::new);
+
+        // Validations
         factory.register(AvroSchemaValidation.class, AvroSchemaValidation::new);
         factory.register(SchemaCompatibilityValidation.class, SchemaCompatibilityValidation::new);
+        factory.register(CompatibilityLevelValidation.class, CompatibilityLevelValidation::new);
+
+        // Transformations
         factory.register(NormalizeSubjectSchemaTransformation.class, NormalizeSubjectSchemaTransformation::new);
+
+        // Health indicators
         factory.register(SchemaRegistryHealthIndicator.class, SchemaRegistryHealthIndicator::new);
+
     }
 }
