@@ -33,6 +33,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -40,6 +41,13 @@ import java.util.List;
  */
 @Path("/")
 public interface SchemaRegistryApi extends AutoCloseable {
+
+
+    /**
+     * Gets root.
+     */
+    @GET
+    Response get();
 
     /*
      * ----------------------------------------------------------------------------------------------------------------

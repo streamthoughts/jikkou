@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.api.config.Configuration;
 import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
 import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectCollector;
 import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectController;
+import io.streamthoughts.jikkou.schema.registry.health.SchemaRegistryHealthIndicator;
 import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchemaTransformation;
 import io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
@@ -36,5 +37,6 @@ public class SchemaRegistryExtensionProvider implements ExtensionProvider {
         factory.register(AvroSchemaValidation.class, AvroSchemaValidation::new);
         factory.register(SchemaCompatibilityValidation.class, SchemaCompatibilityValidation::new);
         factory.register(NormalizeSubjectSchemaTransformation.class, NormalizeSubjectSchemaTransformation::new);
+        factory.register(SchemaRegistryHealthIndicator.class, SchemaRegistryHealthIndicator::new);
     }
 }

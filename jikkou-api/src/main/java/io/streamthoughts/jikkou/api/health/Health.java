@@ -113,11 +113,11 @@ public final class Health {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Health{" +
-                "name='" + name + '\'' +
+        return "Health[" +
+                "name=" + name +
                 ", status=" + status +
                 ", details=" + details +
-                '}';
+                ']';
     }
 
     /**
