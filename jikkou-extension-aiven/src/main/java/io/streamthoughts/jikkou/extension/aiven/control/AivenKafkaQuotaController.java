@@ -105,7 +105,7 @@ public class AivenKafkaQuotaController implements BaseResourceController<V1Kafka
                     new CreateKafkaQuotaChangeHandler(api),
                     new DeleteKafkaQuotaChangeHandler(api),
                     new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
-                            it.getChange().getChangeType(),
+                            it.getChange().operation(),
                             it.getChange().getAfter())
                     )
             );

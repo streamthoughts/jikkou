@@ -64,7 +64,7 @@ public interface ChangeHandler<T extends Change> {
     static <T extends Change> void verify(final ChangeHandler<T> handler,
                                           final @NotNull HasMetadataChange<?> item) {
         Set<ChangeType> supportedChangeTypes = handler.supportedChangeTypes();
-        if (!supportedChangeTypes.contains(item.getChange().getChangeType())) {
+        if (!supportedChangeTypes.contains(item.getChange().operation())) {
             throw new IllegalArgumentException(
                     String.format(
                             "'%s' class does not support the passed change: %s",

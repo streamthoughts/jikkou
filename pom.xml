@@ -33,6 +33,7 @@ limitations under the License.
         <module>jikkou-extension-schema-registry</module>
         <module>jikkou-extension-rest-client</module>
         <module>jikkou-extension-core</module>
+        <module>jikkou-extension-kafka-connect</module>
     </modules>
 
     <name>Jikkou Project</name>

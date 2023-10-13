@@ -1,7 +1,7 @@
 ---
 title: "Core"
 linkTitle: "Core"
-weight: 1
+weight: 10
 description: >
   Core extensions for Jikkou
 ---

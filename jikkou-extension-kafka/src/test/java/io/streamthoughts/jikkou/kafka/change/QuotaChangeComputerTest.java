@@ -61,7 +61,7 @@ class QuotaChangeComputerTest {
         // Then
         Assertions.assertNotNull(changes);
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).operation());
     }
 
     @Test
@@ -90,7 +90,7 @@ class QuotaChangeComputerTest {
         // Then
         Assertions.assertNotNull(changes);
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).operation());
     }
 
     @Test
@@ -123,7 +123,7 @@ class QuotaChangeComputerTest {
         // Then
         Assertions.assertNotNull(changes);
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).operation());
     }
 
     @Test
@@ -207,7 +207,7 @@ class QuotaChangeComputerTest {
         // Then
         Assertions.assertNotNull(changes);
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).operation());
     }
 
     @Test
@@ -260,9 +260,9 @@ class QuotaChangeComputerTest {
         Assertions.assertEquals(1, changes.size());
         QuotaChange quotaChange = changes.get(0);
 
-        Assertions.assertEquals(ChangeType.UPDATE, quotaChange.getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, quotaChange.operation());
         Assertions.assertEquals(1, quotaChange.getConfigEntryChanges().size());
-        Assertions.assertEquals(ChangeType.DELETE, quotaChange.getConfigEntryChanges().get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, quotaChange.getConfigEntryChanges().get(0).operation());
     }
 
     @Test
@@ -313,6 +313,6 @@ class QuotaChangeComputerTest {
         // Then
         Assertions.assertNotNull(changes);
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).operation());
     }
 }

@@ -104,7 +104,7 @@ public class AivenKafkaTopicAclEntryController implements BaseResourceController
                     new CreateKafkaAclEntryChangeHandler(api),
                     new DeleteKafkaAclEntryChangeHandler(api),
                     new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
-                            it.getChange().getChangeType(),
+                            it.getChange().operation(),
                             it.getChange().getAfter())
                     )
             );

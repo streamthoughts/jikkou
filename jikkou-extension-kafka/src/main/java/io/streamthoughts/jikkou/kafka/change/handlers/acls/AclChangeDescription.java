@@ -34,7 +34,7 @@ public class AclChangeDescription implements ChangeDescription {
         AclChange change = item.getChange();
         KafkaAclBinding policy = change.getAclBindings();
         return String.format("%s ACL to %s '%s' to execute operation(s) '%s' on resource(s) '%s:%s:%s'",
-                ChangeDescription.humanize(change.getChangeType()),
+                ChangeDescription.humanize(change.operation()),
                 policy.getType(),
                 policy.getPrincipal(),
                 policy.getOperation(),

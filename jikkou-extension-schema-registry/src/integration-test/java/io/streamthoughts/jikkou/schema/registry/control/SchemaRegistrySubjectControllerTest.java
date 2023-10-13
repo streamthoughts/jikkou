@@ -68,7 +68,7 @@ class SchemaRegistrySubjectControllerTest extends AbstractIntegrationTest {
         ChangeResult<SchemaSubjectChange> change = results.get(0);
         HasMetadataChange<SchemaSubjectChange> data = change.data();
         Assertions.assertEquals(Optional.of(1), data.getMetadata().findAnnotationByKey(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID));
-        Assertions.assertEquals(ChangeType.ADD, data.getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, data.getChange().operation());
         Assertions.assertEquals(SchemaType.AVRO, data.getChange().getSchemaType().getAfter());
     }
 }

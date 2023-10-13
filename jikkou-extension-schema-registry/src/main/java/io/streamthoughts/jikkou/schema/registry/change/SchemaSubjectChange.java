@@ -74,7 +74,7 @@ public final class SchemaSubjectChange implements Change {
     }
 
     @JsonProperty("operation")
-    public ChangeType getChangeType() {
+    public ChangeType operation() {
         return changeType;
     }
 

@@ -1,7 +1,7 @@
 ---
 title: "Schema Registry"
 linkTitle: "Schema Registry"
-weight: 3
+weight: 40
 description: >
   Extensions for Schema Registry.
 ---

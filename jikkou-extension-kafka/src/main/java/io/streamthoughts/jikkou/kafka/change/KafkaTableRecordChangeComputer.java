@@ -68,7 +68,7 @@ public final class KafkaTableRecordChangeComputer
                 before.getSpec(),
                 after.getSpec()
         );
-        return List.of(buildChange(record.getChangeType(), getTopicName(after), record));
+        return List.of(buildChange(record.operation(), getTopicName(after), record));
     }
 
     private static String getTopicName(@NotNull V1KafkaTableRecord after) {

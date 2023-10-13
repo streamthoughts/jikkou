@@ -187,21 +187,23 @@ public class RestClientBuilder {
         }
 
         ClientBuilder cb = clientBuilder;
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        LoggingFeature.LoggingFeatureBuilder builder = LoggingFeature.builder()
+                .withLogger(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME));
+
         if (enableClientDebugging) {
-            SLF4JBridgeHandler.removeHandlersForRootLogger();
-            SLF4JBridgeHandler.install();
-            cb = cb
-                    .register(new LoggingFeature(
-                                    Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
-                                    Level.INFO,
-                                    LoggingFeature.Verbosity.PAYLOAD_ANY,
-                                    null
-                            )
-                    );
+            builder = builder
+                    .level(Level.INFO)
+                    .verbosity(LoggingFeature.Verbosity.PAYLOAD_ANY);
         }
+        cb = cb.register(builder.build());
+
         Client client = cb
                 .register(new CustomJacksonMapperProvider(objectMapper))
                 .register(new JacksonJsonProvider())
+                .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
                 .build();
 
         WebTarget webTarget = client.target(baseUri);

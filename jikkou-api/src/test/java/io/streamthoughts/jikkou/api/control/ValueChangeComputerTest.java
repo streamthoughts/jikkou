@@ -71,7 +71,7 @@ class ValueChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChange().operation());
         Assertions.assertEquals(after, changes.get(0).getChange().getAfter());
     }
 
@@ -86,7 +86,7 @@ class ValueChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChange().operation());
         Assertions.assertEquals(value, changes.get(0).getChange().getBefore());
         Assertions.assertEquals(value, changes.get(0).getChange().getAfter());
     }
@@ -135,7 +135,7 @@ class ValueChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChange().operation());
         Assertions.assertEquals(before, changes.get(0).getChange().getBefore());
         Assertions.assertNull(changes.get(0).getChange().getAfter());
     }

@@ -88,6 +88,7 @@ limitations under the License.
             <artifactId>jikkou-template-jinja</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- START dependencies for Jikkou Extensions -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jikkou-extension-kafka</artifactId>
@@ -103,6 +104,12 @@ limitations under the License.
             <artifactId>jikkou-extension-aiven</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-extension-kafka-connect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- END dependencies for Jikkou Extensions -->
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>

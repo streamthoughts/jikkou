@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
@@ -116,6 +117,28 @@ public final class ObjectMeta implements Serializable {
     @JsonProperty("annotations")
     public Map<String, Object> getAnnotations() {
         return Collections.unmodifiableMap(annotations);
+    }
+
+    /**
+     * Finds the label value for the specified key.
+     *
+     * @param key   the label key. Must not be {@code null}.
+     * @return  the optional value.
+     */
+    public Object getLabelByKey(final String key) {
+        return findLabelByKey(key)
+                .orElseThrow(() -> new NoSuchElementException("no label for key '" + key + "'"));
+    }
+
+    /**
+     * Finds the label value for the specified key.
+     *
+     * @param key   the label key. Must not be {@code null}.
+     * @return  the optional value.
+     */
+    public Optional<Object> findLabelByKey(final String key) {
+        if (key == null) throw new IllegalArgumentException("key must not be null");
+        return Optional.ofNullable(labels.get(key));
     }
 
     /**

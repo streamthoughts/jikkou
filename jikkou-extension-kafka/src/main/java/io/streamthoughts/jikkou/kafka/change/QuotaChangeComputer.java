@@ -113,7 +113,7 @@ public final class QuotaChangeComputer
         );
 
         boolean hasChanged = configEntryChanges.stream()
-                .anyMatch(configEntryChange -> configEntryChange.getChange().getChangeType() != ChangeType.NONE);
+                .anyMatch(configEntryChange -> configEntryChange.getChange().operation() != ChangeType.NONE);
 
         var ot = hasChanged ? ChangeType.UPDATE : ChangeType.NONE;
 

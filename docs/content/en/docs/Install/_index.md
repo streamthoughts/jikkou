@@ -91,8 +91,8 @@ pre-release) Jikkou version.
 To build the project you will need:
 
 * Java 17 (i.e. `$JAVA_HOME` environment variable is configured).
-* https://www.graalvm.org/[GraalVM] 22.1.0 or newer to create native executable
-* https://testcontainers.com/[TestContainer] to run integration tests
+* [GraalVM](https://www.graalvm.org/) 22.1.0 or newer to create native executable
+* [TestContainer](https://testcontainers.com) to run integration tests
 
 #### Create Native Executable
 

@@ -63,7 +63,7 @@ public final class QuotaChange implements Change {
      */
     @Override
     @JsonProperty("operation")
-    public ChangeType getChangeType() {
+    public ChangeType operation() {
         return operation;
     }
 
@@ -76,7 +76,7 @@ public final class QuotaChange implements Change {
     public Map<String, ConfigEntryChange> getConfigs() {
         return getConfigEntryChanges()
                 .stream()
-                .collect(Collectors.toMap(ConfigEntryChange::getName, it -> it));
+                .collect(Collectors.toMap(ConfigEntryChange::name, it -> it));
     }
 
     @JsonIgnore

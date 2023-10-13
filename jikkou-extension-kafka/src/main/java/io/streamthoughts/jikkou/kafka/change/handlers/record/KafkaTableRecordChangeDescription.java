@@ -49,7 +49,7 @@ public class KafkaTableRecordChangeDescription implements ChangeDescription {
         ValueChange<V1KafkaTableRecordSpec> record = change.getRecord();
         String keyRawValue = Optional.ofNullable(record.getAfter()).orElse(record.getBefore()).getKey().data().rawValue();
         return String.format("%s record for key '%s' into topic '%s'",
-                ChangeDescription.humanize(change.getChangeType()),
+                ChangeDescription.humanize(change.operation()),
                 keyRawValue,
                 change.getTopic()
         );

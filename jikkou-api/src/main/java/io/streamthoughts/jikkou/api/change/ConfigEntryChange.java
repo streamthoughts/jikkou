@@ -17,66 +17,16 @@ package io.streamthoughts.jikkou.api.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 
-public final class ConfigEntryChange implements Change {
-
-    private final ValueChange<Object> valueChange;
-    private final String name;
+public record ConfigEntryChange(@JsonIgnore String name,
+                                @JsonUnwrapped ValueChange<Object> valueChange
+) implements Change {
 
     /**
-     * Creates a new {@link ConfigEntryChange} instance.
-     *
-     * @param name          the config-entry name.
-     * @param valueChange   the {@link ValueChange}.
+     * {@inheritDoc}
      */
-    public ConfigEntryChange(@NotNull final String name,
-                             @NotNull final ValueChange<Object> valueChange) {
-        this.name = Objects.requireNonNull(name, "'name' should not be null");
-        this.valueChange = Objects.requireNonNull(valueChange, "'valueChange' should not be null");
-    }
-
-    /** {@inheritDoc} */
-    @JsonIgnore
-    public String getName() {
-        return name;
-    }
-
-    /** {@inheritDoc} */
     @Override
-    @JsonIgnore
-    public ChangeType getChangeType() {
-        return valueChange.getChangeType();
-    }
-
-    /** {@inheritDoc} */
-    @JsonUnwrapped
-    public ValueChange<Object> getValueChange() {
-        return valueChange;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ConfigEntryChange that = (ConfigEntryChange) o;
-        return Objects.equals(valueChange, that.valueChange) && Objects.equals(name, that.name);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(valueChange, name);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "ConfigEntryChange{" +
-                "valueChange=" + valueChange +
-                ", name='" + name + '\'' +
-                '}';
+    public ChangeType operation() {
+        return valueChange.operation();
     }
 }

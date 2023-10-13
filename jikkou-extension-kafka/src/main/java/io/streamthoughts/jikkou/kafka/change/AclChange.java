@@ -59,7 +59,7 @@ public final class AclChange implements Change {
      */
     @JsonProperty("operation")
     @Override
-    public ChangeType getChangeType() {
+    public ChangeType operation() {
         return operation;
     }
 

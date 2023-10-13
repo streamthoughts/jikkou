@@ -45,7 +45,7 @@ public final class KafkaTableRecordChange implements Change {
      * {@inheritDoc}
      */
     @Override
-    public ChangeType getChangeType() {
+    public ChangeType operation() {
         return changeType;
     }
 

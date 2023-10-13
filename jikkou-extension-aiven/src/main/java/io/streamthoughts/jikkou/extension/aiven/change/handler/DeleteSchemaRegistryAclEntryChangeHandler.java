@@ -56,6 +56,6 @@ public class DeleteSchemaRegistryAclEntryChangeHandler extends AbstractChangeHan
     @Override
     public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<ValueChange<SchemaRegistryAclEntry>> item) {
         ValueChange<SchemaRegistryAclEntry> change = item.getChange();
-        return KafkaChangeDescriptions.of(change.getChangeType(), change.getBefore());
+        return KafkaChangeDescriptions.of(change.operation(), change.getBefore());
     }
 }

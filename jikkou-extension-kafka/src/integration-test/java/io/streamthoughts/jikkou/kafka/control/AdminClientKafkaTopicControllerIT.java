@@ -166,7 +166,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         ChangeResult<?> change = results.iterator().next();
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().operation());
     }
 
     @Test
@@ -205,9 +205,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .collect(Collectors.toMap(TopicChange::getName, o -> o));
 
         Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_A));
-        Assertions.assertEquals(ChangeType.UPDATE, changeKeyedByTopicName.get(TOPIC_TEST_A).getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, changeKeyedByTopicName.get(TOPIC_TEST_A).operation());
         Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_B));
-        Assertions.assertEquals(ChangeType.ADD, changeKeyedByTopicName.get(TOPIC_TEST_B).getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, changeKeyedByTopicName.get(TOPIC_TEST_B).operation());
     }
 
     @Test
@@ -246,7 +246,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 "Invalid number of changes");
 
         boolean delete = results.stream()
-                .map(it -> it.data().getChange().getChangeType())
+                .map(it -> it.data().getChange().operation())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertFalse(delete);
@@ -291,7 +291,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         Assertions.assertEquals(1, initialTopicList.getItems().size());
         boolean delete = results.stream()
-                .map(it -> it.data().getChange().getChangeType())
+                .map(it -> it.data().getChange().operation())
                 .anyMatch(it -> it.equals(ChangeType.DELETE));
 
         Assertions.assertTrue(delete);

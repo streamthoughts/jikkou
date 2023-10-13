@@ -71,7 +71,7 @@ class SchemaSubjectChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).operation());
     }
 
     @Test
@@ -95,7 +95,7 @@ class SchemaSubjectChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).operation());
     }
 
     @Test
@@ -133,10 +133,10 @@ class SchemaSubjectChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).getChangeType());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getCompatibilityLevels().getChangeType());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchema().getChangeType());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchemaType().getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).operation());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getCompatibilityLevels().operation());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchema().operation());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchemaType().operation());
 
         Assertions.assertNull(changes.get(0).getCompatibilityLevels().getBefore());
         Assertions.assertEquals(CompatibilityLevels.BACKWARD, changes.get(0).getCompatibilityLevels().getAfter());
@@ -175,12 +175,12 @@ class SchemaSubjectChangeComputerTest {
                 .stream().map(HasMetadataChange::getChange).toList();
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).getChangeType());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getCompatibilityLevels().getChangeType());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchemaType().getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).operation());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getCompatibilityLevels().operation());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchemaType().operation());
 
         ValueChange<String> schemaChange = changes.get(0).getSchema();
-        Assertions.assertEquals(ChangeType.UPDATE, schemaChange.getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, schemaChange.operation());
         Assertions.assertNull(changes.get(0).getCompatibilityLevels().getBefore());
 
         Assertions.assertEquals(Json.normalize(SCHEMA_V2.toString()), schemaChange.getAfter());

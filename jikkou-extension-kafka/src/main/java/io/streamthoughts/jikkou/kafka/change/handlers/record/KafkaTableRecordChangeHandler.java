@@ -99,7 +99,7 @@ public final class KafkaTableRecordChangeHandler implements ChangeHandler<KafkaT
     @VisibleForTesting
     static KafkaRecord<ByteBuffer, ByteBuffer> toKafkaRecord(final HasMetadataChange<KafkaTableRecordChange> item) {
         KafkaTableRecordChange change = item.getChange();
-        ChangeType changeType = change.getChangeType();
+        ChangeType changeType = change.operation();
 
         ValueChange<V1KafkaTableRecordSpec> spec = change.getRecord();
 

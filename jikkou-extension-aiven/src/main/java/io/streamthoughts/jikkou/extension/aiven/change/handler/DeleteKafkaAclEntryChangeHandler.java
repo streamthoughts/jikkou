@@ -54,6 +54,6 @@ public class DeleteKafkaAclEntryChangeHandler extends AbstractChangeHandler<Kafk
     @Override
     public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<ValueChange<KafkaAclEntry>> item) {
         ValueChange<KafkaAclEntry> change = item.getChange();
-        return KafkaChangeDescriptions.of(change.getChangeType(), change.getBefore());
+        return KafkaChangeDescriptions.of(change.operation(), change.getBefore());
     }
 }

@@ -104,7 +104,7 @@ public final class AivenSchemaRegistryAclEntryController implements BaseResource
                     new CreateSchemaRegistryAclEntryChangeHandler(api),
                     new DeleteSchemaRegistryAclEntryChangeHandler(api),
                     new ChangeHandler.None<>(it -> KafkaChangeDescriptions.of(
-                            it.getChange().getChangeType(),
+                            it.getChange().operation(),
                             it.getChange().getAfter()))
             );
             return new ChangeExecutor<>(handlers).execute(items, dryRun);

@@ -71,7 +71,7 @@ public abstract class AbstractQuotaChangeHandler implements KafkaQuotaChangeHand
                     final ClientQuotaEntity entity = new ClientQuotaEntity(change.getType().toEntities(change.getEntity()));
                     final List<ClientQuotaAlteration.Op> operations = change.getConfigEntryChanges()
                             .stream()
-                            .map(it -> new ClientQuotaAlteration.Op(it.getName(), (Double) it.getValueChange().getAfter()))
+                            .map(it -> new ClientQuotaAlteration.Op(it.name(), (Double) it.valueChange().getAfter()))
                             .collect(Collectors.toList());
                     return new ClientQuotaAlteration(entity, operations);
                 }).collect(Collectors.toList());

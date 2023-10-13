@@ -69,7 +69,7 @@ public class TextPrinter implements Printer {
             }
 
             String color = Ansi.Color.WHITE;
-            ChangeType changeType = result.data().getChange().getChangeType();
+            ChangeType changeType = result.data().getChange().operation();
             if (result.isChanged()) {
                 switch (changeType) {
                     case ADD -> {
@@ -92,7 +92,7 @@ public class TextPrinter implements Printer {
                 ok++;
             }
 
-            TextPrinter.printTask(result.data().getChange().getChangeType(), result.description(), result.status().name());
+            TextPrinter.printTask(result.data().getChange().operation(), result.description(), result.status().name());
             if (printChangeDetail) {
                 TextPrinter.PS.printf("%s%s%n", isColor() ? color : "", json);
             }

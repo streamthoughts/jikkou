@@ -101,10 +101,10 @@ public class TopicChangeComputer extends ResourceChangeComputer<V1KafkaTopic, V1
                 .computeChanges(getConfigs(before), getConfigs(after));
 
         boolean hasChanged = configEntryChanges.stream()
-                .anyMatch(configEntryChange -> configEntryChange.getChange().getChangeType() != ChangeType.NONE);
+                .anyMatch(configEntryChange -> configEntryChange.getChange().operation() != ChangeType.NONE);
 
         var configOpType = hasChanged ? ChangeType.UPDATE : ChangeType.NONE;
-        var partitionOpType = partitions.getChangeType();
+        var partitionOpType = partitions.operation();
         ChangeType op = List.of(partitionOpType, configOpType).contains(ChangeType.UPDATE) ?
                 ChangeType.UPDATE :
                 ChangeType.NONE;

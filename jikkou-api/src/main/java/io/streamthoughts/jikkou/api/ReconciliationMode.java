@@ -66,7 +66,7 @@ public enum ReconciliationMode {
      * @return  {@code true} if the change is supported, otherwise {@code false}.
      */
     public boolean isSupported(HasMetadataChange<?> change) {
-        ChangeType changeType = change.getChange().getChangeType();
+        ChangeType changeType = change.getChange().operation();
         return changeType == ChangeType.NONE || changeTypes.contains(changeType);
     }
 }

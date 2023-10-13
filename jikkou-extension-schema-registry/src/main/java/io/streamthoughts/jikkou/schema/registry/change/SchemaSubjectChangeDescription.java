@@ -37,9 +37,9 @@ public class SchemaSubjectChangeDescription implements ChangeDescription {
     public String textual() {
         SchemaSubjectChange change = item.getChange();
         return String.format("%s subject '%s' (type=%s, compatibilityLevel=%s)",
-                ChangeDescription.humanize(change.getChangeType()),
+                ChangeDescription.humanize(change.operation()),
                 change.getSubject(),
-                change.getChangeType().name(),
+                change.operation().name(),
                 Optional.ofNullable(change.getCompatibilityLevels()).map(ValueChange::getAfter)
                         .map(Enum::name)
                         .orElse("<global>")
