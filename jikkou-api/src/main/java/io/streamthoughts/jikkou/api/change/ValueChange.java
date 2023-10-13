@@ -151,7 +151,7 @@ public class ValueChange<T> implements Change {
      */
     @Override
     @JsonProperty("operation")
-    public ChangeType getChangeType() {
+    public ChangeType operation() {
         return type;
     }
 

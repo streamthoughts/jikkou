@@ -33,7 +33,7 @@ class JsonValueChangeTest {
         JsonValueChange change = JsonValueChange.with(json, json);
 
         // Then
-        Assertions.assertEquals(change.getChangeType(), ChangeType.NONE);
+        Assertions.assertEquals(change.operation(), ChangeType.NONE);
     }
 
     @Test
@@ -49,7 +49,7 @@ class JsonValueChangeTest {
         JsonValueChange change = JsonValueChange.with(json1, json2);
 
         // Then
-        Assertions.assertEquals(ChangeType.NONE, change.getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, change.operation());
     }
 
     @Test
@@ -65,7 +65,7 @@ class JsonValueChangeTest {
         JsonValueChange change = JsonValueChange.with(json1, json2);
 
         // Then
-        Assertions.assertEquals(ChangeType.UPDATE, change.getChangeType());
+        Assertions.assertEquals(ChangeType.UPDATE, change.operation());
     }
 
     @Test
@@ -78,7 +78,7 @@ class JsonValueChangeTest {
         JsonValueChange change = JsonValueChange.with( null, json);
 
         // Then
-        Assertions.assertEquals(ChangeType.ADD, change.getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, change.operation());
     }
 
     @Test
@@ -91,6 +91,6 @@ class JsonValueChangeTest {
         JsonValueChange change = JsonValueChange.with( json, null);
 
         // Then
-        Assertions.assertEquals(ChangeType.DELETE, change.getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.operation());
     }
 }

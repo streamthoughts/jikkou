@@ -39,13 +39,13 @@ public class TopicChangeDescription implements ChangeDescription {
     public String textual() {
         TopicChange change = object.getChange();
         return String.format("%s topic '%s' (partitions=%d, replicas=%d, configs=[%s])",
-                ChangeDescription.humanize(change.getChangeType()),
+                ChangeDescription.humanize(change.operation()),
                 change.getName(),
                 Optional.ofNullable(change.getPartitions()).map(ValueChange::getAfter).orElse(null),
                 Optional.ofNullable(change.getReplicas()).map(ValueChange::getAfter).orElse(null),
                 change.getConfigEntryChanges()
                         .stream()
-                        .map(s -> s.getName() + "=" + s.getValueChange().getAfter())
+                        .map(s -> s.name() + "=" + s.valueChange().getAfter())
                         .collect(Collectors.joining(","))
         );
     }

@@ -56,7 +56,7 @@ class SchemaRegistryAclEntryChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).operation());
         Assertions.assertEquals(SchemaRegistryAclEntryAdapter.map(after), changes.get(0).getAfter());
     }
 
@@ -81,7 +81,7 @@ class SchemaRegistryAclEntryChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).operation());
         Assertions.assertEquals(SchemaRegistryAclEntryAdapter.map(entry), changes.get(0).getBefore());
         Assertions.assertEquals(SchemaRegistryAclEntryAdapter.map(entry), changes.get(0).getAfter());
     }
@@ -131,7 +131,7 @@ class SchemaRegistryAclEntryChangeComputerTest {
         Assertions.assertEquals(1, changes.size());
 
         ValueChange<SchemaRegistryAclEntry> change = changes.get(0);
-        Assertions.assertEquals(ChangeType.DELETE, change.getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.operation());
         Assertions.assertEquals(SchemaRegistryAclEntryAdapter.map(before), change.getBefore());
         Assertions.assertEquals(ACL_ENTRY_ID, change.getBefore().id());
         Assertions.assertNull(change.getAfter());
@@ -181,7 +181,7 @@ class SchemaRegistryAclEntryChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).operation());
         Assertions.assertEquals(SchemaRegistryAclEntryAdapter.map(before), changes.get(0).getBefore());
         Assertions.assertNull(changes.get(0).getAfter());
     }

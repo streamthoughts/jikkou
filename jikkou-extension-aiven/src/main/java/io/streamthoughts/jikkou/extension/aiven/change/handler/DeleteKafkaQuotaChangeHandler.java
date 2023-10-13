@@ -54,6 +54,6 @@ public class DeleteKafkaQuotaChangeHandler extends AbstractChangeHandler<KafkaQu
     @Override
     public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<ValueChange<KafkaQuotaEntry>> item) {
         ValueChange<KafkaQuotaEntry> change = item.getChange();
-        return KafkaChangeDescriptions.of(change.getChangeType(), change.getBefore());
+        return KafkaChangeDescriptions.of(change.operation(), change.getBefore());
     }
 }

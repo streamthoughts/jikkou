@@ -58,7 +58,7 @@ class KafkaAclEntryChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, changes.get(0).operation());
         Assertions.assertEquals(KafkaAclEntryAdapter.map(after), changes.get(0).getAfter());
     }
 
@@ -83,7 +83,7 @@ class KafkaAclEntryChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.NONE, changes.get(0).operation());
         Assertions.assertEquals(KafkaAclEntryAdapter.map(entry), changes.get(0).getBefore());
         Assertions.assertEquals(KafkaAclEntryAdapter.map(entry), changes.get(0).getAfter());
     }
@@ -133,7 +133,7 @@ class KafkaAclEntryChangeComputerTest {
         Assertions.assertEquals(1, changes.size());
 
         ValueChange<KafkaAclEntry> change = changes.get(0);
-        Assertions.assertEquals(ChangeType.DELETE, change.getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.operation());
         Assertions.assertEquals(KafkaAclEntryAdapter.map(before), change.getBefore());
         Assertions.assertEquals(ACL_ENTRY_ID, change.getBefore().id());
         Assertions.assertNull(change.getAfter());
@@ -183,7 +183,7 @@ class KafkaAclEntryChangeComputerTest {
 
         // Then
         Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, changes.get(0).operation());
         Assertions.assertEquals(KafkaAclEntryAdapter.map(before), changes.get(0).getBefore());
         Assertions.assertNull(changes.get(0).getAfter());
     }

@@ -1,0 +1,20 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta1"
+kind: "KafkaConnector"
+metadata:
+  # The name of the connector
+  name: "local-file-sink"
+  labels:
+    # The name of the kafka connect cluster to connect to
+    kafka.jikkou.io/connect-cluster: "my-kconnect-cluster"
+spec:
+  # Name or alias of the class for this connector.
+  connectorClass: "FileStreamSink"
+  # The maximum number of tasks for the Kafka Connector.
+  tasksMax: 1
+  # Configuration properties of the connector.
+  config:
+    file: "/tmp/test.sink.txt"
+    topics: "connect-test"
+  # The state the connector should be in [running, stopped, paused]. Defaults to running.
+  state: "RUNNING"

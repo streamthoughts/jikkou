@@ -43,6 +43,14 @@ import org.jetbrains.annotations.Nullable;
 public interface Configuration {
 
     /**
+     * Creates a new configuration {@link Builder} instance.
+     * @return  a new {@link Builder} instance.
+     */
+    static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * The basic interface for configuration builders.
      *
      * @param <C> the type of configuration

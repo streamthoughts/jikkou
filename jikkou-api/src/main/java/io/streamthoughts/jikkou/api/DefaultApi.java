@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.api.model.ResourceType;
 import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.api.reporter.CombineChangeReporter;
+import io.streamthoughts.jikkou.api.selector.AggregateSelector;
 import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.api.transform.ResourceTransformationChain;
@@ -337,6 +338,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
         List<HasMetadata> result = resources.stream()
                 .map(DefaultApi::enrichWithGeneratedAnnotation)
+                .filter(new AggregateSelector(selectors)::apply)
                 .toList();
         return converter.convertTo(result);
     }

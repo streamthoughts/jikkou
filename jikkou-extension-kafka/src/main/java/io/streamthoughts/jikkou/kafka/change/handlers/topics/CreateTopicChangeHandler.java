@@ -110,7 +110,7 @@ public final class CreateTopicChangeHandler implements KafkaTopicChangeHandler {
         TopicChange change = t.getChange();
         Map<String, String> configs = change.getConfigEntryChanges()
                 .stream()
-                .collect(Collectors.toMap(ConfigEntryChange::getName, v -> String.valueOf(v.getValueChange().getAfter())));
+                .collect(Collectors.toMap(ConfigEntryChange::name, v -> String.valueOf(v.valueChange().getAfter())));
 
         return new NewTopic(
                 change.getName(),

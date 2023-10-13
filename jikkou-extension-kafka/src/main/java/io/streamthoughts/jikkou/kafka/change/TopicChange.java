@@ -43,7 +43,7 @@ public final class TopicChange implements Change {
     /** {@inheritDoc} */
     @Override
     @JsonProperty("operation")
-    public ChangeType getChangeType() {
+    public ChangeType operation() {
         return operation;
     }
 
@@ -62,7 +62,7 @@ public final class TopicChange implements Change {
     public Map<String, ConfigEntryChange> getConfigs() {
         return  getConfigEntryChanges()
                 .stream()
-                .collect(Collectors.toMap(ConfigEntryChange::getName, it -> it));
+                .collect(Collectors.toMap(ConfigEntryChange::name, it -> it));
     }
 
     @JsonIgnore
@@ -73,7 +73,7 @@ public final class TopicChange implements Change {
     public boolean hasConfigEntryChanges() {
         return  getConfigEntryChanges()
                 .stream()
-                .anyMatch(it -> !it.getChangeType().equals(ChangeType.NONE));
+                .anyMatch(it -> !it.operation().equals(ChangeType.NONE));
     }
 
     /** {@inheritDoc} */

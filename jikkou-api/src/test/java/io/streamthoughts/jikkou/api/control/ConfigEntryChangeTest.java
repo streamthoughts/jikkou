@@ -29,8 +29,8 @@ class ConfigEntryChangeTest {
         ValueChange<Object> value = ValueChange.none("value");
         ConfigEntryChange change = new ConfigEntryChange("key", value);
 
-        Assertions.assertEquals("key", change.getName());
-        Assertions.assertEquals(value, change.getValueChange());
-        Assertions.assertEquals(ChangeType.NONE, change.getChangeType());
+        Assertions.assertEquals("key", change.name());
+        Assertions.assertEquals(value, change.valueChange());
+        Assertions.assertEquals(ChangeType.NONE, change.operation());
     }
 }

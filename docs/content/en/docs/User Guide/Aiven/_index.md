@@ -1,7 +1,7 @@
 ---
 title: "Aiven"
 linkTitle: "Aiven"
-weight: 4
+weight: 50
 description: >
   Extensions for Aiven
 ---

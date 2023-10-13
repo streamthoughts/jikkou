@@ -81,7 +81,7 @@ public class AsyncUtils {
     }
 
     public static <T> T getValueOrThrowException(CompletableFuture<T> future,
-                                                  Function<Exception, RuntimeException> mapper) {
+                                                 Function<Exception, RuntimeException> mapper) {
         if (future != null) {
             try {
                 return future.get();
@@ -98,8 +98,6 @@ public class AsyncUtils {
     public static boolean isSuccessFuture(CompletableFuture<?> future) {
         return future.isDone() && !future.isCompletedExceptionally() && !future.isCancelled();
     }
-
-
 
     private AsyncUtils() {}
 

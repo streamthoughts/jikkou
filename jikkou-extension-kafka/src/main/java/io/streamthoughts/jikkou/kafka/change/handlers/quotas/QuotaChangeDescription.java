@@ -35,10 +35,10 @@ public class QuotaChangeDescription implements ChangeDescription {
     public String textual() {
         QuotaChange change = item.getChange();
         return  String.format("%s quotas %s with entity=[%s], constraints=[%s])",
-                ChangeDescription.humanize(change.getChangeType()),
+                ChangeDescription.humanize(change.operation()),
                 change.getType(),
                 change.getType().toPettyString(change.getEntity()),
-                change.getConfigEntryChanges().stream().map(s -> s.getName() + "=" + s.getValueChange().getAfter()).collect( Collectors.joining( "," ) )
+                change.getConfigEntryChanges().stream().map(s -> s.name() + "=" + s.valueChange().getAfter()).collect( Collectors.joining( "," ) )
         );
     }
 }

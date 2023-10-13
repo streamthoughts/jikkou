@@ -33,8 +33,8 @@ public interface HasMetadataAcceptable {
     /**
      * Checks whether a given resource-type is acceptable.
      *
-     * @param type      the type of the resource.
-     * @return          {@code true} if the given resource is acceptable.
+     * @param type the type of the resource.
+     * @return {@code true} if the given resource is acceptable.
      */
     default boolean canAccept(@NotNull ResourceType type) {
         return canAccept(this, resourceType -> resourceType.canAccept(type));
@@ -59,9 +59,12 @@ public interface HasMetadataAcceptable {
                 .findFirst()
                 .map(AcceptsResource::converter)
                 .map(Classes::newInstance)
-                .orElseThrow(() -> new JikkouRuntimeException(
-                        "Cannot found any converter for type '" + resource.getKind()  + "'"
-                ));
+                .orElseThrow(() -> new JikkouRuntimeException(String.format(
+                        "Cannot found any converter for resource group='%s', apiVersion='%s', kind='%s'",
+                        resource.getGroup(),
+                        resource.getApiVersion(),
+                        resource.getKind()
+                )));
     }
 
 
@@ -69,7 +72,7 @@ public interface HasMetadataAcceptable {
      * Gets the acceptable resource types.
      *
      * @param clazz the class accepting resources.
-     * @return      the list of acceptable types.
+     * @return the list of acceptable types.
      */
     static List<ResourceType> getAcceptedResources(final Class<?> clazz) {
         List<AcceptsResource> annotations = AnnotationResolver
@@ -90,7 +93,7 @@ public interface HasMetadataAcceptable {
 
                     throw new IllegalArgumentException(
                             "Invalid 'AcceptsResource' annotation on class '" + clazz.getName() + "'." +
-                            " At least one of the following must be specified: type, apiVersion or kind."
+                                    " At least one of the following must be specified: type, apiVersion or kind."
                     );
                 })
                 .toList();

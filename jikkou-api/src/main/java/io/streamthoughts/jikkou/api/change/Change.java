@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.streamthoughts.jikkou.annotation.Reflectable;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a change operation on a resource entity.
@@ -33,11 +34,11 @@ import java.util.Arrays;
 public interface Change {
 
     /**
-     * Gets the type of the change.
+     * Gets the type of operation that changed the data.
      *
-     * @return the change type.
+     * @return a change type.
      */
-    ChangeType getChangeType();
+    ChangeType operation();
 
     /**
      * Computes a common change type from all changes. This method will return {@link ChangeType#NONE} if all
@@ -47,8 +48,20 @@ public interface Change {
      * @return  a {@link ChangeType}.
      */
     static ChangeType computeChangeTypeFrom(Change... changes) {
-        return Arrays.stream(changes)
-                .map(Change::getChangeType)
+        return computeChangeTypeFrom(Arrays.asList(changes));
+    }
+
+    /**
+     * Computes a common change type from all changes. This method will return {@link ChangeType#NONE} if all
+     * given changes are of type {@link ChangeType#NONE}, otherwise it returns {@link ChangeType#UPDATE}.
+     *
+     * @param changes   the list of changes.
+     * @return  a {@link ChangeType}.
+     */
+    static ChangeType computeChangeTypeFrom(List<Change> changes) {
+        return changes
+                .stream()
+                .map(Change::operation)
                 .reduce(NONE, (t1, t2) -> t1 == NONE && t2 == NONE ? NONE : UPDATE);
     }
 }

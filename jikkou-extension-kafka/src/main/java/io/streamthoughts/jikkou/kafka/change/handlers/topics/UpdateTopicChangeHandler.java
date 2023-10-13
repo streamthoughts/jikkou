@@ -87,14 +87,14 @@ public final class UpdateTopicChangeHandler implements KafkaTopicChangeHandler {
             if (change.hasConfigEntryChanges()) {
                 final List<AlterConfigOp> alters = new ArrayList<>(change.getConfigEntryChanges().size());
                 for (ConfigEntryChange configEntryChange : change.getConfigEntryChanges()) {
-                    var operationType = configEntryChange.getChangeType();
+                    var operationType = configEntryChange.operation();
 
                     if (operationType == ChangeType.DELETE) {
                         alters.add(newAlterConfigOp(configEntryChange, null, AlterConfigOp.OpType.DELETE));
                     }
 
                     if (operationType == ChangeType.UPDATE || operationType == ChangeType.ADD) {
-                        final String configValue = String.valueOf(configEntryChange.getValueChange().getAfter());
+                        final String configValue = String.valueOf(configEntryChange.valueChange().getAfter());
                         alters.add(newAlterConfigOp(configEntryChange, configValue, AlterConfigOp.OpType.SET));
                     }
                 }
@@ -153,6 +153,6 @@ public final class UpdateTopicChangeHandler implements KafkaTopicChangeHandler {
     private AlterConfigOp newAlterConfigOp(final ConfigEntryChange configEntryChange,
                                            final String value,
                                            final AlterConfigOp.OpType op) {
-        return new AlterConfigOp(new ConfigEntry(configEntryChange.getName(), value), op);
+        return new AlterConfigOp(new ConfigEntry(configEntryChange.name(), value), op);
     }
 }

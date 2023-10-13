@@ -120,7 +120,7 @@ public class AivenSchemaRegistryAclEntryControllerIT extends AbstractAivenIntegr
 
         ChangeResult<ValueChange<SchemaRegistryAclEntry>> result = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, result.status());
-        Assertions.assertEquals(ChangeType.ADD, result.data().getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, result.data().getChange().operation());
     }
 
     @Test
@@ -179,7 +179,7 @@ public class AivenSchemaRegistryAclEntryControllerIT extends AbstractAivenIntegr
 
         ChangeResult<ValueChange<SchemaRegistryAclEntry>> result = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, result.status());
-        Assertions.assertEquals(ChangeType.DELETE, result.data().getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, result.data().getChange().operation());
     }
 
 

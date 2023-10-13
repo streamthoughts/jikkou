@@ -1,7 +1,7 @@
 ---
 title: "Apache Kafka"
 linkTitle: "Apache Kafka"
-weight: 2
+weight: 20
 description: >
   Extensions for Apache Kafka.
 ---

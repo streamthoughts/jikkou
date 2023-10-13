@@ -51,7 +51,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(EMPTY_STATE, EMPTY_STATE)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertTrue(changes.isEmpty());
@@ -66,7 +66,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(actualState, EMPTY_STATE)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertTrue(changes.isEmpty());
@@ -82,7 +82,7 @@ class AclChangeComputerTest {
         var changes =  computer
                 .computeChanges(actualState, EMPTY_STATE)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -100,7 +100,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(EMPTY_STATE, expectedState)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -120,7 +120,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(actualState, expectedState)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -154,7 +154,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(actual, expect)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertEquals(1, changes.size());
@@ -177,7 +177,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(actualState, expectedState)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertEquals(2, changes.size());
@@ -206,7 +206,7 @@ class AclChangeComputerTest {
         var changes = changeComputer
                 .computeChanges(actualState, expectedState)
                 .stream()
-                .collect(Collectors.toMap(it -> it.getChange().getChangeType(), HasMetadataChange::getChange));
+                .collect(Collectors.toMap(it -> it.getChange().operation(), HasMetadataChange::getChange));
 
         // Then
         Assertions.assertEquals(2, changes.size());

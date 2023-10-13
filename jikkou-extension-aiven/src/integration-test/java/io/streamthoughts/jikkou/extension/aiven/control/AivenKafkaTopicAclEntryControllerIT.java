@@ -96,7 +96,7 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.ADD, change.data().getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.ADD, change.data().getChange().operation());
     }
 
     @Test
@@ -139,7 +139,7 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
         Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
-        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().getChangeType());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().operation());
     }
 
 

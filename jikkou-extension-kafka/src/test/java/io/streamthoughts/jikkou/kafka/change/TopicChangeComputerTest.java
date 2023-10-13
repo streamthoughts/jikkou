@@ -107,7 +107,7 @@ class TopicChangeComputerTest {
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
         Assertions.assertNotNull(change);
-        Assertions.assertEquals(DELETE, change.getChangeType());
+        Assertions.assertEquals(DELETE, change.operation());
         Assertions.assertFalse(change.hasConfigEntryChanges());
     }
 
@@ -171,7 +171,7 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(ADD, change.getChangeType());
+        Assertions.assertEquals(ADD, change.operation());
     }
 
     @Test
@@ -222,12 +222,12 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(UPDATE, change.getChangeType());
+        Assertions.assertEquals(UPDATE, change.operation());
         Assertions.assertTrue(change.hasConfigEntryChanges());
 
-        Assertions.assertEquals(UPDATE, change.getConfigs().get(CONFIG_PROP).getChangeType());
-        Assertions.assertEquals("actual-value", change.getConfigs().get(CONFIG_PROP).getValueChange().getBefore());
-        Assertions.assertEquals("expected-value", change.getConfigs().get(CONFIG_PROP).getValueChange().getAfter());
+        Assertions.assertEquals(UPDATE, change.getConfigs().get(CONFIG_PROP).operation());
+        Assertions.assertEquals("actual-value", change.getConfigs().get(CONFIG_PROP).valueChange().getBefore());
+        Assertions.assertEquals("expected-value", change.getConfigs().get(CONFIG_PROP).valueChange().getAfter());
     }
 
     @Test
@@ -276,12 +276,12 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(UPDATE, change.getChangeType());
+        Assertions.assertEquals(UPDATE, change.operation());
         Assertions.assertTrue(change.hasConfigEntryChanges());
 
-        Assertions.assertEquals(ADD, change.getConfigs().get(CONFIG_PROP).getChangeType());
-        Assertions.assertEquals("expected-value", change.getConfigs().get(CONFIG_PROP).getValueChange().getAfter());
-        Assertions.assertNull(change.getConfigs().get(CONFIG_PROP).getValueChange().getBefore());
+        Assertions.assertEquals(ADD, change.getConfigs().get(CONFIG_PROP).operation());
+        Assertions.assertEquals("expected-value", change.getConfigs().get(CONFIG_PROP).valueChange().getAfter());
+        Assertions.assertNull(change.getConfigs().get(CONFIG_PROP).valueChange().getBefore());
     }
 
     @Test
@@ -316,12 +316,12 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(NONE, change.getChangeType());
+        Assertions.assertEquals(NONE, change.operation());
         Assertions.assertFalse(change.hasConfigEntryChanges());
 
-        Assertions.assertEquals(NONE, change.getConfigs().get(CONFIG_PROP).getChangeType());
-        Assertions.assertEquals(ANY_VALUE, change.getConfigs().get(CONFIG_PROP).getValueChange().getBefore());
-        Assertions.assertEquals(ANY_VALUE, change.getConfigs().get(CONFIG_PROP).getValueChange().getAfter());
+        Assertions.assertEquals(NONE, change.getConfigs().get(CONFIG_PROP).operation());
+        Assertions.assertEquals(ANY_VALUE, change.getConfigs().get(CONFIG_PROP).valueChange().getBefore());
+        Assertions.assertEquals(ANY_VALUE, change.getConfigs().get(CONFIG_PROP).valueChange().getAfter());
     }
 
     @Test
@@ -373,12 +373,12 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(UPDATE, change.getChangeType());
+        Assertions.assertEquals(UPDATE, change.operation());
         Assertions.assertTrue(change.hasConfigEntryChanges());
 
-        Assertions.assertEquals(DELETE, change.getConfigs().get(CONFIG_PROP).getChangeType());
-        Assertions.assertEquals("orphan", change.getConfigs().get(CONFIG_PROP).getValueChange().getBefore());
-        Assertions.assertNull(change.getConfigs().get(CONFIG_PROP).getValueChange().getAfter());
+        Assertions.assertEquals(DELETE, change.getConfigs().get(CONFIG_PROP).operation());
+        Assertions.assertEquals("orphan", change.getConfigs().get(CONFIG_PROP).valueChange().getBefore());
+        Assertions.assertNull(change.getConfigs().get(CONFIG_PROP).valueChange().getAfter());
     }
 
     @Test
@@ -434,7 +434,7 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(NONE, change.getChangeType());
+        Assertions.assertEquals(NONE, change.operation());
         Assertions.assertFalse(change.hasConfigEntryChanges());
     }
 
@@ -479,8 +479,8 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(NONE, change.getChangeType());
-        Assertions.assertEquals(NONE, change.getPartitions().getChangeType());
+        Assertions.assertEquals(NONE, change.operation());
+        Assertions.assertEquals(NONE, change.getPartitions().operation());
     }
 
     @Test
@@ -524,7 +524,7 @@ class TopicChangeComputerTest {
 
         // THEN
         TopicChange change = changes.get(TEST_TOPIC);
-        Assertions.assertEquals(NONE, change.getChangeType());
-        Assertions.assertEquals(NONE, change.getReplicas().getChangeType());
+        Assertions.assertEquals(NONE, change.operation());
+        Assertions.assertEquals(NONE, change.getReplicas().operation());
     }
 }

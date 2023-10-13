@@ -1,0 +1,116 @@
+{
+  "type": "object",
+  "title": "V1KafkaConnector",
+  "description": "The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.api.model.Resource",
+    "io.streamthoughts.jikkou.api.model.HasMetadata",
+    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaConnectorSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "kafkaconnector",
+        "plural": "kafkaconnectors",
+        "shortNames": [
+          "kc"
+        ]
+      }
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1beta1",
+      "description": "The version of specification format for that particular resource."
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaConnector",
+      "description": "The kind of that resource."
+    },
+    "metadata": {
+      "$ref": "./Metadata.json"
+    },
+    "spec": {
+      "type": "object",
+      "description": "The actual specification data that describes the resource.",
+      "$ref": "#/$defs/V1KafkaConnectorSpec"
+    },
+    "status": {
+      "type": "object",
+      "description": "The status of the Kafka Connector.",
+      "$ref": "#/$defs/V1KafkaConnectorStatus"
+    }
+  },
+  "$defs": {
+    "V1KafkaConnectorStatus": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "connectorStatus": {
+          "type": "object",
+          "description": "The connector status, as reported by the Kafka Connect REST API.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "existingJavaType": "java.lang.Object"
+        }
+      }
+    },
+    "V1KafkaConnectorSpec": {
+      "type": "object",
+      "javaInterfaces": [],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "connectorClass": {
+          "type": "string",
+          "description": "Name or alias of the class for this connector. Must be a subclass of org.apache.kafka.connect.connector.Connector."
+        },
+        "tasksMax": {
+          "type": "integer",
+          "description": "The maximum number of tasks for the Kafka Connector."
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration properties of the connector.",
+          "additionalProperties": {
+            "lombok-builder": true,
+            "lombok-with": true,
+            "all-args-constructor": false,
+            "type": "string"
+          },
+          "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs"
+        },
+        "state": {
+          "type" : "string",
+          "enum": [
+            "paused",
+            "stopped",
+            "running"
+          ],
+          "default": "running",
+          "description": "The state the connector should be in [running, stopped, paused]. Defaults to running.",
+          "existingJavaType": "io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState"
+        }
+      }
+    }
+  }
+}

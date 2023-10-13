@@ -67,16 +67,16 @@ public final class UpdateSchemaSubjectChangeHandler
             CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
             ValueChange<String> schema = change.getSchema();
 
-            if (UPDATE == schema.getChangeType()) {
+            if (UPDATE == schema.operation()) {
                 future = future.thenComposeAsync(unused -> registerSubjectVersion(item));
             }
 
             ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();
-            if (UPDATE == compatibilityLevels.getChangeType() || ADD == compatibilityLevels.getChangeType()) {
+            if (UPDATE == compatibilityLevels.operation() || ADD == compatibilityLevels.operation()) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
             }
 
-            if (DELETE == compatibilityLevels.getChangeType()) {
+            if (DELETE == compatibilityLevels.operation()) {
                 future = future.thenComposeAsync(unused -> deleteCompatibilityLevel(change));
             }
             results.add(toChangeResponse(item, future));

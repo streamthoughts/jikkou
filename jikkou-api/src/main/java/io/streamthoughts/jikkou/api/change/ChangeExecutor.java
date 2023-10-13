@@ -68,9 +68,9 @@ public final class ChangeExecutor<C extends Change> {
         if (dryRun) {
             return supportedChanges.stream()
                     .map(object -> {
-                        ChangeHandler<C> handler = handlers.get(object.getChange().getChangeType());
+                        ChangeHandler<C> handler = handlers.get(object.getChange().operation());
                         ChangeDescription description = handler.getDescriptionFor(object);
-                        return object.getChange().getChangeType() == ChangeType.NONE ?
+                        return object.getChange().operation() == ChangeType.NONE ?
                                 ChangeResult.ok(object, description) :
                                 ChangeResult.changed(object, description);
                     })
@@ -82,13 +82,13 @@ public final class ChangeExecutor<C extends Change> {
     }
 
     private boolean isChangeSupported(HasMetadataChange<C> object) {
-        return handlers.containsKey(object.getChange().getChangeType());
+        return handlers.containsKey(object.getChange().operation());
     }
 
     private List<ChangeResult<C>> execute(final List<HasMetadataChange<C>> changes) {
         Map<ChangeType, List<HasMetadataChange<C>>> changesGroupedByType = changes
                 .stream()
-                .collect(Collectors.groupingBy(it -> it.getChange().getChangeType()));
+                .collect(Collectors.groupingBy(it -> it.getChange().operation()));
 
         return changesGroupedByType.entrySet()
                 .stream()
@@ -108,7 +108,7 @@ public final class ChangeExecutor<C extends Change> {
 
                         ChangeDescription description = handler.getDescriptionFor(object);
 
-                        if (object.getChange().getChangeType() == ChangeType.NONE) {
+                        if (object.getChange().operation() == ChangeType.NONE) {
                             return ChangeResult.ok(object, description);
                         }
 
