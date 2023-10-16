@@ -680,6 +680,11 @@ limitations under the License.
                                 </release>
                                 <distributions>
                                     <jikkou>
+                                        <name>jikkou</name>
+                                        <type>BINARY</type>
+                                        <sdkman>
+                                            <active>RELEASE</active>
+                                        </sdkman>
                                         <artifacts>
                                             <artifact>
                                                 <path>
