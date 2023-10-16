@@ -20,7 +20,7 @@ limitations under the License.
     <parent>
         <artifactId>jikkou</artifactId>
         <groupId>io.streamthoughts</groupId>
-        <version>0.30.0</version>
+        <version>0.31.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
