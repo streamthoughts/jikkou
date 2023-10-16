@@ -279,14 +279,14 @@ and &lt;code>labels&lt;/code> as defined into the YAML resource file.
 &lt;/li>
 &lt;/ol>
 &lt;figure class="center">
-&lt;img src="jikkou-template-how-it-work.png" width="50%"/>
+&lt;img src="./jikkou-template-how-it-work.svg" width="70%"/>
 &lt;/figure>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Important&lt;/h4>
 You should use &lt;code>{% raw %}...{% endraw %}&lt;/code> tags to ensure the variables defined into the &lt;code>template&lt;/code> are not be
 interpreted during the first rendering.
 &lt;/div>
-&lt;h2 id="variables">Variables&lt;/h2>
+&lt;h2 id="variablescli-configurationmd2fjikkou20cli2fcli-configurationmd">Variables&lt;a href="..%2FJikkou%20CLI%2FCLI-Configuration.md">CLI-Configuration.md&lt;/a>&lt;/h2>
 &lt;p>Jikkou defines a number of top-level variables that are passed to the template engine.&lt;/p>
 &lt;ul>
 &lt;li>
