@@ -17,13 +17,12 @@ See: https://streamthoughts.github.io/jikkou/[official documentation]
 
 == Introduction
 
-**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool designed to provide an efficient and easy way to
-manage, automate, and provision resource configurations for Kafka, Schema Registry, etc.
+**https://github.com/streamthoughts/jikkou[Jikkou]** (jikkō / 実行) is an open-source tool built to provide an efficient
+and easy way to manage, automate, and provision resources on your event-stream platform.
 
-Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka],
-ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
+Developed by Kafka ❤️, Jikkou aims to streamline daily operations on https://kafka.apache.org/documentation/[Apache Kafka], ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
 
-Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schemas** and even more with the use of YAML files called **_Resource Definitions_**.
+Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schemas**, **Connectors** and even more with the use of YAML files called **_Resource Definitions_**.
 
 Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
 
@@ -35,53 +34,57 @@ See https://medium.com/@fhussonnois/why-is-managing-kafka-topics-still-such-a-pa
 
 == Installation
 
-The latest stable release of jikkou (x86) for Linux, and macOS can be downloaded from  https://github.com/streamthoughts/jikkou/releases/latest[GitHub Releases]
+The latest stable release of jikkou (x86) for Linux, and macOS can be retrieved via https://sdkman.io/[SDKMan]:
+
+```bash
+sdk install jikkou
+```
+
+Alternatively, the latest stable release of jikkou (x86) for Linux, and macOS can be downloaded from  https://github.com/streamthoughts/jikkou/releases/latest[GitHub Releases]
 
 Below are the convenience links for the base downloads of Jikkou.
 
 [%header,format=csv]
 |===
 Platform,Link
-Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.29.0/jikkou-0.29.0-linux-x86_64.zip[download (jikkou-0.29.0-linux-x86_64.zip)]
-macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.29.0/jikkou-0.29.0-osx-x86_64.zip[download (jikkou-0.29.0-osx-x86_64.zip)]
+Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.30.0/jikkou-0.30.0-linux-x86_64.zip[download (jikkou-0.30.0-linux-x86_64.zip)]
+macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.30.0/jikkou-0.30.0-osx-x86_64.zip[download (jikkou-0.30.0-osx-x86_64.zip)]
 |===
 
-Alternatively, jikkou is also available:
+Download the jikkou binary from the https://github.com/streamthoughts/jikkou/releases[releases page], uncompress and copy to the desired location.
 
-* As a fatJar available from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.29.0/[Maven Central]
-* As a Docker Image available from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
-
-Download the jikkou binary from the https://github.com/streamthoughts/jikkou/releases[releases page], uncompress
-and copy to the desired location.
-
-[source, bash]
+[source,bash]
 ----
 # Download the latest stable release
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.29.0/jikkou-0.29.0-linux-x86_64.zip
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.30.0/jikkou-0.30.0-linux-x86_64.zip
 
 # Uncompress
-unzip jikkou-0.29.0-linux-x86_64.zip
+unzip jikkou-0.30.0-linux-x86_64.zip
 
 # Copy to the desired location
-cp jikkou-0.29.0-linux-x86_64/bin/jikkou $HOME/.local/bin
+cp jikkou-0.30.0-linux-x86_64/bin/jikkou $HOME/.local/bin
 ----
 
-It is recommended to install the bash/zsh completion script `jikkou_completion`:
+Finally, Jikkou is can also be retrieved :
 
-[source, bash]
+* As a **fatJar** from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.30.0/[Maven Central]
+* As a **Docker Image** from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
+
+Note, it is recommended to install the bash/zsh completion script `jikkou_completion`:
+
+[source,bash]
 ----
 wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion . jikkou_completion
 ----
 
 or alternatively, run the following command for generation the completion script.
 
-[source, bash]
+[source,bash]
 ----
 source <(jikkou generate-completion)
 ----
 
-WARNING: If you are using macOS you may need to remove the quarantine attribute from the bits before you can use them
-         To do this, run the following: `sudo xattr -r -d com.apple.quarantine path/to/jikkou/folder/`
+WARNING: If you are using macOS you may need to remove the quarantine attribute from the bits before you can use them To do this, run the following: `sudo xattr -r -d com.apple.quarantine path/to/jikkou/folder/`
 
 == Overview
 
@@ -89,6 +92,7 @@ Here is an example of how to create and manage a _Kafka topic_ using Jikkou:
 
 * Create a resource file _kafka-topics.yaml_:
 kafka-topics.yaml:::
+
 [source,yaml]
 ----
 # file:./kafka-topics.yaml
@@ -107,7 +111,7 @@ spec:
 
 * Then run the following command:
 
-[source, bash]
+[source,bash]
 ----
 $ jikkou apply --files ./kafka-topics.yaml
 ----
@@ -115,11 +119,13 @@ $ jikkou apply --files ./kafka-topics.yaml
 Jikkou will then take care of computing and applying the necessary changes directly to your cluster.
 
 _(output)_:
+
 [source]
 ----
 TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, replicas=3) - CHANGED **********************
 ----
-[source, json]
+
+[source,json]
 ----
 {
   "changed" : true,
@@ -146,6 +152,7 @@ TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, repl
   "status" : "CHANGED"
 }
 ----
+
 [source]
 ----
 EXECUTION in 2s 661ms (DRY_RUN)

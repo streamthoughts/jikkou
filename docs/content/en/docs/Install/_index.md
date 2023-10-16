@@ -1,14 +1,25 @@
 ---
 title: "Install Jikkou"
 linkTitle: "Install"
-weight: 1
+weight: 2
 description: >
   This guide shows how to install the Jikkou CLI.
+menu:
+  main:
+    weight: 20
 ---
 
 {{% pageinfo %}}
 Jikkou can be installed either from source, or from releases.
 {{% /pageinfo %}}
+
+## From SDKMan! (recommanded)
+
+The latest stable release of jikkou (x86) for Linux, and macOS can be retrieved via https://sdkman.io/[SDKMan]:
+
+```bash
+sdk install jikkou
+```
 
 ## From The Jikkou Project
 
@@ -17,7 +28,7 @@ Jikkou can be installed either from source, or from releases.
 Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available:
 
 * As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (for Linux, MacOS)
-* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.26.0/)
+* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.30.0/)
 * As a docker image available from [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou).
 
 These are the official ways to get Jikkou releases that you manually downloaded and installed.
@@ -25,8 +36,8 @@ These are the official ways to get Jikkou releases that you manually downloaded 
 #### Install From Release distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
-2. Unpack it (`unzip jikkou-0.26.0-linux-x86_64.zip`)
-3. Move the unpacked directory to the desired destination (`mv jikkou-0.26.0-linux-x86_64 /opt/jikkou`)
+2. Unpack it (`unzip jikkou-0.30.0-linux-x86_64.zip`)
+3. Move the unpacked directory to the desired destination (`mv jikkou-0.30.0-linux-x86_64 /opt/jikkou`)
 4. Add the executable to your PATH (`export PATH=$PATH:/opt/jikkou/bin`)
 
 From there, you should be able to run the client: `jikkou help`.
