@@ -77,7 +77,8 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 }
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/aiven/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
-&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</guid><description>
+&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka-connect/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka-connect/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/user-guide/kafka/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="topics">Topics&lt;/h2>
 &lt;h3 id="noduplicatetopicsallowedvalidation">&lt;code>NoDuplicateTopicsAllowedValidation&lt;/code>&lt;/h3>
