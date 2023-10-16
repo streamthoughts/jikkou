@@ -22,7 +22,9 @@ resources on **Event-Driven Data Mesh platforms** (or, more simply, on any **Apa
 
 Jikkou adopts a stateless approach and thus does not store any state internally. Instead, it leverages your platforms 
 or services as the source of truth. This design allows you to seamlessly integrate Jikkou with other solutions 
-(such as Ansible, Terraform, etc.) or use it on an ad hoc basis for specific needs, making it incredibly flexible and versatile
+(such as Ansible, Terraform, etc.) or use it on an ad hoc basis for specific needs, making it incredibly flexible and versatile.
+
+{{< figure src="./jikkou-how-it-works.svg" width="80%" class="center" >}}
 
 ## Why Jikkou ? The Story Behind Jikkou.
 
