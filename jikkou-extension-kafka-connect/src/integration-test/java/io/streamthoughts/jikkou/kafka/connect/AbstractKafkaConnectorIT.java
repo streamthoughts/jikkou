@@ -113,5 +113,6 @@ public class AbstractKafkaConnectorIT {
                 Thread.sleep(100);
             } while (connectors.statusCode() == 200 && connectors.body().equals("[]"));
         }
+        Thread.sleep(1000); // make sure tasks are running
     }
 }
