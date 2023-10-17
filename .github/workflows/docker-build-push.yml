@@ -22,6 +22,7 @@ on:
 env:
   JAVA_VERSION: '17'
   JAVA_DISTRO: 'zulu'
+  GRAAL_VERSION: '22.3.3'
 jobs:
   build:
     if: github.repository == 'streamthoughts/jikkou'
@@ -34,8 +35,8 @@ jobs:
     - name: 'Set up GraalVM'
       uses: graalvm/setup-graalvm@v1
       with:
+        version: ${{ env.GRAAL_VERSION }}
         java-version: ${{ env.JAVA_VERSION }}
-        distribution: 'graalvm'
         github-token: ${{ secrets.GITHUB_TOKEN }}
         components: 'native-image'
         native-image-job-reports: 'true'
