@@ -1,5 +1,4 @@
 = Jikkou!
-
 image:https://img.shields.io/github/license/streamthoughts/jikkou[]
 image:https://img.shields.io/github/issues/streamthoughts/jikkou[]
 image:https://img.shields.io/github/forks/streamthoughts/jikkou[]
@@ -10,6 +9,9 @@ image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_ji
 image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=sqale_rating[Maintainability Rating]
 image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=vulnerabilities[Vulnerabilities]
 image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=coverage[Coverage]
+
+[.text-center]
+image:./assets/jikkou-logo-title.png[align="center"]
 
 toc::[]
 
