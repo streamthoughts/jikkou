@@ -99,7 +99,7 @@ limitations under the License.
         <sonar.java.binaries>target</sonar.java.binaries>
         <sonar.java.source>${jdk.version}</sonar.java.source>
         <sonar.language>java</sonar.language>
-        <config.version>1.4.2</config.version>
+        <config.version>1.4.3</config.version>
         <vavr-jackson.version>0.10.3</vavr-jackson.version>
         <annotations.version>24.0.1</annotations.version>
         <!-- START Maven plugin versions -->
