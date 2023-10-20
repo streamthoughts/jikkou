@@ -37,17 +37,7 @@ public final class AclChangeComputer
      */
     public AclChangeComputer(boolean isDeleteBindingForOrphanPrincipal,
                              @NotNull KafkaAclBindingBuilder kafkaAclBindingBuilder) {
-        super(new KeyMapper(), new ValueMapper(kafkaAclBindingBuilder), isDeleteBindingForOrphanPrincipal);
-    }
-
-    static class KeyMapper implements ChangeKeyMapper<V1KafkaPrincipalAuthorization> {
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public @NotNull Object apply(@NotNull V1KafkaPrincipalAuthorization resource) {
-            return resource.getMetadata().getName(); // Principal
-        }
+        super(metadataNameKeyMapper(), new ValueMapper(kafkaAclBindingBuilder), isDeleteBindingForOrphanPrincipal);
     }
 
     static class ValueMapper implements ChangeValueMapper<V1KafkaPrincipalAuthorization, List<KafkaAclBinding>> {
@@ -80,14 +70,14 @@ public final class AclChangeComputer
         List<AclChange> changes = new ArrayList<>();
         // Compute NONE
         after.stream()
-            .filter(not(KafkaAclBinding::isDelete))
+            .filter(not(KafkaAclBinding::isDeleted))
             .filter(before::contains)
             .map(AclChange::none)
             .forEach(changes::add);
 
         // Compute ADD
         after.stream()
-            .filter(not(KafkaAclBinding::isDelete))
+            .filter(not(KafkaAclBinding::isDeleted))
             .filter(not(before::contains))
             .map(AclChange::add)
             .forEach(changes::add);
@@ -95,7 +85,7 @@ public final class AclChangeComputer
         // Compute DELETE (for explicit deletions)
         after.stream()
             .filter(before::contains)
-            .filter(KafkaAclBinding::isDelete)
+            .filter(KafkaAclBinding::isDeleted)
             .map(AclChange::delete)
             .forEach(changes::add);
 

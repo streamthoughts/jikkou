@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.kafka.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.annotation.Reflectable;
 import java.util.Objects;
 import org.apache.kafka.common.acl.AclOperation;
@@ -24,188 +25,57 @@ import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a binding between a resource pattern and an access control entry.
+ *
+ * @param principal       the principal to grant or deny permissions.
+ * @param resourcePattern the Kafka resource pattern. Cannot be {@code null}.
+ * @param patternType     the Kafka ACL binding pattern type. Cannot be {@code null}.
+ * @param resourceType    the kafka resource type. Cannot be {@code null}.
+ * @param operation       the ACL operation. Cannot be {@code null}.
+ * @param type            represents whether an ACL grants or denies permissions. Cannot be {@code null}.
+ * @param host            the host. Cannot be {@code null}.
+ * @param isDeleted       specify if this binding should be deleted.
+ */
 @Reflectable
-public class KafkaAclBinding {
+public record KafkaAclBinding(
+        @JsonProperty @NotNull String principal,
 
-    private static final String PRINCIPAL_TYPE_SEPARATOR = ":";
+        @JsonProperty @NotNull String resourcePattern,
 
-    private final String principalType;
+        @JsonProperty @NotNull PatternType patternType,
 
-    private final String principalName;
+        @JsonProperty @NotNull ResourceType resourceType,
 
-    private final String resourcePattern;
+        @JsonProperty @NotNull AclOperation operation,
 
-    private final PatternType patternType;
+        @JsonProperty @NotNull AclPermissionType type,
 
-    private final ResourceType resourceType;
+        @JsonProperty @NotNull String host,
 
-    private final AclOperation operation;
+        @JsonIgnore boolean isDeleted
 
-    private final AclPermissionType type;
-
-    private final String host;
-
-    /**
-     * Flag to indicate this binding should be deleted.
-     */
-    private boolean delete;
-
-    public static Builder builder() {
-        return new Builder();
+) {
+    public KafkaAclBinding(@NotNull String principal,
+                           @NotNull String resourcePattern,
+                           @NotNull PatternType patternType,
+                           @NotNull ResourceType resourceType,
+                           @NotNull AclOperation operation,
+                           @NotNull AclPermissionType type,
+                           @NotNull String host) {
+        this(principal, resourcePattern, patternType, resourceType, operation, type, host, false);
     }
 
     /**
-     * Builder class to create a new {@link KafkaAclBinding} object.
-     */
-    public static class Builder {
-
-        private String principalType;
-        private String principalName;
-        private String resource;
-        private PatternType patternType = PatternType.LITERAL;
-        private ResourceType resourceType;
-        private AclPermissionType type;
-        private AclOperation operation;
-        private String host;
-
-        private boolean delete = false;
-
-        public Builder withDelete(final boolean delete) {
-            this.delete = delete;
-            return this;
-        }
-
-        public Builder withPrincipal(final String principal) {
-            String[] parts = principal.split(PRINCIPAL_TYPE_SEPARATOR);
-            return this
-                    .withPrincipalType(parts[0])
-                    .withPrincipalName(parts[1]);
-        }
-
-        public Builder withPrincipalType(final String principalType) {
-            this.principalType = principalType;
-            return this;
-        }
-
-        public Builder withPrincipalName(final String principalName) {
-            this.principalName = principalName;
-            return this;
-        }
-
-        public Builder withResourcePattern(final String resource) {
-            this.resource = resource;
-            return this;
-        }
-
-        public Builder withPatternType(final PatternType patternType) {
-            this.patternType = patternType;
-            return this;
-        }
-
-        public Builder withResourceType(final ResourceType resourceType) {
-            this.resourceType = resourceType;
-            return this;
-        }
-
-        public Builder withType(final AclPermissionType permission) {
-            this.type = permission;
-            return this;
-        }
-
-        public Builder withOperation(final AclOperation operation) {
-            this.operation = operation;
-            return this;
-        }
-
-        public Builder withHost(final String host) {
-            this.host = host;
-            return this;
-        }
-
-        public KafkaAclBinding build() {
-            return new KafkaAclBinding(
-                    principalType,
-                    principalName,
-                    resource,
-                    patternType,
-                    resourceType,
-                    type,
-                    operation,
-                    host,
-                    delete
-            );
-        }
-    }
-
-    /**
-     * Creates a new {@link KafkaAclBinding} instance.
-     */
-    KafkaAclBinding(@NotNull final String principalType,
-                    @NotNull final String principalName,
-                    @NotNull final String resourcePattern,
-                    @NotNull final PatternType patternType,
-                    @NotNull final ResourceType resourceType,
-                    @NotNull final AclPermissionType type,
-                    @NotNull final AclOperation operation,
-                    @NotNull final String host,
-                    final boolean delete) {
-        this.principalType = Objects.requireNonNull(principalType, "'principalType' must not be null");
-        this.principalName = Objects.requireNonNull(principalName, "'principalName' must not be null");
-        this.type = Objects.requireNonNull(type, "'type' must not be null");
-        this.operation = Objects.requireNonNull(operation, "'operation' must not be null");
-        this.host = Objects.requireNonNull(host, "'host' must not be null");
-        this.resourcePattern = Objects.requireNonNull(resourcePattern, "'resourcePattern' must not be null");
-        this.patternType = Objects.requireNonNull(patternType, "'patternType' must not be null");
-        this.resourceType = Objects.requireNonNull(resourceType, "'resourceType' must not be null");
-        this.delete = delete;
-    }
-
-    public void isDelete(boolean delete) {
-        this.delete = delete;
-    }
-    
-    @JsonIgnore
-    public boolean isDelete() {
-        return delete;
-    }
-
-    public AclPermissionType getType() {
-        return type;
-    }
-
-    public String getPrincipal() {
-        return principalType + PRINCIPAL_TYPE_SEPARATOR + principalName;
-    }
-
-    public String getResourcePattern() {
-        return resourcePattern;
-    }
-
-    public PatternType getPatternType() {
-        return patternType;
-    }
-
-    public ResourceType getResourceType() {
-        return resourceType;
-    }
-
-    public AclOperation getOperation() {
-        return operation;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    /** {@inheritDoc} **/
+     * {@inheritDoc}
+     **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         KafkaAclBinding that = (KafkaAclBinding) o;
-        return Objects.equals(principalType, that.principalType) &&
-               Objects.equals(principalName, that.principalName) &&
-               Objects.equals(resourcePattern, that.resourcePattern) &&
+        return Objects.equals(principal, that.principal) &&
+                Objects.equals(resourcePattern, that.resourcePattern) &&
                 patternType == that.patternType &&
                 resourceType == that.resourceType &&
                 operation == that.operation &&
@@ -213,12 +83,13 @@ public class KafkaAclBinding {
                 Objects.equals(host, that.host);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public int hashCode() {
         return Objects.hash(
-                principalType,
-                principalName,
+                principal,
                 resourcePattern,
                 patternType,
                 resourceType,
@@ -226,19 +97,5 @@ public class KafkaAclBinding {
                 type,
                 host
         );
-    }
-
-    @Override
-    public String toString() {
-        return "KafkaAclBinding{" +
-                "principalType='" + principalType + '\'' +
-                ", principalName='" + principalName + '\'' +
-                ", resourcePattern='" + resourcePattern + '\'' +
-                ", patternType=" + patternType +
-                ", resourceType=" + resourceType +
-                ", operation=" + operation +
-                ", permission=" + type +
-                ", host='" + host + '\'' +
-                '}';
     }
 }

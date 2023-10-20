@@ -60,10 +60,6 @@ public final class AdminClientKafkaAclController
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaAclController.class);
 
-    public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
-            .ofBoolean("delete-orphans")
-            .orElse(false);
-
     private AdminClientContextFactory adminClientContextFactory;
 
     /**
@@ -124,7 +120,10 @@ public final class AdminClientKafkaAclController
                     new TopicMatchingAclRulesBuilder(adminClient)
             );
 
-            AclChangeComputer computer = new AclChangeComputer(DELETE_ORPHANS_OPTIONS.evaluate(context.configuration()), builder);
+            AclChangeComputer computer = new AclChangeComputer(
+                    new Config(context.configuration()).isDeleteOrphansEnabled(),
+                    builder);
+
             List<V1KafkaAclChange> changes = computer.computeChanges(actualStates, expectedStates)
                     .stream()
                     .map(it -> V1KafkaAclChange.builder()
@@ -135,10 +134,6 @@ public final class AdminClientKafkaAclController
 
             return new V1KafkaAclChangeList().withItems(changes);
         }
-    }
-
-    private V1KafkaAclChange toModelChange(AclChange c) {
-        return V1KafkaAclChange.builder().withChange(c).build();
     }
 
     /**
@@ -156,6 +151,23 @@ public final class AdminClientKafkaAclController
                     new ChangeHandler.None<>(AclChangeDescription::new)
             );
             return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+        }
+    }
+
+    public static class Config {
+
+        public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS_CONFIG = ConfigProperty
+                .ofBoolean("delete-orphans")
+                .orElse(false);
+
+        private final Configuration configuration;
+
+        public Config(Configuration configuration) {
+            this.configuration = configuration;
+        }
+
+        public boolean isDeleteOrphansEnabled() {
+            return DELETE_ORPHANS_OPTIONS_CONFIG.evaluate(configuration);
         }
     }
 }

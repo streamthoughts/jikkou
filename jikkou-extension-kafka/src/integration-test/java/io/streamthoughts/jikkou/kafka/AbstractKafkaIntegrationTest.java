@@ -50,10 +50,14 @@ public class AbstractKafkaIntegrationTest {
 
     @Container
     final KafkaContainer kafka = new KafkaContainer(
-            DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION)).withKraft()
+            DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION))
+            .withKraft()
             .withNetwork(KAFKA_NETWORK)
             .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
             .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
+            .withEnv("KAFKA_AUTHORIZER_CLASS_NAME", "org.apache.kafka.metadata.authorizer.StandardAuthorizer")
+            .withEnv("KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND", "true")
+            .withEnv("KAFKA_SUPER_USERS", "User:ANONYMOUS")
             .withLogConsumer(new Slf4jLogConsumer(LOG));
 
 

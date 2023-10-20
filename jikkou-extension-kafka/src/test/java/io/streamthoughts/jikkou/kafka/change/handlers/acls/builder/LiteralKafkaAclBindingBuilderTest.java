@@ -80,11 +80,11 @@ public class LiteralKafkaAclBindingBuilderTest {
         assertEquals(1, rules.size());
         KafkaAclBinding rule = rules.iterator().next();
 
-        assertEquals(WILDCARD, rule.getHost());
-        assertEquals(AclOperation.CREATE, rule.getOperation());
-        assertEquals(USER_TYPE + SIMPLE_USER, rule.getPrincipal());
-        assertEquals(TOPIC_TEST_A, rule.getResourcePattern());
-        assertEquals(ResourceType.TOPIC, rule.getResourceType());
+        assertEquals(WILDCARD, rule.host());
+        assertEquals(AclOperation.CREATE, rule.operation());
+        assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
+        assertEquals(TOPIC_TEST_A, rule.resourcePattern());
+        assertEquals(ResourceType.TOPIC, rule.resourceType());
     }
 
     @Test
@@ -121,11 +121,11 @@ public class LiteralKafkaAclBindingBuilderTest {
         assertEquals(1, rules.size());
         KafkaAclBinding rule = rules.iterator().next();
 
-        assertEquals(WILDCARD, rule.getHost());
-        assertEquals(AclOperation.CREATE, rule.getOperation());
-        assertEquals(USER_TYPE + SIMPLE_USER, rule.getPrincipal());
-        assertEquals(TOPIC_WITH_WILDCARD, rule.getResourcePattern());
-        assertEquals(ResourceType.TOPIC, rule.getResourceType());
+        assertEquals(WILDCARD, rule.host());
+        assertEquals(AclOperation.CREATE, rule.operation());
+        assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
+        assertEquals(TOPIC_WITH_WILDCARD, rule.resourcePattern());
+        assertEquals(ResourceType.TOPIC, rule.resourceType());
     }
 
 }

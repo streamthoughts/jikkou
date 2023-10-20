@@ -34,7 +34,7 @@ public final class V1KafkaPrincipalAuthorizationSupport {
 
         return bindings
                 .stream()
-                .collect(Collectors.groupingBy(KafkaAclBinding::getPrincipal))
+                .collect(Collectors.groupingBy(KafkaAclBinding::principal))
                 .entrySet()
                 .stream()
                 .map(e -> from(e.getKey(), e.getValue()));
@@ -51,13 +51,13 @@ public final class V1KafkaPrincipalAuthorizationSupport {
                 .flatMap(resourceAndBindings -> {
                     return resourceAndBindings.getValue()
                             .stream()
-                            .collect(Collectors.groupingBy(KafkaAclBinding::getType))
+                            .collect(Collectors.groupingBy(KafkaAclBinding::type))
                             .entrySet()
                             .stream()
                             .map(typeAndBindings -> {
                                 final List<AclOperation> operations = typeAndBindings.getValue()
                                         .stream()
-                                        .map(KafkaAclBinding::getOperation)
+                                        .map(KafkaAclBinding::operation)
                                         .toList();
 
                                 var pattern = resourceAndBindings.getKey();

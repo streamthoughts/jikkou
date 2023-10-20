@@ -32,15 +32,15 @@ public class AclChangeDescription implements ChangeDescription {
     @Override
     public String textual() {
         AclChange change = item.getChange();
-        KafkaAclBinding policy = change.getAclBindings();
+        KafkaAclBinding policy = change.acl();
         return String.format("%s ACL to %s '%s' to execute operation(s) '%s' on resource(s) '%s:%s:%s'",
                 ChangeDescription.humanize(change.operation()),
-                policy.getType(),
-                policy.getPrincipal(),
-                policy.getOperation(),
-                policy.getResourceType(),
-                policy.getPatternType(),
-                policy.getResourcePattern()
+                policy.type(),
+                policy.principal(),
+                policy.operation(),
+                policy.resourceType(),
+                policy.patternType(),
+                policy.resourcePattern()
         );
     }
 }

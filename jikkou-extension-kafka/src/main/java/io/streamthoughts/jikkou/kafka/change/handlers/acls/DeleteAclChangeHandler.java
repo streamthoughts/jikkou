@@ -64,7 +64,7 @@ public class DeleteAclChangeHandler implements KafkaAclChangeHandler {
         Map<KafkaAclBinding, HasMetadataChange<AclChange>> data = items
                 .stream()
                 .peek(it -> ChangeHandler.verify(this, it))
-                .map(it -> new Tuple2<>(it.getChange().getAclBindings(), it))
+                .map(it -> new Tuple2<>(it.getChange().acl(), it))
                 .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
 
         List<AclBindingFilter> bindings = data.keySet().stream()

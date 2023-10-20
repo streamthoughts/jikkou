@@ -35,10 +35,10 @@ public final class KafkaAclResource {
      */
     public KafkaAclResource(final KafkaAclBinding policy) {
         this(
-                policy.getResourcePattern(),
-                policy.getResourceType(),
-                policy.getPatternType(),
-                policy.getHost()
+                policy.resourcePattern(),
+                policy.resourceType(),
+                policy.patternType(),
+                policy.host()
         );
     }
 

@@ -33,15 +33,16 @@ class AclChangeDescriptionTest {
         // Given
         AclChange change = AclChange.builder()
                 .withOperation(ChangeType.ADD)
-                .withAcl(KafkaAclBinding.builder()
-                        .withPrincipal("User:test")
-                        .withPatternType(PatternType.LITERAL)
-                        .withOperation(AclOperation.ALL)
-                        .withType(AclPermissionType.ALLOW)
-                        .withResourcePattern("test")
-                        .withResourceType(ResourceType.TOPIC)
-                        .withHost("*")
-                        .build()
+                .withAcl(new KafkaAclBinding(
+                    "User:test",
+                    "test",
+                    PatternType.LITERAL,
+                    ResourceType.TOPIC,
+                    AclOperation.ALL,
+                    AclPermissionType.ALLOW,
+                    "*",
+                    false
+                    )
                 )
                 .build();
 

@@ -95,12 +95,12 @@ public class TopicMatchingAclRulesBuilderTest {
         String[] topics = new String[]{TOPIC_TEST_A, TOPIC_TEST_B};
         int i = 0;
         for (KafkaAclBinding rule : rules) {
-            assertEquals(WILDCARD, rule.getHost());
-            assertEquals(AclOperation.CREATE, rule.getOperation());
-            assertEquals(USER_TYPE + SIMPLE_USER, rule.getPrincipal());
-            assertEquals(topics[i], rule.getResourcePattern());
-            assertEquals(ResourceType.TOPIC, rule.getResourceType());
-            assertEquals(PatternType.LITERAL, rule.getPatternType());
+            assertEquals(WILDCARD, rule.host());
+            assertEquals(AclOperation.CREATE, rule.operation());
+            assertEquals(USER_TYPE + SIMPLE_USER, rule.principal());
+            assertEquals(topics[i], rule.resourcePattern());
+            assertEquals(ResourceType.TOPIC, rule.resourceType());
+            assertEquals(PatternType.LITERAL, rule.patternType());
             i++;
         }
     }

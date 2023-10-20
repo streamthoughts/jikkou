@@ -20,73 +20,39 @@ import static java.util.Optional.ofNullable;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaResourceMatcher;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 abstract class AbstractKafkaAclBindingBuilder implements KafkaAclBindingBuilder {
 
 
     List<KafkaAclBinding> buildAclBindings(final String principal,
-                                           final Collection<V1KafkaPrincipalAcl> permissions,
+                                           final Collection<V1KafkaPrincipalAcl> acls,
                                            final String overrideResourcePattern,
                                            final PatternType overridePatternType,
                                            final ResourceType overrideResourceType,
                                            final boolean delete
     ) {
         List<KafkaAclBinding> bindings = new LinkedList<>();
-        for (V1KafkaPrincipalAcl permission : permissions) {
-            for (AclOperation operation : permission.getOperations()) {
-                KafkaAclBinding binding = getKafkaAclBinding(
+        for (V1KafkaPrincipalAcl acl : acls) {
+            for (AclOperation operation : acl.getOperations()) {
+                KafkaAclBinding binding = new KafkaAclBinding(
                         principal,
-                        permission,
+                        ofNullable(overrideResourcePattern).orElse(acl.getResource().getPattern()),
+                        ofNullable(overridePatternType).orElse(acl.getResource().getPatternType()),
+                        ofNullable(overrideResourceType).orElse(acl.getResource().getType()),
                         operation,
-                        overrideResourcePattern,
-                        overridePatternType,
-                        overrideResourceType,
-                        delete);
+                        acl.getType(),
+                        acl.getHost(),
+                        delete
+                );
                 bindings.add(binding);
             }
         }
         return bindings;
-    }
-
-    /**
-     * Static helper method to create a new {@link KafkaAclBinding} from the given arguments.
-     *
-     * @param principal           the principal.
-     * @param acl                 the ACL.
-     * @param operation           the ACL operation.
-     * @param resourcePattern     the resource pattern to be used instead of the one from ACL - can be null.
-     * @param resourcePatternType the resource pattern-type to be used instead of the one from ACL - can be null.
-     * @param resourceType        the resource type to be used instead of the one from ACL - can be null.
-     * @param delete              the flag to indicate if the bind should be deleted.
-     * @return  a new {@link KafkaAclBinding}.
-     */
-    private static KafkaAclBinding getKafkaAclBinding(@NotNull String principal,
-                                                      @NotNull V1KafkaPrincipalAcl acl,
-                                                      @NotNull AclOperation operation,
-                                                      @Nullable String resourcePattern,
-                                                      @Nullable PatternType resourcePatternType,
-                                                      @Nullable ResourceType resourceType,
-                                                      boolean delete) {
-        V1KafkaResourceMatcher resource = acl.getResource();
-
-        return KafkaAclBinding.builder()
-                .withPrincipal(principal)
-                .withResourcePattern(ofNullable(resourcePattern).orElse(resource.getPattern()))
-                .withPatternType(ofNullable(resourcePatternType).orElse(resource.getPatternType()))
-                .withResourceType(ofNullable(resourceType).orElse(resource.getType()))
-                .withType(acl.getType())
-                .withOperation(operation)
-                .withHost(acl.getHost())
-                .withDelete(delete)
-                .build();
     }
 }

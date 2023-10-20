@@ -183,11 +183,11 @@ class AclChangeComputerTest {
         Assertions.assertEquals(2, changes.size());
         AclChange addChange = changes.get(ADD);
         Assertions.assertNotNull(addChange);
-        Assertions.assertEquals("topic-B", addChange.getAclBindings().getResourcePattern());
+        Assertions.assertEquals("topic-B", addChange.acl().resourcePattern());
 
         AclChange noneChange = changes.get(NONE);
         Assertions.assertNotNull(noneChange);
-        Assertions.assertEquals("topic-A", noneChange.getAclBindings().getResourcePattern());
+        Assertions.assertEquals("topic-A", noneChange.acl().resourcePattern());
     }
 
     @Test
@@ -212,11 +212,11 @@ class AclChangeComputerTest {
         Assertions.assertEquals(2, changes.size());
         AclChange deleteChange = changes.get(DELETE);
         Assertions.assertNotNull(deleteChange);
-        Assertions.assertEquals("topic-B", deleteChange.getAclBindings().getResourcePattern());
+        Assertions.assertEquals("topic-B", deleteChange.acl().resourcePattern());
 
         AclChange noneChange = changes.get(NONE);
         Assertions.assertNotNull(noneChange);
-        Assertions.assertEquals("topic-A", noneChange.getAclBindings().getResourcePattern());
+        Assertions.assertEquals("topic-A", noneChange.acl().resourcePattern());
     }
 
     private static V1KafkaPrincipalAuthorization newKafkaPrincipalAuthorization(boolean delete) {
