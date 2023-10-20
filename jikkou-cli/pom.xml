@@ -367,6 +367,17 @@ limitations under the License.
     </build>
     <profiles>
         <profile>
+            <id>dist-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <executable-suffix>.exe</executable-suffix>
+            </properties>
+        </profile>
+        <profile>
             <id>native</id>
             <activation>
                 <property>

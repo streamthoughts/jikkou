@@ -97,7 +97,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest ]
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout GitHub repository'
@@ -106,6 +106,10 @@ jobs:
           ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
           clean: true
+
+      - name: 'Add Developer Command Prompt for Microsoft Visual C++'
+        if: ${{ runner.os == 'Windows' }}
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: 'Set up GraalVM'
         uses: graalvm/setup-graalvm@v1
@@ -121,6 +125,11 @@ jobs:
 
       - name: 'Build Native Image (macOS)'
         if: ${{ runner.os == 'macOS' }}
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
+
+      - name: 'Build Native Image (Windows)'
+        if: ${{ runner.os == 'windows-latest' }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
