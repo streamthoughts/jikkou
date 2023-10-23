@@ -28,7 +28,7 @@ sdk install jikkou
 Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available:
 
 * As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (for Linux, MacOS)
-* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.30.0/)
+* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou-cli/0.30.0/)
 * As a docker image available from [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou).
 
 These are the official ways to get Jikkou releases that you manually downloaded and installed.
