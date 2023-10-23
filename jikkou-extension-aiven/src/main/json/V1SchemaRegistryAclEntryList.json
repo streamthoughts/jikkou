@@ -2,7 +2,7 @@
   "type": "object",
   "description": "List of ACL entries for Schema Registry",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1SchemaRegistryAclEntry>"
+    "io.streamthoughts.jikkou.core.models.ResourceListObject<V1SchemaRegistryAclEntry>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -33,7 +33,7 @@
       "default": "SchemaRegistryAclEntryList"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "items": {

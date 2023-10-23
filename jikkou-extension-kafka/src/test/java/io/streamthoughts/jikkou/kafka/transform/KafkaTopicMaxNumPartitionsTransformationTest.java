@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.kafka.transform;
 
 import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation.MAX_NUM_PARTITIONS_CONFIG;
 
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collections;

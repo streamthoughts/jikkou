@@ -18,14 +18,13 @@ package io.streamthoughts.jikkou.client.command.extension;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.api.JikkouContext;
-import io.streamthoughts.jikkou.api.control.ResourceController;
-import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.model.ResourceType;
+import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
+import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.resource.ResourceController;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,13 +45,13 @@ import picocli.CommandLine.Option;
 @Singleton
 public class ListExtensionCommand implements Runnable {
 
-    @Option(names = { "--type"},
+    @Option(names = {"--type"},
             required = false,
             description = "Limit to extensions of the specified type."
     )
     public String type;
 
-    @Option(names = { "--kinds"},
+    @Option(names = {"--kinds"},
             required = false,
             split = ",",
             description = "Limit to extensions that support the specified resource kind."
@@ -60,41 +59,42 @@ public class ListExtensionCommand implements Runnable {
     public List<String> kinds = Collections.emptyList();
 
     @Inject
-    private JikkouContext context;
+    private ExtensionDescriptorRegistry extensionDescriptorRegistry;
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void run() {
-        ExtensionFactory factory = context.getExtensionFactory();
-        Collection<ExtensionDescriptor<?>> extensions = factory.allExtensionTypes();
+
+        List<ExtensionDescriptor<Extension>> descriptors;
 
         if (type != null) {
-            extensions = extensions
-                    .stream()
-                    .filter(it -> it.type() != null && it.type().equals(type))
-                    .toList();
+            descriptors = extensionDescriptorRegistry.findAllDescriptorsByAlias(type);
+        } else {
+            descriptors = extensionDescriptorRegistry.findAllDescriptorsByClass(Extension.class);
         }
 
         if (kinds != null && !kinds.isEmpty()) {
-            extensions = extensions
+            descriptors = descriptors
                     .stream()
                     .filter(it -> {
-                        List<String> list = it.getSupportedResources().stream().map(ResourceType::getKind).toList();
+                        List<String> list = it.supportedResources().stream().map(ResourceType::getKind).toList();
                         return !Collections.disjoint(list, kinds);
                     })
                     .sorted(Comparator.comparing(ExtensionDescriptor::name))
                     .toList();
         }
 
-        String[][] data = extensions
+        String[][] data = descriptors
                 .stream()
                 .map(descriptor -> new String[]{
                         descriptor.name(),
-                        descriptor.type(),
+                        descriptor.category(),
                         String.valueOf(descriptor.isEnabled()),
-                        descriptor.getSource(),
-                        descriptor.getPrintableSupportedResources(),
-                        ResourceController.supportedReconciliationModes(descriptor.clazz())
+                        descriptor.source(),
+                        descriptor.printableSupportedResources(),
+                        ResourceController.supportedReconciliationModes(descriptor.type())
                                 .stream()
                                 .map(Enum::name)
                                 .map(String::toLowerCase)
@@ -106,7 +106,7 @@ public class ListExtensionCommand implements Runnable {
         String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
                 new Column[]{
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT),
+                        new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("SOURCE").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("ACCEPTED RESOURCES").dataAlign(HorizontalAlign.LEFT),

@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.internals;
 
-import io.streamthoughts.jikkou.api.model.Configs;
+import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants;
 import java.util.HashMap;
 import java.util.Map;

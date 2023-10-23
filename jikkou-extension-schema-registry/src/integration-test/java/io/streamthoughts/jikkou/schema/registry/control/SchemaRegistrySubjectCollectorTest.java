@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.control;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;

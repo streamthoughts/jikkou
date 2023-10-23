@@ -15,14 +15,14 @@
  */
 package io.streamthoughts.jikkou.schema.registry.control;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ResourceCollector;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.common.utils.Tuple2;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;

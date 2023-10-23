@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import io.streamthoughts.jikkou.api.change.ChangeDescription;
-import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ChangeDescription;
+import io.streamthoughts.jikkou.core.change.ChangeType;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;

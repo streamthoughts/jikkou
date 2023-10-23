@@ -17,19 +17,24 @@ package io.streamthoughts.jikkou.kafka.control;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.streamthoughts.jikkou.api.DefaultApi;
-import io.streamthoughts.jikkou.api.JikkouApi;
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
-import io.streamthoughts.jikkou.api.io.ResourceLoader;
-import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.DefaultApi;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
+import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
+import io.streamthoughts.jikkou.core.io.ResourceLoader;
+import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
@@ -76,17 +81,16 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        var controller = new AdminClientKafkaTableController();
-        controller.configure(KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.asConfiguration(clientConfig()));
+        Configuration configuration = KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.asConfiguration(clientConfig());
 
-        var collector = new AdminClientKafkaTableCollector();
-        controller.configure(KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig()));
-
-        api = DefaultApi.builder()
-                .withController(controller)
-                .withCollector(collector)
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
+                new DefaultExtensionDescriptorFactory(),
+                new ClassExtensionAliasesGenerator()
+        );
+        api = DefaultApi.builder(new DefaultExtensionFactory(registry, configuration))
+                .register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new)
+                .register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new)
                 .build();
-
         createTopic(TEST_TOPIC_COMPACTED, Map.of(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
     }
 

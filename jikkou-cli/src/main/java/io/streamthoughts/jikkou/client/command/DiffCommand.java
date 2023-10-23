@@ -15,16 +15,16 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.JikkouApi;
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.io.ResourceLoaderFacade;
-import io.streamthoughts.jikkou.api.io.ResourceWriter;
-import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.api.model.ResourceListObject;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
+import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
+import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;

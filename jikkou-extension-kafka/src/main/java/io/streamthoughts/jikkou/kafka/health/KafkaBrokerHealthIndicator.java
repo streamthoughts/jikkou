@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.health;
 
-import io.streamthoughts.jikkou.annotation.ExtensionDescription;
-import io.streamthoughts.jikkou.annotation.ExtensionName;
-import io.streamthoughts.jikkou.api.config.Configurable;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.health.Health;
-import io.streamthoughts.jikkou.api.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.config.Configurable;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.health.Health;
+import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.kafka.control.KafkaClientConfiguration;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -37,8 +37,8 @@ import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.NotNull;
 
-@ExtensionName("kafkabroker")
-@ExtensionDescription("Get the health of kafka brokers")
+@Named("kafkabroker")
+@Description("Get the health of kafka brokers")
 public final class KafkaBrokerHealthIndicator implements HealthIndicator, Configurable {
 
     private static final String HEALTH_NAME = "kafka";
@@ -51,7 +51,8 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
      * Empty constructor required for CLI.
      */
-    public KafkaBrokerHealthIndicator() { }
+    public KafkaBrokerHealthIndicator() {
+    }
 
     /**
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
@@ -62,7 +63,9 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
         this.adminClientContextFactory = adminClientContextFactory;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         if (adminClientContextFactory == null) {
@@ -71,13 +74,15 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
         this.configuration = new KafkaClientConfiguration(configuration);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Health getHealth(final Duration timeout) {
         if (adminClientContextFactory == null) {
             throw new IllegalStateException("not configured");
         }
-        try(AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
             return getHealth(context.getAdminClient(), timeout);
         }
     }
@@ -86,7 +91,7 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
                              @NotNull final Duration timeout) {
         try {
             DescribeClusterResult result = client.describeCluster(
-                    new DescribeClusterOptions().timeoutMs((int)timeout.toMillis()));
+                    new DescribeClusterOptions().timeoutMs((int) timeout.toMillis()));
 
             Collection<Node> nodes = result.nodes().get();
             var clusterId = result.clusterId().get();
@@ -104,8 +109,8 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
                         return details;
                     }).toList();
             builder
-                .withDetails("resource", "urn:kafka:cluster:id:" + clusterId )
-                .withDetails("brokers", brokers);
+                    .withDetails("resource", "urn:kafka:cluster:id:" + clusterId)
+                    .withDetails("brokers", brokers);
 
             return builder.build();
         } catch (InterruptedException | ExecutionException e) {

@@ -15,16 +15,16 @@
  */
 package io.streamthoughts.jikkou.core;
 
-import io.streamthoughts.jikkou.api.ResourceContext;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.ConfigMapList;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.spi.ResourceProvider;
 
 public class CoreResourceProvider implements ResourceProvider {
 
     /** {@inheritDoc} **/
     @Override
-    public void registerAll(ResourceContext context) {
+    public void registerAll(ResourceRegistry context) {
         context.register(ConfigMap.class);
         context.register(ConfigMapList.class);
     }

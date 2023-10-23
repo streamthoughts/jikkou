@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.internals.admin;
 
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.kafka.internals.KafkaBrokersReady;
 import java.util.Collection;
 import java.util.Collections;

@@ -2,8 +2,8 @@
   "type": "object",
   "description": "",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadataChange<io.streamthoughts.jikkou.kafka.change.AclChange>"
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadataChange<io.streamthoughts.jikkou.kafka.change.AclChange>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -27,7 +27,7 @@
       "default": "KafkaAclChange"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "change": {

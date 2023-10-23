@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.rest.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.rest.client.internal.ProxyInvocationHandler;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;

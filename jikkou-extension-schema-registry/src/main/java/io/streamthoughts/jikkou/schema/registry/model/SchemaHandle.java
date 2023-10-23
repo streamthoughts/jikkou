@@ -21,8 +21,8 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.streamthoughts.jikkou.annotation.Reflectable;
 import io.streamthoughts.jikkou.common.utils.IOUtils;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.io.IOException;
 import java.util.Map;
 

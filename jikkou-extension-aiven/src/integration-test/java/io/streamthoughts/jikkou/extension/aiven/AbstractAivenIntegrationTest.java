@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import java.io.IOException;
 import java.util.Collections;

@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.health;
 
-import io.streamthoughts.jikkou.api.health.Health;
+import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
 import java.time.Duration;
 import org.junit.jupiter.api.Assertions;

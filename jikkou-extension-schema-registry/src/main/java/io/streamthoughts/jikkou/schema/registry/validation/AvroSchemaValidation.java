@@ -15,16 +15,15 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.schema.registry.avro.AvroSchema;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -37,7 +36,6 @@ import org.apache.avro.Schema;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(kind = "SchemaRegistrySubject")
-@ExtensionEnabled(value = false)
 public class AvroSchemaValidation implements ResourceValidation<V1SchemaRegistrySubject> {
 
     public static final ConfigProperty<Boolean> RECORD_FIELD_MUST_HAVE_DOC = ConfigProperty

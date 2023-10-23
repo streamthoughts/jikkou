@@ -15,11 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls;
 
-import io.streamthoughts.jikkou.api.change.ChangeHandler;
-import io.streamthoughts.jikkou.api.change.ChangeMetadata;
-import io.streamthoughts.jikkou.api.change.ChangeResponse;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.ChangeHandler;
+import io.streamthoughts.jikkou.core.change.ChangeMetadata;
+import io.streamthoughts.jikkou.core.change.ChangeResponse;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;

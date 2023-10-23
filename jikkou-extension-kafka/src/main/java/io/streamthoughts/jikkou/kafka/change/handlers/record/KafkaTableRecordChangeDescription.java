@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.record;
 
-import io.streamthoughts.jikkou.api.change.ChangeDescription;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.ChangeDescription;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.util.Objects;

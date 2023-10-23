@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.topics;
 
-import io.streamthoughts.jikkou.api.change.ChangeDescription;
-import io.streamthoughts.jikkou.api.change.ChangeHandler;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.ChangeDescription;
+import io.streamthoughts.jikkou.core.change.ChangeHandler;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import org.jetbrains.annotations.NotNull;
 

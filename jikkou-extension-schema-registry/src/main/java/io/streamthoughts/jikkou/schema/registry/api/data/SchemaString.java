@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.schema.registry.api.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.jikkou.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.Objects;
 
 @Reflectable

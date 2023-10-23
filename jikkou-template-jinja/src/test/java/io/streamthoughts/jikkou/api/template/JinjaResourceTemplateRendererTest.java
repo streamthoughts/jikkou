@@ -16,13 +16,13 @@
 package io.streamthoughts.jikkou.api.template;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.readers.ResourceReaderOptions;
-import io.streamthoughts.jikkou.api.io.readers.TemplateResourceReader;
-import io.streamthoughts.jikkou.api.model.GenericResource;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.NamedValue;
 import io.streamthoughts.jikkou.common.utils.Classes;
+import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.core.io.reader.ResourceReaderOptions;
+import io.streamthoughts.jikkou.core.io.reader.TemplateResourceReader;
+import io.streamthoughts.jikkou.core.models.GenericResource;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.NamedValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;

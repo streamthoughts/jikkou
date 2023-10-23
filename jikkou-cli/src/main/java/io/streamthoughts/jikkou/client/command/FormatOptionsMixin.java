@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.io.ResourceWriter;
+import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import picocli.CommandLine;
 
 public final class FormatOptionsMixin {

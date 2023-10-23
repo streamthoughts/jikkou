@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api;
 
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 
 public class AivenApiClientException extends JikkouRuntimeException {
 

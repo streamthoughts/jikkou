@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;

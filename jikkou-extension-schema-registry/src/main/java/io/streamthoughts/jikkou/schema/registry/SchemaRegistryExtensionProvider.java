@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.schema.registry;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectCollector;
 import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.schema.registry.health.SchemaRegistryHealthIndicator;
@@ -31,24 +31,24 @@ public class SchemaRegistryExtensionProvider implements ExtensionProvider {
 
     /** {@inheritDoc} **/
     @Override
-    public void registerExtensions(@NotNull ExtensionFactory factory,
+    public void registerExtensions(@NotNull ExtensionRegistry registry,
                                    @NotNull Configuration configuration) {
         // Collectors
-        factory.register(SchemaRegistrySubjectCollector.class, SchemaRegistrySubjectCollector::new);
+        registry.register(SchemaRegistrySubjectCollector.class, SchemaRegistrySubjectCollector::new);
 
         // Controllers
-        factory.register(SchemaRegistrySubjectController.class, SchemaRegistrySubjectController::new);
+        registry.register(SchemaRegistrySubjectController.class, SchemaRegistrySubjectController::new);
 
         // Validations
-        factory.register(AvroSchemaValidation.class, AvroSchemaValidation::new);
-        factory.register(SchemaCompatibilityValidation.class, SchemaCompatibilityValidation::new);
-        factory.register(CompatibilityLevelValidation.class, CompatibilityLevelValidation::new);
+        registry.register(AvroSchemaValidation.class, AvroSchemaValidation::new);
+        registry.register(SchemaCompatibilityValidation.class, SchemaCompatibilityValidation::new);
+        registry.register(CompatibilityLevelValidation.class, CompatibilityLevelValidation::new);
 
         // Transformations
-        factory.register(NormalizeSubjectSchemaTransformation.class, NormalizeSubjectSchemaTransformation::new);
+        registry.register(NormalizeSubjectSchemaTransformation.class, NormalizeSubjectSchemaTransformation::new);
 
         // Health indicators
-        factory.register(SchemaRegistryHealthIndicator.class, SchemaRegistryHealthIndicator::new);
+        registry.register(SchemaRegistryHealthIndicator.class, SchemaRegistryHealthIndicator::new);
 
     }
 }

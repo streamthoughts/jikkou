@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec;
 import org.junit.jupiter.api.Assertions;

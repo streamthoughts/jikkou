@@ -20,7 +20,7 @@ import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextF
 import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory.KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS;
 import static io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory.KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import org.junit.jupiter.api.Assertions;

@@ -2,8 +2,8 @@
   "type": "object",
   "description": "",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadataChange<io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange>"
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadataChange<io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -27,7 +27,7 @@
       "default": "SchemaSubjectChange"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "change": {

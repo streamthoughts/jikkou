@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.adapters;
 
-import io.streamthoughts.jikkou.api.model.ConfigValue;
-import io.streamthoughts.jikkou.api.model.Configs;
+import io.streamthoughts.jikkou.core.models.ConfigValue;
+import io.streamthoughts.jikkou.core.models.Configs;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.Config;

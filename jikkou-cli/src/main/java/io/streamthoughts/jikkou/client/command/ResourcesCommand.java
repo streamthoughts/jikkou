@@ -18,9 +18,9 @@ package io.streamthoughts.jikkou.client.command;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.api.JikkouContext;
-import io.streamthoughts.jikkou.api.ResourceContext;
-import io.streamthoughts.jikkou.api.ResourceDescriptor;
+import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.runtime.JikkouContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Comparator;
@@ -38,8 +38,8 @@ public class ResourcesCommand implements Runnable {
     @Override
     public void run() {
 
-        ResourceContext resourceContext = context.getResourceContext();
-        List<ResourceDescriptor> descriptors = resourceContext
+        ResourceRegistry resourceRegistry = context.getResourceContext();
+        List<ResourceDescriptor> descriptors = resourceRegistry
                 .getAllResourceDescriptors()
                 .stream()
                 .sorted(Comparator.comparing(ResourceDescriptor::kind))

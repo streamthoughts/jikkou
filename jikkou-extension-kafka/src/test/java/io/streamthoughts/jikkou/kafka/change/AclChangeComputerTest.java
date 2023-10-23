@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import static io.streamthoughts.jikkou.api.change.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.change.ChangeType.NONE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.ADD;
+import static io.streamthoughts.jikkou.core.change.ChangeType.DELETE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.NONE;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.builder.LiteralKafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;

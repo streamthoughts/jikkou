@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.control;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaSpec;

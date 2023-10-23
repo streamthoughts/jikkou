@@ -17,14 +17,14 @@ package io.streamthoughts.jikkou.extension.aiven.health;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.streamthoughts.jikkou.annotation.ExtensionDescription;
-import io.streamthoughts.jikkou.annotation.ExtensionName;
-import io.streamthoughts.jikkou.api.config.Configurable;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.health.Health;
-import io.streamthoughts.jikkou.api.health.HealthIndicator;
-import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.config.Configurable;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.health.Health;
+import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -38,8 +38,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Aiven Service Health indicator.
  */
-@ExtensionName("avnservice")
-@ExtensionDescription("Get the health of an Aiven service")
+@Named("avnservice")
+@Description("Get the health of an Aiven service")
 public final class AivenServiceHealthIndicator implements HealthIndicator, Configurable {
 
     private static final String HEALTH_NAME = "avnservice";

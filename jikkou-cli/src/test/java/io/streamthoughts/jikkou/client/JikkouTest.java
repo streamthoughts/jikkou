@@ -15,18 +15,11 @@
  */
 package io.streamthoughts.jikkou.client;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.streamthoughts.jikkou.api.JikkouContext;
-import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
-@MicronautTest
 class JikkouTest {
-
-    @Inject
-    JikkouContext context;
 
     @Test
     void shouldReturnUsageCodeForNoArgs() {

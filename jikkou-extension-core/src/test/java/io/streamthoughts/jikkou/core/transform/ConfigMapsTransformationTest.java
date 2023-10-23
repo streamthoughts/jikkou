@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
-import io.streamthoughts.jikkou.api.model.HasConfigRefs;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasSpec;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.HasConfigRefs;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.HasSpec;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;

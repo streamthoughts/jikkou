@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.annotation.Priority;
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
-import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.model.HasPriority;
-import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.Priority;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.HasPriority;
+import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  * Transformation to apply all roles to topic objects.
  */
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
-@ExtensionEnabled
+@Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 public class KafkaPrincipalAuthorizationTransformation implements ResourceTransformation<V1KafkaPrincipalAuthorization> {
 

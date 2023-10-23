@@ -17,15 +17,14 @@ package io.streamthoughts.jikkou.kafka.reporter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.JikkouInfo;
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
+import io.streamthoughts.jikkou.core.JikkouInfo;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
@@ -53,7 +52,6 @@ import org.slf4j.LoggerFactory;
 /**
  * This reporter can be used to send change results into a kafka topic as Cloud Event.
  */
-@ExtensionEnabled(value = false)
 public class KafkaChangeReporter implements ChangeReporter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaChangeReporter.class);

@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.converter;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
-import io.streamthoughts.jikkou.api.converter.AbstractResourceListConverter;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.resource.converter.AbstractResourceListConverter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntryList;
 import java.util.List;

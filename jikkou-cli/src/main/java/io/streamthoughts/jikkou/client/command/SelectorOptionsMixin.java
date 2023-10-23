@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.selector.ExpressionResourceSelectorFactory;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.core.selectors.ExpressionResourceSelectorFactory;
+import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import java.util.List;
 import picocli.CommandLine;
 

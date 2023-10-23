@@ -17,11 +17,11 @@ package io.streamthoughts.jikkou.kafka.connect.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.jikkou.annotation.Reflectable;
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import java.util.List;
 import java.util.Map;

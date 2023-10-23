@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.connect;
 
-import io.streamthoughts.jikkou.api.ResourceContext;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.spi.ResourceProvider;
 
@@ -23,7 +23,7 @@ public class KafkaConnectResourceProvider implements ResourceProvider {
 
     /** {@inheritDoc} **/
     @Override
-    public void registerAll(ResourceContext context) {
+    public void registerAll(ResourceRegistry context) {
         context.register(V1KafkaConnector.class);
     }
 }

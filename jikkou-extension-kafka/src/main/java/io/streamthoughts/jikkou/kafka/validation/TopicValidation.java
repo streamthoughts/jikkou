@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.vavr.control.Option;
 import org.jetbrains.annotations.NotNull;

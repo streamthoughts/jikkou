@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.transform;
 
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.Map;

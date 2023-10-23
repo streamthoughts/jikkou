@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.connect;
 
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.api.io.ResourceDeserializer;
-import io.streamthoughts.jikkou.api.io.ResourceLoader;
-import io.streamthoughts.jikkou.api.io.readers.ResourceReaderFactory;
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
+import io.streamthoughts.jikkou.core.io.ResourceLoader;
+import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;

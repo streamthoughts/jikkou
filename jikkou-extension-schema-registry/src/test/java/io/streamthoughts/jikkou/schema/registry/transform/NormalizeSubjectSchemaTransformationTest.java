@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.transform;
 
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;

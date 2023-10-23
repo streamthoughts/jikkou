@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ValueChange;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;

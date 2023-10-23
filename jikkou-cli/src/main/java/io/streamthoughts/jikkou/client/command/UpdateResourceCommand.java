@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.ReconciliationMode;
+import io.streamthoughts.jikkou.core.ReconciliationMode;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;

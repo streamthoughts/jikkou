@@ -2,7 +2,7 @@
   "type": "object",
   "description": "",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1SchemaRegistrySubjectChange>"
+    "io.streamthoughts.jikkou.core.models.ResourceListObject<V1SchemaRegistrySubjectChange>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -25,11 +25,11 @@
       "default": "SchemaSubjectChangeList"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
       "type": "object"
     },
     "items": {

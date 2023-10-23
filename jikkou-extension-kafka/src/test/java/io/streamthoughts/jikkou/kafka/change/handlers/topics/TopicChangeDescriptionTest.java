@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.topics;
 
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.GenericResourceChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

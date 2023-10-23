@@ -15,10 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see TopicConfig
  */
+@Enabled
 public class TopicConfigKeysValidation extends TopicValidation {
 
     /**

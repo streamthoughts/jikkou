@@ -3,9 +3,9 @@
   "title": "V1KafkaConnector",
   "description": "The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaConnectorSpec>"
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadata",
+    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaConnectorSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -97,7 +97,7 @@
             "all-args-constructor": false,
             "type": "string"
           },
-          "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs"
+          "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs"
         },
         "state": {
           "type" : "string",

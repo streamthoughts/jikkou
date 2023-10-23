@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.model;
 
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;

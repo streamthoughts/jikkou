@@ -2,9 +2,9 @@
   "type": "object",
   "description": "A single ACL entry for Schema Registry",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1SchemaRegistryAclEntrySpec>"
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadata",
+    "io.streamthoughts.jikkou.core.models.HasSpec<V1SchemaRegistryAclEntrySpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -35,7 +35,7 @@
       "default": "SchemaRegistryAclEntry"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "spec": {

@@ -15,15 +15,15 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import static io.streamthoughts.jikkou.api.change.ValueChange.withAfterValue;
+import static io.streamthoughts.jikkou.core.change.ValueChange.withAfterValue;
 
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChangeComputer;
-import io.streamthoughts.jikkou.api.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChangeComputer;
+import io.streamthoughts.jikkou.core.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
