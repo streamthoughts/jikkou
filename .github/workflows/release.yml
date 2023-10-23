@@ -129,7 +129,7 @@ jobs:
           ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
       - name: 'Build Native Image (Windows)'
-        if: ${{ runner.os == 'windows-latest' }}
+        if: ${{ runner.os == 'Windows' }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
