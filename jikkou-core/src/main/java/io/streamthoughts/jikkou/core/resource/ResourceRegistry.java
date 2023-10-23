@@ -17,29 +17,31 @@ package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface ResourceRegistry {
 
     /**
      * Registers the resource for the given type to the context.
      *
-     * @param type    the resource type associated to the class.
+     * @param type     the resource type associated to the class.
      * @param resource the resource class to register.
-     *
      * @return the resource descriptor.
      */
     ResourceDescriptor register(Class<? extends HasMetadata> resource, ResourceType type);
+
     /**
      * Registers the resource for the given version to the context.
      *
-     * @param version the resource version associated to the class.
+     * @param version  the resource version associated to the class.
      * @param resource the resource class to register.
-     *
      * @return the resource descriptor.
      */
     ResourceDescriptor register(Class<? extends HasMetadata> resource, String version);
+
     /**
      * Registers the given resource type to the context.
      *
@@ -47,6 +49,7 @@ public interface ResourceRegistry {
      * @return the resource descriptor.
      */
     ResourceDescriptor register(Class<? extends HasMetadata> resource);
+
     /**
      * Registers the given resource descriptor to the context.
      *
@@ -67,4 +70,26 @@ public interface ResourceRegistry {
      * @return all the registered resource type.
      */
     List<ResourceDescriptor> getAllResourceDescriptors();
+
+
+    /**
+     * Finds a descriptor for the specified resource information.
+     *
+     * @param type the resource type.
+     */
+    Optional<ResourceDescriptor> findDescriptorByType(final ResourceType type);
+
+    /**
+     * Finds a descriptor for the specified resource information.
+     *
+     * @param kind          the kind of the resource.
+     * @param group         the resource group.
+     * @param version       the version of the resource.
+     * @param caseSensitive specify if the kind is case-sensitive.
+     * @return  an optional {@link ResourceDescriptor}.
+     */
+    Optional<ResourceDescriptor> findDescriptorByType(final String kind,
+                                                      final String group,
+                                                      final String version,
+                                                      final boolean caseSensitive);
 }

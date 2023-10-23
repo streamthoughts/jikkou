@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -99,5 +100,35 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
     @Override
     public List<ResourceDescriptor> getAllResourceDescriptors() {
         return new ArrayList<>(descriptors);
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public Optional<ResourceDescriptor> findDescriptorByType(ResourceType type) {
+        return Optional.ofNullable(descriptorsByType.get(type));
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public Optional<ResourceDescriptor> findDescriptorByType(final String kind,
+                                                             final String group,
+                                                             final String version,
+                                                             final boolean caseSensitive) {
+        if (caseSensitive) {
+            return findDescriptorByType(new ResourceType(kind, group, version));
+        }
+
+        return descriptors.stream()
+                .filter(descriptor -> {
+                    if (!descriptor.group().equalsIgnoreCase(group)) {
+                        return false;
+                    }
+                    if (!descriptor.apiVersion().equalsIgnoreCase(version)) {
+                        return false;
+                    }
+                    return descriptor.kind().equalsIgnoreCase(kind);
+                })
+                .findFirst();
+
     }
 }

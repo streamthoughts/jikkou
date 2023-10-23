@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionExcepti
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,6 +83,37 @@ class DefaultResourceRegistryTest {
         registry.register(TestResource.class);
         List<ResourceDescriptor> descriptors = registry.getAllResourceDescriptors();
         Assertions.assertEquals(List.of(DESCRIPTOR), descriptors);
+    }
+
+    @Test
+    void shouldGetDescriptorForKindCaseSensitiveFalse() {
+        registry.register(TestResource.class);
+        Optional<ResourceDescriptor> optional = registry.findDescriptorByType(
+                "test",
+                "test.jikkou.io",
+                "v1beta2",
+                false);
+        Assertions.assertTrue(optional.isPresent());
+        Assertions.assertEquals(DESCRIPTOR, optional.get());
+    }
+
+    @Test
+    void shouldGetDescriptorForKindCaseSensitiveTrue() {
+        registry.register(TestResource.class);
+        Optional<ResourceDescriptor> optional = registry.findDescriptorByType(
+                "test",
+                "test.jikkou.io",
+                "v1beta2",
+                true);
+        Assertions.assertTrue(optional.isEmpty());
+    }
+
+    @Test
+    void shouldGetDescriptorForType() {
+        registry.register(TestResource.class);
+        Optional<ResourceDescriptor> optional = registry.findDescriptorByType(ResourceType.create(TestResource.class));
+        Assertions.assertTrue(optional.isPresent());
+        Assertions.assertEquals(DESCRIPTOR, optional.get());
     }
 
     @ApiVersion("test.jikkou.io/v1beta2")
