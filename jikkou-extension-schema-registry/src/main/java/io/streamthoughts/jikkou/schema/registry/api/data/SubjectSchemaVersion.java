@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
-import io.streamthoughts.jikkou.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.List;
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;

@@ -15,18 +15,16 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@ExtensionEnabled(value = false)
 public class TopicNamePrefixValidation extends TopicValidation {
 
     public static final ConfigProperty<List<String>> VALIDATION_TOPIC_NAME_PREFIXES_CONFIG = ConfigProperty

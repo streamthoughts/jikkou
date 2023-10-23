@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.converters;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import java.util.List;

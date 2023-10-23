@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;

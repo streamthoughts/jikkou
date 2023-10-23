@@ -15,18 +15,18 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
-@ExtensionEnabled(value = true)
+@Enabled
 public class SchemaRegistryAclEntryValidation implements ResourceValidation<V1SchemaRegistryAclEntry> {
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile(

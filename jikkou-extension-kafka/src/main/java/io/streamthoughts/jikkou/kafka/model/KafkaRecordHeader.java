@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.jikkou.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 
 /**

@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.quotas;
 
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.GenericResourceChange;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.GenericResourceChange;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;

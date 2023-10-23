@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.kafka.reporter.ce;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.streamthoughts.jikkou.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 

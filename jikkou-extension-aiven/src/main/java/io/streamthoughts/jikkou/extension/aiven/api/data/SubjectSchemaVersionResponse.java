@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import io.streamthoughts.jikkou.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import java.beans.ConstructorProperties;
 import java.util.Collections;

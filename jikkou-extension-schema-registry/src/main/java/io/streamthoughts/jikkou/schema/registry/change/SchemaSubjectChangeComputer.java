@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeComputer;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.JsonValueChange;
-import io.streamthoughts.jikkou.api.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeComputer;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.JsonValueChange;
+import io.streamthoughts.jikkou.core.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;

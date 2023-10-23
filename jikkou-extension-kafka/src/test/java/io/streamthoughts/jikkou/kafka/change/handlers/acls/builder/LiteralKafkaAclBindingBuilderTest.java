@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.kafka.change.handlers.acls.builder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;

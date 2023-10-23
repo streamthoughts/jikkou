@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.connect;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.kafka.connect.control.KafkaConnectorCollector;
 import io.streamthoughts.jikkou.kafka.connect.control.KafkaConnectorController;
 import io.streamthoughts.jikkou.kafka.connect.health.KafkaConnectHealthIndicator;
@@ -27,24 +27,26 @@ import org.jetbrains.annotations.NotNull;
 
 public class KafkaConnectExtensionProvider implements ExtensionProvider {
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
-    public void registerExtensions(@NotNull ExtensionFactory factory,
+    public void registerExtensions(@NotNull ExtensionRegistry registry,
                                    @NotNull Configuration configuration) {
         // Collectors
-        factory.register(KafkaConnectorCollector.class, KafkaConnectorCollector::new);
+        registry.register(KafkaConnectorCollector.class, KafkaConnectorCollector::new);
 
         // Controllers
-        factory.register(KafkaConnectorController.class, KafkaConnectorController::new);
+        registry.register(KafkaConnectorController.class, KafkaConnectorController::new);
 
         // Validations
-        factory.register(KafkaConnectorResourceValidation.class, KafkaConnectorResourceValidation::new);
+        registry.register(KafkaConnectorResourceValidation.class, KafkaConnectorResourceValidation::new);
 
         // Transformations
-        factory.register(KafkaConnectorResourceTransformation.class, KafkaConnectorResourceTransformation::new);
+        registry.register(KafkaConnectorResourceTransformation.class, KafkaConnectorResourceTransformation::new);
 
         // Health indicators
-        factory.register(KafkaConnectHealthIndicator.class, KafkaConnectHealthIndicator::new);
+        registry.register(KafkaConnectHealthIndicator.class, KafkaConnectHealthIndicator::new);
 
     }
 }

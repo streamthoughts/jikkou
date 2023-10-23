@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.api;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectCluster;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorStatusResponse;

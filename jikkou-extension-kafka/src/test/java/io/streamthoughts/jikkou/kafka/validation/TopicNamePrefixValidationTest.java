@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;

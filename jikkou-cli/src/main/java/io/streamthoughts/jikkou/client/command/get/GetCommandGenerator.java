@@ -19,14 +19,13 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIS
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 
 import io.micronaut.context.ApplicationContext;
-import io.streamthoughts.jikkou.api.JikkouContext;
-import io.streamthoughts.jikkou.api.ResourceDescriptor;
-import io.streamthoughts.jikkou.api.config.ConfigPropertyDescriptor;
-import io.streamthoughts.jikkou.api.control.ResourceCollector;
-import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.model.HasMetadataAcceptable;
-import io.streamthoughts.jikkou.api.model.ResourceType;
+import io.streamthoughts.jikkou.core.config.ConfigPropertyDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
+import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
+import io.streamthoughts.jikkou.runtime.JikkouContext;
 import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi.Text;
 import picocli.CommandLine.Help.Column;
@@ -46,27 +46,27 @@ public class GetCommandGenerator {
 
     private final ApplicationContext applicationContext;
 
+    private final ExtensionDescriptorRegistry extensionDescriptorRegistry;
     private final JikkouContext context;
 
-    private CommandLine.IFactory factory;
-
-    public GetCommandGenerator(@NotNull ApplicationContext applicationContext) {
+    public GetCommandGenerator(@NotNull ApplicationContext applicationContext,
+                               @Nullable JikkouContext context,
+                               @NotNull ExtensionDescriptorRegistry registry) {
         this.applicationContext = applicationContext;
-        this.context = applicationContext.getBean(JikkouContext.class);
+        this.extensionDescriptorRegistry = registry;
+        this.context = context;
     }
 
     public CommandLine createGetCommandLine() {
-        ExtensionFactory extensionFactory = context.getExtensionFactory();
         CommandLine cmd = new CommandLine(new GetCommand());
 
-        Collection<ExtensionDescriptor<ResourceCollector>> descriptors = extensionFactory
-                .getAllDescriptorsForType(ResourceCollector.class);
+        Collection<ExtensionDescriptor<ResourceCollector>> descriptors = extensionDescriptorRegistry
+                .findAllDescriptorsByClass(ResourceCollector.class);
 
         Map<String, List<String>> sections = new LinkedHashMap<>();
         for (ExtensionDescriptor<ResourceCollector> descriptor : descriptors) {
-            Class<ResourceCollector> type = descriptor.clazz();
-
-            List<ResourceType> resources = HasMetadataAcceptable.getAcceptedResources(type);
+            Class<ResourceCollector> type = descriptor.type();
+            List<ResourceType> resources = descriptor.supportedResources();
             for (ResourceType resource : resources) {
                 GetResourceCommand command = applicationContext.getBean(GetResourceCommand.class);
                 command.setResourceType(resource);
@@ -78,9 +78,9 @@ public class GetCommandGenerator {
                         .usageMessage()
                         .header(String.format("Get all '%s' resources.", resource.getKind()))
                         .description(String.format(
-                                "Use jikkou get %s when you want to describe the state of all resources of type '%s'.",
-                                subCommandName,
-                                resource.getKind()
+                                        "Use jikkou get %s when you want to describe the state of all resources of type '%s'.",
+                                        subCommandName,
+                                        resource.getKind()
                                 )
                         );
 
@@ -92,7 +92,7 @@ public class GetCommandGenerator {
                     );
                 }
                 cmd.addSubcommand(subcommand);
-                sections.computeIfAbsent("%nResources for group '" + resourceDescriptor.group() + "': %n%n" , k -> new ArrayList<>())
+                sections.computeIfAbsent("%nResources for group '" + resourceDescriptor.group() + "': %n%n", k -> new ArrayList<>())
                         .add(subcommand.getCommandName());
             }
         }
@@ -133,7 +133,9 @@ public class GetCommandGenerator {
 
         //@Override
         public String render(CommandLine.Help help) {
-            if (help.commandSpec().subcommands().isEmpty()) { return ""; }
+            if (help.commandSpec().subcommands().isEmpty()) {
+                return "";
+            }
 
             StringBuilder result = new StringBuilder();
             sections.forEach((key, value) -> result.append(renderSection(key, value, help)));

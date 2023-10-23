@@ -17,9 +17,9 @@ package io.streamthoughts.jikkou.kafka.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import java.util.List;

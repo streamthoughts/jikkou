@@ -2,9 +2,9 @@
   "type": "object",
   "description": "",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.Resource",
-    "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaTopicSpec>"
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadata",
+    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaTopicSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -34,11 +34,11 @@
       "default": "KafkaTopic"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
       "type": "object"
     },
     "spec": {
@@ -49,7 +49,7 @@
     "V1KafkaTopicSpec": {
       "type": "object",
       "javaInterfaces": [
-        "io.streamthoughts.jikkou.api.model.HasConfigRefs"
+        "io.streamthoughts.jikkou.core.models.HasConfigRefs"
       ],
       "additionalProperties": {
         "lombok-builder": true,
@@ -68,7 +68,7 @@
           "default": -1
         },
         "configs": {
-          "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
+          "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
           "type": "object"
         },
         "configMapRefs": {

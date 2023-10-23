@@ -2,7 +2,7 @@
   "type": "object",
   "description": "List of ACL entries for Kafka Topic",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1KafkaTopicAclEntry>"
+    "io.streamthoughts.jikkou.core.models.ResourceListObject<V1KafkaTopicAclEntry>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -33,7 +33,7 @@
       "default": "KafkaTopicAclEntryList"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "items": {

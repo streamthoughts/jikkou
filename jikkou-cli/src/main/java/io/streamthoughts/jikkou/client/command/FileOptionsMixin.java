@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.io.ResourceLoaderInputs;
-import io.streamthoughts.jikkou.api.model.NamedValue;
+import io.streamthoughts.jikkou.core.io.ResourceLoaderInputs;
+import io.streamthoughts.jikkou.core.models.NamedValue;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

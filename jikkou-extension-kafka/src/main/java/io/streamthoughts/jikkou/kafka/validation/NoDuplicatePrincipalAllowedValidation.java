@@ -15,17 +15,19 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.api.error.DuplicateMetadataNameException;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Enabled
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
 public class NoDuplicatePrincipalAllowedValidation implements ResourceValidation<V1KafkaPrincipalAuthorization> {
 

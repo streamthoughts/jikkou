@@ -15,19 +15,21 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResources;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.annotation.Priority;
-import io.streamthoughts.jikkou.api.error.InvalidResourceException;
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.HasConfigRefs;
-import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasPriority;
-import io.streamthoughts.jikkou.api.model.HasSpec;
-import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResources;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Priority;
+import io.streamthoughts.jikkou.core.exceptions.InvalidResourceException;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.ConfigMapList;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.HasConfigRefs;
+import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.HasPriority;
+import io.streamthoughts.jikkou.core.models.HasSpec;
+import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import java.util.HashMap;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +39,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see ConfigMap
  */
+
+@Named("ConfigMapsTransformation")
+@Description("Resolves ConfigMap objects for resources supporting ConfigRefs")
+@Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@ExtensionEnabled
 @AcceptsResources(value = {})
 public class ConfigMapsTransformation implements ResourceTransformation<HasMetadata> {
 

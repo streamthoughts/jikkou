@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import io.streamthoughts.jikkou.api.config.ConfigException;
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.ConfigException;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

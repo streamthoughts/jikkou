@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
 
 public class SchemaRegistryClientConfig {
 

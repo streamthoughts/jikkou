@@ -2,7 +2,7 @@
   "type": "object",
   "description": "List of Kafka quota",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1KafkaQuota>"
+    "io.streamthoughts.jikkou.core.models.ResourceListObject<V1KafkaQuota>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -33,7 +33,7 @@
       "default": "KafkaQuotaList"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "items": {

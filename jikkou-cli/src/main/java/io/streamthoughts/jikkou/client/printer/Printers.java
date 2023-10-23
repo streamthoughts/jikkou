@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 

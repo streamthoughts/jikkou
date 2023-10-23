@@ -15,15 +15,15 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import static io.streamthoughts.jikkou.api.change.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.change.ChangeType.UPDATE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.ADD;
+import static io.streamthoughts.jikkou.core.change.ChangeType.DELETE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.UPDATE;
 
-import io.streamthoughts.jikkou.api.change.ChangeHandler;
-import io.streamthoughts.jikkou.api.change.ChangeResponse;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.ChangeHandler;
+import io.streamthoughts.jikkou.core.change.ChangeResponse;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;

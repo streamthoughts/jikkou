@@ -3,7 +3,7 @@
   "description": "",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.ResourceListObject<V1KafkaBroker>"
+    "io.streamthoughts.jikkou.core.models.ResourceListObject<V1KafkaBroker>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -32,11 +32,11 @@
       "default": "KafkaBrokerList"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
       "type": "object"
     },
     "items": {

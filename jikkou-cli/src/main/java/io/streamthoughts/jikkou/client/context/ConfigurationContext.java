@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.client.context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;

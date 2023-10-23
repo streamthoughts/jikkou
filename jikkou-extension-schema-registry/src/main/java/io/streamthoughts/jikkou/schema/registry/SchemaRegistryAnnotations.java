@@ -32,7 +32,7 @@ package io.streamthoughts.jikkou.schema.registry;/*
  * limitations under the License.
  */
 
-import io.streamthoughts.jikkou.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 
 public final class SchemaRegistryAnnotations {

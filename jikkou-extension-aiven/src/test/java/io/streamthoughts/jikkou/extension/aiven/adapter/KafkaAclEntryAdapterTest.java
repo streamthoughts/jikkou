@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.adapter;
 
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.extension.aiven.MetadataAnnotations;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;

@@ -15,21 +15,19 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@ExtensionEnabled(value = false)
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
 public class CompatibilityLevelValidation implements ResourceValidation<V1SchemaRegistrySubject> {
 

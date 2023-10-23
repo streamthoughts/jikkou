@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.adapters;
 
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;

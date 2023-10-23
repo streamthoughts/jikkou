@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.api.change.ChangeDescription;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.ChangeDescription;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;

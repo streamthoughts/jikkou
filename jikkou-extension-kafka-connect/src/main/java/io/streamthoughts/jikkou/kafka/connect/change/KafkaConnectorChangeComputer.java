@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChangeComputer;
-import io.streamthoughts.jikkou.api.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChangeComputer;
+import io.streamthoughts.jikkou.core.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;

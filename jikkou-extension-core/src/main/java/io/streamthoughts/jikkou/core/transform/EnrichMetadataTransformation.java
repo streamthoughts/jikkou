@@ -15,22 +15,22 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResources;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.annotation.Priority;
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasPriority;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResources;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.Priority;
+import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.HasPriority;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@ExtensionEnabled
-@AcceptsResources(value = {})
+@Enabled
+@AcceptsResources
 public class EnrichMetadataTransformation implements ResourceTransformation<HasMetadata> {
 
     /**

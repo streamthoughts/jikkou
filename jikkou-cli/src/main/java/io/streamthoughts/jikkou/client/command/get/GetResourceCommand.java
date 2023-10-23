@@ -16,15 +16,15 @@
 package io.streamthoughts.jikkou.client.command.get;
 
 import io.micronaut.context.annotation.Prototype;
-import io.streamthoughts.jikkou.api.JikkouApi;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.io.ResourceWriter;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.ResourceType;
-import io.streamthoughts.jikkou.api.selector.ExpressionResourceSelectorFactory;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.selectors.ExpressionResourceSelectorFactory;
+import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;

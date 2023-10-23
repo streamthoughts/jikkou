@@ -16,9 +16,9 @@
 package io.streamthoughts.jikkou.kafka.control;
 
 
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.config.ConfigurationSupport;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.config.ConfigurationSupport;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 

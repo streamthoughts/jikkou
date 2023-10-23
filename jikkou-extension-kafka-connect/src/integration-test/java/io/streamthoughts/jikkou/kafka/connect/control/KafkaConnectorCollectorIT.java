@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.control;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;

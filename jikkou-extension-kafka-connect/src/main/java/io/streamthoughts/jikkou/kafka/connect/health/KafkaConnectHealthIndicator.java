@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.health;
 
-import io.streamthoughts.jikkou.annotation.ExtensionDescription;
-import io.streamthoughts.jikkou.annotation.ExtensionName;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.health.Health;
-import io.streamthoughts.jikkou.api.health.HealthAggregator;
-import io.streamthoughts.jikkou.api.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.health.Health;
+import io.streamthoughts.jikkou.core.health.HealthAggregator;
+import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
@@ -36,15 +36,17 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Health indicator for Kafka Connect clusters.
  */
-@ExtensionName("kafkaconnect")
-@ExtensionDescription("Get the health of Kafka Connect clusters")
+@Named("kafkaconnect")
+@Description("Get the health of Kafka Connect clusters")
 public class KafkaConnectHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_INDICATOR_NAME = "KafkaConnect";
 
     private KafkaConnectExtensionConfig configuration;
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         configure(new KafkaConnectExtensionConfig(configuration));
@@ -54,7 +56,9 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
         this.configuration = configuration;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public Health getHealth(Duration timeout) {
         Map<String, KafkaConnectClientConfig> configurations = configuration.getConfigurationsByClusterName();

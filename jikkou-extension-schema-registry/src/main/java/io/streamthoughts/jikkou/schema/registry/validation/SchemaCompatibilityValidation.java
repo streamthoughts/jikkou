@@ -15,15 +15,14 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
-import io.streamthoughts.jikkou.api.error.ValidationException;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import io.streamthoughts.jikkou.api.validation.ValidationError;
-import io.streamthoughts.jikkou.api.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
@@ -40,7 +39,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
 
-@ExtensionEnabled(value = false)
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
 public class SchemaCompatibilityValidation implements ResourceValidation<V1SchemaRegistrySubject> {
 

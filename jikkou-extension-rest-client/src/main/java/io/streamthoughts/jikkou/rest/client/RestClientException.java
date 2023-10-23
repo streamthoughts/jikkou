@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.rest.client;
 
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 

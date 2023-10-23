@@ -3,8 +3,8 @@
   "description": "",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.api.model.HasMetadata",
-    "io.streamthoughts.jikkou.api.model.HasSpec<V1KafkaBrokersSpec>"
+    "io.streamthoughts.jikkou.core.models.HasMetadata",
+    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaBrokersSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -33,11 +33,11 @@
       "default": "KafkaBroker"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectMeta",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.api.model.ObjectTemplate",
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
       "type": "object"
     },
     "spec": {
@@ -75,7 +75,7 @@
           "type": "string"
         },
         "configs": {
-          "existingJavaType": "io.streamthoughts.jikkou.api.model.Configs",
+          "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
           "type": "object"
         }
       }

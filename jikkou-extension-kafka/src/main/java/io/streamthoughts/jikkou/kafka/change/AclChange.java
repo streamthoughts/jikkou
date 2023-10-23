@@ -16,8 +16,8 @@
 package io.streamthoughts.jikkou.kafka.change;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.streamthoughts.jikkou.api.change.Change;
-import io.streamthoughts.jikkou.api.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.change.ChangeType;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import java.beans.ConstructorProperties;
 import lombok.Builder;

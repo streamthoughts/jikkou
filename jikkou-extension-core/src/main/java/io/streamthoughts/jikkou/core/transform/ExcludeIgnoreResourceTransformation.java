@@ -15,20 +15,22 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
-import io.streamthoughts.jikkou.annotation.AcceptsResources;
-import io.streamthoughts.jikkou.annotation.ExtensionEnabled;
-import io.streamthoughts.jikkou.annotation.Priority;
-import io.streamthoughts.jikkou.api.model.HasItems;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.HasPriority;
-import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Priority;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.HasPriority;
+import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@Named("ExcludeIgnoreResource")
+@Description("Excludes resources annotated with '" + CoreAnnotations.JIKKOU_IO_IGNORE + "'.")
+@Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@ExtensionEnabled
-@AcceptsResources(value = {})
 public class ExcludeIgnoreResourceTransformation implements ResourceTransformation<HasMetadata> {
 
     /** {@inheritDoc}**/

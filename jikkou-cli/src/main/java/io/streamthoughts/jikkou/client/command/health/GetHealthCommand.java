@@ -15,16 +15,15 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
-import io.streamthoughts.jikkou.api.JikkouContext;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
-import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
-import io.streamthoughts.jikkou.api.health.Health;
-import io.streamthoughts.jikkou.api.health.HealthAggregator;
-import io.streamthoughts.jikkou.api.health.HealthIndicator;
-import io.streamthoughts.jikkou.api.health.Status;
-import io.streamthoughts.jikkou.api.io.Jackson;
-import io.streamthoughts.jikkou.client.JikkouConfig;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.health.Health;
+import io.streamthoughts.jikkou.core.health.HealthAggregator;
+import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.health.Status;
+import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.runtime.JikkouContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
@@ -71,9 +70,6 @@ public class GetHealthCommand implements Callable<Integer> {
     @Inject
     private JikkouContext context;
 
-    @Inject
-    private JikkouConfig config;
-
     /**
      * {@inheritDoc}
      */
@@ -84,19 +80,16 @@ public class GetHealthCommand implements Callable<Integer> {
         Health health = null;
         if (indicator.equalsIgnoreCase("all")) {
             List<Health> l = factory
-                    .getAllExtensions(HealthIndicator.class, config)
+                    .getAllExtensions(HealthIndicator.class)
                     .stream().map(i -> i.getHealth(Duration.ofMillis(timeoutMs)))
                     .toList();
             health = new HealthAggregator().aggregate(l);
         } else {
-            ExtensionDescriptor<HealthIndicator> descriptor = factory.getAllDescriptorsForType(HealthIndicator.class)
-                    .stream()
-                    .filter(it -> it.name().equalsIgnoreCase(indicator))
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new JikkouRuntimeException("Cannot find health-indicator for name '" + indicator + "'")
-                    );
-            HealthIndicator indicator = factory.getExtension(descriptor.clazz(), config);
+            if (!factory.containsExtension(HealthIndicator.class, Qualifiers.byName(indicator))){
+                throw new JikkouRuntimeException("Cannot find health-indicator for name '" + indicator + "'");
+            }
+
+            HealthIndicator indicator = factory.getExtension(HealthIndicator.class, Qualifiers.byName(this.indicator));
             health = indicator.getHealth(Duration.ofMillis(timeoutMs));
         }
 

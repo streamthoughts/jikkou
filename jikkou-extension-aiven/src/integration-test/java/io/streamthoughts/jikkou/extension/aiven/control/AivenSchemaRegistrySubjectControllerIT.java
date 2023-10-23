@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.control;
 
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.JsonValueChange;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.JsonValueChange;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;

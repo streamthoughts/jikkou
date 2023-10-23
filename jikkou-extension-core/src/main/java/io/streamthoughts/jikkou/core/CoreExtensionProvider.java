@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.core;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.extensions.ExtensionFactory;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.transform.ConfigMapsTransformation;
 import io.streamthoughts.jikkou.core.transform.EnrichMetadataTransformation;
 import io.streamthoughts.jikkou.core.transform.ExcludeIgnoreResourceTransformation;
@@ -29,9 +29,10 @@ public class CoreExtensionProvider implements ExtensionProvider {
      * {@inheritDoc}
      **/
     @Override
-    public void registerExtensions(@NotNull ExtensionFactory factory, @NotNull Configuration configuration) {
-        factory.register(ExcludeIgnoreResourceTransformation.class, ExcludeIgnoreResourceTransformation::new);
-        factory.register(ConfigMapsTransformation.class, ConfigMapsTransformation::new);
-        factory.register(EnrichMetadataTransformation.class, EnrichMetadataTransformation::new);
+    public void registerExtensions(@NotNull ExtensionRegistry registry,
+                                   @NotNull Configuration configuration) {
+        registry.register(ExcludeIgnoreResourceTransformation.class, ExcludeIgnoreResourceTransformation::new);
+        registry.register(ConfigMapsTransformation.class, ConfigMapsTransformation::new);
+        registry.register(EnrichMetadataTransformation.class, EnrichMetadataTransformation::new);
     }
 }

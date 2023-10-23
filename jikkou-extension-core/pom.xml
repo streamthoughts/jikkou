@@ -37,7 +37,7 @@ limitations under the License.
     <dependencies>
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>jikkou-api</artifactId>
+            <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

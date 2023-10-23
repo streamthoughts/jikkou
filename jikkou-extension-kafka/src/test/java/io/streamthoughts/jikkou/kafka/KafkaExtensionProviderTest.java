@@ -15,55 +15,33 @@
  */
 package io.streamthoughts.jikkou.kafka;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.extensions.DefaultExtensionFactory;
-import io.streamthoughts.jikkou.api.extensions.ExtensionDescriptor;
-import io.streamthoughts.jikkou.api.transform.ResourceTransformation;
-import io.streamthoughts.jikkou.api.validation.ResourceValidation;
-import java.util.Collection;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
+import io.streamthoughts.jikkou.core.resource.ResourceController;
+import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class KafkaExtensionProviderTest {
 
     @Test
-    void shouldRegisterValidationsThatAcceptAtLeastOneResource() {
+    void shouldRegisterExtensions() {
         // Given
         KafkaExtensionProvider provider = new KafkaExtensionProvider();
-        DefaultExtensionFactory factory = new DefaultExtensionFactory();
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
+                new DefaultExtensionDescriptorFactory(),
+                new ClassExtensionAliasesGenerator()
+        );
 
         // When
-        provider.registerExtensions(factory, Configuration.empty());
+        provider.registerExtensions(registry, Configuration.empty());
 
         // Then
-        Collection<ExtensionDescriptor<ResourceValidation>> descriptors = factory
-                .getAllDescriptorsForType(ResourceValidation.class);
-
-        for (ExtensionDescriptor<ResourceValidation> descriptor : descriptors) {
-            Assertions.assertFalse(
-                    descriptor.getSupportedResources().isEmpty(),
-                    "Class '" + descriptor.classType() + "' does not support any resource");
-        }
+        Assertions.assertFalse(registry.findAllDescriptorsByClass(ResourceValidation.class).isEmpty());
+        Assertions.assertFalse(registry.findAllDescriptorsByClass(ResourceTransformation.class).isEmpty());
+        Assertions.assertFalse(registry.findAllDescriptorsByClass(ResourceController.class).isEmpty());
     }
-
-    @Test
-    void shouldRegisterTransformationsThatAcceptAtLeastOneResource() {
-        // Given
-        KafkaExtensionProvider provider = new KafkaExtensionProvider();
-        DefaultExtensionFactory factory = new DefaultExtensionFactory();
-
-        // When
-        provider.registerExtensions(factory, Configuration.empty());
-
-        // Then
-        Collection<ExtensionDescriptor<ResourceTransformation>> descriptors = factory
-                .getAllDescriptorsForType(ResourceTransformation.class);
-
-        for (ExtensionDescriptor<ResourceTransformation> descriptor : descriptors) {
-            Assertions.assertFalse(
-                    descriptor.getSupportedResources().isEmpty(),
-                    "Class '" + descriptor.classType() + "' does not support any resource");
-        }
-    }
-
 }

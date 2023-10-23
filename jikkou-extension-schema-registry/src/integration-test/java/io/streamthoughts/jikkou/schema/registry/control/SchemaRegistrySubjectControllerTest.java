@@ -15,12 +15,12 @@
  */
 package io.streamthoughts.jikkou.schema.registry.control;
 
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;

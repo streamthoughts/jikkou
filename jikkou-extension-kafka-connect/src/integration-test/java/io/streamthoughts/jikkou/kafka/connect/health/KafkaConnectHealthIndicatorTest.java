@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.health;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.health.Health;
-import io.streamthoughts.jikkou.api.health.Status;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.health.Health;
+import io.streamthoughts.jikkou.core.health.Status;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;

@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry;
 
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import io.streamthoughts.jikkou.schema.registry.control.internals.SchemaSubjectPrettyPrinter;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;

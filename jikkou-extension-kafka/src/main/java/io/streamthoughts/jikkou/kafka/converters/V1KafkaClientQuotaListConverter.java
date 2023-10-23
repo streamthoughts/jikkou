@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.converters;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
-import io.streamthoughts.jikkou.api.converter.ResourceConverter;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.resource.converter.ResourceConverter;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaList;
 import java.util.Collections;

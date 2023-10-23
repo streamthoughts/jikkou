@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.schema.registry.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.api.io.Jackson;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

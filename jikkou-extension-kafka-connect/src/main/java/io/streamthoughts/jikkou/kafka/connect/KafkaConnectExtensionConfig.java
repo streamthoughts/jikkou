@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.connect;
 
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
 import java.util.ArrayList;
 import java.util.Collections;

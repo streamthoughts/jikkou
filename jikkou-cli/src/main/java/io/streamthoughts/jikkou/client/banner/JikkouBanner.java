@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.client.banner;
 
 
-import io.streamthoughts.jikkou.api.JikkouInfo;
+import io.streamthoughts.jikkou.core.JikkouInfo;
 import java.io.PrintStream;
 
 /**

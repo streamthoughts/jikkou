@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.api.config.Configuration;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 import picocli.CommandLine.Option;

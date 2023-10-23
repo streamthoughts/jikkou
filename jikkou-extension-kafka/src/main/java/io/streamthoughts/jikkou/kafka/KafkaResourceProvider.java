@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka;
 
-import io.streamthoughts.jikkou.api.ResourceContext;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
@@ -33,7 +33,7 @@ public class KafkaResourceProvider implements ResourceProvider {
      * {@inheritDoc}
      **/
     @Override
-    public void registerAll(ResourceContext context) {
+    public void registerAll(ResourceRegistry context) {
         context.register(V1KafkaBrokerList.class);
         context.register(V1KafkaBroker.class);
         context.register(V1KafkaClientQuota.class);

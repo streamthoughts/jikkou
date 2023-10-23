@@ -15,16 +15,16 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import static io.streamthoughts.jikkou.api.change.ChangeType.ADD;
-import static io.streamthoughts.jikkou.api.change.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.api.change.ChangeType.NONE;
-import static io.streamthoughts.jikkou.api.change.ChangeType.UPDATE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.ADD;
+import static io.streamthoughts.jikkou.core.change.ChangeType.DELETE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.NONE;
+import static io.streamthoughts.jikkou.core.change.ChangeType.UPDATE;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
-import io.streamthoughts.jikkou.api.model.ConfigValue;
-import io.streamthoughts.jikkou.api.model.Configs;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ConfigValue;
+import io.streamthoughts.jikkou.core.models.Configs;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;

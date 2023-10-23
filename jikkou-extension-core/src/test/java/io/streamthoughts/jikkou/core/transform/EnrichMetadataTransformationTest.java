@@ -15,12 +15,12 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.model.GenericResource;
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
-import io.streamthoughts.jikkou.api.model.HasMetadata;
-import io.streamthoughts.jikkou.api.model.NamedValue;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.models.GenericResource;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -15,14 +15,14 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.topics;
 
-import io.streamthoughts.jikkou.api.change.ChangeHandler;
-import io.streamthoughts.jikkou.api.change.ChangeMetadata;
-import io.streamthoughts.jikkou.api.change.ChangeResponse;
-import io.streamthoughts.jikkou.api.change.ChangeType;
-import io.streamthoughts.jikkou.api.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
+import io.streamthoughts.jikkou.core.change.ChangeHandler;
+import io.streamthoughts.jikkou.core.change.ChangeMetadata;
+import io.streamthoughts.jikkou.core.change.ChangeResponse;
+import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.ArrayList;

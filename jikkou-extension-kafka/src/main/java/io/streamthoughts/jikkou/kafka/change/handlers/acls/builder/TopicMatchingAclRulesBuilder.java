@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls.builder;
 
-import io.streamthoughts.jikkou.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;

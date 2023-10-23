@@ -15,14 +15,14 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.ResourceCollector;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.error.JikkouRuntimeException;
-import io.streamthoughts.jikkou.api.model.ObjectMeta;
-import io.streamthoughts.jikkou.api.selector.AggregateSelector;
-import io.streamthoughts.jikkou.api.selector.ResourceSelector;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
+import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.converters.V1KafkaClientQuotaListConverter;

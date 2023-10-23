@@ -15,26 +15,26 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.control;
 
-import static io.streamthoughts.jikkou.api.ReconciliationMode.APPLY_ALL;
-import static io.streamthoughts.jikkou.api.ReconciliationMode.CREATE;
-import static io.streamthoughts.jikkou.api.ReconciliationMode.DELETE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.APPLY_ALL;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 
-import io.streamthoughts.jikkou.annotation.AcceptsReconciliationModes;
-import io.streamthoughts.jikkou.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.api.ReconciliationContext;
-import io.streamthoughts.jikkou.api.ReconciliationMode;
-import io.streamthoughts.jikkou.api.change.ChangeExecutor;
-import io.streamthoughts.jikkou.api.change.ChangeHandler;
-import io.streamthoughts.jikkou.api.change.ChangeResult;
-import io.streamthoughts.jikkou.api.change.ValueChange;
-import io.streamthoughts.jikkou.api.config.ConfigProperty;
-import io.streamthoughts.jikkou.api.config.Configuration;
-import io.streamthoughts.jikkou.api.control.BaseResourceController;
-import io.streamthoughts.jikkou.api.error.ConfigException;
-import io.streamthoughts.jikkou.api.model.GenericResourceListObject;
-import io.streamthoughts.jikkou.api.model.HasMetadataChange;
-import io.streamthoughts.jikkou.api.model.ResourceListObject;
-import io.streamthoughts.jikkou.api.selector.AggregateSelector;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
+import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.change.ChangeExecutor;
+import io.streamthoughts.jikkou.core.change.ChangeHandler;
+import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
