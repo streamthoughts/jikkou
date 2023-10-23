@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.runtime;
 
+import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSIONS_PROVIDER_DEFAULT_ENABLED;
+
 import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.DefaultApi;
 import io.streamthoughts.jikkou.core.JikkouApi;
@@ -25,6 +27,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionResolver;
 import io.streamthoughts.jikkou.core.extension.ExternalExtension;
 import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
+import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import io.streamthoughts.jikkou.spi.ResourceProvider;
@@ -55,8 +58,8 @@ public final class JikkouContext {
     /**
      * Creates a new {@link JikkouContext} instance.
      *
-     * @param configuration     the configuration.
-     * @param extensionFactory  the extension factory.
+     * @param configuration    the configuration.
+     * @param extensionFactory the extension factory.
      */
     public JikkouContext(@NotNull final Configuration configuration,
                          @NotNull final ExtensionFactory extensionFactory) {
@@ -66,9 +69,9 @@ public final class JikkouContext {
     /**
      * Creates a new {@link JikkouContext} instance.
      *
-     * @param configuration     the configuration.
-     * @param extensionFactory  the extension factory.
-     * @param extensionPaths    the list of external paths from which to load extensions.
+     * @param configuration    the configuration.
+     * @param extensionFactory the extension factory.
+     * @param extensionPaths   the list of external paths from which to load extensions.
      */
     public JikkouContext(@NotNull final Configuration configuration,
                          @NotNull final ExtensionFactory extensionFactory,
@@ -76,14 +79,15 @@ public final class JikkouContext {
         this.configuration = Objects.requireNonNull(configuration, "'configuration' must not be null");
         this.extensionPaths = Objects.requireNonNull(extensionPaths, "'extensionPaths' must not be null");
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "'extensionFactory' must not be null");
-        this.resourceRegistry = new DefaultResourceRegistry();
-        LOG.info("Start context initialization.");
+
+        Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.evaluate(configuration);
+        LOG.info("Start context initialization ({}={}).", EXTENSIONS_PROVIDER_DEFAULT_ENABLED.key(), extensionEnabledByDefault);
         Set<ClassLoader> cls = getAllClassLoaders();
         loadAllServices(ExtensionProvider.class, cls)
                 .forEach(provider -> {
                     final String name = provider.getName();
-                    if (isExtensionProviderEnabled(configuration, name)) {
-                        LOG.info("Loading extensions from ExtensionProvider '{}'", name);
+                    if (isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault)) {
+                        LOG.info("Loading all '{}' extensions", name);
                         provider.registerExtensions(extensionFactory, configuration);
                     } else {
                         LOG.info(
@@ -94,23 +98,33 @@ public final class JikkouContext {
                     }
                 });
 
-        loadAllServices(ResourceProvider.class, cls)
-                .forEach(provider -> {
-                    final String name = provider.getName();
-                    if (isExtensionProviderEnabled(configuration, name)) {
-                        LOG.info("Loading resources from ResourceProvider '{}'", name);
-                        provider.registerAll(resourceRegistry);
-                    } else {
-                        LOG.info(
-                                "Resources for group '{}' are ignored (config setting 'extensions.provider.{}.enabled' is set to 'false').",
-                                name,
-                                name
-                        );
-                    }
 
-                });
+        resourceRegistry = new DefaultResourceRegistry();
+        loadAllServices(ResourceProvider.class, cls)
+            .stream()
+            .flatMap(resourceProvider -> {
+                final String name = resourceProvider.getName();
+                LOG.info("Loading resources from ResourceProvider '{}'", name);
+                Boolean extensionEnabled = isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault);
+                if (!extensionEnabled) {
+                    LOG.info(
+                            "Resources for group '{}' are disabled (config setting 'extensions.provider.{}.enabled' is set to 'false').",
+                            name,
+                            name
+                    );
+                }
+                var registry = new DefaultResourceRegistry(false);
+                resourceProvider.registerAll(registry);
+                return registry.getAllResourceDescriptors()
+                        .stream()
+                        .peek(descriptor -> descriptor.isEnabled(extensionEnabled));
+
+            })
+            .forEach(resourceRegistry::register);
 
         resourceRegistry.getAllResourceDescriptors()
+                .stream()
+                .filter(ResourceDescriptor::isEnabled)
                 .forEach(desc -> ResourceDeserializer.registerKind(
                         desc.group() + "/" + desc.apiVersion(),
                         desc.kind(),
@@ -120,9 +134,11 @@ public final class JikkouContext {
     }
 
     @NotNull
-    private static Boolean isExtensionProviderEnabled(@NotNull Configuration configuration, String name) {
+    private static Boolean isExtensionProviderEnabled(@NotNull Configuration configuration,
+                                                      @NotNull String name,
+                                                      boolean defaultValue) {
         String property = String.format("extensions.provider.%s.enabled", name.toLowerCase(Locale.ROOT));
-        return configuration.findBoolean(property).orElse(true);
+        return configuration.findBoolean(property).orElse(defaultValue);
     }
 
     /**

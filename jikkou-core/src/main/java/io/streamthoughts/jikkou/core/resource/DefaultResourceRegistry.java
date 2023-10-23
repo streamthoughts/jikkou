@@ -41,10 +41,20 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
     private final Set<ResourceDescriptor> descriptors;
     private final ResourceDescriptorFactory factory;
 
+    private final boolean doLog;
+
     /**
      * Creates a new {@link DefaultResourceRegistry} instance.
      */
     public DefaultResourceRegistry() {
+        this(true);
+    }
+
+    /**
+     * Creates a new {@link DefaultResourceRegistry} instance.
+     */
+    public DefaultResourceRegistry(boolean doLog) {
+        this.doLog = doLog;
         this.descriptorsByType = new HashMap<>();
         this.descriptors = new HashSet<>();
         this.factory = new ResourceDescriptorFactory();
@@ -78,11 +88,13 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
                     "Cannot register resource for class '{" + descriptor.resourceClass().getName() + "}'. " +
                     "Class already registered for " + descriptor.resourceType() + ": " + existing.resourceClass().getName());
         }
-        LOG.info("Registered resource for group='{}', version='{}' and kind='{}'",
-                descriptor.group(),
-                descriptor.apiVersion(),
-                descriptor.kind()
-        );
+        if (doLog) {
+            LOG.info("Registered resource for group='{}', version='{}' and kind='{}'",
+                    descriptor.group(),
+                    descriptor.apiVersion(),
+                    descriptor.kind()
+            );
+        }
         this.descriptors.add(descriptor);
         return descriptor;
     }

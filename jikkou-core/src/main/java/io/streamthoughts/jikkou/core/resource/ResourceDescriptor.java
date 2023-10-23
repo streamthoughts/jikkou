@@ -38,6 +38,8 @@ public final class ResourceDescriptor {
     private String pluralName;
     private Set<String> shortNames;
 
+    private boolean isEnabled = true;
+
     /**
      * Creates a new {@link ResourceDescriptor} instance.
      * @param type              the type of the resource.
@@ -188,6 +190,23 @@ public final class ResourceDescriptor {
      */
     public String description() {
         return this.description;
+    }
+
+    /**
+     * Checks whether the described resource is enabled.
+     * @return  {@code true} if the resource is enabled.
+     */
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    /**
+     * Specify whether the described resource is enabled.
+     *
+     * @param isEnabled  {@code true} if the resource is enabled, otherwise {@code false}.
+     */
+    public void isEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
     }
 
     /** {@inheritDoc} */

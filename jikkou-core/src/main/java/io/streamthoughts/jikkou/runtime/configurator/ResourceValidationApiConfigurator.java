@@ -17,15 +17,12 @@ package io.streamthoughts.jikkou.runtime.configurator;
 
 import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 import io.streamthoughts.jikkou.core.resource.validation.ResourceValidationDecorator;
-import java.util.Collections;
-import java.util.List;
+import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,20 +31,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ResourceValidationApiConfigurator extends ExtensionApiConfigurator<ResourceValidation<?>> {
 
-    public static final String VALIDATIONS_CONFIG_NAME = "validations";
-    public static final ConfigProperty<List<ExtensionConfigEntry>> VALIDATIONS_CONFIG = ConfigProperty
-            .ofConfigList(VALIDATIONS_CONFIG_NAME)
-            .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
-
-
     /**
      * Creates a new {@link ResourceValidationApiConfigurator} instance.
      *
      * @param registry the ExtensionDescriptorRegistry instance.
      */
     public ResourceValidationApiConfigurator(final ExtensionDescriptorRegistry registry) {
-        super(registry, VALIDATIONS_CONFIG);
+        super(registry, JikkouConfigProperties.VALIDATIONS_CONFIG);
     }
 
     /** {@inheritDoc}**/

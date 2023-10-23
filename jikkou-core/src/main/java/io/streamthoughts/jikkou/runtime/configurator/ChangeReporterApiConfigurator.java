@@ -18,15 +18,12 @@ package io.streamthoughts.jikkou.runtime.configurator;
 import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.BaseApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporterDecorator;
-import java.util.Collections;
-import java.util.List;
+import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,19 +32,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ChangeReporterApiConfigurator extends ExtensionApiConfigurator<ChangeReporter> {
 
-    public static final String REPORTERS_CONFIG_NAME = "reporters";
-    public static final ConfigProperty<List<ExtensionConfigEntry>> REPORTERS_CONFIG = ConfigProperty
-            .ofConfigList(REPORTERS_CONFIG_NAME)
-            .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
-
     /**
      * Creates a new {@link BaseApiConfigurator} instance.
      *
      * @param registry an {@link ExtensionDescriptorRegistry}.
      */
     public ChangeReporterApiConfigurator(@NotNull ExtensionDescriptorRegistry registry) {
-        super(registry, REPORTERS_CONFIG);
+        super(registry, JikkouConfigProperties.REPORTERS_CONFIG);
     }
 
     /**

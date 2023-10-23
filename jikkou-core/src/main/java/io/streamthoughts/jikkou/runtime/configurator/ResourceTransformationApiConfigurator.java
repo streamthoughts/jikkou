@@ -17,15 +17,12 @@ package io.streamthoughts.jikkou.runtime.configurator;
 
 import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformationDecorator;
-import java.util.Collections;
-import java.util.List;
+import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ResourceTransformation}
@@ -33,20 +30,13 @@ import java.util.stream.Collectors;
  */
 public class ResourceTransformationApiConfigurator extends ExtensionApiConfigurator<ResourceTransformation<?>> {
 
-    public static final String TRANSFORMATIONS_CONFIG_NAME = "transformations";
-
-    public static final ConfigProperty<List<ExtensionConfigEntry>> TRANSFORMATION_CONFIG = ConfigProperty
-            .ofConfigList(TRANSFORMATIONS_CONFIG_NAME)
-            .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
-
     /**
      * Creates a new {@link ResourceTransformationApiConfigurator} instance.
      *
      * @param registry the ExtensionDescriptorRegistry instance.
      */
     public ResourceTransformationApiConfigurator(final ExtensionDescriptorRegistry registry) {
-        super(registry, TRANSFORMATION_CONFIG);
+        super(registry, JikkouConfigProperties.TRANSFORMATION_CONFIG);
     }
 
     /**

@@ -17,10 +17,9 @@ package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public interface ResourceRegistry {
 
