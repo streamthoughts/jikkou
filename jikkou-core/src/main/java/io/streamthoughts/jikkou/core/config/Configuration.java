@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.common.utils.Classes;
 import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
 import io.streamthoughts.jikkou.core.config.internals.TypeConverter;
+import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,8 @@ public interface Configuration {
 
     /**
      * Creates a new configuration {@link Builder} instance.
-     * @return  a new {@link Builder} instance.
+     *
+     * @return a new {@link Builder} instance.
      */
     static Builder builder() {
         return new Builder();
@@ -644,36 +646,8 @@ public interface Configuration {
      * @param defaultValueSupplier the supplier for the default value; may be null
      * @return the configuration value.
      */
-    default List<Configuration> getConfigList(@NotNull final String key,
-                                              @Nullable final Supplier<List<Configuration>> defaultValueSupplier) {
-        Object value = getAny(key);
-        if (!(value instanceof List)) {
-            return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
-        }
-
-        @SuppressWarnings("unchecked")
-        List<Object> items = (List<Object>) value;
-        if (items.isEmpty())
-            return Collections.emptyList();
-
-        return items.stream()
-                .map(item -> {
-                    Configuration config = null;
-                    if (Map.class.isAssignableFrom(item.getClass())) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, ?> stringMap = (Map<String, ?>) item;
-                        config = Configuration.from(stringMap);
-                    }
-
-                    if (Configuration.class.isAssignableFrom(item.getClass())) {
-                        config = (Configuration) item;
-                    }
-
-                    return Optional.ofNullable(config);
-                })
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList());
-    }
+    List<Configuration> getConfigList(@NotNull final String key,
+                                      @Nullable final Supplier<List<Configuration>> defaultValueSupplier);
 
     /**
      * Finds the boolean configuration value for the specified config key.
@@ -795,6 +769,11 @@ public interface Configuration {
 
     Map<String, Object> asMap();
 
+    /**
+     * Static helper method to create a new empty configuration.
+     * 
+     * @return  a new {@link Configuration}.
+     */
     static Configuration empty() {
         return from(Collections.emptyMap());
     }
@@ -814,11 +793,23 @@ public interface Configuration {
         return from(Map.of(k1, v1, k2, v2, k3, v3));
     }
 
+    /**
+     * Static helper method to create a new a configuration from the specified properties.
+     *
+     * @param properties the map configuration.
+     * @return a new {@link Configuration}.
+     */
     static Configuration from(Properties properties) {
         return from(PropertiesUtils.toMap(properties));
     }
 
-    static Configuration from(final Map<String, ?> configs) {
-        return new MapConfiguration(configs);
+    /**
+     * Static helper method to create a new a configuration from the specified map.
+     *
+     * @param configMap the map configuration.
+     * @return a new {@link Configuration}.
+     */
+    static Configuration from(final Map<String, ?> configMap) {
+        return JikkouConfig.create(configMap, false);
     }
 }

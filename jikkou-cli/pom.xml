@@ -111,10 +111,6 @@ limitations under the License.
         </dependency>
         <!-- END dependencies for Jikkou Extensions -->
         <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>

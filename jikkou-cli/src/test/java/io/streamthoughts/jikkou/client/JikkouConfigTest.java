@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.client;
 import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
+import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import java.util.HashMap;
 import java.util.Properties;
 import org.junit.jupiter.api.Assertions;

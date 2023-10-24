@@ -18,9 +18,9 @@ package io.streamthoughts.jikkou.client.command.config;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigRenderOptions;
-import io.streamthoughts.jikkou.client.JikkouConfig;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
+import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;

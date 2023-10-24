@@ -98,6 +98,10 @@ limitations under the License.
             <groupId>org.jsonschema2pojo</groupId>
             <artifactId>jsonschema2pojo-maven-plugin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+        </dependency>
         <!-- START dependencies for test -->
         <dependency>
             <groupId>org.mockito</groupId>

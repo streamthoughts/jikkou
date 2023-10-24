@@ -29,14 +29,14 @@ import org.jetbrains.annotations.NotNull;
  * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ResourceValidation}
  * dynamically passed through the CLI configuration.
  */
-public final class ResourceValidationApiConfigurator extends ExtensionApiConfigurator<ResourceValidation<?>> {
+public final class ValidationApiConfigurator extends ExtensionApiConfigurator<ResourceValidation<?>> {
 
     /**
-     * Creates a new {@link ResourceValidationApiConfigurator} instance.
+     * Creates a new {@link ValidationApiConfigurator} instance.
      *
      * @param registry the ExtensionDescriptorRegistry instance.
      */
-    public ResourceValidationApiConfigurator(final ExtensionDescriptorRegistry registry) {
+    public ValidationApiConfigurator(final ExtensionDescriptorRegistry registry) {
         super(registry, JikkouConfigProperties.VALIDATIONS_CONFIG);
     }
 

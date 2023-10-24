@@ -32,10 +32,11 @@ import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.core.io.writer.DefaultResourceWriter;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
+import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import io.streamthoughts.jikkou.runtime.JikkouContext;
 import io.streamthoughts.jikkou.runtime.configurator.ChangeReporterApiConfigurator;
-import io.streamthoughts.jikkou.runtime.configurator.ResourceTransformationApiConfigurator;
-import io.streamthoughts.jikkou.runtime.configurator.ResourceValidationApiConfigurator;
+import io.streamthoughts.jikkou.runtime.configurator.TransformationApiConfigurator;
+import io.streamthoughts.jikkou.runtime.configurator.ValidationApiConfigurator;
 import jakarta.inject.Singleton;
 
 /**
@@ -68,8 +69,8 @@ public final class BeanFactory {
     @Singleton
     public JikkouApi jikkouApi(JikkouContext context, ExtensionDescriptorRegistry registry) {
         ApiConfigurator[] configurators = {
-                new ResourceValidationApiConfigurator(registry),
-                new ResourceTransformationApiConfigurator(registry),
+                new ValidationApiConfigurator(registry),
+                new TransformationApiConfigurator(registry),
                 new ChangeReporterApiConfigurator(registry)
         };
         return context.createApi(configurators);

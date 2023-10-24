@@ -71,8 +71,8 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
         List<V1KafkaTableRecord> result = collector.listAll(Configuration.of(
                 AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING,
-                AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING)
+                AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
+                AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING.name())
         );
         // Then
         var expected = V1KafkaTableRecord
@@ -107,8 +107,8 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         Assertions.assertThrows(JikkouRuntimeException.class, () -> {
             collector.listAll(Configuration.of(
                     AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                    AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING,
-                    AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING)
+                    AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
+                    AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING.name())
             );
         });
     }

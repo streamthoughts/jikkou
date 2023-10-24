@@ -21,8 +21,6 @@ import static io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry
 import static io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry.TYPE_CONFIG;
 
 import io.streamthoughts.jikkou.core.DefaultApi;
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
@@ -30,8 +28,9 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
+import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ChangeReporterApiConfiguratorTest {
+class ValidationApiConfiguratorTest {
 
     @Test
     void shouldRegisterConfiguredExtensions() {
@@ -49,37 +48,34 @@ class ChangeReporterApiConfiguratorTest {
                 new DefaultExtensionDescriptorFactory(),
                 new ClassExtensionAliasesGenerator()
         );
-        TestReporter reporter = new TestReporter();
-        registry.register(TestReporter.class, () -> reporter);
+        // Extension must be registered
+        TestValidation validation = new TestValidation();
+        registry.register(TestValidation.class, () -> validation);
 
-        ChangeReporterApiConfigurator configurator = new ChangeReporterApiConfigurator(registry);
+        ValidationApiConfigurator configurator = new ValidationApiConfigurator(registry);
 
         DefaultExtensionFactory factory = new DefaultExtensionFactory(registry);
         DefaultApi.Builder builder = DefaultApi.builder(factory);
+
         // When
-        Map<Object, Object> extensionConfig = Collections.emptyMap();
-        Map<String, Object> extensionConfigEntry = NamedValue.emptySet()
+        Map<Object, Object> validationConfig = Collections.emptyMap();
+        Map<String, Object> validationConfigEntry = NamedValue.emptySet()
                 .with(NAME_CONFIG.asValue("test"))
-                .with(TYPE_CONFIG.asValue(TestReporter.class.getName()))
+                .with(TYPE_CONFIG.asValue(TestValidation.class.getName()))
                 .with(PRIORITY_CONFIG.asValue(1))
-                .with(CONFIGURATION_CONFIG.asValue(extensionConfig))
+                .with(CONFIGURATION_CONFIG.asValue(validationConfig))
                 .asMap();
 
         Map<String, Object> config = new HashMap<>();
-        config.put(JikkouConfigProperties.REPORTERS_CONFIG.key(), List.of(extensionConfigEntry));
+        config.put(JikkouConfigProperties.VALIDATIONS_CONFIG.key(), List.of(validationConfigEntry));
         DefaultApi.Builder configured = configurator.configure(builder, Configuration.from(config));
 
         // Then
         Assertions.assertNotNull(configured);
-        Assertions.assertTrue(registry.findDescriptorByClass(TestReporter.class, Qualifiers.byName("test")).isPresent());
-        ChangeReporter actual = factory.getExtension(ChangeReporter.class, Qualifiers.byName("test"));
+        Assertions.assertTrue(registry.findDescriptorByClass(TestValidation.class, Qualifiers.byName("test")).isPresent());
+        ResourceValidation<?> actual = factory.getExtension(ResourceValidation.class, Qualifiers.byName("test"));
         Assertions.assertNotNull(actual);
     }
 
-    public static final class TestReporter implements ChangeReporter {
-        @Override
-        public void report(List<ChangeResult<Change>> results) {
-
-        }
-    }
+    public static final class TestValidation implements ResourceValidation<HasMetadata> { }
 }

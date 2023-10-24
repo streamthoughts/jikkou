@@ -28,14 +28,14 @@ import java.util.function.Supplier;
  * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ResourceTransformation}
  * dynamically passed through the CLI configuration.
  */
-public class ResourceTransformationApiConfigurator extends ExtensionApiConfigurator<ResourceTransformation<?>> {
+public class TransformationApiConfigurator extends ExtensionApiConfigurator<ResourceTransformation<?>> {
 
     /**
-     * Creates a new {@link ResourceTransformationApiConfigurator} instance.
+     * Creates a new {@link TransformationApiConfigurator} instance.
      *
      * @param registry the ExtensionDescriptorRegistry instance.
      */
-    public ResourceTransformationApiConfigurator(final ExtensionDescriptorRegistry registry) {
+    public TransformationApiConfigurator(final ExtensionDescriptorRegistry registry) {
         super(registry, JikkouConfigProperties.TRANSFORMATION_CONFIG);
     }
 

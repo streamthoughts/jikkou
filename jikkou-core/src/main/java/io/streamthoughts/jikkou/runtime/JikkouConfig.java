@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client;
+package io.streamthoughts.jikkou.runtime;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -96,7 +96,7 @@ public final class JikkouConfig implements Configuration {
      * @param config the config Map.
      * @return a new {@link JikkouConfig} instance.
      */
-    public static JikkouConfig create(final Map<String, Object> config) {
+    public static JikkouConfig create(final Map<String, ?> config) {
         return new JikkouConfig(ConfigFactory.parseMap(config));
     }
 
@@ -108,7 +108,7 @@ public final class JikkouConfig implements Configuration {
      * @param doLog  should configuration be logged.
      * @return a new {@link JikkouConfig} instance.
      */
-    public static JikkouConfig create(final Map<String, Object> config, final boolean doLog) {
+    public static JikkouConfig create(final Map<String, ?> config, final boolean doLog) {
         return new JikkouConfig(ConfigFactory.parseMap(config), doLog);
     }
 
@@ -310,7 +310,6 @@ public final class JikkouConfig implements Configuration {
         return (Class<T>) Classes.forName(config.getString(path));
     }
 
-
     /** {@inheritDoc} */
     @Override
     public Map<String, Object> asMap() {
@@ -328,7 +327,21 @@ public final class JikkouConfig implements Configuration {
             casted = JikkouConfig.create(config.asMap());
         }
         return new JikkouConfig(this.config.withFallback(casted.unwrap()), false);
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JikkouConfig that = (JikkouConfig) o;
+        return Objects.equals(config, that.config);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return Objects.hash(config);
     }
 
     private static Map<String, Object> getConfAsMap(@NotNull final Config config) {

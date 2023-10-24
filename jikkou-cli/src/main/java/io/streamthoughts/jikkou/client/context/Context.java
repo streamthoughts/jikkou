@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.ReflectiveAccess;
-import io.streamthoughts.jikkou.client.JikkouConfig;
+import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import java.util.Collections;
 import java.util.Map;
 

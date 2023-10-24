@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.config;
 
+import io.streamthoughts.jikkou.core.models.NamedValue;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -144,6 +145,10 @@ public final class ConfigProperty<T> {
 
     public Configuration asConfiguration(final Object value) {
         return Configuration.of(key, value);
+    }
+
+    public NamedValue asValue(final Object value) {
+        return new NamedValue(key, value);
     }
 
     /**

@@ -30,7 +30,7 @@ class ExtensionConfigEntryTest {
                 ExtensionConfigEntry.TYPE_CONFIG.key(), "Type",
                 ExtensionConfigEntry.PRIORITY_CONFIG.key(), 100,
                 ExtensionConfigEntry.NAME_CONFIG.key(), "Name",
-                ExtensionConfigEntry.CONFIGURATION_CONFIG.key(), Configuration.of("k1", "v1")
+                ExtensionConfigEntry.CONFIGURATION_CONFIG.key(), Map.of("k1", "v1")
         ));
         // When
         ExtensionConfigEntry extensionConfig = ExtensionConfigEntry.of(configuration);
@@ -48,7 +48,7 @@ class ExtensionConfigEntryTest {
         Configuration configuration = Configuration.from(Map.of(
                 ExtensionConfigEntry.TYPE_CONFIG.key(), "Type",
                 ExtensionConfigEntry.NAME_CONFIG.key(), "Name",
-                ExtensionConfigEntry.CONFIGURATION_CONFIG.key(), Configuration.of("k1", "v1")
+                ExtensionConfigEntry.CONFIGURATION_CONFIG.key(), Map.of("k1", "v1")
         ));
         // When
         ExtensionConfigEntry extensionConfig = ExtensionConfigEntry.of(configuration);

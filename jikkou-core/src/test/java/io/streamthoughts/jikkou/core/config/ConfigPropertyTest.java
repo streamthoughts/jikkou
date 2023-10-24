@@ -212,7 +212,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<List<Configuration>> config = ConfigProperty.ofConfigList(KEY);
         // When
-        List<Configuration> value = config.evaluate(Configuration.of(KEY, List.of(Configuration.of("k1", "v1"))));
+        List<Configuration> value = config.evaluate(Configuration.of(KEY, List.of(Map.of("k1", "v1"))));
         // Then
         Assertions.assertNotNull(value);
         Assertions.assertEquals(1, value.size());
