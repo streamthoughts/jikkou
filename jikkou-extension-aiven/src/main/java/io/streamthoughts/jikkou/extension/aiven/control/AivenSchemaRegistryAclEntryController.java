@@ -20,20 +20,19 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -50,10 +49,12 @@ import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, APPLY_ALL}
+)
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
 @AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public final class AivenSchemaRegistryAclEntryController implements BaseResourceController<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
+public final class AivenSchemaRegistryAclEntryController implements Controller<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
@@ -94,9 +95,7 @@ public final class AivenSchemaRegistryAclEntryController implements BaseResource
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> items,
-                                                                           @NotNull ReconciliationMode mode,
-                                                                           boolean dryRun) {
+    public List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> execute(@NotNull ChangeExecutor<ValueChange<SchemaRegistryAclEntry>> executor, @NotNull ReconciliationContext context) {
 
         AivenApiClient api = AivenApiClientFactory.create(config);
         try {
@@ -107,7 +106,7 @@ public final class AivenSchemaRegistryAclEntryController implements BaseResource
                             it.getChange().operation(),
                             it.getChange().getAfter()))
             );
-            return new ChangeExecutor<>(handlers).execute(items, dryRun);
+            return executor.execute(handlers);
         } finally {
             api.close();
         }
@@ -118,9 +117,8 @@ public final class AivenSchemaRegistryAclEntryController implements BaseResource
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<? extends HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> computeReconciliationChanges(
+    public ResourceListObject<? extends HasMetadataChange<ValueChange<SchemaRegistryAclEntry>>> plan(
             @NotNull Collection<V1SchemaRegistryAclEntry> resources,
-            @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
 
         // Get existing resources from the environment.

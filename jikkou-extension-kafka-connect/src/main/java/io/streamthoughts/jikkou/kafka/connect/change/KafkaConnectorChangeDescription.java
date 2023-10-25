@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import io.streamthoughts.jikkou.core.change.ChangeDescription;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
 
 /**
  * This class provides a textual description of {@link KafkaConnectorChange}.

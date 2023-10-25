@@ -16,10 +16,10 @@
 package io.streamthoughts.jikkou.kafka.connect.change;
 
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.core.change.ChangeResponse;
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import java.util.List;

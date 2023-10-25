@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import static io.streamthoughts.jikkou.core.change.ChangeType.ADD;
-import static io.streamthoughts.jikkou.core.change.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.core.change.ChangeType.NONE;
+import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.ADD;
+import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.DELETE;
+import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.NONE;
 
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;

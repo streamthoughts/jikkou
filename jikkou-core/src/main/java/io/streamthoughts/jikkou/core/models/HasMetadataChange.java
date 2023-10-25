@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.core.models;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
 
 /**
  * Represents a change object.

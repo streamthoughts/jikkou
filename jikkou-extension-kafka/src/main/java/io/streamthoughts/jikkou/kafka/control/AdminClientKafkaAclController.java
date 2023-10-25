@@ -20,17 +20,15 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.change.AclChangeComputer;
@@ -54,9 +52,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
-@AcceptsReconciliationModes(value = {CREATE, DELETE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, APPLY_ALL}
+)
 public final class AdminClientKafkaAclController
-        implements BaseResourceController<V1KafkaPrincipalAuthorization, AclChange> {
+        implements Controller<V1KafkaPrincipalAuthorization, AclChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaAclController.class);
 
@@ -93,9 +93,8 @@ public final class AdminClientKafkaAclController
      * {@inheritDoc}
      */
     @Override
-    public V1KafkaAclChangeList computeReconciliationChanges(@NotNull Collection<V1KafkaPrincipalAuthorization> resources,
-                                                             @NotNull ReconciliationMode mode,
-                                                             @NotNull ReconciliationContext context) {
+    public V1KafkaAclChangeList plan(@NotNull Collection<V1KafkaPrincipalAuthorization> resources,
+                                     @NotNull ReconciliationContext context) {
 
         // Get the list of remote resources that are candidates for this reconciliation
         List<V1KafkaPrincipalAuthorization> expectedStates = resources
@@ -140,17 +139,15 @@ public final class AdminClientKafkaAclController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult<AclChange>> execute(@NotNull List<HasMetadataChange<AclChange>> changes,
-                                                 @NotNull ReconciliationMode mode,
-                                                 boolean dryRun) {
-        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
-            final AdminClient adminClient = context.getAdminClient();
+    public List<ChangeResult<AclChange>> execute(@NotNull ChangeExecutor<AclChange> executor, @NotNull ReconciliationContext context) {
+        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = clientContext.getAdminClient();
             List<ChangeHandler<AclChange>> handlers = List.of(
                     new CreateAclChangeHandler(adminClient),
                     new DeleteAclChangeHandler(adminClient),
                     new ChangeHandler.None<>(AclChangeDescription::new)
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return executor.execute(handlers);
         }
     }
 

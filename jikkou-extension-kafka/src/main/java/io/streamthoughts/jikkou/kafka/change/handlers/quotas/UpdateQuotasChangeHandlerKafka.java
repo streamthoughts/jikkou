@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.quotas;
 
-import io.streamthoughts.jikkou.core.change.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 

@@ -16,11 +16,11 @@
 package io.streamthoughts.jikkou.kafka.change;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
 import io.streamthoughts.jikkou.kafka.model.DataType;
 import io.streamthoughts.jikkou.kafka.model.DataValue;

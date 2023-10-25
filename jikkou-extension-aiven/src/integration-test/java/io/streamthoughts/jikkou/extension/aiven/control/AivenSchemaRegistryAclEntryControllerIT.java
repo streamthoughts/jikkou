@@ -17,11 +17,12 @@ package io.streamthoughts.jikkou.extension.aiven.control;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
@@ -111,7 +112,8 @@ public class AivenSchemaRegistryAclEntryControllerIT extends AbstractAivenIntegr
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = controller
+        Reconcilier<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -170,7 +172,8 @@ public class AivenSchemaRegistryAclEntryControllerIT extends AbstractAivenIntegr
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = controller
+        Reconcilier<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -218,7 +221,8 @@ public class AivenSchemaRegistryAclEntryControllerIT extends AbstractAivenIntegr
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = controller
+        Reconcilier<V1SchemaRegistryAclEntry, ValueChange<SchemaRegistryAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<SchemaRegistryAclEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         Assertions.assertEquals(1, results.size());

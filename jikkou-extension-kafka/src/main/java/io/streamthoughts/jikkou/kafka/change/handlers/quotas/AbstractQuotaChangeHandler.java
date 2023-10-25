@@ -15,11 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.quotas;
 
-import io.streamthoughts.jikkou.core.change.ChangeDescription;
-import io.streamthoughts.jikkou.core.change.ChangeMetadata;
-import io.streamthoughts.jikkou.core.change.ChangeResponse;
-import io.streamthoughts.jikkou.core.change.ChangeType;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import java.util.List;

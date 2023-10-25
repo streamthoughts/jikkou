@@ -218,6 +218,19 @@ class ConfigPropertyTest {
         Assertions.assertEquals(1, value.size());
     }
 
+    @Test
+    void shouldReturnTrueGivenEqualsConfig() {
+        ConfigProperty<String> p1 = ConfigProperty.ofString("key")
+                .description("key")
+                .description("default");
+
+        ConfigProperty<String> p2 = ConfigProperty.ofString("key")
+                .description("key")
+                .description("default");
+
+        Assertions.assertEquals(p1, p2);
+    }
+
     public static class TestClass {
 
         public TestClass() {

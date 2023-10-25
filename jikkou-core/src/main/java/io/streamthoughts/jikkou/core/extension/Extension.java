@@ -23,8 +23,8 @@ import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.resource.ResourceCollector;
-import io.streamthoughts.jikkou.core.resource.ResourceController;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 
@@ -34,7 +34,7 @@ import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
  * @see Resource
  * @see ResourceValidation
  * @see ResourceTransformation
- * @see ResourceController
+ * @see Controller
  * @see ResourceCollector
  * @see HealthIndicator
  */

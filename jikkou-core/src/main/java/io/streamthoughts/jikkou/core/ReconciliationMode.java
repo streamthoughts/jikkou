@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.core;
 
-import io.streamthoughts.jikkou.core.change.ChangeType;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import java.util.Set;
 
 /**

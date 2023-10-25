@@ -15,11 +15,11 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.MetadataAnnotations;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;

@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls;
 
-import io.streamthoughts.jikkou.core.change.ChangeType;
 import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
 import org.apache.kafka.common.acl.AclOperation;

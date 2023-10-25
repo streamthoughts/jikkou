@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import io.streamthoughts.jikkou.core.change.ValueChangeComputer;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChangeComputer;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;

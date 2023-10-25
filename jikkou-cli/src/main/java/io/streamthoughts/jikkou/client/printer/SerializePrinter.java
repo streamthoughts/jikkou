@@ -17,9 +17,9 @@ package io.streamthoughts.jikkou.client.printer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
 
 public class SerializePrinter implements Printer {

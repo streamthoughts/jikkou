@@ -18,12 +18,12 @@ package io.streamthoughts.jikkou.client.printer;
 import static io.streamthoughts.jikkou.client.printer.Ansi.isColor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeDescription;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
-import io.streamthoughts.jikkou.core.change.ChangeType;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

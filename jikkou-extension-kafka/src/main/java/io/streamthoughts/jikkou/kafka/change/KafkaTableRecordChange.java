@@ -17,9 +17,9 @@ package io.streamthoughts.jikkou.kafka.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.util.Objects;
 import lombok.AllArgsConstructor;

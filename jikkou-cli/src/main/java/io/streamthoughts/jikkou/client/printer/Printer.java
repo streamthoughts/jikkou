@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
 
 public interface Printer {

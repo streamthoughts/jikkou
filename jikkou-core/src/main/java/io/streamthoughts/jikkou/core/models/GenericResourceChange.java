@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.change.Change;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
 import java.beans.ConstructorProperties;
 import java.util.Objects;
 import java.util.Optional;

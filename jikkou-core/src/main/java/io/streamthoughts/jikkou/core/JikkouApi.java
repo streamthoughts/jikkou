@@ -16,8 +16,6 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
 import io.streamthoughts.jikkou.core.extension.Extension;
@@ -29,6 +27,8 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.resource.ResourceCollector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import java.util.Collections;

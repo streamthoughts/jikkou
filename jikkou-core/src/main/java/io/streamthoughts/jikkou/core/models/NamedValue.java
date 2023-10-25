@@ -125,6 +125,27 @@ public final class NamedValue {
         public boolean isEmpty() {
             return valuesByName.isEmpty();
         }
+
+        /** {@inheritDoc} **/
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Set values = (Set) o;
+            return Objects.equals(valuesByName, values.valuesByName);
+        }
+
+        /** {@inheritDoc} **/
+        @Override
+        public int hashCode() {
+            return Objects.hash(valuesByName);
+        }
+
+        /** {@inheritDoc} **/
+        @Override
+        public String toString() {
+            return "Set" + valuesByName.values();
+        }
     }
 
     public final String name;

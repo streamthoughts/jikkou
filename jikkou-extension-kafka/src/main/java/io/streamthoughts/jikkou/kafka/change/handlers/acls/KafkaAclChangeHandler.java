@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls;
 
-import io.streamthoughts.jikkou.core.change.ChangeDescription;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import org.jetbrains.annotations.NotNull;
 

@@ -16,8 +16,6 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.common.utils.Tuple2;
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
@@ -31,10 +29,13 @@ import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceCollector;
-import io.streamthoughts.jikkou.core.resource.ResourceController;
 import io.streamthoughts.jikkou.core.resource.converter.ResourceConverter;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformationChain;
@@ -150,14 +151,15 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                                                              @NotNull ReconciliationContext context,
                                                              @NotNull ResourceType resourceType,
                                                              @NotNull List<HasMetadata> resources) {
-        ResourceController<HasMetadata, Change> controller = getMatchingResourceController(resourceType);
+        Controller<HasMetadata, Change> controller = getMatchingResourceController(resourceType);
         LOG.info("Starting reconciliation using controller: '{}' (mode: {}, dryRun: {})",
                 controller.getName(),
                 mode,
                 context.isDryRun()
         );
 
-        List<ChangeResult<Change>> changes = controller.reconcile(resources, mode, context);
+        Reconcilier<HasMetadata, Change> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<Change>> changes = reconcilier.reconcile(resources, mode, context);
 
         LOG.info("Reconciliation completed using controller: '{}' (mode: {}, dryRun: {})",
                 controller.getName(),
@@ -182,7 +184,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     if (type.isTransient()) {
                         return entry.getValue().stream();
                     } else {
-                        ResourceController<HasMetadata, Change> controller = getMatchingResourceController(type);
+                        Controller<HasMetadata, Change> controller = getMatchingResourceController(type);
                         ResourceConverter<HasMetadata, HasMetadata> converter = controller.getResourceConverter(type);
                         return converter.convertFrom(entry.getValue()).stream();
                     }
@@ -237,11 +239,10 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         return resourcesByType.entrySet()
                 .stream()
                 .map(e -> {
-                    ResourceController<HasMetadata, Change> controller = getMatchingResourceController(e.getKey());
+                    Controller<HasMetadata, Change> controller = getMatchingResourceController(e.getKey());
                     List<HasMetadata> resource = e.getValue();
-                    ResourceListObject<? extends HasMetadataChange<Change>> changes = controller.computeReconciliationChanges(
+                    ResourceListObject<? extends HasMetadataChange<Change>> changes = controller.plan(
                             resource,
-                            ReconciliationMode.APPLY_ALL,
                             context
                     );
                     return (ResourceListObject<HasMetadataChange<Change>>) changes;
@@ -311,14 +312,14 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     @SuppressWarnings("unchecked")
-    private ResourceController<HasMetadata, Change> getMatchingResourceController(@NotNull ResourceType resource) {
+    private Controller<HasMetadata, Change> getMatchingResourceController(@NotNull ResourceType resource) {
         LOG.info("Looking for a controller accepting resource type: group={}, version={} and kind={}",
                 resource.getGroup(),
                 resource.getApiVersion(),
                 resource.getKind()
         );
         return extensionFactory.getExtension(
-                ResourceController.class,
+                Controller.class,
                 Qualifiers.byAcceptedResource(resource)
         );
     }

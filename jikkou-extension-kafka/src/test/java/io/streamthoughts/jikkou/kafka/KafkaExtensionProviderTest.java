@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
-import io.streamthoughts.jikkou.core.resource.ResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 import org.junit.jupiter.api.Assertions;
@@ -42,6 +42,6 @@ class KafkaExtensionProviderTest {
         // Then
         Assertions.assertFalse(registry.findAllDescriptorsByClass(ResourceValidation.class).isEmpty());
         Assertions.assertFalse(registry.findAllDescriptorsByClass(ResourceTransformation.class).isEmpty());
-        Assertions.assertFalse(registry.findAllDescriptorsByClass(ResourceController.class).isEmpty());
+        Assertions.assertFalse(registry.findAllDescriptorsByClass(Controller.class).isEmpty());
     }
 }

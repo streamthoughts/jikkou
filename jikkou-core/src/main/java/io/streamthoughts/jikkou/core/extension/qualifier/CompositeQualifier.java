@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CompositeQualifier<T> implements Qualifier<T> {
+public final class CompositeQualifier<T> implements Qualifier<T> {
 
     private final List<Qualifier<T>> qualifiers;
 

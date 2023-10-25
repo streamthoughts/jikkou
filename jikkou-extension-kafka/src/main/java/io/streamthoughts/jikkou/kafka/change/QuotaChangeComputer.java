@@ -17,13 +17,13 @@ package io.streamthoughts.jikkou.kafka.change;
 
 import static io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter.toClientQuotaConfigs;
 
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.core.change.ConfigEntryChangeComputer;
-import io.streamthoughts.jikkou.core.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChangeComputer;
+import io.streamthoughts.jikkou.core.reconcilier.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaSpec;

@@ -21,20 +21,19 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -51,10 +50,12 @@ import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsReconciliationModes(value = {CREATE, UPDATE, DELETE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, UPDATE, APPLY_ALL}
+)
 @AcceptsResource(type = V1KafkaQuota.class)
 @AcceptsResource(type = V1KafkaQuotaList.class, converter = V1KafkaAclEntryListConverter.class)
-public class AivenKafkaQuotaController implements BaseResourceController<V1KafkaQuota, ValueChange<KafkaQuotaEntry>> {
+public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, ValueChange<KafkaQuotaEntry>> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
@@ -95,9 +96,7 @@ public class AivenKafkaQuotaController implements BaseResourceController<V1Kafka
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<ValueChange<KafkaQuotaEntry>>> execute(@NotNull List<HasMetadataChange<ValueChange<KafkaQuotaEntry>>> changes,
-                                                                    @NotNull ReconciliationMode mode,
-                                                                    boolean dryRun) {
+    public List<ChangeResult<ValueChange<KafkaQuotaEntry>>> execute(@NotNull final ChangeExecutor<ValueChange<KafkaQuotaEntry>> executor, @NotNull ReconciliationContext context) {
 
         AivenApiClient api = AivenApiClientFactory.create(config);
         try {
@@ -109,7 +108,7 @@ public class AivenKafkaQuotaController implements BaseResourceController<V1Kafka
                             it.getChange().getAfter())
                     )
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return executor.execute(handlers);
         } finally {
             api.close();
         }
@@ -119,9 +118,8 @@ public class AivenKafkaQuotaController implements BaseResourceController<V1Kafka
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<? extends HasMetadataChange<ValueChange<KafkaQuotaEntry>>> computeReconciliationChanges(
+    public ResourceListObject<? extends HasMetadataChange<ValueChange<KafkaQuotaEntry>>> plan(
             @NotNull Collection<V1KafkaQuota> resources,
-            @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
 
         // Get existing resources from the environment.

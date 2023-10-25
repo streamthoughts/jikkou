@@ -17,10 +17,11 @@ package io.streamthoughts.jikkou.extension.aiven.control;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
@@ -74,7 +75,8 @@ class AivenKafkaQuotaControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = controller
+        Reconcilier<V1KafkaQuota, ValueChange<KafkaQuotaEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -118,7 +120,8 @@ class AivenKafkaQuotaControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = controller
+        Reconcilier<V1KafkaQuota, ValueChange<KafkaQuotaEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaQuotaEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then

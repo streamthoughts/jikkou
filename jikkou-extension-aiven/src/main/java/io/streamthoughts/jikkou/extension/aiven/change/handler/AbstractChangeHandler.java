@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change.handler;
 
-import io.streamthoughts.jikkou.core.change.ChangeError;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeMetadata;
-import io.streamthoughts.jikkou.core.change.ChangeResponse;
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeError;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
 import io.streamthoughts.jikkou.rest.client.RestClientException;

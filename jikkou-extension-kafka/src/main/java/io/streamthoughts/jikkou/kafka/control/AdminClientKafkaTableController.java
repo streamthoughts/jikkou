@@ -17,21 +17,21 @@ package io.streamthoughts.jikkou.kafka.control;
 
 import static io.streamthoughts.jikkou.core.ReconciliationMode.APPLY_ALL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChangeComputer;
@@ -54,9 +54,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaTableRecord.class)
-@AcceptsReconciliationModes({CREATE, UPDATE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, UPDATE, APPLY_ALL}
+)
 public final class AdminClientKafkaTableController
-        implements BaseResourceController<V1KafkaTableRecord, KafkaTableRecordChange> {
+        implements Controller<V1KafkaTableRecord, KafkaTableRecordChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTableController.class);
 
@@ -111,14 +113,13 @@ public final class AdminClientKafkaTableController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult<KafkaTableRecordChange>> execute(@NotNull List<HasMetadataChange<KafkaTableRecordChange>> changes,
-                                                              @NotNull ReconciliationMode mode, boolean dryRun) {
+    public List<ChangeResult<KafkaTableRecordChange>> execute(@NotNull ChangeExecutor<KafkaTableRecordChange> executor, @NotNull ReconciliationContext context) {
         try (var producer = producerFactory.createProducer()) {
             List<ChangeHandler<KafkaTableRecordChange>> handlers = List.of(
                     new KafkaTableRecordChangeHandler(producer),
                     new ChangeHandler.None<>(KafkaTableRecordChangeDescription::new)
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return executor.execute(handlers);
         }
     }
 
@@ -126,9 +127,8 @@ public final class AdminClientKafkaTableController
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<? extends HasMetadataChange<KafkaTableRecordChange>> computeReconciliationChanges(
+    public ResourceListObject<? extends HasMetadataChange<KafkaTableRecordChange>> plan(
             @NotNull Collection<V1KafkaTableRecord> resources,
-            @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
 
         Map<String, List<V1KafkaTableRecord>> resourcesByTopic = resources.stream()

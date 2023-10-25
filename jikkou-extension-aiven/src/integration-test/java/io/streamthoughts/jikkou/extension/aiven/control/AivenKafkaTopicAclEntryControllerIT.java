@@ -17,11 +17,12 @@ package io.streamthoughts.jikkou.extension.aiven.control;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ValueChange;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
@@ -87,7 +88,8 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = controller
+        Reconcilier<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -130,7 +132,8 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = controller
+        Reconcilier<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
 
         // Then
@@ -170,7 +173,8 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = controller
+        Reconcilier<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = reconcilier
                 .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
 
 

@@ -21,17 +21,15 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.change.QuotaChangeComputer;
@@ -57,9 +55,11 @@ import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaClientQuota.class)
 @AcceptsResource(type = V1KafkaClientQuotaList.class, converter = V1KafkaClientQuotaListConverter.class)
-@AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, UPDATE, APPLY_ALL}
+)
 public final class AdminClientKafkaQuotaController
-        implements BaseResourceController<V1KafkaClientQuota, QuotaChange> {
+        implements Controller<V1KafkaClientQuota, QuotaChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaQuotaController.class);
 
@@ -98,9 +98,8 @@ public final class AdminClientKafkaQuotaController
      * {@inheritDoc}
      */
     @Override
-    public V1KafkaClientQuotaChangeList computeReconciliationChanges(@NotNull Collection<V1KafkaClientQuota> resources,
-                                                                     @NotNull ReconciliationMode mode,
-                                                                     @NotNull ReconciliationContext context) {
+    public V1KafkaClientQuotaChangeList plan(@NotNull Collection<V1KafkaClientQuota> resources,
+                                             @NotNull ReconciliationContext context) {
 
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaClientQuota> expected = resources.stream()
@@ -115,7 +114,7 @@ public final class AdminClientKafkaQuotaController
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .toList();
 
-        boolean isLimitDeletionEnabled = isLimitDeletionEnabled(mode, context);
+        boolean isLimitDeletionEnabled = isLimitDeletionEnabled(context);
 
         // Compute state changes
         QuotaChangeComputer changeComputer = new QuotaChangeComputer(isLimitDeletionEnabled);
@@ -130,25 +129,24 @@ public final class AdminClientKafkaQuotaController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult<QuotaChange>> execute(@NotNull List<HasMetadataChange<QuotaChange>> changes,
-                                                   @NotNull ReconciliationMode mode,
-                                                   boolean dryRun) {
-        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
-            final AdminClient adminClient = context.getAdminClient();
+    public List<ChangeResult<QuotaChange>> execute(@NotNull final ChangeExecutor<QuotaChange> executor,
+                                                   @NotNull ReconciliationContext context) {
+        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = clientContext.getAdminClient();
             List<ChangeHandler<QuotaChange>> handlers = List.of(
                     new CreateQuotasChangeHandlerKafka(adminClient),
                     new UpdateQuotasChangeHandlerKafka(adminClient),
                     new DeleteQuotasChangeHandler(adminClient),
                     new ChangeHandler.None<>(QuotaChangeDescription::new)
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return executor.execute(handlers);
         }
     }
 
     @VisibleForTesting
-    static boolean isLimitDeletionEnabled(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context) {
+    static boolean isLimitDeletionEnabled(@NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(LIMITS_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(() -> List.of(APPLY_ALL, DELETE, UPDATE).contains(mode))
+                .orElse(true)
                 .evaluate(context.configuration());
     }
 }

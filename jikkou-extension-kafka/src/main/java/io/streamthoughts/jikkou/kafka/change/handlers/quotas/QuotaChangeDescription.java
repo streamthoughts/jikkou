@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.quotas;
 
-import io.streamthoughts.jikkou.core.change.ChangeDescription;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import java.util.Objects;
 import java.util.stream.Collectors;

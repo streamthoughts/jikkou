@@ -15,7 +15,6 @@
  */
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
-import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.Qualifier;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class AnyQualifier<T extends Extension> implements Qualifier<T> {
+public final class AnyQualifier<T> implements Qualifier<T> {
 
     private final List<Qualifier<T>> qualifiers;
 

@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import io.streamthoughts.jikkou.core.change.ChangeType;
-import io.streamthoughts.jikkou.core.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.core.change.ValueChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;

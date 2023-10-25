@@ -1,0 +1,41 @@
+/*
+ * Copyright 2023 The original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.streamthoughts.jikkou.core.reconcilier;
+
+import org.junit.jupiter.api.Test;
+
+class ChangeTest {
+
+    @Test
+    void shouldGetNoneForOnlyNoneChanges() {
+        Change.computeChangeTypeFrom(() -> ChangeType.NONE, () -> ChangeType.NONE);
+    }
+
+    @Test
+    void shouldGetUpdateForUpdate() {
+        Change.computeChangeTypeFrom(() -> ChangeType.NONE, () -> ChangeType.UPDATE);
+    }
+
+    @Test
+    void shouldGetUpdateForDelete() {
+        Change.computeChangeTypeFrom(() -> ChangeType.NONE, () -> ChangeType.DELETE);
+    }
+
+    @Test
+    void shouldGetUpdateForAdd() {
+        Change.computeChangeTypeFrom(() -> ChangeType.NONE, () -> ChangeType.ADD);
+    }
+}

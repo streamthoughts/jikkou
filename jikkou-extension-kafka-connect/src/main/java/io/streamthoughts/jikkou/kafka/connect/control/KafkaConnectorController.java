@@ -21,19 +21,19 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.reconcilier.DefaultChangeExecutor;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
@@ -53,8 +53,10 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1KafkaConnector.class)
-@AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
-public final class KafkaConnectorController implements BaseResourceController<V1KafkaConnector, KafkaConnectorChange> {
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, UPDATE, APPLY_ALL}
+)
+public final class KafkaConnectorController implements Controller<V1KafkaConnector, KafkaConnectorChange> {
 
     private KafkaConnectExtensionConfig configuration;
 
@@ -74,9 +76,10 @@ public final class KafkaConnectorController implements BaseResourceController<V1
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<KafkaConnectorChange>> execute(@NotNull List<HasMetadataChange<KafkaConnectorChange>> changes,
-                                                            @NotNull ReconciliationMode mode, boolean dryRun) {
+    public List<ChangeResult<KafkaConnectorChange>> execute(@NotNull final ChangeExecutor<KafkaConnectorChange> executor,
+                                                            @NotNull final ReconciliationContext context) {
 
+        List<HasMetadataChange<KafkaConnectorChange>> changes = executor.changes();
         Map<String, List<HasMetadataChange<KafkaConnectorChange>>> changesByCluster = groupByKafkaConnectCluster(
                 changes,
                 change -> true
@@ -90,7 +93,11 @@ public final class KafkaConnectorController implements BaseResourceController<V1
                         new KafkaConnectorChangeHandler(api, cluster),
                         new ChangeHandler.None<>(item -> new KafkaConnectorChangeDescription(cluster, item.getChange()))
                 );
-                results.addAll(new ChangeExecutor<>(handlers).execute(entry.getValue(), dryRun));
+                DefaultChangeExecutor<KafkaConnectorChange> dedicatedExecutor = new DefaultChangeExecutor<>(
+                        context,
+                        entry.getValue()
+                );
+                results.addAll(dedicatedExecutor.execute(handlers));
             }
         }
 
@@ -101,9 +108,8 @@ public final class KafkaConnectorController implements BaseResourceController<V1
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<HasMetadataChange<KafkaConnectorChange>> computeReconciliationChanges(
+    public ResourceListObject<HasMetadataChange<KafkaConnectorChange>> plan(
             @NotNull Collection<V1KafkaConnector> resources,
-            @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
 
         Map<String, List<V1KafkaConnector>> resourcesByCluster = groupByKafkaConnectCluster(

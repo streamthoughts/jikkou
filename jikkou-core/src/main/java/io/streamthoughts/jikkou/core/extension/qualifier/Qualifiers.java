@@ -22,6 +22,11 @@ import java.util.Arrays;
 public final class Qualifiers {
 
     @SafeVarargs
+    public static <T> Qualifier<T> byAnyQualifiers(final Qualifier<T>... qualifiers) {
+        return new AnyQualifier<>(Arrays.asList(qualifiers));
+    }
+
+    @SafeVarargs
     public static <T> Qualifier<T> byQualifiers(final Qualifier<T>... qualifiers) {
         return new CompositeQualifier<>(Arrays.asList(qualifiers));
     }

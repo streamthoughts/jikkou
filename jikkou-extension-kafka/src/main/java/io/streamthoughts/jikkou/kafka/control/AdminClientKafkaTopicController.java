@@ -21,17 +21,15 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChangeComputer;
@@ -57,9 +55,11 @@ import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaTopic.class)
 @AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
-@AcceptsReconciliationModes({CREATE, DELETE, UPDATE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, UPDATE, APPLY_ALL}
+)
 public final class AdminClientKafkaTopicController
-        implements BaseResourceController<V1KafkaTopic, TopicChange> {
+        implements Controller<V1KafkaTopic, TopicChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 
@@ -99,29 +99,27 @@ public final class AdminClientKafkaTopicController
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<TopicChange>> execute(@NotNull List<HasMetadataChange<TopicChange>> changes,
-                                                   @NotNull ReconciliationMode mode,
-                                                   boolean dryRun) {
+    public List<ChangeResult<TopicChange>> execute(@NotNull final ChangeExecutor<TopicChange> executor,
+                                                   @NotNull final ReconciliationContext context) {
 
-        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
-            final AdminClient adminClient = context.getAdminClient();
+        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = clientContext.getAdminClient();
             List<ChangeHandler<TopicChange>> handlers = List.of(
                     new CreateTopicChangeHandler(adminClient),
                     new UpdateTopicChangeHandler(adminClient),
                     new DeleteTopicChangeHandler(adminClient),
                     new ChangeHandler.None<>(TopicChangeDescription::new)
             );
-            return new ChangeExecutor<>(handlers).execute(changes, dryRun);
+            return executor.execute(handlers);
         }
     }
 
     @Override
-    public V1KafkaTopicChangeList computeReconciliationChanges(
+    public V1KafkaTopicChangeList plan(
             @NotNull Collection<V1KafkaTopic> resources,
-            @NotNull ReconciliationMode mode, @NotNull
-            ReconciliationContext context) {
+            @NotNull ReconciliationContext context) {
 
-        LOG.info("Computing reconciliation change for '{}' resources in '{}' mode", resources.size(), mode);
+        LOG.info("Computing reconciliation change for '{}' resources", resources.size());
 
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
@@ -142,7 +140,7 @@ public final class AdminClientKafkaTopicController
                 .filter(new AggregateSelector(context.selectors())::apply)
                 .toList();
 
-        boolean isConfigDeletionEnabled = isConfigDeletionEnabled(mode, context);
+        boolean isConfigDeletionEnabled = isConfigDeletionEnabled(context);
 
         TopicChangeComputer changeComputer = new TopicChangeComputer(isConfigDeletionEnabled);
 
@@ -158,9 +156,9 @@ public final class AdminClientKafkaTopicController
     }
 
     @VisibleForTesting
-    static boolean isConfigDeletionEnabled(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context) {
+    static boolean isConfigDeletionEnabled(@NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(() -> List.of(APPLY_ALL, DELETE, UPDATE).contains(mode))
+                .orElse(true)
                 .evaluate(context.configuration());
     }
 }

@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.resource.ResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Collections;
@@ -94,7 +94,7 @@ public class ListExtensionCommand implements Runnable {
                         String.valueOf(descriptor.isEnabled()),
                         descriptor.source(),
                         descriptor.printableSupportedResources(),
-                        ResourceController.supportedReconciliationModes(descriptor.type())
+                        Controller.supportedReconciliationModes(descriptor.type())
                                 .stream()
                                 .map(Enum::name)
                                 .map(String::toLowerCase)

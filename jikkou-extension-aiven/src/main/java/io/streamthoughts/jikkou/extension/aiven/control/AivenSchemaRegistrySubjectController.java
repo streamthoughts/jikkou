@@ -21,17 +21,16 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.annotation.AcceptsReconciliationModes;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.change.ChangeExecutor;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.resource.BaseResourceController;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
@@ -61,12 +60,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Aiven - Schema Registry Subjects Controller.
  */
-@AcceptsReconciliationModes(value = {CREATE, DELETE, UPDATE, APPLY_ALL})
+@ControllerConfiguration(
+        supportedModes = {CREATE, DELETE, UPDATE, APPLY_ALL}
+)
 @AcceptsResource(
         apiVersion = AivenResourceProvider.SCHEMA_REGISTRY_API_VERSION,
         kind = AivenResourceProvider.SCHEMA_REGISTRY_KIND
 )
-public class AivenSchemaRegistrySubjectController implements BaseResourceController<V1SchemaRegistrySubject, SchemaSubjectChange> {
+public class AivenSchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenSchemaRegistrySubjectController.class);
 
@@ -105,9 +106,8 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items,
-                                                           @NotNull ReconciliationMode mode,
-                                                           boolean dryRun) {
+    public List<ChangeResult<SchemaSubjectChange>> execute(@NotNull ChangeExecutor<SchemaSubjectChange> executor,
+                                                           @NotNull ReconciliationContext context) {
         AsyncSchemaRegistryApi api = new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(configuration));
         try {
             List<ChangeHandler<SchemaSubjectChange>> handlers = List.of(
@@ -116,7 +116,7 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
                     new DeleteSchemaSubjectChangeHandler(api),
                     new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
             );
-            return new ChangeExecutor<>(handlers).execute(items, dryRun);
+            return executor.execute(handlers);
         } finally {
             api.close();
         }
@@ -126,9 +126,8 @@ public class AivenSchemaRegistrySubjectController implements BaseResourceControl
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<? extends HasMetadataChange<SchemaSubjectChange>> computeReconciliationChanges(
+    public ResourceListObject<? extends HasMetadataChange<SchemaSubjectChange>> plan(
             @NotNull Collection<V1SchemaRegistrySubject> resources,
-            @NotNull ReconciliationMode mode,
             @NotNull ReconciliationContext context) {
         LOG.info("Computing reconciliation ");
         // Get described resources that are candidates for this reconciliation.

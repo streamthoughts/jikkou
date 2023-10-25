@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,21 @@ class DefaultExtensionFactoryTest {
     void shouldThrowNoSuchExtensionExceptionForNonExistingExtensionByAlias() {
         Assertions.assertThrows(NoSuchExtensionException.class, () -> factory.getExtension("alias"));
     }
+
+    @Test
+    void shouldGetInstanceForRegisteredExtension() {
+        factory.register(DefaultExtensionFactoryTest.class, DefaultExtensionFactoryTest::new);
+        Assertions.assertNotNull(factory.getExtension(DefaultExtensionFactoryTest.class));
+    }
+
+    @Test
+    void shouldGetAllInstancesForRegisteredExtension() {
+        factory.register(DefaultExtensionFactoryTest.class, DefaultExtensionFactoryTest::new);
+        List<DefaultExtensionFactoryTest> extensions = factory.getAllExtensions(DefaultExtensionFactoryTest.class);
+        Assertions.assertNotNull(extensions);
+        Assertions.assertEquals(1, extensions.size());
+    }
+
 
     @Test
     void shouldReturnContainsTrueForRegisteredExtension() {

@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.core.reporter;
 
-import io.streamthoughts.jikkou.core.change.Change;
-import io.streamthoughts.jikkou.core.change.ChangeResult;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;

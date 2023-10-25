@@ -15,12 +15,12 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import io.streamthoughts.jikkou.core.change.ChangeDescription;
-import io.streamthoughts.jikkou.core.change.ChangeError;
-import io.streamthoughts.jikkou.core.change.ChangeHandler;
-import io.streamthoughts.jikkou.core.change.ChangeMetadata;
-import io.streamthoughts.jikkou.core.change.ChangeResponse;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeError;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
