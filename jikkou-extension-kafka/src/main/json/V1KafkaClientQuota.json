@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "",
+  "title": "KafkaClientQuota",
+  "description": "The KafkaClientQuota resource allows managing quotas on a Kafka cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -17,7 +18,10 @@
         "shortNames": [
           "kq"
         ]
-      }
+      },
+      "verbs": [
+        "*"
+      ]
     }
   },
   "required": [

@@ -163,7 +163,7 @@ public final class JikkouContext {
         LOG.info("Start JikkouApi configuration.");
         DefaultApi api = ApiConfigurator.emptyList()
                 .with(configurators)
-                .configure(DefaultApi.builder(extensionFactory), configuration)
+                .configure(DefaultApi.builder(extensionFactory, resourceRegistry), configuration)
                 .build();
         LOG.info("JikkouApi configuration completed.");
         return api;

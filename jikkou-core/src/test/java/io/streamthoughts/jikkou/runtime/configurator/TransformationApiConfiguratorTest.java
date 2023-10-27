@@ -30,6 +30,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.Collections;
@@ -54,7 +55,7 @@ class TransformationApiConfiguratorTest {
         TransformationApiConfigurator configurator = new TransformationApiConfigurator(registry);
 
         DefaultExtensionFactory factory = new DefaultExtensionFactory(registry);
-        DefaultApi.Builder builder = DefaultApi.builder(factory);
+        DefaultApi.Builder builder = DefaultApi.builder(factory, new DefaultResourceRegistry());
         // When
         Map<Object, Object> extensionConfig = Collections.emptyMap();
         Map<String, Object> extensionConfigEntry = NamedValue.emptySet()

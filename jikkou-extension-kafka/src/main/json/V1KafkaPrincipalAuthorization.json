@@ -11,11 +11,19 @@
     "lombok-with": true,
     "all-args-constructor": false,
     "spec": {
-      "names" : {
+      "names": {
         "singular": "kafkaprincipalauthorization",
-        "plural" : "kafkaprincipalauthorizations",
-        "shortNames" : [ "ka" ]
-      }
+        "plural": "kafkaprincipalauthorizations",
+        "shortNames": [
+          "ka"
+        ]
+      },
+      "verbs": [
+        "list",
+        "create",
+        "delete",
+        "apply"
+      ]
     }
   },
   "required": [

@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "ACL entry for Kafka Topic",
+  "title": "KafkaTopicAclEntry",
+  "description": "The KafkaTopicAclEntry resource allows managing topic ACLs on Aiven for Apache Kafka.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -16,7 +17,8 @@
         "shortNames": [
           "avnkta"
         ]
-      }
+      },
+      "verbs": ["*"]
     }
   },
   "required": [

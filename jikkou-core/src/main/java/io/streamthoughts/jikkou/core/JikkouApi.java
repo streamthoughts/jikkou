@@ -21,6 +21,8 @@ import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
+import io.streamthoughts.jikkou.core.models.ApiGroupList;
+import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -83,6 +85,27 @@ public interface JikkouApi extends AutoCloseable {
          */
         A build();
     }
+
+    /**
+     * List the supported API resources.
+     *
+     * @return {@link ApiResourceList}.
+     */
+    List<ApiResourceList> listApiResources();
+
+    /**
+     * List the supported API resources for the specified API group and API version.
+     *
+     * @return {@link ApiResourceList}.
+     */
+    ApiResourceList listApiResources(@NotNull String group, @NotNull String version);
+
+    /**
+     * List the supported API groups.
+     *
+     * @return {@link ApiGroupList}.
+     */
+    ApiGroupList listApiGroups();
 
     /**
      * Execute the reconciliation for the given resources using

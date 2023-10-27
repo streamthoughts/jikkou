@@ -32,6 +32,7 @@ import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,7 +56,7 @@ class ChangeReporterApiConfiguratorTest {
         ChangeReporterApiConfigurator configurator = new ChangeReporterApiConfigurator(registry);
 
         DefaultExtensionFactory factory = new DefaultExtensionFactory(registry);
-        DefaultApi.Builder builder = DefaultApi.builder(factory);
+        DefaultApi.Builder builder = DefaultApi.builder(factory, new DefaultResourceRegistry());
         // When
         Map<Object, Object> extensionConfig = Collections.emptyMap();
         Map<String, Object> extensionConfigEntry = NamedValue.emptySet()

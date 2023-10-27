@@ -20,6 +20,7 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +40,30 @@ class ResourceDescriptorTest {
         Assertions.assertEquals(TEST_KIND.toLowerCase(Locale.ROOT), descriptor.singularName());
     }
 
+    @Test
+    void shouldReturnFalseWhenVerifyResourceListObjectForResource() {
+        ResourceDescriptor descriptor = new ResourceDescriptor(
+                ResourceType.create(TestResource.class),
+                "",
+                TestResource.class
+        );
+        Assertions.assertFalse(descriptor.isResourceListObject());
+    }
+
+    @Test
+    void shouldReturnTrueWhenVerifyResourceListObjectForResourceList() {
+        ResourceDescriptor descriptor = new ResourceDescriptor(
+                ResourceType.create(TestListResource.class),
+                "",
+                TestListResource.class
+        );
+        Assertions.assertTrue(descriptor.isResourceListObject());
+    }
+
+    @ApiVersion("test.jikkou.io/v1beta2")
+    @Kind("TestList")
+    static abstract class TestListResource implements ResourceListObject<HasMetadata> {
+    }
 
     @ApiVersion("test.jikkou.io/v1beta2")
     @Kind("Test")
@@ -48,6 +73,5 @@ class ResourceDescriptorTest {
             singular = "test",
             shortNames = {"t", "ts"}
     )
-    static abstract class TestResource implements HasMetadata {
-    }
+    static abstract class TestResource implements HasMetadata {}
 }

@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDe
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.Verb;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,7 +39,8 @@ class DefaultResourceRegistryTest {
             TestResource.class,
             "test",
             "tests",
-            Set.of("t", "ts")
+            Set.of("t", "ts"),
+            Set.of(Verb.LIST)
     );
 
     private DefaultResourceRegistry registry;

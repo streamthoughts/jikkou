@@ -32,6 +32,7 @@ import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -73,7 +74,7 @@ class AdminClientKafkaAclControllerIT extends AbstractKafkaIntegrationTest {
                 new DefaultExtensionDescriptorFactory(),
                 new ClassExtensionAliasesGenerator()
         );
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry))
+        api = DefaultApi.builder(new DefaultExtensionFactory(registry), new DefaultResourceRegistry())
                 .register(AdminClientKafkaAclController.class, () -> controller)
                 .register(AdminClientKafkaAclCollector.class, () -> collector)
                 .build();

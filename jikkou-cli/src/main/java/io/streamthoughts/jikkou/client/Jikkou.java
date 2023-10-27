@@ -30,13 +30,13 @@ import io.streamthoughts.jikkou.client.command.ApplyResourceCommand;
 import io.streamthoughts.jikkou.client.command.CreateResourceCommand;
 import io.streamthoughts.jikkou.client.command.DeleteResourceCommand;
 import io.streamthoughts.jikkou.client.command.DiffCommand;
-import io.streamthoughts.jikkou.client.command.ResourcesCommand;
 import io.streamthoughts.jikkou.client.command.UpdateResourceCommand;
 import io.streamthoughts.jikkou.client.command.config.ConfigCommand;
 import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCandidateCommand;
 import io.streamthoughts.jikkou.client.command.extension.ExtensionCommand;
 import io.streamthoughts.jikkou.client.command.get.GetCommandGenerator;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
+import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand;
 import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.core.JikkouInfo;
@@ -74,8 +74,8 @@ import picocli.CommandLine.Command;
                 DeleteResourceCommand.class,
                 UpdateResourceCommand.class,
                 ApplyResourceCommand.class,
-                ResourcesCommand.class,
                 ExtensionCommand.class,
+                ListApiResourcesCommand.class,
                 ConfigCommand.class,
                 DiffCommand.class,
                 ValidateCommand.class,
@@ -214,7 +214,7 @@ public final class Jikkou {
      * Returns version information from resource file's {@code version.properties} file.
      */
     static class ResourcePropertiesVersionProvider implements CommandLine.IVersionProvider {
-        
+
         public String[] getVersion() {
             return new String[]{
                     "Jikkou version \"" + JikkouInfo.getVersion() + "\" " + JikkouInfo.getBuildTimestamp(),

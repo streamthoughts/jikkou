@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.Configs;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
@@ -32,6 +33,9 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Names(singular = "kafkabroker", plural = "kafkabrokers", shortNames = {
     "kb"
+})
+@Verbs({
+
 })
 @JsonPropertyOrder({
     "id",

@@ -26,4 +26,16 @@ class JikkouTest {
         int exitCode = Jikkou.execute(new String[]{});
         Assertions.assertEquals(CommandLine.ExitCode.USAGE, exitCode);
     }
+
+    @Test
+    void shouldPrintApiResources() {
+        int execute = Jikkou.execute(new String[]{"api-resources"});
+        Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
+    }
+
+    @Test
+    void shouldPrintUsageForGetCommand() {
+        int execute = Jikkou.execute(new String[]{"get"});
+        Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);
+    }
 }

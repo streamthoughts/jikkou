@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.Resource;
@@ -39,6 +40,9 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("")
+@Verbs({
+
+})
 @JsonPropertyOrder({
     "apiVersion",
     "kind",

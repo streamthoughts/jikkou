@@ -26,8 +26,11 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.annotation.Transient;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
+import io.streamthoughts.jikkou.core.models.Verb;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +59,8 @@ public class JikkouAnnotator extends AbstractAnnotator {
     public static final String SPEC_NAMES_SINGULAR = "singular";
     public static final String SPEC_NAMES_PLURAL = "plural";
     public static final String SPEC_NAMES = "names";
-    public static final String SPEC_NAMES_SHORT_NAMES = "shortNames";
+    public static final String SPEC_SHORT_NAMES = "shortNames";
+    public static final String SPEC_VERBS = "verbs";
     public static final String SPEC = "spec";
     public static final String SPEC_IS_TRANSIENT = "isTransient";
 
@@ -69,7 +73,9 @@ public class JikkouAnnotator extends AbstractAnnotator {
         registerAllLombokAnnotations(classAnnotationMapping);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void propertyField(JFieldVar field,
                               JDefinedClass clazz,
@@ -85,7 +91,9 @@ public class JikkouAnnotator extends AbstractAnnotator {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void propertyOrder(JDefinedClass clazz, JsonNode propertiesNode) {
         var apiVersion = propertiesNode.get(API_VERSION_JSON_SCHEMA_FIELD);
@@ -155,13 +163,24 @@ public class JikkouAnnotator extends AbstractAnnotator {
                 if (names.has(SPEC_NAMES_PLURAL)) {
                     annotate.param(SPEC_NAMES_PLURAL, names.get(SPEC_NAMES_PLURAL).textValue());
                 }
-                JsonNode shortNamesNode = names.get(SPEC_NAMES_SHORT_NAMES);
+                JsonNode shortNamesNode = names.get(SPEC_SHORT_NAMES);
                 if (shortNamesNode != null && shortNamesNode.isArray()) {
-                    JAnnotationArrayMember params = annotate.paramArray(SPEC_NAMES_SHORT_NAMES);
+                    JAnnotationArrayMember params = annotate.paramArray(SPEC_SHORT_NAMES);
                     StreamSupport.stream(shortNamesNode.spliterator(), false)
                             .map(JsonNode::textValue)
                             .forEach(params::param);
                 }
+            }
+            JAnnotationUse annotate = clazz.annotate(Verbs.class);
+            JAnnotationArrayMember array = annotate.paramArray("value");
+            JsonNode verbsNode = spec.get(SPEC_VERBS);
+            if (verbsNode != null && verbsNode.isArray()) {
+                List<String> strVerbs = StreamSupport
+                        .stream(verbsNode.spliterator(), false)
+                        .map(JsonNode::textValue)
+                        .toList();
+                Verb[] verbs = Verb.getForNamesIgnoreCase(strVerbs);
+                Arrays.stream(verbs).forEach(array::param);
             }
             JsonNode isTransient = spec.get(SPEC_IS_TRANSIENT);
             if (isTransient != null && isTransient.isBoolean()) {

@@ -24,10 +24,12 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.models.Verb;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -47,6 +49,13 @@ import lombok.extern.jackson.Jacksonized;
 @Description("The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.")
 @Names(singular = "kafkaconnector", plural = "kafkaconnectors", shortNames = {
     "kc"
+})
+@Verbs({
+    Verb.LIST,
+    Verb.CREATE,
+    Verb.UPDATE,
+    Verb.DELETE,
+    Verb.APPLY
 })
 @JsonPropertyOrder({
     "apiVersion",

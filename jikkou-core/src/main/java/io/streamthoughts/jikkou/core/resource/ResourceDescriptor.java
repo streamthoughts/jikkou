@@ -17,12 +17,18 @@ package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.Verb;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,48 +43,60 @@ public final class ResourceDescriptor {
     private String singularName;
     private String pluralName;
     private Set<String> shortNames;
-
+    private Set<Verb> verbs;
     private boolean isEnabled = true;
 
     /**
      * Creates a new {@link ResourceDescriptor} instance.
-     * @param type              the type of the resource.
-     * @param description       the description of the resource.
-     * @param resourceClass     the class of the resource.
+     *
+     * @param type          the type of the resource.
+     * @param description   the description of the resource.
+     * @param resourceClass the class of the resource.
      */
     public ResourceDescriptor(@NotNull ResourceType type,
                               @NotNull String description,
                               @NotNull Class<? extends HasMetadata> resourceClass) {
-        this(type, description, resourceClass, null, null, Collections.emptySet());
+        this(
+                type,
+                description,
+                resourceClass,
+                null,
+                null,
+                Collections.emptySet(),
+                Collections.emptySet()
+        );
     }
 
     /**
      * Creates a new {@link ResourceDescriptor} instance.
-     * @param type              the type of the resource.
-     * @param description       the description of the resource.
-     * @param resourceClass     the class of the resource.
-     * @param singularName      the singular name of the resource.
-     * @param pluralName        the plural name of the resource.
-     * @param shortNames        the short name of the resource.
+     *
+     * @param type          the type of the resource.
+     * @param description   the description of the resource.
+     * @param resourceClass the class of the resource.
+     * @param singularName  the singular name of the resource.
+     * @param pluralName    the plural name of the resource.
+     * @param shortNames    the short name of the resource.
      */
     public ResourceDescriptor(@NotNull ResourceType type,
                               @NotNull String description,
                               @NotNull Class<? extends HasMetadata> resourceClass,
                               @Nullable String singularName,
                               @Nullable String pluralName,
-                              @NotNull Set<String> shortNames) {
+                              @NotNull Set<String> shortNames,
+                              @NotNull Set<Verb> verbs) {
         this.type = type;
         this.description = description;
         this.clazz = resourceClass;
         this.singularName = singularName;
         this.pluralName = pluralName;
         this.shortNames = shortNames;
+        this.verbs = verbs;
     }
 
     /**
      * Gets the type of the described resource.
      *
-     * @return  the resource type.
+     * @return the resource type.
      */
     public ResourceType resourceType() {
         return type;
@@ -87,7 +105,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the singular name of the described resource.
      *
-     * @return  the singular name.
+     * @return the singular name.
      */
     public String singularName() {
         return Optional
@@ -110,7 +128,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the plural name of the described resource.
      *
-     * @return  the plural name.
+     * @return the plural name.
      */
     public Optional<String> pluralName() {
         return Optional.ofNullable(this.pluralName);
@@ -130,7 +148,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the short names of the described resource.
      *
-     * @return  the short names.
+     * @return the short names.
      */
     public Set<String> shortNames() {
         return Optional.ofNullable(this.shortNames).orElse(Collections.emptySet());
@@ -150,7 +168,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the class representing the described resource.
      *
-     * @return  the resource class.
+     * @return the resource class.
      */
     public Class<? extends HasMetadata> resourceClass() {
         return clazz;
@@ -159,7 +177,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the kind of the described resource.
      *
-     * @return  the resource kind.
+     * @return the resource kind.
      */
     public String kind() {
         return type.getKind();
@@ -168,7 +186,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the api version of the described resource.
      *
-     * @return  the api version.
+     * @return the api version.
      */
     public String apiVersion() {
         return type.getApiVersion();
@@ -177,7 +195,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the group of the described resource.
      *
-     * @return  the resource group.
+     * @return the resource group.
      */
     public String group() {
         return type.getGroup();
@@ -186,7 +204,7 @@ public final class ResourceDescriptor {
     /**
      * Gets the description of the described resource.
      *
-     * @return  the resource description.
+     * @return the resource description.
      */
     public String description() {
         return this.description;
@@ -194,7 +212,8 @@ public final class ResourceDescriptor {
 
     /**
      * Checks whether the described resource is enabled.
-     * @return  {@code true} if the resource is enabled.
+     *
+     * @return {@code true} if the resource is enabled.
      */
     public boolean isEnabled() {
         return isEnabled;
@@ -203,13 +222,57 @@ public final class ResourceDescriptor {
     /**
      * Specify whether the described resource is enabled.
      *
-     * @param isEnabled  {@code true} if the resource is enabled, otherwise {@code false}.
+     * @param isEnabled {@code true} if the resource is enabled, otherwise {@code false}.
      */
     public void isEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Sets the supported verbs.
+     *
+     * @param verbs the verbs
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setSVerbs(Set<Verb> verbs) {
+        this.verbs = verbs;
+        return this;
+    }
+
+    /**
+     * Gets the supported verbs.
+     *
+     * @return the set of verbs.
+     */
+    public Set<Verb> verbs() {
+        return verbs;
+    }
+
+    /**
+     * Gets the supported verbs.
+     *
+     * @return the set of verbs.
+     */
+    public Set<String> orderedVerbs() {
+        return verbs.stream()
+                .map(Verb::value)
+                .sorted(Comparator.comparing(Function.identity()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    /**
+     * Verify the resource described represents a resource list object.
+     *
+     * @return {@code true} if the resource class implement the {@link ResourceListObject} interface,
+     * otherwise {@code false}.
+     */
+    public boolean isResourceListObject() {
+        return ResourceListObject.class.isAssignableFrom(clazz);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -218,7 +281,9 @@ public final class ResourceDescriptor {
         return Objects.equals(type, that.type);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(type);

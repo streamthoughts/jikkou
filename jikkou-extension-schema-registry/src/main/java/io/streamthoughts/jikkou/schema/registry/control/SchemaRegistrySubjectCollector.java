@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.schema.registry.control;
 
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.common.utils.Tuple2;
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -150,7 +150,7 @@ public class SchemaRegistrySubjectCollector implements ResourceCollector<V1Schem
                                 }
                         )
                         .thenApply(compatibilityLevelObject ->
-                                Tuple2.of(subjectSchemaVersion, compatibilityLevelObject)
+                                Pair.of(subjectSchemaVersion, compatibilityLevelObject)
                         )
                 )
                 // Create SchemaRegistrySubject object

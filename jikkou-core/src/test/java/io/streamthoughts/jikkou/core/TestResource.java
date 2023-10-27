@@ -20,7 +20,7 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 
-@ApiVersion("kafka.jikkou.io/v1beta2")
+@ApiVersion("core/v1")
 @Kind("Test")
 public class TestResource implements HasMetadata {
 

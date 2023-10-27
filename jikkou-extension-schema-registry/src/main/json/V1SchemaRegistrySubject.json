@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "",
+  "title": "SchemaRegistrySubject",
+  "description": "The SchemaRegistrySubject resource allows managing subjects and schema on a Schema Registry.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -17,7 +18,10 @@
         "shortNames": [
           "sr"
         ]
-      }
+      },
+      "verbs": [
+        "*"
+      ]
     }
   },
   "required": [

@@ -122,6 +122,25 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
 
     /** {@inheritDoc} **/
     @Override
+    public List<ResourceDescriptor> findDescriptorsByGroup(final String group) {
+        return descriptors.stream()
+                .filter(descriptor -> descriptor.group().equalsIgnoreCase(group))
+                .toList();
+
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public List<ResourceDescriptor> findDescriptorsByGroupVersion(final String group,
+                                                                  final String version) {
+        return descriptors.stream()
+                .filter(descriptor -> descriptor.group().equalsIgnoreCase(group))
+                .filter(descriptor -> descriptor.apiVersion().equalsIgnoreCase(version))
+                .toList();
+    }
+
+    /** {@inheritDoc} **/
+    @Override
     public Optional<ResourceDescriptor> findDescriptorByType(final String kind,
                                                              final String group,
                                                              final String version,

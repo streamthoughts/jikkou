@@ -101,7 +101,7 @@ class HasItemsTest {
                 getTestResourceForName("test")
         ));
         // When
-        List<? extends HasMetadata> result = list.getAllByApiVersion("kafka.jikkou.io/v1beta2");
+        List<? extends HasMetadata> result = list.getAllByApiVersion("core/v1");
 
         // Then
         Assertions.assertNotNull(result);

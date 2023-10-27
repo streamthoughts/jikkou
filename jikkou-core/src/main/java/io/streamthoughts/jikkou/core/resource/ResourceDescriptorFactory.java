@@ -18,16 +18,23 @@ package io.streamthoughts.jikkou.core.resource;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Names;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.Verb;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeSet;
 import org.jetbrains.annotations.NotNull;
 
-public class ResourceDescriptorFactory {
+/**
+ * Factory to create new {@link ResourceDescriptor} instance.
+ */
+public final class ResourceDescriptorFactory {
 
     /**
      * Makes a new {@link ResourceDescriptor} instance.
@@ -35,7 +42,6 @@ public class ResourceDescriptorFactory {
      * @param type     the type of the resource. Cannot be {@code null}.
      * @param resource the class of the resource. Cannot be {@code null}.
      * @return a new instance of {@link ResourceDescriptor}.
-     *
      * @throws NullPointerException if either type or resource is {@code  null}.
      */
     public ResourceDescriptor make(@NotNull final ResourceType type,
@@ -45,6 +51,7 @@ public class ResourceDescriptorFactory {
         String description = extractDescription(resource);
 
         Names names = resource.getAnnotation(Names.class);
+
         if (names != null) {
             return new ResourceDescriptor(
                     type,
@@ -52,18 +59,28 @@ public class ResourceDescriptorFactory {
                     resource,
                     Strings.isBlank(names.singular()) ? null : names.singular(),
                     Strings.isBlank(names.plural()) ? null : names.plural(),
-                    new TreeSet<>(Arrays.asList(names.shortNames()))
+                    new TreeSet<>(Arrays.asList(names.shortNames())),
+                    extractVerbs(resource)
             );
         } else {
             return new ResourceDescriptor(
                     type,
                     description,
                     resource,
-                   null,
                     null,
-                    Collections.emptySet()
+                    null,
+                    Collections.emptySet(),
+                    extractVerbs(resource)
             );
         }
+    }
+
+    @NotNull
+    private static Set<Verb> extractVerbs(@NotNull Class<? extends HasMetadata> resource) {
+        Verb[] verbs = Optional
+                .ofNullable(resource.getAnnotation(Verbs.class))
+                .map(Verbs::value).orElse(new Verb[]{});
+        return new HashSet<>(Arrays.asList(verbs));
     }
 
     @NotNull

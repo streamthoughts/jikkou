@@ -34,6 +34,7 @@ import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -79,7 +80,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 new ClassExtensionAliasesGenerator()
         );
 
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry))
+        api = DefaultApi.builder(new DefaultExtensionFactory(registry), new DefaultResourceRegistry())
                 .register(AdminClientKafkaTopicController.class, () -> new AdminClientKafkaTopicController(factory))
                 .register(AdminClientKafkaTopicCollector.class, () -> new AdminClientKafkaTopicCollector(factory))
                 .build();

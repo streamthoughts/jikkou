@@ -79,7 +79,24 @@ public interface ResourceRegistry {
     Optional<ResourceDescriptor> findDescriptorByType(final ResourceType type);
 
     /**
-     * Finds a descriptor for the specified resource information.
+     * Gets all descriptors for the specified resource group.
+     *
+     * @param group the resource api group.
+     * @return the list for descriptors.
+     */
+    List<ResourceDescriptor> findDescriptorsByGroup(final String group);
+
+    /**
+     * Gets all descriptors for the specified resource group and version.
+     *
+     * @param group the resource api group.
+     * @return the list for descriptors.
+     */
+    List<ResourceDescriptor> findDescriptorsByGroupVersion(final String group,
+                                                           final String version);
+
+    /**
+     * Gets a descriptor for the specified resource information.
      *
      * @param kind          the kind of the resource.
      * @param group         the resource group.

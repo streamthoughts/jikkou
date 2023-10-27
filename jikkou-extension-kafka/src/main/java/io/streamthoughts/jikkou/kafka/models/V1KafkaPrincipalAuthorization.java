@@ -24,11 +24,13 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ObjectTemplate;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.models.Verb;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -45,6 +47,12 @@ import lombok.extern.jackson.Jacksonized;
 @Description("")
 @Names(singular = "kafkaprincipalauthorization", plural = "kafkaprincipalauthorizations", shortNames = {
     "ka"
+})
+@Verbs({
+    Verb.LIST,
+    Verb.CREATE,
+    Verb.DELETE,
+    Verb.APPLY
 })
 @JsonPropertyOrder({
     "apiVersion",

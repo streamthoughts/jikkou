@@ -30,6 +30,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.Collections;
@@ -55,7 +56,7 @@ class ValidationApiConfiguratorTest {
         ValidationApiConfigurator configurator = new ValidationApiConfigurator(registry);
 
         DefaultExtensionFactory factory = new DefaultExtensionFactory(registry);
-        DefaultApi.Builder builder = DefaultApi.builder(factory);
+        DefaultApi.Builder builder = DefaultApi.builder(factory, new DefaultResourceRegistry());
 
         // When
         Map<Object, Object> validationConfig = Collections.emptyMap();

@@ -15,12 +15,17 @@
  */
 package io.streamthoughts.jikkou.core;
 
-import io.streamthoughts.jikkou.common.utils.Tuple2;
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.models.ApiGroup;
+import io.streamthoughts.jikkou.core.models.ApiGroupList;
+import io.streamthoughts.jikkou.core.models.ApiGroupVersion;
+import io.streamthoughts.jikkou.core.models.ApiResource;
+import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -36,6 +41,8 @@ import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.converter.ResourceConverter;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformationChain;
@@ -46,10 +53,14 @@ import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -64,8 +75,9 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultApi.class);
 
-    public static Builder builder(ExtensionFactory extensionFactory) {
-        return new Builder(extensionFactory);
+    public static Builder builder(ExtensionFactory extensionFactory,
+                                  ResourceRegistry resourceRegistry) {
+        return new Builder(extensionFactory, resourceRegistry);
     }
 
     /**
@@ -75,13 +87,18 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
 
         private final ExtensionFactory extensionFactory;
 
+        private final ResourceRegistry resourceRegistry;
+
         /**
          * Creates a new {@link ExtensionFactory} instance.
-         * @param extensionFactory  the extension factory.
+         *
+         * @param extensionFactory the extension factory.
+         * @param resourceRegistry the resource registry.
          */
-        public Builder(@NotNull ExtensionFactory extensionFactory) {
-            Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
-            this.extensionFactory = extensionFactory;
+        public Builder(@NotNull ExtensionFactory extensionFactory,
+                       @NotNull ResourceRegistry resourceRegistry) {
+            this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
+            this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
         }
 
         /**
@@ -92,13 +109,14 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
             extensionFactory.register(type, supplier);
             return this;
         }
+
         /**
          * {@inheritDoc}
          **/
         @Override
         public <T extends Extension> Builder register(@NotNull Class<T> type,
-                                                   @NotNull Supplier<T> supplier,
-                                                   ExtensionDescriptorModifier... modifiers) {
+                                                      @NotNull Supplier<T> supplier,
+                                                      ExtensionDescriptorModifier... modifiers) {
             extensionFactory.register(type, supplier, modifiers);
             return this;
         }
@@ -108,19 +126,98 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
          **/
         @Override
         public DefaultApi build() {
-            return new DefaultApi(extensionFactory);
+            return new DefaultApi(extensionFactory, resourceRegistry);
         }
     }
 
     private final List<ChangeReporter> reporters = new LinkedList<>();
 
     private final ExtensionFactory extensionFactory;
+    private final ResourceRegistry resourceRegistry;
 
     /**
      * Creates a new {@link DefaultApi} instance.
      */
-    private DefaultApi(@NotNull final ExtensionFactory extensionFactory) {
+    private DefaultApi(@NotNull final ExtensionFactory extensionFactory,
+                       @NotNull final ResourceRegistry resourceRegistry) {
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
+        this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ApiResourceList> listApiResources() {
+        ApiGroupList apiGroupList = listApiGroups();
+        return apiGroupList.groups()
+                .stream()
+                .flatMap(group -> group.versions()
+                        .stream()
+                        .map(apiGroupVersion -> Pair.of(group.name(), apiGroupVersion.version()))
+                )
+                .sorted(Comparator.comparing(Pair::_1))
+                .map(groupVersion -> listApiResources(groupVersion._1(), groupVersion._2()))
+                .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiResourceList listApiResources(@NotNull String group, @NotNull String version) {
+        List<ResourceDescriptor> descriptors = resourceRegistry.findDescriptorsByGroupVersion(group, version)
+                .stream()
+                .filter(ResourceDescriptor::isEnabled)
+                .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
+                .toList();
+
+        List<ApiResource> resources = descriptors.stream()
+                .map(it -> {
+                    String name = it.pluralName()
+                            .orElse(it.resourceType().getKind())
+                            .toLowerCase(Locale.ROOT);
+                    return new ApiResource(
+                            name,
+                            it.kind(),
+                            it.singularName(),
+                            it.shortNames(),
+                            it.description(),
+                            it.orderedVerbs()
+                    );
+                })
+                .sorted(Comparator.comparing(ApiResource::name))
+                .toList();
+        return new ApiResourceList(group + "/" + version, resources);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiGroupList listApiGroups() {
+        List<ResourceDescriptor> allResourceDescriptors = resourceRegistry.getAllResourceDescriptors();
+        Map<String, List<ResourceDescriptor>> descriptorsByGroup = allResourceDescriptors
+                .stream()
+                .filter(ResourceDescriptor::isEnabled)
+                .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
+                .collect(Collectors.groupingBy(ResourceDescriptor::group, Collectors.toList()));
+
+        List<ApiGroup> groups = descriptorsByGroup.entrySet()
+                .stream()
+                .map(entry -> {
+                    List<ResourceDescriptor> descriptors = entry.getValue();
+                    Set<ApiGroupVersion> versions = descriptors
+                            .stream()
+                            .map(it -> new ApiGroupVersion(
+                                    it.group() + "/" + it.apiVersion(),
+                                    it.apiVersion())
+                            )
+                            .collect(Collectors.toSet());
+                    return new ApiGroup(entry.getKey(), versions);
+                })
+                .toList();
+        return new ApiGroupList(groups);
     }
 
     /**
@@ -192,10 +289,10 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
 
         GenericResourceListObject<HasMetadata> allResources = new GenericResourceListObject<>(converted);
 
-        Stream<Tuple2<ResourceType, List<HasMetadata>>> stream = allResources.groupByType()
+        Stream<Pair<ResourceType, List<HasMetadata>>> stream = allResources.groupByType()
                 .entrySet()
                 .stream()
-                .map(Tuple2::of);
+                .map(Pair::of);
 
         // Execute transformation
         ResourceTransformationChain transformationChain = getResourceTransformationChain();
@@ -213,7 +310,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 }));
 
         Map<ResourceType, List<HasMetadata>> transformed = stream
-                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
+                .collect(Collectors.toMap(Pair::_1, Pair::_2));
 
         // Execute validations
         ResourceValidationChain validationChain = getResourceValidationChain();
@@ -281,7 +378,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      **/
     @Override
     public Builder toBuilder() {
-        return new Builder(extensionFactory.duplicate());
+        return new Builder(extensionFactory.duplicate(), resourceRegistry);
     }
 
     private ResourceValidationChain getResourceValidationChain() {

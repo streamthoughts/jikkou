@@ -18,7 +18,8 @@
         "shortNames": [
           "kc"
         ]
-      }
+      },
+      "verbs": ["*"]
     }
   },
   "required": [

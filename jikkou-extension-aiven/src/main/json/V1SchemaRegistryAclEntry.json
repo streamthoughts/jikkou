@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "A single ACL entry for Schema Registry",
+  "title": "SchemaRegistryAclEntry",
+  "description": "The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -16,7 +17,8 @@
         "shortNames": [
           "avnsra"
         ]
-      }
+      },
+      "verbs": ["*"]
     }
   },
   "required": [

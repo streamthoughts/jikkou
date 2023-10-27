@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.annotation.Transient;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,9 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("")
+@Verbs({
+
+})
 @Transient
 @JsonPropertyOrder({
     "apiVersion",

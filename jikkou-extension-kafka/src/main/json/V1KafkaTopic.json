@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "",
+  "title": "V1KafkaTopic",
+  "description": "The KafkaTopic resource allows creating and managing topics in a Kafka cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -15,7 +16,8 @@
         "singular": "kafkatopic",
         "plural" : "kafkatopics",
         "shortNames" : [ "kt" ]
-      }
+      },
+      "verbs": ["*"]
     }
   },
   "required": [

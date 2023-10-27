@@ -35,6 +35,7 @@ import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
@@ -87,7 +88,7 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
                 new DefaultExtensionDescriptorFactory(),
                 new ClassExtensionAliasesGenerator()
         );
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry, configuration))
+        api = DefaultApi.builder(new DefaultExtensionFactory(registry, configuration), new DefaultResourceRegistry())
                 .register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new)
                 .register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new)
                 .build();

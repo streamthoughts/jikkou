@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ObjectTemplate;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
@@ -45,6 +46,9 @@ import lombok.extern.jackson.Jacksonized;
 @Description("")
 @Names(shortNames = {
     "ktl"
+})
+@Verbs({
+
 })
 @JsonPropertyOrder({
     "apiVersion",

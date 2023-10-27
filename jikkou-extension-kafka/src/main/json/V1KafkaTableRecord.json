@@ -1,7 +1,7 @@
 {
   "title": "V1KafkaTableRecord",
+  "description": "The KafkaTableRecord resource allows producing and consume record into compacted kafka topics.",
   "type": "object",
-  "description": "",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -14,7 +14,8 @@
     "spec": {
       "names": {
         "singular": "ktable-record"
-      }
+      },
+      "verbs": ["*"]
     }
   },
   "required": [

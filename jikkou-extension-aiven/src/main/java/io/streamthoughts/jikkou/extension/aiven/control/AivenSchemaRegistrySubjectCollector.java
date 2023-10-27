@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.extension.aiven.control;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.common.utils.Tuple2;
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -164,7 +164,7 @@ public class AivenSchemaRegistrySubjectCollector implements ResourceCollector<V1
                         () -> api.getSchemaRegistryLatestSubjectVersion(subject))
                 .thenCompose(subjectSchemaVersion -> CompletableFuture.supplyAsync(
                         // Get Subject Compatibility
-                        () -> Tuple2.of(subjectSchemaVersion, api.getSchemaRegistrySubjectCompatibility(subject))))
+                        () -> Pair.of(subjectSchemaVersion, api.getSchemaRegistrySubjectCompatibility(subject))))
                 .thenApply(tuple ->
                         // Create SchemaRegistrySubject object
                         factory.createSchemaRegistrySubject(tuple._1().version(), tuple._2().compatibilityLevel())

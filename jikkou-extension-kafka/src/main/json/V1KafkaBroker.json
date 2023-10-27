@@ -15,7 +15,10 @@
         "singular": "kafkabroker",
         "plural" : "kafkabrokers",
         "shortNames" : [ "kb" ]
-      }
+      },
+      "verbs": [
+        "list"
+      ]
     }
   },
   "required": [
