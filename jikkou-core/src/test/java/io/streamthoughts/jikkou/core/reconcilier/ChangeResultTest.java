@@ -30,7 +30,7 @@ class ChangeResultTest {
     @Test
     void shouldCreateChangeForOk() {
         // When
-        ChangeResult<Change> result = ChangeResult.ok(
+        ChangeResult<Change> result = DefaultChangeResult.ok(
                 change,
                 description
         );
@@ -43,7 +43,7 @@ class ChangeResultTest {
     @Test
     void shouldCreateChangeForChanged() {
         // When
-        ChangeResult<Change> result = ChangeResult.changed(
+        ChangeResult<Change> result = DefaultChangeResult.changed(
                 change,
                 description
         );
@@ -56,7 +56,7 @@ class ChangeResultTest {
     @Test
     void shouldCreateChangeForFailed() {
         // When
-        ChangeResult<Change> result = ChangeResult.failed(change,
+        ChangeResult<Change> result = DefaultChangeResult.failed(change,
                 description,
                 List.of(new ChangeError("Failed"))
        );

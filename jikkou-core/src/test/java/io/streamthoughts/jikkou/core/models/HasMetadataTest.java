@@ -25,25 +25,25 @@ class HasMetadataTest {
 
     @Test
     void shouldGetApiVersion() {
-        String apiVersion = HasMetadata.getApiVersion(TransientTestResource.class);
+        String apiVersion = Resource.getApiVersion(TransientTestResource.class);
         Assertions.assertEquals("version", apiVersion);
     }
 
     @Test
     void shouldGetKind() {
-        String apiVersion = HasMetadata.getKind(TransientTestResource.class);
+        String apiVersion = Resource.getKind(TransientTestResource.class);
         Assertions.assertEquals("kind", apiVersion);
     }
 
     @Test
     void shouldGetTrueForTransientResource() {
-        boolean isTransient = HasMetadata.isTransient(TransientTestResource.class);
+        boolean isTransient = Resource.isTransient(TransientTestResource.class);
         Assertions.assertTrue(isTransient);
     }
 
     @Test
     void shouldGetFalseForNonTransientResource() {
-        boolean isTransient = HasMetadata.isTransient(NonTransientTestResource.class);
+        boolean isTransient = Resource.isTransient(NonTransientTestResource.class);
         Assertions.assertFalse(isTransient);
     }
 

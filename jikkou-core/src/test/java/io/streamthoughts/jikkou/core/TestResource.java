@@ -36,15 +36,4 @@ public class TestResource implements HasMetadata {
         this.meta = objectMeta;
         return this;
     }
-
-    /** {@inheritDoc} **/
-    @Override
-    public String getApiVersion() {
-        return HasMetadata.getApiVersion(this.getClass());
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public String getKind() {
-        return HasMetadata.getKind(this.getClass());
-    }
 }

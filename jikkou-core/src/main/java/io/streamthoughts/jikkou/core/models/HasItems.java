@@ -61,7 +61,7 @@ public interface HasItems {
      * @return the filtered {@link GenericResourceListObject}.
      */
     default List<? extends HasMetadata> getAllByKind(Class<? extends HasMetadata> resourceClass) {
-        return getAllByKind(HasMetadata.getKind(resourceClass));
+        return getAllByKind(Resource.getKind(resourceClass));
     }
 
     /**
@@ -166,7 +166,7 @@ public interface HasItems {
                         .isPresent())
                 .findFirst()
                 .orElseThrow(() -> new JikkouRuntimeException(
-                        String.format("Cannot found resource of kind %s for name %s", HasMetadata.getKind(type), name)
+                        String.format("Cannot found resource of kind %s for name %s", Resource.getKind(type), name)
                 ));
     }
 

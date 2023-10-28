@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The original authors
+ * Copyright 2023 The original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,82 +15,20 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.streamthoughts.jikkou.common.utils.Time;
-import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import java.io.Serializable;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 
 /**
- * Represents a serializable result of the execution of a change.
+ * Interface to represent a change result.
  *
- * @param <T> the type of the change.
- * @see Change
- * @see ChangeResponse
- * @see DefaultChangeExecutor
+ * @param <T>   the change-type.
  */
-@Reflectable
-@JsonPropertyOrder({
-        "status",
-        "changed",
-        "failed",
-        "end",
-        "data",
-        "error"
-})
-public final class ChangeResult<T extends Change> implements Serializable {
+public interface ChangeResult<T extends Change> {
 
     /**
-     * Static method to build a new {@link ChangeResult} that doesn't result in cluster resource changes.
-     *
-     * @param resource    the operation result.
-     * @param description the operation result description.
-     * @param <T>         the operation result-type.
-     * @return a new {@link ChangeResult}.
+     * Execution status.
      */
-    public static <T extends Change> ChangeResult<T> ok(final HasMetadataChange<T> resource,
-                                                        final ChangeDescription description) {
-        return new ChangeResult<>(Status.OK, resource, description);
-    }
-
-    /**
-     * Static method to build a new {@link ChangeResult} that do result in cluster resource changes.
-     *
-     * @param resource    the operation result.
-     * @param description the operation result description.
-     * @param <T>         the operation result-type.
-     * @return a new {@link ChangeResult}.
-     */
-    public static <T extends Change> ChangeResult<T> changed(final HasMetadataChange<T> resource,
-                                                             final ChangeDescription description) {
-        return new ChangeResult<>(Status.CHANGED, resource, description);
-    }
-
-    /**
-     * Static method to build a new {@link ChangeResult}  that failed with the specified exception.
-     *
-     * @param data        the operation result.
-     * @param description the operation result description.
-     * @param errors      the errors.
-     * @param <T>         the operation result-type.
-     * @return a new {@link ChangeResult}.
-     */
-    public static <T extends Change> ChangeResult<T> failed(final HasMetadataChange<T> data,
-                                                            final ChangeDescription description,
-                                                            final List<ChangeError> errors) {
-        return new ChangeResult<>(Status.FAILED, data, description, errors);
-    }
-
-    /**
-     *
-     */
-    public enum Status {
+    enum Status {
         /**
          * Execution of all changes was successfully
          **/
@@ -105,103 +43,51 @@ public final class ChangeResult<T extends Change> implements Serializable {
         FAILED
     }
 
-    private final long end;
-    private final HasMetadataChange<T> data;
-    private final List<ChangeError> errors;
-    private final Status status;
-    private transient final ChangeDescription description;
-
     /**
-     * Creates a new {@link ChangeResult} instance.
+     * Verify if the status of the change execution is 'changed'.
      *
-     * @param status      the change execution status.
-     * @param data        the resource on which the change was applied.
-     * @param description the description of the change.
+     * @return {@code true} if {@link #status()} returns {@link Status#CHANGED}.
      */
-    private ChangeResult(final Status status,
-                         final HasMetadataChange<T> data,
-                         final ChangeDescription description) {
-        this(status, data, description, null);
+    default boolean isChanged() {
+        return status() == Status.CHANGED;
     }
 
     /**
-     * Creates a new {@link ChangeResult} instance.
+     * Verify if the status of the change execution is 'failed'.
      *
-     * @param status      the change execution status.
-     * @param data        the resource on which the change was applied.
-     * @param description the description of the change.
-     * @param errors      the change execution errors.
+     * @return {@code true} if {@link #status()} returns {@link Status#FAILED}.
      */
-    private ChangeResult(final Status status,
-                         final HasMetadataChange<T> data,
-                         final ChangeDescription description,
-                         final List<ChangeError> errors) {
-        this(status, data, description, errors, Time.SYSTEM.milliseconds());
+    default boolean isFailed() {
+        return status() == Status.FAILED;
     }
+
+    long end();
 
     /**
-     * Creates a new {@link ChangeResult} instance.
+     * Gets the change.
      *
-     * @param status      the change execution status.
-     * @param data        the data of the change.
-     * @param description the description of the change.
-     * @param errors      the change execution errors.
+     * @return  the change resource.
      */
-    private ChangeResult(@NotNull final Status status,
-                         @NotNull final HasMetadataChange<T> data,
-                         @NotNull final ChangeDescription description,
-                         @Nullable final List<ChangeError> errors,
-                         final long end) {
-        this.status = status;
-        this.data = data;
-        this.end = end;
-        this.errors = errors;
-        this.description = description;
-    }
+    HasMetadataChange<T> data();
 
-    @JsonProperty
-    public boolean isChanged() {
-        return status == Status.CHANGED;
-    }
+    /**
+     * Gets the list of errors.
+     *
+     * @return  the list of error.
+     */
+    List<ChangeError> errors();
 
-    @JsonProperty
-    public boolean isFailed() {
-        return status == Status.FAILED;
-    }
+    /**
+     * Gets the status of this execution.
+     *
+     * @return  the status.
+     */
+    Status status();
 
-    @JsonProperty
-    public long end() {
-        return end;
-    }
-
-    @JsonProperty
-    public HasMetadataChange<T> data() {
-        return data;
-    }
-
-    @JsonProperty
-    public List<ChangeError> errors() {
-        return errors;
-    }
-
-    @JsonProperty
-    public Status status() {
-        return this.status;
-    }
-
-    @JsonIgnore
-    public ChangeDescription description() {
-        return this.description;
-    }
-
-    @Override
-    public String toString() {
-        return "ChangeResult{" +
-                ", end=" + end +
-                ", data=" + data +
-                ", errors=" + errors +
-                ", status=" + status +
-                ", description=" + description +
-                '}';
-    }
+    /**
+     * Gets the description of this change.
+     *
+     * @return  a change description.
+     */
+    ChangeDescription description();
 }

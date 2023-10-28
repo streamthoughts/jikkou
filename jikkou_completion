@@ -158,8 +158,8 @@ function _complete_jikkou() {
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} delete" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} update" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} apply" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} resources" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} extensions" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-resources" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} diff" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} validate" ];    then _picocli_jikkou; return $?; fi
@@ -180,8 +180,8 @@ function _complete_jikkou() {
   local cmds1=(delete)
   local cmds2=(update)
   local cmds3=(apply)
-  local cmds4=(resources)
-  local cmds5=(extensions)
+  local cmds4=(extensions)
+  local cmds5=(api-resources)
   local cmds6=(config)
   local cmds7=(diff)
   local cmds8=(validate)
@@ -211,8 +211,8 @@ function _complete_jikkou() {
   if CompWordsContainsArray "${cmds8[@]}"; then _picocli_jikkou_validate; return $?; fi
   if CompWordsContainsArray "${cmds7[@]}"; then _picocli_jikkou_diff; return $?; fi
   if CompWordsContainsArray "${cmds6[@]}"; then _picocli_jikkou_config; return $?; fi
-  if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_extensions; return $?; fi
-  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_resources; return $?; fi
+  if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_apiresources; return $?; fi
+  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_extensions; return $?; fi
   if CompWordsContainsArray "${cmds3[@]}"; then _picocli_jikkou_apply; return $?; fi
   if CompWordsContainsArray "${cmds2[@]}"; then _picocli_jikkou_update; return $?; fi
   if CompWordsContainsArray "${cmds1[@]}"; then _picocli_jikkou_delete; return $?; fi
@@ -227,7 +227,7 @@ function _picocli_jikkou() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="create delete update apply resources extensions config diff validate health help generate-completion"
+  local commands="create delete update apply extensions api-resources config diff validate health help generate-completion"
   local flag_opts="-h --help -V --version"
   local arg_opts=""
 
@@ -456,13 +456,13 @@ function _picocli_jikkou_apply() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `resources` subcommand.
-function _picocli_jikkou_resources() {
+# Generates completions for the options and subcommands of the `extensions` subcommand.
+function _picocli_jikkou_extensions() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands=""
-  local flag_opts=""
+  local commands="list"
+  local flag_opts="-h --help -V --version"
   local arg_opts=""
 
   if [[ "${curr_word}" == -* ]]; then
@@ -474,12 +474,12 @@ function _picocli_jikkou_resources() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `extensions` subcommand.
-function _picocli_jikkou_extensions() {
+# Generates completions for the options and subcommands of the `api-resources` subcommand.
+function _picocli_jikkou_apiresources() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="list"
+  local commands=""
   local flag_opts="-h --help -V --version"
   local arg_opts=""
 
@@ -641,7 +641,7 @@ function _picocli_jikkou_help() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="create delete update apply resources extensions config diff validate health generate-completion"
+  local commands="create delete update apply extensions api-resources config diff validate health generate-completion"
   local flag_opts="-h --help"
   local arg_opts=""
 

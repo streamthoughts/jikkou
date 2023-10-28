@@ -34,6 +34,7 @@ import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.DefaultChangeResult;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
@@ -98,7 +99,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.CREATE, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.CREATE, context).getChanges();
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN
@@ -155,7 +156,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.DELETE, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.DELETE, context).getChanges();
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN
@@ -172,7 +173,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 "Invalid number of changes");
 
         ChangeResult<?> change = results.iterator().next();
-        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
+        Assertions.assertEquals(DefaultChangeResult.Status.CHANGED, change.status());
         Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().operation());
     }
 
@@ -191,7 +192,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.UPDATE, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.UPDATE, context).getChanges();
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN
@@ -232,7 +233,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context).getChanges();
         V1KafkaTopicList actualTopicList = getResource();
 
         // THEN
@@ -274,7 +275,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
         // WHEN
         V1KafkaTopicList initialTopicList = getResource();
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context);
+        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.APPLY_ALL, context).getChanges();
 
         Thread.sleep(500); // Let's wait for KRaft to remove topic
         V1KafkaTopicList actualTopicList = getResource();

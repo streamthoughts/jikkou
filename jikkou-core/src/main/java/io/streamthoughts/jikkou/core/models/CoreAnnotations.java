@@ -30,6 +30,7 @@ public final class CoreAnnotations {
     public static final String JKKOU_IO_MANAGED_BY_LOCATION = PREFIX + "managed-by-location";
     public static final String JKKOU_IO_RESOURCE_GENERATED = PREFIX + "generated";
     public static final String JIKKOU_IO_ITEMS_COUNT = PREFIX + "items-count";
+    public static final String JIKKOU_IO_CHANGE_COUNT = PREFIX + "changes-count";
     public static final String JIKKOU_IO_IGNORE = PREFIX + "ignore";
     public static final String JIKKOU_IO_DELETE = PREFIX + "delete";
     public static final String JIKKOU_BYPASS_VALIDATIONS = PREFIX + "bypass-validations";

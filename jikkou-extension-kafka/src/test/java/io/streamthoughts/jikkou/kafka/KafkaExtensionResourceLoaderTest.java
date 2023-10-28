@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
 import io.streamthoughts.jikkou.kafka.model.DataType;
 import io.streamthoughts.jikkou.kafka.model.DataValue;
@@ -82,8 +83,8 @@ class KafkaExtensionResourceLoaderTest {
         ConfigMap configMap = configMaps.get(0);
         Assertions.assertEquals(
                 ConfigMap.builder()
-                        .withApiVersion(HasMetadata.getApiVersion(ConfigMap.class))
-                        .withKind(HasMetadata.getKind(ConfigMap.class))
+                        .withApiVersion(Resource.getApiVersion(ConfigMap.class))
+                        .withKind(Resource.getKind(ConfigMap.class))
                         .withMetadata(ObjectMeta.builder().withName("test").build())
                         .withData(Configs.of("retention.ms", 10000))
                         .build(),

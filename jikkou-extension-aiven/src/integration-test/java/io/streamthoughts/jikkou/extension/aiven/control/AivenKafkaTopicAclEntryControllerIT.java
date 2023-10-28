@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.DefaultChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
@@ -97,7 +98,7 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
         Assertions.assertEquals(1, results.size());
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
-        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
+        Assertions.assertEquals(DefaultChangeResult.Status.CHANGED, change.status());
         Assertions.assertEquals(ChangeType.ADD, change.data().getChange().operation());
     }
 
@@ -141,7 +142,7 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
         Assertions.assertEquals(1, results.size());
 
         ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
-        Assertions.assertEquals(ChangeResult.Status.CHANGED, change.status());
+        Assertions.assertEquals(DefaultChangeResult.Status.CHANGED, change.status());
         Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().operation());
     }
 
@@ -179,6 +180,6 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
 
 
         Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(ChangeResult.Status.FAILED, results.get(0).status());
+        Assertions.assertEquals(DefaultChangeResult.Status.FAILED, results.get(0).status());
     }
 }

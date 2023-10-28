@@ -32,20 +32,19 @@ import javax.validation.constraints.NotNull;
 })
 public record ApiGroupList(@JsonProperty("kind") @NotNull String kind,
                            @JsonProperty("apiVersion") @NotNull String apiVersion,
-                           @JsonProperty("groups") @NotNull List<ApiGroup> groups) {
+                           @JsonProperty("groups") @NotNull List<ApiGroup> groups) implements Resource {
 
     @ConstructorProperties({
             "kind",
             "apiVersion",
             "groups"
     })
-    public ApiGroupList {
-    }
+    public ApiGroupList {}
 
     public ApiGroupList(@NotNull List<ApiGroup> groups) {
         this(
-                ApiGroupList.class.getAnnotation(Kind.class).value(),
-                ApiGroupList.class.getAnnotation(ApiVersion.class).value(),
+                Resource.getKind(ApiGroupList.class),
+                Resource.getApiVersion(ApiGroupList.class),
                 groups
         );
     }

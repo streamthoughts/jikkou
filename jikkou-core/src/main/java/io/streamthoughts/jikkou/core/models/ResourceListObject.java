@@ -69,7 +69,7 @@ public interface ResourceListObject<E extends HasMetadata>
      * @return the filtered {@link GenericResourceListObject}.
      */
     default List<E> getAllByKind(Class<? extends HasMetadata> resourceClass) {
-        return getAllByKind(HasMetadata.getKind(resourceClass));
+        return getAllByKind(Resource.getKind(resourceClass));
     }
 
     /**

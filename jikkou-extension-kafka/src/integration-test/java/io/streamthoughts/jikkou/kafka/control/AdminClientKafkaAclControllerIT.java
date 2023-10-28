@@ -29,6 +29,7 @@ import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.io.ResourceLoader;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
@@ -93,7 +94,7 @@ class AdminClientKafkaAclControllerIT extends AbstractKafkaIntegrationTest {
         List<V1KafkaPrincipalAuthorization> initialResourceList = api
                 .getResources(V1KafkaPrincipalAuthorization.class, Configuration.empty());
 
-        List<ChangeResult<Change>> results = api.apply(resources, ReconciliationMode.CREATE, context);
+        ReconciliationChangeResultList<Change> result = api.apply(resources, ReconciliationMode.CREATE, context);
 
         List<V1KafkaPrincipalAuthorization> actualResourceList = api
                 .getResources(V1KafkaPrincipalAuthorization.class, Configuration.empty());
@@ -108,10 +109,10 @@ class AdminClientKafkaAclControllerIT extends AbstractKafkaIntegrationTest {
                 "Invalid number of V1KafkaPrincipalAuthorization [after reconciliation]");
         Assertions.assertEquals(
                 1,
-                results.size(),
+                result.getChanges().size(),
                 "Invalid number of changes");
 
-        List<Change> actual = results.stream()
+        List<Change> actual = result.getChanges().stream()
                 .map(ChangeResult::data)
                 .map(HasMetadataChange::getChange)
                 .toList();

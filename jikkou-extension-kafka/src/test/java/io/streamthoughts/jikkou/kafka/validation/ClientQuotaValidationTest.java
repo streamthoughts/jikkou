@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
@@ -39,8 +39,8 @@ class ClientQuotaValidationTest {
     void shouldReturnErrorForNoQuotaType() {
         // Given
         var resource = V1KafkaClientQuota.builder()
-                .withApiVersion(HasMetadata.getApiVersion(V1KafkaTopicList.class))
-                .withKind(HasMetadata.getKind(V1KafkaTopicList.class))
+                .withApiVersion(Resource.getApiVersion(V1KafkaTopicList.class))
+                .withKind(Resource.getKind(V1KafkaTopicList.class))
                 .build();
         // When
         ValidationResult result = validation.validate(resource);
@@ -53,8 +53,8 @@ class ClientQuotaValidationTest {
     void shouldReturnErrorForQuotaTypeClientWithNoEntity() {
         // Given
         var resource = V1KafkaClientQuota.builder()
-                .withApiVersion(HasMetadata.getApiVersion(V1KafkaTopicList.class))
-                .withKind(HasMetadata.getKind(V1KafkaTopicList.class))
+                .withApiVersion(Resource.getApiVersion(V1KafkaTopicList.class))
+                .withKind(Resource.getKind(V1KafkaTopicList.class))
                 .withSpec(V1KafkaClientQuotaSpec
                         .builder()
                         .withType(KafkaClientQuotaType.CLIENT)
@@ -71,8 +71,8 @@ class ClientQuotaValidationTest {
     void shouldNotReturnErrorForQuotaTypeClientWithEntity() {
         // Given
         var resource = V1KafkaClientQuota.builder()
-                .withApiVersion(HasMetadata.getApiVersion(V1KafkaTopicList.class))
-                .withKind(HasMetadata.getKind(V1KafkaTopicList.class))
+                .withApiVersion(Resource.getApiVersion(V1KafkaTopicList.class))
+                .withKind(Resource.getKind(V1KafkaTopicList.class))
                 .withSpec(V1KafkaClientQuotaSpec
                         .builder()
                         .withType(KafkaClientQuotaType.CLIENT)

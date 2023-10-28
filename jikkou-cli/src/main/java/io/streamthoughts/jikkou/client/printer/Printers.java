@@ -16,9 +16,8 @@
 package io.streamthoughts.jikkou.client.printer;
 
 import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 public enum Printers implements Printer {
@@ -36,7 +35,7 @@ public enum Printers implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(List<ChangeResult<Change>> results, boolean dryRun, long executionTimeInMillis) {
-        return printer.print(results, dryRun, executionTimeInMillis);
+    public int print(ReconciliationChangeResultList<Change> result, long executionTimeInMillis) {
+        return printer.print(result, executionTimeInMillis);
     }
 }

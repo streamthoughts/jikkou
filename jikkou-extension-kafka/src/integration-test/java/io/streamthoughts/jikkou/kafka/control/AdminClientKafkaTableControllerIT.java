@@ -107,6 +107,7 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
 
         // WHEN
         List<Change> actual = api.apply(resources, ReconciliationMode.APPLY_ALL, context)
+                .getChanges()
                 .stream()
                 .map(ChangeResult::data)
                 .map(HasMetadataChange::getChange)
@@ -152,6 +153,7 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
 
         // WHEN
         List<Change> actual = api.apply(resources, ReconciliationMode.APPLY_ALL, context)
+                .getChanges()
                 .stream()
                 .map(ChangeResult::data)
                 .map(HasMetadataChange::getChange)

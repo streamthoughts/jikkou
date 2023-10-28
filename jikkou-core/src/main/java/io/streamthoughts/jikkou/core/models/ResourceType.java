@@ -39,7 +39,7 @@ public final class ResourceType implements HasMetadataAcceptable {
         return create(
                 resource.getKind(),
                 resource.getApiVersion(),
-                HasMetadata.isTransient(resource.getClass())
+                Resource.isTransient(resource.getClass())
         );
     }
 
@@ -51,9 +51,9 @@ public final class ResourceType implements HasMetadataAcceptable {
      */
     public static ResourceType create(@NotNull Class<? extends HasMetadata> resource) {
         return create(
-                HasMetadata.getKind(resource),
-                HasMetadata.getApiVersion(resource),
-                HasMetadata.isTransient(resource)
+                Resource.getKind(resource),
+                Resource.getApiVersion(resource),
+                Resource.isTransient(resource)
         );
     }
 

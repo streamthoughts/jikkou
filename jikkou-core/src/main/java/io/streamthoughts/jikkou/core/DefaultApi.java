@@ -32,6 +32,7 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
@@ -131,7 +132,6 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     private final List<ChangeReporter> reporters = new LinkedList<>();
-
     private final ExtensionFactory extensionFactory;
     private final ResourceRegistry resourceRegistry;
 
@@ -224,9 +224,9 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult<Change>> apply(@NotNull final HasItems resources,
-                                            @NotNull final ReconciliationMode mode,
-                                            @NotNull final ReconciliationContext context) {
+    public ReconciliationChangeResultList<Change> apply(@NotNull final HasItems resources,
+                                                        @NotNull final ReconciliationMode mode,
+                                                        @NotNull final ReconciliationContext context) {
         LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
         List<ChangeResult<Change>> results = resourcesByType
@@ -241,7 +241,11 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     .toList();
             new CombineChangeReporter(reporters).report(reportable);
         }
-        return results;
+        return new ReconciliationChangeResultList<>(
+                context.isDryRun(),
+                new ObjectMeta(),
+                results
+        );
     }
 
     private List<ChangeResult<Change>> executeReconciliation(@NotNull ReconciliationMode mode,

@@ -23,11 +23,10 @@ import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import jakarta.inject.Inject;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
@@ -65,12 +64,12 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
     public Integer call() throws IOException {
 
         try {
-            final List<ChangeResult<Change>> results = api.apply(
+            ReconciliationChangeResultList<Change> results = api.apply(
                     getResources(),
                     getReconciliationMode(),
                     getReconciliationContext()
             );
-            return execOptions.format.print(results, isDryRun(), Jikkou.getExecutionTime());
+            return execOptions.format.print(results, Jikkou.getExecutionTime());
         } catch (ValidationException exception) {
             System.out.println(ValidationErrorsWriter.write(exception.errors()));
             return CommandLine.ExitCode.SOFTWARE;

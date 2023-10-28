@@ -18,9 +18,8 @@ package io.streamthoughts.jikkou.client.printer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
-import java.util.List;
 
 public class SerializePrinter implements Printer {
 
@@ -32,17 +31,17 @@ public class SerializePrinter implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(List<ChangeResult<Change>> results, boolean dryRun, long executionTimeMs) {
+    public int print(ReconciliationChangeResultList<Change> result, long executionTimeMs) {
         final String json;
         try {
             json = mapper
                     .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(results);
+                    .writeValueAsString(result);
             System.out.print(json);
         } catch (JsonProcessingException e) {
             throw new JikkouRuntimeException(e);
         }
-        return Printer.getNumberOfFailedChange(results) > 0 ? 1 : 0;
+        return Printer.getNumberOfFailedChange(result.getChanges()) > 0 ? 1 : 0;
     }
 
 

@@ -73,7 +73,7 @@ public class GenericResourceChange<T extends Change> implements HasMetadataChang
     @JsonProperty("kind")
     @Override
     public String getKind() {
-        return Optional.ofNullable(kind).orElse(HasMetadata.getKind(this.getClass()));
+        return Optional.ofNullable(kind).orElse(Resource.getKind(this.getClass()));
     }
 
     /**
@@ -82,7 +82,7 @@ public class GenericResourceChange<T extends Change> implements HasMetadataChang
     @JsonProperty("apiVersion")
     @Override
     public String getApiVersion() {
-        return Optional.ofNullable(apiVersion).orElse(HasMetadata.getApiVersion(this.getClass()));
+        return Optional.ofNullable(apiVersion).orElse(Resource.getApiVersion(this.getClass()));
     }
 
     /**
@@ -115,6 +115,7 @@ public class GenericResourceChange<T extends Change> implements HasMetadataChang
                 Objects.equals(metadata, that.metadata) &&
                 Objects.equals(change, that.change);
     }
+
     /**
      * {@inheritDoc}
      **/

@@ -33,9 +33,9 @@ import javax.validation.constraints.NotNull;
 public record ApiResourceList(@NotNull String kind,
                               @NotNull String apiVersion,
                               @NotNull String groupVersion,
-                              @NotNull List<ApiResource> resources) {
+                              @NotNull List<ApiResource> resources) implements Resource {
 
-    @ConstructorProperties({
+@ConstructorProperties({
             "kind",
             "apiVersion",
             "groupVersion",
@@ -48,10 +48,11 @@ public record ApiResourceList(@NotNull String kind,
                            @NotNull List<ApiResource> resources) {
 
         this(
-                ApiResourceList.class.getAnnotation(Kind.class).value(),
-                ApiResourceList.class.getAnnotation(ApiVersion.class).value(),
+                Resource.getKind(ApiGroupList.class),
+                Resource.getApiVersion(ApiGroupList.class),
                 groupVersion,
                 resources
         );
     }
+
 }

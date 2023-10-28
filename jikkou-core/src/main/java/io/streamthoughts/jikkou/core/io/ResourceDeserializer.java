@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.GenericResource;
-import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.Resource;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -37,7 +36,8 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceDeserializer.class);
 
-    record TypeKey(String kind, String group, String version) { }
+    record TypeKey(String kind, String group, String version) {
+    }
 
     private static final String KIND = "kind";
     private static final String API_VERSION = "apiVersion";
@@ -49,7 +49,8 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
     /**
      * Creates a new {@link ResourceDeserializer} instance.
      */
-    public ResourceDeserializer() {}
+    public ResourceDeserializer() {
+    }
 
     /**
      * {@inheritDoc}
@@ -91,8 +92,8 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
             return jp.getCodec().treeToValue(node, GenericResource.class);
         } else if (Resource.class.isAssignableFrom(resourceType)) {
             LOG.debug("Read specific resource for apiVersion={}, kind={}",
-                HasMetadata.getApiVersion(resourceType),
-                HasMetadata.getKind(resourceType)
+                    Resource.getApiVersion(resourceType),
+                    Resource.getKind(resourceType)
             );
             return jp.getCodec().treeToValue(node, resourceType);
         }
@@ -147,8 +148,8 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
         }
 
         public void registerKind(final Class<? extends Resource> clazz) {
-            var apiVersion = HasMetadata.getApiVersion(clazz);
-            var kind = HasMetadata.getKind(clazz);
+            var apiVersion = Resource.getApiVersion(clazz);
+            var kind = Resource.getKind(clazz);
             registerKind(apiVersion, kind, clazz);
         }
 

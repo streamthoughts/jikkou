@@ -27,10 +27,10 @@ import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.resource.ResourceCollector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import java.util.Collections;
@@ -113,13 +113,13 @@ public interface JikkouApi extends AutoCloseable {
      * @param resources the list of resource to be reconciled.
      * @param mode      the reconciliation mode.
      * @param context   the context to be used for conciliation.
-     * @return the list of all changes applied on the target system.
+     * @return the list of 0all changes applied on the target system.
      * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    List<ChangeResult<Change>> apply(@NotNull HasItems resources,
-                                     @NotNull ReconciliationMode mode,
-                                     @NotNull ReconciliationContext context);
+    ReconciliationChangeResultList<Change> apply(@NotNull HasItems resources,
+                                                 @NotNull ReconciliationMode mode,
+                                                 @NotNull ReconciliationContext context);
 
     /**
      * Execute validations on the given resources.

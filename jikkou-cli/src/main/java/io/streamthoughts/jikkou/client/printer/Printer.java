@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
+import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
@@ -28,7 +29,7 @@ public interface Printer {
      * @param executionTimeMs the execution time in milliseconds.
      * @return the exit code.
      */
-    int print(List<ChangeResult<Change>> results, boolean dryRun, long executionTimeMs);
+    int print(ReconciliationChangeResultList<Change> result, long executionTimeMs);
 
     static int getNumberOfFailedChange(final List<ChangeResult<Change>> results) {
         return (int) results.stream()

@@ -91,8 +91,8 @@ public final class DefaultChangeExecutor<C extends Change> implements ChangeExec
                     ChangeHandler<C> handler = handlers.get(object.getChange().operation());
                     ChangeDescription description = handler.getDescriptionFor(object);
                     return object.getChange().operation() == ChangeType.NONE ?
-                            ChangeResult.ok(object, description) :
-                            ChangeResult.changed(object, description);
+                            DefaultChangeResult.ok(object, description) :
+                            DefaultChangeResult.changed(object, description);
                 })
                 .toList();
     }
@@ -123,7 +123,7 @@ public final class DefaultChangeExecutor<C extends Change> implements ChangeExec
                         ChangeDescription description = handler.getDescriptionFor(object);
 
                         if (object.getChange().operation() == ChangeType.NONE) {
-                            return ChangeResult.ok(object, description);
+                            return DefaultChangeResult.ok(object, description);
                         }
 
                         List<ChangeError> errors = metadata.stream()
@@ -132,8 +132,8 @@ public final class DefaultChangeExecutor<C extends Change> implements ChangeExec
                                 .toList();
 
                         return errors.isEmpty() ?
-                                ChangeResult.changed(object, description) :
-                                ChangeResult.failed(object, description, errors);
+                                DefaultChangeResult.changed(object, description) :
+                                DefaultChangeResult.failed(object, description, errors);
                     });
                 });
     }
