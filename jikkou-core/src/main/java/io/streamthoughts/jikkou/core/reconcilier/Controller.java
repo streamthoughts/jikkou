@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

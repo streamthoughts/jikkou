@@ -18,14 +18,15 @@ package io.streamthoughts.jikkou.kafka.connect.control;
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
@@ -51,14 +52,18 @@ import org.slf4j.LoggerFactory;
  * A ResourceCollector to get {@link V1KafkaConnector} resources.
  */
 @AcceptsResource(type = V1KafkaConnector.class)
-@AcceptsConfigProperty(
-        name = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME,
-        description = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_DESCRIPTION,
-        defaultValue = "false",
-        type = Boolean.class,
-        isRequired = false
+@ExtensionConfigProperties(
+        properties = {
+                @ConfigPropertySpec(
+                        name = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME,
+                        description = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_DESCRIPTION,
+                        defaultValue = "false",
+                        type = Boolean.class,
+                        isRequired = false
+                )
+        }
 )
-public final class KafkaConnectorCollector implements ResourceCollector<V1KafkaConnector> {
+public final class KafkaConnectorCollector implements Collector<V1KafkaConnector> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConnectorCollector.class);
     private static final String DEFAULT_CONNECTOR_TASKS_MAX = "1";

@@ -174,6 +174,86 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
      * {@inheritDoc}
      **/
     @Override
+    public <T> List<ExtensionDescriptor<T>> findAllDescriptorsByClass(@NotNull Class<T> type) {
+        return this.registry.findAllDescriptorsByClass(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> List<ExtensionDescriptor<T>> findAllDescriptorsByClass(@NotNull Class<T> type, @Nullable Qualifier<T> qualifier) {
+        return this.registry.findAllDescriptorsByClass(type, qualifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> List<ExtensionDescriptor<T>> findAllDescriptorsByAlias(@NotNull String alias) {
+        return this.registry.findAllDescriptorsByAlias(alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> List<ExtensionDescriptor<T>> findAllDescriptorsByAlias(@NotNull String alias, @Nullable Qualifier<T> qualifier) {
+        return this.registry.findAllDescriptorsByAlias(alias, qualifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> Optional<ExtensionDescriptor<T>> findDescriptorByAlias(@NotNull String alias) {
+        return this.registry.findDescriptorByAlias(alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> Optional<ExtensionDescriptor<T>> findDescriptorByAlias(@NotNull String alias, @Nullable Qualifier<T> qualifier) {
+        return this.registry.findDescriptorByAlias(alias, qualifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> Optional<ExtensionDescriptor<T>> findDescriptorByClass(@NotNull Class<T> type) {
+        return this.registry.findDescriptorByClass(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> Optional<ExtensionDescriptor<T>> findDescriptorByClass(@NotNull Class<T> type, @Nullable Qualifier<T> qualifier) {
+        return this.registry.findDescriptorByClass(type, qualifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> ExtensionSupplier<T> getExtensionSupplier(ExtensionDescriptor<T> descriptor) {
+        return this.registry.getExtensionSupplier(descriptor);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T> void registerDescriptor(@NotNull ExtensionDescriptor<T> descriptor) {
+        this.registry.registerDescriptor(descriptor);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public ExtensionFactory duplicate() {
         return new DefaultExtensionFactory(this.registry.duplicate());
     }

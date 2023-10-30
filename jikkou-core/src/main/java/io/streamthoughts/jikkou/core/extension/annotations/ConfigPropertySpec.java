@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.annotation;
+package io.streamthoughts.jikkou.core.extension.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -26,12 +25,38 @@ import java.lang.annotation.Target;
 @Documented
 @Target({TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(AcceptsConfigProperties.class)
-public @interface AcceptsConfigProperty {
-
+public @interface ConfigPropertySpec {
+    /**
+     * The name of the configuration options.
+     *
+     * @return  the string name.
+     */
     String name();
+
+    /**
+     * The description of the configuration options.
+     *
+     * @return  the string description.
+     */
     String description() default "";
+
+    /**
+     * The default value of the configuration options (optional).
+     *
+     * @return  the string representation of the default value.
+     */
     String defaultValue() default "";
+
+    /**
+     * The type of the configuration options.
+     *
+     * @return  the type.
+     */
     Class<?> type();
+
+    /**
+     * Specifies if the option is required.
+     * @return  {@code true} if the option is required, otherwise {@code false}.
+     */
     boolean isRequired() default true;
 }

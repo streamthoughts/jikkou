@@ -30,7 +30,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
-import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;

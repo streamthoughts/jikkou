@@ -17,13 +17,14 @@ package io.streamthoughts.jikkou.kafka.control;
 
 import static io.streamthoughts.jikkou.common.utils.AsyncUtils.getValueOrThrowException;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
@@ -60,29 +61,33 @@ import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaTopic.class)
 @AcceptsResource(type = V1KafkaTopicList.class, converter = V1KafkaTopicListConverter.class)
-@AcceptsConfigProperty(
-        name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
-        description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
-        defaultValue = "false",
-        type = Boolean.class,
-        isRequired = false
-)
-@AcceptsConfigProperty(
-        name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
-        description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
-        defaultValue = "false",
-        type = Boolean.class,
-        isRequired = false
-)
-@AcceptsConfigProperty(
-        name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
-        description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
-        defaultValue = "false",
-        type = Boolean.class,
-        isRequired = false
+@ExtensionConfigProperties(
+    properties = {
+        @ConfigPropertySpec(
+                name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
+                description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
+                defaultValue = "false",
+                type = Boolean.class,
+                isRequired = false
+        ),
+        @ConfigPropertySpec(
+                name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
+                description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
+                defaultValue = "false",
+                type = Boolean.class,
+                isRequired = false
+        ),
+        @ConfigPropertySpec(
+                name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
+                description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
+                defaultValue = "false",
+                type = Boolean.class,
+                isRequired = false
+        )
+    }
 )
 public final class AdminClientKafkaTopicCollector
-        implements ResourceCollector<V1KafkaTopic> {
+        implements Collector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);
 

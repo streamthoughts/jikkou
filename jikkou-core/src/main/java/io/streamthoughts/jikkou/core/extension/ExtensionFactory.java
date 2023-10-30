@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface for registering and supplying new {@link Extension} instances.
  */
-public interface ExtensionFactory extends ExtensionRegistry {
+public interface ExtensionFactory extends ExtensionDescriptorRegistry {
 
     /**
      * Checks if at least one extension is registered for the given type.

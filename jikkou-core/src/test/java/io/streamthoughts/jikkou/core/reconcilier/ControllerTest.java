@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.core.reconcilier;
 
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

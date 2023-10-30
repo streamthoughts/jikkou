@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
@@ -26,6 +27,8 @@ import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiGroupVersion;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
+import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -35,13 +38,15 @@ import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
+import io.streamthoughts.jikkou.core.reconcilier.config.ApiResourceVerbOptionSpecFactory;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.converter.ResourceConverter;
@@ -60,6 +65,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -72,6 +78,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of the {@link JikkouApi} interface.
  */
+@SuppressWarnings("rawtypes")
 public final class DefaultApi implements AutoCloseable, JikkouApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultApi.class);
@@ -172,19 +179,36 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
                 .toList();
 
+        ApiResourceVerbOptionSpecFactory optionListFactory = new ApiResourceVerbOptionSpecFactory();
         List<ApiResource> resources = descriptors.stream()
-                .map(it -> {
-                    String name = it.pluralName()
-                            .orElse(it.resourceType().getKind())
+                .map(descriptor -> {
+                    ResourceType type = descriptor.resourceType();
+                    String name = descriptor.pluralName()
+                            .orElse(type.getKind())
                             .toLowerCase(Locale.ROOT);
-                    return new ApiResource(
+
+                    ApiResource resource = new ApiResource(
                             name,
-                            it.kind(),
-                            it.singularName(),
-                            it.shortNames(),
-                            it.description(),
-                            it.orderedVerbs()
+                            descriptor.kind(),
+                            descriptor.singularName(),
+                            descriptor.shortNames(),
+                            descriptor.description(),
+                            descriptor.orderedVerbs()
                     );
+
+                    if (resource.isVerbSupported(Verb.LIST)) {
+                        Optional<ExtensionDescriptor<Collector>> optional = extensionFactory
+                                .findDescriptorByClass(Collector.class, Qualifiers.byAcceptedResource(type));
+                        if (optional.isPresent()) {
+                            ExtensionDescriptor<Collector> collector = optional.get();
+                            List<ApiResourceVerbOptionSpec> optionSpecs = optionListFactory.make(collector.type());
+                            resource = resource.withApiResourceVerbOptionList(
+                                    new ApiResourceVerbOptionList(Verb.LIST, optionSpecs)
+                            );
+                        }
+                    }
+                    return resource;
+
                 })
                 .sorted(Comparator.comparing(ApiResource::name))
                 .toList();
@@ -358,7 +382,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     public List<HasMetadata> getResources(final @NotNull ResourceType resourceType,
                                           final @NotNull List<ResourceSelector> selectors,
                                           final @NotNull Configuration configuration) {
-        ResourceCollector<HasMetadata> collector = getMatchingResourceCollector(resourceType);
+        Collector<HasMetadata> collector = getMatchingResourceCollector(resourceType);
         List<HasMetadata> resources = collector.listAll(configuration, selectors);
         ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
         List<HasMetadata> result = resources.stream()
@@ -399,15 +423,23 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         return new ResourceTransformationChain(transformations);
     }
 
+    @SuppressWarnings("rawtypes")
+    private Optional<ExtensionDescriptor<Collector>> findMatchingResourceCollector(@NotNull ResourceType resource) {
+        return extensionFactory.findDescriptorByClass(
+                Collector.class,
+                        Qualifiers.byAcceptedResource(resource)
+        );
+    }
+
     @SuppressWarnings("unchecked")
-    private ResourceCollector<HasMetadata> getMatchingResourceCollector(@NotNull ResourceType resource) {
+    private Collector<HasMetadata> getMatchingResourceCollector(@NotNull ResourceType resource) {
         LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
                 resource.getGroup(),
                 resource.getApiVersion(),
                 resource.getKind()
         );
         return extensionFactory.getExtension(
-                ResourceCollector.class,
+                Collector.class,
                 Qualifiers.byAcceptedResource(resource)
         );
     }

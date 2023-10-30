@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
-import io.streamthoughts.jikkou.core.reconcilier.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChangeComputer;

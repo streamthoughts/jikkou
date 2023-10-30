@@ -34,7 +34,7 @@ import io.streamthoughts.jikkou.client.command.UpdateResourceCommand;
 import io.streamthoughts.jikkou.client.command.config.ConfigCommand;
 import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCandidateCommand;
 import io.streamthoughts.jikkou.client.command.extension.ExtensionCommand;
-import io.streamthoughts.jikkou.client.command.get.GetCommandGenerator;
+import io.streamthoughts.jikkou.client.command.get.GetCommandLineFactory;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
 import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand;
 import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
@@ -171,8 +171,8 @@ public final class Jikkou {
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
 
-        GetCommandGenerator generator = context.getBean(GetCommandGenerator.class);
-        commandLine.addSubcommand(generator.createGetCommandLine());
+        GetCommandLineFactory generator = context.getBean(GetCommandLineFactory.class);
+        commandLine.addSubcommand(generator.createCommandLine());
 
         CommandLine gen = commandLine.getSubcommands().get("generate-completion");
         gen.getCommandSpec().usageMessage().hidden(true);

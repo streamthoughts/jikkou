@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.rest.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1SchemaRegistrySubject.class)
-public class SchemaRegistrySubjectCollector implements ResourceCollector<V1SchemaRegistrySubject> {
+public class SchemaRegistrySubjectCollector implements Collector<V1SchemaRegistrySubject> {
 
     private SchemaRegistryClientConfig config;
 

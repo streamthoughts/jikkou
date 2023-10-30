@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import java.util.Collections;
 import java.util.List;
@@ -96,9 +96,12 @@ public interface JikkouApi extends AutoCloseable {
     /**
      * List the supported API resources for the specified API group and API version.
      *
+     * @param group   the API group of the resource.
+     * @param version the API version of the resource.
      * @return {@link ApiResourceList}.
      */
-    ApiResourceList listApiResources(@NotNull String group, @NotNull String version);
+    ApiResourceList listApiResources(@NotNull String group,
+                                     @NotNull String version);
 
     /**
      * List the supported API groups.
@@ -114,7 +117,7 @@ public interface JikkouApi extends AutoCloseable {
      * @param mode      the reconciliation mode.
      * @param context   the context to be used for conciliation.
      * @return the list of 0all changes applied on the target system.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     ReconciliationChangeResultList<Change> apply(@NotNull HasItems resources,
@@ -126,7 +129,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @return the validated {@link GenericResourceListObject}.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default ApiResourceValidationResult validate(@NotNull HasItems resources) {
@@ -139,7 +142,7 @@ public interface JikkouApi extends AutoCloseable {
      * @param resources the list of resource to create.
      * @param context   the reconciliation context.
      * @return the validated {@link GenericResourceListObject}.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     ApiResourceValidationResult validate(@NotNull HasItems resources,
@@ -150,7 +153,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default List<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass) {
@@ -162,7 +165,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default List<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
@@ -175,7 +178,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default <T extends HasMetadata> List<T> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
@@ -190,7 +193,7 @@ public interface JikkouApi extends AutoCloseable {
      * @param type          the class of the resource to be described.
      * @param configuration the configuration to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link ResourceCollector} can be found for the specified type,
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     @SuppressWarnings("unchecked")

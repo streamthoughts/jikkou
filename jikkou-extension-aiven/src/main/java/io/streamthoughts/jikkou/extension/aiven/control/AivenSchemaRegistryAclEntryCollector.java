@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1SchemaRegistryAclEntry.class)
 @AcceptsResource(type = V1SchemaRegistryAclEntryList.class, converter = V1SchemaRegistryAclEntryListConverter.class)
-public final class AivenSchemaRegistryAclEntryCollector implements ResourceCollector<V1SchemaRegistryAclEntry> {
+public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1SchemaRegistryAclEntry> {
 
     private AivenApiClientConfig config;
 

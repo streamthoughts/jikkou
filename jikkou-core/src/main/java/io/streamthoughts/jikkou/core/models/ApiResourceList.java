@@ -20,6 +20,7 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import java.beans.ConstructorProperties;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 @Kind("ApiResourceList")
@@ -30,18 +31,27 @@ import javax.validation.constraints.NotNull;
         "groupVersion",
         "resources"
 })
-public record ApiResourceList(@NotNull String kind,
-                              @NotNull String apiVersion,
-                              @NotNull String groupVersion,
-                              @NotNull List<ApiResource> resources) implements Resource {
+public final class ApiResourceList implements Resource {
 
-@ConstructorProperties({
+    private final @NotNull String kind;
+    private final @NotNull String apiVersion;
+    private final @NotNull String groupVersion;
+    private final @NotNull List<ApiResource> resources;
+
+    @ConstructorProperties({
             "kind",
             "apiVersion",
             "groupVersion",
             "resources"
     })
-    public ApiResourceList {
+    public ApiResourceList(@NotNull String kind,
+                           @NotNull String apiVersion,
+                           @NotNull String groupVersion,
+                           @NotNull List<ApiResource> resources) {
+        this.kind = kind;
+        this.apiVersion = apiVersion;
+        this.groupVersion = groupVersion;
+        this.resources = resources;
     }
 
     public ApiResourceList(@NotNull String groupVersion,
@@ -54,5 +64,52 @@ public record ApiResourceList(@NotNull String kind,
                 resources
         );
     }
+
+    @Override
+    public @NotNull String getKind() {
+        return kind;
+    }
+
+    @Override
+    public @NotNull String getApiVersion() {
+        return apiVersion;
+    }
+
+    public @NotNull String getGroupVersion() {
+        return groupVersion;
+    }
+
+    public @NotNull List<ApiResource> getResources() {
+        return resources;
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (ApiResourceList) obj;
+        return Objects.equals(this.kind, that.kind) &&
+                Objects.equals(this.apiVersion, that.apiVersion) &&
+                Objects.equals(this.groupVersion, that.groupVersion) &&
+                Objects.equals(this.resources, that.resources);
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public int hashCode() {
+        return Objects.hash(kind, apiVersion, groupVersion, resources);
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public String toString() {
+        return "ApiResourceList[" +
+                "kind=" + kind + ", " +
+                "apiVersion=" + apiVersion + ", " +
+                "groupVersion=" + groupVersion + ", " +
+                "resources=" + resources + ']';
+    }
+
 
 }

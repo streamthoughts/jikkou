@@ -40,6 +40,12 @@ public enum Verb {
         return value;
     }
 
+    /** {@inheritDoc} **/
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static Verb[] getForNamesIgnoreCase(final @Nullable List<String> verbs) {
         if (verbs == null) return new Verb[]{};
         if (verbs.size() == 1 && verbs.get(0).equalsIgnoreCase("*")) {

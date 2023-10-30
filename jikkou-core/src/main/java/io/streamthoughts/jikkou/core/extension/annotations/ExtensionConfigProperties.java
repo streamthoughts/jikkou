@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The original authors
+ * Copyright 2023 The original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.annotation;
+package io.streamthoughts.jikkou.core.extension.annotations;
 
-import static java.lang.annotation.ElementType.TYPE;
-
+import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({TYPE})
-public @interface AcceptsConfigProperties {
-    AcceptsConfigProperty[] value();
+@Target({ElementType.TYPE})
+public @interface ExtensionConfigProperties {
+
+    /**
+     * Specifies the configuration properties supported by a {@link Controller}.
+     */
+    ConfigPropertySpec[] properties() default {};
 }

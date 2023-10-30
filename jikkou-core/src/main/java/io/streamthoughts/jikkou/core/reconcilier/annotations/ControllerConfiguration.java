@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.reconcilier;
+package io.streamthoughts.jikkou.core.reconcilier.annotations;
 
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import java.lang.annotation.ElementType;

@@ -15,14 +15,15 @@
  */
 package io.streamthoughts.jikkou.kafka.control;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsConfigProperty;
 import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
@@ -59,30 +60,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaTableRecord.class)
-@AcceptsConfigProperty(
-        name = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME,
-        description = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_DESCRIPTION,
-        type = String.class
+@ExtensionConfigProperties(
+        properties = {
+                @ConfigPropertySpec(
+                        name = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME,
+                        description = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_DESCRIPTION,
+                        type = String.class
+                ),
+                @ConfigPropertySpec(
+                        name = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME,
+                        description = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_DESCRIPTION,
+                        type = String.class
+                ),
+                @ConfigPropertySpec(
+                        name = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME,
+                        description = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_DESCRIPTION,
+                        type = String.class
+                ),
+                @ConfigPropertySpec(
+                        name = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_NAME,
+                        description = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION,
+                        type = Boolean.class,
+                        defaultValue = "false",
+                        isRequired = false
+                )
+        }
 )
-@AcceptsConfigProperty(
-        name = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME,
-        description = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_DESCRIPTION,
-        type = String.class
-)
-@AcceptsConfigProperty(
-        name = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME,
-        description = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_DESCRIPTION,
-        type = String.class
-)
-@AcceptsConfigProperty(
-        name = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_NAME,
-        description = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION,
-        type = Boolean.class,
-        defaultValue = "false",
-        isRequired = false
-)
+
 public final class AdminClientKafkaTableCollector
-        implements ResourceCollector<V1KafkaTableRecord> {
+        implements Collector<V1KafkaTableRecord> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTableCollector.class);
     public static final Map<String, Object> EMPTY_CONFIG = Collections.emptyMap();

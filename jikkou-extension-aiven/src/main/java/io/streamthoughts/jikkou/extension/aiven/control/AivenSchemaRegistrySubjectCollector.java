@@ -24,7 +24,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
         apiVersion = AivenResourceProvider.SCHEMA_REGISTRY_API_VERSION,
         kind = AivenResourceProvider.SCHEMA_REGISTRY_KIND
 )
-public class AivenSchemaRegistrySubjectCollector implements ResourceCollector<V1SchemaRegistrySubject> {
+public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRegistrySubject> {
 
     private static final String SCHEMA_REGISTRY_VENDOR = "Karapace";
 

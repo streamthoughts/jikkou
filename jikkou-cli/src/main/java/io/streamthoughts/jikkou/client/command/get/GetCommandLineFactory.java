@@ -19,21 +19,21 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIS
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 
 import io.micronaut.context.ApplicationContext;
-import io.streamthoughts.jikkou.core.config.ConfigPropertyDescriptor;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.models.ApiResource;
+import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
+import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
-import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
-import io.streamthoughts.jikkou.runtime.JikkouContext;
+import io.streamthoughts.jikkou.core.models.Verb;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi.Text;
 import picocli.CommandLine.Help.Column;
@@ -42,57 +42,62 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
 @Singleton
-public class GetCommandGenerator {
+public class GetCommandLineFactory {
 
     private final ApplicationContext applicationContext;
 
-    private final ExtensionDescriptorRegistry extensionDescriptorRegistry;
-    private final JikkouContext context;
+    private final JikkouApi api;
 
-    public GetCommandGenerator(@NotNull ApplicationContext applicationContext,
-                               @Nullable JikkouContext context,
-                               @NotNull ExtensionDescriptorRegistry registry) {
+    @Inject
+    public GetCommandLineFactory(@NotNull ApplicationContext applicationContext,
+                                 @NotNull JikkouApi api) {
         this.applicationContext = applicationContext;
-        this.extensionDescriptorRegistry = registry;
-        this.context = context;
+        this.api = api;
     }
 
-    public CommandLine createGetCommandLine() {
+    public CommandLine createCommandLine() {
         CommandLine cmd = new CommandLine(new GetCommand());
 
-        Collection<ExtensionDescriptor<ResourceCollector>> descriptors = extensionDescriptorRegistry
-                .findAllDescriptorsByClass(ResourceCollector.class);
-
+        List<ApiResourceList> apiResourceLists = api.listApiResources();
         Map<String, List<String>> sections = new LinkedHashMap<>();
-        for (ExtensionDescriptor<ResourceCollector> descriptor : descriptors) {
-            Class<ResourceCollector> type = descriptor.type();
-            List<ResourceType> resources = descriptor.supportedResources();
-            for (ResourceType resource : resources) {
-                GetResourceCommand command = applicationContext.getBean(GetResourceCommand.class);
-                command.setResourceType(resource);
-                CommandLine subcommand = new CommandLine(command);
-                ResourceDescriptor resourceDescriptor = context.getResourceContext().getResourceDescriptorByType(resource);
+
+        for (ApiResourceList apiResourceList : apiResourceLists) {
+            List<ApiResource> resources = apiResourceList.getResources()
+                    .stream()
+                    .filter(it -> it.isVerbSupported(Verb.LIST))
+                    .toList();
+            for (ApiResource resource : resources) {
+                ResourceType type = ResourceType.create(resource.kind(), apiResourceList.getGroupVersion());
+
+                // Create command for the current resource
+                final GetResourceCommand command = applicationContext.getBean(GetResourceCommand.class);
+                command.setResourceType(type);
+
+                // Create subcommand
+                final CommandLine subcommand = new CommandLine(command);
                 CommandSpec spec = subcommand.getCommandSpec();
-                String subCommandName = resourceDescriptor.pluralName().orElse(resourceDescriptor.singularName());
+
+                final String subCommandName = resource.name();
                 spec.name(subCommandName)
                         .usageMessage()
-                        .header(String.format("Get all '%s' resources.", resource.getKind()))
+                        .header(String.format("Get all '%s' resources.", resource.kind()))
                         .description(String.format(
                                         "Use jikkou get %s when you want to describe the state of all resources of type '%s'.",
                                         subCommandName,
-                                        resource.getKind()
+                                        resource.kind()
                                 )
                         );
-
-                spec.aliases(resourceDescriptor.shortNames().toArray(new String[0]));
-
-                List<ConfigPropertyDescriptor> configs = ResourceCollector.getConfigPropertyDescriptors(type);
-                for (ConfigPropertyDescriptor config : configs) {
-                    spec.addOption(createOptionSpec(config, command)
-                    );
+                spec.aliases(resource.shortNames().toArray(new String[0]));
+                Optional<ApiResourceVerbOptionList> optional = resource.getVerbOptionList(Verb.LIST);
+                if (optional.isPresent()) {
+                    ApiResourceVerbOptionList verbOptionList = optional.get();
+                    for (ApiResourceVerbOptionSpec option : verbOptionList.options()) {
+                        spec.addOption(createOptionSpec(option, command)
+                        );
+                    }
                 }
                 cmd.addSubcommand(subcommand);
-                sections.computeIfAbsent("%nResources for group '" + resourceDescriptor.group() + "': %n%n", k -> new ArrayList<>())
+                sections.computeIfAbsent("%nResources for group '" + type.getGroup() + "': %n%n", k -> new ArrayList<>())
                         .add(subcommand.getCommandName());
             }
         }
@@ -104,17 +109,18 @@ public class GetCommandGenerator {
         return cmd;
     }
 
-    private CommandLine.Model.OptionSpec createOptionSpec(ConfigPropertyDescriptor config, GetResourceCommand command) {
+    private CommandLine.Model.OptionSpec createOptionSpec(ApiResourceVerbOptionSpec option,
+                                                          GetResourceCommand command) {
         return CommandLine.Model.OptionSpec
-                .builder("--" + config.name().replaceAll("\\.", "-"))
-                .type(config.type())
-                .description(config.description())
-                .defaultValue(config.isRequired() ? null : config.defaultValue())
-                .required(config.isRequired())
+                .builder("--" + option.name().replaceAll("\\.", "-"))
+                .type(option.typeClass())
+                .description(option.description())
+                .defaultValue(option.required() ? null : option.defaultValue())
+                .required(option.required())
                 .setter(new CommandLine.Model.ISetter() {
                     @Override
                     public <T> T set(T value) {
-                        return command.addOptions(config.name(), value);
+                        return command.addOptions(option.name(), value);
                     }
                 })
                 .build();

@@ -63,7 +63,6 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
      */
     boolean isEnabled();
 
-
     /**
      * Gets the category of the extension.
      */

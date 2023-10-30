@@ -21,12 +21,21 @@ import io.streamthoughts.jikkou.core.annotation.Category;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.config.ConfigPropertyDescriptor;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
 import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The top-level interface for extension.
@@ -35,7 +44,7 @@ import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
  * @see ResourceValidation
  * @see ResourceTransformation
  * @see Controller
- * @see ResourceCollector
+ * @see Collector
  * @see HealthIndicator
  */
 @Evolving
@@ -48,6 +57,20 @@ public interface Extension {
      */
     default String getName() {
         return getName(this);
+    }
+
+    /**
+     * Gets the default configuration of this extension.
+     *
+     * @return  the configuration.
+     */
+    default Configuration getDefaultConfiguration() {
+        List<ConfigPropertyDescriptor> descriptors = getExtensionConfigPropertySpec(this);
+        Map<String, String> defaultProperties = descriptors
+                .stream()
+                .filter(Predicate.not(ConfigPropertyDescriptor::isRequired))
+                .collect(Collectors.toMap(ConfigPropertyDescriptor::name, ConfigPropertyDescriptor::defaultValue));
+        return Configuration.from(defaultProperties);
     }
 
     /**
@@ -110,5 +133,38 @@ public interface Extension {
                 .map(Category::value)
                 .findFirst()
                 .orElse("<unknown>");
+    }
+
+    /**
+     * Gets the specifications for the static configuration properties supported by the specified extension object.
+     *
+     * @param extension the extension object.
+     *
+     * @return  the list of {@link ConfigPropertyDescriptor}.
+     */
+    static List<ConfigPropertyDescriptor> getExtensionConfigPropertySpec(Object extension) {
+        return getExtensionConfigPropertySpec(extension.getClass());
+    }
+
+    /**
+     * Gets the specifications for the static configuration properties supported by the specified extension class.
+     *
+     * @param clazz the extension class.
+     * @return  the list of {@link ConfigPropertyDescriptor}.
+     */
+    static List<ConfigPropertyDescriptor> getExtensionConfigPropertySpec(Class<?> clazz) {
+        ExtensionConfigProperties annotation = clazz.getAnnotation(ExtensionConfigProperties.class);
+        if (annotation == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(annotation.properties())
+                .map(descriptor -> new ConfigPropertyDescriptor(
+                        descriptor.name(),
+                        descriptor.type(),
+                        descriptor.description(),
+                        descriptor.defaultValue(),
+                        descriptor.isRequired()
+                ))
+                .toList();
     }
 }

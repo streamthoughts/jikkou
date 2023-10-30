@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 @AcceptsResource(type = V1KafkaTopicAclEntry.class)
 @AcceptsResource(type = V1KafkaTopicAclEntryList.class, converter = V1KafkaAclEntryListConverter.class)
-public class AivenKafkaTopicAclEntryCollector implements ResourceCollector<V1KafkaTopicAclEntry> {
+public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicAclEntry> {
 
     private AivenApiClientConfig config;
 

@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.resource.ResourceCollector;
+import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 @AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
 public final class AdminClientKafkaAclCollector
-        implements ResourceCollector<V1KafkaPrincipalAuthorization> {
+        implements Collector<V1KafkaPrincipalAuthorization> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaAclCollector.class);
 
