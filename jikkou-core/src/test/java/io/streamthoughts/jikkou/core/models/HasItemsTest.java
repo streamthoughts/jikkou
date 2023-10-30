@@ -27,7 +27,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesForMatchingSelector() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -41,7 +41,7 @@ class HasItemsTest {
     @Test
     void shouldGetNoResourceForNotMatchingSelector() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -55,7 +55,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByKindClass() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -69,7 +69,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByKindString() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -83,7 +83,7 @@ class HasItemsTest {
     @Test
     void shouldGetNoResourceByKindString() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -97,7 +97,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByApiVersionString() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -111,7 +111,7 @@ class HasItemsTest {
     @Test
     void shouldGetResourceByName() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -125,7 +125,7 @@ class HasItemsTest {
     @Test
     void shouldThrowExceptionForNoResourceMatchingResourceName() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When / Then
@@ -135,7 +135,7 @@ class HasItemsTest {
     @Test
     void shouldReturnNonEmptyOptionalForMatchingResourceName() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -149,7 +149,7 @@ class HasItemsTest {
     @Test
     void shouldReturnEmptyOptionalForNonMatchingResourceName() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test")
         ));
         // When
@@ -163,7 +163,7 @@ class HasItemsTest {
     @Test
     void shouldThrowExceptionGivenDuplicateResourceName() {
         // Given
-        GenericResourceListObject<HasMetadata> list = new GenericResourceListObject<>(List.of(
+        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
                 getTestResourceForName("test"),
                 getTestResourceForName("test")
         ));

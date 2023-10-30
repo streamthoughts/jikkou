@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.annotation.Priority;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasPriority;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
@@ -34,10 +34,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Transformation to apply all roles to topic objects.
  */
-@AcceptsResource(type = V1KafkaPrincipalAuthorization.class)
+@HandledResource(type = V1KafkaPrincipalAuthorization.class)
 @Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-public class KafkaPrincipalAuthorizationTransformation implements ResourceTransformation<V1KafkaPrincipalAuthorization> {
+public class KafkaPrincipalAuthorizationTransformation implements Transformation<V1KafkaPrincipalAuthorization> {
 
     /**
      * {@inheritDoc
@@ -50,7 +50,7 @@ public class KafkaPrincipalAuthorizationTransformation implements ResourceTransf
             return Optional.of(toTransform);
         }
 
-        HasItems definedRoleResources = new GenericResourceListObject(items.getAllByKind(V1KafkaPrincipalRole.class));
+        HasItems definedRoleResources = new DefaultResourceListObject(items.getAllByKind(V1KafkaPrincipalRole.class));
         definedRoleResources.verifyNoDuplicateMetadataName();
 
         List<V1KafkaPrincipalAcl> aclBindingsFromRoles = roles

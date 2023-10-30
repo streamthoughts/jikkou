@@ -122,7 +122,7 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     default String printableSupportedResources() {
         return supportedResources()
                 .stream()
-                .map(ResourceType::getKind)
+                .map(ResourceType::kind)
                 .collect(Collectors.joining(", "));
     }
 

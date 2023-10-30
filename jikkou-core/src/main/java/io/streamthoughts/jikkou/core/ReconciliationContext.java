@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -32,12 +32,12 @@ import org.jetbrains.annotations.NotNull;
 public interface ReconciliationContext {
 
     /**
-     * Returns the {@link ResourceSelector} used for restricting the
+     * Returns the {@link Selector} used for restricting the
      * resources that will be included in the current reconciliation operation.
      *
-     * @return the {@link ResourceSelector}.
+     * @return the {@link Selector}.
      */
-    @NotNull List<ResourceSelector> selectors();
+    @NotNull List<Selector> selectors();
 
     /**
      * Returns the {@link Configuration} used for executing a specific resource reconciliation operation.
@@ -129,7 +129,7 @@ public interface ReconciliationContext {
          * @param selectors the selectors
          * @return a new {@link Builder}
          */
-        public Builder selectors(List<ResourceSelector> selectors) {
+        public Builder selectors(List<Selector> selectors) {
             return new Builder(new Default(
                     selectors,
                     internal.configuration(),
@@ -219,7 +219,7 @@ public interface ReconciliationContext {
      * @param configuration the config for computing resource changes.
      * @param isDryRun      specify if the reconciliation should be run in dry-run.
      */
-    record Default(List<ResourceSelector> selectors,
+    record Default(List<Selector> selectors,
                    Configuration configuration,
                    boolean isDryRun,
                    NamedValue.Set labels,

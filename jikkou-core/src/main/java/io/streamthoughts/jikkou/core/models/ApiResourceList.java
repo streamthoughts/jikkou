@@ -16,13 +16,22 @@
 package io.streamthoughts.jikkou.core.models;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.List;
-import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
+/**
+ * ApiResourceList.
+ * 
+ * @param kind          the Kind of the resources.
+ * @param apiVersion    the API Version of the resources.
+ * @param groupVersion  the API Group of the resources.
+ * @param resources     the list of resources.
+ */
 @Kind("ApiResourceList")
 @ApiVersion("v1")
 @JsonPropertyOrder({
@@ -31,12 +40,12 @@ import javax.validation.constraints.NotNull;
         "groupVersion",
         "resources"
 })
-public final class ApiResourceList implements Resource {
-
-    private final @NotNull String kind;
-    private final @NotNull String apiVersion;
-    private final @NotNull String groupVersion;
-    private final @NotNull List<ApiResource> resources;
+@Reflectable
+@JsonDeserialize
+public record ApiResourceList(@NotNull String kind,
+                              @NotNull String apiVersion,
+                              @NotNull String groupVersion,
+                              @NotNull List<ApiResource> resources) implements Resource {
 
     @ConstructorProperties({
             "kind",
@@ -44,72 +53,16 @@ public final class ApiResourceList implements Resource {
             "groupVersion",
             "resources"
     })
-    public ApiResourceList(@NotNull String kind,
-                           @NotNull String apiVersion,
-                           @NotNull String groupVersion,
-                           @NotNull List<ApiResource> resources) {
-        this.kind = kind;
-        this.apiVersion = apiVersion;
-        this.groupVersion = groupVersion;
-        this.resources = resources;
-    }
+    public ApiResourceList {}
 
     public ApiResourceList(@NotNull String groupVersion,
                            @NotNull List<ApiResource> resources) {
 
         this(
-                Resource.getKind(ApiGroupList.class),
-                Resource.getApiVersion(ApiGroupList.class),
+                Resource.getKind(ApiResourceList.class),
+                Resource.getApiVersion(ApiResourceList.class),
                 groupVersion,
                 resources
         );
     }
-
-    @Override
-    public @NotNull String getKind() {
-        return kind;
-    }
-
-    @Override
-    public @NotNull String getApiVersion() {
-        return apiVersion;
-    }
-
-    public @NotNull String getGroupVersion() {
-        return groupVersion;
-    }
-
-    public @NotNull List<ApiResource> getResources() {
-        return resources;
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ApiResourceList) obj;
-        return Objects.equals(this.kind, that.kind) &&
-                Objects.equals(this.apiVersion, that.apiVersion) &&
-                Objects.equals(this.groupVersion, that.groupVersion) &&
-                Objects.equals(this.resources, that.resources);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(kind, apiVersion, groupVersion, resources);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return "ApiResourceList[" +
-                "kind=" + kind + ", " +
-                "apiVersion=" + apiVersion + ", " +
-                "groupVersion=" + groupVersion + ", " +
-                "resources=" + resources + ']';
-    }
-
-
 }

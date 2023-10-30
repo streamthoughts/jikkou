@@ -40,7 +40,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor = factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         Assertions.assertEquals("Test", descriptor.kind());
     }
@@ -50,7 +50,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor = factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         Assertions.assertEquals("v1beta2", descriptor.apiVersion());
     }
@@ -60,7 +60,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor = factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         Assertions.assertEquals("test.jikkou.io", descriptor.group());
     }
@@ -70,7 +70,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor =factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor =factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         Assertions.assertEquals("Test description", descriptor.description());
     }
@@ -80,7 +80,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor = factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         Assertions.assertEquals("test", descriptor.singularName());
     }
@@ -90,7 +90,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor = factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         Assertions.assertTrue(descriptor.pluralName().isPresent());
         Assertions.assertEquals("tests", descriptor.pluralName().get());
@@ -101,7 +101,7 @@ class ResourceDescriptorFactoryTest {
         // Given
         Class<ResourceDescriptorTest.TestResource> resourceClass = ResourceDescriptorTest.TestResource.class;
         // When
-        ResourceDescriptor descriptor = factory.make(ResourceType.create(resourceClass), resourceClass);
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(resourceClass), resourceClass);
         // Then
         HashSet<String> shortNames = new HashSet<>();
         shortNames.add("t");

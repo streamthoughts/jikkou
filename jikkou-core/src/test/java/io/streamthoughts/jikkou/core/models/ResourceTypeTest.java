@@ -22,15 +22,15 @@ class ResourceTypeTest {
 
     @Test
     void should_create_given_kind_only() {
-        ResourceType type = ResourceType.create("KafkaTopicList", null);
-        Assertions.assertEquals("KafkaTopicList", type.getKind());
+        ResourceType type = ResourceType.of("KafkaTopicList", null);
+        Assertions.assertEquals("KafkaTopicList", type.kind());
     }
 
     @Test
     void should_create_given_kind_and_version() {
-        ResourceType type = ResourceType.create("KafkaTopicList", "kafka.jikkou.io/v1beta2");
-        Assertions.assertEquals("KafkaTopicList", type.getKind());
-        Assertions.assertEquals("v1beta2", type.getApiVersion());
-        Assertions.assertEquals("kafka.jikkou.io", type.getGroup());
+        ResourceType type = ResourceType.of("KafkaTopicList", "kafka.jikkou.io/v1beta2");
+        Assertions.assertEquals("KafkaTopicList", type.kind());
+        Assertions.assertEquals("v1beta2", type.apiVersion());
+        Assertions.assertEquals("kafka.jikkou.io", type.group());
     }
 }

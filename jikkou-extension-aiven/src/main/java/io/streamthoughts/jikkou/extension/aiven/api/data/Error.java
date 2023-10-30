@@ -23,7 +23,7 @@ import java.beans.ConstructorProperties;
  *
  * @param message   Printable error message
  * @param moreInfo  URL to the documentation of the error.
- * @param status    HTTP error status code
+ * @param status    HTTP error status name
  * @param errorCode Machine-readable error_code
  */
 @Reflectable

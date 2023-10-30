@@ -17,10 +17,12 @@ package io.streamthoughts.jikkou.core.resource.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.TestResource;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.transform.Transformation;
+import io.streamthoughts.jikkou.core.transform.TransformationChain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +39,7 @@ class ResourceTransformationChainTest {
         List<Integer> calls = new ArrayList<>();
 
         // Given
-        ResourceTransformationChain chain = new ResourceTransformationChain(List.of(
+        TransformationChain chain = new TransformationChain(List.of(
                 newTransformation(3, () -> calls.add(3)),
                 newTransformation(0, () -> calls.add(0)),
                 newTransformation(2, () -> calls.add(2)),
@@ -46,7 +48,7 @@ class ResourceTransformationChainTest {
         // When
         chain.transform(
                 new TestResource(),
-                new GenericResourceListObject<>(Collections.emptyList()),
+                new DefaultResourceListObject<>(Collections.emptyList()),
                 ReconciliationContext.Default.EMPTY
         );
 
@@ -54,8 +56,8 @@ class ResourceTransformationChainTest {
         Assertions.assertEquals(List.of(0, 1, 2, 3), calls);
     }
 
-    private ResourceTransformation<HasMetadata> newTransformation(int priority, Runnable onTransformation) {
-        return new ResourceTransformation<>() {
+    private Transformation<HasMetadata> newTransformation(int priority, Runnable onTransformation) {
+        return new Transformation<>() {
 
             @Override
             public boolean canAccept(@NotNull ResourceType type) {

@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.kafka.transform;
 import static io.streamthoughts.jikkou.core.models.CoreAnnotations.JIKKOU_IO_TRANSFORM_PREFIX;
 import static io.streamthoughts.jikkou.kafka.internals.KafkaTopics.NO_REPLICATION_FACTOR;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasPriority;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Optional;
@@ -37,8 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * This transformation can be used to enforce a minimum number of replicas for a kafka topic.
  */
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@AcceptsResource(type = V1KafkaTopic.class)
-public class KafkaTopicMinReplicasTransformation implements ResourceTransformation<V1KafkaTopic> {
+@HandledResource(type = V1KafkaTopic.class)
+public class KafkaTopicMinReplicasTransformation implements Transformation<V1KafkaTopic> {
 
     public static final String JIKKOU_IO_KAFKA_MIN_REPLICAS = JIKKOU_IO_TRANSFORM_PREFIX + "/kafka-min-replicas";
 

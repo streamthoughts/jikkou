@@ -112,6 +112,16 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
      * {@inheritDoc}
      **/
     @Override
+    public <T> Optional<T> findExtension(@NotNull Class<T> type, @Nullable Qualifier<T> qualifier) {
+        return registry.findDescriptorByClass(type, qualifier)
+                .map(registry::getExtensionSupplier)
+                .map(supplier -> supplier.get(configuration));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public <T> T getExtension(@NotNull String type) {
         return getExtension(type, null);
     }
@@ -168,6 +178,14 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
                 .map(this.registry::getExtensionSupplier)
                 .map(supplier -> supplier.get(configuration))
                 .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ExtensionDescriptor<?>> getAllDescriptors() {
+        return this.registry.getAllDescriptors();
     }
 
     /**

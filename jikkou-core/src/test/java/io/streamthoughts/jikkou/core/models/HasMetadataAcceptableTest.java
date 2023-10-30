@@ -18,10 +18,8 @@ package io.streamthoughts.jikkou.core.models;
 import static io.streamthoughts.jikkou.core.models.HasMetadataAcceptable.getAcceptedResources;
 
 import io.streamthoughts.jikkou.core.TestResource;
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
-import io.streamthoughts.jikkou.core.resource.converter.ResourceConverter;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +33,7 @@ class HasMetadataAcceptableTest {
         // Then
         Assertions.assertNotNull(types);
         Assertions.assertEquals(1, types.size());
-        Assertions.assertEquals(ResourceType.create(TestResource.class), types.get(0));
+        Assertions.assertEquals(ResourceType.of(TestResource.class), types.get(0));
     }
 
     @Test
@@ -43,20 +41,7 @@ class HasMetadataAcceptableTest {
         // Given
         TestHasMetadataAcceptable acceptable = new TestHasMetadataAcceptable();
         // When - Then
-        Assertions.assertTrue(acceptable.canAccept(ResourceType.create(TestResource.class)));
-    }
-
-    @Test
-    void shouldReturnResourceConverter() {
-        // Given
-        TestHasMetadataAcceptable acceptable = new TestHasMetadataAcceptable();
-
-        // When
-        ResourceConverter<HasMetadata, HasMetadata> converter = acceptable
-                .getResourceConverter(new TestResource());
-
-        Assertions.assertNotNull(converter);
-        Assertions.assertEquals(TestResourceConverter.class, converter.getClass());
+        Assertions.assertTrue(acceptable.canAccept(ResourceType.of(TestResource.class)));
     }
 
     @Test
@@ -65,25 +50,13 @@ class HasMetadataAcceptableTest {
         TestHasMetadataAcceptableWithKindOnly acceptable = new TestHasMetadataAcceptableWithKindOnly();
 
         // When / Then
-        Assertions.assertTrue(acceptable.canAccept(ResourceType.create(TestResource.class)));
+        Assertions.assertTrue(acceptable.canAccept(ResourceType.of(TestResource.class)));
     }
 
-    @AcceptsResource(type = TestResource.class, converter = TestResourceConverter.class)
+    @HandledResource(type = TestResource.class)
     public static class TestHasMetadataAcceptable implements HasMetadataAcceptable { }
 
-    @AcceptsResource(kind = "Test")
+    @HandledResource(kind = "Test")
     public static class TestHasMetadataAcceptableWithKindOnly implements HasMetadataAcceptable { }
 
-    public static class TestResourceConverter implements ResourceConverter<TestResource, TestResource> {
-
-        @Override
-        public @NotNull List<TestResource> convertFrom(@NotNull List<TestResource> resources) {
-            return null;
-        }
-
-        @Override
-        public @NotNull List<TestResource> convertTo(@NotNull List<TestResource> resources) {
-            return null;
-        }
-    }
 }

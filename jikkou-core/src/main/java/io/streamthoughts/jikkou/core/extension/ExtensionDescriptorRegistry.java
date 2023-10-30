@@ -28,6 +28,13 @@ import org.jetbrains.annotations.Nullable;
 public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
 
     /**
+     * Gets all the registered descriptors.
+     *
+     * @return the collection of {@link ExtensionDescriptor}.
+     */
+    List<ExtensionDescriptor<?>> getAllDescriptors();
+
+    /**
      * Finds all {@link ExtensionDescriptor} registered for the specified type.
      *
      * @param type the extension class.
@@ -44,7 +51,7 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
      * @return the collection of {@link ExtensionDescriptor}.
      */
     <T> List<ExtensionDescriptor<T>> findAllDescriptorsByClass(@NotNull final Class<T> type,
-                                                                                       @Nullable final Qualifier<T> qualifier);
+                                                               @Nullable final Qualifier<T> qualifier);
 
     /**
      * Finds all {@link ExtensionDescriptor} registered for the specified alias.
@@ -63,7 +70,7 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
      * @return the collection of {@link ExtensionDescriptor}.
      */
     <T> List<ExtensionDescriptor<T>> findAllDescriptorsByAlias(@NotNull final String alias,
-                                                                                       @Nullable final Qualifier<T> qualifier);
+                                                               @Nullable final Qualifier<T> qualifier);
 
     /**
      * Finds a {@link ExtensionDescriptor} for the specified type.
@@ -85,7 +92,7 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
      * @throws NoUniqueExtensionException if more than one extension is registered for the given type.
      */
     <T> Optional<ExtensionDescriptor<T>> findDescriptorByAlias(@NotNull final String alias,
-                                                                                 @Nullable final Qualifier<T> qualifier);
+                                                               @Nullable final Qualifier<T> qualifier);
 
     /**
      * Finds a {@link ExtensionDescriptor} for the specified type.
@@ -107,7 +114,7 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
      * @throws NoUniqueExtensionException if more than one extension is registered for the given type.
      */
     <T> Optional<ExtensionDescriptor<T>> findDescriptorByClass(@NotNull final Class<T> type,
-                                                                                 @Nullable final Qualifier<T> qualifier);
+                                                               @Nullable final Qualifier<T> qualifier);
 
 
     <T> ExtensionSupplier<T> getExtensionSupplier(ExtensionDescriptor<T> descriptor);
@@ -124,7 +131,7 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
     /**
      * Duplicates this registry.
      *
-     * @return  a new {@link ExtensionDescriptorRegistry} instance.
+     * @return a new {@link ExtensionDescriptorRegistry} instance.
      */
     ExtensionDescriptorRegistry duplicate();
 }

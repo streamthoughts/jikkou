@@ -29,7 +29,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ServiceInformationResponse;
-import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.http.client.RestClientException;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -97,8 +97,8 @@ public final class AivenServiceHealthIndicator implements HealthIndicator, Confi
             if (!response.errors().isEmpty()) {
                 return new Health.Builder()
                         .unknown()
-                        .withName(HEALTH_NAME)
-                        .withDetails(Map.of(
+                        .name(HEALTH_NAME)
+                        .details(Map.of(
                                 "message", response.message(),
                                 "errors", response.errors()
                         ))
@@ -117,9 +117,9 @@ public final class AivenServiceHealthIndicator implements HealthIndicator, Confi
 
             return new Health.Builder()
                     .up()
-                    .withName(HEALTH_NAME)
-                    .withDetails("resource", getUrn())
-                    .withDetails("service", details)
+                    .name(HEALTH_NAME)
+                    .details("resource", getUrn())
+                    .details("service", details)
                     .build();
         } catch (RestClientException e) {
             String response;
@@ -131,16 +131,16 @@ public final class AivenServiceHealthIndicator implements HealthIndicator, Confi
             }
             return new Health.Builder()
                     .down()
-                    .withName(HEALTH_NAME)
-                    .withDetails("resource", getUrn())
-                    .withDetails(Map.of("response", response))
+                    .name(HEALTH_NAME)
+                    .details("resource", getUrn())
+                    .details(Map.of("response", response))
                     .build();
         } catch (Exception e) {
             return new Health.Builder()
                     .down()
-                    .withName(HEALTH_NAME)
-                    .withDetails("resource", getUrn())
-                    .withDetails(Map.of("message", "An unexpected error has occurred while retrieving the information."))
+                    .name(HEALTH_NAME)
+                    .details("resource", getUrn())
+                    .details(Map.of("message", "An unexpected error has occurred while retrieving the information."))
                     .build();
         } finally {
             api.close(); // make sure api is closed after catching exception

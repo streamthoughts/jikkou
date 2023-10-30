@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.kafka.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
@@ -40,13 +41,13 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaTopic
  * <p>
- * The KafkaTopic resource allows creating and managing topics in a Kafka cluster.
+ * KafkaTopic resources provide a way of managing topics in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The KafkaTopic resource allows creating and managing topics in a Kafka cluster.")
+@Description("KafkaTopic resources provide a way of managing topics in a Kafka cluster.")
 @Names(singular = "kafkatopic", plural = "kafkatopics", shortNames = {
     "kt"
 })
@@ -89,11 +90,14 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
     @Builder.Default
     private String kind = "KafkaTopic";
     /**
-     * 
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
      * (Required)
      * 
      */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
     @JsonProperty("template")
     private ObjectTemplate template;
@@ -157,7 +161,9 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
     }
 
     /**
-     * 
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
      * (Required)
      * 
      */

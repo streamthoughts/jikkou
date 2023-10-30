@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.common.utils;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * A immutable tuple of two elements.
@@ -49,6 +50,10 @@ public record Pair<T1, T2>(T1 _1, T2 _2) {
 
     public <R> Pair<T1, R> mapRight(Function<? super T2, ? extends R> mapper) {
         return new Pair<>(_1, mapper.apply(_2));
+    }
+
+    public Stream<Pair<T1, T2>> stream() {
+        return Stream.of(this);
     }
 
     /**

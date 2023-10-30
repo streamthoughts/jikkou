@@ -62,8 +62,9 @@ public final class JikkouContext {
      * @param extensionFactory the extension factory.
      */
     public JikkouContext(@NotNull final Configuration configuration,
-                         @NotNull final ExtensionFactory extensionFactory) {
-        this(configuration, extensionFactory, new ArrayList<>());
+                         @NotNull final ExtensionFactory extensionFactory,
+                         @NotNull final ResourceRegistry resourceRegistry) {
+        this(configuration, extensionFactory,resourceRegistry,  new ArrayList<>());
     }
 
     /**
@@ -75,10 +76,12 @@ public final class JikkouContext {
      */
     public JikkouContext(@NotNull final Configuration configuration,
                          @NotNull final ExtensionFactory extensionFactory,
+                         @NotNull final ResourceRegistry resourceRegistry,
                          @NotNull final List<String> extensionPaths) {
         this.configuration = Objects.requireNonNull(configuration, "'configuration' must not be null");
         this.extensionPaths = Objects.requireNonNull(extensionPaths, "'extensionPaths' must not be null");
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "'extensionFactory' must not be null");
+        this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "'resourceRegistry' must not be null");
 
         Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.evaluate(configuration);
         LOG.info("Start context initialization ({}={}).", EXTENSIONS_PROVIDER_DEFAULT_ENABLED.key(), extensionEnabledByDefault);
@@ -97,30 +100,27 @@ public final class JikkouContext {
                         );
                     }
                 });
-
-
-        resourceRegistry = new DefaultResourceRegistry();
         loadAllServices(ResourceProvider.class, cls)
-            .stream()
-            .flatMap(resourceProvider -> {
-                final String name = resourceProvider.getName();
-                LOG.info("Loading resources from ResourceProvider '{}'", name);
-                Boolean extensionEnabled = isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault);
-                if (!extensionEnabled) {
-                    LOG.info(
-                            "Resources for group '{}' are disabled (config setting 'extensions.provider.{}.enabled' is set to 'false').",
-                            name,
-                            name
-                    );
-                }
-                var registry = new DefaultResourceRegistry(false);
-                resourceProvider.registerAll(registry);
-                return registry.getAllResourceDescriptors()
-                        .stream()
-                        .peek(descriptor -> descriptor.isEnabled(extensionEnabled));
+                .stream()
+                .flatMap(resourceProvider -> {
+                    final String name = resourceProvider.getName();
+                    LOG.info("Loading resources from ResourceProvider '{}'", name);
+                    Boolean extensionEnabled = isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault);
+                    if (!extensionEnabled) {
+                        LOG.info(
+                                "Resources for group '{}' are disabled (config setting 'extensions.provider.{}.enabled' is set to 'false').",
+                                name,
+                                name
+                        );
+                    }
+                    var registry = new DefaultResourceRegistry(false);
+                    resourceProvider.registerAll(registry);
+                    return registry.getAllResourceDescriptors()
+                            .stream()
+                            .peek(descriptor -> descriptor.isEnabled(extensionEnabled));
 
-            })
-            .forEach(resourceRegistry::register);
+                })
+                .forEach(resourceRegistry::register);
 
         resourceRegistry.getAllResourceDescriptors()
                 .stream()
@@ -155,15 +155,20 @@ public final class JikkouContext {
      *
      * @return an {@link ResourceRegistry} instance.
      */
-    public @NotNull ResourceRegistry getResourceContext() {
+    public @NotNull ResourceRegistry getResourceRegistry() {
         return resourceRegistry;
     }
 
     public JikkouApi createApi(ApiConfigurator... configurators) {
+        return createApi(new DefaultApi.Builder(extensionFactory, resourceRegistry), configurators);
+    }
+
+    public <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> A createApi(B builder,
+                                                                                   ApiConfigurator... configurators) {
         LOG.info("Start JikkouApi configuration.");
-        DefaultApi api = ApiConfigurator.emptyList()
+        A api = ApiConfigurator.emptyList()
                 .with(configurators)
-                .configure(DefaultApi.builder(extensionFactory, resourceRegistry), configuration)
+                .configure(builder, configuration)
                 .build();
         LOG.info("JikkouApi configuration completed.");
         return api;

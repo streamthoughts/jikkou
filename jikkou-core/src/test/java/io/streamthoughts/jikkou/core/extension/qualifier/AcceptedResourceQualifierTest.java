@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
@@ -31,7 +31,7 @@ class AcceptedResourceQualifierTest {
     @Test
     void shouldFilterDescriptorsForMatchingResourceType() {
         AcceptedResourceQualifier<TestExtension> qualifier = new AcceptedResourceQualifier<>(
-                ResourceType.create("Foo", "test.jikkou.io/v1"));
+                ResourceType.of("Foo", "test.jikkou.io/v1"));
 
         ExtensionDescriptor<TestExtension> descriptor = getDescriptor(TestExtension.class);
         Stream<ExtensionDescriptor<TestExtension>> filtered = qualifier.filter(TestExtension.class, Stream.of(descriptor));
@@ -42,7 +42,7 @@ class AcceptedResourceQualifierTest {
     @Test
     void shouldFilterDescriptorsForNotMatchingResourceType() {
         AcceptedResourceQualifier<TestExtension> qualifier = new AcceptedResourceQualifier<>(
-                ResourceType.create("Dummy", "test.jikkou.io/v1"));
+                ResourceType.of("Dummy", "test.jikkou.io/v1"));
 
         ExtensionDescriptor<TestExtension> descriptor = getDescriptor(TestExtension.class);
         Stream<ExtensionDescriptor<TestExtension>> filtered = qualifier.filter(TestExtension.class, Stream.of(descriptor));
@@ -54,7 +54,7 @@ class AcceptedResourceQualifierTest {
         return factory.make(clazz, () -> null);
     }
 
-    @AcceptsResource(apiVersion = "test.jikkou.io/v1", kind = "Bar")
-    @AcceptsResource(apiVersion = "test.jikkou.io/v1", kind = "Foo")
+    @HandledResource(apiVersion = "test.jikkou.io/v1", kind = "Bar")
+    @HandledResource(apiVersion = "test.jikkou.io/v1", kind = "Foo")
     public static class TestExtension implements Extension { }
 }

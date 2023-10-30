@@ -20,10 +20,12 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.streamthoughts</groupId>
-        <artifactId>jikkou</artifactId>
+        <artifactId>jikkou-parent</artifactId>
         <version>0.31.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <name>Jikkou Template :: Jinja</name>
     <artifactId>jikkou-template-jinja</artifactId>
 
     <properties>

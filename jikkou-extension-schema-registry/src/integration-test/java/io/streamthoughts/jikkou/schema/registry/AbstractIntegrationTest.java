@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry;
 
-import io.streamthoughts.jikkou.rest.client.RestClientBuilder;
+import io.streamthoughts.jikkou.http.client.RestClientBuilder;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;

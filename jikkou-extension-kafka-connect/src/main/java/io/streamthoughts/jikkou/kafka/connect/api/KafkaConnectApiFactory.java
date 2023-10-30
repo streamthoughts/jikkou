@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.connect.api;
 
 import io.streamthoughts.jikkou.common.utils.Encoding;
-import io.streamthoughts.jikkou.rest.client.RestClientBuilder;
+import io.streamthoughts.jikkou.http.client.RestClientBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;

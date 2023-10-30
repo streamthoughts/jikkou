@@ -18,11 +18,11 @@ package io.streamthoughts.jikkou.kafka.connect.validation;
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels.KAFKA_CONNECT_CLUSTER;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.ArrayList;
@@ -31,8 +31,8 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @Enabled
-@AcceptsResource(type = V1KafkaConnector.class)
-public class KafkaConnectorResourceValidation implements ResourceValidation<V1KafkaConnector> {
+@HandledResource(type = V1KafkaConnector.class)
+public class KafkaConnectorResourceValidation implements Validation<V1KafkaConnector> {
 
     /**
      * {@inheritDoc}

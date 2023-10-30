@@ -16,7 +16,10 @@
 package io.streamthoughts.jikkou.core.models;
 
 
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.models.generics.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ *
+ * @param <E>
+ */
+@Reflectable
+@JsonDeserialize(as = GenericResourceListObject.class)
 public interface ResourceListObject<E extends HasMetadata>
         extends HasItems,
         Listeable<E>,
@@ -45,7 +54,11 @@ public interface ResourceListObject<E extends HasMetadata>
     @Override
     ObjectMeta getMetadata();
 
-    default Map<String, E> groupByName() {
+    /**
+     * Gets the resources grouped keyed by name.
+     * @return  the resources.
+     */
+    default Map<String, E> keyByName() {
         return getItems()
                 .stream()
                 .collect(Collectors.toMap(i -> i.getMetadata().getName(), i -> i));
@@ -58,45 +71,45 @@ public interface ResourceListObject<E extends HasMetadata>
      * @return the filtered resources.
      */
     @SuppressWarnings("unchecked")
-    default List<E> getAllMatching(final @NotNull List<ResourceSelector> selectors) {
+    default List<E> getAllMatching(final @NotNull List<Selector> selectors) {
         return (List<E>) HasItems.super.getAllMatching(selectors);
     }
 
     /**
-     * Gets the {@link GenericResourceListObject} matching the given kind.
+     * Gets the {@link DefaultResourceListObject} matching the given kind.
      *
      * @param resourceClass the class of the resource.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<E> getAllByKind(Class<? extends HasMetadata> resourceClass) {
         return getAllByKind(Resource.getKind(resourceClass));
     }
 
     /**
-     * Gets the {@link GenericResourceListObject} matching the given kind.
+     * Gets the {@link DefaultResourceListObject} matching the given kind.
      *
      * @param kind the Kind of the resource.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<E> getAllByKind(@NotNull final String kind) {
         return getAllByKinds(kind);
     }
 
     /**
-     * Gets the {@link GenericResourceListObject} matching the given kinds.
+     * Gets the {@link DefaultResourceListObject} matching the given kinds.
      *
      * @param kinds the list of Kinds of the resources.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<E> getAllByKinds(@NotNull final String... kinds) {
         return getAllByKinds(Arrays.asList(kinds));
     }
 
     /**
-     * Gets the {@link GenericResourceListObject} matching the given kinds.
+     * Gets the {@link DefaultResourceListObject} matching the given kinds.
      *
      * @param kinds the list of Kinds of the resources.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     @SuppressWarnings("unchecked")
     default List<E> getAllByKinds(@NotNull final List<String> kinds) {
@@ -104,10 +117,10 @@ public interface ResourceListObject<E extends HasMetadata>
     }
 
     /**
-     * Gets the {@link GenericResourceListObject} matching the given version.
+     * Gets the {@link DefaultResourceListObject} matching the given version.
      *
      * @param version the Version of the resource.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     @SuppressWarnings("unchecked")
     default List<E> getAllByApiVersion(@NotNull final String version) {

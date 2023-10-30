@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.extension.ExtensionAttribute;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.Qualifier;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 public final class AcceptedResourceQualifier<T> implements Qualifier<T> {
 
-    private static final String METADATA_ATTRIBUTE_NAME = AcceptsResource.class
+    private static final String METADATA_ATTRIBUTE_NAME = HandledResource.class
             .getSimpleName()
             .toLowerCase(Locale.ROOT);
 
@@ -79,13 +79,13 @@ public final class AcceptedResourceQualifier<T> implements Qualifier<T> {
         ResourceType resourceType = null;
 
         if (type != HasMetadata.class) {
-            resourceType = ResourceType.create(type);
+            resourceType = ResourceType.of(type);
         }
         else if (!Strings.isBlank(apiVersion)) {
-            resourceType = ResourceType.create(kind, apiVersion);
+            resourceType = ResourceType.of(kind, apiVersion);
         }
         else if (!Strings.isBlank(kind)) {
-            resourceType = ResourceType.create(kind);
+            resourceType = ResourceType.of(kind);
         }
 
         return equals == Objects.equals(this.type, resourceType);
@@ -116,10 +116,10 @@ public final class AcceptedResourceQualifier<T> implements Qualifier<T> {
     @Override
     public String toString() {
         return "@AcceptedResource(apiVersion="
-                + type.getGroup()
+                + type.group()
                 + "/"
-                + type.getApiVersion()
-                + ", kind=" + type.getKind()
+                + type.apiVersion()
+                + ", kind=" + type.kind()
                 + ")";
     }
 }

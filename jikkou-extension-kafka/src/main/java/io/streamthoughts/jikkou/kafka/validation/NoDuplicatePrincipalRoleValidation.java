@@ -15,28 +15,28 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @Enabled
-@AcceptsResource(type = V1KafkaPrincipalRole.class)
-public class NoDuplicatePrincipalRoleValidation implements ResourceValidation<V1KafkaPrincipalRole> {
+@HandledResource(type = V1KafkaPrincipalRole.class)
+public class NoDuplicatePrincipalRoleValidation implements Validation<V1KafkaPrincipalRole> {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public ValidationResult validate(@NotNull List<V1KafkaPrincipalRole> resources) throws ValidationException {
-        GenericResourceListObject<V1KafkaPrincipalRole> list = new GenericResourceListObject<>(resources);
+        DefaultResourceListObject<V1KafkaPrincipalRole> list = new DefaultResourceListObject<>(resources);
         try {
             list.verifyNoDuplicateMetadataName();
             return ValidationResult.success();

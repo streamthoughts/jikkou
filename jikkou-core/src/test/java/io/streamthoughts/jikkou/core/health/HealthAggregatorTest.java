@@ -26,13 +26,13 @@ class HealthAggregatorTest {
     @Test
     void should_successfully_aggregate_healths_with_name() {
         var aggregate = aggregator.aggregate("test", List.of(
-                Health.builder().up().withName("OK").build(),
-                Health.builder().down().withName("KO").build()
+                Health.builder().up().name("OK").build(),
+                Health.builder().down().name("KO").build()
         ));
 
-        Status status = aggregate.getStatus();
+        HealthStatus status = aggregate.getStatus();
         Assertions.assertEquals("test", aggregate.getName());
-        Assertions.assertEquals(Status.DOWN, status);
+        Assertions.assertEquals(HealthStatus.DOWN, status);
     }
 
     @Test

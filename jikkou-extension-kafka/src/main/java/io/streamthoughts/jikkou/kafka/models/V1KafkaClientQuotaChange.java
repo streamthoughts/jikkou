@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.kafka.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
@@ -74,11 +75,14 @@ public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthou
     @Builder.Default
     private String kind = "KafkaClientQuotaChange";
     /**
-     * 
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
      * (Required)
      * 
      */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
     @JsonProperty("change")
     private io.streamthoughts.jikkou.kafka.change.QuotaChange change;
@@ -132,7 +136,9 @@ public class V1KafkaClientQuotaChange implements HasMetadataChange<io.streamthou
     }
 
     /**
-     * 
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
      * (Required)
      * 
      */

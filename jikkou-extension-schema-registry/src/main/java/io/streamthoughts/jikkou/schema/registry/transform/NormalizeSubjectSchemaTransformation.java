@@ -16,12 +16,12 @@
 package io.streamthoughts.jikkou.schema.registry.transform;
 
 import io.streamthoughts.jikkou.common.utils.Json;
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasPriority;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@AcceptsResource(kind = "SchemaRegistrySubject")
+@HandledResource(kind = "SchemaRegistrySubject")
 @Enabled
-public class NormalizeSubjectSchemaTransformation implements ResourceTransformation<V1SchemaRegistrySubject> {
+public class NormalizeSubjectSchemaTransformation implements Transformation<V1SchemaRegistrySubject> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NormalizeSubjectSchemaTransformation.class);
 

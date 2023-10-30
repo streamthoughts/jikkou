@@ -60,14 +60,13 @@ public class GetCommandLineFactory {
 
         List<ApiResourceList> apiResourceLists = api.listApiResources();
         Map<String, List<String>> sections = new LinkedHashMap<>();
-
         for (ApiResourceList apiResourceList : apiResourceLists) {
-            List<ApiResource> resources = apiResourceList.getResources()
+            List<ApiResource> resources = apiResourceList.resources()
                     .stream()
                     .filter(it -> it.isVerbSupported(Verb.LIST))
                     .toList();
             for (ApiResource resource : resources) {
-                ResourceType type = ResourceType.create(resource.kind(), apiResourceList.getGroupVersion());
+                ResourceType type = ResourceType.of(resource.kind(), apiResourceList.groupVersion());
 
                 // Create command for the current resource
                 final GetResourceCommand command = applicationContext.getBean(GetResourceCommand.class);
@@ -97,7 +96,7 @@ public class GetCommandLineFactory {
                     }
                 }
                 cmd.addSubcommand(subcommand);
-                sections.computeIfAbsent("%nResources for group '" + type.getGroup() + "': %n%n", k -> new ArrayList<>())
+                sections.computeIfAbsent("%nResources for group '" + type.group() + "': %n%n", k -> new ArrayList<>())
                         .add(subcommand.getCommandName());
             }
         }

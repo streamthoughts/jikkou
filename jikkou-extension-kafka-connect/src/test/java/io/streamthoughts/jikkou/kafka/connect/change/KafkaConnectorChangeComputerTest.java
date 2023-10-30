@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.connect.change;
 
 import io.streamthoughts.jikkou.core.models.Configs;
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
@@ -65,7 +65,7 @@ class KafkaConnectorChangeComputerTest {
                 List.of(newConnector));
 
         // Then
-        GenericResourceChange<Change> change = GenericResourceChange
+        DefaultResourceChange<Change> change = DefaultResourceChange
                 .builder()
                 .withMetadata(ObjectMeta
                     .builder()
@@ -139,7 +139,7 @@ class KafkaConnectorChangeComputerTest {
                 List.of(newConnector));
 
         // Then
-        GenericResourceChange<Change> change = GenericResourceChange
+        DefaultResourceChange<Change> change = DefaultResourceChange
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()

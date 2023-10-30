@@ -39,9 +39,9 @@ class SchemaRegistryHealthIndicatorTest extends AbstractIntegrationTest {
         // Then
         Health expected = Health.builder()
                 .up()
-                .withName("schemaregistry")
-                .withDetails("schema.registry.url", getSchemaRegistryClientConfiguration().getSchemaRegistryUrl())
-                .withDetails("http.response.status", 200)
+                .name("schemaregistry")
+                .details("schema.registry.url", getSchemaRegistryClientConfiguration().getSchemaRegistryUrl())
+                .details("http.response.status", 200)
                 .build();
         Assertions.assertEquals(expected, health);
     }

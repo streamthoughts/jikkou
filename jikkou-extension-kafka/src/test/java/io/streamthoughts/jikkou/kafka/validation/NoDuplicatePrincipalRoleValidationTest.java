@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.validation;
 
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

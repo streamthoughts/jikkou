@@ -79,7 +79,14 @@ public class V1KafkaPrincipalRole implements HasMetadata, HasSpec<V1KafkaPrincip
     @JsonProperty("kind")
     @Builder.Default
     private String kind = "KafkaPrincipalRole";
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
     @JsonProperty("template")
     private ObjectTemplate template;
@@ -143,6 +150,12 @@ public class V1KafkaPrincipalRole implements HasMetadata, HasSpec<V1KafkaPrincip
         return kind;
     }
 
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
     public ObjectMeta getMetadata() {
         return metadata;

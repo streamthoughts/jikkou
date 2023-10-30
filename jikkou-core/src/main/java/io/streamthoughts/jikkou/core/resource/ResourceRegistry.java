@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.resource;
 
-import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,7 @@ public interface ResourceRegistry {
      * @param resource the resource class to register.
      * @return the resource descriptor.
      */
-    ResourceDescriptor register(Class<? extends HasMetadata> resource, ResourceType type);
+    ResourceDescriptor register(Class<? extends Resource> resource, ResourceType type);
 
     /**
      * Registers the resource for the given version to the context.
@@ -39,7 +39,7 @@ public interface ResourceRegistry {
      * @param resource the resource class to register.
      * @return the resource descriptor.
      */
-    ResourceDescriptor register(Class<? extends HasMetadata> resource, String version);
+    ResourceDescriptor register(Class<? extends Resource> resource, String version);
 
     /**
      * Registers the given resource type to the context.
@@ -47,7 +47,7 @@ public interface ResourceRegistry {
      * @param resource the resource class to register.
      * @return the resource descriptor.
      */
-    ResourceDescriptor register(Class<? extends HasMetadata> resource);
+    ResourceDescriptor register(Class<? extends Resource> resource);
 
     /**
      * Registers the given resource descriptor to the context.
@@ -69,7 +69,6 @@ public interface ResourceRegistry {
      * @return all the registered resource type.
      */
     List<ResourceDescriptor> getAllResourceDescriptors();
-
 
     /**
      * Finds a descriptor for the specified resource information.

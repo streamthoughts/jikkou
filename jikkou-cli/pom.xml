@@ -17,19 +17,21 @@ limitations under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>jikkou</artifactId>
-        <groupId>io.streamthoughts</groupId>
-        <version>0.31.0-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.streamthoughts</groupId>
+        <artifactId>jikkou-parent</artifactId>
+        <version>0.31.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
     <artifactId>jikkou-cli</artifactId>
 
-    <name>jikkou-cli</name>
+    <name>Jikkou CLI</name>
 
     <description>
-        Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources for any kafka infrastructure
+        Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and
+        provision resources for any kafka infrastructure
     </description>
 
     <packaging>${packaging}</packaging>
@@ -39,26 +41,36 @@ limitations under the License.
         <app.distribution.directory>${project.basedir}/../dist</app.distribution.directory>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
         <ascii-table.version>1.8.0</ascii-table.version>
-        <micronaut.version>3.10.1</micronaut.version>
-        <micronaut-parent.version>3.10.1</micronaut-parent.version>
+        <executable-suffix/>
+        <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
+        <!-- Micronaut -->
+        <micronaut.version>4.1.6</micronaut.version>
+        <micronaut.core.version>4.1.6</micronaut.core.version>
         <micronaut-maven-plugin.version>4.0.7</micronaut-maven-plugin.version>
-        <micronaut-picocli-bom.version>5.0.1</micronaut-picocli-bom.version>
+        <micronaut-picocli-bom.version>5.1.0</micronaut-picocli-bom.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
-        <executable-suffix/>
+        <!-- Native -->
         <imageName>jikkou</imageName>
         <graalvm.build.arg>--verbose</graalvm.build.arg>
-        <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
-        <micronaut-serde-processor.version>1.5.3</micronaut-serde-processor.version>
+        <native.maven.plugin.version>0.9.28</native.maven.plugin.version>
+        <exec.mainClass>io.streamthoughts.jikkou.client.Jikkou</exec.mainClass>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!-- Micronaut -->
             <dependency>
-                <groupId>io.micronaut</groupId>
+                <groupId>io.micronaut.platform</groupId>
                 <artifactId>micronaut-parent</artifactId>
-                <version>${micronaut-parent.version}</version>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-core-bom</artifactId>
+                <version>${micronaut.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -85,10 +97,20 @@ limitations under the License.
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-rest-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jikkou-template-jinja</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- START dependencies for Jikkou Extensions -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-extension-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jikkou-extension-kafka</artifactId>
@@ -117,23 +139,12 @@ limitations under the License.
         <!-- START dependencies for Micronaut/Picocli -->
         <dependency>
             <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-inject</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.micronaut</groupId>
             <artifactId>micronaut-jackson-databind</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-runtime</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.micronaut</groupId>
-                    <artifactId>micronaut-jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -144,7 +155,29 @@ limitations under the License.
             <groupId>io.micronaut.picocli</groupId>
             <artifactId>micronaut-picocli</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <!-- END dependencies for Micronaut -->
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Support for AWS MSK Apache Kafka Managed Service -->
         <dependency>
@@ -232,11 +265,6 @@ limitations under the License.
                     <useIncrementalCompilation>false</useIncrementalCompilation>
                     <annotationProcessorPaths combine.children="append">
                         <path>
-                            <groupId>io.micronaut.serde</groupId>
-                            <artifactId>micronaut-serde-processor</artifactId>
-                            <version>${micronaut-serde-processor.version}</version>
-                        </path>
-                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
@@ -249,11 +277,6 @@ limitations under the License.
                         <path>
                             <groupId>io.micronaut</groupId>
                             <artifactId>micronaut-inject-java</artifactId>
-                            <version>${micronaut.version}</version>
-                        </path>
-                        <path>
-                            <groupId>io.micronaut</groupId>
-                            <artifactId>micronaut-validation</artifactId>
                             <version>${micronaut.version}</version>
                         </path>
                         <path>
@@ -300,7 +323,7 @@ limitations under the License.
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>io.streamthoughts.jikkou.client.Jikkou</mainClass>
+                                    <mainClass>${exec.mainClass}</mainClass>
                                     <manifestEntries>
                                         <Implementation-Title>Jikkou</Implementation-Title>
                                         <Implementation-Version>${project.version}</Implementation-Version>
@@ -389,11 +412,34 @@ limitations under the License.
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
+                        <version>${native.maven.plugin.version}</version>
                         <configuration>
+                            <mainClass>${exec.mainClass}</mainClass>
                             <buildArgs combine.children="append">
                                 <buildArg>${graalvm.build.arg}</buildArg>
                             </buildArgs>
+                            <metadataRepository>
+                                <enabled>true</enabled>
+                                <version>0.3.5</version>
+                            </metadataRepository>
                         </configuration>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                            <execution>
+                                <id>test-native</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -436,7 +482,9 @@ limitations under the License.
                                 </goals>
                                 <configuration>
                                     <installDir>/opt/jikkou</installDir>
-                                    <deb>${app.distribution.directory}/jikkou-${project.version}-${os.detected.classifier}.deb</deb>
+                                    <deb>
+                                        ${app.distribution.directory}/jikkou-${project.version}-${os.detected.classifier}.deb
+                                    </deb>
                                     <verbose>true</verbose>
                                     <snapshotExpand>true</snapshotExpand>
                                     <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
@@ -445,7 +493,9 @@ limitations under the License.
                                     <controlDir>${project.basedir}/src/deb/control</controlDir>
                                     <dataSet>
                                         <data>
-                                            <src>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</src>
+                                            <src>
+                                                ${project.build.directory}/${project.build.finalName}-runner${executable-suffix}
+                                            </src>
                                             <type>file</type>
                                             <dst>jikkou</dst>
                                             <mapper>
@@ -508,7 +558,9 @@ limitations under the License.
                                     <filemode>755</filemode>
                                     <sources>
                                         <source>
-                                            <location>${project.build.directory}/${project.build.finalName}-runner${executable-suffix}</location>
+                                            <location>
+                                                ${project.build.directory}/${project.build.finalName}-runner${executable-suffix}
+                                            </location>
                                         </source>
                                     </sources>
                                 </mapping>

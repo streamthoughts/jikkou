@@ -15,22 +15,24 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.common.utils.Time;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import java.io.Serializable;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
 /**
- * Represents a serializable result of the execution of a change.
+ * Default {@link ChangeResult} implementation.
  *
- * @param <T> the type of the change.
+ * @param status      the change execution status.
+ * @param data        the data of the change.
+ * @param description the description of the change.
+ * @param errors      the change execution errors.
+ * @param <T>         the type of the change.
  * @see Change
  * @see ChangeResponse
  * @see DefaultChangeExecutor
@@ -44,7 +46,13 @@ import org.jetbrains.annotations.Nullable;
         "data",
         "error"
 })
-public final class DefaultChangeResult<T extends Change> implements Serializable, ChangeResult<T> {
+public record DefaultChangeResult<T extends Change>(
+        @JsonProperty @NotNull Status status,
+        @JsonProperty @NotNull HasMetadataChange<T> data,
+        @JsonProperty @NotNull ChangeDescription description,
+        @JsonProperty @Nullable List<ChangeError> errors,
+        @JsonProperty @NotNull Long end
+) implements ChangeResult<T> {
 
     /**
      * Static method to build a new {@link DefaultChangeResult} that doesn't result in cluster resource changes.
@@ -87,12 +95,6 @@ public final class DefaultChangeResult<T extends Change> implements Serializable
         return new DefaultChangeResult<>(Status.FAILED, data, description, errors);
     }
 
-    private final long end;
-    private final HasMetadataChange<T> data;
-    private final List<ChangeError> errors;
-    private final Status status;
-    private transient final ChangeDescription description;
-
     /**
      * Creates a new {@link DefaultChangeResult} instance.
      *
@@ -122,75 +124,20 @@ public final class DefaultChangeResult<T extends Change> implements Serializable
     }
 
     /**
-     * Creates a new {@link DefaultChangeResult} instance.
-     *
-     * @param status      the change execution status.
-     * @param data        the data of the change.
-     * @param description the description of the change.
-     * @param errors      the change execution errors.
-     */
-    private DefaultChangeResult(@NotNull final Status status,
-                                @NotNull final HasMetadataChange<T> data,
-                                @NotNull final ChangeDescription description,
-                                @Nullable final List<ChangeError> errors,
-                                final long end) {
-        this.status = status;
-        this.data = data;
-        this.end = end;
-        this.errors = errors;
-        this.description = description;
-    }
-
+     * {@inheritDoc}
+     **/
     @Override
     @JsonProperty
     public boolean isChanged() {
         return status == Status.CHANGED;
     }
 
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     @JsonProperty
     public boolean isFailed() {
         return status == Status.FAILED;
-    }
-
-    @Override
-    @JsonProperty
-    public long end() {
-        return end;
-    }
-
-    @Override
-    @JsonProperty
-    public HasMetadataChange<T> data() {
-        return data;
-    }
-
-    @Override
-    @JsonProperty
-    public List<ChangeError> errors() {
-        return errors;
-    }
-
-    @Override
-    @JsonProperty
-    public Status status() {
-        return this.status;
-    }
-
-    @Override
-    @JsonIgnore
-    public ChangeDescription description() {
-        return this.description;
-    }
-
-    @Override
-    public String toString() {
-        return "ChangeResult{" +
-                ", end=" + end +
-                ", data=" + data +
-                ", errors=" + errors +
-                ", status=" + status +
-                ", description=" + description +
-                '}';
     }
 }

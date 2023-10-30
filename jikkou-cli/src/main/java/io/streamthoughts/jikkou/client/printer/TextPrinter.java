@@ -20,12 +20,13 @@ import static io.streamthoughts.jikkou.client.printer.Ansi.isColor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import java.io.PrintStream;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -52,7 +53,7 @@ public class TextPrinter implements Printer {
      * {@inheritDoc}
      **/
     @Override
-    public int print(ReconciliationChangeResultList<Change> result,
+    public int print(ApiChangeResultList result,
                      long executionTimeMs) {
         int ok = 0;
         int created = 0;
@@ -64,7 +65,7 @@ public class TextPrinter implements Printer {
             try {
                 json = Jackson.JSON_OBJECT_MAPPER
                         .writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(result);
+                        .writeValueAsString(change);
             } catch (JsonProcessingException e) {
                 throw new JikkouRuntimeException(e);
             }
@@ -107,7 +108,7 @@ public class TextPrinter implements Printer {
     private static void printTask(final ChangeType changeType,
                                   final ChangeDescription description,
                                   final String status) {
-        String text = description.textual();
+        String text = Optional.ofNullable(description).map(ChangeDescription::textual).orElse("");
         String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
         PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? Ansi.Color.WHITE : "", changeType, text, status, padding);
     }

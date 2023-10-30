@@ -40,7 +40,7 @@ public record MessageErrorsResponse(String message, List<Error> errors) {
      * Represents a single error.
      *
      * @param message   Printable error message
-     * @param status    HTTP error status code
+     * @param status    HTTP error status name
      * @param errorCode Machine-readable error_code
      */
     public record Error(String message, int status, String errorCode) {

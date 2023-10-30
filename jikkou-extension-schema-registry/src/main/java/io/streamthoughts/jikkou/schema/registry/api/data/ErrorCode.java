@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
 /**
- * Error code that can be returned.
+ * Error name that can be returned.
  */
 public class ErrorCode {
 

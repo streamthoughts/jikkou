@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeError;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
-import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;

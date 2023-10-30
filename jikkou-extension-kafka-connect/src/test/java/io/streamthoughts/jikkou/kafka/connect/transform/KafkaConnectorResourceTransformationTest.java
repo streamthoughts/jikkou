@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.connect.transform;
 
 import io.streamthoughts.jikkou.core.models.Configs;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.Map;
@@ -43,7 +43,7 @@ class KafkaConnectorResourceTransformationTest {
                 .build();
         // When
         KafkaConnectorResourceTransformation transformation = new KafkaConnectorResourceTransformation();
-        Optional<V1KafkaConnector> result = transformation.transform(resource, GenericResourceListObject.empty());
+        Optional<V1KafkaConnector> result = transformation.transform(resource, DefaultResourceListObject.empty());
 
         // Then
         V1KafkaConnector transformed = result.get();

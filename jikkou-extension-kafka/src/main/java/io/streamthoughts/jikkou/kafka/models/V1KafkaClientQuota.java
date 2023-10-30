@@ -39,15 +39,15 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * KafkaClientQuota
+ * V1KafkaClientQuota
  * <p>
- * The KafkaClientQuota resource allows managing quotas on a Kafka cluster.
+ * KafkaPrincipalAuthorization resources provide a way of managing quotas in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The KafkaClientQuota resource allows managing quotas on a Kafka cluster.")
+@Description("KafkaPrincipalAuthorization resources provide a way of managing quotas in a Kafka cluster.")
 @Names(singular = "kafkaclientquota", plural = "kafkaclientquotas", shortNames = {
     "kq"
 })
@@ -89,7 +89,14 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
     @JsonProperty("kind")
     @Builder.Default
     private String kind = "KafkaClientQuota";
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
     @JsonProperty("template")
     private ObjectTemplate template;
@@ -153,6 +160,12 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
         return kind;
     }
 
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
     public ObjectMeta getMetadata() {
         return metadata;

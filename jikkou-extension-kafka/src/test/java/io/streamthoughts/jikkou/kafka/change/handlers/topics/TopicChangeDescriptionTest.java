@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.topics;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChange;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
@@ -38,7 +38,7 @@ class TopicChangeDescriptionTest {
                 .build();
 
         // When
-        var desc = new TopicChangeDescription(GenericResourceChange.<TopicChange>builder().withChange(change).build());
+        var desc = new TopicChangeDescription(DefaultResourceChange.<TopicChange>builder().withChange(change).build());
 
         // Then
         Assertions.assertEquals(

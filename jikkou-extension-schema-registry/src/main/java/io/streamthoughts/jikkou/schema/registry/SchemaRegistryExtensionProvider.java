@@ -17,9 +17,9 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
-import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectCollector;
-import io.streamthoughts.jikkou.schema.registry.control.SchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.schema.registry.health.SchemaRegistryHealthIndicator;
+import io.streamthoughts.jikkou.schema.registry.reconcilier.SchemaRegistrySubjectCollector;
+import io.streamthoughts.jikkou.schema.registry.reconcilier.SchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchemaTransformation;
 import io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.CompatibilityLevelValidation;

@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
         "labels",
         "annotations"
 })
-public final class ObjectMeta implements Serializable {
+public class ObjectMeta implements Serializable {
 
     private final String name;
 
@@ -84,7 +84,7 @@ public final class ObjectMeta implements Serializable {
         this.labels = Optional.ofNullable(labels)
                 .map(HashMap::new)
                 .orElse(new HashMap<>());
-        this.annotations =Optional.ofNullable(annotations)
+        this.annotations = Optional.ofNullable(annotations)
                 .map(HashMap::new)
                 .orElse(new HashMap<>());
     }
@@ -122,8 +122,8 @@ public final class ObjectMeta implements Serializable {
     /**
      * Finds the label value for the specified key.
      *
-     * @param key   the label key. Must not be {@code null}.
-     * @return  the optional value.
+     * @param key the label key. Must not be {@code null}.
+     * @return the optional value.
      */
     public Object getLabelByKey(final String key) {
         return findLabelByKey(key)
@@ -133,8 +133,8 @@ public final class ObjectMeta implements Serializable {
     /**
      * Finds the label value for the specified key.
      *
-     * @param key   the label key. Must not be {@code null}.
-     * @return  the optional value.
+     * @param key the label key. Must not be {@code null}.
+     * @return the optional value.
      */
     public Optional<Object> findLabelByKey(final String key) {
         if (key == null) throw new IllegalArgumentException("key must not be null");
@@ -142,10 +142,24 @@ public final class ObjectMeta implements Serializable {
     }
 
     /**
+     * Add label if the specified key is not already associated with
+     * a value (or is mapped to null) associate it with the given value.
+     *
+     * @param key   the label key. Must not be {@code null}.
+     * @param value the label value.
+     * @throws IllegalArgumentException if the passed key is equals to {@code null}.
+     */
+    public void addLabelIfAbsent(final String key,
+                                 final Object value) {
+        if (key == null) throw new IllegalArgumentException("key must not be null");
+        this.labels.putIfAbsent(key, value);
+    }
+
+    /**
      * Finds the annotation value for the specified key.
      *
-     * @param key   the annotation key. Must not be {@code null}.
-     * @return  the optional value.
+     * @param key the annotation key. Must not be {@code null}.
+     * @return the optional value.
      */
     public Optional<Object> findAnnotationByKey(final String key) {
         if (key == null) throw new IllegalArgumentException("key must not be null");

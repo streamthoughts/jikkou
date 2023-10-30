@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "",
+  "title": "V1KafkaPrincipalAuthorization",
+  "description": "KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -41,8 +42,7 @@
       "default": "KafkaPrincipalAuthorization"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
-      "type": "object"
+      "$ref": "./Metadata.json"
     },
     "template": {
       "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",

@@ -15,26 +15,26 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @Enabled
-@AcceptsResource(type = V1KafkaTopic.class)
-public class NoDuplicateTopicsAllowedValidation implements ResourceValidation<V1KafkaTopic> {
+@HandledResource(type = V1KafkaTopic.class)
+public class NoDuplicateTopicsAllowedValidation implements Validation<V1KafkaTopic> {
 
     /** {@inheritDoc} */
     @Override
     public ValidationResult validate(@NotNull List<V1KafkaTopic> resources) throws ValidationException {
-        GenericResourceListObject<V1KafkaTopic> list = new GenericResourceListObject<>(resources);
+        DefaultResourceListObject<V1KafkaTopic> list = new DefaultResourceListObject<>(resources);
         try {
             list.verifyNoDuplicateMetadataName();
             return ValidationResult.success();

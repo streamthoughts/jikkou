@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.kafka.connect.change;
 
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
@@ -44,7 +44,7 @@ class KafkaConnectorChangeHandlerTest {
                 List.of()
         );
 
-        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new GenericResourceChange<>(change)));
+        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new DefaultResourceChange<>(change)));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.get(0).getResults());
@@ -66,7 +66,7 @@ class KafkaConnectorChangeHandlerTest {
                 List.of()
         );
 
-        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new GenericResourceChange<>(change)));
+        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new DefaultResourceChange<>(change)));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.get(0).getResults());
@@ -88,7 +88,7 @@ class KafkaConnectorChangeHandlerTest {
                 List.of()
         );
 
-        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new GenericResourceChange<>(change)));
+        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new DefaultResourceChange<>(change)));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.get(0).getResults());
@@ -110,7 +110,7 @@ class KafkaConnectorChangeHandlerTest {
                 List.of()
         );
 
-        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new GenericResourceChange<>(change)));
+        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new DefaultResourceChange<>(change)));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.get(0).getResults());
@@ -132,7 +132,7 @@ class KafkaConnectorChangeHandlerTest {
                 List.of()
         );
 
-        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new GenericResourceChange<>(change)));
+        List<ChangeResponse<KafkaConnectorChange>> results = handler.apply(List.of(new DefaultResourceChange<>(change)));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.get(0).getResults());

@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.kafka.health;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.health.Health;
-import io.streamthoughts.jikkou.core.health.Status;
+import io.streamthoughts.jikkou.core.health.HealthStatus;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import java.time.Duration;
@@ -48,7 +48,7 @@ class KafkaBrokerHealthIndicatorIT extends AbstractKafkaIntegrationTest {
         var indicator = new KafkaBrokerHealthIndicator(factory);
         Health health = indicator.getHealth(Duration.ofSeconds(30));
         Assertions.assertNotNull(health);
-        Assertions.assertEquals(Status.UP, health.getStatus());
+        Assertions.assertEquals(HealthStatus.UP, health.getStatus());
         Assertions.assertTrue(((String) health.getDetails().get("resource")).startsWith("urn:kafka:cluster:id:"));
         Assertions.assertEquals(1, ((List) health.getDetails().get("brokers")).size());
         Assertions.assertEquals(

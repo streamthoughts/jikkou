@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.core.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.Map;
@@ -32,6 +33,7 @@ import javax.validation.constraints.NotNull;
         "version",
         "metadata"
 })
+@Reflectable
 public record ApiGroupVersion(@JsonProperty("groupVersion") @NotNull String groupVersion,
                               @JsonProperty("version") @NotNull String version,
                               @JsonProperty("metadata") Map<String, Object> metadata) {

@@ -21,7 +21,7 @@ import java.beans.ConstructorProperties;
 /**
  * Schema Registry - Error Response
  *
- * @param errorCode the error code.
+ * @param errorCode the error name.
  * @param message   the error message.
  */
 @Reflectable

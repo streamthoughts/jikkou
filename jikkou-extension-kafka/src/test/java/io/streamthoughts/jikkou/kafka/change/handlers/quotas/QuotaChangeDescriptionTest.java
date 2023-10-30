@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.quotas;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChange;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
@@ -44,7 +44,7 @@ class QuotaChangeDescriptionTest {
                 .build();
 
         // When
-        var desc = new QuotaChangeDescription(GenericResourceChange.<QuotaChange>builder().withChange(change).build());
+        var desc = new QuotaChangeDescription(DefaultResourceChange.<QuotaChange>builder().withChange(change).build());
 
         // Then
         Assertions.assertEquals(

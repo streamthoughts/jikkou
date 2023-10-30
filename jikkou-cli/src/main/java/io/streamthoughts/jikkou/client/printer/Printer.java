@@ -15,21 +15,20 @@
  */
 package io.streamthoughts.jikkou.client.printer;
 
-import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
 
 public interface Printer {
     /**
-     * Print the specified execution results to stdout and terminate the application with the appropriate exit code.
+     * Print the specified execution results to stdout and terminate the application with the appropriate exit name.
      *
-     * @param results the reconciliation changes to print.
-     * @param dryRun  is dry-run enabled.
+     * @param result the reconciliation changes to print.
      * @param executionTimeMs the execution time in milliseconds.
-     * @return the exit code.
+     * @return the exit name.
      */
-    int print(ReconciliationChangeResultList<Change> result, long executionTimeMs);
+    int print(ApiChangeResultList result, long executionTimeMs);
 
     static int getNumberOfFailedChange(final List<ChangeResult<Change>> results) {
         return (int) results.stream()

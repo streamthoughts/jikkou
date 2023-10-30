@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.kafka.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
@@ -81,7 +82,14 @@ public class V1KafkaClientQuotaChangeList implements ResourceListObject<V1KafkaC
     @JsonProperty("kind")
     @Builder.Default
     private String kind = "KafkaClientQuotaChangeList";
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
     @JsonProperty("template")
     private ObjectTemplate template;
@@ -145,6 +153,12 @@ public class V1KafkaClientQuotaChangeList implements ResourceListObject<V1KafkaC
         return kind;
     }
 
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
     public ObjectMeta getMetadata() {
         return metadata;

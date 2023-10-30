@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.transform;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.models.HasItems;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.kafka.connect.internals.KafkaConnectUtils;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
@@ -26,8 +26,8 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @Enabled
-@AcceptsResource(type = V1KafkaConnector.class)
-public class KafkaConnectorResourceTransformation implements ResourceTransformation<V1KafkaConnector> {
+@HandledResource(type = V1KafkaConnector.class)
+public class KafkaConnectorResourceTransformation implements Transformation<V1KafkaConnector> {
 
     /**
      * {@inheritDoc}

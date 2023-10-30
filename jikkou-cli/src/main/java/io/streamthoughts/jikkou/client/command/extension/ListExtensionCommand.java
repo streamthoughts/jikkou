@@ -79,7 +79,7 @@ public class ListExtensionCommand implements Runnable {
             descriptors = descriptors
                     .stream()
                     .filter(it -> {
-                        List<String> list = it.supportedResources().stream().map(ResourceType::getKind).toList();
+                        List<String> list = it.supportedResources().stream().map(ResourceType::kind).toList();
                         return !Collections.disjoint(list, kinds);
                     })
                     .sorted(Comparator.comparing(ExtensionDescriptor::name))

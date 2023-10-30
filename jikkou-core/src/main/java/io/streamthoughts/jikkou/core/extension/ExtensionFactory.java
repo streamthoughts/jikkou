@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionExcepti
 import io.streamthoughts.jikkou.core.extension.exceptions.NoUniqueExtensionException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,7 +76,7 @@ public interface ExtensionFactory extends ExtensionDescriptorRegistry {
     <T> T getExtension(@NotNull final Class<T> type);
 
     /**
-     * Gets a new instance for the specified type.
+     * Gets a new extension instance for the specified type.
      *
      * @param type      the extension class.
      * @param qualifier the options used to qualify the extension.
@@ -87,6 +88,18 @@ public interface ExtensionFactory extends ExtensionDescriptorRegistry {
     <T> T getExtension(@NotNull final Class<T> type,
                        @Nullable final Qualifier<T> qualifier);
 
+
+    /**
+     * Finds a new extension instance for the specified type.
+     *
+     * @param type      the extension class.
+     * @param qualifier the options used to qualify the extension.
+     * @param <T>       the type of the extension.
+     * @return an optional instance of type {@link T}.
+     * @throws NoUniqueExtensionException if more than one extension is registered for the given type.
+     */
+    <T> Optional<T> findExtension(@NotNull final Class<T> type,
+                                  @Nullable final Qualifier<T> qualifier);
 
     /**
      * Gets a new instance for the specified type.
@@ -155,8 +168,8 @@ public interface ExtensionFactory extends ExtensionDescriptorRegistry {
 
     /**
      * Duplicates this factory.
-     * 
-     * @return  a new {@link ExtensionFactory} instance.
+     *
+     * @return a new {@link ExtensionFactory} instance.
      */
     ExtensionFactory duplicate();
 

@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.core.reconcilier;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ class DefaultChangeExecutorTest {
     void shouldNotExecuteHandlerForDryRunTrue() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.ADD);
-        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.ADD).build();
+        HasMetadataChange<Change> change = DefaultResourceChange.builder().withChange(() -> ChangeType.ADD).build();
         ChangeExecutor<Change> executor = new DefaultChangeExecutor<>(
                 CONTEXT_DRY_RUN_TRUE,
                 List.of(change)
@@ -52,7 +52,7 @@ class DefaultChangeExecutorTest {
     void shouldExecuteHandlerForSupportedType() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.ADD);
-        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.ADD).build();
+        HasMetadataChange<Change> change = DefaultResourceChange.builder().withChange(() -> ChangeType.ADD).build();
         ChangeExecutor<Change> executor = new DefaultChangeExecutor<>(
                 CONTEXT_DRY_RUN_FALSE,
                 List.of(change)
@@ -70,7 +70,7 @@ class DefaultChangeExecutorTest {
     void shouldNotExecuteHandlerForUnsupportedType() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.DELETE);
-        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.ADD).build();
+        HasMetadataChange<Change> change = DefaultResourceChange.builder().withChange(() -> ChangeType.ADD).build();
         ChangeExecutor<Change> executor = new DefaultChangeExecutor<>(
                 CONTEXT_DRY_RUN_FALSE,
                 List.of(change)
@@ -87,7 +87,7 @@ class DefaultChangeExecutorTest {
     void shouldAlwaysReturnNoneChanges() {
         // Given
         TestChangeHandler handler = new TestChangeHandler(ChangeType.NONE);
-        HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.NONE).build();
+        HasMetadataChange<Change> change = DefaultResourceChange.builder().withChange(() -> ChangeType.NONE).build();
         ChangeExecutor<Change> executor = new DefaultChangeExecutor<>(
                 CONTEXT_DRY_RUN_FALSE,
                 List.of(change)

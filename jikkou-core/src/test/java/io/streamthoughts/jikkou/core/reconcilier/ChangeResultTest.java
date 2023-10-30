@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 class ChangeResultTest {
 
-    HasMetadataChange<Change> change = GenericResourceChange.builder().withChange(() -> ChangeType.NONE).build();
+    HasMetadataChange<Change> change = DefaultResourceChange.builder().withChange(() -> ChangeType.NONE).build();
 
     ChangeDescription description = () -> "test";
 

@@ -1,6 +1,6 @@
 {
-  "title": "V1KafkaBrokerList",
-  "description": "",
+  "title": "V1KafkaBroker",
+  "description": "KafkaBroker resources provide a way of describing brokers in a Kafka cluster.",
   "type": "object",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -36,8 +36,7 @@
       "default": "KafkaBroker"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
-      "type": "object"
+      "$ref": "./Metadata.json"
     },
     "template": {
       "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",

@@ -20,10 +20,12 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.streamthoughts</groupId>
-        <artifactId>jikkou</artifactId>
+        <artifactId>jikkou-parent</artifactId>
         <version>0.31.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <name>Jikkou Extension :: Aiven</name>
     <artifactId>jikkou-extension-aiven</artifactId>
     <description>Integration between Aiven for Apache Kafka and Jikkou</description>
 
@@ -97,7 +99,6 @@ limitations under the License.
             <version>${okhttp.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>

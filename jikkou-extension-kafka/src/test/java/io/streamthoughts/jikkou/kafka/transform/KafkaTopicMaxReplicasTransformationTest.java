@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collections;
@@ -38,7 +38,7 @@ class KafkaTopicMaxReplicasTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, GenericResourceListObject.of(Collections.emptyList()));
+                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()));
 
         // Then
         Assertions.assertNotNull(result);
@@ -61,7 +61,7 @@ class KafkaTopicMaxReplicasTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, GenericResourceListObject.of(Collections.emptyList()));
+                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()));
 
         // Then
         Assertions.assertNotNull(result);

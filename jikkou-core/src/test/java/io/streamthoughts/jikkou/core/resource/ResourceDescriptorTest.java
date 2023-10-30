@@ -33,7 +33,7 @@ class ResourceDescriptorTest {
     @Test
     void shouldReturnLowercaseKindWhenNoSingularName() {
         ResourceDescriptor descriptor = new ResourceDescriptor(
-                ResourceType.create(TestResource.class),
+                ResourceType.of(TestResource.class),
                 "",
                 TestResource.class
         );
@@ -43,7 +43,7 @@ class ResourceDescriptorTest {
     @Test
     void shouldReturnFalseWhenVerifyResourceListObjectForResource() {
         ResourceDescriptor descriptor = new ResourceDescriptor(
-                ResourceType.create(TestResource.class),
+                ResourceType.of(TestResource.class),
                 "",
                 TestResource.class
         );
@@ -53,7 +53,7 @@ class ResourceDescriptorTest {
     @Test
     void shouldReturnTrueWhenVerifyResourceListObjectForResourceList() {
         ResourceDescriptor descriptor = new ResourceDescriptor(
-                ResourceType.create(TestListResource.class),
+                ResourceType.of(TestListResource.class),
                 "",
                 TestListResource.class
         );

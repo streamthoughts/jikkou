@@ -15,15 +15,15 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
-import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
+import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
@@ -39,8 +39,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsResource(type = V1SchemaRegistrySubject.class)
-public class SchemaCompatibilityValidation implements ResourceValidation<V1SchemaRegistrySubject> {
+@HandledResource(type = V1SchemaRegistrySubject.class)
+public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {
 
     private SchemaRegistryClientConfig config;
 
@@ -64,7 +64,7 @@ public class SchemaCompatibilityValidation implements ResourceValidation<V1Schem
 
     public static ValidationResult validate(@NotNull V1SchemaRegistrySubject resource,
                                             @NotNull AsyncSchemaRegistryApi api,
-                                            @NotNull ResourceValidation<?> validation) throws ValidationException {
+                                            @NotNull Validation<?> validation) throws ValidationException {
 
         String subjectName = resource.getMetadata().getName();
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();

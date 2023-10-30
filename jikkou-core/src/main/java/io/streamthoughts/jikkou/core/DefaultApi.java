@@ -15,27 +15,36 @@
  */
 package io.streamthoughts.jikkou.core;
 
-import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.health.Health;
+import io.streamthoughts.jikkou.core.health.HealthAggregator;
+import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiExtension;
+import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroup;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiGroupVersion;
+import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
+import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
+import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiResource;
+import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
+import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
@@ -49,15 +58,12 @@ import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import io.streamthoughts.jikkou.core.resource.converter.ResourceConverter;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformationChain;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidationChain;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
-import java.time.Instant;
+import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.validation.ValidationChain;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -70,7 +76,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,12 +84,19 @@ import org.slf4j.LoggerFactory;
  * The default implementation of the {@link JikkouApi} interface.
  */
 @SuppressWarnings("rawtypes")
-public final class DefaultApi implements AutoCloseable, JikkouApi {
+public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultApi.class);
 
-    public static Builder builder(ExtensionFactory extensionFactory,
-                                  ResourceRegistry resourceRegistry) {
+    /**
+     * Gets a new builder.
+     *
+     * @param extensionFactory The ExtensionFactory.
+     * @param resourceRegistry The ResourceRegistry.
+     * @return The Builder.
+     */
+    public static Builder builder(@NotNull ExtensionFactory extensionFactory,
+                                  @NotNull ResourceRegistry resourceRegistry) {
         return new Builder(extensionFactory, resourceRegistry);
     }
 
@@ -139,7 +151,6 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     }
 
     private final List<ChangeReporter> reporters = new LinkedList<>();
-    private final ExtensionFactory extensionFactory;
     private final ResourceRegistry resourceRegistry;
 
     /**
@@ -147,25 +158,8 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      */
     private DefaultApi(@NotNull final ExtensionFactory extensionFactory,
                        @NotNull final ResourceRegistry resourceRegistry) {
-        this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
+        super(extensionFactory);
         this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<ApiResourceList> listApiResources() {
-        ApiGroupList apiGroupList = listApiGroups();
-        return apiGroupList.groups()
-                .stream()
-                .flatMap(group -> group.versions()
-                        .stream()
-                        .map(apiGroupVersion -> Pair.of(group.name(), apiGroupVersion.version()))
-                )
-                .sorted(Comparator.comparing(Pair::_1))
-                .map(groupVersion -> listApiResources(groupVersion._1(), groupVersion._2()))
-                .toList();
     }
 
     /**
@@ -176,6 +170,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         List<ResourceDescriptor> descriptors = resourceRegistry.findDescriptorsByGroupVersion(group, version)
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)
+                .filter(Predicate.not(ResourceDescriptor::isTransient))
                 .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
                 .toList();
 
@@ -184,7 +179,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                 .map(descriptor -> {
                     ResourceType type = descriptor.resourceType();
                     String name = descriptor.pluralName()
-                            .orElse(type.getKind())
+                            .orElse(type.kind())
                             .toLowerCase(Locale.ROOT);
 
                     ApiResource resource = new ApiResource(
@@ -202,9 +197,11 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                         if (optional.isPresent()) {
                             ExtensionDescriptor<Collector> collector = optional.get();
                             List<ApiResourceVerbOptionSpec> optionSpecs = optionListFactory.make(collector.type());
-                            resource = resource.withApiResourceVerbOptionList(
-                                    new ApiResourceVerbOptionList(Verb.LIST, optionSpecs)
-                            );
+                            if (!optionSpecs.isEmpty()) {
+                                resource = resource.withApiResourceVerbOptionList(
+                                        new ApiResourceVerbOptionList(Verb.LIST, optionSpecs)
+                                );
+                            }
                         }
                     }
                     return resource;
@@ -224,6 +221,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
         Map<String, List<ResourceDescriptor>> descriptorsByGroup = allResourceDescriptors
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)
+                .filter(Predicate.not(ResourceDescriptor::isTransient))
                 .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
                 .collect(Collectors.groupingBy(ResourceDescriptor::group, Collectors.toList()));
 
@@ -248,9 +246,84 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ReconciliationChangeResultList<Change> apply(@NotNull final HasItems resources,
-                                                        @NotNull final ReconciliationMode mode,
-                                                        @NotNull final ReconciliationContext context) {
+    public ApiHealthIndicatorList getApiHealthIndicators() {
+        List<ApiHealthIndicator> indicators = extensionFactory
+                .findAllDescriptorsByClass(HealthIndicator.class)
+                .stream()
+                .map(descriptor -> new ApiHealthIndicator(descriptor.name(), descriptor.description()))
+                .toList();
+        return new ApiHealthIndicatorList(indicators);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiHealthResult getApiHealth(@NotNull String name,
+                                        @NotNull Duration timeout) {
+        Health health = getHealth(name, timeout);
+        return ApiHealthResult.from(health);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiHealthResult getApiHealth(@NotNull Duration timeout) {
+        ApiHealthIndicatorList list = getApiHealthIndicators();
+        List<Health> health = list.indicators().stream()
+                .map(indicator -> getHealth(indicator.name(), timeout))
+                .toList();
+
+        HealthAggregator aggregator = new HealthAggregator();
+        Health aggregated = aggregator.aggregate(health);
+        return ApiHealthResult.from(aggregated);
+    }
+
+
+    private Health getHealth(@NotNull String name, @NotNull Duration timeout) {
+        HealthIndicator extension = extensionFactory.getExtension(
+                HealthIndicator.class,
+                Qualifiers.byName(name)
+        );
+        Health health;
+        try {
+            health = extension.getHealth(timeout);
+        } catch (Exception e) {
+            health = Health
+                    .builder()
+                    .down()
+                    .name(extension.getName())
+                    .exception(e)
+                    .build();
+        }
+        return health;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions() {
+        List<ApiExtension> extensions = extensionFactory.getAllDescriptors()
+                .stream()
+                .map(descriptor -> new ApiExtension(
+                                descriptor.name(),
+                                descriptor.category(),
+                                descriptor.source(),
+                                descriptor.description()
+                        )
+                ).toList();
+        return new ApiExtensionList(extensions);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiChangeResultList reconcile(@NotNull final HasItems resources,
+                                         @NotNull final ReconciliationMode mode,
+                                         @NotNull final ReconciliationContext context) {
         LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
         List<ChangeResult<Change>> results = resourcesByType
@@ -265,7 +338,7 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
                     .toList();
             new CombineChangeReporter(reporters).report(reportable);
         }
-        return new ReconciliationChangeResultList<>(
+        return new ApiChangeResultList(
                 context.isDryRun(),
                 new ObjectMeta(),
                 results
@@ -298,107 +371,78 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ApiResourceValidationResult validate(final @NotNull HasItems resources,
-                                                final @NotNull ReconciliationContext context) {
+    public ApiValidationResult validate(final @NotNull HasItems resources,
+                                        final @NotNull ReconciliationContext context) {
+        HasItems prepared = prepare(resources, context);
+        ValidationChain validationChain = getResourceValidationChain();
+        List<HasMetadata> items = (List<HasMetadata>) prepared.getItems();
+        ValidationResult result = validationChain.validate(items);
 
-        List<HasMetadata> converted = resources.groupByType()
-                .entrySet()
-                .stream()
-                .flatMap(entry -> {
-                    ResourceType type = entry.getKey();
-                    if (type.isTransient()) {
-                        return entry.getValue().stream();
-                    } else {
-                        Controller<HasMetadata, Change> controller = getMatchingResourceController(type);
-                        ResourceConverter<HasMetadata, HasMetadata> converter = controller.getResourceConverter(type);
-                        return converter.convertFrom(entry.getValue()).stream();
-                    }
-                }).toList();
-
-        GenericResourceListObject<HasMetadata> allResources = new GenericResourceListObject<>(converted);
-
-        Stream<Pair<ResourceType, List<HasMetadata>>> stream = allResources.groupByType()
-                .entrySet()
-                .stream()
-                .map(Pair::of);
-
-        // Execute transformation
-        ResourceTransformationChain transformationChain = getResourceTransformationChain();
-        stream = stream
-                .map(t -> t.mapRight(resource ->
-                        transformationChain.transformAll(resource, allResources, context)
-                ));
-
-        // Execute selectors
-        stream = stream
-                .filter(t -> !t._1().isTransient())
-                .map(t -> t.mapRight(resource -> {
-                    List<ResourceSelector> selectors = context.selectors();
-                    return new GenericResourceListObject<>(t._2()).getAllMatching(selectors);
-                }));
-
-        Map<ResourceType, List<HasMetadata>> transformed = stream
-                .collect(Collectors.toMap(Pair::_1, Pair::_2));
-
-        // Execute validations
-        ResourceValidationChain validationChain = getResourceValidationChain();
-
-        ValidationResult result = validationChain.validate(transformed);
-        if (result.isValid()) {
-            List<HasMetadata> list = transformed.values().stream().flatMap(Collection::stream).toList();
-            return new ApiResourceValidationResult(new GenericResourceListObject<>(list));
-        }
-
-        return new ApiResourceValidationResult(result.errors());
+        return result.isValid() ?
+                new ApiValidationResult(new DefaultResourceListObject<>(items)) :
+                new ApiValidationResult(result.errors());
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public List<ResourceListObject<HasMetadataChange<Change>>> getDiff(final @NotNull HasItems resources,
-                                                                       final @NotNull ReconciliationContext context) {
+    public ApiResourceChangeList getDiff(final @NotNull HasItems resources,
+                                         final @NotNull ReconciliationContext context) {
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
 
-        return resourcesByType.entrySet()
+        List<ResourceListObject<HasMetadataChange<Change>>> changes = resourcesByType.entrySet()
                 .stream()
                 .map(e -> {
                     Controller<HasMetadata, Change> controller = getMatchingResourceController(e.getKey());
                     List<HasMetadata> resource = e.getValue();
-                    ResourceListObject<? extends HasMetadataChange<Change>> changes = controller.plan(
+                    ResourceListObject<? extends HasMetadataChange<Change>> result = controller.plan(
                             resource,
                             context
                     );
-                    return (ResourceListObject<HasMetadataChange<Change>>) changes;
+                    return (ResourceListObject<HasMetadataChange<Change>>) result;
                 })
                 .toList();
+        return new ApiResourceChangeList(changes);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public List<HasMetadata> getResources(final @NotNull ResourceType resourceType,
-                                          final @NotNull List<ResourceSelector> selectors,
-                                          final @NotNull Configuration configuration) {
+    public ResourceListObject<HasMetadata> getResources(final @NotNull ResourceType resourceType,
+                                                        final @NotNull List<Selector> selectors,
+                                                        final @NotNull Configuration configuration) {
         Collector<HasMetadata> collector = getMatchingResourceCollector(resourceType);
-        List<HasMetadata> resources = collector.listAll(configuration, selectors);
-        ResourceConverter<HasMetadata, HasMetadata> converter = collector.getResourceConverter(resourceType);
-        List<HasMetadata> result = resources.stream()
-                .map(DefaultApi::enrichWithGeneratedAnnotation)
-                .filter(new AggregateSelector(selectors)::apply)
-                .toList();
-        return converter.convertTo(result);
+        ResourceListObject<HasMetadata> resourceListObject = collector.listAll(configuration, selectors);
+
+        OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
+
+        List<HasMetadata> items = resourceListObject.getItems()
+                .stream()
+                .map(item -> addBuiltInAnnotations(item, timestamp))
+                .collect(Collectors.toList());
+
+        DefaultResourceListObject<HasMetadata> metadata = new DefaultResourceListObject<>(
+                resourceListObject.getKind(),
+                resourceListObject.getApiVersion(),
+                resourceListObject.getMetadata(),
+                items
+        );
+        return addBuiltInAnnotations(metadata, timestamp);
     }
 
-    private static HasMetadata enrichWithGeneratedAnnotation(HasMetadata resource) {
+    private <T extends HasMetadata> T addBuiltInAnnotations(T resource, OffsetDateTime timestamp) {
         ObjectMeta meta = resource
                 .optionalMetadata()
                 .orElse(new ObjectMeta()).toBuilder()
-                .withAnnotation(CoreAnnotations.JKKOU_IO_RESOURCE_GENERATED, Instant.now())
+                .withAnnotation(
+                        CoreAnnotations.JKKOU_IO_RESOURCE_GENERATED,
+                        timestamp.toString()
+                )
                 .build();
-        return resource.withMetadata(meta);
+        return (T) resource.withMetadata(meta);
     }
 
     /**
@@ -407,54 +451,6 @@ public final class DefaultApi implements AutoCloseable, JikkouApi {
     @Override
     public Builder toBuilder() {
         return new Builder(extensionFactory.duplicate(), resourceRegistry);
-    }
-
-    private ResourceValidationChain getResourceValidationChain() {
-        @SuppressWarnings("rawtypes")
-        List<ResourceValidation> validations = extensionFactory
-                .getAllExtensions(ResourceValidation.class, Qualifiers.enabled());
-        return new ResourceValidationChain(validations);
-    }
-
-    private ResourceTransformationChain getResourceTransformationChain() {
-        @SuppressWarnings("rawtypes")
-        List<ResourceTransformation> transformations = extensionFactory.getAllExtensions(
-                ResourceTransformation.class, Qualifiers.enabled());
-        return new ResourceTransformationChain(transformations);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Optional<ExtensionDescriptor<Collector>> findMatchingResourceCollector(@NotNull ResourceType resource) {
-        return extensionFactory.findDescriptorByClass(
-                Collector.class,
-                        Qualifiers.byAcceptedResource(resource)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    private Collector<HasMetadata> getMatchingResourceCollector(@NotNull ResourceType resource) {
-        LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
-                resource.getGroup(),
-                resource.getApiVersion(),
-                resource.getKind()
-        );
-        return extensionFactory.getExtension(
-                Collector.class,
-                Qualifiers.byAcceptedResource(resource)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    private Controller<HasMetadata, Change> getMatchingResourceController(@NotNull ResourceType resource) {
-        LOG.info("Looking for a controller accepting resource type: group={}, version={} and kind={}",
-                resource.getGroup(),
-                resource.getApiVersion(),
-                resource.getKind()
-        );
-        return extensionFactory.getExtension(
-                Controller.class,
-                Qualifiers.byAcceptedResource(resource)
-        );
     }
 
     /**

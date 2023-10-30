@@ -34,13 +34,14 @@ import org.junit.jupiter.api.Test;
 class DefaultResourceRegistryTest {
 
     static final ResourceDescriptor DESCRIPTOR = new ResourceDescriptor(
-            ResourceType.create(TestResource.class),
+            ResourceType.of(TestResource.class),
             "Test description",
             TestResource.class,
             "test",
             "tests",
             Set.of("t", "ts"),
-            Set.of(Verb.LIST)
+            Set.of(Verb.LIST),
+            false
     );
 
     private DefaultResourceRegistry registry;
@@ -69,7 +70,7 @@ class DefaultResourceRegistryTest {
     @Test
     void shouldGetDescriptorByTypeForRegisteredResource() {
         registry.register(TestResource.class);
-        ResourceDescriptor descriptor = registry.getResourceDescriptorByType(ResourceType.create(TestResource.class));
+        ResourceDescriptor descriptor = registry.getResourceDescriptorByType(ResourceType.of(TestResource.class));
         Assertions.assertEquals(DESCRIPTOR, descriptor);
     }
 
@@ -77,7 +78,7 @@ class DefaultResourceRegistryTest {
     void shouldThrowNoSuchExtensionExceptionForNotRegisteredResource() {
         Assertions.assertThrows(
                 NoSuchExtensionException.class,
-                () -> registry.getResourceDescriptorByType(ResourceType.create(TestResource.class)));
+                () -> registry.getResourceDescriptorByType(ResourceType.of(TestResource.class)));
     }
 
     @Test
@@ -113,7 +114,7 @@ class DefaultResourceRegistryTest {
     @Test
     void shouldGetDescriptorForType() {
         registry.register(TestResource.class);
-        Optional<ResourceDescriptor> optional = registry.findDescriptorByType(ResourceType.create(TestResource.class));
+        Optional<ResourceDescriptor> optional = registry.findDescriptorByType(ResourceType.of(TestResource.class));
         Assertions.assertTrue(optional.isPresent());
         Assertions.assertEquals(DESCRIPTOR, optional.get());
     }

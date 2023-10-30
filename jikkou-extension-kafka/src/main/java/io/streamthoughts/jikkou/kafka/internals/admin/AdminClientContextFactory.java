@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.internals.admin;
 
-import static io.streamthoughts.jikkou.kafka.control.KafkaClientConfiguration.ADMIN_CLIENT_CONFIG;
+import static io.streamthoughts.jikkou.kafka.reconcilier.KafkaClientConfiguration.ADMIN_CLIENT_CONFIG;
 
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;

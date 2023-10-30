@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier.change;
 
-import io.streamthoughts.jikkou.core.models.GenericResource;
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.generics.GenericResource;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import java.util.List;
@@ -100,7 +100,7 @@ class ValueChangeComputerTest {
         List<HasMetadataChange<ValueChange<KeyValue>>> changes = computer.computeChanges(List.of(before), List.of(after));
 
         // Then
-        List<GenericResourceChange<Change>> expected = List.of(GenericResourceChange
+        List<DefaultResourceChange<Change>> expected = List.of(DefaultResourceChange
                 .builder()
                         .withMetadata(null)
                         .withChange(ValueChange.with(before, after))

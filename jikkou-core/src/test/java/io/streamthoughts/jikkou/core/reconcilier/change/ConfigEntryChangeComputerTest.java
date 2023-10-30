@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.core.reconcilier.change;
 
 import io.streamthoughts.jikkou.core.models.ConfigValue;
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import java.util.Collections;
@@ -40,7 +40,7 @@ class ConfigEntryChangeComputerTest {
 
         // Then
         List<HasMetadataChange<ConfigEntryChange>> expected = after.stream()
-                .map(it -> GenericResourceChange.<ConfigEntryChange>builder()
+                .map(it -> DefaultResourceChange.<ConfigEntryChange>builder()
                         .withMetadata(new ObjectMeta())
                         .withChange(new ConfigEntryChange(it.getName(), ValueChange.withAfterValue(it.value())))
                         .build()
@@ -61,7 +61,7 @@ class ConfigEntryChangeComputerTest {
 
         // Then
         List<HasMetadataChange<ConfigEntryChange>> expected = after.stream()
-                .map(it -> GenericResourceChange.<ConfigEntryChange>builder()
+                .map(it -> DefaultResourceChange.<ConfigEntryChange>builder()
                         .withMetadata(new ObjectMeta())
                         .withChange(new ConfigEntryChange(it.getName(), ValueChange.withAfterValue(it.value())))
                         .build()
@@ -85,7 +85,7 @@ class ConfigEntryChangeComputerTest {
 
         // Then
         List<HasMetadataChange<ConfigEntryChange>> expected = List.of(
-                        GenericResourceChange.<ConfigEntryChange>builder()
+                        DefaultResourceChange.<ConfigEntryChange>builder()
                                 .withMetadata(new ObjectMeta())
                                 .withChange(new ConfigEntryChange("key", ValueChange.with( "old", "new")))
                                 .build()
@@ -105,7 +105,7 @@ class ConfigEntryChangeComputerTest {
 
         // Then
         List<HasMetadataChange<ConfigEntryChange>> expected = List.of(
-                GenericResourceChange.<ConfigEntryChange>builder()
+                DefaultResourceChange.<ConfigEntryChange>builder()
                         .withMetadata(new ObjectMeta())
                         .withChange(new ConfigEntryChange("key", ValueChange.withBeforeValue("value")))
                         .build()

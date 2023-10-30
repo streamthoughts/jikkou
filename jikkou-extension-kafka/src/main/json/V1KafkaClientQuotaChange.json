@@ -27,8 +27,7 @@
       "default": "KafkaClientQuotaChange"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
-      "type": "object"
+      "$ref": "./Metadata.json"
     },
     "change": {
      "existingJavaType": "io.streamthoughts.jikkou.kafka.change.QuotaChange",

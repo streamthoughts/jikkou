@@ -15,14 +15,14 @@
  */
 package io.streamthoughts.jikkou.core.exceptions;
 
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
 import java.util.List;
 
 /**
  * The top-level validation exception.
  *
- * @see ResourceValidation
+ * @see Validation
  */
 public class ValidationException extends JikkouRuntimeException {
     private final List<ValidationError> errors;

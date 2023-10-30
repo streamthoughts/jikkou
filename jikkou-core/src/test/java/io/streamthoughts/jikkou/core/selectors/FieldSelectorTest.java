@@ -34,12 +34,15 @@ class FieldSelectorTest {
 
 
     @Test
-    public void should_select_resource_given_selector_IN() {
+    public void shouldSelectResourceForSelectorIn() {
         // GIVEN
-        FieldSelector selector = new FieldSelector();
-        selector.setKey("metadata.name");
-        selector.setOperator(ExpressionOperator.IN);
-        selector.setValues(List.of("test-resource"));
+        var expression =  new SelectorExpression(
+                "",
+                "",
+                "metadata.name",
+                ExpressionOperator.IN, (List.of("test-resource"))
+        );
+        FieldSelector selector = new FieldSelector(expression);
 
         // WHEN
         boolean result = selector.apply(TEST_RESOURCE);
@@ -49,12 +52,15 @@ class FieldSelectorTest {
     }
 
     @Test
-    public void should_not_select_resource_given_selector_NOTIN() {
+    public void shouldNotSelectResourceForSelectorNotIn() {
         // GIVEN
-        FieldSelector selector = new FieldSelector();
-        selector.setKey("metadata.name");
-        selector.setOperator(ExpressionOperator.NOTIN);
-        selector.setValues(List.of("test-resource"));
+        var expression =  new SelectorExpression(
+                "",
+                "",
+                "metadata.name",
+                ExpressionOperator.NOTIN, (List.of("test-resource"))
+        );
+        FieldSelector selector = new FieldSelector(expression);
 
         // WHEN
         boolean result = selector.apply(TEST_RESOURCE);

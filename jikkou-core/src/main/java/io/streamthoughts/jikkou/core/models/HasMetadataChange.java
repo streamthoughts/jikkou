@@ -15,14 +15,22 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
+import io.streamthoughts.jikkou.core.models.generics.GenericResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 
 /**
- * Represents a change object.
+ * Resource that represents a change.
  */
 @Evolving
+@JsonDeserialize(as = GenericResourceChange.class)
 public interface HasMetadataChange<T extends Change> extends HasMetadata {
 
+    /**
+     * Gets the change.
+     *
+     * @return  The change.
+     */
     T getChange();
 }

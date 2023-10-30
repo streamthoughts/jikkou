@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,9 +72,9 @@ class TransformationApiConfiguratorTest {
         // Then
         Assertions.assertNotNull(configured);
         Assertions.assertTrue(registry.findDescriptorByClass(TestTransformation.class, Qualifiers.byName("test")).isPresent());
-        ResourceTransformation<?> actual = factory.getExtension(ResourceTransformation.class, Qualifiers.byName("test"));
+        Transformation<?> actual = factory.getExtension(Transformation.class, Qualifiers.byName("test"));
         Assertions.assertNotNull(actual);
     }
 
-    public static final class TestTransformation implements ResourceTransformation<HasMetadata> { }
+    public static final class TestTransformation implements Transformation<HasMetadata> { }
 }

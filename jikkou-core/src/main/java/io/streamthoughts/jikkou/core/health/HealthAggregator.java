@@ -52,24 +52,24 @@ public final class HealthAggregator {
      */
     public Health aggregate(final String name, final Collection<Health> healths) {
         final Health.Builder builder = new Health.Builder().up();
-        Optional.ofNullable(name).ifPresent(builder::withName);
+        Optional.ofNullable(name).ifPresent(builder::name);
         if (!healths.isEmpty()) {
             healths.forEach(h -> {
                 if (h.getName() == null || h.getName().isBlank()) {
                     throw new IllegalArgumentException("Cannot aggregate metric with empty name");
                 }
-                builder.withDetails(
+                builder.details(
                                 h.getName(),
                                 // avoid redundancy by removing the health name
                                 new Health.Builder()
-                                        .withStatus(h.getStatus())
-                                        .withDetails(h.getDetails())
+                                        .status(h.getStatus())
+                                        .details(h.getDetails())
                                         .build()
                         );
                     }
             );
-            final Status status = statusAggregator.aggregateStatus(StatusAggregator.getAllStatus(healths));
-            builder.withStatus(status);
+            final HealthStatus status = statusAggregator.aggregateStatus(StatusAggregator.getAllStatus(healths));
+            builder.status(status);
         }
         return builder.build();
     }

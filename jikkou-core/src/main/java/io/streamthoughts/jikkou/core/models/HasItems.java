@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +48,7 @@ public interface HasItems {
      * @param selectors the list of selectors to apply.
      * @return the filtered resources.
      */
-    default List<? extends HasMetadata> getAllMatching(final @NotNull List<ResourceSelector> selectors) {
+    default List<? extends HasMetadata> getAllMatching(final @NotNull List<Selector> selectors) {
         return getItems().stream()
                 .filter(new AggregateSelector(selectors)::apply)
                 .toList();
@@ -58,7 +58,7 @@ public interface HasItems {
      * Gets all the resources matching the given kind.
      *
      * @param resourceClass the class of the resource.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<? extends HasMetadata> getAllByKind(Class<? extends HasMetadata> resourceClass) {
         return getAllByKind(Resource.getKind(resourceClass));
@@ -68,7 +68,7 @@ public interface HasItems {
      * Gets all the resources matching the given kind.
      *
      * @param kind the Kind of the resource.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<? extends HasMetadata> getAllByKind(@NotNull final String kind) {
         return getAllByKinds(kind);
@@ -78,7 +78,7 @@ public interface HasItems {
      * Gets all the resources matching the given kinds.
      *
      * @param kinds the list of Kinds of the resources.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<? extends HasMetadata> getAllByKinds(@NotNull final String... kinds) {
         return getAllByKinds(Arrays.asList(kinds));
@@ -88,7 +88,7 @@ public interface HasItems {
      * Gets all the resources matching the given kinds.
      *
      * @param kinds the list of Kinds of the resources.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<? extends HasMetadata> getAllByKinds(@NotNull final List<String> kinds) {
         if (kinds.isEmpty()) {
@@ -101,10 +101,22 @@ public interface HasItems {
     }
 
     /**
+     * Gets all the resources matching the given type.
+     *
+     * @param type the resource type.
+     * @return the filtered {@link DefaultResourceListObject}.
+     */
+    default List<? extends HasMetadata> getAllByType(@NotNull final ResourceType type) {
+        return getItems().stream()
+                .filter(resource -> type.canAccept(ResourceType.of(resource)))
+                .toList();
+    }
+
+    /**
      * Gets all the resources matching the given version.
      *
      * @param version the Version of the resource.
-     * @return the filtered {@link GenericResourceListObject}.
+     * @return the filtered {@link DefaultResourceListObject}.
      */
     default List<? extends HasMetadata> getAllByApiVersion(@NotNull final String version) {
         return getItems().stream()
@@ -119,7 +131,7 @@ public interface HasItems {
      */
     @JsonIgnore
     default Map<ResourceType, List<HasMetadata>> groupByType() {
-        return getItems().stream().collect(groupingBy(ResourceType::create));
+        return getItems().stream().collect(groupingBy(ResourceType::of));
     }
 
     /**
@@ -129,7 +141,7 @@ public interface HasItems {
      */
     @JsonIgnore
     default Set<ResourceType> getAllResourceTypes() {
-        return getItems().stream().map(ResourceType::create).collect(Collectors.toSet());
+        return getItems().stream().map(ResourceType::of).collect(Collectors.toSet());
     }
 
     /**

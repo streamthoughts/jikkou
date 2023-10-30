@@ -34,13 +34,15 @@ import org.apache.kafka.common.acl.AclPermissionType;
 
 
 /**
- * A KafkaPrincipalAcl defines a list of allowed or denied operations for a resource
+ * V1KafkaPrincipalAcl
+ * <p>
+ * KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("A KafkaPrincipalAcl defines a list of allowed or denied operations for a resource")
+@Description("KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.")
 @JsonPropertyOrder({
     "resource",
     "operations",

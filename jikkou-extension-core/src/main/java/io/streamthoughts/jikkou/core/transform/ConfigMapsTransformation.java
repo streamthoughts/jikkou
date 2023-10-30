@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResources;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.HandledResources;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceException;
@@ -29,7 +29,6 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.HasSpec;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import java.util.HashMap;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +43,8 @@ import org.jetbrains.annotations.NotNull;
 @Description("Resolves ConfigMap objects for resources supporting ConfigRefs")
 @Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-@AcceptsResources(value = {})
-public class ConfigMapsTransformation implements ResourceTransformation<HasMetadata> {
+@HandledResources(value = {})
+public class ConfigMapsTransformation implements Transformation<HasMetadata> {
 
 
     /**

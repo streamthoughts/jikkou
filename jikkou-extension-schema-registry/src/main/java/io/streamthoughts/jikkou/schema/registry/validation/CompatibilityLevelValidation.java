@@ -15,21 +15,21 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationError;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsResource(type = V1SchemaRegistrySubject.class)
-public class CompatibilityLevelValidation implements ResourceValidation<V1SchemaRegistrySubject> {
+@HandledResource(type = V1SchemaRegistrySubject.class)
+public class CompatibilityLevelValidation implements Validation<V1SchemaRegistrySubject> {
 
     public static final ConfigProperty<List<CompatibilityLevels>> VALIDATION_COMPATIBILITY_CONFIG = ConfigProperty
             .ofList("compatibilityLevels")
