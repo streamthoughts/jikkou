@@ -17,36 +17,29 @@ package io.streamthoughts.jikkou.core.selectors;
 
 import io.streamthoughts.jikkou.core.exceptions.InvalidSelectorException;
 import java.util.List;
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class SelectorExpression {
-    private final String expression;
-    private final String selector;
-    private final String key;
-    private final ExpressionOperator operator;
-    private final List<String> values;
+/**
+ * SelectorExpression.
+ *
+ * @param expression the expression string.
+ * @param selector   the name of the selector.
+ * @param key        the expression key.
+ * @param operator   the expression operator.
+ * @param values     the expression values.
+ */
+public record SelectorExpression(@NotNull String expression,
+                                 @Nullable String selector,
+                                 @NotNull String key,
+                                 @NotNull ExpressionOperator operator,
+                                 @NotNull List<String> values) {
 
     /**
      * Creates a new {@link SelectorExpression} instance.
-     *
-     * @param expression    the expression string.
-     * @param selector      the name of the selector.
-     * @param key           the expression key.
-     * @param operator      the expression operator.
-     * @param values        the expression values.
      */
-    public SelectorExpression(String expression,
-                              String selector,
-                              String key,
-                              String operator,
-                              List<String> values) {
-        this.expression = expression;
-        this.selector = selector;
-        this.key = key;
-        this.operator = ExpressionOperator.findByName(operator);
-        this.values = values;
-
-        if (this.operator == ExpressionOperator.INVALID) {
+    public SelectorExpression {
+        if (operator == ExpressionOperator.INVALID) {
             throw new InvalidSelectorException(
                     "Unknown operator: '"
                             + operator + "' in expression '"
@@ -55,45 +48,24 @@ public final class SelectorExpression {
         }
     }
 
-    public String selector() {
-        return selector;
+    /**
+     * Creates a new {@link SelectorExpression} instance.
+     *
+     * @param expression the expression string.
+     * @param selector   the name of the selector.
+     * @param key        the expression key.
+     * @param operator   the expression operator.
+     * @param values     the expression values.
+     */
+    public SelectorExpression(@NotNull String expression,
+                              @Nullable String selector,
+                              @NotNull String key,
+                              @NotNull String operator,
+                              @NotNull List<String> values) {
+        this(expression, selector, key, ExpressionOperator.findByName(operator), values);
     }
 
-    public String key() {
-        return key;
+    public MatchExpression create(ExpressionKeyValueExtractor extractor) {
+        return operator().create(key, values, extractor);
     }
-
-    public ExpressionOperator operator() {
-        return operator;
-    }
-
-    public List<String> values() {
-        return values;
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (SelectorExpression) obj;
-        return Objects.equals(this.expression, that.expression) &&
-                Objects.equals(this.selector, that.selector) &&
-                Objects.equals(this.key, that.key) &&
-                Objects.equals(this.operator, that.operator) &&
-                Objects.equals(this.values, that.values);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(expression, selector, key, operator, values);
-    }
-
-    /** {@inheritDoc} **/
-    @Override
-    public String toString() {
-        return expression;
-    }
-
 }

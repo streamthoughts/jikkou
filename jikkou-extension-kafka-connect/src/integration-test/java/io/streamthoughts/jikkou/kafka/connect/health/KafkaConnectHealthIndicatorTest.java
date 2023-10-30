@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.kafka.connect.health;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.health.Health;
-import io.streamthoughts.jikkou.core.health.Status;
+import io.streamthoughts.jikkou.core.health.HealthStatus;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
@@ -47,6 +47,6 @@ class KafkaConnectHealthIndicatorTest extends AbstractKafkaConnectorIT {
 
         Health health = indicator.getHealth(Duration.ZERO);
         Assertions.assertNotNull(health);
-        Assertions.assertEquals(Status.UP, health.getStatus());
+        Assertions.assertEquals(HealthStatus.UP, health.getStatus());
     }
 }

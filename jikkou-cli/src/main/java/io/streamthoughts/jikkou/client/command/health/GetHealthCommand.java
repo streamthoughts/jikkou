@@ -15,21 +15,15 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
-import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
-import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
-import io.streamthoughts.jikkou.core.health.Health;
-import io.streamthoughts.jikkou.core.health.HealthAggregator;
-import io.streamthoughts.jikkou.core.health.HealthIndicator;
-import io.streamthoughts.jikkou.core.health.Status;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.health.HealthStatus;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.runtime.JikkouContext;
+import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -48,6 +42,8 @@ import picocli.CommandLine.Parameters;
         mixinStandardHelpOptions = true)
 @Singleton
 public class GetHealthCommand implements Callable<Integer> {
+
+    public static final String HEALTH_INDICATOR_ALL = "all";
 
     enum Formats { JSON, YAML }
 
@@ -68,42 +64,30 @@ public class GetHealthCommand implements Callable<Integer> {
     String indicator;
 
     @Inject
-    private JikkouContext context;
+    private JikkouApi api;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() throws IOException {
-        ExtensionFactory factory = context.getExtensionFactory();
-
-        Health health = null;
-        if (indicator.equalsIgnoreCase("all")) {
-            List<Health> l = factory
-                    .getAllExtensions(HealthIndicator.class)
-                    .stream().map(i -> i.getHealth(Duration.ofMillis(timeoutMs)))
-                    .toList();
-            health = new HealthAggregator().aggregate(l);
+        Duration timeout = Duration.ofMillis(timeoutMs);
+        ApiHealthResult result;
+        if (indicator.equalsIgnoreCase(HEALTH_INDICATOR_ALL)) {
+            result = api.getApiHealth(timeout);
         } else {
-            if (!factory.containsExtension(HealthIndicator.class, Qualifiers.byName(indicator))){
-                throw new JikkouRuntimeException("Cannot find health-indicator for name '" + indicator + "'");
-            }
-
-            HealthIndicator indicator = factory.getExtension(HealthIndicator.class, Qualifiers.byName(this.indicator));
-            health = indicator.getHealth(Duration.ofMillis(timeoutMs));
+            result = api.getApiHealth(indicator, timeout);
         }
 
-        if (health != null) {
-
+        if (result != null) {
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 switch (format) {
-                    case JSON -> Jackson.JSON_OBJECT_MAPPER.writeValue(baos, health);
-                    case YAML -> Jackson.YAML_OBJECT_MAPPER.writeValue(baos, health);
+                    case JSON -> Jackson.JSON_OBJECT_MAPPER.writeValue(baos, result);
+                    case YAML -> Jackson.YAML_OBJECT_MAPPER.writeValue(baos, result);
                 }
                 System.out.println(baos);
             }
-
-            return health.getStatus().equals(Status.UP) ?
+            return result.status().equals(HealthStatus.UP) ?
                     CommandLine.ExitCode.OK :
                     CommandLine.ExitCode.SOFTWARE;
         }

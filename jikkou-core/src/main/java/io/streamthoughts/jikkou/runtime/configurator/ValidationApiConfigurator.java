@@ -19,17 +19,17 @@ import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidationDecorator;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationDecorator;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ResourceValidation}
+ * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link Validation}
  * dynamically passed through the CLI configuration.
  */
-public final class ValidationApiConfigurator extends ExtensionApiConfigurator<ResourceValidation<?>> {
+public final class ValidationApiConfigurator extends ExtensionApiConfigurator<Validation<?>> {
 
     /**
      * Creates a new {@link ValidationApiConfigurator} instance.
@@ -42,17 +42,17 @@ public final class ValidationApiConfigurator extends ExtensionApiConfigurator<Re
 
     /** {@inheritDoc}**/
     @Override
-    protected Supplier<ResourceValidation<?>> getExtensionSupplier(final @NotNull ExtensionConfigEntry extension,
-                                                                   final @NotNull ExtensionDescriptor<ResourceValidation<?>> descriptor) {
+    protected Supplier<Validation<?>> getExtensionSupplier(final @NotNull ExtensionConfigEntry extension,
+                                                           final @NotNull ExtensionDescriptor<Validation<?>> descriptor) {
         return new ValidationDecoratorSupplier(descriptor.supplier(), extension);
     }
 
-    private static final class ValidationDecoratorSupplier implements Supplier<ResourceValidation<?>> {
+    private static final class ValidationDecoratorSupplier implements Supplier<Validation<?>> {
 
-        private final Supplier<ResourceValidation<?>> delegate;
+        private final Supplier<Validation<?>> delegate;
         private final ExtensionConfigEntry configEntry;
 
-        public ValidationDecoratorSupplier(Supplier<ResourceValidation<?>> delegate,
+        public ValidationDecoratorSupplier(Supplier<Validation<?>> delegate,
                                            ExtensionConfigEntry configEntry) {
             this.delegate = delegate;
             this.configEntry = configEntry;
@@ -62,9 +62,9 @@ public final class ValidationApiConfigurator extends ExtensionApiConfigurator<Re
          * {@inheritDoc}
          **/
         @Override
-        public ResourceValidation<?> get() {
-            ResourceValidation<?> extension = delegate.get();
-            extension = new ResourceValidationDecorator<>(extension)
+        public Validation<?> get() {
+            Validation<?> extension = delegate.get();
+            extension = new ValidationDecorator<>(extension)
                     .withPriority(configEntry.priority())
                     .withName(configEntry.name())
                     .withConfiguration(configEntry.config());

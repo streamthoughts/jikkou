@@ -282,9 +282,7 @@ public interface Configuration {
      */
     Set<String> keys();
 
-    default boolean hasKey(@NotNull final String key) {
-        return keys().contains(key);
-    }
+    boolean hasKey(@NotNull final String key);
 
     /**
      * Get the string value associated with the given key.
@@ -632,7 +630,7 @@ public interface Configuration {
                 return config;
             }
             if (value instanceof Map map) {
-                return Configuration.from((Map<String, ?>) map);
+                return Configuration.from((Map<String, Object>) map);
             }
         }
 
@@ -767,8 +765,11 @@ public interface Configuration {
      */
     Configuration withFallback(@NotNull final Configuration other);
 
-    Map<String, Object> asMap();
+    default Map<String, Object> asMap() {
+        return asMap(true);
+    }
 
+    Map<String, Object> asMap(boolean flatten);
     /**
      * Static helper method to create a new empty configuration.
      * 

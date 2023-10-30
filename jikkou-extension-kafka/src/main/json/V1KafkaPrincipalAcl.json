@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "description": "A KafkaPrincipalAcl defines a list of allowed or denied operations for a resource",
+  "title": "V1KafkaPrincipalAcl",
+  "description": "KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.",
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,

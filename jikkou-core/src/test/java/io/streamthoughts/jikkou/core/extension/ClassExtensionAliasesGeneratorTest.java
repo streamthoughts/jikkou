@@ -16,8 +16,8 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
+import io.streamthoughts.jikkou.core.validation.Validation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -76,8 +76,8 @@ class ClassExtensionAliasesGeneratorTest {
         );
     }
 
-    private static abstract class TestTransformation implements ResourceTransformation<HasMetadata> {};
-    private static abstract class TestValidation implements ResourceValidation<HasMetadata> {};
+    private static abstract class TestTransformation implements Transformation<HasMetadata> {};
+    private static abstract class TestValidation implements Validation<HasMetadata> {};
     private static abstract class TestExtension implements Extension {};
 
 }

@@ -15,14 +15,21 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import io.streamthoughts.jikkou.core.models.generics.GenericChangeResult;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface to represent a change result.
  *
- * @param <T>   the change-type.
+ * @param <T> the change-type.
  */
+@JsonDeserialize(as = GenericChangeResult.class)
 public interface ChangeResult<T extends Change> {
 
     /**
@@ -40,7 +47,16 @@ public interface ChangeResult<T extends Change> {
         /**
          * Execution of one or more changes failed
          **/
-        FAILED
+        FAILED;
+
+        @JsonCreator
+        public static Status getForNameIgnoreCase(final @Nullable String str) {
+            if (str == null) throw new IllegalArgumentException("Unsupported status 'null'");
+            return Arrays.stream(Status.values())
+                    .filter(e -> e.name().equals(str.toUpperCase(Locale.ROOT)))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Unsupported status '" + str + "'"));
+        }
     }
 
     /**
@@ -61,33 +77,33 @@ public interface ChangeResult<T extends Change> {
         return status() == Status.FAILED;
     }
 
-    long end();
+    Long end();
 
     /**
      * Gets the change.
      *
-     * @return  the change resource.
+     * @return the change resource.
      */
     HasMetadataChange<T> data();
 
     /**
      * Gets the list of errors.
      *
-     * @return  the list of error.
+     * @return the list of error.
      */
     List<ChangeError> errors();
 
     /**
      * Gets the status of this execution.
      *
-     * @return  the status.
+     * @return the status.
      */
     Status status();
 
     /**
      * Gets the description of this change.
      *
-     * @return  a change description.
+     * @return a change description.
      */
     ChangeDescription description();
 }

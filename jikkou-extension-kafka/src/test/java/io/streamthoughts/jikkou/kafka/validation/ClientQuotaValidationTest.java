@@ -16,12 +16,12 @@
 package io.streamthoughts.jikkou.kafka.validation;
 
 import io.streamthoughts.jikkou.core.models.Resource;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaSpec;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

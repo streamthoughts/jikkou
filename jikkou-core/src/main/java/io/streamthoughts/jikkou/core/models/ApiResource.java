@@ -17,6 +17,8 @@ package io.streamthoughts.jikkou.core.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import jakarta.validation.constraints.NotNull;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,9 +48,10 @@ import java.util.Set;
         "verbs",
         "metadata"}
 )
-public record ApiResource(
-        @JsonProperty("name") String name,
-        @JsonProperty("kind") String kind,
+@Reflectable
+public record ApiResource (
+        @NotNull @JsonProperty("name") String name,
+        @NotNull @JsonProperty("kind") String kind,
         @JsonProperty("singularName") String singularName,
         @JsonProperty("shortNames") Set<String> shortNames,
         @JsonProperty("description") String description,
@@ -142,5 +145,17 @@ public record ApiResource(
         return verbsOptions.stream()
                 .filter(verbsOptions -> verbsOptions.verb().equalsIgnoreCase(verb.value()))
                 .findFirst();
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public Set<String> shortNames() {
+        return Optional.ofNullable(shortNames).orElse(Collections.emptySet());
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public Set<String> verbs() {
+        return Optional.ofNullable(verbs).orElse(Collections.emptySet());
     }
 }

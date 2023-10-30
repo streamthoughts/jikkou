@@ -18,12 +18,10 @@ package io.streamthoughts.jikkou.client.command.health;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
-import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.List;
 import picocli.CommandLine.Command;
 
 @Command(name = "get-indicators",
@@ -40,7 +38,7 @@ import picocli.CommandLine.Command;
 public class GetHealthIndicatorsCommand implements Runnable {
 
     @Inject
-    private ExtensionDescriptorRegistry extensionDescriptorRegistry;
+    private JikkouApi api;
 
     /**
      * {@inheritDoc}
@@ -48,10 +46,10 @@ public class GetHealthIndicatorsCommand implements Runnable {
     @Override
     public void run() {
 
-        List<ExtensionDescriptor<HealthIndicator>> descriptors = extensionDescriptorRegistry
-                .findAllDescriptorsByClass(HealthIndicator.class);
+        ApiHealthIndicatorList indicatorList = api.getApiHealthIndicators();
 
-        String[][] data = descriptors
+        String[][] data = indicatorList
+                .indicators()
                 .stream()
                 .map(descriptor -> new String[]{
                         descriptor.name(),

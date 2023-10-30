@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.record;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
@@ -46,7 +46,7 @@ class KafkaTableKafkaTableRecordChangeDescriptionTest {
                 .build();
 
         // When
-        KafkaTableRecordChangeDescription description = new KafkaTableRecordChangeDescription(new GenericResourceChange<>(change));
+        KafkaTableRecordChangeDescription description = new KafkaTableRecordChangeDescription(new DefaultResourceChange<>(change));
         String textual = description.textual();
 
         // Then

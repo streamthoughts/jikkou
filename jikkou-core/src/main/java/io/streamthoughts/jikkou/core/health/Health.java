@@ -22,11 +22,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link Health} wraps information about a service or sub-system.
@@ -41,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 public final class Health {
 
     private final String name;
-    private final Status status;
+    private final HealthStatus status;
     private final Map<String, Object> details;
 
     public static @NotNull Builder builder() {
@@ -51,12 +54,12 @@ public final class Health {
     /**
      * Creates a new {@link Health} instance.
      *
-     * @param name      the status indicator name (maybe {@code null}).
-     * @param status    the {@link Status} instance (cannot be {@code null}).
-     * @param details   the status indicator details (cannot be {@code null}).
+     * @param name    The status indicator name (maybe {@code null}).
+     * @param status  The {@link HealthStatus} instance (cannot be {@code null}).
+     * @param details The status indicator details (cannot be {@code null}).
      */
     private Health(@Nullable final String name,
-                   @Nullable final Status status,
+                   @Nullable final HealthStatus status,
                    @Nullable final Map<String, Object> details) {
         Objects.requireNonNull(status);
         Objects.requireNonNull(details);
@@ -68,7 +71,7 @@ public final class Health {
     /**
      * Gets the health indicator name.
      *
-     * @return  the name (may be {@code null}).
+     * @return the name (maybe {@code null}).
      */
     public String getName() {
         return name;
@@ -77,24 +80,26 @@ public final class Health {
     /**
      * Gets the health indicator status.
      *
-     * @return  the {@link Status} (cannot be {@code null}).
+     * @return the {@link HealthStatus} (cannot be {@code null}).
      */
     @JsonUnwrapped
-    public Status getStatus() {
+    public HealthStatus getStatus() {
         return status;
     }
 
     /**
      * Gets the health indicator details.
      *
-     * @return  the details or an empty map.
+     * @return the details or an empty map.
      */
     @JsonInclude(Include.NON_EMPTY)
     public Map<String, Object> getDetails() {
         return details;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,13 +109,17 @@ public final class Health {
                 Objects.equals(details, health.details);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name, status, details);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "Health[" +
@@ -125,55 +134,57 @@ public final class Health {
      */
     public static class Builder {
 
+        private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
+
         private String name;
-        private Status status;
+        private HealthStatus status;
         private final Map<String, Object> details;
 
         /**
          * Creates a new {@link Builder} instance.
          */
         public Builder() {
-            status = Status.UNKNOWN;
+            status = HealthStatus.UNKNOWN;
             details = new LinkedHashMap<>();
         }
 
         /**
-         * Sets the status for the {@link Health} indicator to be built to {@link Status#DOWN}.
+         * Sets the status for the {@link Health} indicator to be built to {@link HealthStatus#DOWN}.
          *
-         * @return  this {@link Builder} instance.
+         * @return this {@link Builder} instance.
          */
         public Builder down() {
-            status = Status.DOWN;
+            status = HealthStatus.DOWN;
             return this;
         }
 
         /**
-         * Sets the status for the {@link Health} indicator to be built to {@link Status#UP}.
+         * Sets the status for the {@link Health} indicator to be built to {@link HealthStatus#UP}.
          *
-         * @return  this {@link Builder} instance.
+         * @return this {@link Builder} instance.
          */
         public Builder up() {
-            status = Status.UP;
+            status = HealthStatus.UP;
             return this;
         }
 
         /**
-         * Sets the status for the {@link Health} indicator to be built {@link Status#UNKNOWN}.
+         * Sets the status for the {@link Health} indicator to be built {@link HealthStatus#UNKNOWN}.
          *
-         * @return  this {@link Builder} instance.
+         * @return this {@link Builder} instance.
          */
         public Builder unknown() {
-            status = Status.UNKNOWN;
+            status = HealthStatus.UNKNOWN;
             return this;
         }
 
         /**
          * Sets the name of service or sub-system.
          *
-         * @param name  the name.
-         * @return      this {@link Builder} instance.
+         * @param name the name.
+         * @return this {@link Builder} instance.
          */
-        public Builder withName(final String name) {
+        public Builder name(final String name) {
             this.name = name;
             return this;
         }
@@ -181,10 +192,10 @@ public final class Health {
         /**
          * Adds a details entry for the {@link Health} indicator.
          *
-         * @param details   the details.
-         * @return          this {@link Builder} instance.
+         * @param details the details.
+         * @return this {@link Builder} instance.
          */
-        public Builder withDetails(final Map<String, Object> details) {
+        public Builder details(final Map<String, ?> details) {
             this.details.putAll(details);
             return this;
         }
@@ -194,9 +205,9 @@ public final class Health {
          *
          * @param key   the detail key.
          * @param value the detail value.
-         * @return      this {@link Builder} instance.
+         * @return this {@link Builder} instance.
          */
-        public Builder withDetails(final String key, final Object value) {
+        public Builder details(final String key, final Object value) {
             Objects.requireNonNull(key, "'key' should not be null");
             Objects.requireNonNull(value, "'value' should not be null");
             details.put(key, value);
@@ -206,27 +217,26 @@ public final class Health {
         /**
          * Sets the exception for the {@link Health} indicator.
          *
-         * @param exception the exception.
-         * @return          this {@link Builder} instance.
+         * @param ex The exception.
+         * @return this {@link Builder} instance.
          */
-        public Builder withException(final Throwable exception) {
-            Objects.requireNonNull(exception, "exception cannot be null");
-
-            Throwable cause = exception;
-            if (exception.getCause() != null) {
-                cause = exception.getCause();
+        public Builder exception(final @NotNull Throwable ex) {
+            Map<String, String> error = new HashMap<>(1);
+            final String message = ex.getClass().getName() + ": " + ex.getMessage();
+            error.put("error", message);
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Health indicator [" + name + "] reported exception: " + message, ex);
             }
-            details.put("error", cause.getClass().getName() + ": " + cause.getMessage());
-            return this;
+            return details(error);
         }
 
         /**
-         * Sets the {@link Status} for the {@link Health} indicator.
+         * Sets the {@link HealthStatus} for the {@link Health} indicator.
          *
-         * @param status    the status.
-         * @return          this {@link Builder} instance.
+         * @param status the status.
+         * @return this {@link Builder} instance.
          */
-        public Builder withStatus(final Status status) {
+        public Builder status(final HealthStatus status) {
             Objects.requireNonNull(status, "status cannot be null");
             this.status = status;
             return this;
@@ -234,7 +244,8 @@ public final class Health {
 
         /**
          * Builds a new {@link Health} instance.
-         * @return  the {@link Health} instance.
+         *
+         * @return the {@link Health} instance.
          */
         public Health build() {
             return new Health(name, status, details);

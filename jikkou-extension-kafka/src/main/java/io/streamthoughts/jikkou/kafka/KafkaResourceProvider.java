@@ -16,18 +16,18 @@
 package io.streamthoughts.jikkou.kafka;
 
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicList;
 import io.streamthoughts.jikkou.spi.ResourceProvider;
 
-public class KafkaResourceProvider implements ResourceProvider {
+public final class KafkaResourceProvider implements ResourceProvider {
 
     /**
      * {@inheritDoc}

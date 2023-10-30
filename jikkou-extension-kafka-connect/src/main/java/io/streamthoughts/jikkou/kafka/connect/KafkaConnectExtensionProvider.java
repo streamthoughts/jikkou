@@ -17,9 +17,9 @@ package io.streamthoughts.jikkou.kafka.connect;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
-import io.streamthoughts.jikkou.kafka.connect.control.KafkaConnectorCollector;
-import io.streamthoughts.jikkou.kafka.connect.control.KafkaConnectorController;
 import io.streamthoughts.jikkou.kafka.connect.health.KafkaConnectHealthIndicator;
+import io.streamthoughts.jikkou.kafka.connect.reconcilier.KafkaConnectorCollector;
+import io.streamthoughts.jikkou.kafka.connect.reconcilier.KafkaConnectorController;
 import io.streamthoughts.jikkou.kafka.connect.transform.KafkaConnectorResourceTransformation;
 import io.streamthoughts.jikkou.kafka.connect.validation.KafkaConnectorResourceValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;

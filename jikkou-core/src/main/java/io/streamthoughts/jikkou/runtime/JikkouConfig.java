@@ -284,7 +284,6 @@ public final class JikkouConfig implements Configuration {
         return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
     }
 
-
     /**
      * {@inheritDoc}
      *
@@ -312,8 +311,11 @@ public final class JikkouConfig implements Configuration {
 
     /** {@inheritDoc} */
     @Override
-    public Map<String, Object> asMap() {
-        return getConfAsMap(config);
+    public Map<String, Object> asMap(boolean flatten) {
+        if (flatten) {
+            return getConfAsMap(config);
+        }
+        return config.root().unwrapped();
     }
 
     /**

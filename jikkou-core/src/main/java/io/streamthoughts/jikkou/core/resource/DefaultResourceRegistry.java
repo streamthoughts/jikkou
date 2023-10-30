@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
-import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,20 +62,20 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
 
     /** {@inheritDoc} **/
     @Override
-    public ResourceDescriptor register(Class<? extends HasMetadata> resource, ResourceType type) {
+    public ResourceDescriptor register(Class<? extends Resource> resource, ResourceType type) {
         return register(factory.make(type, resource));
     }
 
     /** {@inheritDoc} **/
     @Override
-    public ResourceDescriptor register(Class<? extends HasMetadata> resource, String version) {
-        return register(resource, ResourceType.create(resource).withVersion(version));
+    public ResourceDescriptor register(Class<? extends Resource> resource, String version) {
+        return register(resource, ResourceType.of(resource).version(version));
     }
 
     /** {@inheritDoc} **/
     @Override
-    public ResourceDescriptor register(Class<? extends HasMetadata> resource) {
-        return register(factory.make(ResourceType.create(resource), resource));
+    public ResourceDescriptor register(Class<? extends Resource> resource) {
+        return register(factory.make(ResourceType.of(resource), resource));
     }
 
     /** {@inheritDoc} **/

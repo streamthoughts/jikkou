@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
@@ -47,7 +47,7 @@ class AclChangeDescriptionTest {
                 .build();
 
         // When
-        var desc = new AclChangeDescription(GenericResourceChange.<AclChange>builder().withChange(change).build());
+        var desc = new AclChangeDescription(DefaultResourceChange.<AclChange>builder().withChange(change).build());
 
         // Then
         Assertions.assertEquals(

@@ -37,33 +37,52 @@ public final class DefaultResourceWriter implements ResourceWriter {
      */
     @Override
     public void write(@NotNull Format format,
-                      @NotNull List<? extends Resource> items,
+                      @NotNull Resource resource,
                       @NotNull OutputStream os) {
         try {
             switch (format) {
                 case JSON:
-                    serializeJson(items, os);
+                    writeJSON(os, resource);
                     break;
                 case YAML:
-                    serializeYaml(items, os);
+                    writeYAML(os, resource);
                     break;
-            };
-
-
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize object into '" + format + "' format", e);
         }
     }
 
-    private static void serializeJson(@NotNull List<? extends Resource> items,
-                                      @NotNull OutputStream os) throws IOException {
-        Jackson.JSON_OBJECT_MAPPER.writeValue(os, items);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(@NotNull Format format,
+                      @NotNull List<? extends Resource> items,
+                      @NotNull OutputStream os) {
+        try {
+            switch (format) {
+                case JSON:
+                    writeJSON(os, items);
+                    break;
+                case YAML:
+                    for (Object item : items) {
+                        writeYAML(os, item);
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize object into '" + format + "' format", e);
+        }
     }
 
-    private static void serializeYaml(@NotNull List<? extends Resource> items,
-                                      @NotNull OutputStream os) throws IOException {
-        for (Object item : items) {
-            Jackson.YAML_OBJECT_MAPPER.writeValue(os, item);
-        }
+    private void writeJSON(@NotNull OutputStream os,
+                           @NotNull Object object) throws IOException {
+        Jackson.JSON_OBJECT_MAPPER.writeValue(os, object);
+    }
+
+    private void writeYAML(@NotNull OutputStream os,
+                           @NotNull Object object) throws IOException {
+        Jackson.YAML_OBJECT_MAPPER.writeValue(os, object);
     }
 }

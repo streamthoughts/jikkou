@@ -24,7 +24,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
-import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.http.client.RestClientException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

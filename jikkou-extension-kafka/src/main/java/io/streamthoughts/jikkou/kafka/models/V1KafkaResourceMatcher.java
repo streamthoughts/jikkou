@@ -155,9 +155,9 @@ public class V1KafkaResourceMatcher {
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.type == null)? 0 :this.type.hashCode()));
         result = ((result* 31)+((this.pattern == null)? 0 :this.pattern.hashCode()));
         result = ((result* 31)+((this.patternType == null)? 0 :this.patternType.hashCode()));
-        result = ((result* 31)+((this.type == null)? 0 :this.type.hashCode()));
         return result;
     }
 
@@ -170,7 +170,7 @@ public class V1KafkaResourceMatcher {
             return false;
         }
         V1KafkaResourceMatcher rhs = ((V1KafkaResourceMatcher) other);
-        return ((((this.pattern == rhs.pattern)||((this.pattern!= null)&&this.pattern.equals(rhs.pattern)))&&((this.patternType == rhs.patternType)||((this.patternType!= null)&&this.patternType.equals(rhs.patternType))))&&((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type))));
+        return ((((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type)))&&((this.pattern == rhs.pattern)||((this.pattern!= null)&&this.pattern.equals(rhs.pattern))))&&((this.patternType == rhs.patternType)||((this.patternType!= null)&&this.patternType.equals(rhs.patternType))));
     }
 
 }

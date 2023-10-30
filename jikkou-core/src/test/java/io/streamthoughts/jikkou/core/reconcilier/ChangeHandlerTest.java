@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -35,7 +35,7 @@ class ChangeHandlerTest {
         Assertions.assertEquals(ChangeType.NONE, handler.supportedChangeTypes().iterator().next());
 
         // When
-        GenericResourceChange<Change> input = GenericResourceChange
+        DefaultResourceChange<Change> input = DefaultResourceChange
                 .builder()
                 .withChange(change)
                 .build();

@@ -17,16 +17,16 @@ package io.streamthoughts.jikkou.kafka;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaAclCollector;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaAclController;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaBrokerCollector;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaCollector;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaQuotaController;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTableCollector;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTableController;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicCollector;
-import io.streamthoughts.jikkou.kafka.control.AdminClientKafkaTopicController;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclCollector;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclController;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaBrokerCollector;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaQuotaCollector;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaQuotaController;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaTableCollector;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaTableController;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaTopicCollector;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaTopicController;
 import io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter;
 import io.streamthoughts.jikkou.kafka.transform.KafkaPrincipalAuthorizationTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation;
@@ -49,7 +49,7 @@ import io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class KafkaExtensionProvider implements ExtensionProvider {
+public final class KafkaExtensionProvider implements ExtensionProvider {
 
     /** {@inheritDoc} **/
     @Override

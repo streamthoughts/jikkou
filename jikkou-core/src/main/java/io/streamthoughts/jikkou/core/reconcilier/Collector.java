@@ -23,7 +23,8 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public interface Collector<R extends HasMetadata>
      * @param configuration the configuration settings that may be used to get resources.
      * @return the list of resources.
      */
-    default List<R> listAll(@NotNull Configuration configuration) {
+    default ResourceListObject<R> listAll(@NotNull Configuration configuration) {
         return listAll(configuration, Collections.emptyList());
     }
 
@@ -58,7 +59,7 @@ public interface Collector<R extends HasMetadata>
      * @param selectors     the selectors to be used for filtering the resource to describe.
      * @return the list of resources.
      */
-    List<R> listAll(@NotNull Configuration configuration, @NotNull List<ResourceSelector> selectors);
+    ResourceListObject<R> listAll(@NotNull Configuration configuration, @NotNull List<Selector> selectors);
 
     /**
      * Gets all the resources that exist on the remote system and that math the given selectors.
@@ -66,7 +67,7 @@ public interface Collector<R extends HasMetadata>
      * @param selectors the selector to be used for filtering the resource to describe.
      * @return the list of resources.
      */
-    default List<R> listAll(@NotNull List<ResourceSelector> selectors) {
+    default ResourceListObject<R> listAll(@NotNull List<Selector> selectors) {
         return listAll(getDefaultConfiguration(), selectors);
     }
 
@@ -75,7 +76,7 @@ public interface Collector<R extends HasMetadata>
      *
      * @return the list of resources.
      */
-    default List<R> listAll() {
+    default ResourceListObject<R> listAll() {
         return listAll(Collections.emptyList());
     }
 

@@ -1,0 +1,185 @@
+/*
+ * Copyright 2023 The original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.streamthoughts.jikkou.extension.aiven.reconcilier;
+
+import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconcilier.DefaultChangeResult;
+import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
+import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
+import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec;
+import java.util.List;
+import okhttp3.mockwebserver.MockResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("integration")
+class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
+
+    private static AivenKafkaTopicAclEntryController controller;
+
+    @BeforeEach
+    public void beforeEach() {
+        controller = new AivenKafkaTopicAclEntryController(getAivenApiConfig());
+    }
+
+    @Test
+    void shouldCreateKafkaAclEntries() {
+        // Given
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {"acl":[{"id":"default","permission":"admin","topic":"*","username":"avnadmin"}]}
+                        """
+                ));
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {
+                          "acl": [
+                            {
+                              "id": "default",
+                              "permission": "admin",
+                              "topic": "*",
+                              "username": "avnadmin"
+                            },
+                            {
+                              "id": "acl44b79574e2a",
+                              "permission": "write",
+                              "topic": "topic-test",
+                              "username": "user-test"
+                            }
+                          ],
+                          "message": "added"
+                        }
+                        """
+
+                ));
+        V1KafkaTopicAclEntry entry = V1KafkaTopicAclEntry.builder()
+                .withSpec(V1KafkaTopicAclEntrySpec.builder()
+                        .withPermission(Permission.WRITE)
+                        .withTopic("topic-test")
+                        .withUsername("user-test")
+                        .build())
+                .build();
+
+        // When
+        Reconcilier<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = reconcilier
+                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
+
+        // Then
+        Assertions.assertNotNull(results);
+        Assertions.assertEquals(1, results.size());
+
+        ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
+        Assertions.assertEquals(DefaultChangeResult.Status.CHANGED, change.status());
+        Assertions.assertEquals(ChangeType.ADD, change.data().getChange().operation());
+    }
+
+    @Test
+    void shouldDeleteKafkaAclEntries() {
+        // Given
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {"acl":[{"id":"default","permission":"admin","topic":"*","username":"avnadmin"}]}
+                        """
+                ));
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {"acl":[],"message":"deleted"}
+                        """
+
+                ));
+        // When
+        V1KafkaTopicAclEntry entry = V1KafkaTopicAclEntry.builder()
+                .withMetadata(ObjectMeta.builder()
+                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
+                        .build())
+                .withSpec(V1KafkaTopicAclEntrySpec.builder()
+                        .withPermission(Permission.ADMIN)
+                        .withTopic("*")
+                        .withUsername("avnadmin")
+                        .build())
+                .build();
+
+        // When
+        Reconcilier<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = reconcilier
+                .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
+
+        // Then
+        Assertions.assertNotNull(results);
+        Assertions.assertEquals(1, results.size());
+
+        ChangeResult<ValueChange<KafkaAclEntry>> change = results.get(0);
+        Assertions.assertEquals(DefaultChangeResult.Status.CHANGED, change.status());
+        Assertions.assertEquals(ChangeType.DELETE, change.data().getChange().operation());
+    }
+
+
+    @Test
+    void shouldHandleError() {
+        // Given
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {"acl":[]}
+                        """
+                ));
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(409)
+                .setBody("""
+                        {"errors":[{"message":"Identical ACL entry already exists","status":409}],"message":"Identical ACL entry already exists"}
+                        """
+                ));
+
+        V1KafkaTopicAclEntry entry = V1KafkaTopicAclEntry.builder()
+                .withSpec(V1KafkaTopicAclEntrySpec.builder()
+                        .withPermission(Permission.ADMIN)
+                        .withTopic("*")
+                        .withUsername("avnadmin")
+                        .build())
+                .build();
+
+        // When
+        Reconcilier<V1KafkaTopicAclEntry, ValueChange<KafkaAclEntry>> reconcilier = new Reconcilier<>(controller);
+        List<ChangeResult<ValueChange<KafkaAclEntry>>> results = reconcilier
+                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
+
+
+        Assertions.assertEquals(1, results.size());
+        Assertions.assertEquals(DefaultChangeResult.Status.FAILED, results.get(0).status());
+    }
+}

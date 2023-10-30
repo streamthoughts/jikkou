@@ -19,16 +19,16 @@ import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformationDecorator;
+import io.streamthoughts.jikkou.core.transform.Transformation;
+import io.streamthoughts.jikkou.core.transform.TransformationDecorator;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.function.Supplier;
 
 /**
- * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ResourceTransformation}
+ * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link Transformation}
  * dynamically passed through the CLI configuration.
  */
-public class TransformationApiConfigurator extends ExtensionApiConfigurator<ResourceTransformation<?>> {
+public class TransformationApiConfigurator extends ExtensionApiConfigurator<Transformation<?>> {
 
     /**
      * Creates a new {@link TransformationApiConfigurator} instance.
@@ -43,27 +43,27 @@ public class TransformationApiConfigurator extends ExtensionApiConfigurator<Reso
      * {@inheritDoc}
      **/
        @Override
-    protected Supplier<ResourceTransformation<?>> getExtensionSupplier(ExtensionConfigEntry configEntry,
-                                                                       ExtensionDescriptor<ResourceTransformation<?>> descriptor) {
+    protected Supplier<Transformation<?>> getExtensionSupplier(ExtensionConfigEntry configEntry,
+                                                               ExtensionDescriptor<Transformation<?>> descriptor) {
            return new TransformationDecoratorSupplier(configEntry, descriptor.supplier());
     }
 
-    private static final class TransformationDecoratorSupplier implements Supplier<ResourceTransformation<?>> {
+    private static final class TransformationDecoratorSupplier implements Supplier<Transformation<?>> {
 
-        private final Supplier<ResourceTransformation<?>> delegate;
+        private final Supplier<Transformation<?>> delegate;
         private final ExtensionConfigEntry configEntry;
 
         public TransformationDecoratorSupplier(ExtensionConfigEntry configEntry,
-                                               Supplier<ResourceTransformation<?>> delegate) {
+                                               Supplier<Transformation<?>> delegate) {
             this.delegate = delegate;
             this.configEntry = configEntry;
         }
 
         /** {@inheritDoc} **/
         @Override
-        public ResourceTransformation<?> get() {
-            ResourceTransformation<?> extension = delegate.get();
-            extension = new ResourceTransformationDecorator<>(extension)
+        public Transformation<?> get() {
+            Transformation<?> extension = delegate.get();
+            extension = new TransformationDecorator<>(extension)
                     .withPriority(configEntry.priority())
                     .withName(configEntry.name())
                     .withConfiguration(configEntry.config());

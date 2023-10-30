@@ -20,6 +20,7 @@ import static picocli.CommandLine.Model.CommandSpec;
 import ch.qos.logback.classic.LoggerContext;
 import io.micronaut.configuration.picocli.MicronautFactory;
 import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.ApplicationContextBuilder;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -40,9 +41,9 @@ import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand
 import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.core.JikkouInfo;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.time.Duration;
@@ -90,13 +91,12 @@ public final class Jikkou {
 
     private static final Logger LOG = LoggerFactory.getLogger(Jikkou.class);
 
-    static LocalDateTime START_TIME;
+    private static LocalDateTime START_TIME;
 
-    @Inject
-    private ConfigurationContext configurationContext;
 
     @EventListener
     public void onStartupEvent(StartupEvent event) {
+        ConfigurationContext configurationContext = GlobalConfigurationContext.getConfigurationContext();
         if (!configurationContext.isExists()) {
             System.err.printf(
                     "No configuration context has been defined (file:%s)." +
@@ -108,7 +108,6 @@ public final class Jikkou {
 
     public static void main(final String... args) {
         setRootLogLevelWithEnv();
-        START_TIME = LocalDateTime.now();
         var printer = BannerPrinterBuilder.newBuilder()
                 .setLogger(LOG)
                 .setLoggerLevel(Level.INFO)
@@ -129,8 +128,12 @@ public final class Jikkou {
     }
 
     public static int execute(String[] args) {
-        try (ApplicationContext context = ApplicationContext.builder(
-                Jikkou.class, Environment.CLI).start()) {
+        START_TIME = LocalDateTime.now();
+        Configuration config = GlobalConfigurationContext.getConfiguration();
+        ApplicationContextBuilder builder = ApplicationContext.builder(Jikkou.class, Environment.CLI);
+        // Inject config to Micronaut to enable conditional beans.
+        builder.propertySources(new JikkouPropertySource(config));
+        try (ApplicationContext context = builder.start()) {
             final CommandLine commandLine = createCommandLine(context);
             if (args.length > 0) {
                 return commandLine.execute(args);
@@ -170,9 +173,12 @@ public final class Jikkou {
                 })
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
-
-        GetCommandLineFactory generator = context.getBean(GetCommandLineFactory.class);
-        commandLine.addSubcommand(generator.createCommandLine());
+        try {
+            GetCommandLineFactory generator = context.getBean(GetCommandLineFactory.class);
+            commandLine.addSubcommand(generator.createCommandLine());
+        } catch (Exception e) {
+            System.err.println("Error: Cannot generate 'get' subcommands. Cause: " + e.getLocalizedMessage());
+        }
 
         CommandLine gen = commandLine.getSubcommands().get("generate-completion");
         gen.getCommandSpec().usageMessage().hidden(true);

@@ -55,6 +55,8 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
 
     private final Map<ExtensionKey<?>, ExtensionSupplier<?>> extensionsByKey;
 
+    private final List<ExtensionDescriptor<?>> descriptors;
+
     /**
      * Creates a new {@link DefaultExtensionRegistry} instance.
      *
@@ -68,6 +70,7 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         this.extensionsTypesByAlias = new HashMap<>();
         this.extensionsByKey = new HashMap<>();
         this.extensionAliasesGenerator = extensionAliasesGenerator;
+        this.descriptors = new ArrayList<>();
     }
 
     /**
@@ -79,8 +82,17 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         this.extensionsByKey = new HashMap<>(registry.extensionsByKey);
         this.descriptorsByType = new HashMap<>();
         this.extensionsTypesByAlias = new HashMap<>();
+        this.descriptors = new ArrayList<>(registry.descriptors);
         registry.descriptorsByType.forEach((k, v) -> this.descriptorsByType.put(k, new ArrayList<>(v)));
         registry.extensionsTypesByAlias.forEach((k, v) -> this.extensionsTypesByAlias.put(k, new ArrayList<>(v)));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ExtensionDescriptor<?>> getAllDescriptors() {
+        return Collections.unmodifiableList(descriptors);
     }
 
     /**
@@ -246,18 +258,18 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         if (descriptor.type() == null)
             throw new ExtensionRegistrationException("Cannot register extension with type 'null': " + descriptor);
 
-        registerAliasesFor(descriptor);
-
-        Classes.getAllSuperTypes(descriptor.type()).forEach(cls ->
-                descriptorsByType.computeIfAbsent(cls, k -> new LinkedList<>()).add(descriptor)
-        );
-
         final ExtensionKey<T> key = ExtensionKey.create(descriptor);
 
         if (extensionsByKey.put(key, new DefaultExtensionSupplier<>(descriptor)) != null) {
             throw new ConflictingExtensionDefinitionException(
                     "Failed to resister ExtensionDescriptor, extension already exists for key: " + key);
         }
+        registerAliasesFor(descriptor);
+
+        Classes.getAllSuperTypes(descriptor.type()).forEach(cls ->
+                descriptorsByType.computeIfAbsent(cls, k -> new LinkedList<>()).add(descriptor)
+        );
+        descriptors.add(descriptor);
     }
 
     @Override

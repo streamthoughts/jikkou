@@ -18,10 +18,10 @@ package io.streamthoughts.jikkou.core.reconcilier;
 import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.NONE;
 import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.UPDATE;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.models.generics.GenericChange;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,8 +29,8 @@ import java.util.List;
  * Represents a change operation on a resource entity.
  */
 @Evolving
-@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 @Reflectable
+@JsonDeserialize(as = GenericChange.class)
 public interface Change {
 
     /**

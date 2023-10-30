@@ -23,7 +23,7 @@ import java.io.Serializable;
 /**
  * Kafka Connect - Error Response
  *
- * @param errorCode the error code.
+ * @param errorCode the error name.
  * @param message   the error message.
  */
 @Reflectable

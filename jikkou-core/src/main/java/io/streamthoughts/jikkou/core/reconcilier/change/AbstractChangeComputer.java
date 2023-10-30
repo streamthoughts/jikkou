@@ -23,7 +23,7 @@ import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.UPDATE;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
@@ -128,7 +128,7 @@ public abstract class AbstractChangeComputer<T, V, C extends Change> implements 
                         groupedByChangeType.getOrDefault(changeType, Collections.emptyList())
                                 .stream()
                                 .flatMap(it -> handle(changeType, it).stream()
-                                        .map(change -> GenericResourceChange
+                                        .map(change -> DefaultResourceChange
                                                 .<C>builder()
                                                 .withMetadata(it.meta)
                                                 .withChange(change)

@@ -15,26 +15,47 @@
  */
 package io.streamthoughts.jikkou.core;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Determines the type of changes that can be applied on the resources to be reconciled.
  */
 public enum ReconciliationMode {
 
-    /** Only changes that create new resource objects on the system will be applied. */
+    /**
+     * Only changes that create new resource objects on the system will be applied.
+     */
     CREATE(ChangeType.ADD),
 
-    /** Only changes that delete an existing resource objects on your system will be applied. */
+    /**
+     * Only changes that delete an existing resource objects on your system will be applied.
+     */
     DELETE(ChangeType.DELETE),
 
-    /** Only changes that create or update existing resource objects on the system will be applied. */
+    /**
+     * Only changes that create or update existing resource objects on the system will be applied.
+     */
     UPDATE(ChangeType.ADD, ChangeType.UPDATE),
 
-    /** Apply all reconciliation changes */
-    APPLY_ALL(ChangeType.ADD, ChangeType.UPDATE, ChangeType.DELETE);
+    /**
+     * Apply all reconciliation changes
+     */
+    FULL(ChangeType.ADD, ChangeType.UPDATE, ChangeType.DELETE);
+
+    @JsonCreator
+    public static ReconciliationMode getForNameIgnoreCase(final @Nullable String str) {
+        if (str == null) throw new IllegalArgumentException("Unsupported mode 'null'");
+        return Arrays.stream(ReconciliationMode.values())
+                .filter(e -> e.name().equals(str.toUpperCase(Locale.ROOT)))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported mode '" + str + "'"));
+    }
 
     /**
      * Set of change-type supported for this reconciliation mode.
@@ -44,7 +65,7 @@ public enum ReconciliationMode {
     /**
      * Creates a new {@link ReconciliationMode} instance.
      *
-     * @param changeTypes   {@link #changeTypes}
+     * @param changeTypes {@link #changeTypes}
      */
     ReconciliationMode(ChangeType... changeTypes) {
         this(Set.of(changeTypes));
@@ -53,7 +74,7 @@ public enum ReconciliationMode {
     /**
      * Creates a new {@link ReconciliationMode} instance.
      *
-     * @param changeTypes   {@link #changeTypes}
+     * @param changeTypes {@link #changeTypes}
      */
     ReconciliationMode(Set<ChangeType> changeTypes) {
         this.changeTypes = changeTypes;
@@ -62,8 +83,8 @@ public enum ReconciliationMode {
     /**
      * Checks whether the given change is supported by this reconciliation mode.
      *
-     * @param change    the change to test.
-     * @return  {@code true} if the change is supported, otherwise {@code false}.
+     * @param change the change to test.
+     * @return {@code true} if the change is supported, otherwise {@code false}.
      */
     public boolean isSupported(HasMetadataChange<?> change) {
         ChangeType changeType = change.getChange().operation();

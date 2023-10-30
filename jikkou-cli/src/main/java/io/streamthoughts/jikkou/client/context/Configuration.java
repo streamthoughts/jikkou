@@ -17,15 +17,13 @@ package io.streamthoughts.jikkou.client.context;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonClassDescription;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.ReflectiveAccess;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@ReflectiveAccess
-@JsonClassDescription
+@Reflectable
 public class Configuration {
 
     @JsonProperty("currentContext")
@@ -34,7 +32,9 @@ public class Configuration {
     @JsonAnyGetter
     private final Map<String, Context> configurationContexts = new LinkedHashMap<>();
 
-    @JsonCreator
+    @ConstructorProperties({
+            "currentContext"
+    })
     public Configuration(String currentContext) {
         this.currentContext = currentContext;
     }

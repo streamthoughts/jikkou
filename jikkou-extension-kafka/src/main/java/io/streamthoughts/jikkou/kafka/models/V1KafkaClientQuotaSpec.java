@@ -131,8 +131,8 @@ public class V1KafkaClientQuotaSpec {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.configs == null)? 0 :this.configs.hashCode()));
         result = ((result* 31)+((this.type == null)? 0 :this.type.hashCode()));
+        result = ((result* 31)+((this.configs == null)? 0 :this.configs.hashCode()));
         result = ((result* 31)+((this.entity == null)? 0 :this.entity.hashCode()));
         return result;
     }
@@ -146,7 +146,7 @@ public class V1KafkaClientQuotaSpec {
             return false;
         }
         V1KafkaClientQuotaSpec rhs = ((V1KafkaClientQuotaSpec) other);
-        return ((((this.configs == rhs.configs)||((this.configs!= null)&&this.configs.equals(rhs.configs)))&&((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type))))&&((this.entity == rhs.entity)||((this.entity!= null)&&this.entity.equals(rhs.entity))));
+        return ((((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type)))&&((this.configs == rhs.configs)||((this.configs!= null)&&this.configs.equals(rhs.configs))))&&((this.entity == rhs.entity)||((this.entity!= null)&&this.entity.equals(rhs.entity))));
     }
 
 }

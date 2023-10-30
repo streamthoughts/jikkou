@@ -286,7 +286,7 @@ public class JikkouAnnotator extends AbstractAnnotator {
                 )
                 .registerLombokAnnotation(
                         LombokAnnotation.builder()
-                                .schemaProperty(LOMBOK_SCHEMA_PROPERTY_PREFIX + "equals-and-hash-code")
+                                .schemaProperty(LOMBOK_SCHEMA_PROPERTY_PREFIX + "equals-and-hash-name")
                                 .annotation(EqualsAndHashCode.class)
                                 .enabledByDefault(false)
                                 .param(a -> a.param("doNotUseGetters", true))

@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.client.context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -27,19 +28,17 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigurationContext {
+public final class ConfigurationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationContext.class);
+    private static final String JIKKOU_CONFIG_ENV = "JIKKOUCONFIG";
+    private static final String DEFAULT_CONFIG_FILE = ".jikkou/config";
     public static final String EMPTY_CONTEXT = "";
     private final ObjectMapper objectMapper;
-
-    private static final String JIKKOU_CONFIG_ENV = "JIKKOUCONFIG";
-
-    private static final String DEFAULT_CONFIG_FILE = ".jikkou/config";
     private final File configFile;
-    
-    public ConfigurationContext(ObjectMapper objectMapper) {
-        this(getDefaultConfigFile(), objectMapper);
+
+    public static ConfigurationContext createDefaultContext() {
+        return new ConfigurationContext(getDefaultConfigFile(), Jackson.JSON_OBJECT_MAPPER);
     }
 
     @NotNull

@@ -17,16 +17,13 @@ package io.streamthoughts.jikkou.core.models;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
 import java.util.Objects;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
-public final class ResourceType implements HasMetadataAcceptable {
-    private final String kind;
-    private final String group;
-    private final String apiVersion;
-    private final boolean isTransient;
+public record ResourceType(@NotNull String kind,
+                           @Nullable String group,
+                           @Nullable String apiVersion,
+                           boolean isTransient) implements HasMetadataAcceptable {
 
     /**
      * Static helper method to create a new {@link ResourceType} from the given resource.
@@ -34,9 +31,11 @@ public final class ResourceType implements HasMetadataAcceptable {
      * @param resource the resource.
      * @return a new {@link ResourceType}.
      */
-    public static ResourceType create(@NotNull HasMetadata resource) {
-        if (resource == null) throw new IllegalArgumentException("resource must no be null");
-        return create(
+    public static ResourceType of(@NotNull Resource resource) {
+        if (resource == null) {
+            throw new IllegalArgumentException("resource cannot be null");
+        }
+        return of(
                 resource.getKind(),
                 resource.getApiVersion(),
                 Resource.isTransient(resource.getClass())
@@ -49,8 +48,11 @@ public final class ResourceType implements HasMetadataAcceptable {
      * @param resource the resource.
      * @return a new {@link ResourceType}.
      */
-    public static ResourceType create(@NotNull Class<? extends HasMetadata> resource) {
-        return create(
+    public static ResourceType of(@NotNull Class<? extends Resource> resource) {
+        if (resource == null) {
+            throw new IllegalArgumentException("resource cannot be null");
+        }
+        return of(
                 Resource.getKind(resource),
                 Resource.getApiVersion(resource),
                 Resource.isTransient(resource)
@@ -64,32 +66,32 @@ public final class ResourceType implements HasMetadataAcceptable {
      * @param apiVersion the resource ApiVersion.
      * @return a new {@link ResourceType}.
      */
-    public static ResourceType create(@NotNull final String kind,
-                                      @Nullable final String apiVersion) {
-        return create(kind, apiVersion, false);
+    public static ResourceType of(@NotNull final String kind,
+                                  @Nullable final String apiVersion) {
+        return of(kind, apiVersion, false);
     }
 
     /**
      * Static helper method to create a new {@link ResourceType} for the given Kind .
      *
-     * @param kind       the resource Kind.
+     * @param kind the resource Kind.
      * @return a new {@link ResourceType}.
      */
-    public static ResourceType create(@NotNull final String kind) {
-        return create(kind, null, false);
+    public static ResourceType of(@NotNull final String kind) {
+        return of(kind, null, false);
     }
 
     /**
      * Static helper method to create a new {@link ResourceType} for the given Kind and ApiVersion.
      *
-     * @param kind        the resource Kind.
-     * @param apiVersion  the resource ApiVersion.
+     * @param kind        The resource Kind.
+     * @param apiVersion  The resource API version.
      * @param isTransient flag indicating if the resource is transient.
      * @return a new {@link ResourceType}.
      */
-    public static ResourceType create(@NotNull final String kind,
-                                      @Nullable final String apiVersion,
-                                      final boolean isTransient) {
+    public static ResourceType of(@NotNull final String kind,
+                                  @Nullable final String apiVersion,
+                                  final boolean isTransient) {
         Objects.requireNonNull(kind, "'kind' should not be null");
         if (Strings.isBlank(apiVersion)) {
             return new ResourceType(kind, null, null, isTransient);
@@ -104,32 +106,18 @@ public final class ResourceType implements HasMetadataAcceptable {
 
     /**
      * Creates a new {@link ResourceType} instance.
-     *
-     * @param kind    the kind of the resource.
-     * @param group   the group of the resource.
-     * @param version the version of the resource.
      */
-    public ResourceType(@NotNull final String kind,
-                        @Nullable final String group,
-                        @Nullable final String version) {
-        this(kind, group, version, false);
+    public ResourceType {
+        Objects.requireNonNull(kind, "'kind' cannot be null");
     }
 
     /**
      * Creates a new {@link ResourceType} instance.
-     *
-     * @param kind    the kind of the resource.
-     * @param group   the group of the resource.
-     * @param version the version of the resource.
      */
-    public ResourceType(@NotNull final String kind,
-                        @Nullable final String group,
-                        @Nullable final String version,
-                        final boolean isTransient) {
-        this.kind = Objects.requireNonNull(kind, "'kind' cannot be null");
-        this.group = group;
-        this.apiVersion = version;
-        this.isTransient = isTransient;
+    public ResourceType(@NotNull String kind,
+                        @Nullable String group,
+                        @Nullable String apiVersion) {
+        this(kind, group, apiVersion, false);
     }
 
     /**
@@ -138,8 +126,8 @@ public final class ResourceType implements HasMetadataAcceptable {
      * @param version the resource version.
      * @return a new {@link ResourceType}.
      */
-    public ResourceType withVersion(String version) {
-        return ResourceType.create(kind, version);
+    public ResourceType version(String version) {
+        return ResourceType.of(kind, version);
     }
 
     /**
@@ -163,40 +151,5 @@ public final class ResourceType implements HasMetadataAcceptable {
         }
 
         return Objects.equals(kind, that.kind);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ResourceType that = (ResourceType) o;
-        return isTransient == that.isTransient
-                && Objects.equals(kind, that.kind)
-                && Objects.equals(group, that.group)
-                && Objects.equals(apiVersion, that.apiVersion);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(kind, group, apiVersion, isTransient);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "[" +
-                "kind=" + kind +
-                ", group=" + group +
-                ", apiVersion=" + apiVersion +
-                ", transient=" + isTransient +
-                ']';
     }
 }

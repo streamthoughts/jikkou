@@ -15,12 +15,12 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
-import io.streamthoughts.jikkou.core.annotation.AcceptsResource;
+import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
-import io.streamthoughts.jikkou.core.resource.validation.ValidationResult;
+import io.streamthoughts.jikkou.core.validation.Validation;
+import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -30,11 +30,11 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSp
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
 import org.jetbrains.annotations.NotNull;
 
-@AcceptsResource(
+@HandledResource(
         apiVersion = AivenResourceProvider.SCHEMA_REGISTRY_API_VERSION,
         kind = AivenResourceProvider.SCHEMA_REGISTRY_KIND
 )
-public class AivenSchemaCompatibilityValidation implements ResourceValidation<V1SchemaRegistrySubject> {
+public class AivenSchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {
 
     private AivenApiClientConfig config;
 

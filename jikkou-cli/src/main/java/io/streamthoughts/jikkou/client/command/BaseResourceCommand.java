@@ -22,9 +22,8 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
+import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.HasItems;
-import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
 import jakarta.inject.Inject;
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -62,9 +61,8 @@ public abstract class BaseResourceCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() throws IOException {
-
         try {
-            ReconciliationChangeResultList<Change> results = api.apply(
+            ApiChangeResultList results = api.reconcile(
                     getResources(),
                     getReconciliationMode(),
                     getReconciliationContext()

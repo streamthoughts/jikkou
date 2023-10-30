@@ -23,7 +23,6 @@ import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasPriority;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 @Description("Excludes resources annotated with '" + CoreAnnotations.JIKKOU_IO_IGNORE + "'.")
 @Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
-public class ExcludeIgnoreResourceTransformation implements ResourceTransformation<HasMetadata> {
+public class ExcludeIgnoreResourceTransformation implements Transformation<HasMetadata> {
 
     /** {@inheritDoc}**/
     @Override

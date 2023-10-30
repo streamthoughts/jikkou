@@ -28,8 +28,8 @@ import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
-import io.streamthoughts.jikkou.core.resource.transform.ResourceTransformation;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.transform.Transformation;
+import io.streamthoughts.jikkou.core.validation.Validation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
  * The top-level interface for extension.
  *
  * @see Resource
- * @see ResourceValidation
- * @see ResourceTransformation
+ * @see Validation
+ * @see Transformation
  * @see Controller
  * @see Collector
  * @see HealthIndicator

@@ -39,12 +39,13 @@ public final class ResourceDescriptor {
 
     private final ResourceType type;
     private final String description;
-    private final Class<? extends HasMetadata> clazz;
+    private final Class<? extends Resource> clazz;
     private String singularName;
     private String pluralName;
     private Set<String> shortNames;
     private Set<Verb> verbs;
     private boolean isEnabled = true;
+    private boolean isTransient = false;
 
     /**
      * Creates a new {@link ResourceDescriptor} instance.
@@ -63,7 +64,8 @@ public final class ResourceDescriptor {
                 null,
                 null,
                 Collections.emptySet(),
-                Collections.emptySet()
+                Collections.emptySet(),
+                false
         );
     }
 
@@ -76,14 +78,16 @@ public final class ResourceDescriptor {
      * @param singularName  the singular name of the resource.
      * @param pluralName    the plural name of the resource.
      * @param shortNames    the short name of the resource.
+     * @param isTransient   Specify if the resource is transient.
      */
     public ResourceDescriptor(@NotNull ResourceType type,
                               @NotNull String description,
-                              @NotNull Class<? extends HasMetadata> resourceClass,
+                              @NotNull Class<? extends Resource> resourceClass,
                               @Nullable String singularName,
                               @Nullable String pluralName,
                               @NotNull Set<String> shortNames,
-                              @NotNull Set<Verb> verbs) {
+                              @NotNull Set<Verb> verbs,
+                              boolean isTransient) {
         this.type = type;
         this.description = description;
         this.clazz = resourceClass;
@@ -91,6 +95,7 @@ public final class ResourceDescriptor {
         this.pluralName = pluralName;
         this.shortNames = shortNames;
         this.verbs = verbs;
+        this.isTransient = isTransient;
     }
 
     /**
@@ -110,9 +115,8 @@ public final class ResourceDescriptor {
     public String singularName() {
         return Optional
                 .ofNullable(this.singularName)
-                .orElse(type.getKind().toLowerCase(Locale.ROOT));
+                .orElse(type.kind().toLowerCase(Locale.ROOT));
     }
-
 
     /**
      * Sets the singular name of the described resource.
@@ -170,7 +174,7 @@ public final class ResourceDescriptor {
      *
      * @return the resource class.
      */
-    public Class<? extends HasMetadata> resourceClass() {
+    public Class<? extends Resource> resourceClass() {
         return clazz;
     }
 
@@ -180,7 +184,7 @@ public final class ResourceDescriptor {
      * @return the resource kind.
      */
     public String kind() {
-        return type.getKind();
+        return type.kind();
     }
 
     /**
@@ -189,7 +193,7 @@ public final class ResourceDescriptor {
      * @return the api version.
      */
     public String apiVersion() {
-        return type.getApiVersion();
+        return type.apiVersion();
     }
 
     /**
@@ -198,7 +202,7 @@ public final class ResourceDescriptor {
      * @return the resource group.
      */
     public String group() {
-        return type.getGroup();
+        return type.group();
     }
 
     /**
@@ -234,7 +238,7 @@ public final class ResourceDescriptor {
      * @param verbs the verbs
      * @return this object so methods can be chained together; never null
      */
-    public ResourceDescriptor setSVerbs(Set<Verb> verbs) {
+    public ResourceDescriptor setVerbs(Set<Verb> verbs) {
         this.verbs = verbs;
         return this;
     }
@@ -268,6 +272,15 @@ public final class ResourceDescriptor {
      */
     public boolean isResourceListObject() {
         return ResourceListObject.class.isAssignableFrom(clazz);
+    }
+
+    /**
+     * Verify the resource described represents a transient resource.
+     *
+     * @return {@code true} if the resource is transient, otherwise {@code false}.
+     */
+    public boolean isTransient() {
+        return isTransient;
     }
 
     /**

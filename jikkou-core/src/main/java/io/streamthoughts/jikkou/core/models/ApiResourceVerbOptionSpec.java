@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core.models;
 import static java.util.stream.Collectors.toMap;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.Arrays;
 import java.util.List;
@@ -28,11 +29,11 @@ import java.util.function.Function;
 /**
  * ApiResourceVerbOptionSpec.
  *
- * @param name              the name of the parameter.
- * @param description       the description of the parameter.
- * @param type              the type of the parameter.
- * @param defaultValue      the default value of the parameter.
- * @param required          specifies if the parameter is required.
+ * @param name         the name of the parameter.
+ * @param description  the description of the parameter.
+ * @param type         the type of the parameter.
+ * @param defaultValue the default value of the parameter.
+ * @param required     specifies if the parameter is required.
  */
 @JsonPropertyOrder({
         "name",
@@ -40,8 +41,8 @@ import java.util.function.Function;
         "type",
         "defaultValue",
         "required"
-}
-)
+})
+@Reflectable
 public record ApiResourceVerbOptionSpec(
         String name,
         String description,
@@ -52,25 +53,24 @@ public record ApiResourceVerbOptionSpec(
     /**
      * Creates a new {@link ApiResourceVerbOptionSpec} instance.
      */
-     @ConstructorProperties({
+    @ConstructorProperties({
             "name",
-            "kind",
-            "singularName",
-            "shortNames",
             "description",
-            "verbs",
-            "metadata"})
+            "type",
+            "defaultValue",
+            "required"
+    })
     public ApiResourceVerbOptionSpec {
     }
 
     /**
      * Creates a new {@link ApiResourceVerbOptionSpec} instance.
      *
-     * @param name              the name of the parameter.
-     * @param description       the description of the parameter.
-     * @param type              the type of the parameter.
-     * @param defaultValue      the default value of the parameter.
-     * @param required          specifies if the parameter is required.
+     * @param name         the name of the parameter.
+     * @param description  the description of the parameter.
+     * @param type         the type of the parameter.
+     * @param defaultValue the default value of the parameter.
+     * @param required     specifies if the parameter is required.
      */
     public ApiResourceVerbOptionSpec(String name,
                                      String description,
@@ -82,6 +82,7 @@ public record ApiResourceVerbOptionSpec(
 
     @SuppressWarnings("rawtypes")
     private static final Map<String, Class> TYPES;
+
     static {
         var type = new Class[]{
                 Boolean.class,

@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.record;
 
-import io.streamthoughts.jikkou.core.models.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
@@ -48,7 +48,7 @@ class KafkaTableKafkaTableRecordChangeHandlerTest {
                 ))
                 .build();
         // When
-        KafkaRecord< ByteBuffer, ByteBuffer> actual = KafkaTableRecordChangeHandler.toKafkaRecord(new GenericResourceChange<>(change));
+        KafkaRecord< ByteBuffer, ByteBuffer> actual = KafkaTableRecordChangeHandler.toKafkaRecord(new DefaultResourceChange<>(change));
 
         KafkaRecord<ByteBuffer, ByteBuffer> expected = KafkaRecord
                 .<ByteBuffer, ByteBuffer>builder()

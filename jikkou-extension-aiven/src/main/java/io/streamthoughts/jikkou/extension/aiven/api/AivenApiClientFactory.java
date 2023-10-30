@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api;
 
-import io.streamthoughts.jikkou.rest.client.RestClientBuilder;
+import io.streamthoughts.jikkou.http.client.RestClientBuilder;
 import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

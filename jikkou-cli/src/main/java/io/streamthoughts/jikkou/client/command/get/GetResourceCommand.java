@@ -22,9 +22,10 @@ import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.selectors.ExpressionResourceSelectorFactory;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selectors.Selector;
 import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Spec;
 
 @Command(headerHeading = "Usage:%n%n",
@@ -58,6 +60,12 @@ public class GetResourceCommand implements Callable<Integer> {
     @Mixin
     FormatOptionsMixin formatOptions;
 
+    @Option(names = { "--list" },
+            defaultValue = "false",
+            description = "Get resources as ResourceListObject."
+    )
+    private boolean list = false;
+
     private final Map<String, Object> options = new HashMap<>();
     private ResourceType resourceType;
 
@@ -73,20 +81,24 @@ public class GetResourceCommand implements Callable<Integer> {
     /** {@inheritDoc} **/
     @Override
     public Integer call() throws Exception {
-        List<HasMetadata> resources = api.getResources(
+        ResourceListObject<HasMetadata> resources = api.getResources(
                 resourceType,
                 getResourceSelectors(),
                 Configuration.from(options)
         );
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            writer.write(formatOptions.format(), resources, baos);
+            if (list) {
+                writer.write(formatOptions.format(), resources, baos);
+            } else {
+                writer.write(formatOptions.format(), resources.getItems(), baos);
+            }
             System.out.println(baos);
             return CommandLine.ExitCode.OK;
         }
     }
 
-    private List<ResourceSelector> getResourceSelectors() {
-        return new ExpressionResourceSelectorFactory().make(selectorOptions.expressions);
+    private List<Selector> getResourceSelectors() {
+        return new ExpressionSelectorFactory().make(selectorOptions.expressions);
     }
 
     public void setResourceType(ResourceType resourceType) {

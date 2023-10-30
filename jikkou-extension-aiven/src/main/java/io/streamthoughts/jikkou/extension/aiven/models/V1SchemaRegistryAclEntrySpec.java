@@ -149,8 +149,8 @@ public class V1SchemaRegistryAclEntrySpec {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.permission == null)? 0 :this.permission.hashCode()));
         result = ((result* 31)+((this.resource == null)? 0 :this.resource.hashCode()));
+        result = ((result* 31)+((this.permission == null)? 0 :this.permission.hashCode()));
         result = ((result* 31)+((this.username == null)? 0 :this.username.hashCode()));
         return result;
     }
@@ -164,7 +164,7 @@ public class V1SchemaRegistryAclEntrySpec {
             return false;
         }
         V1SchemaRegistryAclEntrySpec rhs = ((V1SchemaRegistryAclEntrySpec) other);
-        return ((((this.permission == rhs.permission)||((this.permission!= null)&&this.permission.equals(rhs.permission)))&&((this.resource == rhs.resource)||((this.resource!= null)&&this.resource.equals(rhs.resource))))&&((this.username == rhs.username)||((this.username!= null)&&this.username.equals(rhs.username))));
+        return ((((this.resource == rhs.resource)||((this.resource!= null)&&this.resource.equals(rhs.resource)))&&((this.permission == rhs.permission)||((this.permission!= null)&&this.permission.equals(rhs.permission))))&&((this.username == rhs.username)||((this.username!= null)&&this.username.equals(rhs.username))));
     }
 
 }

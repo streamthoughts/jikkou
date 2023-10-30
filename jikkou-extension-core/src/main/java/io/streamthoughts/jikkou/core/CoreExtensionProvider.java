@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.converter.ResourceListConverter;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.transform.ConfigMapsTransformation;
 import io.streamthoughts.jikkou.core.transform.EnrichMetadataTransformation;
@@ -34,5 +35,6 @@ public class CoreExtensionProvider implements ExtensionProvider {
         registry.register(ExcludeIgnoreResourceTransformation.class, ExcludeIgnoreResourceTransformation::new);
         registry.register(ConfigMapsTransformation.class, ConfigMapsTransformation::new);
         registry.register(EnrichMetadataTransformation.class, EnrichMetadataTransformation::new);
+        registry.register(ResourceListConverter.class, ResourceListConverter::new);
     }
 }

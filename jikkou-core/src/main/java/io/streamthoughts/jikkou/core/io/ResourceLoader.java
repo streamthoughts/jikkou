@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.core.io;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderOptions;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import java.io.InputStream;
 import java.net.URI;
@@ -56,7 +56,7 @@ public final class ResourceLoader {
      * Loads resource definitions from the given classpath resource.
      *
      * @param resourceName name of the classpath resource to load.
-     * @return a new {@link GenericResourceListObject}.
+     * @return a new {@link DefaultResourceListObject}.
      */
     public HasItems loadFromClasspath(@NotNull final String resourceName) {
         return Optional.ofNullable(getClass().getClassLoader().getResourceAsStream(resourceName))
@@ -70,24 +70,24 @@ public final class ResourceLoader {
      * Loads resource definitions from the given {@code InputStream}.
      *
      * @param file the input stream.
-     * @return a new {@link GenericResourceListObject}.
+     * @return a new {@link DefaultResourceListObject}.
      */
     public HasItems load(@NotNull final InputStream file) {
-        return new GenericResourceListObject<>(factory.create(file).readAllResources(options));
+        return new DefaultResourceListObject<>(factory.create(file).readAllResources(options));
     }
 
     /**
      * Loads resource definitions from the given locations, e.g., files, directories, or URLs.
      *
      * @param locations locations from which to resource definitions.
-     * @return a list of {@link GenericResourceListObject}.
+     * @return a list of {@link DefaultResourceListObject}.
      */
     public HasItems load(final @NotNull List<String> locations) {
         if (locations.isEmpty()) {
             throw new JikkouRuntimeException("No resource definition file loaded");
         }
 
-        return new GenericResourceListObject<>(locations.stream()
+        return new DefaultResourceListObject<>(locations.stream()
                 .map(location -> factory.create(URI.create(location)))
                 .flatMap(reader -> reader.readAllResources(options).stream())
                 .toList()

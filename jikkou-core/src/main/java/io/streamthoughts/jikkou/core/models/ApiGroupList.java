@@ -17,8 +17,10 @@ package io.streamthoughts.jikkou.core.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -30,6 +32,8 @@ import javax.validation.constraints.NotNull;
         "apiVersion",
         "groups"
 })
+@Reflectable
+@JsonDeserialize
 public record ApiGroupList(@JsonProperty("kind") @NotNull String kind,
                            @JsonProperty("apiVersion") @NotNull String apiVersion,
                            @JsonProperty("groups") @NotNull List<ApiGroup> groups) implements Resource {

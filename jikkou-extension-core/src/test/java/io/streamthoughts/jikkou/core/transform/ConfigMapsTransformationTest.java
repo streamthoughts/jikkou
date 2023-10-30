@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core.transform;
 
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.Configs;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasConfigRefs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
@@ -52,7 +52,7 @@ class ConfigMapsTransformationTest {
 
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
+                .transform(resource, new DefaultResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
         // Then
@@ -70,7 +70,7 @@ class ConfigMapsTransformationTest {
 
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
+                .transform(resource, new DefaultResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
         // Then
@@ -89,7 +89,7 @@ class ConfigMapsTransformationTest {
         ));
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new GenericResourceListObject(List.of(TEST_CONFIG_MAP)))
+                .transform(resource, new DefaultResourceListObject(List.of(TEST_CONFIG_MAP)))
                 .get();
 
         // Then

@@ -21,13 +21,13 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FieldSelector extends ExpressionResourceSelector {
+public class FieldSelector extends ExpressionSelector {
 
     /**
      * Creates a new {@link FieldSelector} instance.
      */
-    public FieldSelector() {
-        super(new PathExpressionKeyValueExtractor());
+    public FieldSelector(SelectorExpression expression) {
+        super(expression, new PathExpressionKeyValueExtractor());
     }
 
     static class PathExpressionKeyValueExtractor implements ExpressionKeyValueExtractor {

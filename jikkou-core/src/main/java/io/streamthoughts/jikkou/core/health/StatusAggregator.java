@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The {@link StatusAggregator} is used to aggregate multiple {@link Status} instance.
+ * The {@link StatusAggregator} is used to aggregate multiple {@link HealthStatus} instance.
  *
  * @see HealthAggregator
  */
@@ -29,20 +29,20 @@ public interface StatusAggregator {
     /**
      * Aggregates the specified list of status.
      *
-     * @param allStatus the list of {@link Status} to be aggregate.
+     * @param allStatus the list of {@link HealthStatus} to be aggregate.
      *
-     * @return          the aggregated {@link Status} instance.
+     * @return          the aggregated {@link HealthStatus} instance.
      */
-    Status aggregateStatus(final List<Status> allStatus);
+    HealthStatus aggregateStatus(final List<HealthStatus> allStatus);
 
 
     /**
      * Static helper that can be used for retrieving only status from a list of {@link Health} instances.
      *
      * @param healths   the list of {@link Health}.
-     * @return          the corresponding list of {@link Status}.
+     * @return          the corresponding list of {@link HealthStatus}.
      */
-    static List<Status> getAllStatus(final Collection<Health> healths) {
+    static List<HealthStatus> getAllStatus(final Collection<Health> healths) {
         return healths.stream().map(Health::getStatus).collect(Collectors.toList());
     }
 }

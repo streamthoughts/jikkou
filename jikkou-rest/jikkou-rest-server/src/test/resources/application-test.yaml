@@ -1,0 +1,34 @@
+# Copyright 2023 The original authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+micronaut:
+  name: jikkou-rest
+  server:
+    # Use -1 to run on a random port
+    port: -1
+
+#  security:
+#    enabled: false
+
+# Http Client Configurations
+  http:
+    client:
+      connect-timeout: 10s
+
+jikkou:
+  extensions.provider:
+    # By default, disable all extensions
+    default.enabled: false
+    # Explicitly enabled/disable extensions
+    #<provider_name>.enabled: <boolean>
+    kafka.enabled: true

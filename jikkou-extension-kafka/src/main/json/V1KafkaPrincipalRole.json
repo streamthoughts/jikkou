@@ -29,8 +29,7 @@
       "default": "KafkaPrincipalRole"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
-      "type": "object"
+      "$ref": "./Metadata.json"
     },
     "template": {
       "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",

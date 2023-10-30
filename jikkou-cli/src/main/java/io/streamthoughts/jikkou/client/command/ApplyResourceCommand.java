@@ -36,7 +36,7 @@ public class ApplyResourceCommand extends BaseResourceCommand {
     /** {@inheritDoc } **/
     @Override
     protected @NotNull ReconciliationMode getReconciliationMode() {
-        return ReconciliationMode.APPLY_ALL;
+        return ReconciliationMode.FULL;
     }
 
 }

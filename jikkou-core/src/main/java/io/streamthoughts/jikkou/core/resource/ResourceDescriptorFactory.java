@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Verbs;
-import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public final class ResourceDescriptorFactory {
      * @throws NullPointerException if either type or resource is {@code  null}.
      */
     public ResourceDescriptor make(@NotNull final ResourceType type,
-                                   @NotNull Class<? extends HasMetadata> resource) {
+                                   @NotNull Class<? extends Resource> resource) {
         Objects.requireNonNull(type, "Cannot make ResourceDescriptor for type 'null'");
         Objects.requireNonNull(type, "Cannot make ResourceDescriptor for resource 'null'");
         String description = extractDescription(resource);
@@ -60,7 +60,8 @@ public final class ResourceDescriptorFactory {
                     Strings.isBlank(names.singular()) ? null : names.singular(),
                     Strings.isBlank(names.plural()) ? null : names.plural(),
                     new TreeSet<>(Arrays.asList(names.shortNames())),
-                    extractVerbs(resource)
+                    extractVerbs(resource),
+                    Resource.isTransient(resource)
             );
         } else {
             return new ResourceDescriptor(
@@ -70,13 +71,14 @@ public final class ResourceDescriptorFactory {
                     null,
                     null,
                     Collections.emptySet(),
-                    extractVerbs(resource)
+                    extractVerbs(resource),
+                    Resource.isTransient(resource)
             );
         }
     }
 
     @NotNull
-    private static Set<Verb> extractVerbs(@NotNull Class<? extends HasMetadata> resource) {
+    private static Set<Verb> extractVerbs(@NotNull Class<? extends Resource> resource) {
         Verb[] verbs = Optional
                 .ofNullable(resource.getAnnotation(Verbs.class))
                 .map(Verbs::value).orElse(new Verb[]{});
@@ -84,7 +86,7 @@ public final class ResourceDescriptorFactory {
     }
 
     @NotNull
-    private static String extractDescription(@NotNull Class<? extends HasMetadata> resource) {
+    private static String extractDescription(@NotNull Class<? extends Resource> resource) {
         return Optional.ofNullable(resource.getAnnotation(Description.class))
                 .map(Description::value)
                 .orElse("");

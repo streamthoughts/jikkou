@@ -53,7 +53,7 @@ public interface Resource extends Serializable {
      *
      * @return {@link true} if this class is annotated with {@link Transient}, otherwise return {@link false}.
      */
-    static boolean isTransient(final Class<? extends Resource> clazz) {
+    static boolean isTransient(final Class<?> clazz) {
         return AnnotationResolver.isAnnotatedWith(clazz, Transient.class);
     }
 
@@ -63,7 +63,7 @@ public interface Resource extends Serializable {
      * @param clazz the resource class for which to extract the Version.
      * @return the Version or {@code null}.
      */
-    static String getApiVersion(final Class<? extends Resource> clazz) {
+    static String getApiVersion(final Class<?> clazz) {
         ApiVersion version = clazz.getAnnotation(ApiVersion.class);
         if (version != null) {
             return version.value();
@@ -77,7 +77,7 @@ public interface Resource extends Serializable {
      * @param clazz the resource class for which to extract the Kind.
      * @return the Kind or {@code null}.
      */
-    static String getKind(final Class<? extends Resource> clazz) {
+    static String getKind(final Class<?> clazz) {
         Kind kind = clazz.getAnnotation(Kind.class);
         if (kind != null) {
             return kind.value();

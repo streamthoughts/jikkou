@@ -39,12 +39,15 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
+ * V1KafkaPrincipalAuthorization
+ * <p>
+ * KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
+@Description("KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.")
 @Names(singular = "kafkaprincipalauthorization", plural = "kafkaprincipalauthorizations", shortNames = {
     "ka"
 })
@@ -85,7 +88,14 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
     @JsonProperty("kind")
     @Builder.Default
     private String kind = "KafkaPrincipalAuthorization";
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
     @JsonProperty("template")
     private ObjectTemplate template;
@@ -149,6 +159,12 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
         return kind;
     }
 
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
     public ObjectMeta getMetadata() {
         return metadata;

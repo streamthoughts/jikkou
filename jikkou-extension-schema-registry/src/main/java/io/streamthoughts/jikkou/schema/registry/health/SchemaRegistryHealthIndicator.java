@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
-import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
@@ -71,7 +71,7 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator, Con
         SchemaRegistryApi api = SchemaRegistryApiFactory.create(config);
         try {
             Health.Builder builder = Health.builder()
-                    .withName(HEALTH_INDICATOR_NAME);
+                    .name(HEALTH_INDICATOR_NAME);
             Response response = null;
             try {
                 response = api.get();
@@ -81,13 +81,13 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator, Con
                     builder = builder.down();
                 }
             } catch (RestClientException e) {
-                builder = builder.down().withException(e);
+                builder = builder.down().exception(e);
             }
             if (response != null) {
-                builder = builder.withDetails("http.response.status", response.getStatus());
+                builder = builder.details("http.response.status", response.getStatus());
             }
             return builder
-                    .withDetails("schema.registry.url", config.getSchemaRegistryUrl())
+                    .details("schema.registry.url", config.getSchemaRegistryUrl())
                     .build();
         } finally {
             api.close();

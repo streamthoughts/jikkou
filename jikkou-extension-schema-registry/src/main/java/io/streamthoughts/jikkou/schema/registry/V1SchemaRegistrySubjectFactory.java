@@ -17,13 +17,13 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
-import io.streamthoughts.jikkou.schema.registry.control.internals.SchemaSubjectPrettyPrinter;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.SchemaRegistry;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
+import io.streamthoughts.jikkou.schema.registry.reconcilier.internals.SchemaSubjectPrettyPrinter;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

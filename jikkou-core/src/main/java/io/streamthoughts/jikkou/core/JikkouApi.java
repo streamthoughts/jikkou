@@ -16,24 +16,32 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
+import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
+import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
+import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
+import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
-import io.streamthoughts.jikkou.core.models.GenericResourceListObject;
+import io.streamthoughts.jikkou.core.models.ApiValidationResult;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.models.ReconciliationChangeResultList;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import io.streamthoughts.jikkou.core.selectors.Selector;
+import java.time.Duration;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +53,7 @@ import org.jetbrains.annotations.NotNull;
 public interface JikkouApi extends AutoCloseable {
 
     /**
-     * The basic interface for JikkouApi builders.
+     * The builder interface to create new {@link JikkouApi}.
      *
      * @param <A> the type of api
      * @param <B> the type of builder
@@ -86,12 +94,24 @@ public interface JikkouApi extends AutoCloseable {
         A build();
     }
 
+
     /**
      * List the supported API resources.
      *
      * @return {@link ApiResourceList}.
      */
-    List<ApiResourceList> listApiResources();
+    default List<ApiResourceList> listApiResources() {
+        ApiGroupList apiGroupList = listApiGroups();
+        return apiGroupList.groups()
+                .stream()
+                .flatMap(group -> group.versions()
+                        .stream()
+                        .map(apiGroupVersion -> Pair.of(group.name(), apiGroupVersion.version()))
+                )
+                .map(groupVersion -> listApiResources(groupVersion._1(), groupVersion._2()))
+                .sorted(Comparator.comparing(ApiResourceList::groupVersion))
+                .toList();
+    }
 
     /**
      * List the supported API resources for the specified API group and API version.
@@ -111,6 +131,46 @@ public interface JikkouApi extends AutoCloseable {
     ApiGroupList listApiGroups();
 
     /**
+     * List the supported health indicators.
+     *
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiHealthIndicatorList getApiHealthIndicators();
+
+    /**
+     * Gets the health details for the specified health indicator name.
+     *
+     * @param name the health indicator name.
+     * @return a new {@link HealthIndicator} instance.
+     */
+    ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout);
+
+    /**
+     * Get the health details for all supported health indicators.
+     *
+     * @return a new {@link HealthIndicator} instance.
+     */
+    ApiHealthResult getApiHealth(@NotNull Duration timeout);
+
+    /**
+     * Gets the health details for the specified {@link ApiHealthIndicator}.
+     *
+     * @param indicator the {@link ApiHealthIndicator}.
+     * @return a new {@link HealthIndicator} instance.
+     */
+    default ApiHealthResult getApiHealth(@NotNull ApiHealthIndicator indicator,
+                                         @NotNull Duration timeout) {
+        return getApiHealth(indicator.name(), timeout);
+    }
+
+    /**
+     * List the supported API extensions.
+     *
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtensionList getApiExtensions();
+
+    /**
      * Execute the reconciliation for the given resources using
      *
      * @param resources the list of resource to be reconciled.
@@ -120,19 +180,19 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    ReconciliationChangeResultList<Change> apply(@NotNull HasItems resources,
-                                                 @NotNull ReconciliationMode mode,
-                                                 @NotNull ReconciliationContext context);
+    ApiChangeResultList reconcile(@NotNull HasItems resources,
+                                  @NotNull ReconciliationMode mode,
+                                  @NotNull ReconciliationContext context);
 
     /**
      * Execute validations on the given resources.
      *
      * @param resources the list of resource to create.
-     * @return the validated {@link GenericResourceListObject}.
+     * @return the validated {@link DefaultResourceListObject}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default ApiResourceValidationResult validate(@NotNull HasItems resources) {
+    default ApiValidationResult validate(@NotNull HasItems resources) {
         return validate(resources, ReconciliationContext.Default.EMPTY);
     }
 
@@ -141,12 +201,12 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @param context   the reconciliation context.
-     * @return the validated {@link GenericResourceListObject}.
+     * @return the validated {@link DefaultResourceListObject}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    ApiResourceValidationResult validate(@NotNull HasItems resources,
-                                         @NotNull ReconciliationContext context);
+    ApiValidationResult validate(@NotNull HasItems resources,
+                                 @NotNull ReconciliationContext context);
 
     /**
      * Get the resources associated to the given type.
@@ -156,7 +216,7 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default List<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass) {
+    default ResourceListObject<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass) {
         return getResources(resourceClass, Collections.emptyList(), Configuration.empty());
     }
 
@@ -168,8 +228,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default List<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
-                                           @NotNull List<ResourceSelector> selectors) {
+    default ResourceListObject<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
+                                                         @NotNull List<Selector> selectors) {
         return getResources(resourceClass, selectors, Configuration.empty());
     }
 
@@ -181,8 +241,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default <T extends HasMetadata> List<T> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
-                                                         @NotNull Configuration configuration) {
+    default <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
+                                                                       @NotNull Configuration configuration) {
         return getResources(resourceClass, Collections.emptyList(), configuration);
     }
 
@@ -197,10 +257,10 @@ public interface JikkouApi extends AutoCloseable {
      *                            or more than one descriptor match the type.
      */
     @SuppressWarnings("unchecked")
-    default <T extends HasMetadata> List<T> getResources(@NotNull Class<? extends HasMetadata> type,
-                                                         @NotNull List<ResourceSelector> selectors,
-                                                         @NotNull Configuration configuration) {
-        return (List<T>) getResources(ResourceType.create(type), selectors, configuration);
+    default <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull Class<? extends HasMetadata> type,
+                                                                       @NotNull List<Selector> selectors,
+                                                                       @NotNull Configuration configuration) {
+        return (ResourceListObject<T>) getResources(ResourceType.of(type), selectors, configuration);
     }
 
     /**
@@ -209,8 +269,8 @@ public interface JikkouApi extends AutoCloseable {
      * @param resources the list of resource to be reconciled.
      * @return the {@link HasMetadata}.
      */
-    List<ResourceListObject<HasMetadataChange<Change>>> getDiff(@NotNull HasItems resources,
-                                                                @NotNull ReconciliationContext context);
+    ApiResourceChangeList getDiff(@NotNull HasItems resources,
+                                  @NotNull ReconciliationContext context);
 
     /**
      * Get the resource associated to the given type.
@@ -218,8 +278,18 @@ public interface JikkouApi extends AutoCloseable {
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default List<HasMetadata> getResources(@NotNull ResourceType resourceType,
-                                           @NotNull List<ResourceSelector> selectors) {
+    default ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType) {
+        return getResources(resourceType, Collections.emptyList(), Configuration.empty());
+    }
+
+    /**
+     * Get the resource associated to the given type.
+     *
+     * @param resourceType the type of the resource to be described.
+     * @return the {@link HasMetadata}.
+     */
+    default ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType,
+                                                         @NotNull List<Selector> selectors) {
         return getResources(resourceType, selectors, Configuration.empty());
     }
 
@@ -230,10 +300,9 @@ public interface JikkouApi extends AutoCloseable {
      * @param configuration the option to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
      */
-    @SuppressWarnings("unchecked")
-    default <T extends HasMetadata> List<T> getResources(@NotNull ResourceType resourceType,
-                                                         @NotNull Configuration configuration) {
-        return (List<T>) getResources(resourceType, Collections.emptyList(), configuration);
+    default <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull ResourceType resourceType,
+                                                                       @NotNull Configuration configuration) {
+        return (ResourceListObject<T>) getResources(resourceType, Collections.emptyList(), configuration);
     }
 
     /**
@@ -243,9 +312,9 @@ public interface JikkouApi extends AutoCloseable {
      * @param configuration the option to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
      */
-    List<HasMetadata> getResources(@NotNull ResourceType resourceType,
-                                   @NotNull List<ResourceSelector> selectors,
-                                   @NotNull Configuration configuration);
+    ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType,
+                                                 @NotNull List<Selector> selectors,
+                                                 @NotNull Configuration configuration);
 
     @SuppressWarnings("rawtypes")
     ApiBuilder toBuilder();

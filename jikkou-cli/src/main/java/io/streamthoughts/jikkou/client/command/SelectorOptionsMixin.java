@@ -15,19 +15,19 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.core.selectors.ExpressionResourceSelectorFactory;
-import io.streamthoughts.jikkou.core.selectors.ResourceSelector;
+import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.List;
 import picocli.CommandLine;
 
 public final class SelectorOptionsMixin {
 
     @CommandLine.Option(names = { "--selector", "-s" },
-            description = "The selector expression use for including or excluding resources.")
+            description = "The selector expression used for including or excluding resources.")
     public String[] expressions;
 
 
-    public List<ResourceSelector> getResourceSelectors() {
-        return new ExpressionResourceSelectorFactory().make(expressions);
+    public List<Selector> getResourceSelectors() {
+        return new ExpressionSelectorFactory().make(expressions);
     }
 }

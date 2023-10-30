@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.health;
 
+import static io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator.HEALTH_NAME;
+
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.config.Configurable;
@@ -22,9 +24,9 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
-import io.streamthoughts.jikkou.kafka.control.KafkaClientConfiguration;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
+import io.streamthoughts.jikkou.kafka.reconcilier.KafkaClientConfiguration;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -37,11 +39,11 @@ import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.NotNull;
 
-@Named("kafkabroker")
+@Named(HEALTH_NAME)
 @Description("Get the health of kafka brokers")
 public final class KafkaBrokerHealthIndicator implements HealthIndicator, Configurable {
 
-    private static final String HEALTH_NAME = "kafka";
+    public static final String HEALTH_NAME = "kafka";
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -97,7 +99,7 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
             var clusterId = result.clusterId().get();
             Health.Builder builder = new Health.Builder()
                     .up()
-                    .withName(HEALTH_NAME);
+                    .name(HEALTH_NAME);
 
             List<Map<String, Object>> brokers = nodes
                     .stream()
@@ -109,8 +111,8 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
                         return details;
                     }).toList();
             builder
-                    .withDetails("resource", "urn:kafka:cluster:id:" + clusterId)
-                    .withDetails("brokers", brokers);
+                    .details("resource", "urn:kafka:cluster:id:" + clusterId)
+                    .details("brokers", brokers);
 
             return builder.build();
         } catch (InterruptedException | ExecutionException e) {
@@ -119,8 +121,8 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
             }
             return new Health.Builder()
                     .unknown()
-                    .withName(HEALTH_NAME)
-                    .withException(e)
+                    .name(HEALTH_NAME)
+                    .exception(e)
                     .build();
         }
     }

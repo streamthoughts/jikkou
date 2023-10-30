@@ -27,9 +27,9 @@ public class DefaultStatusAggregator implements StatusAggregator {
 
     static {
         DEFAULT_ORDERED_STATUS = new String[] {
-                Status.DOWN.code(),
-                Status.UP.code(),
-                Status.UNKNOWN.code()
+                HealthStatus.DOWN.name(),
+                HealthStatus.UP.name(),
+                HealthStatus.UNKNOWN.name()
         };
     }
 
@@ -45,34 +45,34 @@ public class DefaultStatusAggregator implements StatusAggregator {
     /**
      * Creates a new {@link DefaultStatusAggregator} instance using the specified status order.
      *
-     * @param statusOrder   the {@link Status} to order to be used for aggregating {@link Status}.
+     * @param statusOrder   the {@link HealthStatus} to order to be used for aggregating {@link HealthStatus}.
      */
-    private DefaultStatusAggregator(final List<Status> statusOrder) {
+    private DefaultStatusAggregator(final List<HealthStatus> statusOrder) {
         Objects.requireNonNull(statusOrder, "statusOrder cannot be null");
-        this.statusOrder = statusOrder.stream().map(Status::code).collect(Collectors.toList());
+        this.statusOrder = statusOrder.stream().map(HealthStatus::name).collect(Collectors.toList());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Status aggregateStatus(final List<Status> allStatus) {
+    public HealthStatus aggregateStatus(final List<HealthStatus> allStatus) {
         return allStatus
                 .stream()
                 .min(new StatusComparator())
-                .orElse(Status.UNKNOWN);
+                .orElse(HealthStatus.UNKNOWN);
     }
 
-    private class StatusComparator implements Comparator<Status> {
+    private class StatusComparator implements Comparator<HealthStatus> {
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public int compare(Status status1, Status status2) {
-            int i1 = statusOrder.indexOf(status1.code());
-            int i2 = statusOrder.indexOf(status2.code());
-            return (i1 < i2) ? -1 : (i1 != i2) ? 1 : status1.code().compareTo(status2.code());
+        public int compare(HealthStatus status1, HealthStatus status2) {
+            int i1 = statusOrder.indexOf(status1.name());
+            int i2 = statusOrder.indexOf(status2.name());
+            return (i1 < i2) ? -1 : (i1 != i2) ? 1 : status1.name().compareTo(status2.name());
         }
     }
 }

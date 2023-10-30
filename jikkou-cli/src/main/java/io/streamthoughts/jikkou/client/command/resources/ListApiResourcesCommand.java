@@ -51,13 +51,13 @@ public class ListApiResourcesCommand implements Runnable {
         String[][] data = apiResourceLists
                 .stream()
                 .flatMap(apiResourceList -> {
-                    List<ApiResource> resources = apiResourceList.getResources();
+                    List<ApiResource> resources = apiResourceList.resources();
                     return resources
                             .stream()
                             .map(resource -> new String[]{
                                     resource.name(),
                                     String.join(", ", resource.shortNames()),
-                                    apiResourceList.getGroupVersion(),
+                                    apiResourceList.groupVersion(),
                                     resource.kind(),
                                     String.join(", ", resource.verbs()),
                                     resource.description(),

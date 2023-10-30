@@ -31,7 +31,9 @@ public final class AivenResourceProvider implements ResourceProvider {
     public static final String SCHEMA_REGISTRY_KIND = "SchemaRegistrySubject";
 
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void registerAll(ResourceRegistry context) {
         context.register(V1KafkaTopicAclEntry.class);
@@ -42,7 +44,7 @@ public final class AivenResourceProvider implements ResourceProvider {
         context.register(V1KafkaQuotaList.class);
         context.register(V1SchemaRegistrySubject.class, SCHEMA_REGISTRY_API_VERSION)
                 .setSingularName("avn-schemaregistrysubject")
-                .setPluralName(null)
+                .setPluralName("avn-schemaregistrysubjects")
                 .setShortNames(null);
     }
 }

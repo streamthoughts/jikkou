@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.core.resource.validation.ResourceValidation;
+import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,9 +74,9 @@ class ValidationApiConfiguratorTest {
         // Then
         Assertions.assertNotNull(configured);
         Assertions.assertTrue(registry.findDescriptorByClass(TestValidation.class, Qualifiers.byName("test")).isPresent());
-        ResourceValidation<?> actual = factory.getExtension(ResourceValidation.class, Qualifiers.byName("test"));
+        Validation<?> actual = factory.getExtension(Validation.class, Qualifiers.byName("test"));
         Assertions.assertNotNull(actual);
     }
 
-    public static final class TestValidation implements ResourceValidation<HasMetadata> { }
+    public static final class TestValidation implements Validation<HasMetadata> { }
 }

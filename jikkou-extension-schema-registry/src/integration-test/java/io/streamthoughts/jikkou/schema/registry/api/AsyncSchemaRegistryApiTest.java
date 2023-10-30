@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.schema.registry.api;
 
 import static io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest.CONFLUENT_PLATFORM_VERSION;
 
-import io.streamthoughts.jikkou.rest.client.RestClientBuilder;
-import io.streamthoughts.jikkou.rest.client.RestClientException;
+import io.streamthoughts.jikkou.http.client.RestClientBuilder;
+import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;

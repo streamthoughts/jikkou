@@ -32,7 +32,18 @@ public interface ResourceWriter {
     }
 
     /**
-     * Writes the given list of resource for the specified format.
+     * Writes a resource using the specified resource.
+     *
+     * @param format   The output format
+     * @param resource The Resource.
+     * @param os       the output stream to write to
+     */
+    void write(@NotNull final Format format,
+               @NotNull final Resource resource,
+               @NotNull final OutputStream os);
+
+    /**
+     * Writes a resource using the specified resources.
      *
      * @param format the output format.
      * @param items  the list of {@link Resource} to write.

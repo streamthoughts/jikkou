@@ -65,7 +65,7 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
         if (configurations.isEmpty()) {
             return Health
                     .builder()
-                    .withName(HEALTH_INDICATOR_NAME)
+                    .name(HEALTH_INDICATOR_NAME)
                     .unknown()
                     .build();
         }
@@ -81,23 +81,23 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
         KafkaConnectApi api = KafkaConnectApiFactory.create(connectClientConfig, timeout);
         Health.Builder builder = Health
                 .builder()
-                .withName(connectClientConfig.getConnectClusterName());
+                .name(connectClientConfig.getConnectClusterName());
         try {
             try {
                 ConnectCluster cluster = api.getConnectCluster();
                 builder = builder.up()
-                        .withDetails("version", cluster.version())
-                        .withDetails("commit", cluster.commit())
-                        .withDetails("kafkaClusterId", cluster.kafkaClusterId());
+                        .details("version", cluster.version())
+                        .details("commit", cluster.commit())
+                        .details("kafkaClusterId", cluster.kafkaClusterId());
             } catch (Exception e) {
-                builder = builder.down().withException(e);
+                builder = builder.down().exception(e);
             }
         } finally {
             api.close();
         }
 
         builder = builder
-                .withDetails("url", connectClientConfig.getConnectUrl());
+                .details("url", connectClientConfig.getConnectUrl());
         return builder.build();
     }
 }

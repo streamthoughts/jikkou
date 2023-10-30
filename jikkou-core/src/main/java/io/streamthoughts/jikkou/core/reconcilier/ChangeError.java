@@ -17,34 +17,25 @@ package io.streamthoughts.jikkou.core.reconcilier;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.util.Objects;
+import java.beans.ConstructorProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Reflectable
-public record ChangeError(@NotNull String message, @Nullable Integer status) {
+public record ChangeError(@JsonProperty("message") @NotNull String message,
+                          @JsonProperty("status") @Nullable Integer status) {
 
     public ChangeError(final String message) {
         this(message, null);
     }
 
-    public ChangeError(@NotNull final String message,
-                       @Nullable final Integer status) {
-        this.message = Objects.requireNonNull(message, "message must not be null");
-        this.status = status;
+    @ConstructorProperties({
+            "message",
+            "status"
+    })
+    public ChangeError {
     }
 
-    @Override
-    @JsonProperty("message")
-    public String message() {
-        return message;
-    }
-
-    @Override
-    @JsonProperty("status")
-    public Integer status() {
-        return status;
-    }
 
     @Override
     public String toString() {

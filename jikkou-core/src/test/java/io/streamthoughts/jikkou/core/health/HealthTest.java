@@ -24,7 +24,7 @@ class HealthTest {
     void should_success_create_health_with_empty_name() {
         Health health = Health.builder().up().build();
         Assertions.assertNotNull(health);
-        Assertions.assertEquals(Status.UP, health.getStatus());
+        Assertions.assertEquals(HealthStatus.UP, health.getStatus());
         Assertions.assertNull(health.getName());
     }
 
@@ -32,10 +32,10 @@ class HealthTest {
     void should_success_create_health_up() {
         Health health = Health.builder()
                 .up()
-                .withName("test")
+                .name("test")
                 .build();
         Assertions.assertNotNull(health);
-        Assertions.assertEquals(Status.UP, health.getStatus());
+        Assertions.assertEquals(HealthStatus.UP, health.getStatus());
         Assertions.assertEquals("test", health.getName());
     }
 
@@ -43,10 +43,10 @@ class HealthTest {
     void should_success_create_health_down_given_exception() {
         Health health = Health.builder()
                 .down()
-                .withException(new RuntimeException("Boom!"))
+                .exception(new RuntimeException("Boom!"))
                 .build();
         Assertions.assertNotNull(health);
-        Assertions.assertEquals(Status.DOWN, health.getStatus());
+        Assertions.assertEquals(HealthStatus.DOWN, health.getStatus());
         Assertions.assertNotNull(health.getDetails());
         Assertions.assertEquals("java.lang.RuntimeException: Boom!", health.getDetails().get("error"));
     }
@@ -54,11 +54,11 @@ class HealthTest {
     @Test
     void should_success_create_health_given_status_and_details() {
         Health health = Health.builder()
-                .withStatus(Status.UNKNOWN)
-                .withDetails("key", "value")
+                .status(HealthStatus.UNKNOWN)
+                .details("key", "value")
                 .build();
         Assertions.assertNotNull(health);
-        Assertions.assertEquals(Status.UNKNOWN, health.getStatus());
+        Assertions.assertEquals(HealthStatus.UNKNOWN, health.getStatus());
         Assertions.assertNotNull(health.getDetails());
         Assertions.assertEquals("value", health.getDetails().get("key"));
     }

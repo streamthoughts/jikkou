@@ -66,7 +66,7 @@ public interface Controller<
      * Execute all changes for the given reconciliation mode.
      *
      * @param executor  the executor to be used to applied changed.
-     * @param context   the reconciliation contex.
+     * @param context   the reconciliation context.
      * @return the list of all changes applied.
      */
     List<ChangeResult<C>> execute(@NotNull ChangeExecutor<C> executor,
