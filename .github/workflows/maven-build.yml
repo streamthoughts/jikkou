@@ -22,7 +22,8 @@ on:
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '23.1.0'
+  GRAAL_VERSION: '21.0.1'
+  GRAAL_DISTRIBUTION: 'graalvm-community'
 jobs:
   build:
     name: Build and analyze

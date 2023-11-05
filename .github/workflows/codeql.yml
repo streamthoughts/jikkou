@@ -20,6 +20,11 @@ on:
   schedule:
     - cron: '17 20 * * 3'
 
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRO: 'zulu'
+  GRAAL_VERSION: '23.1.0'
+
 jobs:
   analyze:
     name: Analyze
@@ -66,11 +71,11 @@ jobs:
     #   If the Autobuild fails above, remove it and uncomment the following three lines.
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
 
-    - name: Set up JDK 17
+    - name: 'Set up JDK'
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
-        distribution: 'zulu'
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRO }}
         check-latest: true
         cache: maven
 
