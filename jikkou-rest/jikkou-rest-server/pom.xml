@@ -30,6 +30,8 @@
         <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouRestServer</exec.mainClass>
         <!-- Additional -->
         <git-commit-id-maven-plugin.version>7.0.0</git-commit-id-maven-plugin.version>
+        <docker.image.name>streamthoughts/${project.artifactId}</docker.image.name>
+        <docker.image.tag>main</docker.image.tag>
     </properties>
 
     <dependencies>
@@ -234,25 +236,6 @@
                     </includeOnlyProperties>
                 </configuration>
             </plugin>
-            <!-- Docker -->
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.4.0</version>
-                <configuration>
-                    <to>
-                        <image>streamthoughts/${project.artifactId}:${project.version}</image>
-                    </to>
-                    <container>
-                        <ports>
-                            <port>28082</port>
-                        </ports>
-                        <environment>
-                            <MICRONAUT_CONFIG_FILES>/app/resources/application.yaml</MICRONAUT_CONFIG_FILES>
-                        </environment>
-                    </container>
-                </configuration>
-            </plugin>
             <!-- Maven -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -287,10 +270,35 @@
         <profile>
             <id>default</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>packaging</name>
+                    <value>docker</value>
+                </property>
             </activation>
             <build>
                 <plugins>
+                    <!-- Docker -->
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <configuration>
+                            <from>
+                                <image>eclipse-temurin</image>
+                            </from>
+                            <to>
+                                <image>${docker.image.name}:${docker.image.tag}</image>
+                            </to>
+                            <container>
+                                <ports>
+                                    <port>28082</port>
+                                </ports>
+                                <environment>
+                                    <MICRONAUT_CONFIG_FILES>/app/resources/application.yaml</MICRONAUT_CONFIG_FILES>
+                                </environment>
+                            </container>
+                        </configuration>
+                    </plugin>
                     <!-- Micronaut -->
                     <plugin>
                         <groupId>io.micronaut.maven</groupId>
@@ -311,6 +319,11 @@
         </profile>
         <profile>
             <id>dist</id>
+            <activation>
+                <property>
+                    <name>dist</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

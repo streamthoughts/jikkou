@@ -100,4 +100,3 @@ jikkou:
 #          topic.name: "jikkou-resource-change-event"
 #          client: ${jikkou.kafka.client}
 #          client.id:  "jikkou-reporter-producer"
-]

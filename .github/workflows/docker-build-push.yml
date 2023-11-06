@@ -50,27 +50,14 @@ jobs:
         echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
         echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
 
-    - name: 'Build Native Executable'
+    - name: 'Build Native Executable (Jikkou CLI)'
       run: |
         chmod +x ./mvnw  && \
         ./mvnw -ntp -B clean package -Pnative -Dgraalvm.build.arg="--static --libc=musl" -DskipTests && \
         cp ./jikkou-cli/target/jikkou-cli-${{ env.VERSION }}-runner ./docker/jikkou-cli-${{ env.VERSION }}-runner
 
-    - name: 'Set Docker Image Tag (Main)'
+    - name: 'Build & Push to Docker Hub (Jikkou CLI)'
       if: github.ref_name == 'main'
-      run: echo "DOCKER_TAG=main" >> $GITHUB_ENV
-
-    - name: 'Set Docker Image Tag'
-      if: startsWith(github.ref, 'refs/tags/v')
-      run: echo "DOCKER_TAG=${{ env.VERSION }}" >> $GITHUB_ENV
-
-    - name: 'Login to DockerHub'
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}        
-
-    - name: 'Build & Push to Docker Hub'
       uses: docker/build-push-action@v4
       with:
         context: docker
@@ -78,14 +65,14 @@ jobs:
         file: docker/Dockerfile
         no-cache: true
         push: true
-        tags: streamthoughts/jikkou:${{ env.DOCKER_TAG }}
+        tags: streamthoughts/jikkou:main,streamthoughts/jikkou:latest
         build-args: |
           VERSION=${{ env.VERSION }}
           COMMIT=${{ env.GIT_COMMIT }}
           BRANCH=${{ env.GIT_BRANCH }}
           CREATED=${{ env.CREATED }}
 
-    - name: 'Build & Push to Docker Hub (Latest)'
+    - name: 'Build & Push to Docker Hub (Jikkou CLI)'
       if: startsWith(github.ref, 'refs/tags/v')
       uses: docker/build-push-action@v4
       with:
@@ -94,9 +81,24 @@ jobs:
         file: docker/Dockerfile
         no-cache: true
         push: true
-        tags: streamthoughts/jikkou:latest
+        tags: streamthoughts/jikkou:${{ env.VERSION }},streamthoughts/jikkou:latest
         build-args: |
           VERSION=${{ env.VERSION }}
           COMMIT=${{ env.GIT_COMMIT }}
           BRANCH=${{ env.GIT_BRANCH }}
           CREATED=${{ env.CREATED }}
+
+    - name: 'Build & Push to Docker Hub (Jikkou REST)'
+      if: github.ref_name == 'main'
+      run: |
+        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml -Dpackaging=docker \
+        -Djib.to.image=streamthoughts/jikkou-rest-server:main \
+        docker image push --all-tags streamthoughts/jikkou-rest-server
+
+    - name: 'Build & Push to Docker Hub (Jikkou REST)'
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml -Dpackaging=docker \
+        -Djib.to.image=streamthoughts/jikkou-rest-server:${{ env.VERSION }} \
+        -Djib.to.tags=latest
+        docker image push --all-tags streamthoughts/jikkou-rest-server
