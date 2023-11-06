@@ -38,7 +38,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.vavr.jackson.datatype.VavrModule;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
@@ -50,29 +49,30 @@ public interface Jackson {
 
     ObjectMapper YAML_OBJECT_MAPPER = YAMLMapper.builder()
             .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
-            .addModules(new Jdk8Module(), new VavrModule(), new JavaTimeModule(), NULL_COLLECTIONS_AS_EMPTY)
+            .addModules(new Jdk8Module(), new JavaTimeModule(), NULL_COLLECTIONS_AS_EMPTY)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET,false)
+            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
             .serializationInclusion(JsonInclude.Include.NON_ABSENT)
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
             .build();
 
     ObjectMapper JSON_OBJECT_MAPPER = JsonMapper.builder()
-            .addModules(new Jdk8Module(), new VavrModule(), new JavaTimeModule(), NULL_COLLECTIONS_AS_EMPTY)
+            .addModules(new Jdk8Module(), new JavaTimeModule(), NULL_COLLECTIONS_AS_EMPTY)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET,false)
+            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
             .serializationInclusion(JsonInclude.Include.NON_ABSENT)
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
             .build();
 
 
-    abstract class ContextualJsonDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer { }
+    abstract class ContextualJsonDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
+    }
 
     class NullCollectionsAsEmptyModifier extends BeanDeserializerModifier {
         @Override

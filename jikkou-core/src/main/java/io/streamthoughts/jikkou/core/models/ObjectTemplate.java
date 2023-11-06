@@ -22,13 +22,11 @@ import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.Map;
 import java.util.Optional;
-import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "values",
 })
-@Builder(builderMethodName = "builder", toBuilder = true)
 @Reflectable
 public final class ObjectTemplate {
 

@@ -16,9 +16,8 @@
 package io.streamthoughts.jikkou.core.reconcilier;
 
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Service interface for executing reconciliation changes.

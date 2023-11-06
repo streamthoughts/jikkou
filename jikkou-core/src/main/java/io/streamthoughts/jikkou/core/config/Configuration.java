@@ -770,6 +770,8 @@ public interface Configuration {
     }
 
     Map<String, Object> asMap(boolean flatten);
+
+
     /**
      * Static helper method to create a new empty configuration.
      * 

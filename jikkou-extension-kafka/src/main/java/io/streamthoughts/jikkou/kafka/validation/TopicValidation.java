@@ -20,7 +20,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import io.vavr.control.Option;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,6 +38,6 @@ public abstract class TopicValidation implements Validation<V1KafkaTopic> {
     }
 
     public Configuration config() {
-        return Option.of(config).getOrElseThrow(() -> new IllegalStateException("not configured."));
+        return Optional.ofNullable(config).orElseThrow(() -> new IllegalStateException("not configured."));
     }
 }

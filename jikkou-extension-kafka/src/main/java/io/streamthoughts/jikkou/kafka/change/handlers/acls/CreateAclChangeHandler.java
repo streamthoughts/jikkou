@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.handlers.acls;
 
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
@@ -23,8 +24,6 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
-import io.vavr.Tuple2;
-import io.vavr.concurrent.Future;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,52 +38,53 @@ import org.jetbrains.annotations.NotNull;
 
 public class CreateAclChangeHandler implements KafkaAclChangeHandler {
 
-    private final AdminClient adminClient;
+    private final AdminClient client;
 
     /**
      * Creates a new {@link CreateAclChangeHandler} instance.
      *
-     * @param adminClient the {@link AdminClient}.
+     * @param client the {@link AdminClient}.
      */
-    public CreateAclChangeHandler(@NotNull final AdminClient adminClient) {
-        this.adminClient = Objects.requireNonNull(adminClient, "'adminClient should not be null'");
+    public CreateAclChangeHandler(@NotNull final AdminClient client) {
+        this.client = Objects.requireNonNull(client, "client cannot not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<ChangeType> supportedChangeTypes() {
         return Set.of(ChangeType.ADD);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ChangeResponse<AclChange>> apply(@NotNull List<HasMetadataChange<AclChange>> items) {
         Map<KafkaAclBinding, HasMetadataChange<AclChange>> data = items
                 .stream()
                 .peek(it -> ChangeHandler.verify(this, it))
-                .map(it -> new Tuple2<>(it.getChange().acl(), it))
-                .collect(Collectors.toMap(Tuple2::_1, Tuple2::_2));
+                .map(it -> Pair.of(it.getChange().acl(), it))
+                .collect(Collectors.toMap(Pair::_1, Pair::_2));
 
         List<AclBinding> bindings = data.keySet().stream()
                 .map(KafkaAclBindingAdapter::toAclBinding)
                 .toList();
 
-        CreateAclsResult result = adminClient.createAcls(bindings);
+        CreateAclsResult result = client.createAcls(bindings);
 
         Map<AclBinding, KafkaFuture<Void>> results = result.values();
 
         return results.entrySet()
                 .stream()
-                .map(e -> new Tuple2<>(KafkaAclBindingAdapter.fromAclBinding(e.getKey()), e.getValue()))
-                .map(t -> t.map2(Future::fromJavaFuture))
-                .map(t -> t.map2(List::of))
-                .map(t -> {
-                    HasMetadataChange<AclChange> change = data.get(t._1());
-                    List<CompletableFuture<ChangeMetadata>> futures = t._2().stream()
-                            .map(Future::toCompletableFuture)
-                            .map(f -> f.thenApply(unused -> ChangeMetadata.empty()))
-                            .toList();
-                    return new ChangeResponse<>(change, futures);
+                .map(e -> Pair.of(KafkaAclBindingAdapter.fromAclBinding(e.getKey()), e.getValue()))
+                .map(pair -> {
+                    HasMetadataChange<AclChange> change = data.get(pair._1());
+                    CompletableFuture<Void> future = pair._2()
+                            .toCompletionStage()
+                            .toCompletableFuture();
+                    return new ChangeResponse<>(change, future.thenApply(ignore -> ChangeMetadata.empty()));
                 })
                 .toList();
     }

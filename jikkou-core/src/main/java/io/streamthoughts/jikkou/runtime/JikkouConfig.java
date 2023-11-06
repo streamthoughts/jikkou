@@ -35,10 +35,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Singular;
-import lombok.With;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -357,25 +353,4 @@ public final class JikkouConfig implements Configuration {
         config.entrySet().forEach(e -> properties.setProperty(e.getKey(), config.getString(e.getKey())));
         return properties;
     }
-
-    public static Builder builder() {
-        return new Builder(null, null);
-    }
-
-    @With
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static final class Builder {
-
-        private String configFile;
-
-        @Singular
-        private Map<String, Object> configOverrides = new HashMap<>();
-
-
-        public JikkouConfig build() {
-            return load(configOverrides, configFile);
-        }
-    }
-
 }

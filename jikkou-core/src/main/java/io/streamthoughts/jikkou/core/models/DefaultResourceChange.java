@@ -25,12 +25,8 @@ import io.streamthoughts.jikkou.core.reconcilier.Change;
 import java.beans.ConstructorProperties;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.Builder;
-import lombok.With;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@With
-@Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @Description("")
 @JsonPropertyOrder({
         "apiVersion",
@@ -65,6 +61,10 @@ public class DefaultResourceChange<T extends Change> implements HasMetadataChang
         this.apiVersion = apiVersion;
         this.metadata = metadata;
         this.change = change;
+    }
+
+    public static <T extends Change> DefaultResourceChangeBuilder<T> builder() {
+        return new DefaultResourceChangeBuilder<T>();
     }
 
     /**
@@ -111,7 +111,8 @@ public class DefaultResourceChange<T extends Change> implements HasMetadataChang
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultResourceChange<?> that = (DefaultResourceChange<?>) o;
-        return Objects.equals(kind, that.kind) && Objects.equals(apiVersion, that.apiVersion) &&
+        return Objects.equals(kind, that.kind) &&
+                Objects.equals(apiVersion, that.apiVersion) &&
                 Objects.equals(metadata, that.metadata) &&
                 Objects.equals(change, that.change);
     }
@@ -126,11 +127,65 @@ public class DefaultResourceChange<T extends Change> implements HasMetadataChang
 
     @Override
     public String toString() {
-        return "GenericResourceChange{" +
-                "kind='" + kind + '\'' +
-                ", apiVersion='" + apiVersion + '\'' +
+        return "DefaultResourceChange[" +
+                "kind=" + kind +
+                ", apiVersion=" + apiVersion +
                 ", metadata=" + metadata +
                 ", change=" + change +
-                '}';
+                ']';
+    }
+
+    public DefaultResourceChange<T> withKind(String kind) {
+        return this.kind == kind ? this : new DefaultResourceChange<T>(kind, this.apiVersion, this.metadata, this.change);
+    }
+
+    public DefaultResourceChange<T> withApiVersion(String apiVersion) {
+        return this.apiVersion == apiVersion ? this : new DefaultResourceChange<T>(this.kind, apiVersion, this.metadata, this.change);
+    }
+
+    public DefaultResourceChange<T> withMetadata(ObjectMeta metadata) {
+        return this.metadata == metadata ? this : new DefaultResourceChange<T>(this.kind, this.apiVersion, metadata, this.change);
+    }
+
+    public DefaultResourceChange<T> withChange(T change) {
+        return this.change == change ? this : new DefaultResourceChange<T>(this.kind, this.apiVersion, this.metadata, change);
+    }
+
+    public DefaultResourceChangeBuilder<T> toBuilder() {
+        return new DefaultResourceChangeBuilder<T>().withKind(this.kind).withApiVersion(this.apiVersion).withMetadata(this.metadata).withChange(this.change);
+    }
+
+    public static class DefaultResourceChangeBuilder<T extends Change> {
+        private String kind;
+        private String apiVersion;
+        private ObjectMeta metadata;
+        private T change;
+
+        DefaultResourceChangeBuilder() {
+        }
+
+        public DefaultResourceChangeBuilder<T> withKind(String kind) {
+            this.kind = kind;
+            return this;
+        }
+
+        public DefaultResourceChangeBuilder<T> withApiVersion(String apiVersion) {
+            this.apiVersion = apiVersion;
+            return this;
+        }
+
+        public DefaultResourceChangeBuilder<T> withMetadata(ObjectMeta metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public DefaultResourceChangeBuilder<T> withChange(T change) {
+            this.change = change;
+            return this;
+        }
+
+        public DefaultResourceChange<T> build() {
+            return new DefaultResourceChange<T>(this.kind, this.apiVersion, this.metadata, this.change);
+        }
     }
 }
