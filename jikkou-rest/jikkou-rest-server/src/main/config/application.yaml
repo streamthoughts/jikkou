@@ -1,0 +1,103 @@
+# Copyright 2023 The original authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+micronaut:
+  application:
+    name: jikkou-rest-server
+  server:
+    # Use -1 to run on a random port
+    port: 28082
+  security:
+    enabled: false
+
+# Endpoints configuration
+endpoints:
+  all:
+    port: 28082
+    sensitive: false
+    enabled: false
+  health:
+    enabled: true
+    details-visible: ANONYMOUS
+    # Disable built-in health indicators
+    discovery-client.enabled: false
+    disk-space.enabled: false
+
+    # Enable Jikkou Health indicators.
+    jikkou:
+      enabled: true
+      timeout-ms: 5000
+# Jikkou API Configurations
+jikkou:
+  #security:
+  #  basic-auth:
+  #    - username: "admin"
+  #      password: "{noop}admin"
+
+  extensions.provider:
+    # By default, disable all extensions
+    default.enabled: false
+    # Explicitly enabled/disable extensions
+    #<provider_name>.enabled: <boolean>
+    core.enabled: true
+    kafka.enabled: true
+    # schemaregistry.enabled: true
+    # aiven.enabled: true
+    # kafkaconnect.enabled: true
+
+  # Kafka Extension Configuration
+  kafka:
+    client:
+      bootstrap.servers: localhost:9092
+
+  # Schema Registry Extension Configuration
+  schemaRegistry:
+    url: http://localhost:8081
+
+  # The default custom transformations to apply on any resources.
+  transformations: [ ]
+
+  # The default custom validations to apply on any resources.
+  validations:
+    - name: "topicMustHaveValidName"
+      type: io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation
+      priority: 100
+      config:
+        topicNameRegex: "[a-zA-Z0-9\\._\\-]+"
+
+    - name: "topicMustHavePartitionsEqualsOrGreaterThanOne"
+      type: io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+      priority: 100
+      config:
+        topicMinNumPartitions: 1
+
+    - name: "topicMustHaveReplicasEqualsOrGreaterThanOne"
+      type: io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation
+      priority: 100
+      config:
+        topicMinReplicationFactor: 1
+
+#  # The default custom reporters to report applied changes.
+#  reporters:
+#    # Uncomment following lines to enable default kafka reporter
+#    - name: "default"
+#      type: io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+#      config:
+#        event.source: "jikkou/cli"
+#        kafka:
+#          topic.creation.enabled: true
+#          topic.creation.defaultReplicationFactor: 1
+#          topic.name: "jikkou-resource-change-event"
+#          client: ${jikkou.kafka.client}
+#          client.id:  "jikkou-reporter-producer"
+]

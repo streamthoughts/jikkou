@@ -141,7 +141,8 @@ limitations under the License.
         <graal-sdk.version>23.1.0</graal-sdk.version>
         <reflections.version>0.10.2</reflections.version>
         <spotless.version>2.40.0</spotless.version>
-
+        <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
+        <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -290,6 +291,11 @@ limitations under the License.
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>appassembler-maven-plugin</artifactId>
+                    <version>${appassembler-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven-resources-plugin.version}</version>
@@ -308,6 +314,31 @@ limitations under the License.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>${maven-shade-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>default-shade</id>
+                            <configuration>
+                                <createDependencyReducedPom>false</createDependencyReducedPom>
+                                <transformers>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>${exec.mainClass}</mainClass>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                </transformers>
+                                <filters>
+                                    <filter>
+                                        <artifact>*.*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                            <exclude>module-info.class</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -731,6 +762,18 @@ limitations under the License.
                                             </artifact>
                                         </artifacts>
                                     </jikkou>
+                                    <jikkou-rest-server>
+                                        <name>jikkou-rest-server</name>
+                                        <type>JAVA_BINARY</type>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}.zip
+                                                </path>
+                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}.zip</transform>
+                                            </artifact>
+                                        </artifacts>
+                                    </jikkou-rest-server>
                                 </distributions>
                             </jreleaser>
                         </configuration>

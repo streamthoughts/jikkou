@@ -38,7 +38,6 @@ limitations under the License.
 
     <properties>
         <packaging>jar</packaging>
-        <app.distribution.directory>${project.basedir}/../dist</app.distribution.directory>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
         <ascii-table.version>1.8.0</ascii-table.version>
         <executable-suffix/>

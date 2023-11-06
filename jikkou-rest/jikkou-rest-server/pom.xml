@@ -203,35 +203,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-shade</id>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>${exec.mainClass}</mainClass>
-                                </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                            </transformers>
-                            <filters>
-                                <filter>
-                                    <artifact>*.*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>module-info.class</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
                 <version>${git-commit-id-maven-plugin.version}</version>
@@ -251,7 +222,8 @@
                 </executions>
                 <configuration>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/project-info.properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/project-info.properties
+                    </generateGitPropertiesFilename>
                     <failOnNoGitDirectory>false</failOnNoGitDirectory>
                     <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
                     <prefix>project</prefix>
@@ -262,21 +234,11 @@
                     </includeOnlyProperties>
                 </configuration>
             </plugin>
-            <!-- Micronaut -->
-            <plugin>
-                <groupId>io.micronaut.maven</groupId>
-                <artifactId>micronaut-maven-plugin</artifactId>
-                <version>${micronaut-maven-plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <micronautAotVersion>2.0.1</micronautAotVersion>
-                    <testResourcesVersion>1.2.5</testResourcesVersion>
-                </configuration>
-            </plugin>
             <!-- Docker -->
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.0</version>
                 <configuration>
                     <to>
                         <image>streamthoughts/${project.artifactId}:${project.version}</image>
@@ -320,4 +282,105 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Micronaut -->
+                    <plugin>
+                        <groupId>io.micronaut.maven</groupId>
+                        <artifactId>micronaut-maven-plugin</artifactId>
+                        <version>${micronaut-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <micronautAotVersion>2.0.1</micronautAotVersion>
+                            <testResourcesVersion>1.2.5</testResourcesVersion>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>dist</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>appassembler-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-java-binary</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>assemble</goal>
+                                </goals>
+                                <configuration>
+                                    <assembleDirectory>
+                                        ${project.build.directory}/distribution
+                                    </assembleDirectory>
+                                    <licenseHeaderFile>${project.basedir}/license-header</licenseHeaderFile>
+                                    <platforms>
+                                        <platform>unix</platform>
+                                        <platform>windows</platform>
+                                    </platforms>
+                                    <binFileExtensions>
+                                        <unix>.sh</unix>
+                                        <windows>.bat</windows>
+                                    </binFileExtensions>
+                                    <programs>
+                                        <program>
+                                            <mainClass>${exec.mainClass}</mainClass>
+                                            <name>${artifactId}</name>
+                                        </program>
+                                    </programs>
+                                    <configurationDirectory>etc</configurationDirectory>
+                                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                                    <generateRepository>true</generateRepository>
+                                    <repositoryLayout>flat</repositoryLayout>
+                                    <repositoryName>lib</repositoryName>
+                                    <extraJvmArguments>
+                                        -Dlogger.config=@BASEDIR@/etc/logback.xml
+                                        -Dmicronaut.config.file=@BASEDIR@/etc/application.yaml
+                                    </extraJvmArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration combine.self="append">
+                            <attach>false</attach>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>${artifactId}-${project.version}</finalName>
+                            <outputDirectory>${app.distribution.directory}</outputDirectory>
+                            <workDirectory>${project.build.directory}/assembly/work</workDirectory>
+                            <skipAssembly>false</skipAssembly>
+                            <descriptors>
+                                <descriptor>${project.basedir}/src/main/assembly/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

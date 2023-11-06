@@ -23,7 +23,7 @@
     </appender>
 
     <logger name="org.apache.kafka.clients.NetworkClient" level="ERROR"/>
-    <root level="${JIKKOU_REST_LOG_LEVEL:-INFO}">
+    <root level="${JIKKOU_LOG_LEVEL:-INFO}">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
