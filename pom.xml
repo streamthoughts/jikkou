@@ -120,7 +120,7 @@ limitations under the License.
 
         <!-- Tests -->
         <junit.version>5.10.0</junit.version>
-        <junit-bom.version>5.10.0</junit-bom.version>
+        <junit-bom.version>5.10.1</junit-bom.version>
         <testcontainer.version>1.19.1</testcontainer.version>
         <!-- Dependencies -->
         <kafka.version>3.6.0</kafka.version>
