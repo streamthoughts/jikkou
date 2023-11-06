@@ -30,8 +30,8 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Service interface which is used to collect all the resources that currently exist into the managed system.
- * A {@link Collector} is responsible to collect resources for a single specific type.
+ * Service interface for listing the resources available on a specific managed system.
+ * A collector implementation can only collect resources of the same type.
  *
  * @param <R> type of the resources that are collected.
  */

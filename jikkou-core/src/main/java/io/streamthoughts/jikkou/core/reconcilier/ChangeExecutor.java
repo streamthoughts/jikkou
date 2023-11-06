@@ -15,29 +15,33 @@
  */
 package io.streamthoughts.jikkou.core.reconcilier;
 
-import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
+ * Service interface for executing reconciliation changes.
  *
  * @param <C> type of the change handled by this executor.
  */
 public interface ChangeExecutor<C extends Change> {
 
     /**
-     * Executes this executor with the specified change handles.
+     * Executes all the changes attached to this executor with the specified handlers.
      *
-     * @param handlers  the handles to be used for executing changes.
-     * @return  the list of change results.
+     * @param handlers The list of ChangeHandler.
+     * @return The list of ChangeResult.
+     *
+     * @throws IllegalArgumentException if more than one handler is provided for a same {@link ChangeType}.
+     * @throws NullPointerException if the list of handlers is {@code null}.
      */
     @NotNull List<ChangeResult<C>> execute(@NotNull final List<? extends ChangeHandler<C>> handlers);
 
     /**
      * Gets the list of changes that will be applied by the executor.
      *
-     * @return  the {@link ReconciliationMode}.
+     * @return The list of HasMetadataChange.
      */
     @NotNull List<HasMetadataChange<C>> changes();
 

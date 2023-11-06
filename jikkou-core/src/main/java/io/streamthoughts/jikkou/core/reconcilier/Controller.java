@@ -34,7 +34,8 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This interface is used to compute and apply changes required to reconcile resources into a managed system.
+ * Service interface for computing and applying the changes required to reconcile resources.
+ * A controller implementation can only reconcile resources of the same type.
  *
  * @param <R> type of the resource managed by this controller.
  * @param <C> type of the change managed by this controller.
@@ -49,6 +50,26 @@ public interface Controller<
         extends HasMetadataAcceptable, Configurable, Extension {
 
     /**
+     * Executes all changes for the given reconciliation mode.
+     *
+     * @param executor  The ChangeExecutor to be used to applied changed.
+     * @param context   The ReconciliationContext.
+     * @return The list of ChangeResult.
+     */
+    List<ChangeResult<C>> execute(@NotNull ChangeExecutor<C> executor,
+                                  @NotNull ReconciliationContext context);
+
+    /**
+     * Plans all the changes to be executed to reconcile the specified resources.
+     *
+     * @param resources The list of resources to be reconciled.
+     * @param context   The ReconciliationContext.
+     * @return The list of changes.
+     */
+    ResourceListObject<? extends HasMetadataChange<C>> plan(@NotNull Collection<R> resources,
+                                                            @NotNull ReconciliationContext context);
+
+    /**
      * Gets the set of reconciliation modes supported by this controller.
      *
      * @param clazz the extension clazz.
@@ -61,24 +82,4 @@ public interface Controller<
         }
         return Collections.emptySet();
     }
-
-    /**
-     * Execute all changes for the given reconciliation mode.
-     *
-     * @param executor  the executor to be used to applied changed.
-     * @param context   the reconciliation context.
-     * @return the list of all changes applied.
-     */
-    List<ChangeResult<C>> execute(@NotNull ChangeExecutor<C> executor,
-                                  @NotNull ReconciliationContext context);
-
-    /**
-     * Plans all the changes to be executed to reconcile the specified resources.
-     *
-     * @param resources the list of resources to be reconciled.
-     * @param context   the operation context.
-     * @return the list of changes to be applied.
-     */
-    ResourceListObject<? extends HasMetadataChange<C>> plan(@NotNull Collection<R> resources,
-                                                            @NotNull ReconciliationContext context);
 }
