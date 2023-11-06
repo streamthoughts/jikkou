@@ -48,7 +48,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+
     - name: 'Set Docker Image Build-Args'
       run: |
         echo "VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
@@ -97,14 +97,18 @@ jobs:
     - name: 'Build & Push to Docker Hub (Jikkou REST)'
       if: github.ref_name == 'main'
       run: |
-        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml -Dpackaging=docker \
-        -Djib.to.image=streamthoughts/jikkou-rest-server:main \
+        ./mvnw -ntp -B install && \
+        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml \
+        -Dpackaging=docker \
+        -Djib.to.image=streamthoughts/jikkou-rest-server:main
         docker image push --all-tags streamthoughts/jikkou-rest-server
 
     - name: 'Build & Push to Docker Hub (Jikkou REST)'
       if: startsWith(github.ref, 'refs/tags/v')
       run: |
-        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml -Dpackaging=docker \
+        ./mvnw -ntp -B install && \
+        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml \
+        -Dpackaging=docker \
         -Djib.to.image=streamthoughts/jikkou-rest-server:${{ env.VERSION }} \
         -Djib.to.tags=latest
         docker image push --all-tags streamthoughts/jikkou-rest-server
