@@ -15,15 +15,10 @@
  */
 package io.streamthoughts.jikkou.client.command.get;
 
+import io.streamthoughts.jikkou.client.command.BaseCommand;
 import picocli.CommandLine.Command;
 
 @Command(name = "get",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
         header = "List and describe all resources of a specific kind.",
         description = "Use this command to describe the current state of all resources of a specific kind.")
-public class GetCommand {}
+public class GetCommand extends BaseCommand {}

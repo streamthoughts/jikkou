@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.client.command.health;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import io.streamthoughts.jikkou.client.command.BaseCommand;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import jakarta.inject.Inject;
@@ -25,17 +26,11 @@ import jakarta.inject.Singleton;
 import picocli.CommandLine.Command;
 
 @Command(name = "get-indicators",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
         header = "Get all health indicators.",
-        description = "Get all health indicators.",
-        mixinStandardHelpOptions = true)
+        description = "Get all health indicators."
+)
 @Singleton
-public class GetHealthIndicatorsCommand implements Runnable {
+public class GetHealthIndicatorsCommand extends BaseCommand implements Runnable {
 
     @Inject
     private JikkouApi api;

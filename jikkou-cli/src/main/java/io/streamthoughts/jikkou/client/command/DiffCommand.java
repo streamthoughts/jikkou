@@ -40,11 +40,14 @@ import picocli.CommandLine.Mixin;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Display all resource changes.",
-        description = "This command can be used to get all detected changes for the resource definition files.",
+        header = "Show changes required by the current resource definitions.",
+        description = """
+               Generates a speculative reconciliation plan, showing the changes Jikkou would apply to reconcile the resource definitions.
+               This command does not actually perform the reconciliation actions.
+               """,
         mixinStandardHelpOptions = true)
 @Singleton
-public class DiffCommand implements Callable<Integer> {
+public class DiffCommand extends BaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
     @Mixin

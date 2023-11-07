@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client.command.health;
+package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
 import picocli.CommandLine.Command;
 
-@Command(name = "health",
-        header = "Print or describe health indicators.",
-        description = "This command can be used to describe all resources of a given kind",
-        subcommands = {
-                GetHealthCommand.class,
-                GetHealthIndicatorsCommand.class
-        })
-public class HealthCommand extends BaseCommand {
+@Command(name = "prepare",
+        headerHeading = "Usage:%n%n",
+        descriptionHeading = "%nDESCRIPTION:%n%n",
+        parameterListHeading = "%nPARAMETERS:%n%n",
+        optionListHeading = "%nOPTIONS:%n%n",
+        commandListHeading = "%nCOMMANDS:%n%n",
+        synopsisHeading = "%n",
+        mixinStandardHelpOptions = true
+)
+public class BaseCommand {
 }

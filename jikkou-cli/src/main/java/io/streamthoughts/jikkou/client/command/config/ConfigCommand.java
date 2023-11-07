@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.config;
 
+import io.streamthoughts.jikkou.client.command.BaseCommand;
 import jakarta.inject.Singleton;
 import picocli.CommandLine.Command;
 
@@ -29,4 +30,4 @@ import picocli.CommandLine.Command;
 
 )
 @Singleton
-public class ConfigCommand { }
+public class ConfigCommand extends BaseCommand { }

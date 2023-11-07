@@ -15,16 +15,16 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.client.Jikkou;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
-import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
+import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
@@ -32,65 +32,69 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
-@Command(synopsisHeading      = "%nUsage:%n%n",
-        descriptionHeading   = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading    = "%nOptions:%n%n",
-        commandListHeading   = "%nCommands:%n%n",
-        mixinStandardHelpOptions = true)
-public abstract class BaseResourceCommand implements Callable<Integer> {
+@Command(name = "prepare",
+        header = "Prepare the resource definition files for validation.",
+        description = """
+                Prepare the resource definition files specified through the command line arguments for validation.
+                """
+)
+@Singleton
+public class PrepareCommand extends BaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
-    @Mixin
-    ExecOptionsMixin execOptions;
     @Mixin
     FileOptionsMixin fileOptions;
     @Mixin
     SelectorOptionsMixin selectorOptions;
     @Mixin
+    FormatOptionsMixin formatOptions;
+    @Mixin
     ConfigOptionsMixin configOptionsMixin;
 
-    // SERVICES
+    // API
     @Inject
     JikkouApi api;
     @Inject
     ResourceLoaderFacade loader;
-    
+    @Inject
+    ResourceWriter writer;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Integer call() throws IOException {
+
         try {
-            ApiChangeResultList results = api.reconcile(
+            HasItems result = api.prepare(
                     getResources(),
-                    getReconciliationMode(),
                     getReconciliationContext()
             );
-            return execOptions.format.print(results, Jikkou.getExecutionTime());
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                writer.write(formatOptions.format, result.getItems(), baos);
+                System.out.println(baos);
+                return CommandLine.ExitCode.OK;
+            }
         } catch (ValidationException exception) {
             System.out.println(ValidationErrorsWriter.write(exception.errors()));
             return CommandLine.ExitCode.SOFTWARE;
         }
     }
 
-    private @NotNull ReconciliationContext getReconciliationContext() {
-        return ReconciliationContext.builder()
-                .dryRun(isDryRun())
+    @NotNull
+    private HasItems getResources() {
+        return loader.load(fileOptions);
+    }
+
+    @NotNull
+    private ReconciliationContext getReconciliationContext() {
+        return ReconciliationContext
+                .builder()
+                .dryRun(true)
                 .configuration(configOptionsMixin.getConfiguration())
                 .selectors(selectorOptions.getResourceSelectors())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .build();
-    }
-
-    protected @NotNull HasItems getResources() {
-        return loader.load(fileOptions);
-    }
-
-    protected abstract @NotNull ReconciliationMode getReconciliationMode();
-
-    public boolean isDryRun() {
-        return execOptions.dryRun;
     }
 }

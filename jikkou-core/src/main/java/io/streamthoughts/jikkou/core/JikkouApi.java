@@ -146,7 +146,7 @@ public interface JikkouApi extends AutoCloseable {
     ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout);
 
     /**
-     * Get the health details for all supported health indicators.
+     * Gets the health details for all supported health indicators.
      *
      * @return a new {@link HealthIndicator} instance.
      */
@@ -197,7 +197,7 @@ public interface JikkouApi extends AutoCloseable {
     }
 
     /**
-     * Execute validations on the given resources.
+     * Execute validations of the specified resources.
      *
      * @param resources the list of resource to create.
      * @param context   the reconciliation context.
@@ -207,6 +207,16 @@ public interface JikkouApi extends AutoCloseable {
      */
     ApiValidationResult validate(@NotNull HasItems resources,
                                  @NotNull ReconciliationContext context);
+
+    /**
+     * Execute transformations of the specified resources.
+     *
+     * @param resources the list of resources to prepare.
+     * @param context   the reconciliation context.
+     * @return the transformed resources.
+     */
+    HasItems prepare(final @NotNull HasItems resources,
+                     final @NotNull ReconciliationContext context);
 
     /**
      * Get the resources associated to the given type.

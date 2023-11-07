@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client.command;
+package io.streamthoughts.jikkou.client.command.reconcile;
 
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
-@Command(name = "delete",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
-        header = "Delete resources that are no longer described by the resource definition files.",
-        description = "Reconcile the target platform by deleting all existing resources that are no longer described by the resource definition files passed as arguments.",
-        mixinStandardHelpOptions = true
+@Command(name = "apply",
+        header = "Update the resources as described by the resource definition files.",
+        description = "Reconciles the target platform so that the resources match the resource definition files passed as arguments."
 )
 @Singleton
-public class DeleteResourceCommand extends BaseResourceCommand {
+public class ApplyResourceCommand extends BaseResourceCommand {
 
-    /** {@inheritDoc} **/
+    /** {@inheritDoc } **/
     @Override
     protected @NotNull ReconciliationMode getReconciliationMode() {
-        return ReconciliationMode.DELETE;
+        return ReconciliationMode.FULL;
     }
+
 }

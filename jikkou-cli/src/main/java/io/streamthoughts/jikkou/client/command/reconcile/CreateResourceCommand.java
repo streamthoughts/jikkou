@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.client.command;
+package io.streamthoughts.jikkou.client.command.reconcile;
 
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import jakarta.inject.Singleton;
@@ -21,15 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine.Command;
 
 @Command(name = "create",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
         header = "Create resources from the resource definition files (only non-existing resources will be created).",
-        description = "Reconcile the target platform by creating all non-existing resources that are described by the resource definition files passed as arguments.",
-        mixinStandardHelpOptions = true
+        description = "Reconcile the target platform by creating all non-existing resources that are described by the resource definition files passed as arguments."
 )
 @Singleton
 public class CreateResourceCommand extends BaseResourceCommand {

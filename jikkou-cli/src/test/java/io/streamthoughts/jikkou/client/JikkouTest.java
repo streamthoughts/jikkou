@@ -41,6 +41,12 @@ class JikkouTest {
     }
 
     @Test
+    void shouldPrintPrepareHelp() {
+        int execute = Jikkou.execute(new String[]{"prepare"});
+        Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);
+    }
+
+    @Test
     void shouldPrintApiResources() {
         int execute = Jikkou.execute(new String[]{"api-resources"});
         Assertions.assertEquals(CommandLine.ExitCode.OK, execute);

@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
+import io.streamthoughts.jikkou.client.command.BaseCommand;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.health.HealthStatus;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -31,17 +32,11 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "get",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
         header = "Print health indicators.",
-        description = "This command can be used to get information about the health of target environments.",
-        mixinStandardHelpOptions = true)
+        description = "This command can be used to get information about the health of target environments."
+)
 @Singleton
-public class GetHealthCommand implements Callable<Integer> {
+public class GetHealthCommand extends BaseCommand implements Callable<Integer> {
 
     public static final String HEALTH_INDICATOR_ALL = "all";
 

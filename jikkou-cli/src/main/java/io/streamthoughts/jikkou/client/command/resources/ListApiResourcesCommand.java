@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.client.command.resources;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import io.streamthoughts.jikkou.client.command.BaseCommand;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
@@ -27,17 +28,11 @@ import java.util.List;
 import picocli.CommandLine.Command;
 
 @Command(name = "api-resources",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
         header = "Print the supported API resources",
-        description = "Print the supported API resources",
-        mixinStandardHelpOptions = true)
+        description = "Print the supported API resources"
+)
 @Singleton
-public class ListApiResourcesCommand implements Runnable {
+public class ListApiResourcesCommand extends BaseCommand implements Runnable {
 
     @Inject
     private JikkouApi api;

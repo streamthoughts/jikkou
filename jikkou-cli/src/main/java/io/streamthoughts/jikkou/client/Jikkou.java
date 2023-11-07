@@ -16,6 +16,8 @@
 package io.streamthoughts.jikkou.client;
 
 import static picocli.CommandLine.Model.CommandSpec;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 
 import ch.qos.logback.classic.LoggerContext;
 import io.micronaut.configuration.picocli.MicronautFactory;
@@ -27,19 +29,21 @@ import io.micronaut.runtime.event.annotation.EventListener;
 import io.streamthoughts.jikkou.client.banner.Banner;
 import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
 import io.streamthoughts.jikkou.client.banner.JikkouBanner;
-import io.streamthoughts.jikkou.client.command.ApplyResourceCommand;
-import io.streamthoughts.jikkou.client.command.CreateResourceCommand;
-import io.streamthoughts.jikkou.client.command.DeleteResourceCommand;
 import io.streamthoughts.jikkou.client.command.DiffCommand;
-import io.streamthoughts.jikkou.client.command.UpdateResourceCommand;
+import io.streamthoughts.jikkou.client.command.PrepareCommand;
 import io.streamthoughts.jikkou.client.command.config.ConfigCommand;
 import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCandidateCommand;
 import io.streamthoughts.jikkou.client.command.extension.ExtensionCommand;
 import io.streamthoughts.jikkou.client.command.get.GetCommandLineFactory;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
+import io.streamthoughts.jikkou.client.command.reconcile.ApplyResourceCommand;
+import io.streamthoughts.jikkou.client.command.reconcile.CreateResourceCommand;
+import io.streamthoughts.jikkou.client.command.reconcile.DeleteResourceCommand;
+import io.streamthoughts.jikkou.client.command.reconcile.UpdateResourceCommand;
 import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand;
 import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
+import io.streamthoughts.jikkou.client.renderer.CommandGroupRenderer;
 import io.streamthoughts.jikkou.core.JikkouInfo;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
@@ -48,7 +52,11 @@ import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +71,7 @@ import picocli.CommandLine.Command;
 @Command(name = "jikkou",
         descriptionHeading = "%n%n",
         parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
+        optionListHeading = "%nOPTIONS:%n%n",
         commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage: ",
         synopsisHeading = "%n",
@@ -79,6 +87,7 @@ import picocli.CommandLine.Command;
                 ListApiResourcesCommand.class,
                 ConfigCommand.class,
                 DiffCommand.class,
+                PrepareCommand.class,
                 ValidateCommand.class,
                 HealthCommand.class,
                 CommandLine.HelpCommand.class,
@@ -181,8 +190,24 @@ public final class Jikkou {
         }
 
         CommandLine gen = commandLine.getSubcommands().get("generate-completion");
-        gen.getCommandSpec().usageMessage().hidden(true);
+        gen.getCommandSpec().usageMessage().hidden(false);
+
+
+        commandLine.getHelpSectionMap().remove(SECTION_KEY_COMMAND_LIST_HEADING);
+        commandLine.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST, buildHelpSectionRenderer());
+
         return commandLine;
+    }
+
+    public static CommandLine.IHelpSectionRenderer buildHelpSectionRenderer() {
+        Map<String, List<String>> sections = new LinkedHashMap<>();
+        sections.put("%nCORE COMMANDS:%n", Arrays.asList(
+                "apply", "create", "delete", "diff", "get", "health", "prepare", "update", "validate")
+        );
+        sections.put("%nADDITIONAL COMMANDS:%n", Arrays.asList(
+                "api-resources", "extensions", "generate-completion", "help")
+        );
+        return new CommandGroupRenderer(sections);
     }
 
     public static class ShortErrorMessageHandler implements CommandLine.IParameterExceptionHandler {

@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -59,6 +60,10 @@ public abstract class BaseApi implements JikkouApi {
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory cannot be null");
     }
 
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public HasItems prepare(final @NotNull HasItems resources,
                             final @NotNull ReconciliationContext context) {
 
@@ -70,7 +75,7 @@ public abstract class BaseApi implements JikkouApi {
                 .get();
     }
 
-    private HasItems convert(final @NotNull HasItems resources) {
+    private ResourceListObject<HasMetadata> convert(final @NotNull HasItems resources) {
 
         ConverterChain converter = getConverterChain();
         List<HasMetadata> converted = resources.getItems()
@@ -97,8 +102,8 @@ public abstract class BaseApi implements JikkouApi {
         return new DefaultResourceListObject<>(converted);
     }
 
-    private HasItems transform(final @NotNull HasItems items,
-                               final @NotNull ReconciliationContext context) {
+    private ResourceListObject<HasMetadata> transform(final @NotNull HasItems items,
+                                                      final @NotNull ReconciliationContext context) {
 
         TransformationChain transformationChain = getResourceTransformationChain();
 
@@ -121,8 +126,8 @@ public abstract class BaseApi implements JikkouApi {
         return new DefaultResourceListObject<>(transformed);
     }
 
-    private HasItems select(final @NotNull HasItems resources,
-                            final @NotNull ReconciliationContext context) {
+    private ResourceListObject<HasMetadata> select(final @NotNull HasItems resources,
+                                                   final @NotNull ReconciliationContext context) {
 
         List<? extends HasMetadata> filtered = resources.getItems().stream()
                 .filter(Predicate.not(resource -> Resource.isTransient(resource.getClass())))
