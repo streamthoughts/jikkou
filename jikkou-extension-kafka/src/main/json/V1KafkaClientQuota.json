@@ -42,8 +42,7 @@
       "$ref": "./Metadata.json"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
-      "type": "object"
+      "$ref": "./Template.json"
     },
     "spec": {
       "$ref": "V1KafkaClientQuotaSpec.json"

@@ -39,8 +39,7 @@
       "$ref": "./Metadata.json"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
-      "type": "object"
+      "$ref": "./Template.json"
     },
     "spec": {
       "$ref": "#/$defs/V1KafkaBrokersSpec"
@@ -65,16 +64,20 @@
       },
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "description": "The node id of this node."
         },
         "host": {
-          "type": "string"
+          "type": "string",
+          "description": "The host name for this node."
         },
         "port": {
-          "type": "integer"
+          "type": "integer",
+          "description": "The port for this node."
         },
         "rack": {
-          "type": "string"
+          "type": "string",
+          "description": "The rack for this node (null if this node has no defined rack)."
         },
         "configs": {
           "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",

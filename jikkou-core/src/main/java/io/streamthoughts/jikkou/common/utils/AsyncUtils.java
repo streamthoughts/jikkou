@@ -81,15 +81,21 @@ public class AsyncUtils {
     }
 
     public static <T> T getValueOrThrowException(CompletableFuture<T> future,
-                                                 Function<Exception, RuntimeException> mapper) {
+                                                 Function<Throwable, RuntimeException> mapper) {
         if (future != null) {
             try {
                 return future.get();
             } catch (Exception e) {
+                Throwable t = e;
                 if (e instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
                 }
-                throw mapper.apply(e);
+                if (e instanceof ExecutionException) {
+                    if (e.getCause() != null) {
+                        t = e.getCause();
+                    }
+                }
+                throw mapper.apply(t);
             }
         }
         return null;

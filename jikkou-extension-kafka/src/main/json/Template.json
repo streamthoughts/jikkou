@@ -1,0 +1,15 @@
+{
+  "title": "ObjectTemplate",
+  "description": "Data values to be passed to the template engine.",
+  "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
+  "type": "object",
+  "properties": {
+    "values": {
+      "type": "string",
+      "description": "Values are optional key/value pairs that are provided to the template engine.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

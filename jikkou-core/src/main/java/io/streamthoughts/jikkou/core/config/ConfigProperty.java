@@ -276,9 +276,9 @@ public final class ConfigProperty<T> {
     /** {@inheritDoc} **/
     @Override
     public String toString() {
-        return "ConfigProperty{" +
-                "key='" + key + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return "ConfigProperty[" +
+                "key=" + key +
+                ", description=" + description +
+                ']';
     }
 }

@@ -98,7 +98,14 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
     @JsonProperty("metadata")
     @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
+    /**
+     * ObjectTemplate
+     * <p>
+     * Data values to be passed to the template engine.
+     * 
+     */
     @JsonProperty("template")
+    @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
      * Client quota specification
@@ -171,6 +178,12 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
         return metadata;
     }
 
+    /**
+     * ObjectTemplate
+     * <p>
+     * Data values to be passed to the template engine.
+     * 
+     */
     @JsonProperty("template")
     public ObjectTemplate getTemplate() {
         return template;

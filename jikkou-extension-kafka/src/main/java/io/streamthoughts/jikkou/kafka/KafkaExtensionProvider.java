@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.kafka;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientConsumerGroupCollector;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclCollector;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclController;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaBrokerCollector;
@@ -75,6 +76,7 @@ public final class KafkaExtensionProvider implements ExtensionProvider {
         registry.register(AdminClientKafkaAclCollector.class, AdminClientKafkaAclCollector::new);
         registry.register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new);
         registry.register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new);
+        registry.register(AdminClientConsumerGroupCollector.class, AdminClientConsumerGroupCollector::new);
 
         // transformations
         registry.register(KafkaPrincipalAuthorizationTransformation.class, KafkaPrincipalAuthorizationTransformation::new);

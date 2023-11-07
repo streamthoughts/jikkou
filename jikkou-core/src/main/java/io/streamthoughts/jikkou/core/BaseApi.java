@@ -169,7 +169,7 @@ public abstract class BaseApi implements JikkouApi {
                 Collector.class,
                 Qualifiers.byAcceptedResource(resource)
         ).orElseThrow(() -> new JikkouRuntimeException(String.format(
-                "Cannot found register collector for resource type: group='%s', version='%s' and kind='%s",
+                "Cannot find collector for resource type: group='%s', version='%s' and kind='%s",
                 resource.group(),
                 resource.apiVersion(),
                 resource.kind()
@@ -187,7 +187,7 @@ public abstract class BaseApi implements JikkouApi {
                 Controller.class,
                 Qualifiers.byAcceptedResource(resource)
         ).orElseThrow(() -> new JikkouRuntimeException(String.format(
-                "Cannot found controller for resource type: group='%s', version='%s' and kind='%s",
+                "Cannot find controller for resource type: group='%s', version='%s' and kind='%s",
                 resource.group(),
                 resource.apiVersion(),
                 resource.kind()

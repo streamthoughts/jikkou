@@ -1,0 +1,179 @@
+{
+  "type": "object",
+  "title": "V1KafkaConsumerGroup",
+  "description": "V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadata",
+    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaConsumerGroupSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "kafkaconsumergroup",
+        "plural": "kafkaconsumergroups",
+        "shortNames": [
+          "kcg"
+        ]
+      },
+      "verbs": [
+        "list"
+      ]
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1beta1"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaConsumerGroup"
+    },
+    "metadata": {
+      "$ref": "./Metadata.json"
+    },
+    "template": {
+      "$ref": "./Template.json"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaConsumerGroupSpec"
+    }
+  },
+  "$defs": {
+    "V1KafkaConsumerGroupSpec": {
+      "title": "V1KafkaConsumerGroupSpec",
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "The consumer group state."
+        },
+        "members": {
+          "type": "array",
+          "description": "List of consumer group instance.",
+          "items": {
+            "$ref": "#/$defs/V1KafkaConsumerGroupMember"
+          }
+        },
+        "coordinator": {
+          "type": "object",
+          "description": "The broker node responsible for coordinating this group.",
+          "$ref": "#/$defs/V1KafkaNode"
+        }
+      }
+    },
+    "V1KafkaConsumerGroupMember": {
+      "title": "V1KafkaConsumerGroupMember",
+      "type": "object",
+      "description": "Detailed description of a single group instance in the cluster.",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "memberId"
+      ],
+      "properties": {
+        "memberId": {
+          "type": "string",
+          "description": "The member ID."
+        },
+        "groupInstanceId": {
+          "type": "string",
+          "description": "The group instance ID."
+        },
+        "clientId": {
+          "type": "string",
+          "description": "The client ID."
+        },
+        "host": {
+          "type": "string",
+          "description": "The member host."
+        },
+        "assignments": {
+          "description": "List of topic-partitions assigned to the member.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "offsets": {
+          "type": "array",
+          "description": "List of topic-partitions offsets.",
+          "items": {
+            "type": "object",
+            "$ref": "#/$defs/V1KafkaConsumerOffset"
+          }
+        }
+      }
+    },
+    "V1KafkaConsumerOffset": {
+      "title": "V1KafkaConsumerOffset",
+      "type": "object",
+      "description": "Information about the position of a consumer for a topic-partitions",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "The Topic."
+        },
+        "partition": {
+          "type": "integer",
+          "description": "The partition."
+        },
+        "offset": {
+          "type": "any",
+          "description": "The offset."
+        }
+      }
+    },
+    "V1KafkaNode": {
+      "title": "V1KafkaNode",
+      "type": "object",
+      "description": "Information about a Kafka node.",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The node id of this node."
+        },
+        "host": {
+          "type": "string",
+          "description": "The host name for this node."
+        },
+        "port": {
+          "type": "integer",
+          "description": "The port for this node."
+        },
+        "rack": {
+          "type": "string",
+          "description": "The rack for this node (null if this node has no defined rack)."
+        }
+      }
+    }
+  }
+}

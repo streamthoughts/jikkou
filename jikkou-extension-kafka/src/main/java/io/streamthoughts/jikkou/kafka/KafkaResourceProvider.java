@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
@@ -43,5 +44,6 @@ public final class KafkaResourceProvider implements ResourceProvider {
         context.register(V1KafkaPrincipalAuthorization.class);
         context.register(V1KafkaPrincipalRole.class);
         context.register(V1KafkaTableRecord.class);
+        context.register(V1KafkaConsumerGroup.class);
     }
 }

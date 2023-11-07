@@ -29,6 +29,7 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ObjectTemplate;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.Verb;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
@@ -38,17 +39,17 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * V1KafkaBroker
+ * V1KafkaConsumerGroup
  * <p>
- * KafkaBroker resources provide a way of describing brokers in a Kafka cluster.
+ * V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaBroker resources provide a way of describing brokers in a Kafka cluster.")
-@Names(singular = "kafkabroker", plural = "kafkabrokers", shortNames = {
-    "kb"
+@Description("V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.")
+@Names(singular = "kafkaconsumergroup", plural = "kafkaconsumergroups", shortNames = {
+    "kcg"
 })
 @Verbs({
     Verb.LIST
@@ -60,12 +61,12 @@ import lombok.extern.jackson.Jacksonized;
     "template",
     "spec"
 })
-@ApiVersion("kafka.jikkou.io/v1beta2")
-@Kind("KafkaBroker")
+@ApiVersion("kafka.jikkou.io/v1beta1")
+@Kind("KafkaConsumerGroup")
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
+public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsumerGroupSpec> , Resource
 {
 
     /**
@@ -75,7 +76,7 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "kafka.jikkou.io/v1beta2";
+    private String apiVersion = "kafka.jikkou.io/v1beta1";
     /**
      * 
      * (Required)
@@ -83,11 +84,12 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
      */
     @JsonProperty("kind")
     @Builder.Default
-    private String kind = "KafkaBroker";
+    private String kind = "KafkaConsumerGroup";
     /**
      * ObjectMeta
      * <p>
      * Metadata attached to the resources.
+     * (Required)
      * 
      */
     @JsonProperty("metadata")
@@ -103,18 +105,20 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
     @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
+     * V1KafkaConsumerGroupSpec
+     * <p>
      * 
      * (Required)
      * 
      */
     @JsonProperty("spec")
-    private io.streamthoughts.jikkou.kafka.models.V1KafkaBrokersSpec spec;
+    private io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec spec;
 
     /**
      * No args constructor for use in serialization
      * 
      */
-    public V1KafkaBroker() {
+    public V1KafkaConsumerGroup() {
     }
 
     /**
@@ -132,7 +136,7 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
         "template",
         "spec"
     })
-    public V1KafkaBroker(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.streamthoughts.jikkou.kafka.models.V1KafkaBrokersSpec spec) {
+    public V1KafkaConsumerGroup(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec spec) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -165,6 +169,7 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
      * ObjectMeta
      * <p>
      * Metadata attached to the resources.
+     * (Required)
      * 
      */
     @JsonProperty("metadata")
@@ -184,19 +189,21 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
     }
 
     /**
+     * V1KafkaConsumerGroupSpec
+     * <p>
      * 
      * (Required)
      * 
      */
     @JsonProperty("spec")
-    public io.streamthoughts.jikkou.kafka.models.V1KafkaBrokersSpec getSpec() {
+    public io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec getSpec() {
         return spec;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(V1KafkaBroker.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(V1KafkaConsumerGroup.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("apiVersion");
         sb.append('=');
         sb.append(((this.apiVersion == null)?"<null>":this.apiVersion));
@@ -241,10 +248,10 @@ public class V1KafkaBroker implements HasMetadata, HasSpec<V1KafkaBrokersSpec>
         if (other == this) {
             return true;
         }
-        if ((other instanceof V1KafkaBroker) == false) {
+        if ((other instanceof V1KafkaConsumerGroup) == false) {
             return false;
         }
-        V1KafkaBroker rhs = ((V1KafkaBroker) other);
+        V1KafkaConsumerGroup rhs = ((V1KafkaConsumerGroup) other);
         return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
     }
 

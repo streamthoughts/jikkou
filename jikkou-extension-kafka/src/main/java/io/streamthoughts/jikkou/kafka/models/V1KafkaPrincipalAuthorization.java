@@ -97,7 +97,14 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
     @JsonProperty("metadata")
     @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
+    /**
+     * ObjectTemplate
+     * <p>
+     * Data values to be passed to the template engine.
+     * 
+     */
     @JsonProperty("template")
+    @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
      * 
@@ -170,6 +177,12 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
         return metadata;
     }
 
+    /**
+     * ObjectTemplate
+     * <p>
+     * Data values to be passed to the template engine.
+     * 
+     */
     @JsonProperty("template")
     public ObjectTemplate getTemplate() {
         return template;

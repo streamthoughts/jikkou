@@ -18,4 +18,5 @@ package io.streamthoughts.jikkou.kafka;
 public class MetadataAnnotations {
 
     public static String JIKKOU_IO_KAFKA_CLUSTER_ID = "kafka.jikkou.io/cluster-id";
+    public static String JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER = "kafka.jikkou.io/is-simple-consumer";
 }
