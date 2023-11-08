@@ -22,10 +22,14 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * The state the connector should be in. Defaults to running.
+ * The state the connector is or should be in. Defaults to RUNNING.
+ *
+ * see org.apache.kafka.connect.runtime.AbstractStatus.State.
  */
 public enum KafkaConnectorState {
-
+    UNASSIGNED,
+    RESTARTING,
+    FAILED,
     PAUSED,
     STOPPED,
     RUNNING;

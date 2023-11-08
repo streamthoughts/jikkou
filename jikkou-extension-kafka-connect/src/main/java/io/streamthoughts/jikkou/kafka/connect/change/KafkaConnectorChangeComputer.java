@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class KafkaConnectorChangeComputer extends ResourceChangeComputer<V1KafkaConnector, V1KafkaConnector, KafkaConnectorChange> {
@@ -115,8 +116,14 @@ public class KafkaConnectorChangeComputer extends ResourceChangeComputer<V1Kafka
                 .with(before.getSpec().getTasksMax(), after.getSpec().getTasksMax());
 
         // Compute change for 'state'
+        KafkaConnectorState beforeState = before.getSpec().getState();
+
+        // 'state' is optional and can be empty.
+        KafkaConnectorState afterState = Optional.ofNullable(after.getSpec().getState())
+                .orElse(KafkaConnectorState.RUNNING);
+
         ValueChange<KafkaConnectorState> stateChange = ValueChange
-                .with(before.getSpec().getState(), after.getSpec().getState());
+                .with(beforeState, afterState);
 
         List<Change> allChanges = new ArrayList<>(configChanges);
         allChanges.add(connectClassChange);

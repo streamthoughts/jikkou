@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -85,22 +86,24 @@ public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaCon
     @NotNull
     private Stream<ChangeResponse<KafkaConnectorChange>> updateConnector(HasMetadataChange<KafkaConnectorChange> item) {
         KafkaConnectorChange change = item.getChange();
-        if (!change.isStateOnlyChange())
+        if (!change.isStateOnlyChange()) {
             return createOrUpdateConnectorConfig(item);
-
+        }
         KafkaConnectorState newState = change.state().getAfter();
 
         String connectorName = change.name();
-        CompletableFuture<Void> future = switch (newState) {
-            case PAUSED -> CompletableFuture
-                    .runAsync(() -> api.pauseConnector(connectorName));
-            case STOPPED -> CompletableFuture
-                    .runAsync(() -> api.stopConnector(connectorName));
-            case RUNNING -> CompletableFuture
-                    .runAsync(() -> api.resumeConnector(connectorName));
+        Optional<CompletableFuture<Void>> future = switch (newState) {
+            case PAUSED -> Optional.of(CompletableFuture
+                    .runAsync(() -> api.pauseConnector(connectorName)));
+            case STOPPED -> Optional.of(CompletableFuture
+                    .runAsync(() -> api.stopConnector(connectorName)));
+            case RUNNING -> Optional.of(CompletableFuture
+                    .runAsync(() -> api.resumeConnector(connectorName)));
+            // new state cannot be one of:
+            case UNASSIGNED, RESTARTING, FAILED -> Optional.empty();
         };
-        ChangeResponse<KafkaConnectorChange> response = toChangeResponse(item, future);
-        return Stream.of(response);
+
+        return future.map(f -> toChangeResponse(item, f)).map(Stream::of).orElse(Stream.empty());
     }
 
     @NotNull
@@ -142,7 +145,7 @@ public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaCon
     }
 
     private ChangeResponse<KafkaConnectorChange> toChangeResponse(HasMetadataChange<KafkaConnectorChange> change,
-                                                                 CompletableFuture<?> future) {
+                                                                  CompletableFuture<?> future) {
         CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
             if (throwable == null) {
                 return ChangeMetadata.empty();
