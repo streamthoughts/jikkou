@@ -19,7 +19,6 @@ import static picocli.CommandLine.Model.CommandSpec;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 
-import ch.qos.logback.classic.LoggerContext;
 import io.micronaut.configuration.picocli.MicronautFactory;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.ApplicationContextBuilder;
@@ -59,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -70,6 +68,7 @@ import org.slf4j.event.Level;
 import picocli.AutoComplete;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
 /**
  * The main-class
@@ -106,8 +105,10 @@ public final class Jikkou {
 
     private static final Logger LOG = LoggerFactory.getLogger(Jikkou.class);
 
-    private static LocalDateTime START_TIME;
+    @Mixin
+    LoggingMixin loggingMixin;
 
+    private static LocalDateTime START_TIME;
 
     @EventListener
     public void onStartupEvent(StartupEvent event) {
@@ -122,7 +123,7 @@ public final class Jikkou {
     }
 
     public static void main(final String... args) {
-        setRootLogLevelWithEnv();
+        Logging.configureRootLoggerLevel();
         var printer = BannerPrinterBuilder.newBuilder()
                 .setLogger(LOG)
                 .setLoggerLevel(Level.INFO)
@@ -131,15 +132,6 @@ public final class Jikkou {
         printer.print(new JikkouBanner());
 
         System.exit(execute(args));
-    }
-
-    private static void setRootLogLevelWithEnv() {
-        String rootLogLevel = System.getenv("JIKKOU_CLI_LOG_LEVEL");
-        if (rootLogLevel != null) {
-            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ch.qos.logback.classic.Logger logger = loggerContext.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-            logger.setLevel(ch.qos.logback.classic.Level.toLevel(rootLogLevel.toUpperCase(Locale.ROOT)));
-        }
     }
 
     public static int execute(String[] args) {
@@ -159,18 +151,18 @@ public final class Jikkou {
         }
     }
 
+    private int executionStrategy(CommandLine.ParseResult parseResult) {
+        loggingMixin.configureRootLoggerLevel();
+        return new CommandLine.RunLast().execute(parseResult); // default execution strategy
+    }
+
     @NotNull
     private static CommandLine createCommandLine(ApplicationContext context) {
-        final CommandLine commandLine = new CommandLine(Jikkou.class, new MicronautFactory(context))
+        Jikkou app = context.getBean(Jikkou.class);
+        final CommandLine commandLine = new CommandLine(app, new MicronautFactory(context))
                 .setCaseInsensitiveEnumValuesAllowed(true)
                 .setUsageHelpWidth(160)
-                .setExecutionStrategy(new CommandLine.RunLast() {
-                    @Override
-                    public int execute(final CommandLine.ParseResult parseResult) throws CommandLine.ExecutionException {
-                        // Initialization must be triggered after args was parsed by Picocli
-                        return super.execute(parseResult);
-                    }
-                })
+                .setExecutionStrategy(app::executionStrategy)
                 .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
                     final PrintWriter err = cmd.getErr();
                     if (!(ex instanceof JikkouRuntimeException)) {
@@ -258,10 +250,11 @@ public final class Jikkou {
         List<String> additional = new ArrayList<>();
 
         if (isApiEnabled) {
-            additional.add( "api-resources");
-            additional.add( "api-extensions");
+            additional.add("api-resources");
+            additional.add("api-extensions");
         }
 
+        additional.add("config");
         additional.add("generate-completion");
         additional.add("help");
 

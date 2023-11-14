@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.extension;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.extension.Example;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
@@ -34,7 +34,7 @@ import picocli.CommandLine.Parameters;
         description = "Print detailed information about the use of a specific API extension."
 )
 @Singleton
-public class GetExtensionCommand extends BaseCommand implements Callable<Integer> {
+public class GetExtensionCommand extends CLIBaseCommand implements Callable<Integer> {
 
     public static final String NOT_AVAILABLE = "N/A";
     @Parameters(

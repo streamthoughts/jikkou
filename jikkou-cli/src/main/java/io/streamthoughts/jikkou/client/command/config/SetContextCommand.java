@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.config;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
 import io.streamthoughts.jikkou.common.utils.Strings;
@@ -36,7 +36,7 @@ import picocli.CommandLine.Parameters;
         description = "Configures the specified context with the provided arguments"
 )
 @Singleton
-public class SetContextCommand extends BaseCommand implements Callable<Integer> {
+public class SetContextCommand extends CLIBaseCommand implements Callable<Integer> {
 
     @Parameters(index = "0", description = "Context name")
     String contextName;

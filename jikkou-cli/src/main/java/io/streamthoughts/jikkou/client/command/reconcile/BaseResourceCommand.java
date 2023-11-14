@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.client.command.reconcile;
 
 import io.streamthoughts.jikkou.client.Jikkou;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
 import io.streamthoughts.jikkou.client.command.ExecOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
-public abstract class BaseResourceCommand extends BaseCommand implements Callable<Integer> {
+public abstract class BaseResourceCommand extends CLIBaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
     @Mixin

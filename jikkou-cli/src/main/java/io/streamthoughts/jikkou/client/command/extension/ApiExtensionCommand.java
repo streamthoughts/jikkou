@@ -15,22 +15,18 @@
  */
 package io.streamthoughts.jikkou.client.command.extension;
 
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import jakarta.inject.Singleton;
 import picocli.CommandLine.Command;
 
 @Command(name = "api-extensions",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
-        header = "List or describe the extensions of Jikkou",
-        description = "List or describe the extensions used by the client",
-        mixinStandardHelpOptions = true,
+        header = "Print the supported API extensions",
+        description = {
+                "List and describe the API extensions supported by the Jikkou CLI or Jikkou API Server (in proxy mode)."
+        },
         subcommands = {
                 ListExtensionCommand.class,
                 GetExtensionCommand.class,
         })
 @Singleton
-public class ApiExtensionCommand {}
+public class ApiExtensionCommand extends CLIBaseCommand {}

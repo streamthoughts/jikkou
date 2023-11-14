@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -32,7 +32,7 @@ import picocli.CommandLine.Command;
         description = "Displays the current context"
 )
 @Singleton
-public class CurrentContextCommand extends BaseCommand implements Runnable {
+public class CurrentContextCommand extends CLIBaseCommand implements Runnable {
 
     @Inject
     private ConfigurationContext configurationContext;

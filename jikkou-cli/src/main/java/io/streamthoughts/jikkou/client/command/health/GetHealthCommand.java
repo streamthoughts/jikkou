@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.health.HealthStatus;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -36,7 +36,7 @@ import picocli.CommandLine.Parameters;
         description = "This command can be used to get information about the health of target environments."
 )
 @Singleton
-public class GetHealthCommand extends BaseCommand implements Callable<Integer> {
+public class GetHealthCommand extends CLIBaseCommand implements Callable<Integer> {
 
     public static final String HEALTH_INDICATOR_ALL = "all";
 

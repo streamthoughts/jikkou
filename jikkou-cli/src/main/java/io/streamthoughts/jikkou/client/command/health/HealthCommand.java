@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.health;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import picocli.CommandLine.Command;
 
 @Command(name = "health",
@@ -25,5 +25,5 @@ import picocli.CommandLine.Command;
                 GetHealthCommand.class,
                 GetHealthIndicatorsCommand.class
         })
-public class HealthCommand extends BaseCommand {
+public class HealthCommand extends CLIBaseCommand {
 }

@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.client.command.get;
 
 import io.micronaut.context.annotation.Prototype;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
@@ -39,18 +40,12 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Spec;
 
-@Command(headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
+@Command(
         header = "Display one or many resources",
-        description = "Display one or many resources",
-        mixinStandardHelpOptions = true
+        description = "Display one or many resources"
 )
 @Prototype
-public class GetResourceCommand implements Callable<Integer> {
+public class GetResourceCommand extends CLIBaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
     @Spec

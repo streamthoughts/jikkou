@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.config;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.completion.ContextNameCompletions;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import jakarta.inject.Inject;
@@ -28,7 +28,7 @@ import picocli.CommandLine.Parameters;
         description = "Configures jikkou to use the specified context"
 )
 @Singleton
-public class UseContextCommand extends BaseCommand implements Runnable {
+public class UseContextCommand extends CLIBaseCommand implements Runnable {
 
     @Parameters(index = "0", description = "Context name", completionCandidates = ContextNameCompletions.class)
     String contextName;

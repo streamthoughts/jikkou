@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.client.command.validate;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
@@ -48,7 +48,7 @@ import picocli.CommandLine.Mixin;
                 """
 )
 @Singleton
-public class ValidateCommand extends BaseCommand implements Callable<Integer> {
+public class ValidateCommand extends CLIBaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
     @Mixin

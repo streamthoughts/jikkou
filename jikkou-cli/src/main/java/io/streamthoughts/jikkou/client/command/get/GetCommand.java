@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.client.command.get;
 
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import picocli.CommandLine.Command;
 
 @Command(name = "get",
-        header = "List and describe all resources of a specific kind.",
-        description = "Use this command to describe the current state of all resources of a specific kind.")
-public class GetCommand extends BaseCommand {}
+        header = "Display one or many specific resources.",
+        description = "Use this command to display the current state of all the resources of a specific kind.")
+public class GetCommand extends CLIBaseCommand {}

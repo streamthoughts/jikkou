@@ -15,9 +15,11 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
+import io.streamthoughts.jikkou.client.LoggingMixin;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name = "prepare",
+@Command(
         headerHeading = "Usage:%n%n",
         descriptionHeading = "%nDESCRIPTION:%n%n",
         parameterListHeading = "%nPARAMETERS:%n%n",
@@ -26,5 +28,8 @@ import picocli.CommandLine.Command;
         synopsisHeading = "%n",
         mixinStandardHelpOptions = true
 )
-public class BaseCommand {
+public class CLIBaseCommand {
+
+    @Mixin
+    LoggingMixin loggingMixin;
 }

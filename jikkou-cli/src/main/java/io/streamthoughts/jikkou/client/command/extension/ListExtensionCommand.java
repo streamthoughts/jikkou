@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.client.command.extension;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
@@ -31,17 +32,10 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "list",
-        headerHeading = "Usage:%n%n",
-        descriptionHeading = "%nDescription:%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOptions:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        synopsisHeading = "%n",
         header = "Print the supported API extensions",
-        description = "Print the supported API extensions",
-        mixinStandardHelpOptions = true)
+        description = "Print the supported API extensions")
 @Singleton
-public class ListExtensionCommand implements Runnable {
+public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
 
     @Option(names = {"--category"},
             required = false,

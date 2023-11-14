@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.client.command.server;
 
 import io.micronaut.context.annotation.Requires;
 import io.streamthoughts.jikkou.client.beans.ProxyConfiguration;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.http.client.JikkouApiClient;
 import io.streamthoughts.jikkou.rest.data.Info;
@@ -34,7 +34,7 @@ import picocli.CommandLine.Command;
 )
 @Singleton
 @Requires(bean = ProxyConfiguration.class)
-public class ServerInfoCommand extends BaseCommand implements Callable<Integer> {
+public class ServerInfoCommand extends CLIBaseCommand implements Callable<Integer> {
 
     enum Formats {JSON, YAML}
 

@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.client.command.config;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
 import jakarta.inject.Inject;
@@ -31,7 +31,7 @@ import picocli.CommandLine.Command;
         description = "Get all contexts"
 )
 @Singleton
-public class GetContextsCommand extends BaseCommand implements Runnable {
+public class GetContextsCommand extends CLIBaseCommand implements Runnable {
 
     @Inject
     private ConfigurationContext configurationContext;

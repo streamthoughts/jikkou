@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.client.command.config;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigRenderOptions;
-import io.streamthoughts.jikkou.client.command.BaseCommand;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
 import io.streamthoughts.jikkou.runtime.JikkouConfig;
@@ -35,7 +35,7 @@ import picocli.CommandLine.Option;
         description = "Show merged jikkou config settings"
 )
 @Singleton
-public class ViewCommand extends BaseCommand implements Runnable {
+public class ViewCommand extends CLIBaseCommand implements Runnable {
 
     @Option(names = "--name",
             required = false,

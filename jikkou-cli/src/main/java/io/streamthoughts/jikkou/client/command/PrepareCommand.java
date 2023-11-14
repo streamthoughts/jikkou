@@ -39,7 +39,7 @@ import picocli.CommandLine.Mixin;
                 """
 )
 @Singleton
-public class PrepareCommand extends BaseCommand implements Callable<Integer> {
+public class PrepareCommand extends CLIBaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
     @Mixin
