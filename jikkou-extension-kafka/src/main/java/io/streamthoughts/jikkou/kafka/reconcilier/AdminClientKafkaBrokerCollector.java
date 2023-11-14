@@ -19,6 +19,8 @@ import io.streamthoughts.jikkou.core.annotation.HandledResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -53,6 +55,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @HandledResource(type = V1KafkaBroker.class)
+@ExtensionConfigProperties(
+        properties = {
+                @ConfigPropertySpec(
+                        name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
+                        description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
+                        defaultValue = "false",
+                        type = Boolean.class,
+                        isRequired = false
+                ),
+                @ConfigPropertySpec(
+                        name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
+                        description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
+                        defaultValue = "false",
+                        type = Boolean.class,
+                        isRequired = false
+                ),
+                @ConfigPropertySpec(
+                        name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
+                        description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
+                        defaultValue = "false",
+                        type = Boolean.class,
+                        isRequired = false
+                )
+        }
+)
 public final class AdminClientKafkaBrokerCollector
         implements Collector<V1KafkaBroker> {
 

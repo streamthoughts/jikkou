@@ -43,7 +43,7 @@ public final class LoggingMixin {
             description = {
                     "Specify the log level verbosity to be used while running a command.",
                     "Valid level values are: TRACE, DEBUG, INFO, WARN, ERROR.",
-                    "For example, `--logger-level=INFO"
+                    "For example, `--logger-level=INFO`"
             })
     public void setLevel(String loggerLevel) {
         // Each subcommand that mixes in the LoggingMixin has its own instance

@@ -2,7 +2,7 @@
 categories: [ ]
 tags: [ "feature", "resources" ]
 title: "Kafka Consumer Groups"
-linkTitle: "Topics"
+linkTitle: "Consumer Groups"
 weight: 10
 description: >
   Learn how to manage Kafka Consumer Groups.
