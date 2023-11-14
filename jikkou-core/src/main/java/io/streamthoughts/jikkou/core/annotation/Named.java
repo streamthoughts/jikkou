@@ -18,9 +18,11 @@ package io.streamthoughts.jikkou.core.annotation;
 import static java.lang.annotation.ElementType.TYPE;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Inherited
 @Documented
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target({TYPE})
@@ -29,7 +31,7 @@ public @interface Named {
     /**
      * Gets the name of the annotated extension.
      *
-     * @return  the name.
+     * @return  The name.
      */
-    String value() default "";
+    String value();
 }

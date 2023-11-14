@@ -23,6 +23,7 @@ import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.streamthoughts.jikkou.rest.Project;
+import io.streamthoughts.jikkou.rest.data.Info;
 import io.streamthoughts.jikkou.rest.entities.ResourceResponse;
 
 @Controller("/")
@@ -30,7 +31,7 @@ import io.streamthoughts.jikkou.rest.entities.ResourceResponse;
 public class RootController extends AbstractController {
 
     @Get(produces = MediaType.APPLICATION_JSON)
-    public ResourceResponse<Project.Info> get(HttpRequest<?> httpRequest) {
+    public ResourceResponse<Info> get(HttpRequest<?> httpRequest) {
         return new ResourceResponse<>(Project.info())
                 .link(Link.SELF, getSelfLink(httpRequest))
                 .link("get-apis", getLink(httpRequest, "apis"));

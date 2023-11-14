@@ -15,7 +15,6 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.annotation.Category;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import org.junit.jupiter.api.Assertions;
@@ -45,13 +44,10 @@ class DefaultExtensionDescriptorFactoryTest {
 
         ExtensionMetadata expectedMetadata = new ExtensionMetadata();
         expectedMetadata.addAttribute(new ExtensionAttribute("named").add(
-                "value", "TestExtension", ""
+                "value", "TestExtension", null
         ));
         expectedMetadata.addAttribute(new ExtensionAttribute("description").add(
-                "value", "This is a test extension", ""
-        ));
-        expectedMetadata.addAttribute(new ExtensionAttribute("category").add(
-                "value", "test", "<unknown>"
+                "value", "This is a test extension", null
         ));
         expectedMetadata.addAttribute(EVOLVING_EXTENSION);
 
@@ -71,7 +67,7 @@ class DefaultExtensionDescriptorFactoryTest {
         Assertions.assertNotNull(descriptor.supplier());
         Assertions.assertNotNull(descriptor.classLoader());
         Assertions.assertEquals("TestExtension", descriptor.name());
-        Assertions.assertEquals("", descriptor.description());
+        Assertions.assertNull(descriptor.description());
 
         ExtensionMetadata expectedMetadata = new ExtensionMetadata();
         expectedMetadata.addAttribute(EVOLVING_EXTENSION);
@@ -83,7 +79,6 @@ class DefaultExtensionDescriptorFactoryTest {
 
     @Named("TestExtension")
     @Description( "This is a test extension")
-    @Category("test")
     public static class TestAnnotatedExtension implements Extension {}
 
 }

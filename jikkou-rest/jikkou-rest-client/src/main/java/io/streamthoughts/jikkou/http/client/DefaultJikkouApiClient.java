@@ -39,6 +39,7 @@ import io.streamthoughts.jikkou.http.client.adapter.ResourceReconcileRequestFact
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
 import io.streamthoughts.jikkou.http.client.exception.UnsupportedApiResourceException;
 import io.streamthoughts.jikkou.http.client.hateoas.Links;
+import io.streamthoughts.jikkou.rest.data.Info;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import java.net.URI;
@@ -83,6 +84,16 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      */
     public DefaultJikkouApiClient(@NotNull ApiClient apiClient) {
         this.apiClient = Objects.requireNonNull(apiClient, "apiClient cannot be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public Info getServerInfo() {
+        String basePath = apiClient.getBasePath();
+        Request request = new Request.Builder().url(basePath).get().build();
+        return apiClient.execute(request, Info.class).getData();
     }
 
     /**
@@ -163,6 +174,22 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @Override
     public ApiExtensionList getApiExtensions() {
         HttpUrl url = getHttpUrlBuilderForApiResource(API_CORE_GROUP, API_CORE_VERSION, "extensions").build();
+        Request httpRequest = new Request.Builder().url(url).get().build();
+        ApiResponse<ApiExtensionList> response = apiClient.execute(
+                httpRequest,
+                ApiExtensionList.class
+        );
+        return response.getData();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions(String type) {
+        HttpUrl url = getHttpUrlBuilderForApiResource(API_CORE_GROUP, API_CORE_VERSION, "extensions")
+                .addQueryParameter("type", type)
+                .build();
         Request httpRequest = new Request.Builder().url(url).get().build();
         ApiResponse<ApiExtensionList> response = apiClient.execute(
                 httpRequest,
@@ -355,7 +382,8 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     private HttpUrl.Builder getHttpUrlBuilderForApiResource(String group,
                                                             String version,
                                                             String resource) {
-        return getHttpUrlBuilderForApiGroupVersion(group, version).addPathSegments(resource);
+        return getHttpUrlBuilderForApiGroupVersion(group, version).
+                addPathSegments(resource);
     }
 
 }

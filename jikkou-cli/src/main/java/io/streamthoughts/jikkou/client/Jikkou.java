@@ -33,7 +33,7 @@ import io.streamthoughts.jikkou.client.command.DiffCommand;
 import io.streamthoughts.jikkou.client.command.PrepareCommand;
 import io.streamthoughts.jikkou.client.command.config.ConfigCommand;
 import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCandidateCommand;
-import io.streamthoughts.jikkou.client.command.extension.ExtensionCommand;
+import io.streamthoughts.jikkou.client.command.extension.ApiExtensionCommand;
 import io.streamthoughts.jikkou.client.command.get.GetCommandLineFactory;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.ApplyResourceCommand;
@@ -41,6 +41,7 @@ import io.streamthoughts.jikkou.client.command.reconcile.CreateResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.DeleteResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.UpdateResourceCommand;
 import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand;
+import io.streamthoughts.jikkou.client.command.server.ServerInfoCommand;
 import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.renderer.CommandGroupRenderer;
@@ -48,15 +49,20 @@ import io.streamthoughts.jikkou.core.JikkouInfo;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.http.client.JikkouApiClient;
+import io.streamthoughts.jikkou.rest.data.Info;
 import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +81,7 @@ import picocli.CommandLine.Command;
         commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage: ",
         synopsisHeading = "%n",
-        description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources for any kafka infrastructure. %n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
+        description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision the assets of your data streaming platform. %n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
         mixinStandardHelpOptions = true,
         versionProvider = Jikkou.ResourcePropertiesVersionProvider.class,
         subcommands = {
@@ -83,7 +89,7 @@ import picocli.CommandLine.Command;
                 DeleteResourceCommand.class,
                 UpdateResourceCommand.class,
                 ApplyResourceCommand.class,
-                ExtensionCommand.class,
+                ApiExtensionCommand.class,
                 ListApiResourcesCommand.class,
                 ConfigCommand.class,
                 DiffCommand.class,
@@ -170,11 +176,10 @@ public final class Jikkou {
                     if (!(ex instanceof JikkouRuntimeException)) {
                         err.println(cmd.getColorScheme().stackTraceText(ex));
                     }
-                    String message = ex.getLocalizedMessage() != null ?
-                            ex.getLocalizedMessage() :
-                            ex.getClass().getName();
-
-                    err.println(cmd.getColorScheme().errorText("Error: " + message));
+                    err.println(cmd.getColorScheme().errorText(String.format("Error: %s: %s",
+                            ex.getClass().getSimpleName(),
+                            ex.getLocalizedMessage()
+                    )));
                     if (ex instanceof InvalidResourceFileException) {
                         return CommandLine.ExitCode.USAGE;
                     }
@@ -182,31 +187,91 @@ public final class Jikkou {
                 })
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
-        try {
-            GetCommandLineFactory generator = context.getBean(GetCommandLineFactory.class);
-            commandLine.addSubcommand(generator.createCommandLine());
-        } catch (Exception e) {
-            System.err.println("Error: Cannot generate 'get' subcommands. Cause: " + e.getLocalizedMessage());
+        Optional<JikkouApiClient> optionalApiClient = context.findBean(JikkouApiClient.class);
+        // NOT IN PROXY-MODE
+        boolean isApiEnabled = true;
+        boolean isProxyMode = optionalApiClient.isPresent();
+        if (optionalApiClient.isPresent()) {
+            // Add additional command 'server-info'
+            commandLine.addSubcommand(context.getBean(ServerInfoCommand.class));
+            JikkouApiClient client = optionalApiClient.get();
+            try {
+                Info info = client.getServerInfo();
+                PrintWriter out = commandLine.getOut();
+                out.println(commandLine.getColorScheme().text(String.format(
+                        "Connected to Jikkou API server (version: %s).",
+                        info.version()
+                )));
+            } catch (Exception e) {
+                final PrintWriter err = commandLine.getErr();
+                err.println(commandLine.getColorScheme().errorText(String.format("Error: %s. Cause: %s",
+                        "Failed to connect to Jikkou API server",
+                        e.getLocalizedMessage()
+                )));
+                isApiEnabled = false; // DISABLE API
+            }
+        }
+
+        if (isApiEnabled) {
+            try {
+                GetCommandLineFactory generator = context.getBean(GetCommandLineFactory.class);
+                commandLine.addSubcommand(generator.createCommandLine());
+            } catch (Exception e) {
+                System.err.println("Error: Cannot generate 'get' subcommands. Cause: " + e.getLocalizedMessage());
+            }
         }
 
         CommandLine gen = commandLine.getSubcommands().get("generate-completion");
         gen.getCommandSpec().usageMessage().hidden(false);
 
-
         commandLine.getHelpSectionMap().remove(SECTION_KEY_COMMAND_LIST_HEADING);
-        commandLine.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST, buildHelpSectionRenderer());
+
+        CommandLine.IHelpSectionRenderer renderer = buildHelpSectionRenderer(isProxyMode, isApiEnabled);
+        commandLine.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST, renderer);
 
         return commandLine;
     }
 
-    public static CommandLine.IHelpSectionRenderer buildHelpSectionRenderer() {
+    public static CommandLine.IHelpSectionRenderer buildHelpSectionRenderer(boolean isProxyMode,
+                                                                            boolean isApiEnabled) {
+
         Map<String, List<String>> sections = new LinkedHashMap<>();
-        sections.put("%nCORE COMMANDS:%n", Arrays.asList(
-                "apply", "create", "delete", "diff", "get", "health", "prepare", "update", "validate")
-        );
-        sections.put("%nADDITIONAL COMMANDS:%n", Arrays.asList(
-                "api-resources", "extensions", "generate-completion", "help")
-        );
+        List<String> core = new ArrayList<>();
+        if (isApiEnabled) {
+            // All COMMANDS in alphabetic order.
+            core.add("apply");
+            core.add("create");
+            core.add("delete");
+            core.add("diff");
+            core.add("get");
+            core.add("prepare");
+            core.add("update");
+            core.add("validate");
+        }
+
+        List<String> system = new ArrayList<>();
+        if (isApiEnabled) {
+            system.add("health");
+            if (isProxyMode) system.add("server-info");
+        }
+
+        List<String> additional = new ArrayList<>();
+
+        if (isApiEnabled) {
+            additional.add( "api-resources");
+            additional.add( "api-extensions");
+        }
+
+        additional.add("generate-completion");
+        additional.add("help");
+
+        sections.put("%nCORE COMMANDS:%n",
+                core.stream().sorted(Comparator.comparing(Function.identity())).toList());
+        sections.put("%nSYSTEM MANAGEMENT COMMANDS:%n",
+                system.stream().sorted(Comparator.comparing(Function.identity())).toList());
+        sections.put("%nADDITIONAL COMMANDS:%n",
+                additional.stream().sorted(Comparator.comparing(Function.identity())).toList());
+
         return new CommandGroupRenderer(sections);
     }
 

@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionClassLoader;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.ExtensionGroupAwareRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionResolver;
 import io.streamthoughts.jikkou.core.extension.ExternalExtension;
 import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
@@ -91,7 +92,7 @@ public final class JikkouContext {
                     final String name = provider.getName();
                     if (isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault)) {
                         LOG.info("Loading all '{}' extensions", name);
-                        provider.registerExtensions(extensionFactory, configuration);
+                        provider.registerExtensions(new ExtensionGroupAwareRegistry(extensionFactory, name), configuration);
                     } else {
                         LOG.info(
                                 "Extensions for group '{}' are ignored (config setting 'extensions.provider.{}.enabled' is set to 'false').",

@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.schema.registry.health;
 
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
  * Health indicator for Schema Registry component.
  */
 @Named("schemaregistry")
+@Title("SchemaRegistryHealthIndicator allows checking whether the Schema Registry is healthy.")
 @Description("Get the health of Schema Registry")
 public final class SchemaRegistryHealthIndicator implements HealthIndicator, Configurable {
 

@@ -176,6 +176,14 @@ public class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
+    public ApiExtensionList getApiExtensions(String type) {
+        return apiClient.getApiExtensions(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public ApiChangeResultList reconcile(@NotNull HasItems resources,
                                          @NotNull ReconciliationMode mode,
                                          @NotNull ReconciliationContext context) {

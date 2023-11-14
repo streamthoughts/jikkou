@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,6 +27,20 @@ import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import org.jetbrains.annotations.NotNull;
 
+@Title("TopicMinReplicationFactorValidation allows validating that topics are configured with a minimal replication factor.")
+@Example(
+        title = "Validate topics have a replication factor equals or greater than '1'.",
+        full = true,
+        code = {"""
+            validations:
+            - name: "topicMustHaveReplicasEqualsOrGreaterThanOne"
+              type: "io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation"
+              priority: 100
+              config:
+                topicMinReplicationFactor: 1
+            """
+        }
+)
 public class TopicMinReplicationFactorValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG = ConfigProperty

@@ -16,10 +16,11 @@
 package io.streamthoughts.jikkou.core.health;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.annotation.Category;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import java.time.Duration;
 
 /**
@@ -27,7 +28,7 @@ import java.time.Duration;
  */
 @Evolving
 @Enabled
-@Category("HealthIndicator")
+@Category(ExtensionCategory.HEALTH_INDICATOR)
 public interface HealthIndicator extends Extension, Configurable {
 
     /**

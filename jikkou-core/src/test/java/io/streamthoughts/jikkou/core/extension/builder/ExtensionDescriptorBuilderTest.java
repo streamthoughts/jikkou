@@ -16,7 +16,9 @@
 package io.streamthoughts.jikkou.core.extension.builder;
 
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +28,11 @@ class ExtensionDescriptorBuilderTest {
     void shouldCreateBuilderFromDescriptor() {
         var descriptor = new DefaultExtensionDescriptor<>(
                 "Name",
+                "Title",
                 "Description",
-                "test",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
+                "Group",
                 ExtensionDescriptorBuilderTest.class,
                 ExtensionDescriptorBuilderTest.class.getClassLoader(),
                 () -> null,

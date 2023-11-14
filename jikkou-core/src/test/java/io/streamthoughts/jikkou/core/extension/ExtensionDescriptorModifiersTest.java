@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,12 @@ class ExtensionDescriptorModifiersTest {
     @Test
     void shouldModifyDecoratorName() {
         var descriptor = new DefaultExtensionDescriptor<>(
-                ExtensionDescriptorModifiersTest.class.getName(), "", "",
+                ExtensionDescriptorModifiersTest.class.getName(),
+                "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
+                "",
                 ExtensionDescriptorModifiersTest.class,
                 ExtensionDescriptorModifiersTest.class.getClassLoader(),
                 () -> null,
@@ -37,7 +43,12 @@ class ExtensionDescriptorModifiersTest {
     @Test
     void shouldModifyDecoratorIsEnabled() {
         var descriptor = new DefaultExtensionDescriptor<>(
-                ExtensionDescriptorModifiersTest.class.getName(), "","",
+                ExtensionDescriptorModifiersTest.class.getName(),
+                "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
+                "",
                 ExtensionDescriptorModifiersTest.class,
                 ExtensionDescriptorModifiersTest.class.getClassLoader(),
                 () -> null,

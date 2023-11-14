@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.kafka.validation;
 
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * @see TopicConfig
  */
 @Enabled
+@Title("TopicConfigKeysValidation verifies that provided topic configuration keys are validated.")
 public class TopicConfigKeysValidation extends TopicValidation {
 
     /**

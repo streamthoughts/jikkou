@@ -18,18 +18,24 @@ package io.streamthoughts.jikkou.core.annotation;
 import static java.lang.annotation.ElementType.TYPE;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Used to provide a set of code examples of the element.
+ *
+ * @see io.streamthoughts.jikkou.core.extension.Extension
+ * @see io.streamthoughts.jikkou.core.models.Resource
+ */
 @Documented
+@Inherited
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target({TYPE})
-public @interface Category {
+public @interface Examples {
 
     /**
-     * Gets the name of the category to which this extension belongs to.
-     * @return the name of the category.
+     * @return The examples.
      */
-    String value() default "<unknown>";
-
+    Example[] value() default {};
 }

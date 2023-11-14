@@ -15,8 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.health;
 
-import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.health.Health;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
  * Health indicator for Kafka Connect clusters.
  */
 @Named("kafkaconnect")
-@Description("Get the health of Kafka Connect clusters")
+@Title("AivenServiceHealthIndicator allows checking whether Kafka Connect clusters are healthy.")
 public class KafkaConnectHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_INDICATOR_NAME = "KafkaConnect";
@@ -90,7 +90,13 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
                         .details("commit", cluster.commit())
                         .details("kafkaClusterId", cluster.kafkaClusterId());
             } catch (Exception e) {
-                builder = builder.down().exception(e);
+                Throwable t = e;
+                if (e instanceof jakarta.ws.rs.ProcessingException pe) {
+                    if (pe.getCause() != null) {
+                        t = e.getCause();
+                    }
+                }
+                builder = builder.down().exception(t);
             }
         } finally {
             api.close();

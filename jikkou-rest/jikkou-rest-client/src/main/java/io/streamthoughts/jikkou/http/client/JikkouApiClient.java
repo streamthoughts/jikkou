@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
+import io.streamthoughts.jikkou.rest.data.Info;
 import java.time.Duration;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,15 @@ import org.jetbrains.annotations.NotNull;
  * API Client interface for Jikkou.
  */
 public interface JikkouApiClient {
+
+    /**
+     * Gets API server information.
+     *
+     * @return The Info.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     */
+    Info getServerInfo();
 
     /**
      * Gets the list of supported API groups.
@@ -101,6 +111,13 @@ public interface JikkouApiClient {
      * @return a {@link ApiExtensionList} instance.
      */
     ApiExtensionList getApiExtensions();
+
+    /**
+     * Get the supported API extensions for the supported type.
+     *
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtensionList getApiExtensions(String type);
 
     /**
      * List all resources matching the specified type and selectors.

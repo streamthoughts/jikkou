@@ -18,18 +18,26 @@ package io.streamthoughts.jikkou.core.annotation;
 import static java.lang.annotation.ElementType.TYPE;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Used to provide a lon description of an element.
+ *
+ * @see io.streamthoughts.jikkou.core.extension.Extension
+ * @see io.streamthoughts.jikkou.core.models.Resource
+ */
+@Inherited
 @Documented
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target({TYPE})
 public @interface Description {
 
     /**
-     * Gets the description of the annotated extension.
+     * Gets the description of the element.
      *
-     * @return  the name.
+     * @return The description.
      */
-    String value() default "";
+    String value();
 }

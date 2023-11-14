@@ -15,23 +15,27 @@
  */
 package io.streamthoughts.jikkou.core.annotation;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Descriptive annotation that can be used to declare
- * a field, method, constructor and types for runtime reflective access.
+ * Used to provide the short description of an element.
+ *
+ * @see io.streamthoughts.jikkou.core.extension.Extension
+ * @see io.streamthoughts.jikkou.core.models.Resource
  */
 @Documented
 @Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({TYPE, FIELD, CONSTRUCTOR, METHOD})
-public @interface Reflectable { }
+@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+@Target({TYPE})
+public @interface Title {
+
+    /**
+     * @return The short description of current element.
+     */
+    String value();
+}

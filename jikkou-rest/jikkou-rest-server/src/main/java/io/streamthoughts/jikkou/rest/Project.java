@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.rest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.jikkou.rest.data.Info;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -49,15 +49,5 @@ public final class Project {
 
     public static Info info() {
         return INFO;
-    }
-
-    public record Info(@JsonProperty("version") String version,
-                       @JsonProperty("build_time") String buildTimestamp,
-                       @JsonProperty("commit_id") String commitId) {
-
-        static Info empty() {
-            return new Info(null, null, null);
-        }
-
     }
 }

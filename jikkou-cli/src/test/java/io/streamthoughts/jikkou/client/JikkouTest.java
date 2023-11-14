@@ -66,7 +66,7 @@ class JikkouTest {
 
     @Test
     void testCommandExtensionsList() {
-        int execute = Jikkou.execute(new String[]{"extensions", "list"});
+        int execute = Jikkou.execute(new String[]{"api-extensions", "list"});
         Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
     }
 

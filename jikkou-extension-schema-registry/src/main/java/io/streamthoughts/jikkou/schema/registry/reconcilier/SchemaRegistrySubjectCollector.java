@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubjectList;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -142,8 +143,12 @@ public class SchemaRegistrySubjectCollector implements Collector<V1SchemaRegistr
                                     if (t.getCause() != null) t = t.getCause();
 
                                     if (t instanceof RestClientException exception) {
-                                        if (exception.response().getStatus() == 404)
+                                        if (exception.response()
+                                                .map(Response::getStatus)
+                                                .filter(status -> status.equals(404))
+                                                .isPresent()) {
                                             return null;
+                                        }
                                     }
                                     if (t instanceof RuntimeException re) {
                                         throw re;

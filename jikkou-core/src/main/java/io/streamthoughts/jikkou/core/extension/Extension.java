@@ -17,12 +17,12 @@ package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.annotation.Category;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.config.ConfigPropertyDescriptor;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.Resource;
@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -62,7 +63,7 @@ public interface Extension {
     /**
      * Gets the default configuration of this extension.
      *
-     * @return  the configuration.
+     * @return the configuration.
      */
     default Configuration getDefaultConfiguration() {
         List<ConfigPropertyDescriptor> descriptors = getExtensionConfigPropertySpec(this);
@@ -90,10 +91,8 @@ public interface Extension {
      * @return the extension name.
      */
     static String getName(final Class<?> clazz) {
-        return AnnotationResolver.findAllAnnotationsByType(clazz, Named.class)
-                .stream()
+        return Optional.ofNullable(clazz.getAnnotation(Named.class))
                 .map(Named::value)
-                .findFirst()
                 .orElse(clazz.getSimpleName());
     }
 
@@ -111,14 +110,10 @@ public interface Extension {
      * Gets the description of the given extension class.
      *
      * @param clazz the extension class for which to extract the description.
-     * @return the description or {@code ""}.
+     * @return The description or {@code null}.
      */
     static String getDescription(final Class<?> clazz) {
-        return AnnotationResolver.findAllAnnotationsByType(clazz, Description.class)
-                .stream()
-                .map(Description::value)
-                .findFirst()
-                .orElse("");
+        return Optional.ofNullable(clazz.getAnnotation(Description.class)).map(Description::value).orElse(null);
     }
 
     /**
@@ -127,20 +122,19 @@ public interface Extension {
      * @param clazz the extension class for which to extract the type.
      * @return the type or {@code "<unknown>"}.
      */
-    static String getCategory(final Class<?> clazz) {
+    static ExtensionCategory getCategory(final Class<?> clazz) {
         return AnnotationResolver.findAllAnnotationsByType(clazz, Category.class)
                 .stream()
                 .map(Category::value)
                 .findFirst()
-                .orElse("<unknown>");
+                .orElse(null);
     }
 
     /**
      * Gets the specifications for the static configuration properties supported by the specified extension object.
      *
      * @param extension the extension object.
-     *
-     * @return  the list of {@link ConfigPropertyDescriptor}.
+     * @return the list of {@link ConfigPropertyDescriptor}.
      */
     static List<ConfigPropertyDescriptor> getExtensionConfigPropertySpec(Object extension) {
         return getExtensionConfigPropertySpec(extension.getClass());
@@ -150,7 +144,7 @@ public interface Extension {
      * Gets the specifications for the static configuration properties supported by the specified extension class.
      *
      * @param clazz the extension class.
-     * @return  the list of {@link ConfigPropertyDescriptor}.
+     * @return the list of {@link ConfigPropertyDescriptor}.
      */
     static List<ConfigPropertyDescriptor> getExtensionConfigPropertySpec(Class<?> clazz) {
         ExtensionConfigProperties annotation = clazz.getAnnotation(ExtensionConfigProperties.class);

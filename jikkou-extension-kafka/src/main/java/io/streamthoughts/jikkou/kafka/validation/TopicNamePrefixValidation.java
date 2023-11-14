@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,7 +27,21 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-public class TopicNamePrefixValidation extends TopicValidation {
+@Title("TopicNamePrefixValidation allows validating that topic names start with one of the defined prefixes.")
+@Example(
+        title = "Validate topic names start with one of the defined visibility prefixes.",
+        full = true,
+        code = {"""
+                validations:
+                - name: "topicsMustStartWithVisibilityPrefix"
+                  type: "io.streamthoughts.jikkou.kafka.validation.TopicNamePrefixValidation"
+                  priority: 100
+                  config:
+                    topicNamePrefixes: ["public", "private", "protected"]
+                """
+        }
+)
+public final class TopicNamePrefixValidation extends TopicValidation {
 
     public static final ConfigProperty<List<String>> VALIDATION_TOPIC_NAME_PREFIXES_CONFIG = ConfigProperty
             .ofList("topicNamePrefixes");
@@ -35,7 +51,8 @@ public class TopicNamePrefixValidation extends TopicValidation {
     /**
      * Empty constructor used by {@link Configuration}.
      */
-    public TopicNamePrefixValidation() {}
+    public TopicNamePrefixValidation() {
+    }
 
     /**
      * Creates a new {@link TopicNamePrefixValidation}.

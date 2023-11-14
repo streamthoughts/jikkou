@@ -18,17 +18,15 @@ package io.streamthoughts.jikkou.client.command.extension;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.streamthoughts.jikkou.core.extension.Extension;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
-import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.models.ApiExtension;
+import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -39,27 +37,32 @@ import picocli.CommandLine.Option;
         optionListHeading = "%nOptions:%n%n",
         commandListHeading = "%nCommands:%n%n",
         synopsisHeading = "%n",
-        header = "Get all the extensions.",
-        description = "Get all the extensions.",
+        header = "Print the supported API extensions",
+        description = "Print the supported API extensions",
         mixinStandardHelpOptions = true)
 @Singleton
 public class ListExtensionCommand implements Runnable {
 
-    @Option(names = {"--type"},
+    @Option(names = {"--category"},
             required = false,
-            description = "Limit to extensions of the specified type."
+            description = "Limit to extensions of the specified category."
     )
-    public String type;
+    public String category;
 
-    @Option(names = {"--kinds"},
+    @Option(names = {"--group"},
             required = false,
-            split = ",",
+            description = "Limit to extensions of the specified group."
+    )
+    public String group;
+
+    @Option(names = {"--kind"},
+            required = false,
             description = "Limit to extensions that support the specified resource kind."
     )
-    public List<String> kinds = Collections.emptyList();
+    public String kind;
 
     @Inject
-    private ExtensionDescriptorRegistry extensionDescriptorRegistry;
+    private JikkouApi api;
 
     /**
      * {@inheritDoc}
@@ -67,50 +70,32 @@ public class ListExtensionCommand implements Runnable {
     @Override
     public void run() {
 
-        List<ExtensionDescriptor<Extension>> descriptors;
+        ApiExtensionList apiExtensions = Strings.isBlank(kind) ?
+                api.getApiExtensions() : api.getApiExtensions(kind);
 
-        if (type != null) {
-            descriptors = extensionDescriptorRegistry.findAllDescriptorsByAlias(type);
-        } else {
-            descriptors = extensionDescriptorRegistry.findAllDescriptorsByClass(Extension.class);
-        }
+        Predicate<ApiExtension> predicate = Stream.<Predicate<ApiExtension>>of(
+                ext -> category == null || ext.category().equalsIgnoreCase(category),
+                ext -> group == null || ext.group().equalsIgnoreCase(category)
+        ).reduce(Predicate::and).get();
 
-        if (kinds != null && !kinds.isEmpty()) {
-            descriptors = descriptors
-                    .stream()
-                    .filter(it -> {
-                        List<String> list = it.supportedResources().stream().map(ResourceType::kind).toList();
-                        return !Collections.disjoint(list, kinds);
-                    })
-                    .sorted(Comparator.comparing(ExtensionDescriptor::name))
-                    .toList();
-        }
-
-        String[][] data = descriptors
+        Stream<ApiExtension> extensions = apiExtensions.extensions()
                 .stream()
-                .map(descriptor -> new String[]{
-                        descriptor.name(),
-                        descriptor.category(),
-                        String.valueOf(descriptor.isEnabled()),
-                        descriptor.source(),
-                        descriptor.printableSupportedResources(),
-                        Controller.supportedReconciliationModes(descriptor.type())
-                                .stream()
-                                .map(Enum::name)
-                                .map(String::toLowerCase)
-                                .sorted()
-                                .collect(Collectors.joining(", "))
+                .filter(predicate)
+                .sorted(Comparator.comparing(ApiExtension::name));
+
+        String[][] data = extensions
+                .map(extension -> new String[]{
+                        extension.name(),
+                        extension.group(),
+                        extension.category()
                 })
                 .toArray(String[][]::new);
 
         String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
                 new Column[]{
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("SOURCE").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("ACCEPTED RESOURCES").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("ACTIONS").dataAlign(HorizontalAlign.LEFT)
+                        new Column().header("GROUP").dataAlign(HorizontalAlign.LEFT),
+                        new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT)
                 },
                 data);
         System.out.println(table);

@@ -309,9 +309,30 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 .stream()
                 .map(descriptor -> new ApiExtension(
                                 descriptor.name(),
-                                descriptor.category(),
-                                descriptor.source(),
-                                descriptor.description()
+                                descriptor.title(),
+                                descriptor.description(),
+                                descriptor.examples(),
+                                descriptor.category().name(),
+                                descriptor.group()
+                        )
+                ).toList();
+        return new ApiExtensionList(extensions);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions(String type) {
+        List<ApiExtension> extensions = extensionFactory.findAllDescriptorsByAlias(type)
+                .stream()
+                .map(descriptor -> new ApiExtension(
+                                descriptor.name(),
+                                descriptor.title(),
+                                descriptor.description(),
+                                descriptor.examples(),
+                                descriptor.category().name(),
+                                descriptor.group()
                         )
                 ).toList();
         return new ApiExtensionList(extensions);

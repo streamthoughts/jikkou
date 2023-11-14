@@ -16,11 +16,16 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +57,9 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
         return new ExtensionDescriptorBuilder<T>()
                 .type(extensionType)
                 .name(Extension.getName(extensionType))
+                .title(getTitle(extensionType))
                 .description(Extension.getDescription(extensionType))
+                .examples(getExamples(extensionType))
                 .category(Extension.getCategory(extensionType))
                 .isEnabled(Extension.isEnabled(extensionType))
                 .supplier(extensionSupplier)
@@ -61,27 +68,41 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
                 .build();
     }
 
+    @Nullable
+    private static <T> String getTitle(@NotNull Class<T> extensionType) {
+        return Optional.ofNullable(extensionType.getAnnotation(Title.class))
+                .map(Title::value)
+                .orElse(null);
+    }
+
+    @NotNull
+    private static <T> List<Example> getExamples(@NotNull Class<T> extensionType) {
+        return Arrays.stream(extensionType.getAnnotationsByType(io.streamthoughts.jikkou.core.annotation.Example.class))
+                .map(ex -> new Example(ex.title(), ex.code()))
+                .toList();
+    }
+
     private <T> ExtensionMetadata loadAnnotationComponentMetadata(final Class<T> extensionType) {
         final ExtensionMetadata metadata = new ExtensionMetadata();
         var annotations = AnnotationResolver.findAllAnnotations(extensionType);
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> type = annotation.annotationType();
-            var aTribute = new ExtensionAttribute(aTributeNameFor(type));
+            var attribute = new ExtensionAttribute(attributeNameFor(type));
             for (var method : type.getDeclaredMethods()) {
                 try {
                     Object defaultValue = method.getDefaultValue();
                     Object value = method.invoke(annotation);
-                    aTribute.add(method.getName(), value, defaultValue);
+                    attribute.add(method.getName(), value, defaultValue);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     LOG.error("Error while scanning component annotations", e);
                 }
             }
-            metadata.addAttribute(aTribute);
+            metadata.addAttribute(attribute);
         }
         return metadata;
     }
 
-    private String aTributeNameFor(final Class<? extends Annotation> annotationType) {
+    private String attributeNameFor(final Class<? extends Annotation> annotationType) {
         return annotationType.getSimpleName().toLowerCase();
     }
 }

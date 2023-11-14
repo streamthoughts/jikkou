@@ -20,7 +20,7 @@ import io.streamthoughts.jikkou.core.extension.Qualifier;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class NamedQualifier<T> implements Qualifier<T> {
+public final class NamedQualifier<T> implements Qualifier<T> {
 
     private final String name;
     private final boolean equals;

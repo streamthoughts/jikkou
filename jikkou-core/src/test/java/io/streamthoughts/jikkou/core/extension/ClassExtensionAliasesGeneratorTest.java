@@ -68,7 +68,12 @@ class ClassExtensionAliasesGeneratorTest {
     @NotNull
     private static <T> DefaultExtensionDescriptor<T> getDescriptor(Class<T> clazz) {
         return new DefaultExtensionDescriptor<>(
-                clazz.getName(), "", "",
+                clazz.getName(),
+                "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
+                "",
                 clazz,
                 clazz.getClassLoader(),
                 () -> null,

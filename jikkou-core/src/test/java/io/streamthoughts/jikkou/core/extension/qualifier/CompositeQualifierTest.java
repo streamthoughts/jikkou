@@ -16,8 +16,10 @@
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.Qualifier;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
@@ -42,6 +44,9 @@ class CompositeQualifierTest {
         return new DefaultExtensionDescriptor<>(
                 "Test",
                 "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
                 "",
                 clazz,
                 clazz.getClassLoader(),

@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,6 +27,21 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Title("TopicNameSuffixValidation allows validating that topic names end with one of the defined suffixes.")
+@Example(
+        title = "Validate topic names end with one of the defined format suffixes.",
+        full = true,
+        code = {
+                """
+                validations:
+                - name: "topicNameMustEndWithFormatSuffix"
+                  type: "io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation"
+                  priority: 100
+                  config:
+                    topicNamePrefixes: [".avro", ".json", ".proto"]
+                """
+        }
+)
 public class TopicNameSuffixValidation extends TopicValidation {
 
     public static final ConfigProperty<List<String>> VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG = ConfigProperty

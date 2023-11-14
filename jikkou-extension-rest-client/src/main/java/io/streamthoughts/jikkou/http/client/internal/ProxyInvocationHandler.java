@@ -122,11 +122,13 @@ public class ProxyInvocationHandler implements InvocationHandler {
             Map<String, Object> templateValues = resolvePathParameters(method, args);
             String pathUrl = target.path(resolvePath(method)).resolveTemplates(templateValues).getUri().toString();
             e.getResponse().bufferEntity();
-            throw new RestClientException(
-                    e,
-                    pathUrl,
-                    httpMethodName
-            );
+            throw new RestClientException(e, pathUrl, httpMethodName);
+        } catch (RuntimeException e) {
+            Throwable t = e.getCause();
+            if (e.getCause() != null) {
+                t = e.getCause();
+            }
+            throw new RestClientException(t);
         }
     }
 
@@ -144,7 +146,7 @@ public class ProxyInvocationHandler implements InvocationHandler {
             for (final Annotation ann : paramAnns[i]) {
                 anns.put(ann.annotationType(), ann);
             }
-            PathParam pathParam = (PathParam)anns.get(PathParam.class);
+            PathParam pathParam = (PathParam) anns.get(PathParam.class);
             if (pathParam != null) {
                 var value = args[i];
                 Annotation ann;

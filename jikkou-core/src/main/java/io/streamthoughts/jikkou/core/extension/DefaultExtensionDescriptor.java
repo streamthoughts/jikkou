@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -29,7 +30,10 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
 
     private final String name;
     private final String description;
-    private final String category;
+    private final String title;
+    private final List<Example> examples;
+    private final ExtensionCategory category;
+    private final String group;
     private final Class<T> type;
     private final Supplier<T> supplier;
     private final boolean isEnabled;
@@ -40,16 +44,20 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     /**
      * Creates a new {@link DefaultExtensionDescriptor} instance.
      *
-     * @param name        the name of the extension.
-     * @param description the description of the extension.
-     * @param description the category of the extension.
-     * @param type        the type of the extension.
-     * @param classLoader the extension classloader.
-     * @param supplier    the supplier of the extension.
+     * @param name        The name of the extension.
+     * @param description The description of the extension.
+     * @param category    The category of the extension.
+     * @param group       The group of the extension.
+     * @param type        The type of the extension.
+     * @param classLoader The extension ClassLoader.
+     * @param supplier    The Supplier of the extension.
      */
     public DefaultExtensionDescriptor(final String name,
+                                      final String title,
                                       final String description,
-                                      final String category,
+                                      final List<Example> examples,
+                                      final ExtensionCategory category,
+                                      final String group,
                                       final Class<T> type,
                                       final ClassLoader classLoader,
                                       final Supplier<T> supplier,
@@ -58,7 +66,10 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
         Objects.requireNonNull(supplier, "supplier can't be null");
         this.name = name;
         this.description = description;
+        this.title = title;
+        this.examples = examples;
         this.category = category;
+        this.group = group;
         this.supplier = supplier;
         this.type = type;
         this.classLoader = classLoader == null ? type.getClassLoader() : classLoader;
@@ -75,8 +86,11 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     protected DefaultExtensionDescriptor(final ExtensionDescriptor<T> descriptor) {
         this(
                 descriptor.name(),
+                descriptor.title(),
                 descriptor.description(),
+                descriptor.examples(),
                 descriptor.category(),
+                descriptor.group(),
                 descriptor.type(),
                 descriptor.classLoader(),
                 descriptor.supplier(),
@@ -94,12 +108,22 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
         return name;
     }
 
+    @Override
+    public String title() {
+        return title;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String description() {
         return description;
+    }
+
+    @Override
+    public List<Example> examples() {
+        return examples;
     }
 
     /**
@@ -134,8 +158,16 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
      * {@inheritDoc}
      */
     @Override
-    public String category() {
+    public ExtensionCategory category() {
         return category;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String group() {
+        return group;
     }
 
     /**

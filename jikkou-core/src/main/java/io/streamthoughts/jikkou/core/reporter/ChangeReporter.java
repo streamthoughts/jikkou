@@ -19,6 +19,8 @@ import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * Interface used to report changes applied by Jikkou to a third-party system.
  */
 @Reflectable
+@Category(ExtensionCategory.REPORTER)
 public interface ChangeReporter extends Extension, Configurable {
 
     /**

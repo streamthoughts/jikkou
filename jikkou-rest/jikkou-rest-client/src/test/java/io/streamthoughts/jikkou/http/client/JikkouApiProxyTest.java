@@ -192,9 +192,11 @@ class JikkouApiProxyTest {
                           "extensions": [
                             {
                               "name": "TestExtension",
-                              "category": "Test",
-                              "source": "<internal>",
-                              "description": "Test extension"
+                              "title": "Title",
+                              "examples": [],
+                              "category": "Category",
+                              "description": "Test",
+                              "group": "Group"
                             }
                           ]
                         }
@@ -205,9 +207,11 @@ class JikkouApiProxyTest {
                 List.of(
                         new ApiExtension(
                                 "TestExtension",
+                                "Title",
                                 "Test",
-                                "<internal>",
-                                "Test extension"
+                                Collections.emptyList(),
+                                "Category",
+                                "Group"
                         )
                 )
         );

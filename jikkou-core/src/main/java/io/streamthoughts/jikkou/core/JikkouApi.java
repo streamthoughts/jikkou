@@ -171,6 +171,13 @@ public interface JikkouApi extends AutoCloseable {
     ApiExtensionList getApiExtensions();
 
     /**
+     * List the supported API extensions for the specified extension type.
+     *
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtensionList getApiExtensions(String type);
+
+    /**
      * Execute the reconciliation for the given resources using
      *
      * @param resources the list of resource to be reconciled.

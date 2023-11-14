@@ -16,9 +16,10 @@
 package io.streamthoughts.jikkou.core.validation;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.annotation.Category;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.resource.Interceptor;
 import io.streamthoughts.jikkou.core.transform.Transformation;
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Reflectable
 @Evolving
-@Category("Validation")
+@Category(ExtensionCategory.VALIDATION)
 public interface Validation<T extends HasMetadata> extends Interceptor {
 
     /**

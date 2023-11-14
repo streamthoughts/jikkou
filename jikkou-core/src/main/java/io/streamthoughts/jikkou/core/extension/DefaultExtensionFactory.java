@@ -18,12 +18,13 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The default {@link ExtensionFactory} implementation.
@@ -41,8 +42,7 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
     public DefaultExtensionFactory(@NotNull final ExtensionDescriptorRegistry registry) {
         this(registry, Configuration.empty());
     }
-
-
+    
     /**
      * Creates a new {@link DefaultExtensionFactory} instance.
      *
@@ -102,8 +102,12 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
     public <T> T getExtension(@NotNull Class<T> type,
                               @Nullable Qualifier<T> qualifier) {
         Optional<ExtensionDescriptor<T>> optional = registry.findDescriptorByClass(type, qualifier);
-        if (optional.isEmpty())
-            throw new NoSuchExtensionException("No extension registered for type '" + type + "'");
+        if (optional.isEmpty()) {
+            String error = qualifier != null ?
+                    "No extension registered for type '" + type + "', and qualifier '" + qualifier + "'." :
+                    "No extension registered for type '" + type + "'.";
+            throw new NoSuchExtensionException(error);
+        }
         ExtensionDescriptor<T> descriptor = optional.get();
         return registry.getExtensionSupplier(descriptor).get(configuration);
     }

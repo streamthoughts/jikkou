@@ -18,27 +18,44 @@ package io.streamthoughts.jikkou.core.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.extension.Example;
 import java.beans.ConstructorProperties;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @JsonPropertyOrder({
         "name",
+        "title",
+        "description",
+        "examples",
         "category",
-        "source",
+        "group",
         "description"
 })
 @Reflectable
 public record ApiExtension(@JsonProperty String name,
+                           @JsonProperty String title,
+                           @JsonProperty String description,
+                           @JsonProperty List<Example> examples,
                            @JsonProperty String category,
-                           @JsonProperty String source,
-                           @JsonProperty String description) {
+                           @JsonProperty String group) {
 
     @ConstructorProperties({
             "name",
+            "title",
+            "description",
+            "examples",
             "category",
-            "source",
+            "group",
             "description"
     })
     public ApiExtension {
 
+    }
+
+    @Override
+    public List<Example> examples() {
+        return Optional.ofNullable(examples).orElse(Collections.emptyList());
     }
 }

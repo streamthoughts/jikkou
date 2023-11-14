@@ -45,7 +45,10 @@ public class CommandGroupRenderer implements CommandLine.IHelpSectionRenderer {
         CommandLine.Help.TextTable textTable = createTextTable(help);
 
         for (String name : cmdNames) {
-            CommandLine.Model.CommandSpec sub = help.commandSpec().subcommands().get(name).getCommandSpec();
+            CommandLine.Model.CommandSpec sub = help.commandSpec()
+                    .subcommands()
+                    .get(name)
+                    .getCommandSpec();
 
             // create comma-separated list of command name and aliases
             String names = sub.names().toString();

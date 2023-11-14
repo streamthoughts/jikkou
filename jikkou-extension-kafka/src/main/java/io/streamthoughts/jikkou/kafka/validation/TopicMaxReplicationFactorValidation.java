@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,7 +27,21 @@ import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import org.jetbrains.annotations.NotNull;
 
-public class TopicMaxReplicationFactorValidation extends TopicValidation {
+@Title("TopicMaxReplicationFactorValidation allows validating that topics are configured with a maximal replication factor.")
+@Example(
+        title = "Validate topics have a replication factor equals or less than '3'.",
+        full = true,
+        code = {"""
+            validations:
+            - name: "topicMustHaveReplicasEqualsOrLessThanThree"
+              type: "io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactorValidation"
+              priority: 100
+              config:
+                topicMaxReplicationFactor: 3
+            """
+        }
+)
+public final class TopicMaxReplicationFactorValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG = ConfigProperty
             .ofInt("topicMaxReplicationFactor");

@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -27,6 +29,20 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.jetbrains.annotations.NotNull;
 
+@Title("TopicNameRegexValidation allows validating that topic names match a defined regex.")
+@Example(
+        title = "Validate topic names match with one of the defined visibility prefixes.",
+        full = true,
+        code = {"""
+            validations:
+            - name: "topicMustHaveValidName"
+              type: "io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation"
+              priority: 100
+              config:
+                topicNameRegex: "[a-zA-Z0-9\\\\._\\\\-]+"
+            """
+        }
+)
 public class TopicNameRegexValidation extends TopicValidation {
 
     public static final ConfigProperty<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigProperty

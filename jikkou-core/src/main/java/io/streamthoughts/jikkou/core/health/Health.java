@@ -224,8 +224,8 @@ public final class Health {
             Map<String, String> error = new HashMap<>(1);
             final String message = ex.getClass().getName() + ": " + ex.getMessage();
             error.put("error", message);
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Health indicator [" + name + "] reported exception: " + message, ex);
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Health indicator [" + name + "] reported exception: " + message, ex);
             }
             return details(error);
         }

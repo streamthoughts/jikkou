@@ -16,9 +16,12 @@
 package io.streamthoughts.jikkou.core.extension.builder;
 
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.Example;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionMetadata;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -30,8 +33,11 @@ import java.util.function.Supplier;
 public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<T> {
 
     private String name;
+    private String title;
     private String description;
-    private String category;
+    private List<Example> examples;
+    private ExtensionCategory category;
+    private String group;
     private ExtensionMetadata metadata;
     private Class<T> type;
     private boolean isEnabled;
@@ -59,13 +65,16 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
     public static <T> ExtensionDescriptorBuilder<T> create(final ExtensionDescriptor<T> descriptor) {
         return new ExtensionDescriptorBuilder<T>()
                 .name(descriptor.name())
+                .title(descriptor.title())
                 .description(descriptor.description())
+                .examples(descriptor.examples())
                 .type(descriptor.type())
+                .category(descriptor.category())
+                .group(descriptor.group())
                 .metadata(descriptor.metadata())
                 .classLoader(descriptor.classLoader())
                 .supplier(descriptor.supplier())
-                .isEnabled(descriptor.isEnabled())
-                .category(descriptor.category());
+                .isEnabled(descriptor.isEnabled());
     }
 
     /**
@@ -86,6 +95,31 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
         this.name = name;
         return this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String title() {
+        return title;
+    }
+
+    public ExtensionDescriptorBuilder<T> title(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public ExtensionDescriptorBuilder<T> examples(List<Example> examples) {
+        this.examples = examples;
+        return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<Example> examples() {
+        return examples;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -157,14 +191,28 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * {@inheritDoc}
      */
     @Override
-    public String category() {
+    public ExtensionCategory category() {
         return category;
     }
 
-    public ExtensionDescriptorBuilder<T> category(String category) {
+    public ExtensionDescriptorBuilder<T> category(ExtensionCategory category) {
         this.category = category;
         return this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String group() {
+        return group;
+    }
+
+    public ExtensionDescriptorBuilder<T> group(String group) {
+        this.group = group;
+        return this;
+    }
+
 
     /**
      * Sets the classLoader of the Extension.
@@ -234,8 +282,11 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
     public ExtensionDescriptor<T> build() {
         DefaultExtensionDescriptor<T> descriptor = new DefaultExtensionDescriptor<>(
                 name,
+                title,
                 description,
+                examples,
                 category,
+                group,
                 type,
                 classLoader,
                 supplier,

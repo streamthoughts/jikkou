@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,7 +27,21 @@ import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import org.jetbrains.annotations.NotNull;
 
-public class TopicMaxNumPartitionsValidation extends TopicValidation {
+@Title("TopicMaxNumPartitionsValidation allows validating that topics are configured with a maximal number of partitions.")
+@Example(
+        title = "Validate topics have a number of partitions equals or less than '50'.",
+        full = true,
+        code = {"""
+            validations:
+            - name: "topicMustHavePartitionsEqualsOrLessThanFifty"
+              type: "io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitionsValidation"
+              priority: 100
+              config:
+                topicMaxNumPartitions: 50
+            """
+        }
+)
+public final class TopicMaxNumPartitionsValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG = ConfigProperty
             .ofInt("topicMaxNumPartitions");

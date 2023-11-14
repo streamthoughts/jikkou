@@ -18,7 +18,9 @@ package io.streamthoughts.jikkou.core.extension.qualifier;
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
@@ -50,6 +52,9 @@ class EnabledQualifierTest {
         return new DefaultExtensionDescriptor<>(
                 clazz.getName(),
                 "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
                 "",
                 clazz,
                 clazz.getClassLoader(),

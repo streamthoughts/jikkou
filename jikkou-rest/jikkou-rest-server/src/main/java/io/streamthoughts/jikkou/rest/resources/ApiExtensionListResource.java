@@ -20,9 +20,11 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.rest.controller.AbstractController;
@@ -46,8 +48,9 @@ public class ApiExtensionListResource extends AbstractController {
     @Get(produces = MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
-    public ResourceResponse<ApiExtensionList> get(HttpRequest<?> request) {
-        ApiExtensionList apiHealthIndicatorList = api.getApiExtensions();
+    public ResourceResponse<ApiExtensionList> get(HttpRequest<?> request,
+                                                  @QueryValue(value = "type", defaultValue = "") String type) {
+        ApiExtensionList apiHealthIndicatorList = Strings.isBlank(type) ? api.getApiExtensions() : api.getApiExtensions(type);
         return new ResourceResponse<>(apiHealthIndicatorList).link(Link.SELF, getSelfLink(request));
     }
 }

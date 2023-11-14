@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,9 @@ class DefaultExtensionSupplierTest {
         var descriptor = new DefaultExtensionDescriptor<>(
                 ExtensionDescriptorModifiersTest.class.getName(),
                 "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
                 "",
                 ExtensionDescriptorModifiersTest.class,
                 ExtensionDescriptorModifiersTest.class.getClassLoader(),
@@ -47,7 +51,12 @@ class DefaultExtensionSupplierTest {
     void shouldInvokeConfigureMethodForConfigurableExtension() {
         Configurable mock = Mockito.mock(Configurable.class);
         var descriptor = new DefaultExtensionDescriptor<>(
-                Configurable.class.getName(), "", "",
+                Configurable.class.getName(),
+                "",
+                "",
+                Collections.emptyList(),
+                ExtensionCategory.EXTENSION,
+                "",
                 Configurable.class,
                 Configurable.class.getClassLoader(),
                 () -> mock,

@@ -18,35 +18,58 @@ package io.streamthoughts.jikkou.http.client;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Top-level exception for the RestClient.
  */
 public class RestClientException extends JikkouRuntimeException {
 
-    private final WebApplicationException error;
+    private final Throwable cause;
     private final String requestMethod;
     private final String requestUrl;
 
-    public RestClientException(WebApplicationException error,
-                               String requestUrl,
-                               String requestMethod) {
-        super(error);
+    /**
+     * Creates a new {@link RestClientException} instance.
+     *
+     * @param cause         The cause.
+     */
+    public RestClientException(@NotNull Throwable cause) {
+        this(cause, null, null);
+    }
+
+    /**
+     * Creates a new {@link RestClientException} instance.
+     *
+     * @param cause         The cause.
+     * @param requestUrl    The request URL.
+     * @param requestMethod the request Method.
+     */
+    public RestClientException(@NotNull Throwable cause,
+                               @Nullable String requestUrl,
+                               @Nullable String requestMethod) {
+        super(cause);
         this.requestUrl = requestUrl;
         this.requestMethod = requestMethod;
-        this.error = error;
+        this.cause = cause;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String getLocalizedMessage() {
-        return error.getLocalizedMessage();
+        return cause.getLocalizedMessage();
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String getMessage() {
-        return error.getMessage();
+        return cause.getMessage();
     }
 
     /**
@@ -54,8 +77,8 @@ public class RestClientException extends JikkouRuntimeException {
      *
      * @return the string request url.
      */
-    public String requestUrl() {
-        return requestUrl;
+    public Optional<String> requestUrl() {
+        return Optional.ofNullable(requestUrl);
     }
 
     /**
@@ -63,8 +86,8 @@ public class RestClientException extends JikkouRuntimeException {
      *
      * @return the string method
      */
-    public String requestMethod() {
-        return requestMethod;
+    public Optional<String> requestMethod() {
+        return Optional.ofNullable(requestMethod);
     }
 
     /**
@@ -72,8 +95,11 @@ public class RestClientException extends JikkouRuntimeException {
      *
      * @return the HTTP response.
      */
-    public Response response() {
-        return error.getResponse();
+    public Optional<Response> response() {
+        if (cause instanceof WebApplicationException webApplicationException) {
+            return Optional.ofNullable(webApplicationException.getResponse());
+        }
+        return Optional.empty();
     }
 
     /**
@@ -87,14 +113,17 @@ public class RestClientException extends JikkouRuntimeException {
 
     /**
      * Get the response entity.
-     * @param entityType the entity type.
      *
+     * @param entityType the entity type.
      * @return the response entity, or {@code null}.
      */
     public <T> T getResponseEntity(Class<T> entityType) {
-        Response response = error.getResponse();
-        if (response.hasEntity()) {
-            return response.readEntity(entityType);
+        Optional<Response> optional = response();
+        if (optional.isPresent()) {
+            Response response = optional.get();
+            if (response.hasEntity()) {
+                return response.readEntity(entityType);
+            }
         }
         return null;
     }

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -39,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
  * Aiven Service Health indicator.
  */
 @Named("avnservice")
+@Title("AivenServiceHealthIndicator allows checking whether the Aiven service is healthy.")
 @Description("Get the health of an Aiven service")
 public final class AivenServiceHealthIndicator implements HealthIndicator, Configurable {
 

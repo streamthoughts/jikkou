@@ -18,9 +18,9 @@ package io.streamthoughts.jikkou.client.beans;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.streamthoughts.jikkou.core.JikkouApi;
-import io.streamthoughts.jikkou.http.client.ApiClient;
 import io.streamthoughts.jikkou.http.client.ApiClientBuilder;
 import io.streamthoughts.jikkou.http.client.DefaultJikkouApiClient;
+import io.streamthoughts.jikkou.http.client.JikkouApiClient;
 import io.streamthoughts.jikkou.http.client.JikkouApiProxy;
 import io.streamthoughts.jikkou.http.client.security.UsernamePasswordAuthenticator;
 import io.streamthoughts.jikkou.http.client.security.UsernamePasswordCredential;
@@ -30,16 +30,14 @@ import jakarta.inject.Singleton;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@Requires(bean = ProxyConfiguration.class)
 @Factory
 public final class ProxyApiFactory {
 
     @Inject
     ProxyConfiguration configuration;
-
     @Singleton
-    @Requires(bean = ProxyConfiguration.class)
-    @SuppressWarnings("rawtypes")
-    public JikkouApi.ApiBuilder proxyApiBuilder(JikkouContext context) {
+    public JikkouApiClient apiClient() {
         ApiClientBuilder builder = ApiClientBuilder.builder();
         builder
                 .withBasePath(configuration.url())
@@ -62,11 +60,12 @@ public final class ProxyApiFactory {
                     }
                 });
 
-        ApiClient client = builder.build();
-        return new JikkouApiProxy.Builder(
-                context.getExtensionFactory(),
-                new DefaultJikkouApiClient(client)
-        );
+        return new DefaultJikkouApiClient( builder.build());
+    }
+    @Singleton
+    @SuppressWarnings("rawtypes")
+    public JikkouApi.ApiBuilder proxyApiBuilder(JikkouContext context, JikkouApiClient apiClient) {
+        return new JikkouApiProxy.Builder(context.getExtensionFactory(), apiClient);
     }
 
     @NotNull

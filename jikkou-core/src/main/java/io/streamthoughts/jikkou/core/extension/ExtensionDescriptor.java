@@ -36,11 +36,25 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     String name();
 
     /**
+     * Gets the short description of the extension.
+     *
+     * @return  The title.
+     */
+    String title();
+
+    /**
      * Gets the description of the extension.
      *
      * @return the description, or {@code null} if the description is not set.
      */
     String description();
+
+    /**
+     * Gets the examples of the extension.
+     *
+     * @return The examples.
+     */
+    List<Example> examples();
 
     /**
      * Gets the extension metadata.
@@ -64,9 +78,18 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     boolean isEnabled();
 
     /**
-     * Gets the category of the extension.
+     * Gets the category to which this extension belongs to.
+     *
+     * @return The category.
      */
-    String category();
+    ExtensionCategory category();
+
+    /**
+     * Gets the group to which this extension belongs to.
+     *
+     * @return The group.
+     */
+    String group();
 
     /**
      * Adds new aliases to reference the described extension.
@@ -124,17 +147,5 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
                 .stream()
                 .map(ResourceType::kind)
                 .collect(Collectors.joining(", "));
-    }
-
-    default String source() {
-        ClassLoader cl = getClass().getClassLoader();
-        if (cl instanceof ExtensionClassLoader o) {
-            return o.location();
-        }
-        return "<internal>";
-    }
-
-    default String printableAliases() {
-        return String.join(", ", aliases());
     }
 }

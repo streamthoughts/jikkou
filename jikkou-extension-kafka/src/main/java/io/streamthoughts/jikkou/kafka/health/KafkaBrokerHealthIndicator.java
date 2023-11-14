@@ -19,6 +19,7 @@ import static io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator.H
 
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -40,6 +41,7 @@ import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.NotNull;
 
 @Named(HEALTH_NAME)
+@Title("KafkaBrokerHealthIndicator allows checking whether the Kafka cluster is healthy.")
 @Description("Get the health of kafka brokers")
 public final class KafkaBrokerHealthIndicator implements HealthIndicator, Configurable {
 

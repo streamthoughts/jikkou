@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Example;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,6 +27,20 @@ import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import org.jetbrains.annotations.NotNull;
 
+@Title("TopicMinNumPartitionsValidation allows validating that topics are configured with a minimal number of partitions.")
+@Example(
+        title = "Validate topics have a number of partitions equals or greater than '1'.",
+        full = true,
+        code = {"""
+            validations:
+            - name: "topicMustHavePartitionsEqualsOrGreaterThanOne"
+              type: "io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation"
+              priority: 100
+              config:
+                topicMinNumPartitions: 1
+            """
+        }
+)
 public class TopicMinNumPartitionsValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG = ConfigProperty

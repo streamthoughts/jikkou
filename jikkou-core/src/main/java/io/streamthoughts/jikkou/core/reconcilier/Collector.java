@@ -16,11 +16,12 @@
 package io.streamthoughts.jikkou.core.reconcilier;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.annotation.Category;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Evolving
 @Enabled
-@Category("Collector")
+@Category(ExtensionCategory.COLLECTOR)
 public interface Collector<R extends HasMetadata>
         extends HasMetadataAcceptable, Extension, Configurable {
 

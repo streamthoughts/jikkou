@@ -17,7 +17,8 @@ package io.streamthoughts.jikkou.core.transform;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.annotation.Category;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * This interface is used to transform a resource.
  */
 @Evolving
-@Category("Transformation")
+@Category(ExtensionCategory.TRANSFORMATION)
 public interface Transformation<T extends HasMetadata> extends Interceptor {
 
     /**

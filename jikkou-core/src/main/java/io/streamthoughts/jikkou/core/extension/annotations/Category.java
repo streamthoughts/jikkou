@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.annotation;
+package io.streamthoughts.jikkou.core.extension.annotations;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Descriptive annotation that can be used to declare
- * a field, method, constructor and types for runtime reflective access.
- */
 @Documented
 @Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target({TYPE, FIELD, CONSTRUCTOR, METHOD})
-public @interface Reflectable { }
+@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+@Target({TYPE})
+public @interface Category {
+
+    /**
+     * Gets the name of the category to which this extension belongs to.
+     * @return the name of the category.
+     */
+    ExtensionCategory value();
+
+}

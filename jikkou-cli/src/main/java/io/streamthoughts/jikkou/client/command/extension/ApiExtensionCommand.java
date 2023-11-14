@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.client.command.extension;
 import jakarta.inject.Singleton;
 import picocli.CommandLine.Command;
 
-@Command(name = "extensions",
+@Command(name = "api-extensions",
         headerHeading = "Usage:%n%n",
         descriptionHeading = "%nDescription:%n%n",
         parameterListHeading = "%nParameters:%n%n",
@@ -29,7 +29,8 @@ import picocli.CommandLine.Command;
         description = "List or describe the extensions used by the client",
         mixinStandardHelpOptions = true,
         subcommands = {
-                ListExtensionCommand.class
+                ListExtensionCommand.class,
+                GetExtensionCommand.class,
         })
 @Singleton
-public class ExtensionCommand {}
+public class ApiExtensionCommand {}
