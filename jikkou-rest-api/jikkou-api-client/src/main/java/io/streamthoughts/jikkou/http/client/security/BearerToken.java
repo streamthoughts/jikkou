@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.rest;
-
-import io.micronaut.runtime.Micronaut;
+package io.streamthoughts.jikkou.http.client.security;
 
 /**
- * Jikkou REST Server.
+ * Authentication token.
+ *
+ * @param value The token value.
  */
-public class JikkouRestServer {
+public record BearerToken(String value) {
 
-    public static void main(String[] args) {
-        Micronaut.build(args)
-                .eagerInitSingletons(true)
-                .mainClass(JikkouRestServer.class)
-                .start();
+    public static BearerToken empty() {
+        return new BearerToken(null);
     }
 }

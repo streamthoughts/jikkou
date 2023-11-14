@@ -34,9 +34,9 @@ limitations under the License.
         <module>jikkou-extension-rest-client</module>
         <module>jikkou-extension-core</module>
         <module>jikkou-extension-kafka-connect</module>
-        <module>jikkou-rest/jikkou-rest-client</module>
-        <module>jikkou-rest/jikkou-rest-server</module>
-        <module>jikkou-rest/jikkou-rest-data</module>
+        <module>jikkou-rest-api/jikkou-api-client</module>
+        <module>jikkou-rest-api/jikkou-api-server</module>
+        <module>jikkou-rest-api/jikkou-api-data</module>
     </modules>
 
     <name>Jikkou Project</name>
@@ -750,8 +750,8 @@ limitations under the License.
                                             </artifact>
                                         </artifacts>
                                     </jikkou>
-                                    <jikkou-rest-server>
-                                        <name>jikkou-rest-server</name>
+                                    <jikkou-api-server>
+                                        <name>jikkou-api-server</name>
                                         <type>JAVA_BINARY</type>
                                         <artifacts>
                                             <artifact>
@@ -761,7 +761,7 @@ limitations under the License.
                                                 <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}.zip</transform>
                                             </artifact>
                                         </artifacts>
-                                    </jikkou-rest-server>
+                                    </jikkou-api-server>
                                 </distributions>
                             </jreleaser>
                         </configuration>

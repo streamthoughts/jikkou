@@ -45,8 +45,8 @@ public class ProxyConfigurationTest {
         Assertions.assertTrue(configuration.enabled());
         Assertions.assertTrue(configuration.debugging());
         //Assertions.assertNull(configuration.basicAuth()); <- Micronaut inject an interceptor
-        Assertions.assertTrue(configuration.basicAuth().username().isEmpty());
-        Assertions.assertTrue(configuration.basicAuth().password().isEmpty());
+        Assertions.assertTrue(configuration.security().basicAuth().username().isEmpty());
+        Assertions.assertTrue(configuration.security().basicAuth().password().isEmpty());
     }
 
     @Test
@@ -74,8 +74,8 @@ public class ProxyConfigurationTest {
         Assertions.assertTrue(configuration.enabled());
         Assertions.assertTrue(configuration.debugging());
 
-        Assertions.assertNotNull(configuration.basicAuth());
-        ProxyConfiguration.BasicAuth basicAuth = configuration.basicAuth();
+        Assertions.assertNotNull(configuration.security().basicAuth());
+        ProxyConfiguration.BasicAuth basicAuth = configuration.security().basicAuth();
         Assertions.assertEquals("user", basicAuth.username().get());
         Assertions.assertEquals("pass", basicAuth.password().get());
     }

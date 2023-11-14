@@ -17,11 +17,20 @@ micronaut:
   server:
     # Use -1 to run on a random port
     port: 28082
-  security:
-    enabled: false
+
+  # security:
+  #  enabled: true
+  #  # Token based authentication configuration
+  #  authentication: bearer
+  #  token:
+  #    enabled: false
+  #    jwt:
+  #      signatures:
+  #        secret:
+  #          generator:
+  #            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
 
 # Endpoints configuration
-
 endpoints:
   all:
     port: 28082
@@ -40,10 +49,10 @@ endpoints:
       timeout-ms: 5000
 # Jikkou API Configurations
 jikkou:
-  #security:
-  #  basic-auth:
-  #    - username: "admin"
-  #      password: "{noop}admin"
+#  security:
+#    basic-auth:
+#      - username: "admin"
+#        password: "{noop}admin"
 
   extensions.provider:
     # By default, disable all extensions

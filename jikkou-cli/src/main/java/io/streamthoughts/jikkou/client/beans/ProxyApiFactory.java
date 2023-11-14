@@ -22,6 +22,8 @@ import io.streamthoughts.jikkou.http.client.ApiClientBuilder;
 import io.streamthoughts.jikkou.http.client.DefaultJikkouApiClient;
 import io.streamthoughts.jikkou.http.client.JikkouApiClient;
 import io.streamthoughts.jikkou.http.client.JikkouApiProxy;
+import io.streamthoughts.jikkou.http.client.security.BearerToken;
+import io.streamthoughts.jikkou.http.client.security.BearerTokenAuthenticator;
 import io.streamthoughts.jikkou.http.client.security.UsernamePasswordAuthenticator;
 import io.streamthoughts.jikkou.http.client.security.UsernamePasswordCredential;
 import io.streamthoughts.jikkou.runtime.JikkouContext;
@@ -36,6 +38,7 @@ public final class ProxyApiFactory {
 
     @Inject
     ProxyConfiguration configuration;
+
     @Singleton
     public JikkouApiClient apiClient() {
         ApiClientBuilder builder = ApiClientBuilder.builder();
@@ -46,7 +49,17 @@ public final class ProxyApiFactory {
                 .withReadTimeout(getReadTimeout())
                 .withConnectTimeout(getConnectionTimeout());
 
-        Optional.ofNullable(configuration.basicAuth())
+        ProxyConfiguration.Security security = configuration.security();
+
+        // Bearer Token based authentication.
+        security.accessToken()
+                .ifPresent(accessToken ->
+                        builder.withAuthenticator(
+                                new BearerTokenAuthenticator(() -> new BearerToken(accessToken))
+                        )
+                );
+        // UsernamePassword based authentication.
+        Optional.ofNullable(security.basicAuth())
                 .ifPresent(basicAuth -> {
                     Optional<String> username = basicAuth.username();
                     Optional<String> password = basicAuth.password();
@@ -60,8 +73,9 @@ public final class ProxyApiFactory {
                     }
                 });
 
-        return new DefaultJikkouApiClient( builder.build());
+        return new DefaultJikkouApiClient(builder.build());
     }
+
     @Singleton
     @SuppressWarnings("rawtypes")
     public JikkouApi.ApiBuilder proxyApiBuilder(JikkouContext context, JikkouApiClient apiClient) {

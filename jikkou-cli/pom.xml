@@ -27,7 +27,7 @@ limitations under the License.
 
     <artifactId>jikkou-cli</artifactId>
 
-    <name>Jikkou CLI</name>
+    <name>Jikkou :: CLI</name>
 
     <description>
         Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and
@@ -96,7 +96,7 @@ limitations under the License.
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-rest-client</artifactId>
+            <artifactId>jikkou-api-client</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

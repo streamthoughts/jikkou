@@ -10,8 +10,8 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>jikkou-rest-server</artifactId>
-    <name>Jikkou REST :: Server</name>
+    <artifactId>jikkou-api-server</artifactId>
+    <name>Jikkou REST :: API Server</name>
     <description>REST API interface for Jikkou</description>
 
     <packaging>${packaging}</packaging>
@@ -27,7 +27,7 @@
         <micronaut-serde-processor.version>1.5.3</micronaut-serde-processor.version>
         <micronaut-security.version>4.1.0</micronaut-security.version>
         <micronaut.runtime>netty</micronaut.runtime>
-        <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouRestServer</exec.mainClass>
+        <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouApiServer</exec.mainClass>
         <!-- Additional -->
         <git-commit-id-maven-plugin.version>7.0.0</git-commit-id-maven-plugin.version>
         <docker.image.name>streamthoughts/${project.artifactId}</docker.image.name>
@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-rest-data</artifactId>
+            <artifactId>jikkou-api-data</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- START dependencies for Jikkou Extensions -->
@@ -104,6 +104,11 @@
         <dependency>
             <groupId>io.micronaut.security</groupId>
             <artifactId>micronaut-security</artifactId>
+            <version>${micronaut-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.security</groupId>
+            <artifactId>micronaut-security-jwt</artifactId>
             <version>${micronaut-security.version}</version>
         </dependency>
         <dependency>

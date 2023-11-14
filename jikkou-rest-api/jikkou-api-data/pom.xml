@@ -10,8 +10,8 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>jikkou-rest-data</artifactId>
-    <name>Jikkou REST :: Data</name>
+    <artifactId>jikkou-api-data</artifactId>
+    <name>Jikkou REST :: API Data</name>
 
     <properties>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>

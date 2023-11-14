@@ -10,9 +10,9 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>jikkou-rest-client</artifactId>
+    <artifactId>jikkou-api-client</artifactId>
 
-    <name>Jikkou REST :: Client</name>
+    <name>Jikkou REST :: API Client</name>
 
     <properties>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>jikkou-rest-data</artifactId>
+            <artifactId>jikkou-api-data</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

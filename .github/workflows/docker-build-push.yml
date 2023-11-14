@@ -94,21 +94,21 @@ jobs:
           BRANCH=${{ env.GIT_BRANCH }}
           CREATED=${{ env.CREATED }}
 
-    - name: 'Build & Push to Docker Hub (Jikkou REST)'
+    - name: 'Build & Push to Docker Hub (Jikkou API Server)'
       if: github.ref_name == 'main'
       run: |
         ./mvnw -ntp -B install && \
-        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml \
+        ./mvnw -ntp -B package -f ./jikkou-rest-api/jikkou-api-server/pom.xml \
         -Dpackaging=docker \
-        -Djib.to.image=streamthoughts/jikkou-rest-server:main
-        docker image push --all-tags streamthoughts/jikkou-rest-server
+        -Djib.to.image=streamthoughts/jikkou-api-server:main
+        docker image push --all-tags streamthoughts/jikkou-api-server
 
-    - name: 'Build & Push to Docker Hub (Jikkou REST)'
+    - name: 'Build & Push to Docker Hub (Jikkou API Server)'
       if: startsWith(github.ref, 'refs/tags/v')
       run: |
         ./mvnw -ntp -B install && \
-        ./mvnw -ntp -B package -f ./jikkou-rest/jikkou-rest-server/pom.xml \
+        ./mvnw -ntp -B package -f ./jikkou-rest-api/jikkou-api-server/pom.xml \
         -Dpackaging=docker \
-        -Djib.to.image=streamthoughts/jikkou-rest-server:${{ env.VERSION }} \
+        -Djib.to.image=streamthoughts/jikkou-api-server:${{ env.VERSION }} \
         -Djib.to.tags=latest
-        docker image push --all-tags streamthoughts/jikkou-rest-server
+        docker image push --all-tags streamthoughts/jikkou-api-server

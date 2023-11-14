@@ -189,11 +189,11 @@ public final class Jikkou {
             JikkouApiClient client = optionalApiClient.get();
             try {
                 Info info = client.getServerInfo();
-                PrintWriter out = commandLine.getOut();
-                out.println(commandLine.getColorScheme().text(String.format(
-                        "Connected to Jikkou API server (version: %s).",
-                        info.version()
-                )));
+                LOG.info("Connected to Jikkou API server (version: %{}, buildTimestamp: {}, commitId: {}).",
+                        info.version(),
+                        info.buildTimestamp(),
+                        info.commitId()
+                );
             } catch (Exception e) {
                 final PrintWriter err = commandLine.getErr();
                 err.println(commandLine.getColorScheme().errorText(String.format("Error: %s. Cause: %s",

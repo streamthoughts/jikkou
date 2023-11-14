@@ -49,7 +49,16 @@ public interface ProxyConfiguration {
    Integer defaultTimeout();
 
    @Nullable
-   BasicAuth basicAuth();
+   Security security();
+
+   @AccessorsStyle(readPrefixes = "", writePrefixes = "")
+   @ConfigurationProperties("security")
+   interface Security {
+
+      Optional<String> accessToken();
+
+      BasicAuth basicAuth();
+   }
 
    @AccessorsStyle(readPrefixes = "", writePrefixes = "")
    @ConfigurationProperties("security.basic-auth")
