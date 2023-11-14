@@ -128,7 +128,7 @@ Options:
   -V, --version           Print version information and exit.
 ```
 
-(The output from your current Jikkou version may be different than the above example.)
+(The output from your current Jikkou version may be different from the above example.)
 
 ### Examples
 
