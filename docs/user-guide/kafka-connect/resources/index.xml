@@ -87,7 +87,7 @@ The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> The selector expression use &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> including or
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> excluding resources.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>(The output from your current Jikkou version may be different than the above example.)&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>(The output from your current Jikkou version may be different from the above example.)&lt;/p>
 &lt;h3 id="examples-1">Examples&lt;/h3>
 &lt;p>(command)&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou get kc --expand-status
