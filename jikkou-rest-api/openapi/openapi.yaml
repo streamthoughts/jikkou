@@ -1,0 +1,585 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Jikkou API
+  contact:
+    name: Jikkou Team
+  x-logo:
+    url: 'https://raw.githubusercontent.com/streamthoughts/jikkou/fcdbcfb30f0e9be57736a6d45569c2cc3599fae2/assets/jikkou-logo-title.png'
+    backgroundColor: '#FFFFFF'
+    altText: 'Jikkou logo'
+servers:
+  - url: '{protocol}://{address}:{port}'
+    description: Jikkou API Server
+    variables:
+      address:
+        default: localhost
+        description: Address of the server
+      port:
+        default: '28082'
+        description: Port of the server
+      protocol:
+        default: http
+        description: Protocol for interacting with server
+        enum:
+          - http
+          - https
+paths:
+  /:
+    get:
+      summary: 'Get server information'
+      operationId: getServerInfo
+      description: |-
+        Return information about the Jikkou API server
+      tags: [ ]
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerInfo'
+  /apis:
+    get:
+      summary: 'List supported API groups'
+      operationId: 'listApiGroups'
+      description: |-
+        Return the list of API groups supported by the server.
+      tags: [ ]
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiGroupList'
+  /apis/{GroupName}/{Version}:
+    parameters:
+      - $ref: '#/components/parameters/GroupName'
+      - $ref: '#/components/parameters/Version'
+    get:
+      summary: 'List supported API resources'
+      operationId: 'listApiResources'
+      description: |-
+        Return the list of API resources supported by the server for the specified API group and API version.
+      tags: [ ]
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiResourceList'
+  /apis/{GroupName}/{Version}/{ResourcePlural}:
+    parameters:
+      - $ref: '#/components/parameters/GroupName'
+      - $ref: '#/components/parameters/Version'
+      - $ref: '#/components/parameters/ResourcePlural'
+    get:
+      summary: 'List resources'
+      operationId: 'listResources'
+      description: |-
+        Return the list resources for the specified API group, API version, and plural name.
+      tags: [ ]
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceListObject'
+  /apis/{GroupName}/{Version}/{ResourcePlural}/select:
+    parameters:
+      - $ref: '#/components/parameters/GroupName'
+      - $ref: '#/components/parameters/Version'
+      - $ref: '#/components/parameters/ResourcePlural'
+    post:
+      summary: 'Select resources'
+      operationId: 'selectResources'
+      description: |-
+        Select the resources for the specified API group, API version, and plural name matching the given selectors.
+      tags: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/ResourceListRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceListObject'
+  /apis/{GroupName}/{Version}/{ResourcePlural}/validate:
+    parameters:
+      - $ref: '#/components/parameters/GroupName'
+      - $ref: '#/components/parameters/Version'
+      - $ref: '#/components/parameters/ResourcePlural'
+    post:
+      summary: 'Validate resources'
+      operationId: 'validateResources'
+      description: |-
+        Validate the given resources for the specified API group, API version, and plural name.
+      tags: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/ResourceReconciliationRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceListObject'
+  /apis/{GroupName}/{Version}/{ResourcePlural}/diff:
+    parameters:
+      - $ref: '#/components/parameters/GroupName'
+      - $ref: '#/components/parameters/Version'
+      - $ref: '#/components/parameters/ResourcePlural'
+      - $ref: '#/components/parameters/ReconciliationMode'
+    post:
+      summary: 'Diff resources'
+      operationId: 'diffResources'
+      description: |-
+        List the change required by the given resources for the specified API group, API version, and plural name.
+        
+        Generates a speculative reconciliation plan, showing the changes Jikkou would apply to 
+        reconcile the resource definitions. This API does not actually perform the reconciliation actions.
+      tags: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/ResourceReconciliationRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiResourceChangeList'
+  /apis/{GroupName}/{Version}/{ResourcePlural}/reconcile/mode/{ReconciliationMode}{?dry-run}:
+    parameters:
+      - $ref: '#/components/parameters/GroupName'
+      - $ref: '#/components/parameters/Version'
+      - $ref: '#/components/parameters/ResourcePlural'
+      - $ref: '#/components/parameters/ReconciliationMode'
+    post:
+      summary: 'Reconcile resources'
+      operationId: 'reconcileResources'
+      description: |-
+        Reconcile the given resources for the specified API group, API version, and plural name.
+      tags: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/ResourceReconciliationRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiChangeResultList'
+components:
+  parameters:
+    GroupName:
+      name: 'group_name'
+      description: 'The API group.'
+      in: path
+      required: true
+      schema:
+        type: string
+      example: 'core.jikkou.io'
+    Version:
+      name: 'version'
+      description: 'The API version.'
+      in: path
+      required: true
+      schema:
+        type: string
+      example: 'v1'
+    ResourcePlural:
+      name: 'resource_plural_name'
+      description: 'The API resource plural name.'
+      in: path
+      required: true
+      schema:
+        type: string
+      example: 'kafkatopics'
+    ReconciliationMode:
+      name: 'reconciliation_mode'
+      description: 'The reconciliation mode'
+      in: path
+      required: true
+      example: 'FULL'
+      schema:
+        type: string
+        x-extensible-enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          - FULL
+  requestBodies:
+    ResourceListRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceListRequest'
+    ResourceReconciliationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceReconciliationRequest'
+  responses:
+    ServerInfo:
+      description: 'Information about the Jikkou API server.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerInfo'
+          example:
+            version: 0.31.0
+            build_time: 2023-11-14T18:07:38+0000
+            commit_id: dae1be11c092256f36c18c8f1d90f16b0c951716
+    ApiGroupList:
+      description: 'The ApiGroupList object.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiGroupList'
+    ApiResourceList:
+      description: 'The ApiResourceList object.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResourceList'
+    ResourceListObject:
+      description: 'The list of resource objects.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceListObject'
+  ApiResourceChangeList:
+    description: 'The list of resource objects.'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ApiResourceChangeList'
+    ApiChangeResultList:
+      description: 'The list of change results.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiChangeResultList'
+  schemas:
+    ServerInfo:
+      type: object
+      description: 'Information about the Jikkou API server.'
+      required:
+        - version
+        - build_time
+        - commit_id
+      properties:
+        version:
+          type: string
+          description: 'The version of the Jikkou API server.'
+        build_time:
+          type: string
+          description: 'The build-timestamp of the Jikkou API server.'
+        commit_id:
+          type: string
+          description: 'The Git Commit ID of the Jikkou API server.'
+    ApiGroupList:
+      type: object
+      description: 'List of API groups'
+      required:
+        - kind
+        - apiVersion
+        - groups
+      properties:
+        kind:
+          type: string
+          description: 'The kind for this resource.'
+          const: ApiGroupList
+        apiVersion:
+          type: string
+          description: 'The API version for this resource.'
+          const: v1
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiGroup'
+    ApiGroup:
+      type: object
+      description: 'Describe an API group'
+      required:
+        - name
+        - versions
+      properties:
+        name:
+          type: string
+          description: ''
+        versions:
+          type: array
+          description: ''
+          items:
+            $ref: '#/components/schemas/ApiGroupVersion'
+    ApiGroupVersion:
+      type: object
+      title: ApiGroupVersion
+      required:
+        - groupVersion
+        - version
+        - metadata
+      properties:
+        groupVersion:
+          type: string
+        version:
+          type: string
+        metadata:
+          type: object
+          'additionalProperties':
+            'type': 'any'
+    ApiResourceList:
+      type: object
+      title: ApiResourceList
+      description: 'List of ApiResource objects.'
+      required:
+        - kind
+        - apiVersion
+      properties:
+        kind:
+          type: string
+          description: 'The kind of the resource.'
+          const: ApiResourceList
+        apiVersion:
+          type: string
+          description: 'The API version of the resource.'
+          const: v1
+        groupVersion:
+          type: string
+          description: 'The API Group of the resources.'
+        resources:
+          type: array
+          description: 'The list of resources.'
+          items:
+            $ref: '#/components/schemas/ApiResource'
+    ApiResource:
+      type: object
+      title: ApiResource
+      description: 'Describes an API resource.'
+      required:
+        - name
+        - kind
+        - singularName
+        - description
+        - verbs
+      properties:
+        name:
+          type: string
+          description: 'The name of the resource.'
+        kind:
+          type: string
+          description: 'The Kind of the resource.'
+        singularName:
+          type: string
+          description: 'The singular name of the resource.'
+        shortNames:
+          type: string
+          description: 'The short names of the resource.'
+        description:
+          type: string
+          description: 'The description of the resource.'
+        verbs:
+          type: string
+          description: 'The verbs supported by the resource.'
+        metadata:
+          type: object
+          'additionalProperties':
+            'type': 'any'
+          description: 'The resource metadata.'
+    ResourceListObject:
+      type: object
+      title: ResourceListObject
+      description: 'Generic ResourceList object.'
+      properties:
+        kind:
+          type: string
+          description: 'The kind for this resource.'
+        apiVersion:
+          type: string
+          description: 'The API version for this resource.'
+        items:
+          description: 'List of resource objects'
+          $ref: '#/components/schemas/Resource'
+    ObjectMeta:
+      title: 'ObjectMeta'
+      description: 'Metadata attached to the resources.'
+      type: 'object'
+      properties:
+        name:
+          type: 'string'
+          description: 'The name of the resource.'
+        labels:
+          type: 'object'
+          description: 'Labels are optional key/value pairs that are attached to the resource.'
+          additionalProperties:
+            type: 'string'
+        annotations:
+          type: 'object'
+          description: 'Annotations are optional key/value pairs that are attached to the resource.'
+          additionalProperties:
+            type: 'string'
+    Resource:
+      required:
+        - kind
+        - apiVersion
+        - spec
+      properties:
+        kind:
+          type: string
+          description: 'Kind is a string value representing the resource this object represents.'
+        apiVersion:
+          type: string
+          description: 'APIVersion defines the versioned schema of the representation of the returned object.'
+        metadata:
+          type: object
+          $ref: '#/components/schemas/ObjectMeta'
+          description: "Standard object's metadata."
+        spec:
+          type: object
+          description: 'Specification of the desired or actual state of the object.'
+    ResourceListRequest:
+      type: object
+      properties:
+        selectors:
+          type: array
+          description: 'The list of selector expressions.'
+          items:
+            type: string
+    ResourceReconciliationParameters:
+      type: object
+      properties:
+        labels:
+          type: 'object'
+          description: 'Labels are optional key/value pairs that are attached to the resource.'
+          additionalProperties:
+            type: 'string'
+        annotations:
+          type: 'object'
+          description: 'Annotations are optional key/value pairs that are attached to the resource.'
+          additionalProperties:
+            type: 'string'
+        options:
+          type: 'object'
+          additionalProperties:
+            type: 'string'
+          description: 'The reconciliation options'
+        selectors:
+          type: array
+          items:
+            type: string
+          description: 'The list of selector expressions used for including or excluding resources.'
+    ResourceReconciliationRequest:
+      type: object
+      description: 'The ResourceReconciliationRequest.'
+      required:
+        - resources
+        - params
+      properties:
+        resources:
+          type: array
+          description: 'The list of resource objects.'
+          items:
+            $ref: '#/components/schemas/Resource'
+        params:
+          type: object
+          description: 'The reconciliation parameters'
+          $ref: '#/components/schemas/ResourceReconciliationParameters'
+    Change:
+      type: object
+      description: "The change"
+      properties:
+        operation:
+          type: string
+          description: "The operation type of the change."
+          additionalProperties:
+            type: any
+    ChangeResource:
+      type: object
+      description: 'Represent a change.'
+      properties:
+        required:
+          - kind
+          - apiVersion
+          - change
+        properties:
+          kind:
+            type: string
+            description: 'Kind is a string value representing the resource this object represents.'
+          apiVersion:
+            type: string
+            description: 'APIVersion defines the versioned schema of the representation of the returned object.'
+          metadata:
+            type: object
+            $ref: '#/components/schemas/ObjectMeta'
+            description: "Standard object's metadata."
+          change:
+            type: object
+            description: 'The change object'
+            $ref: '#/components/schemas/Change'
+    ChangeError:
+      type: object
+      description: 'Represents a change error.'
+      properties:
+        message:
+          type: string
+          description: 'The error message'
+        status:
+          type: integer
+          description: 'The status code of the error.'
+    ChangeResult:
+      type: object
+      description: 'Represents a change execution result.'
+      required:
+        - end
+        - status
+        - data
+        - description
+      properties:
+         end:
+           type: number
+           description: 'The epoch timestamp attached to this change.'
+         errors:
+           type: array
+           items:
+             type: object
+             $ref: '#/components/schemas/ChangeError'
+           description: 'The list of errors (optional)'
+         status:
+           type: string
+           description: 'The execution status.'
+         data:
+           type: 'object'
+           description: 'The data change.'
+           $ref: '#/components/schemas/ChangeResource'
+         description:
+           type: string
+           description: 'The human-readable description of this change.'
+    ApiChangeResultList:
+      type: object
+      description: 'The list of change results'
+      required:
+        - kind
+        - apiVersion
+        - dryRun
+        - changes
+      properties:
+          kind:
+            type: 'string'
+            description: 'Kind is a string value representing the resource this object represents.'
+            const: 'ApiChangeResultList'
+          apiVersion:
+            type: 'string'
+            description: 'APIVersion defines the versioned schema of the representation of the returned object.'
+            const: 'core.jikkou.io/v1'
+          dryRun:
+            type: 'boolean'
+            description: 'Specify whether the reconciliation was executed in dryRun mode.'
+          metadata:
+            type: object
+            $ref: '#/components/schemas/ObjectMeta'
+            description: "Standard object's metadata."
+          changes:
+            type: array
+            items:
+              type: object
+              $ref: '#/components/schemas/ChangeResult'
+    ApiResourceChangeList:
+      type: object
+      description: 'The list of change changes'
+      required:
+        - kind
+        - apiVersion
+        - dryRun
+        - changes
+      properties:
+        kind:
+          type: 'string'
+          description: 'Kind is a string value representing the resource this object represents.'
+          const: 'ApiResourceChangeList'
+        apiVersion:
+          type: 'string'
+          description: 'APIVersion defines the versioned schema of the representation of the returned object.'
+          const: 'core.jikkou.io/v1'
+        dryRun:
+          type: 'boolean'
+          description: 'Specify whether the reconciliation was executed in dryRun mode.'
+        changes:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/ChangeResource'
+
+
