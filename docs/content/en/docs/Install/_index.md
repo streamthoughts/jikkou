@@ -36,8 +36,8 @@ These are the official ways to get Jikkou releases that you manually downloaded 
 #### Install From Release distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
-2. Unpack it (`unzip jikkou-0.30.0-linux-x86_64.zip`)
-3. Move the unpacked directory to the desired destination (`mv jikkou-0.30.0-linux-x86_64 /opt/jikkou`)
+2. Unpack it (`unzip jikkou-0.31.0-linux-x86_64.zip`)
+3. Move the unpacked directory to the desired destination (`mv jikkou-0.31.0-linux-x86_64 /opt/jikkou`)
 4. Add the executable to your PATH (`export PATH=$PATH:/opt/jikkou/bin`)
 
 From there, you should be able to run the client: `jikkou help`.
@@ -101,7 +101,7 @@ pre-release) Jikkou version.
 
 To build the project you will need:
 
-* Java 17 (i.e. `$JAVA_HOME` environment variable is configured).
+* Java 21 (i.e. `$JAVA_HOME` environment variable is configured).
 * [GraalVM](https://www.graalvm.org/) 22.1.0 or newer to create native executable
 * [TestContainer](https://testcontainers.com) to run integration tests
 

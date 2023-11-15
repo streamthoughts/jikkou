@@ -1,3 +1,5 @@
+@import "buttons";
+
 footer.bg-dark {
    background-color: #192a34 !important;
 }
@@ -105,3 +107,9 @@ h3 > code {
 .alert-warning {
     border-width: 0 0 0 4px;
 }
+
+h1.display-1 {
+   font-size: 3em;
+   font-weight: 800;
+}
+
