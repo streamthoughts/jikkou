@@ -49,8 +49,8 @@ Below are the convenience links for the base downloads of Jikkou.
 [%header,format=csv]
 |===
 Platform,Link
-Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.30.0/jikkou-0.30.0-linux-x86_64.zip[download (jikkou-0.30.0-linux-x86_64.zip)]
-macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.30.0/jikkou-0.30.0-osx-x86_64.zip[download (jikkou-0.30.0-osx-x86_64.zip)]
+Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip[download (jikkou-0.31.0-linux-x86_64.zip)]
+macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-osx-x86_64.zip[download (jikkou-0.31.0-osx-x86_64.zip)]
 |===
 
 Download the jikkou binary from the https://github.com/streamthoughts/jikkou/releases[releases page], uncompress and copy to the desired location.
@@ -58,13 +58,13 @@ Download the jikkou binary from the https://github.com/streamthoughts/jikkou/rel
 [source,bash]
 ----
 # Download the latest stable release
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.30.0/jikkou-0.30.0-linux-x86_64.zip
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip
 
 # Uncompress
-unzip jikkou-0.30.0-linux-x86_64.zip
+unzip jikkou-0.31.0-linux-x86_64.zip
 
 # Copy to the desired location
-cp jikkou-0.30.0-linux-x86_64/bin/jikkou $HOME/.local/bin
+cp jikkou-0.31.0-linux-x86_64/bin/jikkou $HOME/.local/bin
 ----
 
 Finally, Jikkou is can also be retrieved :
@@ -175,7 +175,7 @@ Jikkou CLI is built with https://micronaut.io/[Micronaut] and https://picocli.in
 
 To build the project you will need:
 
-* Java 17
+* Java 21
 * https://www.graalvm.org/[GraalVM] 22.1.0 or newer to create native executable
 * https://testcontainers.com/[TestContainer] to run integration tests
 
