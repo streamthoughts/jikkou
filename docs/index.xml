@@ -1,4 +1,30 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/</link><description>Recent content in Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Basic CLI Features</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/</link><description>Recent content in Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: API Server</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/server_configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/server_configuration/</guid><description>
+&lt;h2 id="running-server-on-a-specific-port">Running Server on a Specific Port&lt;/h2>
+&lt;p>By default, the server runs on port &lt;code>28082&lt;/code>. However, you can set the server to run on a specific port:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># ./etc/application.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">micronaut&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">server&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">port&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">80&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># Port used to access APIs&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">endpoints&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">all&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">port&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">80&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># Port used to access Health endpoints&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="enabling-specific-extension-providers">Enabling Specific Extension Providers&lt;/h2>
+&lt;p>By default, the server is configured to run only with the &lt;code>core&lt;/code> and &lt;code>kafka&lt;/code> extension providers.
+However, you can enable (or disable) additional providers:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">jikkou&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">extensions.provider&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># By default, disable all extension providers.&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">default.enabled&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># Explicitly enabled/disable an extension provider&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic">#&amp;lt;provider_name&amp;gt;.enabled: &amp;lt;boolean&amp;gt;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">core.enabled&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">kafka.enabled&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># schemaregistry.enabled: true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># aiven.enabled: true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># kafkaconnect.enabled: true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Basic CLI Features</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
 &lt;/div>
@@ -66,7 +92,62 @@ reference and used to define multiple &lt;a href="https://streamthoughts.github.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">cleanup.policy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;delete&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">2&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">86400000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># (1 day)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>&lt;/code>&lt;/pre></description></item><item><title>Docs: Jikkou Getting Started</title><link>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>&lt;/code>&lt;/pre></description></item><item><title>Docs: Install Jikkou API Server</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</guid><description>
+&lt;h2 id="releases">Releases&lt;/h2>
+&lt;p>The latest stable release of Jikkou API Server is available:&lt;/p>
+&lt;ul>
+&lt;li>As a Java binary distribution (.zip) from &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a>&lt;/li>
+&lt;li>As a docker image available from &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou-api-server">Docker Hub&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h3 id="standalone-installation">Standalone Installation&lt;/h3>
+&lt;p>Follow these few steps to download the latest stable versions and get started.&lt;/p>
+&lt;h4 id="prerequisites">Prerequisites&lt;/h4>
+&lt;p>To be able to run Jikkou API Server, the only requirement is to have a working Java 21 installation.
+You can check the correct installation of Java by issuing the following command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>java -version
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-1-download">Step 1: Download&lt;/h4>
+&lt;p>Download the latest Java binary distribution from the &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a> (e.g. &lt;code>jikkou-api-server-0.31.0.zip&lt;/code>)&lt;/p>
+&lt;p>Unpack the download distribution and move the unpacked directory to a desired destination&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>unzip jikkou-api-server-&lt;span style="color:#000">$LATEST_VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>mv jikkou-api-server-&lt;span style="color:#000">$LATEST_VERSION&lt;/span> /opt/jikkou
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-2-start-the-api-server">Step 2: Start the API Server&lt;/h4>
+&lt;p>Launch the application with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>./bin/jikkou-api-server.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-3-test-the-api-server">Step 3: Test the API Server&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ curl -sX GET http://localhost:28082 -H &lt;span style="color:#4e9a06">&amp;#34;Accept: application/json&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">|&lt;/span> jq
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;version&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;0.31.0&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;build_time&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;2023-11-14T18:07:38+0000&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;commit_id&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;dae1be11c092256f36c18c8f1d90f16b0c951716&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;_links&amp;#34;&lt;/span>: &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;self&amp;#34;&lt;/span>: &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;href&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;/&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;templated&amp;#34;&lt;/span>: &lt;span style="color:#204a87">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;get-apis&amp;#34;&lt;/span>: &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;href&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;/apis&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;templated&amp;#34;&lt;/span>: &lt;span style="color:#204a87">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-4-stop-the-api-server">Step 4: Stop the API Server&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">PID&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#4e9a06">`&lt;/span>ps -ef &lt;span style="color:#000;font-weight:bold">|&lt;/span> grep -v grep &lt;span style="color:#000;font-weight:bold">|&lt;/span> grep JikkouApiServer &lt;span style="color:#000;font-weight:bold">|&lt;/span> awk &lt;span style="color:#4e9a06">&amp;#39;{print $2}&amp;#39;&lt;/span>&lt;span style="color:#4e9a06">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">kill&lt;/span> &lt;span style="color:#000">$PID&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="docker">Docker&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Run Docker&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker run -it &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--net host &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>streamthoughts/jikkou-api-server:latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="development-builds">Development Builds&lt;/h2>
+&lt;p>In addition to releases you can download or install development snapshots of Jikkou API Server.&lt;/p>
+&lt;h3 id="from-docker-hub">From Docker Hub&lt;/h3>
+&lt;p>Docker images are built and push to &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a> from the latest &lt;code>main&lt;/code>
+branch.&lt;/p>
+&lt;p>They are not official releases, and may not be stable.
+However, they offer the opportunity to test the cutting edge features.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ docker run -it streamthoughts/jikkou-api-server:main
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Jikkou Getting Started</title><link>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</guid><description>
 &lt;p>This document will guide you through setting up Jikkou in a few minutes and managing your first resources
 with Jikkou.&lt;/p>
 &lt;h2 id="prerequisites">Prerequisites&lt;/h2>
@@ -554,7 +635,51 @@ applied on the object.&lt;/p>
 &lt;p>This annotation is automatically added by Jikkou to an object when loaded from your local filesystem.&lt;/p>
 &lt;h4 id="jikkouioitems-count">&lt;code>jikkou.io/items-count&lt;/code>&lt;/h4>
 &lt;p>Used by jikkou.&lt;/p>
-&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p></description></item><item><title>Docs: Automate Jikkou with GitHub Actions</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/githubactions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/githubactions/</guid><description>
+&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p></description></item><item><title>Docs: Basic Auth</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/basic_auth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/basic_auth/</guid><description>
+&lt;p>Jikkou API Server can be secured using a &lt;strong>Basic HTTP Authentication Scheme&lt;/strong>.&lt;/p>
+&lt;p>&lt;a href="https://datatracker.ietf.org/doc/html/rfc7617">RFC7617&lt;/a> defines the &amp;ldquo;Basic&amp;rdquo; Hypertext Transfer Protocol (HTTP)
+authentication scheme, which transmits credentials as user-id/password pairs, encoded using Base64.&lt;/p>
+&lt;p>Basic Authentication should be used over a secured connection using HTTPS.&lt;/p>
+&lt;h2 id="configure-basic-http-authentication">Configure Basic HTTP Authentication&lt;/h2>
+&lt;h3 id="step1-enable-security">Step1: Enable security&lt;/h3>
+&lt;p>Add the following configuration to your server configuration.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># ./etc/application.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">micronaut&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">security&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">enabled&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step2-configure-the-list-of-users">Step2: Configure the list of users&lt;/h3>
+&lt;p>The list of &lt;code>username/password&lt;/code> authorized to connect to the API server can be configured as follows:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># ./etc/application.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">security&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">basic-auth&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">username&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;admin&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">password&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{noop}password&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For production environment, &lt;em>password&lt;/em> must not be configured in plaintext. &lt;em>Password&lt;/em> can be passed encoded
+in &lt;code>bcrypt&lt;/code>, &lt;code>scrypt&lt;/code>, &lt;code>argon2&lt;/code>, and &lt;code>sha256&lt;/code>.&lt;/p>
+&lt;h4 id="example">Example&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">echo&lt;/span> -n password &lt;span style="color:#000;font-weight:bold">|&lt;/span> sha256sum
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># ./etc/application.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">security&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">basic-auth&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">username&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;admin&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">password&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;{sha256}5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step3-validate-authentication">Step3: Validate authentication&lt;/h3>
+&lt;p>&lt;strong>Encode credentials&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">echo&lt;/span> -n &lt;span style="color:#4e9a06">&amp;#34;admin:password&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">|&lt;/span> base64
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">YWRtaW46cGFzc3dvcmQ&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Send
+request&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>curl -IX GET http://localhost:28082/apis/kafka.jikkou.io/v1beta2/kafkabrokers &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>-H &lt;span style="color:#4e9a06">&amp;#34;Accept: application/json&amp;#34;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>-H &lt;span style="color:#4e9a06">&amp;#34;Authorization: Basic YWRtaW46cGFzc3dvcmQ&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>HTTP/1.1 &lt;span style="color:#0000cf;font-weight:bold">200&lt;/span> OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Content-Type: application/hal+json
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>content-length: &lt;span style="color:#0000cf;font-weight:bold">576&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Automate Jikkou with GitHub Actions</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/githubactions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/githubactions/</guid><description>
 &lt;h2 id="setup-jikkou">Setup Jikkou&lt;/h2>
 &lt;p>The &lt;a href="https://github.com/streamthoughts/setup-jikkou">&lt;code>streamthoughts/setup-jikkou&lt;/code>&lt;/a> action is a JavaScript action that
 sets up Jikkou in your &lt;strong>GitHub Actions&lt;/strong> workflow by:&lt;/p>
@@ -599,7 +724,40 @@ Actions run syntax. This allows most Jikkou commands to work exactly like they d
 &lt;td>The path to the Jikkou CLI config file. If set, Jikkou CLI will be configured through the &lt;code>JIKKOUCONFIG&lt;/code> environment variable.&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: Reconciliation</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</guid><description>
+&lt;/table></description></item><item><title>Docs: JWT</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/jwt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/jwt/</guid><description>
+&lt;p>Jikkou API Server can be secured using &lt;strong>JWT (JSON Web Token) Authentication&lt;/strong>.&lt;/p>
+&lt;h2 id="configure-jwt">Configure JWT&lt;/h2>
+&lt;h3 id="step1-set-jwt-signature-secret">Step1: Set JWT signature secret&lt;/h3>
+&lt;p>Add the following configuration to your server configuration.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># ./etc/application.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">micronaut&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">security&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">enabled&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">authentication&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">bearer &amp;lt;1&amp;gt;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">token&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">enabled&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jwt&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">signatures&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">secret&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">generator&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">secret&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne} &amp;lt;2&amp;gt;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>&lt;strong>&amp;lt;1&amp;gt;&lt;/strong> Set authentication to bearer to receive a JSON response from the login endpoint.&lt;/li>
+&lt;li>&lt;strong>&amp;lt;2&amp;gt;&lt;/strong> Change this to your own secret and keep it safe (do not store this in your VCS).&lt;/li>
+&lt;/ul>
+&lt;h3 id="step2-generate-a-token">Step2: Generate a Token&lt;/h3>
+&lt;p>Generate a valid JSON Web Token on &lt;code>https://jwt.io/&lt;/code> using your secret.&lt;/p>
+&lt;p>Example with &lt;code>pleaseChangeThisSecretForANewOne&lt;/code> as signature secret.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">TOKEN&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.6cD3MnZmX2xyEAWyh-GgGD11TX8SmvmHVLknuAIJ8yE
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step3-validate-authentication">Step3: Validate authentication&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ curl -I -X GET http://localhost:28082/apis/kafka.jikkou.io/v1beta2/kafkabrokers &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>-H &lt;span style="color:#4e9a06">&amp;#34;Accept: application/json&amp;#34;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>-H &lt;span style="color:#4e9a06">&amp;#34;Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.6cD3MnZmX2xyEAWyh-GgGD11TX8SmvmHVLknuAIJ8yE&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>HTTP/1.1 &lt;span style="color:#0000cf;font-weight:bold">200&lt;/span> OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Content-Type: application/hal+json
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>content-length: &lt;span style="color:#0000cf;font-weight:bold">576&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Reconciliation</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>In the context of Jikkou, reconciliation refers to the process of comparing the desired state of an object with the
 actual state of the system and making any necessary corrections or adjustments to align them.&lt;/p>
@@ -653,7 +811,51 @@ definition:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou.io/delete&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: CLI Proxy Mode</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/cli_proxy_mode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/cli_proxy_mode/</guid><description>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;h3 id="step-1-enable-proxy-mode">Step 1: Enable Proxy Mode&lt;/h3>
+&lt;p>To enable proxy mode so that the CLI communicates directly with your API Server, add the following parameters to your
+configuration:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+# Proxy Configuration
+proxy {
+# Specify whether proxy mode is enabled (default: false).
+enabled = true
+# URL of the API Server
+url = &amp;#34;http://localhost:28082&amp;#34;
+# Specifcy whether HTTP request debugging should be enabled (default: false)
+debugging = false
+# The connect timeout in millisecond (if not configured used ` default-timeout` ).
+connect-timeout = 10000
+# The read timeout in millisecond (if not configured used ` default-timeout` ).
+read-timeout = 10000
+# The write timeout in millisecond (if not configured used ` default-timeout` ).
+write-timeout = 10000
+# The default timeout (i.e., for read/connect) in millisecond (default: 10000)
+default-timeout = 10000
+# Security settings to authenticate to the API Server.
+security = {
+# For Token based Authentication.
+# access-token = &amp;#34;&amp;#34;
+# For Username/Password Basic-Authentication.
+# basic-auth = {
+# username = &amp;#34;&amp;#34;
+# password = &amp;#34;&amp;#34;
+# }
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;h3 id="step-2-check-connection">Step 2: Check connection&lt;/h3>
+&lt;p>When enabling Proxy Mode, Jikkou CLI provides the additional command &lt;code>server-info&lt;/code>. You can use it to verify the
+connectivity with teh server.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou server-info -o JSON &lt;span style="color:#000;font-weight:bold">|&lt;/span> jq
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;version&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;0.31.0&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;build_time&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;2023-11-15T10:35:22+0100&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;commit_id&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;f3384d38e606fb32599c175895d0cbef28258540&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>You can use &lt;em>selectors&lt;/em> to select only a subset of resource objects to describe from your system or for which you want
 to perform a reconciliation process.&lt;/p>

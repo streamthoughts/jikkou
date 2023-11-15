@@ -1,0 +1,67 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Jikkou API Server Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/</link><description>Recent content in Jikkou API Server Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Install Jikkou API Server</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</guid><description>
+&lt;h2 id="releases">Releases&lt;/h2>
+&lt;p>The latest stable release of Jikkou API Server is available:&lt;/p>
+&lt;ul>
+&lt;li>As a Java binary distribution (.zip) from &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a>&lt;/li>
+&lt;li>As a docker image available from &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou-api-server">Docker Hub&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h3 id="standalone-installation">Standalone Installation&lt;/h3>
+&lt;p>Follow these few steps to download the latest stable versions and get started.&lt;/p>
+&lt;h4 id="prerequisites">Prerequisites&lt;/h4>
+&lt;p>To be able to run Jikkou API Server, the only requirement is to have a working Java 21 installation.
+You can check the correct installation of Java by issuing the following command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>java -version
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-1-download">Step 1: Download&lt;/h4>
+&lt;p>Download the latest Java binary distribution from the &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a> (e.g. &lt;code>jikkou-api-server-0.31.0.zip&lt;/code>)&lt;/p>
+&lt;p>Unpack the download distribution and move the unpacked directory to a desired destination&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>unzip jikkou-api-server-&lt;span style="color:#000">$LATEST_VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>mv jikkou-api-server-&lt;span style="color:#000">$LATEST_VERSION&lt;/span> /opt/jikkou
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-2-start-the-api-server">Step 2: Start the API Server&lt;/h4>
+&lt;p>Launch the application with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>./bin/jikkou-api-server.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-3-test-the-api-server">Step 3: Test the API Server&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ curl -sX GET http://localhost:28082 -H &lt;span style="color:#4e9a06">&amp;#34;Accept: application/json&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">|&lt;/span> jq
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;version&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;0.31.0&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;build_time&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;2023-11-14T18:07:38+0000&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;commit_id&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;dae1be11c092256f36c18c8f1d90f16b0c951716&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;_links&amp;#34;&lt;/span>: &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;self&amp;#34;&lt;/span>: &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;href&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;/&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;templated&amp;#34;&lt;/span>: &lt;span style="color:#204a87">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;get-apis&amp;#34;&lt;/span>: &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;href&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;/apis&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;templated&amp;#34;&lt;/span>: &lt;span style="color:#204a87">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step-4-stop-the-api-server">Step 4: Stop the API Server&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">PID&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#4e9a06">`&lt;/span>ps -ef &lt;span style="color:#000;font-weight:bold">|&lt;/span> grep -v grep &lt;span style="color:#000;font-weight:bold">|&lt;/span> grep JikkouApiServer &lt;span style="color:#000;font-weight:bold">|&lt;/span> awk &lt;span style="color:#4e9a06">&amp;#39;{print $2}&amp;#39;&lt;/span>&lt;span style="color:#4e9a06">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">kill&lt;/span> &lt;span style="color:#000">$PID&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="docker">Docker&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Run Docker&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker run -it &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--net host &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>streamthoughts/jikkou-api-server:latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="development-builds">Development Builds&lt;/h2>
+&lt;p>In addition to releases you can download or install development snapshots of Jikkou API Server.&lt;/p>
+&lt;h3 id="from-docker-hub">From Docker Hub&lt;/h3>
+&lt;p>Docker images are built and push to &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou">Docker Hub&lt;/a> from the latest &lt;code>main&lt;/code>
+branch.&lt;/p>
+&lt;p>They are not official releases, and may not be stable.
+However, they offer the opportunity to test the cutting edge features.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ docker run -it streamthoughts/jikkou-api-server:main
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configurations</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/</guid><description>
+&lt;p>Jikkou API Server is built with &lt;a href="https://micronaut.io/">Micronaut Framework&lt;/a>.&lt;/p>
+&lt;p>The default configuration file is located in the installation directory of you server under the
+path &lt;code>/etc/application.yaml&lt;/code>.&lt;/p>
+&lt;p>You can either modify this configuration file directly or create a new one.
+Then, your configuration file path can be targeted through the &lt;code>MICRONAUT_CONFIG_FILES&lt;/code> environment variable.&lt;/p>
+&lt;p>A YAML Configuration file example can be found
+here: &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-rest-api/jikkou-api-server/src/main/resources/application.yaml">application.yaml&lt;/a>&lt;/p>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+For more information about how to configure the application, we recommend you to read the official Micronaut documentation (see: &lt;a href="https://docs.micronaut.io/latest/guide/#config">Application Configuration&lt;/a>).
+&lt;/div></description></item></channel></rss>
