@@ -38,5 +38,5 @@ public record SubjectSchemaVersion(String subject,
                                    int version,
                                    String schemaType,
                                    String schema,
-                                   List<String> references) {
+                                   List<SubjectSchemaReference> references) {
 }
