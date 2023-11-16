@@ -5,7 +5,7 @@ Add styles or override variables from the theme here.
 */
 
 $primary: #16262f;
-$secondary: #BF1363;
+$secondary: #CF2557FF;
 $primary-light: lighten($primary, 75%) !default;
 
 $yellow: #D17A22;
@@ -28,6 +28,9 @@ $blue-light: #2880c1 !default;
 
 $gray: #6C757D !default;
 $gray-light: #F8F9FA !default;
+
+$dark-pink: #E62D4CFF !default;
+$light-purple: #6951F3FF !default;
 
 
 

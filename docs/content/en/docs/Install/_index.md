@@ -13,9 +13,9 @@ menu:
 Jikkou can be installed either from source, or from releases.
 {{% /pageinfo %}}
 
-## From SDKMan! (recommanded)
+## From SDKMan! (recommended)
 
-The latest stable release of jikkou (x86) for Linux, and macOS can be retrieved via https://sdkman.io/[SDKMan]:
+The latest stable release of jikkou (x86) for Linux, and macOS can be retrieved via [SDKMan!](https://sdkman.io/):
 
 ```bash
 sdk install jikkou

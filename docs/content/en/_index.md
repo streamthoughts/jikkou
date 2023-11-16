@@ -18,7 +18,7 @@ linkTitle: Jikkou
 
 [<img src="./images/jikkou-no-title-logo-450px.png" width="100px"/>](./images/jikkou-no-title-logo-450px.png)
 
-**[Jikkou](https://github.com/streamthoughts/jikkou)** (**jikkō / 実行**) is a lightweight open-source tool designed to
+**[Jikkou](https://github.com/streamthoughts/jikkou)** (**jikkō / 実行**) is an open-source product designed to
 provide an efficient and easy way to manage, automate and provision resources on your self-service Event-Driven
 [Data Mesh](https://martinfowler.com/articles/data-mesh-principles.html) platforms (or, more simply, on any Apache Kafka Infrastructures).
 

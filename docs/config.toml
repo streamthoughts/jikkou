@@ -1,5 +1,6 @@
 baseURL = "https://streamthoughts.github.io/jikkou/"
 title = "Jikkou Documentation"
+description = "Jikkou is an open-source product designed to swiftly and efficiently manage, automate and provision all the assets of your data streaming platform."
 
 # Language settings
 contentDir = "content/en"
