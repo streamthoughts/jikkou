@@ -13,12 +13,22 @@
 # limitations under the License.
 micronaut:
   application:
-    name: jikkou-rest-server
+    name: jikkou-api-server
   server:
     # Use -1 to run on a random port
     port: 28082
+
   security:
     enabled: false
+#  # Token based authentication configuration
+#  authentication: bearer
+#  token:
+#    enabled: false
+#    jwt:
+#      signatures:
+#        secret:
+#          generator:
+#            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
 
 # Endpoints configuration
 endpoints:
@@ -39,10 +49,10 @@ endpoints:
       timeout-ms: 5000
 # Jikkou API Configurations
 jikkou:
-  #security:
-  #  basic-auth:
-  #    - username: "admin"
-  #      password: "{noop}admin"
+  #  security:
+  #    basic-auth:
+  #      - username: "admin"
+  #        password: "{noop}admin"
 
   extensions.provider:
     # By default, disable all extensions
@@ -51,16 +61,11 @@ jikkou:
     #<provider_name>.enabled: <boolean>
     core.enabled: true
     kafka.enabled: true
-    # schemaregistry.enabled: true
-    # aiven.enabled: true
-    # kafkaconnect.enabled: true
 
-  # Kafka Extension Configuration
   kafka:
     client:
       bootstrap.servers: localhost:9092
 
-  # Schema Registry Extension Configuration
   schemaRegistry:
     url: http://localhost:8081
 

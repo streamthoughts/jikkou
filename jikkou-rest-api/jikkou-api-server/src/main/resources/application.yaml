@@ -13,22 +13,22 @@
 # limitations under the License.
 micronaut:
   application:
-    name: jikkou-rest-server
+    name: jikkou-api-server
   server:
     # Use -1 to run on a random port
     port: 28082
 
-  # security:
-  #  enabled: true
-  #  # Token based authentication configuration
-  #  authentication: bearer
-  #  token:
-  #    enabled: false
-  #    jwt:
-  #      signatures:
-  #        secret:
-  #          generator:
-  #            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
+  security:
+    enabled: false
+#  # Token based authentication configuration
+#  authentication: bearer
+#  token:
+#    enabled: false
+#    jwt:
+#      signatures:
+#        secret:
+#          generator:
+#            secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
 
 # Endpoints configuration
 endpoints:
@@ -92,5 +92,16 @@ jikkou:
       config:
         topicMinReplicationFactor: 1
 
-  # The default custom reporters to report applied changes.
-  reporters: [ ]
+#  # The default custom reporters to report applied changes.
+#  reporters:
+#    # Uncomment following lines to enable default kafka reporter
+#    - name: "default"
+#      type: io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+#      config:
+#        event.source: "jikkou/cli"
+#        kafka:
+#          topic.creation.enabled: true
+#          topic.creation.defaultReplicationFactor: 1
+#          topic.name: "jikkou-resource-change-event"
+#          client: ${jikkou.kafka.client}
+#          client.id:  "jikkou-reporter-producer"
