@@ -381,5 +381,14 @@
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "com.amazonaws.auth.AWS4Signer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   }
 ]
