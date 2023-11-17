@@ -17,15 +17,13 @@ name: Releases
 on:
   workflow_dispatch:
     inputs:
-      newVersion:
-        type: string
-        required: false
-        description: "New version (if null use current version)"
-      createTag:
-        type: boolean
+      version:
+        description: "Release version"
         required: true
-        description: "Create a Tag"
-        default: true
+      next:
+        description: "Next version"
+        required: false
+
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRO: 'zulu'
@@ -37,6 +35,7 @@ jobs:
     outputs:
       HEAD: ${{ steps.version.outputs.HEAD }}
       RELEASE_VERSION: ${{ steps.version.outputs.RELEASE_VERSION }}
+      NEXT_VERSION: ${{ steps.version.outputs.NEXT_VERSION }}
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4
@@ -57,40 +56,30 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Grant execute permission to MVN Wrapper
-        run: chmod +x ./mvnw
-
-      - name: Update release version
-        if: "${{ github.event.inputs.newVersion == '' }}"
-        run: |
-          echo 'Remove snapshot from maven version'
-          ./mvnw -q versions:set -DremoveSnapshot -DprocessAllModules -DgenerateBackupPoms=false
-
-      - name: Set specific version to release
-        if: "${{ github.event.inputs.newVersion != '' }}"
-        run: |
-          ./mvnw -q versions:set -DnewVersion=${{ github.event.inputs.newVersion }}
-
-      - name: 'Set env RELEASE_VERSION'
-        run: |
-          RELEASE_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
-
       - name: 'Configure Git'
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: 'Push release version'
+      - name: 'Set release version'
         id: version
-        if: "${{ github.event.inputs.createTag == 'true' }}"
         run: |
+          RELEASE_VERSION=${{ github.event.inputs.version }}
+          NEXT_VERSION=${{ github.event.inputs.next }}
+          if [ -z $NEXT_VERSION ]
+          then
+            PLAIN_VERSION=`echo ${RELEASE_VERSION} | awk 'match($0, /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)/) { print substr($0, RSTART, RLENGTH); }'`
+            NEXT_VERSION="${PLAIN_VERSION}-SNAPSHOT"
+          fi
+          chmod +x ./mvnw
+          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=${{ env.RELEASE_VERSION }}
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: release version ${{ env.RELEASE_VERSION }} 🎉"
           git push --atomic origin HEAD:main
           HEAD=$(git rev-parse HEAD)
           echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_OUTPUT
 
   build-distribution:
     needs: [ set-release-version ]
@@ -189,7 +178,7 @@ jobs:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          JRELEASER_GPG_SECRET_KEY:  ${{ secrets.GPG_PRIVATE_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           JRELEASER_SDKMAN_CONSUMER_KEY: ${{ secrets.JRELEASER_SDKMAN_CONSUMER_KEY }}
           JRELEASER_SDKMAN_CONSUMER_TOKEN: ${{ secrets.JRELEASER_SDKMAN_CONSUMER_TOKEN }}
         run: ./mvnw -ntp -B --file ./jikkou-cli/pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
@@ -203,18 +192,11 @@ jobs:
             target/jreleaser/trace.log
             target/jreleaser/output.properties
 
-      - name: 'Bump version for next iteration'
-        if: "${{ github.event.inputs.newVersion == '' }}"
+      - name: 'Commit Next Version'
+        env:
+          NEXT_VERSION: ${{ needs.set-release-version.outputs.NEXT_VERSION }}
         run: |
-          ./mvnw -q build-helper:parse-version versions:set \
-            -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.nextMinorVersion}.0-SNAPSHOT \
-            versions:commit
-          NEXT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
-
-      - name: 'Commit Bump Version'
-        if: "${{ github.event.inputs.newVersion == '' }}"
-        run: |
+          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=${{ env.NEXT_VERSION }}
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
           git push origin HEAD:main 
