@@ -27,10 +27,10 @@ import javax.validation.constraints.NotNull;
 /**
  * ApiResourceList.
  * 
- * @param kind          the Kind of the resources.
- * @param apiVersion    the API Version of the resources.
- * @param groupVersion  the API Group of the resources.
- * @param resources     the list of resources.
+ * @param kind          The Kind of the resources.
+ * @param apiVersion    The API Version of the resources.
+ * @param groupVersion  The API Group of the resources.
+ * @param resources     The list of resources.
  */
 @Kind("ApiResourceList")
 @ApiVersion("v1")

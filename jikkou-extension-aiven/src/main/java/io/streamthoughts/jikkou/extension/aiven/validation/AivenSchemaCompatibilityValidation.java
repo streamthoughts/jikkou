@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
-import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenAsyncSchemaRegistryApi;
@@ -31,8 +31,8 @@ import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityVa
 import org.jetbrains.annotations.NotNull;
 
 @HandledResource(
-        apiVersion = AivenResourceProvider.SCHEMA_REGISTRY_API_VERSION,
-        kind = AivenResourceProvider.SCHEMA_REGISTRY_KIND
+        apiVersion = AivenExtensionProvider.SCHEMA_REGISTRY_API_VERSION,
+        kind = AivenExtensionProvider.SCHEMA_REGISTRY_KIND
 )
 public class AivenSchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {
 

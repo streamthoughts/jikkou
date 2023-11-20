@@ -19,11 +19,11 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
-import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
+import io.streamthoughts.jikkou.core.resource.exception.ConflictingResourceDefinitionException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +62,7 @@ class DefaultResourceRegistryTest {
     void shouldThrowConflictingExtensionDefinitionExceptionForDuplicateResource() {
         registry.register(TestResource.class);
         Assertions.assertThrows(
-                ConflictingExtensionDefinitionException.class,
+                ConflictingResourceDefinitionException.class,
                 () -> registry.register(TestResource.class)
         );
     }
@@ -70,7 +70,7 @@ class DefaultResourceRegistryTest {
     @Test
     void shouldGetDescriptorByTypeForRegisteredResource() {
         registry.register(TestResource.class);
-        ResourceDescriptor descriptor = registry.getResourceDescriptorByType(ResourceType.of(TestResource.class));
+        ResourceDescriptor descriptor = registry.getDescriptorByType(ResourceType.of(TestResource.class));
         Assertions.assertEquals(DESCRIPTOR, descriptor);
     }
 
@@ -78,13 +78,13 @@ class DefaultResourceRegistryTest {
     void shouldThrowNoSuchExtensionExceptionForNotRegisteredResource() {
         Assertions.assertThrows(
                 NoSuchExtensionException.class,
-                () -> registry.getResourceDescriptorByType(ResourceType.of(TestResource.class)));
+                () -> registry.getDescriptorByType(ResourceType.of(TestResource.class)));
     }
 
     @Test
     void shouldGetAllDescriptors() {
         registry.register(TestResource.class);
-        List<ResourceDescriptor> descriptors = registry.getAllResourceDescriptors();
+        List<ResourceDescriptor> descriptors = registry.allDescriptors();
         Assertions.assertEquals(List.of(DESCRIPTOR), descriptors);
     }
 
@@ -125,7 +125,10 @@ class DefaultResourceRegistryTest {
     @Names(
             plural = "tests",
             singular = "test",
-            shortNames = { "t" , "ts" }
+            shortNames = {"t", "ts"}
     )
-    static abstract class TestResource implements HasMetadata {};
+    static abstract class TestResource implements HasMetadata {
+    }
+
+    ;
 }

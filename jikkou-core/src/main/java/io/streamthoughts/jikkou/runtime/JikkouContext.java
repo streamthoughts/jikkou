@@ -16,6 +16,8 @@
 package io.streamthoughts.jikkou.runtime;
 
 import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSIONS_PROVIDER_DEFAULT_ENABLED;
+import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSION_PATHS;
+import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSION_PROVIDER_CONFIG_PREFIX;
 
 import io.streamthoughts.jikkou.core.ApiConfigurator;
 import io.streamthoughts.jikkou.core.DefaultApi;
@@ -31,7 +33,6 @@ import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
-import io.streamthoughts.jikkou.spi.ResourceProvider;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,8 +51,6 @@ import org.slf4j.LoggerFactory;
 public final class JikkouContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(JikkouContext.class);
-
-    private final List<String> extensionPaths;
     private final ExtensionFactory extensionFactory;
     private final Configuration configuration;
     private final ResourceRegistry resourceRegistry;
@@ -65,7 +64,7 @@ public final class JikkouContext {
     public JikkouContext(@NotNull final Configuration configuration,
                          @NotNull final ExtensionFactory extensionFactory,
                          @NotNull final ResourceRegistry resourceRegistry) {
-        this(configuration, extensionFactory,resourceRegistry,  new ArrayList<>());
+        this(configuration, extensionFactory, resourceRegistry, new ArrayList<>());
     }
 
     /**
@@ -80,50 +79,22 @@ public final class JikkouContext {
                          @NotNull final ResourceRegistry resourceRegistry,
                          @NotNull final List<String> extensionPaths) {
         this.configuration = Objects.requireNonNull(configuration, "'configuration' must not be null");
-        this.extensionPaths = Objects.requireNonNull(extensionPaths, "'extensionPaths' must not be null");
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "'extensionFactory' must not be null");
         this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "'resourceRegistry' must not be null");
+        Objects.requireNonNull(extensionPaths, "'extensionPaths' must not be null");
+
+        List<String> paths = new ArrayList<>(extensionPaths);
+        paths.addAll(EXTENSION_PATHS.evaluate(configuration));
 
         Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.evaluate(configuration);
         LOG.info("Start context initialization ({}={}).", EXTENSIONS_PROVIDER_DEFAULT_ENABLED.key(), extensionEnabledByDefault);
-        Set<ClassLoader> cls = getAllClassLoaders();
-        loadAllServices(ExtensionProvider.class, cls)
-                .forEach(provider -> {
-                    final String name = provider.getName();
-                    if (isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault)) {
-                        LOG.info("Loading all '{}' extensions", name);
-                        provider.registerExtensions(new ExtensionGroupAwareRegistry(extensionFactory, name), configuration);
-                    } else {
-                        LOG.info(
-                                "Extensions for group '{}' are ignored (config setting 'extensions.provider.{}.enabled' is set to 'false').",
-                                name,
-                                name
-                        );
-                    }
-                });
-        loadAllServices(ResourceProvider.class, cls)
-                .stream()
-                .flatMap(resourceProvider -> {
-                    final String name = resourceProvider.getName();
-                    LOG.info("Loading resources from ResourceProvider '{}'", name);
-                    Boolean extensionEnabled = isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault);
-                    if (!extensionEnabled) {
-                        LOG.info(
-                                "Resources for group '{}' are disabled (config setting 'extensions.provider.{}.enabled' is set to 'false').",
-                                name,
-                                name
-                        );
-                    }
-                    var registry = new DefaultResourceRegistry(false);
-                    resourceProvider.registerAll(registry);
-                    return registry.getAllResourceDescriptors()
-                            .stream()
-                            .peek(descriptor -> descriptor.isEnabled(extensionEnabled));
+        Set<ClassLoader> cls = getAllClassLoaders(paths);
 
-                })
-                .forEach(resourceRegistry::register);
+        for (ExtensionProvider provider : loadAllServices(ExtensionProvider.class, cls)) {
+            loadExtensionProviders(provider, configuration, extensionEnabledByDefault);
+        }
 
-        resourceRegistry.getAllResourceDescriptors()
+        resourceRegistry.allDescriptors()
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)
                 .forEach(desc -> ResourceDeserializer.registerKind(
@@ -134,11 +105,40 @@ public final class JikkouContext {
         LOG.info("JikkouContext initialized.");
     }
 
-    @NotNull
-    private static Boolean isExtensionProviderEnabled(@NotNull Configuration configuration,
+    private void loadExtensionProviders(@NotNull ExtensionProvider provider,
+                                        @NotNull Configuration configuration,
+                                        boolean extensionEnabledByDefault) {
+        final String name = provider.getName();
+        final boolean isExtensionProviderEnabled = isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault);
+        if (isExtensionProviderEnabled) {
+            LOG.info("Loading extensions from provider '{}'", name);
+            provider.registerExtensions(new ExtensionGroupAwareRegistry(extensionFactory, name), configuration);
+
+            LOG.info("Loading resources from provider '{}'", name);
+            var registry = new DefaultResourceRegistry(false);
+            provider.registerResources(registry);
+            registry.allDescriptors().forEach(resourceRegistry::register);
+        } else {
+            LOG.info(
+                    "Extensions for group '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
+                    EXTENSION_PROVIDER_CONFIG_PREFIX,
+                    name,
+                    name
+            );
+            LOG.info(
+                    "Resources for group '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
+                    EXTENSION_PROVIDER_CONFIG_PREFIX,
+                    name,
+                    name
+            );
+        }
+
+    }
+
+    private static boolean isExtensionProviderEnabled(@NotNull Configuration configuration,
                                                       @NotNull String name,
                                                       boolean defaultValue) {
-        String property = String.format("extensions.provider.%s.enabled", name.toLowerCase(Locale.ROOT));
+        String property = String.format(EXTENSION_PROVIDER_CONFIG_PREFIX + ".%s.enabled", name.toLowerCase(Locale.ROOT));
         return configuration.findBoolean(property).orElse(defaultValue);
     }
 
@@ -178,7 +178,7 @@ public final class JikkouContext {
     /**
      * @return the set of known {@link ClassLoader}.
      */
-    private Set<ClassLoader> getAllClassLoaders() {
+    private Set<ClassLoader> getAllClassLoaders(List<String> extensionPaths) {
         Set<ClassLoader> classLoaders = new HashSet<>();
         classLoaders.add(JikkouContext.class.getClassLoader());
         classLoaders.addAll(getClassLoadersForPath(extensionPaths));

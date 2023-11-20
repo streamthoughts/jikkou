@@ -148,7 +148,7 @@ public class ApiResource extends AbstractController {
                 adapter.getReconciliationContext(requestBody, true)
         );
 
-        return HttpResponse.<ResourceListObject<?>>ok()
+        return HttpResponse.<ApiResourceChangeList>ok()
                 .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 

@@ -49,18 +49,23 @@ endpoints:
       timeout-ms: 5000
 # Jikkou API Configurations
 jikkou:
-#  security:
-#    basic-auth:
-#      - username: "admin"
-#        password: "{noop}admin"
+  #  security:
+  #    basic-auth:
+  #      - username: "admin"
+  #        password: "{noop}admin"
 
-  extensions.provider:
+  # The paths from which to load extensions
+  extension.paths: []
+
+  # The extension providers
+  extension.providers:
     # By default, disable all extensions
     default.enabled: false
     # Explicitly enabled/disable extensions
     #<provider_name>.enabled: <boolean>
     core.enabled: true
     kafka.enabled: true
+    file.enabled: true
 
   kafka:
     client:

@@ -127,7 +127,7 @@ public class DefaultApiResourceService implements ApiResourceService {
     ResourceDescriptor getResourceDescriptorByIdentifier(@NotNull ApiResourceIdentifier identifier) {
         Objects.requireNonNull(identifier, "identifier must not be null");
         return resourceRegistry
-                .findDescriptorsByGroupVersion(identifier.group(), identifier.version())
+                .getDescriptorsByGroupAndVersion(identifier.group(), identifier.version())
                 .stream()
                 .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
                 .filter(ResourceDescriptor::isEnabled)

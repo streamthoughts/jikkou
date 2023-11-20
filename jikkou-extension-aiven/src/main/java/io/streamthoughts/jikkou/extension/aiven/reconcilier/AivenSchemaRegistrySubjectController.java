@@ -32,7 +32,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
-import io.streamthoughts.jikkou.extension.aiven.AivenResourceProvider;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -64,8 +64,8 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 @HandledResource(
-        apiVersion = AivenResourceProvider.SCHEMA_REGISTRY_API_VERSION,
-        kind = AivenResourceProvider.SCHEMA_REGISTRY_KIND
+        apiVersion = AivenExtensionProvider.SCHEMA_REGISTRY_API_VERSION,
+        kind = AivenExtensionProvider.SCHEMA_REGISTRY_KIND
 )
 public class AivenSchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject, SchemaSubjectChange> {
 

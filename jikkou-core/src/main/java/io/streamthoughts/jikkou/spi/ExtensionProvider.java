@@ -17,15 +17,19 @@ package io.streamthoughts.jikkou.spi;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Service interface for registering extensions and resources to Jikkou at runtime.
+ */
 public interface ExtensionProvider {
 
     /**
-     * Gets the name of this provider.
+     * Returns the name of this provider.
      *
-     * @return the string name.
+     * @return The provider name.
      */
     default String getName() {
         return this.getClass()
@@ -37,9 +41,16 @@ public interface ExtensionProvider {
     /**
      * Registers the extensions for this provider.
      *
-     * @param registry      the extension registry.
-     * @param configuration the configuration.
+     * @param registry      The ExtensionRegistry.
+     * @param configuration The configuration.
      */
     void registerExtensions(@NotNull ExtensionRegistry registry,
                             @NotNull Configuration configuration);
+
+    /**
+     * Registers the resources for this provider.
+     *
+     * @param registry The ResourceRegistry
+     */
+    void registerResources(@NotNull ResourceRegistry registry);
 }

@@ -28,12 +28,15 @@ import io.streamthoughts.jikkou.rest.data.ErrorResponse;
 import io.streamthoughts.jikkou.rest.data.errors.Errors;
 import jakarta.inject.Singleton;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Primary
 @Produces
 @Singleton
 @Requires(classes = {Exception.class, DefaultHttpExceptionHandler.class})
-public class DefaultHttpExceptionHandler implements ExceptionHandler<Exception, HttpResponse<?>> {
+public final class DefaultHttpExceptionHandler implements ExceptionHandler<Exception, HttpResponse<?>> {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpExceptionHandler.class);
 
     /**
      * {{@inheritDoc}
@@ -41,6 +44,7 @@ public class DefaultHttpExceptionHandler implements ExceptionHandler<Exception, 
     @Override
     @Error(global = true, exception = Exception.class)
     public HttpResponse<?> handle(HttpRequest request, Exception exception) {
+        LOG.error("Internal Server Error", exception);
         ErrorResponse response = new ErrorResponse(
                 "Internal Server Error",
                 List.of(new ErrorEntity(

@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * ResourceListRequest.
  *
  * @param options   The parameters.
- * @param selectors The selector expression.
+ * @param selectors The list of selector expressions.
  */
 public record ResourceListRequest(@Nullable @JsonProperty("options") Map<String, Object> options,
                                   @Nullable @JsonProperty("selectors") List<String> selectors) {

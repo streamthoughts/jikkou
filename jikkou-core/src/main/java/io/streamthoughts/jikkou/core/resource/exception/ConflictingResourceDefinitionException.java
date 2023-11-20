@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.kafka.connect;
+package io.streamthoughts.jikkou.core.resource.exception;
 
-import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
-import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import io.streamthoughts.jikkou.spi.ResourceProvider;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 
-public class KafkaConnectResourceProvider implements ResourceProvider {
+public final class ConflictingResourceDefinitionException extends JikkouRuntimeException {
 
-    /** {@inheritDoc} **/
-    @Override
-    public void registerAll(ResourceRegistry context) {
-        context.register(V1KafkaConnector.class);
-        context.register(V1KafkaConnectorList.class);
+    /**
+     * Creates a new {@link ConflictingResourceDefinitionException} instance.
+     *
+     * @param message   the error message.
+     */
+    public ConflictingResourceDefinitionException(final String message) {
+        super(message);
     }
 }

@@ -167,7 +167,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      **/
     @Override
     public ApiResourceList listApiResources(@NotNull String group, @NotNull String version) {
-        List<ResourceDescriptor> descriptors = resourceRegistry.findDescriptorsByGroupVersion(group, version)
+        List<ResourceDescriptor> descriptors = resourceRegistry.getDescriptorsByGroupAndVersion(group, version)
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)
                 .filter(Predicate.not(ResourceDescriptor::isTransient))
@@ -217,7 +217,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      **/
     @Override
     public ApiGroupList listApiGroups() {
-        List<ResourceDescriptor> allResourceDescriptors = resourceRegistry.getAllResourceDescriptors();
+        List<ResourceDescriptor> allResourceDescriptors = resourceRegistry.allDescriptors();
         Map<String, List<ResourceDescriptor>> descriptorsByGroup = allResourceDescriptors
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)

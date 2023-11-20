@@ -17,7 +17,18 @@ package io.streamthoughts.jikkou.kafka;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientConsumerGroupCollector;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclCollector;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclController;
@@ -51,12 +62,6 @@ import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
 public final class KafkaExtensionProvider implements ExtensionProvider {
-
-    /** {@inheritDoc} **/
-    @Override
-    public String getName() {
-        return "kafka";
-    }
 
     /** {@inheritDoc} **/
     @Override
@@ -102,5 +107,20 @@ public final class KafkaExtensionProvider implements ExtensionProvider {
 
         // reporters
         registry.register(KafkaChangeReporter.class, KafkaChangeReporter::new);
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public void registerResources(@NotNull ResourceRegistry registry) {
+        registry.register(V1KafkaBrokerList.class);
+        registry.register(V1KafkaBroker.class);
+        registry.register(V1KafkaClientQuota.class);
+        registry.register(V1KafkaClientQuotaList.class);
+        registry.register(V1KafkaTopicList.class);
+        registry.register(V1KafkaTopic.class);
+        registry.register(V1KafkaPrincipalAuthorization.class);
+        registry.register(V1KafkaPrincipalRole.class);
+        registry.register(V1KafkaTableRecord.class);
+        registry.register(V1KafkaConsumerGroup.class);
     }
 }

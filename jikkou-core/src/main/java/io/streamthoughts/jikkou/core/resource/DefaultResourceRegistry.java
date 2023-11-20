@@ -15,15 +15,16 @@
  */
 package io.streamthoughts.jikkou.core.resource;
 
-import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.resource.exception.ConflictingResourceDefinitionException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -60,33 +61,44 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
         this.factory = new ResourceDescriptorFactory();
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public ResourceDescriptor register(Class<? extends Resource> resource, ResourceType type) {
+        Objects.requireNonNull(resource, "resource cannot be null");
         return register(factory.make(type, resource));
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public ResourceDescriptor register(Class<? extends Resource> resource, String version) {
+        Objects.requireNonNull(resource, "resource cannot be null");
         return register(resource, ResourceType.of(resource).version(version));
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public ResourceDescriptor register(Class<? extends Resource> resource) {
+        Objects.requireNonNull(resource, "resource cannot be null");
         return register(factory.make(ResourceType.of(resource), resource));
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public ResourceDescriptor register(final ResourceDescriptor descriptor) {
-        if (descriptor == null) throw new IllegalArgumentException("descriptor must not be null");
+        Objects.requireNonNull(descriptor, "descriptor cannot be null");
         ResourceDescriptor existing = descriptorsByType.putIfAbsent(descriptor.resourceType(), descriptor);
         if (existing != null) {
-            throw new ConflictingExtensionDefinitionException(
+            throw new ConflictingResourceDefinitionException(
                     "Cannot register resource for class '{" + descriptor.resourceClass().getName() + "}'. " +
-                    "Class already registered for " + descriptor.resourceType() + ": " + existing.resourceClass().getName());
+                            "Class already registered for " + descriptor.resourceType() + ": " + existing.resourceClass().getName());
         }
         if (doLog) {
             LOG.info("Registered resource for group='{}', version='{}' and kind='{}'",
@@ -99,47 +111,59 @@ public final class DefaultResourceRegistry implements ResourceRegistry {
         return descriptor;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
-    public ResourceDescriptor getResourceDescriptorByType(final @NotNull ResourceType type) {
+    public ResourceDescriptor getDescriptorByType(final @NotNull ResourceType type) {
         if (!descriptorsByType.containsKey(type)) {
             throw new NoSuchExtensionException("No resource registered found for type: " + type);
         }
         return descriptorsByType.get(type);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
-    public List<ResourceDescriptor> getAllResourceDescriptors() {
+    public List<ResourceDescriptor> allDescriptors() {
         return new ArrayList<>(descriptors);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public Optional<ResourceDescriptor> findDescriptorByType(ResourceType type) {
         return Optional.ofNullable(descriptorsByType.get(type));
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
-    public List<ResourceDescriptor> findDescriptorsByGroup(final String group) {
+    public List<ResourceDescriptor> getDescriptorsByGroup(final String group) {
         return descriptors.stream()
                 .filter(descriptor -> descriptor.group().equalsIgnoreCase(group))
                 .toList();
 
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
-    public List<ResourceDescriptor> findDescriptorsByGroupVersion(final String group,
-                                                                  final String version) {
+    public List<ResourceDescriptor> getDescriptorsByGroupAndVersion(final String group,
+                                                                    final String version) {
         return descriptors.stream()
                 .filter(descriptor -> descriptor.group().equalsIgnoreCase(group))
                 .filter(descriptor -> descriptor.apiVersion().equalsIgnoreCase(version))
                 .toList();
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public Optional<ResourceDescriptor> findDescriptorByType(final String kind,
                                                              final String group,

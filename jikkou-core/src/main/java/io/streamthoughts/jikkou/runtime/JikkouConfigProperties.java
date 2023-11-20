@@ -23,8 +23,15 @@ import java.util.stream.Collectors;
 
 public final class JikkouConfigProperties {
 
+    public static String EXTENSION_PROVIDER_CONFIG_PREFIX = "extension.providers";
+    public static final ConfigProperty<List<String>> EXTENSION_PATHS = ConfigProperty
+            .ofList("extension.paths")
+            .description("A list of directories from which to load external resource and extensions (controller, collector, transformation, validation, etc.")
+            .orElse(Collections.emptyList());
+
+
     public static final ConfigProperty<Boolean> EXTENSIONS_PROVIDER_DEFAULT_ENABLED = ConfigProperty
-            .ofBoolean("extensions.provider.default.enabled")
+            .ofBoolean(EXTENSION_PROVIDER_CONFIG_PREFIX + ".default.enabled")
             .description("Specify whether all extension providers should be enabled or disabled by default.")
             .orElse(true);
 

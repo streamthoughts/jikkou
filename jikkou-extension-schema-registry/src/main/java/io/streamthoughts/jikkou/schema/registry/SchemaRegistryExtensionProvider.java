@@ -17,7 +17,10 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubjectList;
 import io.streamthoughts.jikkou.schema.registry.health.SchemaRegistryHealthIndicator;
+import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.reconcilier.SchemaRegistrySubjectCollector;
 import io.streamthoughts.jikkou.schema.registry.reconcilier.SchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchemaTransformation;
@@ -27,7 +30,10 @@ import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityVa
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class SchemaRegistryExtensionProvider implements ExtensionProvider {
+/**
+ * Extension provider for Schema Registry.
+ */
+public final class SchemaRegistryExtensionProvider implements ExtensionProvider {
 
     /** {@inheritDoc} **/
     @Override
@@ -50,5 +56,12 @@ public class SchemaRegistryExtensionProvider implements ExtensionProvider {
         // Health indicators
         registry.register(SchemaRegistryHealthIndicator.class, SchemaRegistryHealthIndicator::new);
 
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public void registerResources(@NotNull ResourceRegistry registry) {
+        registry.register(V1SchemaRegistrySubject.class);
+        registry.register(V1SchemaRegistrySubjectList.class);
     }
 }

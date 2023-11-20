@@ -18,6 +18,9 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.converter.ResourceListConverter;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.models.ConfigMap;
+import io.streamthoughts.jikkou.core.models.ConfigMapList;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.transform.ConfigMapsTransformation;
 import io.streamthoughts.jikkou.core.transform.EnrichMetadataTransformation;
 import io.streamthoughts.jikkou.core.transform.ExcludeIgnoreResourceTransformation;
@@ -36,5 +39,14 @@ public class CoreExtensionProvider implements ExtensionProvider {
         registry.register(ConfigMapsTransformation.class, ConfigMapsTransformation::new);
         registry.register(EnrichMetadataTransformation.class, EnrichMetadataTransformation::new);
         registry.register(ResourceListConverter.class, ResourceListConverter::new);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void registerResources(@NotNull ResourceRegistry registry) {
+        registry.register(ConfigMap.class);
+        registry.register(ConfigMapList.class);
     }
 }

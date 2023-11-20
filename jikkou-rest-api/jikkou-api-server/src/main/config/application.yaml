@@ -54,7 +54,11 @@ jikkou:
   #      - username: "admin"
   #        password: "{noop}admin"
 
-  extensions.provider:
+  # The paths from which to load extensions
+  extension.paths: []
+
+  # The extension providers
+  extension.providers:
     # By default, disable all extensions
     default.enabled: false
     # Explicitly enabled/disable extensions

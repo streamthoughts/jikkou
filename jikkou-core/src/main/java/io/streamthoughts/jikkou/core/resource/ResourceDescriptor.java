@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class ResourceDescriptor {
 
+    public static final String EMPTY_API_GROUP = "";
     private final ResourceType type;
     private final String description;
     private final Class<? extends Resource> clazz;

@@ -19,7 +19,10 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ExternalExtension {
+/**
+ * An ExternalExtension.
+ */
+public final class ExternalExtension {
 
     private final URL location;
     private final URL[] resources;
@@ -27,7 +30,7 @@ public class ExternalExtension {
     /**
      * Creates a new {@link ExternalExtension} instance.
      *
-     * @param location  the extension top-level location.
+     * @param location  The extension top-level location.
      * @param resources the extension resources.
      */
     ExternalExtension(final URL location, final URL[] resources) {
@@ -69,9 +72,9 @@ public class ExternalExtension {
      */
     @Override
     public String toString() {
-        return "ExternalExtension{" +
+        return "ExternalExtension [" +
                 "location=" + location +
                 ", resources=" + Arrays.toString(resources) +
-                '}';
+                ']';
     }
 }

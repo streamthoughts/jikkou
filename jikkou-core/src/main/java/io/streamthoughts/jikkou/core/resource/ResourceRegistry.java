@@ -17,10 +17,14 @@ package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.resource.exception.ConflictingResourceDefinitionException;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * ResourceRegistry.
+ */
 public interface ResourceRegistry {
 
     /**
@@ -29,6 +33,8 @@ public interface ResourceRegistry {
      * @param type     the resource type associated to the class.
      * @param resource the resource class to register.
      * @return the resource descriptor.
+     * @throws NullPointerException                   if the resource class is {@code null}.
+     * @throws ConflictingResourceDefinitionException if an extension is already register for that type.
      */
     ResourceDescriptor register(Class<? extends Resource> resource, ResourceType type);
 
@@ -38,6 +44,8 @@ public interface ResourceRegistry {
      * @param version  the resource version associated to the class.
      * @param resource the resource class to register.
      * @return the resource descriptor.
+     * @throws NullPointerException                   if the resource class is {@code null}.
+     * @throws ConflictingResourceDefinitionException if an extension is already register for that type.
      */
     ResourceDescriptor register(Class<? extends Resource> resource, String version);
 
@@ -46,6 +54,8 @@ public interface ResourceRegistry {
      *
      * @param resource the resource class to register.
      * @return the resource descriptor.
+     * @throws NullPointerException                   if the resource class is {@code null}.
+     * @throws ConflictingResourceDefinitionException if an extension is already register for that type.
      */
     ResourceDescriptor register(Class<? extends Resource> resource);
 
@@ -53,6 +63,8 @@ public interface ResourceRegistry {
      * Registers the given resource descriptor to the context.
      *
      * @param descriptor the resource descriptor.
+     * @throws NullPointerException                   if the descriptor is {@code null}.
+     * @throws ConflictingResourceDefinitionException if an extension is already register for that type.
      */
     ResourceDescriptor register(ResourceDescriptor descriptor);
 
@@ -61,47 +73,47 @@ public interface ResourceRegistry {
      *
      * @return all the registered resource type.
      */
-    ResourceDescriptor getResourceDescriptorByType(@NotNull ResourceType type);
+    ResourceDescriptor getDescriptorByType(@NotNull ResourceType type);
 
     /**
      * Gets all the resources register to the context.
      *
-     * @return all the registered resource type.
+     * @return The list of descriptors.
      */
-    List<ResourceDescriptor> getAllResourceDescriptors();
-
-    /**
-     * Finds a descriptor for the specified resource information.
-     *
-     * @param type the resource type.
-     */
-    Optional<ResourceDescriptor> findDescriptorByType(final ResourceType type);
+    List<ResourceDescriptor> allDescriptors();
 
     /**
      * Gets all descriptors for the specified resource group.
      *
-     * @param group the resource api group.
-     * @return the list for descriptors.
+     * @param group The resource api group.
+     * @return The list of descriptors.
      */
-    List<ResourceDescriptor> findDescriptorsByGroup(final String group);
+    List<ResourceDescriptor> getDescriptorsByGroup(final String group);
 
     /**
      * Gets all descriptors for the specified resource group and version.
      *
-     * @param group the resource api group.
-     * @return the list for descriptors.
+     * @param group The resource api group.
+     * @return The list for descriptors.
      */
-    List<ResourceDescriptor> findDescriptorsByGroupVersion(final String group,
-                                                           final String version);
+    List<ResourceDescriptor> getDescriptorsByGroupAndVersion(final String group,
+                                                             final String version);
 
     /**
-     * Gets a descriptor for the specified resource information.
+     * Finds a descriptor for the specified resource information.
      *
-     * @param kind          the kind of the resource.
-     * @param group         the resource group.
-     * @param version       the version of the resource.
-     * @param caseSensitive specify if the kind is case-sensitive.
-     * @return  an optional {@link ResourceDescriptor}.
+     * @param type The resource type.
+     */
+    Optional<ResourceDescriptor> findDescriptorByType(final ResourceType type);
+
+    /**
+     * Finds a descriptor for the specified resource information.
+     *
+     * @param kind          The kind of the resource.
+     * @param group         The resource group.
+     * @param version       The version of the resource.
+     * @param caseSensitive Specify whether the kind is case-sensitive.
+     * @return an optional {@link ResourceDescriptor}.
      */
     Optional<ResourceDescriptor> findDescriptorByType(final String kind,
                                                       final String group,

@@ -17,7 +17,10 @@ package io.streamthoughts.jikkou.kafka.connect;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
 import io.streamthoughts.jikkou.kafka.connect.health.KafkaConnectHealthIndicator;
+import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.reconcilier.KafkaConnectorCollector;
 import io.streamthoughts.jikkou.kafka.connect.reconcilier.KafkaConnectorController;
 import io.streamthoughts.jikkou.kafka.connect.transform.KafkaConnectorResourceTransformation;
@@ -25,7 +28,10 @@ import io.streamthoughts.jikkou.kafka.connect.validation.KafkaConnectorResourceV
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class KafkaConnectExtensionProvider implements ExtensionProvider {
+/**
+ * Extension provider for Kafka Connect.
+ */
+public final class KafkaConnectExtensionProvider implements ExtensionProvider {
 
     /**
      * {@inheritDoc}
@@ -48,5 +54,14 @@ public class KafkaConnectExtensionProvider implements ExtensionProvider {
         // Health indicators
         registry.register(KafkaConnectHealthIndicator.class, KafkaConnectHealthIndicator::new);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void registerResources(@NotNull ResourceRegistry registry) {
+        registry.register(V1KafkaConnector.class);
+        registry.register(V1KafkaConnectorList.class);
     }
 }
