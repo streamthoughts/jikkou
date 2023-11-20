@@ -48,6 +48,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.GRAAL_DISTRIBUTION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
 
       - name: 'Build Native Image (Linux)'
         if: ${{ runner.os == 'Linux' }}

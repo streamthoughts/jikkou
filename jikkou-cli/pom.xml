@@ -51,7 +51,7 @@ limitations under the License.
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <!-- Native -->
         <imageName>jikkou</imageName>
-        <graalvm.build.arg>--verbose</graalvm.build.arg>
+        <graalvm.build.arg>--verbose -march=compatibility</graalvm.build.arg>
         <native.maven.plugin.version>0.9.28</native.maven.plugin.version>
         <exec.mainClass>io.streamthoughts.jikkou.client.Jikkou</exec.mainClass>
     </properties>
