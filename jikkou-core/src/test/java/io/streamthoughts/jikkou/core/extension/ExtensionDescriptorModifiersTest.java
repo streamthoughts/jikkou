@@ -15,47 +15,43 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ExtensionDescriptorModifiersTest {
 
+    static final List<Example> NO_EXAMPLES = Collections.emptyList();
+    static final List<ConfigPropertySpec> NO_PROPERTIES = Collections.emptyList();
+
+    static final ExtensionDescriptor<ExtensionDescriptorModifiersTest> DESCRIPTOR = new DefaultExtensionDescriptor<>(
+            ExtensionDescriptorModifiersTest.class.getName(),
+            "",
+            "",
+            NO_EXAMPLES,
+            ExtensionCategory.EXTENSION,
+            NO_PROPERTIES,
+            "",
+            ExtensionDescriptorModifiersTest.class,
+            ExtensionDescriptorModifiersTest.class.getClassLoader(),
+            () -> null,
+            false
+    );
+
     @Test
     void shouldModifyDecoratorName() {
-        var descriptor = new DefaultExtensionDescriptor<>(
-                ExtensionDescriptorModifiersTest.class.getName(),
-                "",
-                "",
-                Collections.emptyList(),
-                ExtensionCategory.EXTENSION,
-                "",
-                ExtensionDescriptorModifiersTest.class,
-                ExtensionDescriptorModifiersTest.class.getClassLoader(),
-                () -> null,
-                false
-        );
+
         ExtensionDescriptorModifier modifier = ExtensionDescriptorModifiers.withName("modified");
-        ExtensionDescriptor<ExtensionDescriptorModifiersTest> result = modifier.apply(descriptor);
+        ExtensionDescriptor<ExtensionDescriptorModifiersTest> result = modifier.apply(DESCRIPTOR);
         Assertions.assertEquals("modified", result.name());
     }
 
     @Test
     void shouldModifyDecoratorIsEnabled() {
-        var descriptor = new DefaultExtensionDescriptor<>(
-                ExtensionDescriptorModifiersTest.class.getName(),
-                "",
-                "",
-                Collections.emptyList(),
-                ExtensionCategory.EXTENSION,
-                "",
-                ExtensionDescriptorModifiersTest.class,
-                ExtensionDescriptorModifiersTest.class.getClassLoader(),
-                () -> null,
-                false
-        );
         ExtensionDescriptorModifier modifier = ExtensionDescriptorModifiers.enabled(true);
-        ExtensionDescriptor<ExtensionDescriptorModifiersTest> result = modifier.apply(descriptor);
+        ExtensionDescriptor<ExtensionDescriptorModifiersTest> result = modifier.apply(DESCRIPTOR);
         Assertions.assertTrue(result.isEnabled());
     }
 }

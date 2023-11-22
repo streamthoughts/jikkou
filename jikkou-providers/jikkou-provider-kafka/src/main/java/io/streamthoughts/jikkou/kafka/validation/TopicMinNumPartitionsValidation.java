@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -32,13 +33,13 @@ import org.jetbrains.annotations.NotNull;
         title = "Validate topics have a number of partitions equals or greater than '1'.",
         full = true,
         code = {"""
-            validations:
-            - name: "topicMustHavePartitionsEqualsOrGreaterThanOne"
-              type: "io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation"
-              priority: 100
-              config:
-                topicMinNumPartitions: 1
-            """
+                validations:
+                - name: "topicMustHavePartitionsEqualsOrGreaterThanOne"
+                  type: "io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation"
+                  priority: 100
+                  config:
+                    topicMinNumPartitions: 1
+                """
         }
 )
 public class TopicMinNumPartitionsValidation extends TopicValidation {
@@ -55,21 +56,12 @@ public class TopicMinNumPartitionsValidation extends TopicValidation {
     }
 
     /**
-     * Creates a new {@link TopicMinNumPartitionsValidation}
-     *
-     * @param minNumPartitions the min number of partitions.
-     */
-    public TopicMinNumPartitionsValidation(final int minNumPartitions) {
-        configure(VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.asConfiguration(minNumPartitions));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        minNumPartitions = VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.getOptional(config)
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        minNumPartitions = VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.key(),

@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.kafka.reconcilier;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -73,10 +73,9 @@ public final class AdminClientKafkaQuotaCollector
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 

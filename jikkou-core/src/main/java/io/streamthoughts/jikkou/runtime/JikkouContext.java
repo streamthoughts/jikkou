@@ -84,9 +84,9 @@ public final class JikkouContext {
         Objects.requireNonNull(extensionPaths, "'extensionPaths' must not be null");
 
         List<String> paths = new ArrayList<>(extensionPaths);
-        paths.addAll(EXTENSION_PATHS.evaluate(configuration));
+        paths.addAll(EXTENSION_PATHS.get(configuration));
 
-        Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.evaluate(configuration);
+        Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.get(configuration);
         LOG.info("Start context initialization ({}={}).", EXTENSIONS_PROVIDER_DEFAULT_ENABLED.key(), extensionEnabledByDefault);
         Set<ClassLoader> cls = getAllClassLoaders(paths);
 

@@ -15,26 +15,17 @@
  */
 package io.streamthoughts.jikkou.core.reporter;
 
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionDecorator;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
-import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- *  This class can be used to decorate a change reporter with a different name.
+ * This class can be used to decorate a change reporter with a different name.
  *
  * @see ChangeReporterDecorator
  */
-public class ChangeReporterDecorator implements ChangeReporter {
-
-    protected final ChangeReporter extension;
-
-    private Configuration configuration;
-    private String name;
+public class ChangeReporterDecorator extends ExtensionDecorator<ChangeReporter, ChangeReporterDecorator> implements ChangeReporter {
 
     /**
      * Creates a new {@link ChangeReporterDecorator} instance.
@@ -42,48 +33,11 @@ public class ChangeReporterDecorator implements ChangeReporter {
      * @param extension the extension; must not be null.
      */
     public ChangeReporterDecorator(ChangeReporter extension) {
-        this.extension = Objects.requireNonNull(extension, "extension must not be null");
+        super(extension);
     }
 
     @Override
     public void report(List<ChangeResult<Change>> results) {
         this.extension.report(results);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        this.extension.configure(configuration.withFallback(config));
-    }
-
-    public ChangeReporterDecorator withName(@Nullable String name) {
-        this.name = name;
-        return this;
-    }
-
-    public ChangeReporterDecorator withConfiguration(@Nullable Configuration configuration) {
-        this.configuration = configuration;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String getName() {
-        return name != null ? name : extension.getName();
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return "[" +
-                "extension=" + extension +
-                ", name='" + name +
-                ']';
     }
 }

@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.kafka;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.kafka.action.KafkaConsumerGroupsResetOffsets;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
@@ -109,6 +110,8 @@ public final class KafkaExtensionProvider implements ExtensionProvider {
 
         // reporters
         registry.register(KafkaChangeReporter.class, KafkaChangeReporter::new);
+
+        registry.register(KafkaConsumerGroupsResetOffsets.class, KafkaConsumerGroupsResetOffsets::new);
     }
 
     /**

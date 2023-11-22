@@ -15,12 +15,10 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
-import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -57,6 +55,13 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     List<Example> examples();
 
     /**
+     * Gets the specification of config properties of the extension.
+     *
+     * @return  The config property specs.
+     */
+    List<ConfigPropertySpec> properties();
+
+    /**
      * Gets the extension metadata.
      *
      * @return the {@link ExtensionMetadata}.
@@ -85,11 +90,11 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     ExtensionCategory category();
 
     /**
-     * Gets the group to which this extension belongs to.
+     * Gets the provider to which this extension belongs to.
      *
-     * @return The group.
+     * @return The provider.
      */
-    String group();
+    String provider();
 
     /**
      * Adds new aliases to reference the described extension.
@@ -134,18 +139,5 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     @Override
     default int compareTo(@NotNull ExtensionDescriptor<T> that) {
         return that.className().compareTo(this.className());
-    }
-
-    default List<ResourceType> supportedResources() {
-        return HasMetadataAcceptable.getSupportedResources(type())
-                .stream()
-                .toList();
-    }
-
-    default String printableSupportedResources() {
-        return supportedResources()
-                .stream()
-                .map(ResourceType::kind)
-                .collect(Collectors.joining(", "));
     }
 }

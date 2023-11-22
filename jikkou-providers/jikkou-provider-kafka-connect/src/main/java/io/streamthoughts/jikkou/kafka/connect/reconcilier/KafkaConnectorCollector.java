@@ -23,8 +23,10 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -54,18 +56,16 @@ import org.slf4j.LoggerFactory;
  * A ResourceCollector to get {@link V1KafkaConnector} resources.
  */
 @SupportedResource(type = V1KafkaConnector.class)
-@ExtensionConfigProperties(
-        properties = {
-                @ConfigPropertySpec(
+@ExtensionSpec(
+        options = {
+                @ExtensionOptionSpec(
                         name = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME,
                         description = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_DESCRIPTION,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
+                        type = Boolean.class
                 )
         }
 )
-public final class KafkaConnectorCollector implements Collector<V1KafkaConnector> {
+public final class KafkaConnectorCollector extends ContextualExtension implements Collector<V1KafkaConnector> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConnectorCollector.class);
     private static final String DEFAULT_CONNECTOR_TASKS_MAX = "1";
@@ -76,11 +76,12 @@ public final class KafkaConnectorCollector implements Collector<V1KafkaConnector
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        configure(new KafkaConnectExtensionConfig(config));
+    public void init(@NotNull ExtensionContext context) throws ConfigException {
+        super.init(context);
+        init(new KafkaConnectExtensionConfig(context.appConfiguration()));
     }
 
-    public void configure(@NotNull KafkaConnectExtensionConfig configuration) throws ConfigException {
+    public void init(@NotNull KafkaConnectExtensionConfig configuration) throws ConfigException {
         this.configuration = configuration;
     }
 
@@ -179,7 +180,7 @@ public final class KafkaConnectorCollector implements Collector<V1KafkaConnector
         }
 
         public boolean expandStatus() {
-            return EXPEND_STATUS.evaluate(configuration);
+            return EXPEND_STATUS.get(configuration);
         }
     }
 }

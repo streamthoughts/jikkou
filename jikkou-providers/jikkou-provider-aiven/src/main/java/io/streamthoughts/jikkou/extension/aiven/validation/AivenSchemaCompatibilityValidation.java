@@ -16,9 +16,8 @@
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
@@ -42,8 +41,8 @@ public class AivenSchemaCompatibilityValidation implements Validation<V1SchemaRe
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        this.config = new AivenApiClientConfig(config);
+    public void init(@NotNull final ExtensionContext context) {
+        this.config = new AivenApiClientConfig(context.appConfiguration());
     }
 
     /**

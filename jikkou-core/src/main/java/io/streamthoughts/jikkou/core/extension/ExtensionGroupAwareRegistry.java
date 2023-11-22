@@ -45,7 +45,7 @@ public final class ExtensionGroupAwareRegistry implements ExtensionRegistry {
     @Override
     public <T> void register(@NotNull Class<T> type,
                              @NotNull Supplier<T> supplier) {
-        delegate.register(type, supplier, ExtensionDescriptorModifiers.withGroup(extensionGroup));
+        delegate.register(type, supplier, ExtensionDescriptorModifiers.withProvider(extensionGroup));
     }
 
     /**
@@ -56,7 +56,7 @@ public final class ExtensionGroupAwareRegistry implements ExtensionRegistry {
                              @NotNull Supplier<T> supplier,
                              ExtensionDescriptorModifier... modifiers) {
         ExtensionDescriptorModifier[] newModifiers = Arrays.copyOf(modifiers, modifiers.length + 1);
-        newModifiers[newModifiers.length - 1] = ExtensionDescriptorModifiers.withGroup(extensionGroup);
+        newModifiers[newModifiers.length - 1] = ExtensionDescriptorModifiers.withProvider(extensionGroup);
         delegate.register(type, supplier, newModifiers);
     }
 }

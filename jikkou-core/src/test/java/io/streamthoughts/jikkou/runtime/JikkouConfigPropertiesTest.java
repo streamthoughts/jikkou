@@ -26,10 +26,10 @@ class JikkouConfigPropertiesTest {
     @Test
     void shouldGetExtensionProviderDefaultEnabled() {
         Configuration configFalse = Configuration.of(EXTENSIONS_PROVIDER_DEFAULT_ENABLED.key(), "false");
-        Assertions.assertEquals(false, EXTENSIONS_PROVIDER_DEFAULT_ENABLED.evaluate(configFalse));
+        Assertions.assertEquals(false, EXTENSIONS_PROVIDER_DEFAULT_ENABLED.get(configFalse));
 
         Configuration configTrue = Configuration.of(EXTENSIONS_PROVIDER_DEFAULT_ENABLED.key(), "true");
-        Assertions.assertEquals(true, EXTENSIONS_PROVIDER_DEFAULT_ENABLED.evaluate(configTrue));
+        Assertions.assertEquals(true, EXTENSIONS_PROVIDER_DEFAULT_ENABLED.get(configTrue));
     }
 
 }

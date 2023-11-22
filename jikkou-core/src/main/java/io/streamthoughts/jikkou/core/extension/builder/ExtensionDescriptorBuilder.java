@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension.builder;
 
+import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.Example;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
@@ -26,7 +27,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * Class used to create new {@link ExtensionDescriptor} instance.
+ * Builder for creating new {@link ExtensionDescriptor} instances.
  *
  * @param <T> type of the extension.
  */
@@ -36,8 +37,9 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
     private String title;
     private String description;
     private List<Example> examples;
+    private List<ConfigPropertySpec> properties;
     private ExtensionCategory category;
-    private String group;
+    private String provider;
     private ExtensionMetadata metadata;
     private Class<T> type;
     private boolean isEnabled;
@@ -70,7 +72,8 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
                 .examples(descriptor.examples())
                 .type(descriptor.type())
                 .category(descriptor.category())
-                .group(descriptor.group())
+                .properties(descriptor.properties())
+                .provider(descriptor.provider())
                 .metadata(descriptor.metadata())
                 .classLoader(descriptor.classLoader())
                 .supplier(descriptor.supplier())
@@ -114,10 +117,27 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Example> examples() {
         return examples;
+    }
+
+
+    public ExtensionDescriptorBuilder<T> properties(List<ConfigPropertySpec> properties) {
+        this.properties = properties;
+        return this;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigPropertySpec> properties() {
+        return properties;
     }
 
 
@@ -204,15 +224,14 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * {@inheritDoc}
      */
     @Override
-    public String group() {
-        return group;
+    public String provider() {
+        return provider;
     }
 
-    public ExtensionDescriptorBuilder<T> group(String group) {
-        this.group = group;
+    public ExtensionDescriptorBuilder<T> provider(String provider) {
+        this.provider = provider;
         return this;
     }
-
 
     /**
      * Sets the classLoader of the Extension.
@@ -286,7 +305,8 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
                 description,
                 examples,
                 category,
-                group,
+                properties,
+                provider,
                 type,
                 classLoader,
                 supplier,

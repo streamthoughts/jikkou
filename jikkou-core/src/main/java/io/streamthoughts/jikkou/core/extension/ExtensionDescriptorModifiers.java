@@ -24,16 +24,16 @@ import org.jetbrains.annotations.NotNull;
 public final class ExtensionDescriptorModifiers {
 
     /**
-     * Gets a modifier implementation that will set the group of the extension.
+     * Gets a modifier implementation that will set the provider of the extension.
      *
      * @return a new {@link ExtensionDescriptorModifier} instance.
      */
-    public static ExtensionDescriptorModifier withGroup(@NotNull final String name) {
+    public static ExtensionDescriptorModifier withProvider(@NotNull final String name) {
         return new ExtensionDescriptorModifier() {
             @Override
             public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
                 return ExtensionDescriptorBuilder.<T>create(descriptor)
-                        .group(name)
+                        .provider(name)
                         .build();
             }
         };

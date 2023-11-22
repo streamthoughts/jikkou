@@ -16,35 +16,25 @@
 package io.streamthoughts.jikkou.core.reporter;
 
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import io.streamthoughts.jikkou.core.config.Configurable;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface used to report changes applied by Jikkou to a third-party system.
  */
 @Reflectable
 @Category(ExtensionCategory.REPORTER)
-public interface ChangeReporter extends Extension, Configurable {
+public interface ChangeReporter extends Extension {
 
     /**
      * Reports the given change results.
      *
-     * @param results  the change-results to be reported.
+     * @param results the change-results to be reported.
      */
     void report(final List<ChangeResult<Change>> results);
 
-    /**
-     * Configure this {@code ChangeReporter}.
-     *
-     * @param configuration  the {@link Configuration} instance used to configure this instance.
-     */
-    @Override
-    default void configure(final @NotNull Configuration configuration) {}
 }

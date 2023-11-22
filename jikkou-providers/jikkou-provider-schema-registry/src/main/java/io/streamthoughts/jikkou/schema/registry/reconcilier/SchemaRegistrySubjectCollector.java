@@ -19,8 +19,9 @@ import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1SchemaRegistrySubject.class)
-public class SchemaRegistrySubjectCollector implements Collector<V1SchemaRegistrySubject> {
+public class SchemaRegistrySubjectCollector extends ContextualExtension implements Collector<V1SchemaRegistrySubject> {
 
     private SchemaRegistryClientConfig config;
 
@@ -63,18 +64,19 @@ public class SchemaRegistrySubjectCollector implements Collector<V1SchemaRegistr
      * @param config the configuration.
      */
     public SchemaRegistrySubjectCollector(SchemaRegistryClientConfig config) {
-        configure(config);
+        init(config);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        configure(new SchemaRegistryClientConfig(config));
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
+        init(new SchemaRegistryClientConfig(context.appConfiguration()));
     }
 
-    private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
+    private void init(@NotNull SchemaRegistryClientConfig config) {
         this.config = config;
         this.schemaRegistrySubjectFactory = new V1SchemaRegistrySubjectFactory(
                 config.getSchemaRegistryVendor(),

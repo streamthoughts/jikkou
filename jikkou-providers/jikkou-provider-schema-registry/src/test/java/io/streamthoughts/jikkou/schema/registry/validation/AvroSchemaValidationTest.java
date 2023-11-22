@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -25,6 +26,7 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSp
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class AvroSchemaValidationTest {
 
@@ -68,8 +70,10 @@ class AvroSchemaValidationTest {
     @Test
     void shouldReturnErrorForMissingDocField() {
         // Given
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(AvroSchemaValidation.RECORD_FIELD_MUST_HAVE_DOC.asConfiguration(true));
         AvroSchemaValidation validation = new AvroSchemaValidation();
-        validation.configure(AvroSchemaValidation.RECORD_FIELD_MUST_HAVE_DOC.asConfiguration(true));
+        validation.init(context);
 
         // When
         ValidationResult result = validation.validate(V1SchemaRegistrySubject
@@ -101,8 +105,10 @@ class AvroSchemaValidationTest {
     @Test
     void shouldReturnErrorForNonNullableFields() {
         // Given
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_NULLABLE.asConfiguration(true));
         AvroSchemaValidation validation = new AvroSchemaValidation();
-        validation.configure(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_NULLABLE.asConfiguration(true));
+        validation.init(context);
 
         // When
         ValidationResult result = validation.validate(V1SchemaRegistrySubject
@@ -133,8 +139,10 @@ class AvroSchemaValidationTest {
     @Test
     void shouldReturnErrorForNonOptionalFields() {
         // Given
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_OPTIONAL.asConfiguration(true));
         AvroSchemaValidation validation = new AvroSchemaValidation();
-        validation.configure(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_OPTIONAL.asConfiguration(true));
+        validation.init(context);
 
         // When
         ValidationResult result = validation.validate(V1SchemaRegistrySubject

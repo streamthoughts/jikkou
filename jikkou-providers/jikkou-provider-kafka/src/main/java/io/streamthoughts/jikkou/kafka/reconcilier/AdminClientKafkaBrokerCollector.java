@@ -17,10 +17,8 @@ package io.streamthoughts.jikkou.kafka.reconcilier;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -29,7 +27,6 @@ import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.internals.ConfigsBuilder;
-import io.streamthoughts.jikkou.kafka.internals.KafkaConfigPredicate;
 import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -54,33 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaBroker.class)
-@ExtensionConfigProperties(
-        properties = {
-                @ConfigPropertySpec(
-                        name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
-                        description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
-                ),
-                @ConfigPropertySpec(
-                        name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
-                        description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
-                ),
-                @ConfigPropertySpec(
-                        name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
-                        description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
-                )
-        }
-)
 public final class AdminClientKafkaBrokerCollector
-        implements Collector<V1KafkaBroker> {
+        extends AdminClientKafkaConfigs implements Collector<V1KafkaBroker> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaBrokerCollector.class);
 
@@ -106,10 +78,10 @@ public final class AdminClientKafkaBrokerCollector
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 
@@ -130,14 +102,9 @@ public final class AdminClientKafkaBrokerCollector
     ResourceListObject<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
                                               @NotNull final Selector selector,
                                               @NotNull final AdminClientContext context) {
-        var options = new ConfigDescribeConfiguration(configuration);
 
-        var predicate = new KafkaConfigPredicate()
-                .withDefaultConfig(options.isDescribeDefaultConfigs())
-                .withDynamicBrokerConfig(options.isDescribeDynamicBrokerConfigs())
-                .withStaticBrokerConfig(options.isDescribeStaticBrokerConfigs());
-
-        List<V1KafkaBroker> resources = new KafkaBrokerClient(context.getAdminClient()).listAll(predicate);
+        List<V1KafkaBroker> resources = new KafkaBrokerClient(context.getAdminClient())
+                .listAll(kafkaConfigPredicate(configuration));
         final String clusterId = context.getClusterId();
         List<V1KafkaBroker> items = resources
                 .stream()

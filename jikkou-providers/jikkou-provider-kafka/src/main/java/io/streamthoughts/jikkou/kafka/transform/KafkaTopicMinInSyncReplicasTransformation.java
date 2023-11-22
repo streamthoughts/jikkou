@@ -21,8 +21,8 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ConfigValue;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -54,8 +54,8 @@ public class KafkaTopicMinInSyncReplicasTransformation implements Transformation
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        minInSyncReplicas = MIN_INSYNC_REPLICAS_CONFIG.getOptional(config)
+    public void init(@NotNull ExtensionContext context) {
+        minInSyncReplicas = MIN_INSYNC_REPLICAS_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MIN_INSYNC_REPLICAS_CONFIG.key(),

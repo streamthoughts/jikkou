@@ -19,7 +19,6 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
-import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
@@ -48,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 public interface Controller<
         R extends HasMetadata,
         C extends Change>
-        extends HasMetadataAcceptable, Configurable, Extension {
+        extends HasMetadataAcceptable, Extension {
 
     /**
      * Executes all changes for the given reconciliation mode.

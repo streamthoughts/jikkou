@@ -21,7 +21,6 @@ import io.streamthoughts.jikkou.core.validation.Validation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +30,7 @@ class ClassExtensionAliasesGeneratorTest {
     @Test
     void shouldGetClassAliasesForNameSuffixedWithTransformation() {
         ClassExtensionAliasesGenerator generator = new ClassExtensionAliasesGenerator();
-        DefaultExtensionDescriptor<TestTransformation> descriptor = getDescriptor(TestTransformation.class);
+        ExtensionDescriptor<TestTransformation> descriptor = getDescriptor(TestTransformation.class);
         Set<String> aliases = generator.getAliasesFor(descriptor, Collections.emptyList());
         Assertions.assertEquals(Set.of("Test", "TestTransformation"), aliases);
     }
@@ -39,7 +38,7 @@ class ClassExtensionAliasesGeneratorTest {
     @Test
     void shouldGetClassAliasesForNameSuffixedWithValidation() {
         ClassExtensionAliasesGenerator generator = new ClassExtensionAliasesGenerator();
-        DefaultExtensionDescriptor<TestValidation> descriptor = getDescriptor(TestValidation.class);
+        ExtensionDescriptor<TestValidation> descriptor = getDescriptor(TestValidation.class);
         Set<String> aliases = generator.getAliasesFor(descriptor, Collections.emptyList());
         Assertions.assertEquals(Set.of("Test", "TestValidation"), aliases);
     }
@@ -47,7 +46,7 @@ class ClassExtensionAliasesGeneratorTest {
     @Test
     void shouldGetClassAliasesForNameSuffixedWithExtension() {
         ClassExtensionAliasesGenerator generator = new ClassExtensionAliasesGenerator();
-        DefaultExtensionDescriptor<TestExtension> descriptor = getDescriptor(TestExtension.class);
+        ExtensionDescriptor<TestExtension> descriptor = getDescriptor(TestExtension.class);
         Set<String> aliases = generator.getAliasesFor(descriptor, Collections.emptyList());
         Assertions.assertEquals(Set.of("Test", "TestExtension"), aliases);
     }
@@ -65,24 +64,29 @@ class ClassExtensionAliasesGeneratorTest {
         Assertions.assertTrue(aliases.isEmpty());
     }
 
-    @NotNull
-    private static <T> DefaultExtensionDescriptor<T> getDescriptor(Class<T> clazz) {
+    private static <T> ExtensionDescriptor<T> getDescriptor(Class<T> clazz) {
         return new DefaultExtensionDescriptor<>(
-                clazz.getName(),
-                "",
-                "",
+                "Test",
+                "Title",
+                "Description",
                 Collections.emptyList(),
                 ExtensionCategory.EXTENSION,
-                "",
+                Collections.emptyList(),
+                "Provider",
                 clazz,
                 clazz.getClassLoader(),
                 () -> null,
-                false
+                true
         );
     }
 
-    private static abstract class TestTransformation implements Transformation<HasMetadata> {};
-    private static abstract class TestValidation implements Validation<HasMetadata> {};
-    private static abstract class TestExtension implements Extension {};
+    private static abstract class TestTransformation implements Transformation<HasMetadata> {
+    }
+
+    private static abstract class TestValidation implements Validation<HasMetadata> {
+    }
+
+    private static abstract class TestExtension implements Extension {
+    }
 
 }

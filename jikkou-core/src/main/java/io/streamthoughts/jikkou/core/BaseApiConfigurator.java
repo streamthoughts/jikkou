@@ -47,7 +47,7 @@ public abstract class BaseApiConfigurator implements ApiConfigurator {
     }
 
     protected <T> T getPropertyValue(final ConfigProperty<T> property) {
-        return property.evaluate(configuration);
+        return property.get(configuration);
     }
 
     /** {@inheritDoc} **/

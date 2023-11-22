@@ -15,14 +15,9 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.annotation.Description;
-import io.streamthoughts.jikkou.core.annotation.Enabled;
-import io.streamthoughts.jikkou.core.config.ConfigPropertyDescriptor;
-import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.action.Action;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.models.Resource;
@@ -30,17 +25,12 @@ import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.core.validation.Validation;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The top-level interface for extension.
  *
+ * @see Action
  * @see Resource
  * @see Validation
  * @see Transformation
@@ -49,85 +39,18 @@ import java.util.stream.Collectors;
  * @see HealthIndicator
  */
 @Evolving
+@Category(ExtensionCategory.EXTENSION)
 public interface Extension extends HasName {
 
     /**
-     * Gets the default configuration of this extension.
+     * Initializes this extension with the specified context.
+     * 
+     * This method is invoked each time the extension is used. Note that the given context is tied
+     * to this extension and therefore cannot be passed on to another extension through this method.
      *
-     * @return the configuration.
+     * @param context The extension context.
      */
-    default Configuration getDefaultConfiguration() {
-        List<ConfigPropertyDescriptor> descriptors = getExtensionConfigPropertySpec(this);
-        Map<String, String> defaultProperties = descriptors
-                .stream()
-                .filter(Predicate.not(ConfigPropertyDescriptor::isRequired))
-                .collect(Collectors.toMap(ConfigPropertyDescriptor::name, ConfigPropertyDescriptor::defaultValue));
-        return Configuration.from(defaultProperties);
-    }
-
-    /**
-     * Check whether the given extension is enabled.
-     *
-     * @param clazz the extension class for which to extract the description.
-     * @return boolean, default is {@code true}.
-     */
-    static boolean isEnabled(final Class<?> clazz) {
-        return AnnotationResolver.isAnnotatedWith(clazz, Enabled.class);
-    }
-
-    /**
-     * Gets the description of the given extension class.
-     *
-     * @param clazz the extension class for which to extract the description.
-     * @return The description or {@code null}.
-     */
-    static String getDescription(final Class<?> clazz) {
-        return Optional.ofNullable(clazz.getAnnotation(Description.class)).map(Description::value).orElse(null);
-    }
-
-    /**
-     * Gets the category of the given extension class.
-     *
-     * @param clazz the extension class for which to extract the type.
-     * @return the type or {@code "<unknown>"}.
-     */
-    static ExtensionCategory getCategory(final Class<?> clazz) {
-        return AnnotationResolver.findAllAnnotationsByType(clazz, Category.class)
-                .stream()
-                .map(Category::value)
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * Gets the specifications for the static configuration properties supported by the specified extension object.
-     *
-     * @param extension the extension object.
-     * @return the list of {@link ConfigPropertyDescriptor}.
-     */
-    static List<ConfigPropertyDescriptor> getExtensionConfigPropertySpec(Object extension) {
-        return getExtensionConfigPropertySpec(extension.getClass());
-    }
-
-    /**
-     * Gets the specifications for the static configuration properties supported by the specified extension class.
-     *
-     * @param clazz the extension class.
-     * @return the list of {@link ConfigPropertyDescriptor}.
-     */
-    static List<ConfigPropertyDescriptor> getExtensionConfigPropertySpec(Class<?> clazz) {
-        ExtensionConfigProperties annotation = clazz.getAnnotation(ExtensionConfigProperties.class);
-        if (annotation == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.stream(annotation.properties())
-                .map(descriptor -> new ConfigPropertyDescriptor(
-                        descriptor.name(),
-                        descriptor.type(),
-                        descriptor.description(),
-                        descriptor.defaultValue(),
-                        descriptor.isRequired()
-                ))
-                .toList();
+    default void init(@NotNull ExtensionContext context) {
+        // intentionally left blank
     }
 }

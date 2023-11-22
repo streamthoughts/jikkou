@@ -18,10 +18,10 @@ package io.streamthoughts.jikkou.kafka.reconcilier;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -61,29 +61,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaTableRecord.class)
-@ExtensionConfigProperties(
-        properties = {
-                @ConfigPropertySpec(
+@ExtensionSpec(
+        options = {
+                @ExtensionOptionSpec(
                         name = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME,
                         description = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_DESCRIPTION,
-                        type = String.class
+                        type = String.class,
+                        required = true
                 ),
-                @ConfigPropertySpec(
+                @ExtensionOptionSpec(
                         name = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME,
                         description = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_DESCRIPTION,
-                        type = String.class
+                        type = String.class,
+                        required = true
                 ),
-                @ConfigPropertySpec(
+                @ExtensionOptionSpec(
                         name = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME,
                         description = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_DESCRIPTION,
-                        type = String.class
+                        type = String.class,
+                        required = true
                 ),
-                @ConfigPropertySpec(
+                @ExtensionOptionSpec(
                         name = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_NAME,
                         description = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION,
-                        type = Boolean.class,
-                        defaultValue = "false",
-                        isRequired = false
+                        type = Boolean.class
                 )
         }
 )
@@ -117,22 +118,12 @@ public final class AdminClientKafkaTableCollector
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaTableCollector} instance with the specified
-     * application's configuration.
-     *
-     * @param config the application's configuration.
-     */
-    public AdminClientKafkaTableCollector(final @NotNull Configuration config) {
-        configure(config);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
+    public void init(@NotNull ExtensionContext context) {
         if (consumerFactory == null) {
-            Config config = new Config(configuration);
+            Config config = new Config(context.appConfiguration());
             consumerFactory = new DefaultConsumerFactory<byte[], byte[]>(config.clientConfig())
                     .setKeyDeserializer(new ByteArrayDeserializer())
                     .setValueDeserializer(new ByteArrayDeserializer());
@@ -140,7 +131,7 @@ public final class AdminClientKafkaTableCollector
 
         if (adminClientFactory == null) {
             adminClientFactory = new DefaultAdminClientFactory(() ->
-                    KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.evaluate(configuration)
+                    KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.get(context.appConfiguration())
             );
         }
     }
@@ -195,7 +186,6 @@ public final class AdminClientKafkaTableCollector
     public static class InternalConsumerRecordCallback implements ConsumerRecordCallback<byte[], byte[]> {
 
         private final Map<DataHandle, V1KafkaTableRecord> accumulator;
-
         private final DataType keyType;
         private final DataType valueType;
         private final boolean skipMessageOnError;
@@ -358,23 +348,23 @@ public final class AdminClientKafkaTableCollector
         }
 
         public boolean skipMessageOnError() {
-            return SKIP_MESSAGE_ON_ERROR_CONFIG.evaluate(configuration);
+            return SKIP_MESSAGE_ON_ERROR_CONFIG.get(configuration);
         }
 
         public String topicName() {
-            return TOPIC_NAME_CONFIG.evaluate(configuration);
+            return TOPIC_NAME_CONFIG.get(configuration);
         }
 
         public DataType keyType() {
-            return DataType.valueOf(KEY_TYPE_CONFIG.evaluate(configuration).toUpperCase(Locale.ROOT));
+            return DataType.valueOf(KEY_TYPE_CONFIG.get(configuration).toUpperCase(Locale.ROOT));
         }
 
         public DataType valueType() {
-            return DataType.valueOf(VALUE_TYPE_CONFIG.evaluate(configuration).toUpperCase(Locale.ROOT));
+            return DataType.valueOf(VALUE_TYPE_CONFIG.get(configuration).toUpperCase(Locale.ROOT));
         }
 
         public Map<String, Object> clientConfig() {
-            return KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.evaluate(configuration);
+            return KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.get(configuration);
         }
     }
 }

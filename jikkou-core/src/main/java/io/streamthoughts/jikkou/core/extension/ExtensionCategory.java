@@ -15,6 +15,11 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.streamthoughts.jikkou.common.utils.Enums;
+import org.jetbrains.annotations.Nullable;
+
 public enum ExtensionCategory {
 
     /**
@@ -45,5 +50,19 @@ public enum ExtensionCategory {
      * For any class that implements {@link io.streamthoughts.jikkou.core.health.HealthIndicator}.
      */
     HEALTH_INDICATOR,
+
+    /**
+     * For any class that implements {@link io.streamthoughts.jikkou.core.action.Action}.
+     */
+    ACTION,
+    /**
+     * Any.
+     */
     EXTENSION;
+
+    @JsonCreator
+    public static ExtensionCategory getForNameIgnoreCase(final @Nullable String str) {
+        return Enums.getForNameIgnoreCase(str, ExtensionCategory.class);
+    }
+
 }

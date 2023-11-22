@@ -35,7 +35,7 @@ public interface ExtensionSupplier<T> {
     T get(Configuration configuration);
 
     /**
-     * Gets the descriptor for the extension supply this class.
+     * Gets the descriptor for the extension supplied by this class.
      *
      * @return  the {@link ExtensionDescriptor}.
      */

@@ -18,21 +18,32 @@ package io.streamthoughts.jikkou.kafka.transform;
 import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation.MAX_NUM_PARTITIONS_CONFIG;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class KafkaTopicMaxNumPartitionsTransformationTest {
+
+    KafkaTopicMaxNumPartitionsTransformation transformation;
+
+    @BeforeEach
+    void beforeEach() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(MAX_NUM_PARTITIONS_CONFIG.asConfiguration(10));
+        transformation = new KafkaTopicMaxNumPartitionsTransformation();
+        transformation.init(context);
+    }
 
     @Test
     void shouldEnforceConstraintForInvalidValue() {
         // Given
-        KafkaTopicMaxNumPartitionsTransformation transformation = new KafkaTopicMaxNumPartitionsTransformation();
-        transformation.configure(MAX_NUM_PARTITIONS_CONFIG.asConfiguration(10));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
@@ -54,8 +65,6 @@ class KafkaTopicMaxNumPartitionsTransformationTest {
     @Test
     void shouldNotEnforceConstraintForValidValue() {
         // Given
-        KafkaTopicMaxNumPartitionsTransformation transformation = new KafkaTopicMaxNumPartitionsTransformation();
-        transformation.configure(MAX_NUM_PARTITIONS_CONFIG.asConfiguration(10));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()

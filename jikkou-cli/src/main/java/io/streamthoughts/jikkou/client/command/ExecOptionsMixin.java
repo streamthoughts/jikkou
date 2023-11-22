@@ -22,7 +22,7 @@ public class ExecOptionsMixin {
 
     @Option(names = { "--output", "-o" },
             defaultValue = "TEXT",
-            description = "Prints the output in the specified format. Allowed values: text, compact, json, yaml (default text)."
+            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
     )
     public Printers format;
 

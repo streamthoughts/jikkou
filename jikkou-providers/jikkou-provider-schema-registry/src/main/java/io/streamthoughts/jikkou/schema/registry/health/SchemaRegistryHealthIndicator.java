@@ -18,9 +18,8 @@ package io.streamthoughts.jikkou.schema.registry.health;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
-import io.streamthoughts.jikkou.core.config.Configurable;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.http.client.RestClientException;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 @Named("schemaregistry")
 @Title("SchemaRegistryHealthIndicator allows checking whether the Schema Registry is healthy.")
 @Description("Get the health of Schema Registry")
-public final class SchemaRegistryHealthIndicator implements HealthIndicator, Configurable {
+public final class SchemaRegistryHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_INDICATOR_NAME = "schemaregistry";
     private SchemaRegistryClientConfig config;
@@ -61,8 +60,8 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator, Con
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        this.config = new SchemaRegistryClientConfig(config);
+    public void init(@NotNull final ExtensionContext context) throws ConfigException {
+        this.config = new SchemaRegistryClientConfig(context.appConfiguration());
     }
 
     /**

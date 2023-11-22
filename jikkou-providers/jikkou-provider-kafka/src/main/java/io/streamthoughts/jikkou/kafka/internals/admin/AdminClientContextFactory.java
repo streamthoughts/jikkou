@@ -73,17 +73,17 @@ public final class AdminClientContextFactory {
     @NotNull
     public AdminClientContext createAdminClientContext() {
         AdminClientContext context = new AdminClientContext(factory);
-        context.enabledWaitForKafkaBrokers(KAFKA_BROKERS_WAIT_FOR_ENABLED.evaluate(configuration));
+        context.enabledWaitForKafkaBrokers(KAFKA_BROKERS_WAIT_FOR_ENABLED.get(configuration));
         context.setOptions(KafkaBrokersReady.Options.withDefaults()
-                .withRetryBackoffMs(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.evaluate(configuration))
-                .withMinAvailableBrokers(KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.evaluate(configuration))
-                .withTimeoutMs(KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.evaluate(configuration))
+                .withRetryBackoffMs(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.get(configuration))
+                .withMinAvailableBrokers(KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.get(configuration))
+                .withTimeoutMs(KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.get(configuration))
         );
         return context;
     }
 
     @NotNull
     private static DefaultAdminClientFactory newDefaultAdminClientFactory(Configuration configuration) {
-        return new DefaultAdminClientFactory(ADMIN_CLIENT_CONFIG.evaluate(configuration));
+        return new DefaultAdminClientFactory(ADMIN_CLIENT_CONFIG.get(configuration));
     }
 }

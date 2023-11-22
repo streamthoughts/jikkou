@@ -22,7 +22,7 @@ public final class FormatOptionsMixin {
 
     @Option(names = { "--output", "-o" },
             defaultValue = "YAML",
-            description = "Prints the output in the specified format. Allowed values: ${COMPLETION-CANDIDATES} (default YAML)."
+            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
     )
     ResourceWriter.Format format;
 

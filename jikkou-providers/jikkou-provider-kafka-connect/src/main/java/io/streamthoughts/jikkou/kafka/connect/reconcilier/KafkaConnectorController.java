@@ -22,8 +22,8 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
@@ -55,7 +55,7 @@ import org.jetbrains.annotations.NotNull;
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
-public final class KafkaConnectorController implements Controller<V1KafkaConnector, KafkaConnectorChange> {
+public final class KafkaConnectorController extends ContextualExtension implements Controller<V1KafkaConnector, KafkaConnectorChange> {
 
     private KafkaConnectExtensionConfig configuration;
 
@@ -65,10 +65,11 @@ public final class KafkaConnectorController implements Controller<V1KafkaConnect
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        this.configuration = new KafkaConnectExtensionConfig(config);
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
+        this.configuration = new KafkaConnectExtensionConfig(context.appConfiguration());
         this.collector = new KafkaConnectorCollector();
-        this.collector.configure(config);
+        this.collector.init(context);
     }
 
     /**

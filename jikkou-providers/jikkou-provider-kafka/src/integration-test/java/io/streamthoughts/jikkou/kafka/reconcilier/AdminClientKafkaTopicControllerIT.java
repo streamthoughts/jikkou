@@ -102,9 +102,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
         List<? extends ChangeResult> results = api.reconcile(resources, ReconciliationMode.CREATE, context).getChanges();
-        ResourceListObject<V1KafkaTopic> actualTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
@@ -159,9 +159,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult<Change>> results = api.reconcile(resources, ReconciliationMode.DELETE, context).getChanges();
-        ResourceListObject<V1KafkaTopic> actualTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
@@ -195,9 +195,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult<Change>> results = api.reconcile(resources, ReconciliationMode.UPDATE, context).getChanges();
-        ResourceListObject<V1KafkaTopic> actualTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
@@ -236,9 +236,9 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult<Change>> results = api.reconcile(resources, ReconciliationMode.FULL, context).getChanges();
-        ResourceListObject<V1KafkaTopic> actualTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
@@ -278,11 +278,11 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
                 .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult<Change>> results = api.reconcile(resources, ReconciliationMode.FULL, context).getChanges();
 
         Thread.sleep(500); // Let's wait for KRaft to remove topic
-        ResourceListObject<V1KafkaTopic> actualTopicList = getResource();
+        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
@@ -314,13 +314,7 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         return items.stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList();
     }
 
-    private ResourceListObject<V1KafkaTopic> getResource() {
-        Configuration configuration = new ConfigDescribeConfiguration()
-                .withDescribeStaticBrokerConfigs(false)
-                .withDescribeDynamicBrokerConfigs(false)
-                .withDescribeDefaultConfigs(false)
-                .asConfiguration();
-
-        return api.listResources(V1KafkaTopic.class, Selectors.NO_SELECTOR, configuration);
+    private ResourceListObject<V1KafkaTopic> listResources() {
+        return api.listResources(V1KafkaTopic.class, Selectors.NO_SELECTOR, Configuration.empty());
     }
 }

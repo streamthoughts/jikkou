@@ -68,26 +68,26 @@ public class KafkaChangeReporterConfig {
     }
 
     public String topicName() {
-        return KAFKA_TOPIC_CONFIG.evaluate(configuration);
+        return KAFKA_TOPIC_CONFIG.get(configuration);
     }
 
     public Map<String, Object> producerConfig() {
-        return PRODUCER_CLIENT_CONFIG.evaluate(configuration);
+        return PRODUCER_CLIENT_CONFIG.get(configuration);
     }
 
     public Map<String, Object> adminClientConfig() {
-        return ADMIN_CLIENT_CONFIG.evaluate(configuration);
+        return ADMIN_CLIENT_CONFIG.get(configuration);
     }
 
     public String eventSource() {
-        return EVENT_SOURCE_CONFIG.evaluate(configuration);
+        return EVENT_SOURCE_CONFIG.get(configuration);
     }
 
     public boolean isTopicCreationEnabled() {
-        return KAFKA_TOPIC_CREATION_ENABLED_CONFIG.evaluate(configuration);
+        return KAFKA_TOPIC_CREATION_ENABLED_CONFIG.get(configuration);
     }
 
     public int defaultReplicationFactor() {
-        return KAFKA_TOPIC_CREATION_DEFAULT_REPLICAS_CONFIG.evaluate(configuration);
+        return KAFKA_TOPIC_CREATION_DEFAULT_REPLICAS_CONFIG.get(configuration);
     }
 }

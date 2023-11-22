@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -33,7 +35,8 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     private final String title;
     private final List<Example> examples;
     private final ExtensionCategory category;
-    private final String group;
+    private final List<ConfigPropertySpec> properties;
+    private final String provider;
     private final Class<T> type;
     private final Supplier<T> supplier;
     private final boolean isEnabled;
@@ -47,7 +50,7 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
      * @param name        The name of the extension.
      * @param description The description of the extension.
      * @param category    The category of the extension.
-     * @param group       The group of the extension.
+     * @param provider    The provider of the extension.
      * @param type        The type of the extension.
      * @param classLoader The extension ClassLoader.
      * @param supplier    The Supplier of the extension.
@@ -57,7 +60,8 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
                                       final String description,
                                       final List<Example> examples,
                                       final ExtensionCategory category,
-                                      final String group,
+                                      final List<ConfigPropertySpec> properties,
+                                      final String provider,
                                       final Class<T> type,
                                       final ClassLoader classLoader,
                                       final Supplier<T> supplier,
@@ -67,9 +71,10 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
         this.name = name;
         this.description = description;
         this.title = title;
-        this.examples = examples;
+        this.examples = examples == null ? null : new ArrayList<>(examples);
+        this.properties = properties == null ? null : new ArrayList<>(properties);
         this.category = category;
-        this.group = group;
+        this.provider = provider;
         this.supplier = supplier;
         this.type = type;
         this.classLoader = classLoader == null ? type.getClassLoader() : classLoader;
@@ -99,9 +104,20 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
         return description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Example> examples() {
         return examples;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigPropertySpec> properties() {
+        return properties;
     }
 
     /**
@@ -144,8 +160,8 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
      * {@inheritDoc}
      */
     @Override
-    public String group() {
-        return group;
+    public String provider() {
+        return provider;
     }
 
     /**

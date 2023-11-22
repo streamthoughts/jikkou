@@ -24,7 +24,8 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
@@ -44,6 +45,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicChangeList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +58,7 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 public final class AdminClientKafkaTopicController
-        implements Controller<V1KafkaTopic, TopicChange> {
+        extends ContextualExtension implements Controller<V1KafkaTopic, TopicChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 
@@ -85,10 +87,10 @@ public final class AdminClientKafkaTopicController
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 
@@ -124,15 +126,17 @@ public final class AdminClientKafkaTopicController
                 .toList();
 
         // Build the configuration for describing actual resources
-        Configuration describeConfiguration = new ConfigDescribeConfiguration()
-                .withDescribeDefaultConfigs(true)
-                .withDescribeStaticBrokerConfigs(true)
-                .withDescribeDynamicBrokerConfigs(true)
-                .asConfiguration();
+        Configuration configuration = Configuration.from(Map.of(
+                AdminClientKafkaConfigs.DEFAULT_CONFIGS_CONFIG, true,
+                AdminClientKafkaConfigs.DYNAMIC_BROKER_CONFIGS_CONFIG, true,
+                AdminClientKafkaConfigs.STATIC_BROKER_CONFIGS_CONFIG, true
+        ));
 
         // Get the list of remote resources that are candidates for this reconciliation
         AdminClientKafkaTopicCollector collector = new AdminClientKafkaTopicCollector(adminClientContextFactory);
-        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration, Selectors.NO_SELECTOR)
+        collector.init(extensionContext().contextForExtension(AdminClientKafkaTopicCollector.class));
+
+        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(configuration, Selectors.NO_SELECTOR)
                 .stream()
                 .filter(context.selector()::apply)
                 .toList();
@@ -156,6 +160,6 @@ public final class AdminClientKafkaTopicController
     static boolean isConfigDeletionEnabled(@NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
                 .orElse(true)
-                .evaluate(context.configuration());
+                .get(context.configuration());
     }
 }

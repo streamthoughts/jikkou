@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core;
 
+import io.streamthoughts.jikkou.core.action.SystemTimeAction;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.converter.ResourceListConverter;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
@@ -39,6 +40,7 @@ public final class CoreExtensionProvider implements ExtensionProvider {
         registry.register(ConfigMapsTransformation.class, ConfigMapsTransformation::new);
         registry.register(EnrichMetadataTransformation.class, EnrichMetadataTransformation::new);
         registry.register(ResourceListConverter.class, ResourceListConverter::new);
+        registry.register(SystemTimeAction.class, SystemTimeAction::new);
     }
 
     /**

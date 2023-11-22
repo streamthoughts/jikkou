@@ -33,7 +33,7 @@ import java.util.List;
 @Reflectable
 public record ApiResourceVerbOptionList(
         String verb,
-        List<ApiResourceVerbOptionSpec> options) {
+        List<ApiOptionSpec> options) {
 
     @ConstructorProperties({
             "verb",
@@ -43,7 +43,7 @@ public record ApiResourceVerbOptionList(
 
     public ApiResourceVerbOptionList(
             Verb verb,
-            List<ApiResourceVerbOptionSpec> options) {
+            List<ApiOptionSpec> options) {
         this(verb.value(), options);
     }
 }

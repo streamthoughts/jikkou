@@ -15,18 +15,30 @@
  */
 package io.streamthoughts.jikkou.client.command.extension;
 
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.extension.Example;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
-import io.streamthoughts.jikkou.core.models.ApiExtensionList;
+import io.streamthoughts.jikkou.core.models.ApiExtensionSpec;
+import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "get",
@@ -36,7 +48,24 @@ import picocli.CommandLine.Parameters;
 @Singleton
 public class GetExtensionCommand extends CLIBaseCommand implements Callable<Integer> {
 
-    public static final String NOT_AVAILABLE = "N/A";
+    private static final String NOT_AVAILABLE = "N/A";
+    private static final String NEW_LINE = System.lineSeparator();
+    private static final String WIDE_COLUMN_TITLE = "TITLE";
+    private static final String WIDE_COLUMN_DESCRIPTION = "DESCRIPTION";
+    private static final String WIDE_COLUMN_OPTIONS = "OPTIONS";
+    private static final String WIDE_COLUMN_EXAMPLES = "EXAMPLES";
+
+    enum Format {
+        JSON, YAML, WIDE
+    }
+
+    @Option(names = {"--output", "-o"},
+            defaultValue = "WIDE",
+            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
+    )
+
+    private Format format;
+
     @Parameters(
             paramLabel = "NAME",
             description = "Name of the extension.")
@@ -52,42 +81,89 @@ public class GetExtensionCommand extends CLIBaseCommand implements Callable<Inte
      * {@inheritDoc}
      **/
     @Override
-    public Integer call() {
-        ApiExtensionList apiExtensions = api.getApiExtensions();
+    public Integer call() throws IOException {
+        ApiExtension extension = api.getApiExtension(name);
 
-        Optional<ApiExtension> optional = apiExtensions.extensions()
-                .stream()
-                .filter(it -> it.name().equalsIgnoreCase(name))
-                .findFirst();
-        if (optional.isEmpty()) {
-            System.err.printf("Unknown ApiExtension for name '%s'.%n", name);
-            return CommandLine.ExitCode.SOFTWARE;
+        ApiExtensionSpec spec = extension.spec();
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            switch (format) {
+                case JSON -> Jackson.JSON_OBJECT_MAPPER
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValue(os, extension);
+                case YAML -> Jackson.YAML_OBJECT_MAPPER
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValue(os, extension);
+                case WIDE -> writeText(os, spec);
+            }
+            System.out.println(os);
+            return CommandLine.ExitCode.OK;
         }
 
-        ApiExtension extension = optional.get();
-        StringBuilder sb = new StringBuilder()
-                .append("\n")
-                .append("TITLE\n")
-                .append(Optional.ofNullable(extension.title()).orElse(NOT_AVAILABLE))
-                .append("\n\n")
-                .append("DESCRIPTION\n")
-                .append(Optional.ofNullable(extension.description()).orElse(NOT_AVAILABLE))
-                .append("\n\n")
-                .append("EXAMPLES");
+    }
 
-        List<Example> examples = extension.examples();
+    private static void writeText(OutputStream os, ApiExtensionSpec spec) {
+        StringBuilder sb = new StringBuilder()
+                .append(NEW_LINE)
+                .append(WIDE_COLUMN_TITLE)
+                .append(NEW_LINE)
+                .append(Optional.ofNullable(spec.title()).orElse(NOT_AVAILABLE))
+                .append(NEW_LINE)
+                .append(NEW_LINE)
+                .append(WIDE_COLUMN_DESCRIPTION)
+                .append(NEW_LINE)
+                .append(Optional.ofNullable(spec.description()).orElse(NOT_AVAILABLE))
+                .append(NEW_LINE)
+                .append(NEW_LINE)
+                .append(WIDE_COLUMN_OPTIONS)
+                .append(NEW_LINE)
+                .append(writeOptionsAsTable(spec.options()))
+                .append(NEW_LINE)
+                .append(NEW_LINE)
+                .append(WIDE_COLUMN_EXAMPLES);
+
+        List<Example> examples = spec.examples();
         if (examples.isEmpty()) {
-            sb.append("\n\n");
+            sb.append(NEW_LINE);
             sb.append(NOT_AVAILABLE);
         } else {
             for (Example example : examples) {
-                sb.append("\n\n");
+                sb.append(NEW_LINE);
+                sb.append(NEW_LINE);
                 sb.append(example.title());
-                sb.append("\n\n");
-                sb.append(String.join("\n", example.code()));
+                sb.append(NEW_LINE);
+                sb.append(NEW_LINE);
+                sb.append(String.join(NEW_LINE, example.code()));
             }
         }
-        System.out.println(sb);
-        return CommandLine.ExitCode.OK;
+        try (var writer = new PrintWriter(os)) {
+            writer.write(sb.toString());
+        }
+    }
+
+    private static String writeOptionsAsTable(List<ApiOptionSpec> optionSpecs) {
+        List<String[]> options = new ArrayList<>();
+        for (ApiOptionSpec option : optionSpecs) {
+            String[] strings = new String[]{
+                    option.name(),
+                    option.description(),
+                    option.type(),
+                    String.valueOf(option.required())
+            };
+            options.add(strings);
+        }
+        String[][] data = options.toArray(new String[0][]);
+        return AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS,
+                new Column[]{
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(20, OverflowBehaviour.NEWLINE),
+                        new Column().header(WIDE_COLUMN_DESCRIPTION).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(80, OverflowBehaviour.NEWLINE),
+                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(10, OverflowBehaviour.NEWLINE),
+                        new Column().header("REQUIRED").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(10, OverflowBehaviour.NEWLINE)
+                },
+                data
+        );
     }
 }

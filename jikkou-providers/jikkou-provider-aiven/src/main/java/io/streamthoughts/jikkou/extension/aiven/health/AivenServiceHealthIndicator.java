@@ -20,9 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
-import io.streamthoughts.jikkou.core.config.Configurable;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -42,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 @Named("avnservice")
 @Title("AivenServiceHealthIndicator allows checking whether the Aiven service is healthy.")
 @Description("Get the health of an Aiven service")
-public final class AivenServiceHealthIndicator implements HealthIndicator, Configurable {
+public final class AivenServiceHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_NAME = "avnservice";
 
@@ -56,32 +55,14 @@ public final class AivenServiceHealthIndicator implements HealthIndicator, Confi
     }
 
     /**
-     * Creates a new {@link AivenServiceHealthIndicator} instance.
-     *
-     * @param config the configuration.
-     */
-    public AivenServiceHealthIndicator(@NotNull AivenApiClientConfig config) {
-        this.config = config;
-    }
-
-    /**
-     * Creates a new {@link AivenServiceHealthIndicator} instance.
-     *
-     * @param configuration the context configuration.
-     */
-    public AivenServiceHealthIndicator(@NotNull Configuration configuration) {
-        configure(configuration);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        configure(new AivenApiClientConfig(config));
+    public void init(@NotNull final ExtensionContext context) {
+        init(new AivenApiClientConfig(context.appConfiguration()));
     }
 
-    public void configure(@NotNull AivenApiClientConfig config) throws ConfigException {
+    public void init(@NotNull AivenApiClientConfig config) throws ConfigException {
         this.config = config;
     }
 

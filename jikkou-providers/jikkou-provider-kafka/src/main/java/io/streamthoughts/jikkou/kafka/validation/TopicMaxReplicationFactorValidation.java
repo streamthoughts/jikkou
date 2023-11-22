@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -32,13 +33,13 @@ import org.jetbrains.annotations.NotNull;
         title = "Validate topics have a replication factor equals or less than '3'.",
         full = true,
         code = {"""
-            validations:
-            - name: "topicMustHaveReplicasEqualsOrLessThanThree"
-              type: "io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactorValidation"
-              priority: 100
-              config:
-                topicMaxReplicationFactor: 3
-            """
+                validations:
+                - name: "topicMustHaveReplicasEqualsOrLessThanThree"
+                  type: "io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactorValidation"
+                  priority: 100
+                  config:
+                    topicMaxReplicationFactor: 3
+                """
         }
 )
 public final class TopicMaxReplicationFactorValidation extends TopicValidation {
@@ -55,21 +56,12 @@ public final class TopicMaxReplicationFactorValidation extends TopicValidation {
     }
 
     /**
-     * Creates a new {@link TopicMaxReplicationFactorValidation}
-     *
-     * @param maxReplicationFactor the min replication factor.
-     */
-    public TopicMaxReplicationFactorValidation(final int maxReplicationFactor) {
-        configure(VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.asConfiguration(maxReplicationFactor));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        maxReplicationFactor = VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.getOptional(config)
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        maxReplicationFactor = VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.key(),

@@ -56,21 +56,21 @@ public final class AivenApiClientConfig {
     }
 
     public String getApiUrl() {
-        return AIVEN_API_URL.evaluate(configuration);
+        return AIVEN_API_URL.get(configuration);
     }
 
     public String getTokenAuth() {
-        return AIVEN_TOKEN_AUTH.evaluate(configuration);
+        return AIVEN_TOKEN_AUTH.get(configuration);
     }
 
     public String getProject() {
-        return AIVEN_PROJECT.evaluate(configuration);
+        return AIVEN_PROJECT.get(configuration);
     }
 
     public String getService() {
-        return AIVEN_SERVICE.evaluate(configuration);
+        return AIVEN_SERVICE.get(configuration);
     }
     public boolean getDebugLoggingEnabled() {
-        return AIVEN_DEBUG_LOGGING_ENABLED.evaluate(configuration);
+        return AIVEN_DEBUG_LOGGING_ENABLED.get(configuration);
     }
 }

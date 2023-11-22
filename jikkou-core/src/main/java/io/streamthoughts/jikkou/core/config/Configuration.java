@@ -562,7 +562,7 @@ public interface Configuration {
                                        @Nullable final Supplier<List<String>> defaultValueSupplier) {
         Object object = getAny(key);
         if (object != null) {
-            return (List<String>) TypeConverter.getArray(object);
+            return (List<String>) TypeConverter.getList(object, true);
         }
         return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
     }
@@ -698,13 +698,23 @@ public interface Configuration {
     }
 
     /**
-     * Find the double value associated with the given key.
+     * Find the float value associated with the given key.
      *
      * @param key the key for the configuration property.
      * @return the {@link java.util.Optional} configuration value.
      */
     default Optional<Float> findFloat(@NotNull final String key) {
         return Optional.ofNullable(getFloat(key));
+    }
+
+    /**
+     * Find the double value associated with the given key.
+     *
+     * @param key the key for the configuration property.
+     * @return the {@link java.util.Optional} configuration value.
+     */
+    default Optional<Double> findDouble(@NotNull final String key) {
+        return Optional.ofNullable(getDouble(key));
     }
 
     /**

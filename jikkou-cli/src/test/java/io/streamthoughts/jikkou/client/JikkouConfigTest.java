@@ -38,7 +38,7 @@ class JikkouConfigTest {
         JikkouConfig config = JikkouConfig.load();
 
         // When
-        Properties properties = ADMIN_CLIENT_CONFIG.evaluate(config);
+        Properties properties = ADMIN_CLIENT_CONFIG.get(config);
 
         // Then
         Assertions.assertNotNull(properties);

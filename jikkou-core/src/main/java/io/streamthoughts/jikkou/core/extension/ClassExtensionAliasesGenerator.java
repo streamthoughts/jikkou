@@ -16,6 +16,8 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.action.Action;
+import io.streamthoughts.jikkou.core.converter.Converter;
 import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import java.util.ArrayList;
@@ -59,6 +61,10 @@ public final class ClassExtensionAliasesGenerator implements ExtensionAliasesGen
                 new DropClassNameSuffixExtractor("Validation", Validation.class::isAssignableFrom));
         addClassAliasExtractor(
                 new DropClassNameSuffixExtractor("Transformation", Transformation.class::isAssignableFrom));
+        addClassAliasExtractor(
+                new DropClassNameSuffixExtractor("Converter", Converter.class::isAssignableFrom));
+        addClassAliasExtractor(
+                new DropClassNameSuffixExtractor("Action", Action.class::isAssignableFrom));
     }
 
     public void addClassAliasExtractor(final ClassAliasExtractor extractor) {

@@ -30,6 +30,7 @@ import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
 import io.streamthoughts.jikkou.client.banner.JikkouBanner;
 import io.streamthoughts.jikkou.client.command.DiffCommand;
 import io.streamthoughts.jikkou.client.command.PrepareCommand;
+import io.streamthoughts.jikkou.client.command.action.ActionCommandLineFactory;
 import io.streamthoughts.jikkou.client.command.config.ConfigCommand;
 import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCandidateCommand;
 import io.streamthoughts.jikkou.client.command.extension.ApiExtensionCommand;
@@ -206,10 +207,10 @@ public final class Jikkou {
 
         if (isApiEnabled) {
             try {
-                GetCommandLineFactory generator = context.getBean(GetCommandLineFactory.class);
-                commandLine.addSubcommand(generator.createCommandLine());
+                commandLine.addSubcommand(context.getBean(GetCommandLineFactory.class).createCommandLine());
+                commandLine.addSubcommand(context.getBean(ActionCommandLineFactory.class).createCommandLine());
             } catch (Exception e) {
-                System.err.println("Error: Cannot generate 'get' subcommands. Cause: " + e.getLocalizedMessage());
+                System.err.println("Error: Cannot generate 'get/action' subcommands. Cause: " + e.getLocalizedMessage());
             }
         }
 
@@ -244,6 +245,7 @@ public final class Jikkou {
         List<String> system = new ArrayList<>();
         if (isApiEnabled) {
             system.add("health");
+            system.add("action");
             if (isProxyMode) system.add("server-info");
         }
 

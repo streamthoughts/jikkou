@@ -44,13 +44,13 @@ public class GetHealthCommand extends CLIBaseCommand implements Callable<Integer
 
     @Option(names = { "--output", "-o" },
             defaultValue = "YAML",
-            description = "Prints the output in the specified format. Allowed values: json, yaml (default yaml)."
+            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
     )
     Formats format;
 
     @Option(names = "--timeout-ms",
             defaultValue = "2000",
-            description = "Timeout in milliseconds for retrieving health indicators (default: 2000).")
+            description = "Timeout in milliseconds for retrieving health indicators (default: ${DEFAULT-VALUE}).")
     long timeoutMs;
 
     @Parameters(

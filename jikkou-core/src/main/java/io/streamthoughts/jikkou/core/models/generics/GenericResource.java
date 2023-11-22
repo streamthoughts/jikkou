@@ -31,16 +31,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-
 /**
  * Provides a generic serializable/deserializable implementation of the {@link HasMetadata} interface.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "apiVersion",
-    "kind",
-    "metadata",
-    "template"
+        "apiVersion",
+        "kind",
+        "metadata",
+        "template"
 })
 @JsonDeserialize
 @Reflectable
@@ -60,16 +59,16 @@ public class GenericResource implements HasMetadata {
     /**
      * Creates a new {@link GenericResource} instance.
      *
-     * @param apiVersion    the apiVersion.
-     * @param kind          the resource kind.
-     * @param metadata      the resource metadata.
-     * @param template      the resource template.
+     * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
+     * @param metadata   The resource metadata.
+     * @param template   The resource template.
      */
     @ConstructorProperties({
-        "apiVersion",
-        "kind",
-        "metadata",
-        "template"
+            "apiVersion",
+            "kind",
+            "metadata",
+            "template"
     })
     public GenericResource(final String apiVersion,
                            final String kind,
@@ -78,6 +77,15 @@ public class GenericResource implements HasMetadata {
         this(apiVersion, kind, metadata, template, new LinkedHashMap<>());
     }
 
+    /**
+     * Creates a new {@link GenericResource} instance.
+     *
+     * @param apiVersion           The resource API Version.
+     * @param kind                 The resource Kind.
+     * @param metadata             The resource metadata.
+     * @param template             The resource template.
+     * @param additionalProperties The additional properties.
+     */
     public GenericResource(final String apiVersion,
                            final String kind,
                            final ObjectMeta metadata,
@@ -134,20 +142,24 @@ public class GenericResource implements HasMetadata {
         this.additionalProperties.put(name, value);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GenericResource resource = (GenericResource) o;
         return Objects.equals(apiVersion, resource.apiVersion) &&
-            Objects.equals(kind, resource.kind) &&
-            Objects.equals(metadata, resource.metadata) &&
-            Objects.equals(template, resource.template) &&
-            Objects.equals(additionalProperties, resource.additionalProperties);
+                Objects.equals(kind, resource.kind) &&
+                Objects.equals(metadata, resource.metadata) &&
+                Objects.equals(template, resource.template) &&
+                Objects.equals(additionalProperties, resource.additionalProperties);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public int hashCode() {
         return Objects.hash(apiVersion, kind, metadata, template, additionalProperties);

@@ -26,8 +26,8 @@ import java.beans.ConstructorProperties;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
-@ApiVersion("core.jikkou.io/v1")
-@Kind("ApiExtensionList")
+@ApiVersion(ApiExtensionList.API_VERSION)
+@Kind(ApiExtensionList.KIND)
 @JsonPropertyOrder({
         "kind",
         "apiVersion",
@@ -41,7 +41,10 @@ import javax.validation.constraints.NotNull;
 @Reflectable
 public record ApiExtensionList(@JsonProperty("kind") @NotNull String kind,
                                @JsonProperty("apiVersion") @NotNull String apiVersion,
-                               @JsonProperty("extensions") @NotNull List<ApiExtension> extensions) implements Resource {
+                               @JsonProperty("extensions") @NotNull List<ApiExtensionSummary> extensions) {
+
+    public static final String API_VERSION = "core.jikkou.io/v1";
+    public static final String KIND = "ApiExtensionList";
 
     @ConstructorProperties({
             "kind",
@@ -51,10 +54,10 @@ public record ApiExtensionList(@JsonProperty("kind") @NotNull String kind,
     public ApiExtensionList {
     }
 
-    public ApiExtensionList(@NotNull List<ApiExtension> extensions) {
+    public ApiExtensionList(@NotNull List<ApiExtensionSummary> extensions) {
         this(
-                Resource.getKind(ApiExtensionList.class),
-                Resource.getApiVersion(ApiExtensionList.class),
+                KIND,
+                API_VERSION,
                 extensions
         );
     }

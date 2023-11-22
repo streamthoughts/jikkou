@@ -17,45 +17,47 @@ package io.streamthoughts.jikkou.core.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.streamthoughts.jikkou.core.annotation.ApiVersion;
+import io.streamthoughts.jikkou.core.annotation.Kind;
+import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import io.streamthoughts.jikkou.core.extension.Example;
 import java.beans.ConstructorProperties;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import javax.validation.constraints.NotNull;
 
+@ApiVersion(ApiExtension.API_VERSION)
+@Kind(ApiExtension.KIND)
 @JsonPropertyOrder({
-        "name",
-        "title",
-        "description",
-        "examples",
-        "category",
-        "group",
-        "description"
+        "kind",
+        "apiVersion",
+        "spec"
 })
+@Names(
+        plural = "extensions",
+        singular = "extension"
+)
+@JsonDeserialize
 @Reflectable
-public record ApiExtension(@JsonProperty String name,
-                           @JsonProperty String title,
-                           @JsonProperty String description,
-                           @JsonProperty List<Example> examples,
-                           @JsonProperty String category,
-                           @JsonProperty String provider) {
+public record ApiExtension(@JsonProperty("kind") @NotNull String kind,
+                           @JsonProperty("apiVersion") @NotNull String apiVersion,
+                           @JsonProperty("spec") @NotNull ApiExtensionSpec spec) {
+
+    public static final String API_VERSION = "core.jikkou.io/v1";
+    public static final String KIND = "ApiExtension";
 
     @ConstructorProperties({
-            "name",
-            "title",
-            "description",
-            "examples",
-            "category",
-            "provider",
-            "description"
+            "kind",
+            "apiVersion",
+            "spec"
     })
     public ApiExtension {
-
     }
 
-    @Override
-    public List<Example> examples() {
-        return Optional.ofNullable(examples).orElse(Collections.emptyList());
+    public ApiExtension(@NotNull ApiExtensionSpec spec) {
+        this(
+                KIND,
+                API_VERSION,
+                spec
+        );
     }
 }

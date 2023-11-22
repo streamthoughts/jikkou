@@ -107,6 +107,15 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
      * {@inheritDoc}
      **/
     @Override
+    public List<ExtensionDescriptor<?>> findAllDescriptors(@NotNull Qualifier qualifier) {
+        Stream<ExtensionDescriptor<?>> candidates = descriptors.stream();
+        return qualifier.filter(null, candidates).toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public <T> List<ExtensionDescriptor<T>> findAllDescriptorsByClass(@NotNull Class<T> type,
                                                                       @Nullable Qualifier<T> qualifier) {
         Objects.requireNonNull(type, "Cannot find descriptors for type 'null'");
@@ -260,15 +269,18 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
 
         final ExtensionKey<T> key = ExtensionKey.create(descriptor);
 
-        if (extensionsByKey.put(key, new DefaultExtensionSupplier<>(descriptor)) != null) {
+        if (extensionsByKey.put(key, new DefaultExtensionSupplier<>(this, descriptor)) != null) {
             throw new ConflictingExtensionDefinitionException(
                     "Failed to resister ExtensionDescriptor, extension already exists for key: " + key);
         }
         registerAliasesFor(descriptor);
 
-        Classes.getAllSuperTypes(descriptor.type()).forEach(cls ->
-                descriptorsByType.computeIfAbsent(cls, k -> new LinkedList<>()).add(descriptor)
-        );
+        Classes.getAllSuperTypes(descriptor.type()).forEach(cls -> {
+            descriptorsByType.computeIfAbsent(cls, k -> new LinkedList<>()).add(descriptor);
+            if (!cls.equals(descriptor.type())) {
+                extensionsTypesByAlias.computeIfAbsent(cls.getName(), k -> new LinkedList<>()).add(descriptor.type());
+            }
+        });
         descriptors.add(descriptor);
     }
 

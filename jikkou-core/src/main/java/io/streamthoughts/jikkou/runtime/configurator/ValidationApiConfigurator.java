@@ -65,9 +65,9 @@ public final class ValidationApiConfigurator extends ExtensionApiConfigurator<Va
         public Validation<?> get() {
             Validation<?> extension = delegate.get();
             extension = new ValidationDecorator<>(extension)
-                    .withPriority(configEntry.priority())
-                    .withName(configEntry.name())
-                    .withConfiguration(configEntry.config());
+                    .priority(configEntry.priority())
+                    .name(configEntry.name())
+                    .configuration(configEntry.config());
             return extension;
         }
     }

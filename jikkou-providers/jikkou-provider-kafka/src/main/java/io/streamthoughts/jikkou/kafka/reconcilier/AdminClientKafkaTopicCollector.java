@@ -19,10 +19,8 @@ import static io.streamthoughts.jikkou.common.utils.AsyncUtils.getValueOrThrowEx
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -60,33 +58,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaTopic.class)
-@ExtensionConfigProperties(
-        properties = {
-                @ConfigPropertySpec(
-                        name = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_NAME,
-                        description = ConfigDescribeConfiguration.DESCRIBE_DEFAULT_CONFIGS_PROPERTY_DESC,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
-                ),
-                @ConfigPropertySpec(
-                        name = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_NAME,
-                        description = ConfigDescribeConfiguration.DESCRIBE_DYNAMIC_BROKER_CONFIGS_PROPERTY_DESC,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
-                ),
-                @ConfigPropertySpec(
-                        name = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_CONFIG,
-                        description = ConfigDescribeConfiguration.DESCRIBE_STATIC_BROKER_CONFIGS_PROPERTY_DESC,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
-                )
-        }
-)
 public final class AdminClientKafkaTopicCollector
-        implements Collector<V1KafkaTopic> {
+        extends AdminClientKafkaConfigs implements Collector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);
 
@@ -112,10 +85,10 @@ public final class AdminClientKafkaTopicCollector
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
         if (adminClientContextFactory == null) {
-            adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 
@@ -125,15 +98,13 @@ public final class AdminClientKafkaTopicCollector
     @Override
     public Optional<V1KafkaTopic> get(@NotNull final String name,
                                       @NotNull final Configuration configuration) {
-        var options = new ConfigDescribeConfiguration(configuration);
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Getting kafka topic '{}' with options: {}", name, options.asConfiguration().asMap());
+            LOG.info("Listing all kafka topics with configuration: {}", configuration.asMap());
         }
 
+        final KafkaConfigPredicate predicate = kafkaConfigPredicate(configuration);
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
-
-            var predicate = getKafkaConfigPredicate(options);
             List<V1KafkaTopic> resources = new KafkaTopicsClient(context.getAdminClient())
                     .listAll(Set.of(name), predicate);
 
@@ -154,14 +125,11 @@ public final class AdminClientKafkaTopicCollector
     public ResourceListObject<V1KafkaTopic> listAll(@NotNull final Configuration configuration,
                                                     @NotNull final Selector selector) {
 
-        var options = new ConfigDescribeConfiguration(configuration);
-
         if (LOG.isInfoEnabled()) {
-            LOG.info("Listing all kafka topics with options: {}", options.asConfiguration().asMap());
+            LOG.info("Listing all kafka topics with configuration: {}", configuration.asMap());
         }
 
-        var predicate = getKafkaConfigPredicate(options);
-
+        final KafkaConfigPredicate predicate = kafkaConfigPredicate(configuration);
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
 
             List<V1KafkaTopic> resources = new KafkaTopicsClient(context.getAdminClient())
@@ -181,15 +149,6 @@ public final class AdminClientKafkaTopicCollector
             return new V1KafkaTopicList(items);
         }
     }
-
-    private KafkaConfigPredicate getKafkaConfigPredicate(ConfigDescribeConfiguration options) {
-        return new KafkaConfigPredicate()
-                .withDynamicTopicConfig(true)
-                .withDefaultConfig(options.isDescribeDefaultConfigs())
-                .withDynamicBrokerConfig(options.isDescribeDynamicBrokerConfigs())
-                .withStaticBrokerConfig(options.isDescribeStaticBrokerConfigs());
-    }
-
 
     private V1KafkaTopic addClusterIdToMetadataAnnotations(V1KafkaTopic resource,
                                                            String clusterId) {

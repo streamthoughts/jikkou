@@ -26,7 +26,6 @@ import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.Resource;
-import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -55,7 +54,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1SchemaRegistrySubjectChange implements HasMetadataChange<SchemaSubjectChange> , Resource
+public class V1SchemaRegistrySubjectChange implements HasMetadataChange<io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange> , Resource
 {
 
     /**
@@ -82,7 +81,7 @@ public class V1SchemaRegistrySubjectChange implements HasMetadataChange<SchemaSu
     @JsonProperty("metadata")
     private ObjectMeta metadata;
     @JsonProperty("change")
-    private SchemaSubjectChange change;
+    private io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange change;
 
     /**
      * No args constructor for use in serialization
@@ -104,7 +103,7 @@ public class V1SchemaRegistrySubjectChange implements HasMetadataChange<SchemaSu
         "metadata",
         "change"
     })
-    public V1SchemaRegistrySubjectChange(String apiVersion, String kind, ObjectMeta metadata, SchemaSubjectChange change) {
+    public V1SchemaRegistrySubjectChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange change) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -143,7 +142,7 @@ public class V1SchemaRegistrySubjectChange implements HasMetadataChange<SchemaSu
     }
 
     @JsonProperty("change")
-    public SchemaSubjectChange getChange() {
+    public io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange getChange() {
         return change;
     }
 

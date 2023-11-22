@@ -23,7 +23,8 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
@@ -55,6 +56,7 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, FULL}
 )
 public final class AdminClientKafkaAclController
+        extends ContextualExtension
         implements Controller<V1KafkaPrincipalAuthorization, AclChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaAclController.class);
@@ -81,10 +83,10 @@ public final class AdminClientKafkaAclController
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 
@@ -107,6 +109,8 @@ public final class AdminClientKafkaAclController
 
             // Get the actual state from the cluster.
             AdminClientKafkaAclCollector collector = new AdminClientKafkaAclCollector(adminClientContextFactory);
+            collector.init(extensionContext().contextForExtension(AdminClientKafkaAclCollector.class));
+
             List<V1KafkaPrincipalAuthorization> actualStates = collector.listAll(adminClient)
                     .stream()
                     .filter(context.selector()::apply)
@@ -163,7 +167,7 @@ public final class AdminClientKafkaAclController
         }
 
         public boolean isDeleteOrphansEnabled() {
-            return DELETE_ORPHANS_OPTIONS_CONFIG.evaluate(configuration);
+            return DELETE_ORPHANS_OPTIONS_CONFIG.get(configuration);
         }
     }
 }

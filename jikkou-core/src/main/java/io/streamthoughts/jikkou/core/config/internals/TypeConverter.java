@@ -16,13 +16,13 @@
 package io.streamthoughts.jikkou.core.config.internals;
 
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -30,20 +30,27 @@ import java.util.regex.Pattern;
 /**
  * Class which can be used to convert an object to a specific type.
  */
-public class TypeConverter implements Serializable {
+public final class TypeConverter {
 
     private static final String BOOLEAN_TRUE = "true";
     private static final String BOOLEAN_FALSE = "false";
     private static final String MIN_LONG_STR_NO_SIGN = String.valueOf(Long.MIN_VALUE).substring(1);
     private static final String MAX_LONG_STR = String.valueOf(Long.MAX_VALUE);
 
-    public static Collection getArray(final Object value) throws IllegalArgumentException {
+    public static List getList(final Object value, boolean wrapSingleElement) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
+        List result = switch (value) {
+            case Collection<?> objects -> Arrays.asList(objects.toArray());
+            case Object[] objects -> Arrays.asList(objects);
+            default -> null;
+        };
 
-        if (Collection.class.isAssignableFrom(value.getClass())) {
-            return (Collection<?>) value;
-        } else if (value instanceof Object[]) {
-            return Arrays.asList((Object[]) value);
+        if (result == null && wrapSingleElement) {
+            result = List.of(value);
+        }
+
+        if (result != null) {
+            return result;
         }
 
         throw new ConfigException(
@@ -203,7 +210,7 @@ public class TypeConverter implements Serializable {
 
         String result = switch (value) {
             case Double ignored -> String.valueOf(value);
-            case Integer ignored ->String.valueOf(value);
+            case Integer ignored -> String.valueOf(value);
             case String ignored -> String.valueOf(value);
             case null, default -> {
                 throw new ConfigException(
@@ -263,7 +270,7 @@ public class TypeConverter implements Serializable {
         } else if (alen > cmpLen) {
             return false;
         } else {
-            for(int i = 0; i < cmpLen; ++i) {
+            for (int i = 0; i < cmpLen; ++i) {
                 int diff = s.charAt(i) - cmp.charAt(i);
                 if (diff != 0) {
                     return diff < 0;

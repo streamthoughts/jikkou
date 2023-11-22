@@ -15,8 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import static io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation.VALIDATION_TOPIC_NAME_REGEX_CONFIG;
+
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -25,6 +28,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class TopicNameRegexValidationTest {
 
@@ -37,20 +41,31 @@ class TopicNameRegexValidationTest {
 
     @Test
     void shouldThrowExceptionForMissingConfig() {
-        Assertions.assertThrows(ConfigException.class, () -> validation.configure(Configuration.empty()));
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(Configuration.empty());
+        Assertions.assertThrows(ConfigException.class, () -> validation.init(context));
     }
 
     @Test
     void shouldThrowExceptionForInvalidRegex() {
-        Assertions.assertThrows(ConfigException.class, () -> {
-            new TopicNameRegexValidation("");
-        });
+        // Given
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration(""));
+
+        // When
+        Assertions.assertThrows(ConfigException.class, () -> new TopicNameRegexValidation().init(context));
     }
 
     @Test
     void shouldThrowExceptionForTopicNameNotMatching() {
         // Given
-        var validation = new TopicNameRegexValidation("test-");
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration("test-"));
+
+        var validation =  new TopicNameRegexValidation();
+        validation.init(context);
+
+        new TopicNameRegexValidation();
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()

@@ -59,23 +59,23 @@ public class KafkaConnectClientConfig {
     }
 
     public String getConnectClusterName() {
-        return KAFKA_CONNECT_NAME.evaluate(configuration);
+        return KAFKA_CONNECT_NAME.get(configuration);
     }
 
     public String getConnectUrl() {
-        return KAFKA_CONNECT_URL.evaluate(configuration);
+        return KAFKA_CONNECT_URL.get(configuration);
     }
 
     public AuthMethod getAuthMethod() {
-        return AuthMethod.getForNameIgnoreCase(KAFKA_CONNECT_AUTH_METHOD.evaluate(configuration));
+        return AuthMethod.getForNameIgnoreCase(KAFKA_CONNECT_AUTH_METHOD.get(configuration));
     }
 
     public String getBasicAuthUsername() {
-        return KAFKA_CONNECT_BASIC_AUTH_USERNAME.evaluate(configuration);
+        return KAFKA_CONNECT_BASIC_AUTH_USERNAME.get(configuration);
     }
 
     public String getBasicAuthPassword() {
-        return KAFKA_CONNECT_BASIC_AUTH_PASSWORD.evaluate(configuration);
+        return KAFKA_CONNECT_BASIC_AUTH_PASSWORD.get(configuration);
     }
 
     public String getBasicAuthInfo() {
@@ -83,7 +83,7 @@ public class KafkaConnectClientConfig {
     }
 
     public boolean getDebugLoggingEnabled() {
-        return KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.evaluate(configuration);
+        return KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration);
     }
 
     /** {@inheritDoc} **/

@@ -52,7 +52,7 @@ public class KafkaPrincipalAuthorizationTransformation implements Transformation
             return Optional.of(toTransform);
         }
 
-        HasItems definedRoleResources = new DefaultResourceListObject(items.getAllByKind(V1KafkaPrincipalRole.class));
+        HasItems definedRoleResources = new DefaultResourceListObject<>(items.getAllByKind(V1KafkaPrincipalRole.class));
         definedRoleResources.verifyNoDuplicateMetadataName();
 
         List<V1KafkaPrincipalAcl> aclBindingsFromRoles = roles

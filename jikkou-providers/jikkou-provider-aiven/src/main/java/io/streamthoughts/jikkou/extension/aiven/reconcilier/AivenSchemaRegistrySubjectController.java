@@ -22,8 +22,7 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
@@ -87,18 +86,18 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
      * @param config the configuration.
      */
     public AivenSchemaRegistrySubjectController(AivenApiClientConfig config) {
-        configure(config);
+        init(config);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        configure(new AivenApiClientConfig(configuration));
+    public void init(@NotNull final ExtensionContext context) {
+        init(new AivenApiClientConfig(context.appConfiguration()));
     }
 
-    private void configure(@NotNull AivenApiClientConfig configuration) throws ConfigException {
+    private void init(@NotNull AivenApiClientConfig configuration) {
         this.configuration = configuration;
     }
 
@@ -129,7 +128,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
     public ResourceListObject<? extends HasMetadataChange<SchemaSubjectChange>> plan(
             @NotNull Collection<V1SchemaRegistrySubject> resources,
             @NotNull ReconciliationContext context) {
-        LOG.info("Computing reconciliation ");
+
         // Get described resources that are candidates for this reconciliation.
         List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
                 .filter(context.selector()::apply)

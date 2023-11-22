@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -58,7 +59,9 @@ public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject>
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
+    public void init(@NotNull final ExtensionContext context) {
+        final Configuration config = context.appConfiguration();
+
         recordFieldsMustHaveDoc = RECORD_FIELD_MUST_HAVE_DOC.getOptional(config)
                 .orElseThrow(getConfigExceptionSupplier(RECORD_FIELD_MUST_HAVE_DOC));
 

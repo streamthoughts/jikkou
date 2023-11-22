@@ -24,7 +24,8 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
@@ -56,6 +57,7 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 public final class AdminClientKafkaQuotaController
+        extends ContextualExtension
         implements Controller<V1KafkaClientQuota, QuotaChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaQuotaController.class);
@@ -84,10 +86,10 @@ public final class AdminClientKafkaQuotaController
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 
@@ -105,8 +107,9 @@ public final class AdminClientKafkaQuotaController
 
         // Get the list of described resource that are candidates for this reconciliation
         AdminClientKafkaQuotaCollector collector = new AdminClientKafkaQuotaCollector(adminClientContextFactory);
+        collector.init(extensionContext().contextForExtension(AdminClientKafkaQuotaCollector.class));
 
-        final List<V1KafkaClientQuota> actual = collector.listAll(Selectors.NO_SELECTOR)
+        final List<V1KafkaClientQuota> actual = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
                 .stream()
                 .filter(context.selector()::apply)
                 .toList();
@@ -144,6 +147,6 @@ public final class AdminClientKafkaQuotaController
     static boolean isLimitDeletionEnabled(@NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(LIMITS_DELETE_ORPHANS_CONFIG_NAME)
                 .orElse(true)
-                .evaluate(context.configuration());
+                .get(context.configuration());
     }
 }

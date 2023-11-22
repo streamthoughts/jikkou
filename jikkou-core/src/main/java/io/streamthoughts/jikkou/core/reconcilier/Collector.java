@@ -17,7 +17,6 @@ package io.streamthoughts.jikkou.core.reconcilier;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
-import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
@@ -40,11 +39,11 @@ import org.jetbrains.annotations.NotNull;
 @Enabled
 @Category(ExtensionCategory.COLLECTOR)
 public interface Collector<R extends HasMetadata>
-        extends HasMetadataAcceptable, Extension, Configurable {
+        extends HasMetadataAcceptable, Extension {
 
     /**
      * Gets a single resource by name.
-     *
+     * <p>
      * The {@link Collector} interface provides a default and non-optimized implementation
      * which applies a filter on the return of the method {@link #listAll(Configuration, Selector)}.
      *
@@ -70,13 +69,4 @@ public interface Collector<R extends HasMetadata>
     ResourceListObject<R> listAll(@NotNull Configuration configuration,
                                   @NotNull Selector selector);
 
-    /**
-     * Gets all the resources that exist on the remote system and that math the given selectors.
-     *
-     * @param selector the selector to be used for filtering the resource to describe.
-     * @return the list of resources.
-     */
-    default ResourceListObject<R> listAll(@NotNull Selector selector) {
-        return listAll(getDefaultConfiguration(), selector);
-    }
 }

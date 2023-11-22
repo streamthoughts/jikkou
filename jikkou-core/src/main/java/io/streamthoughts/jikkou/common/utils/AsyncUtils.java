@@ -35,7 +35,6 @@ public class AsyncUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncUtils.class);
     public static final int DEFAULT_TIMEOUT = 10;
 
-
     public static <T> CompletableFuture<List<T>> waitForAll(Stream<CompletableFuture<List<T>>> futures) {
         return futures.reduce(CompletableFuture.completedFuture(new ArrayList<>()),
                 (pre, curr) -> pre.thenCompose(preV -> curr.thenApply(currV -> {

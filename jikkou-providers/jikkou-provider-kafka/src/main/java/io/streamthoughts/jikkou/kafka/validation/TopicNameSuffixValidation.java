@@ -18,9 +18,9 @@ package io.streamthoughts.jikkou.kafka.validation;
 import io.streamthoughts.jikkou.core.annotation.Example;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
@@ -33,13 +33,13 @@ import org.jetbrains.annotations.NotNull;
         full = true,
         code = {
                 """
-                validations:
-                - name: "topicNameMustEndWithFormatSuffix"
-                  type: "io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation"
-                  priority: 100
-                  config:
-                    topicNamePrefixes: [".avro", ".json", ".proto"]
-                """
+                        validations:
+                        - name: "topicNameMustEndWithFormatSuffix"
+                          type: "io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation"
+                          priority: 100
+                          config:
+                            topicNamePrefixes: [".avro", ".json", ".proto"]
+                        """
         }
 )
 public class TopicNameSuffixValidation extends TopicValidation {
@@ -49,20 +49,24 @@ public class TopicNameSuffixValidation extends TopicValidation {
 
     private List<String> suffixes;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        suffixes = VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.getOptional(config)
-               .orElseThrow(() -> new ConfigException(
-                       String.format("The '%s' configuration property is required for %s",
-                               VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.key(),
-                               TopicNameSuffixValidation.class.getSimpleName()
-                       )
-               ));
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        suffixes = VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.getOptional(context.appConfiguration())
+                .orElseThrow(() -> new ConfigException(
+                        String.format("The '%s' configuration property is required for %s",
+                                VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.key(),
+                                TopicNameSuffixValidation.class.getSimpleName()
+                        )
+                ));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ValidationResult validate(final @NotNull V1KafkaTopic resource) throws ValidationException {
         final boolean matched = suffixes.stream()

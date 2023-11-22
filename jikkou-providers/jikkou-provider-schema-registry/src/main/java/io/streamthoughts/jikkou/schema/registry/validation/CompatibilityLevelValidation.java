@@ -20,6 +20,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -41,8 +42,9 @@ public class CompatibilityLevelValidation implements Validation<V1SchemaRegistry
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
+    public void init(@NotNull final ExtensionContext context) {
+        final Configuration config = context.appConfiguration();
+
         accepted = VALIDATION_COMPATIBILITY_CONFIG.getOptional(config)
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
