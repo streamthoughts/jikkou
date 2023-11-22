@@ -78,7 +78,6 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
     @Inject
     ResourceWriter writer;
 
-
     // Picocli require an empty constructor to generate the completion file
     public GetResourceCommand() {
     }
@@ -114,16 +113,32 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
         }
     }
 
+    /**
+     * Sets the resource name.
+     * @param name The resource name.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Sets the resource type.
+     * @param type The resource type.
+     */
     public void setType(ResourceType type) {
         this.type = type;
     }
 
+    /**
+     * Sets the option for the specified name and value.
+     *
+     * @param name  The option name.
+     * @param value The option value.
+     * @return      The previous value.
+     * @param <T>   The option type.
+     */
     @SuppressWarnings("unchecked")
-    public <T> T addOptions(final String name, final T value) {
+    public <T> T setOption(final String name, final T value) {
         return (T) this.options.put(name, value);
     }
 }

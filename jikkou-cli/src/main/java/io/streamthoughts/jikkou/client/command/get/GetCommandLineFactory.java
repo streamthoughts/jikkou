@@ -40,7 +40,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
 
 @Singleton
-public class GetCommandLineFactory {
+public final class GetCommandLineFactory {
 
     private final ApplicationContext applicationContext;
 
@@ -84,14 +84,19 @@ public class GetCommandLineFactory {
                                         resource.kind()
                                 )
                         );
+
                 spec.aliases(resource.shortNames().toArray(new String[0]));
                 Optional<ApiResourceVerbOptionList> optional = resource.getVerbOptionList(Verb.LIST);
                 if (optional.isPresent()) {
+                    CommandLine.Model.ArgGroupSpec.Builder argGroupSpecBuilder = CommandLine.Model.ArgGroupSpec.builder()
+                            .heading("RESOURCE OPTIONS:%n%n")
+                            .exclusive(false)
+                            .multiplicity("0..1");
                     ApiResourceVerbOptionList verbOptionList = optional.get();
                     for (ApiResourceVerbOptionSpec option : verbOptionList.options()) {
-                        spec.addOption(createOptionSpec(option, command)
-                        );
+                        argGroupSpecBuilder.addArg(createOptionSpec(option, command));
                     }
+                    spec.addArgGroup(argGroupSpecBuilder.build());
                 }
                 if (resource.isVerbSupported(Verb.GET)) {
                     spec.addOption( CommandLine.Model.OptionSpec
@@ -135,7 +140,7 @@ public class GetCommandLineFactory {
                 .setter(new CommandLine.Model.ISetter() {
                     @Override
                     public <T> T set(T value) {
-                        return command.addOptions(option.name(), value);
+                        return command.setOption(option.name(), value);
                     }
                 })
                 .build();
