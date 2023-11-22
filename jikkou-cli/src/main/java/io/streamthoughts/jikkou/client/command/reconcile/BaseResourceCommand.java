@@ -76,7 +76,7 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
         return ReconciliationContext.builder()
                 .dryRun(isDryRun())
                 .configuration(configOptionsMixin.getConfiguration())
-                .selectors(selectorOptions.getResourceSelectors())
+                .selector(selectorOptions.getResourceSelector())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .build();

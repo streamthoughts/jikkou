@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.extension.aiven.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
@@ -65,7 +66,7 @@ public class AivenSchemaRegistryAclEntryCollectorIT extends AbstractAivenIntegra
                 .setBody(DEFAULT_AIVEN_ACL_ENTRIES)
         );
         // When
-        List<V1SchemaRegistryAclEntry> results = collector.listAll(Configuration.empty(), NO_SELECTOR)
+        List<V1SchemaRegistryAclEntry> results = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
                 .getItems();
 
         // Then

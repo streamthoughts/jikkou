@@ -61,7 +61,7 @@ public class ApiResourceListResource extends AbstractController {
         ApiResourceList apiResourceList = api.listApiResources(group, version);
         List<ApiResource> resources = apiResourceList.resources().stream()
                 .map(resource -> {
-                    HashMap<String, Object> metadata = getMetadata(httpRequest, resource);
+                    Map<String, Object> metadata = getMetadata(httpRequest, resource);
                     return new ApiResource(
                             resource.name(),
                             resource.kind(),
@@ -79,15 +79,28 @@ public class ApiResourceListResource extends AbstractController {
     }
 
     @NotNull
-    private HashMap<String, Object> getMetadata(HttpRequest<?> httpRequest,
+    private Map<String, Object> getMetadata(HttpRequest<?> httpRequest,
                                                 ApiResource resource) {
-        HashMap<String, Object> metadata = new HashMap<>(resource.metadata());
+
         Map<String, Link> links = new LinkedHashMap<>();
-        links.put("list", getLinkForList(httpRequest, resource, false));
-        if (resource.getVerbOptionList(Verb.LIST).isPresent()) {
-            links.put("list-params", getLinkForList(httpRequest, resource, true));
+
+        // Links for Verb LIST
+        if (resource.isVerbSupported(Verb.LIST)) {
+            links.put("list", getLinkForList(httpRequest, resource, false));
+            links.put("select", getLinkForSelect(httpRequest, resource));
+
+            if (resource.getVerbOptionList(Verb.LIST).isPresent()) {
+                links.put("list-params", getLinkForList(httpRequest, resource, true));
+            }
         }
-        links.put("select", getLinkForSelect(httpRequest, resource));
+
+        // Links for Verb GET
+        if (resource.isVerbSupported(Verb.GET)) {
+            links.put("get", getLinkForGet(httpRequest, resource, false));
+            if (resource.getVerbOptionList(Verb.GET).isPresent()) {
+                links.put("get-params", getLinkForGet(httpRequest, resource, true));
+            }
+        }
 
         if (resource.isVerbSupported(Verb.CREATE) ||
                 resource.isVerbSupported(Verb.UPDATE) ||
@@ -98,8 +111,18 @@ public class ApiResourceListResource extends AbstractController {
             links.put("validate", getLinkForValidate(httpRequest, resource));
             links.put("diff", getLinkForDiff(httpRequest, resource));
         }
+
+        Map<String, Object> metadata = new HashMap<>(resource.metadata());
         metadata.put(ResourceResponse.LINKS, links);
         return metadata;
+    }
+
+    private Link getLinkForGet(HttpRequest<?> httpRequest, ApiResource resource, boolean includeOptions) {
+        Link link = getLink(httpRequest, resource.name());
+        Link build = Link.build(link.getHref() + "/{name}")
+                .templated(true)
+                .build();
+        return addLinkOptions(build, resource, Verb.LIST, includeOptions);
     }
 
     private Link getLinkForSelect(HttpRequest<?> httpRequest, ApiResource resource) {

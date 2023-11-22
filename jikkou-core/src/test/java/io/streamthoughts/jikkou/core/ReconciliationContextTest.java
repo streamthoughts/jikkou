@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import java.util.Collections;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,12 +30,12 @@ class ReconciliationContextTest {
                 .dryRun(true)
                 .label(new NamedValue("label", "value"))
                 .annotation(new NamedValue("annotation", "value"))
-                .selectors(Collections.emptyList())
+                .selector(Selectors.NO_SELECTOR)
                 .configuration(Configuration.empty())
                 .build();
 
         Assertions.assertEquals(new ReconciliationContext.Default(
-                Collections.emptyList(),
+                Selectors.NO_SELECTOR,
                 Configuration.empty(),
                 true,
                 NamedValue.setOf(new NamedValue("label", "value")),

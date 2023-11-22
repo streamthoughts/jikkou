@@ -92,7 +92,7 @@ public class PrepareCommand extends CLIBaseCommand implements Callable<Integer> 
                 .builder()
                 .dryRun(true)
                 .configuration(configOptionsMixin.getConfiguration())
-                .selectors(selectorOptions.getResourceSelectors())
+                .selector(selectorOptions.getResourceSelector())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .build();

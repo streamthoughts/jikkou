@@ -30,7 +30,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.change.QuotaChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.quotas.CreateQuotasChangeHandlerKafka;
@@ -100,15 +100,15 @@ public final class AdminClientKafkaQuotaController
 
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaClientQuota> expected = resources.stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         // Get the list of described resource that are candidates for this reconciliation
         AdminClientKafkaQuotaCollector collector = new AdminClientKafkaQuotaCollector(adminClientContextFactory);
 
-        final List<V1KafkaClientQuota> actual = collector.listAll()
+        final List<V1KafkaClientQuota> actual = collector.listAll(Selectors.NO_SELECTOR)
                 .stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         boolean isLimitDeletionEnabled = isLimitDeletionEnabled(context);

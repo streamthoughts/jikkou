@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.kafka.connect.reconcilier;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
@@ -54,7 +55,8 @@ class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
 
         // When
         List<V1KafkaConnector> results = collector.listAll(
-                Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME, false))
+                        Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME, false),
+                        Selectors.NO_SELECTOR)
                 .getItems();
 
         // Then
@@ -94,7 +96,8 @@ class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
 
         // When
         List<V1KafkaConnector> results = collector.listAll(
-                Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME, true))
+                        Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME, true),
+                        Selectors.NO_SELECTOR)
                 .getItems();
 
         // Then

@@ -96,7 +96,7 @@ public class ValidateCommand extends CLIBaseCommand implements Callable<Integer>
         return ReconciliationContext.builder()
                 .dryRun(true)
                 .configuration(configOptionsMixin.getConfiguration())
-                .selectors(selectorOptions.getResourceSelectors())
+                .selector(selectorOptions.getResourceSelector())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .build();

@@ -20,8 +20,6 @@ import static java.util.stream.Collectors.groupingBy;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
-import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -41,18 +39,6 @@ public interface HasItems {
      * @return the items.
      */
     List<? extends HasMetadata> getItems();
-
-    /**
-     * Gets the resources matching the given list of selectors.
-     *
-     * @param selectors the list of selectors to apply.
-     * @return the filtered resources.
-     */
-    default List<? extends HasMetadata> getAllMatching(final @NotNull List<Selector> selectors) {
-        return getItems().stream()
-                .filter(new AggregateSelector(selectors)::apply)
-                .toList();
-    }
 
     /**
      * Gets all the resources matching the given kind.

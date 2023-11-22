@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import jakarta.inject.Inject;
@@ -43,7 +44,7 @@ public final class ReconciliationContextAdapter {
                 .builder()
                 .dryRun(dryRun)
                 .configuration(Configuration.from(params.options()))
-                .selectors(selectorFactory.make(params.selectors()))
+                .selector(Selectors.allMatch(selectorFactory.make(params.selectors())))
                 .annotations(NamedValue.setOf(params.annotations()))
                 .labels(NamedValue.setOf(params.labels()))
                 .build();
@@ -54,7 +55,7 @@ public final class ReconciliationContextAdapter {
                 .builder()
                 .dryRun(true)
                 .configuration(Configuration.from(request.options()))
-                .selectors(selectorFactory.make(request.selectors()))
+                .selector(Selectors.allMatch(selectorFactory.make(request.selectors())))
                 .build();
     }
 }

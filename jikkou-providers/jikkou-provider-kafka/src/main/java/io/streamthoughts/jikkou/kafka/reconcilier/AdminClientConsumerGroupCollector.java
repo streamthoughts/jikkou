@@ -95,7 +95,7 @@ public final class AdminClientConsumerGroupCollector implements Collector<V1Kafk
      **/
     @Override
     public ResourceListObject<V1KafkaConsumerGroup> listAll(@NotNull Configuration configuration,
-                                                            @NotNull List<Selector> selectors) {
+                                                            @NotNull Selector selector) {
         final Config config = new Config(configuration);
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             KafkaConsumerGroupService service = new KafkaConsumerGroupService(clientContext.getAdminClient());

@@ -23,7 +23,6 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
@@ -75,7 +74,7 @@ public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
      **/
     @Override
     public ResourceListObject<V1KafkaQuota> listAll(@NotNull Configuration configuration,
-                                                    @NotNull List<Selector> selectors) {
+                                                    @NotNull Selector selector) {
         final AivenApiClient api = AivenApiClientFactory.create(config);
         try {
             ListKafkaQuotaResponse response = api.listKafkaQuotas();
@@ -92,7 +91,7 @@ public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
             List<V1KafkaQuota> items = response.quotas()
                     .stream()
                     .map(KafkaQuotaAdapter::map)
-                    .filter(new AggregateSelector(selectors)::apply)
+                    .filter(selector::apply)
                     .collect(Collectors.toList());
             return new V1KafkaQuotaList(items);
 

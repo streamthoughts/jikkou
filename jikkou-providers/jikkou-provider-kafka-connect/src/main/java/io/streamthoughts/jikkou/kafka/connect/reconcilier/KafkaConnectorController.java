@@ -34,7 +34,6 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.DefaultChangeExecutor;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
@@ -114,7 +113,7 @@ public final class KafkaConnectorController implements Controller<V1KafkaConnect
 
         Map<String, List<V1KafkaConnector>> resourcesByCluster = groupByKafkaConnectCluster(
                 resources,
-                new AggregateSelector(context.selectors())::apply);
+                context.selector()::apply);
 
         KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer();
 
@@ -125,7 +124,7 @@ public final class KafkaConnectorController implements Controller<V1KafkaConnect
 
             List<V1KafkaConnector> actualStates = collector.listAll(clusterName, false)
                     .stream()
-                    .filter(new AggregateSelector(context.selectors())::apply)
+                    .filter(context.selector()::apply)
                     .toList();
             allChanges.addAll(computer.computeChanges(actualStates, expectedStates));
         }

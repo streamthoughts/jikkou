@@ -79,28 +79,6 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     }
 
     /**
-     * Creates a new {@link DefaultExtensionDescriptor} instance from the given one.
-     *
-     * @param descriptor the {@link DefaultExtensionDescriptor} to copy.
-     */
-    protected DefaultExtensionDescriptor(final ExtensionDescriptor<T> descriptor) {
-        this(
-                descriptor.name(),
-                descriptor.title(),
-                descriptor.description(),
-                descriptor.examples(),
-                descriptor.category(),
-                descriptor.group(),
-                descriptor.type(),
-                descriptor.classLoader(),
-                descriptor.supplier(),
-                descriptor.isEnabled()
-        );
-        metadata = descriptor.metadata();
-        aliases.addAll(descriptor.aliases());
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

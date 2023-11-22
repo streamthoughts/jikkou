@@ -21,7 +21,6 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
@@ -86,14 +85,14 @@ public final class AdminClientKafkaAclCollector
      */
     @Override
     public ResourceListObject<V1KafkaPrincipalAuthorization> listAll(@NotNull final Configuration configuration,
-                                                                     @NotNull final List<Selector> selectors) {
+                                                                     @NotNull final Selector selector) {
 
 
         try (AdminClientContext adminClientContext = adminClientContextFactory.createAdminClientContext()) {
 
             List<V1KafkaPrincipalAuthorization> resources = listAll(adminClientContext.getAdminClient())
                     .stream()
-                    .filter(new AggregateSelector(selectors)::apply)
+                    .filter(selector::apply)
                     .toList();
 
             String clusterId = adminClientContext.getClusterId();

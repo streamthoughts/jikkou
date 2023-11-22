@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core.models;
 
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +28,7 @@ public enum Verb {
     CREATE("create"),
     UPDATE("update"),
     DELETE("delete"),
+    GET("get"),
     APPLY("apply");
 
     private final String value;
@@ -55,9 +56,9 @@ public enum Verb {
                 .orElseThrow(() -> new JikkouRuntimeException("Unsupported verb '" + verb + "'"));
     }
 
-    public static Verb[] getForNamesIgnoreCase(final @Nullable List<String> verbs) {
+    public static Verb[] getForNamesIgnoreCase(final @Nullable Collection<String> verbs) {
         if (verbs == null) return new Verb[]{};
-        if (verbs.size() == 1 && verbs.get(0).equalsIgnoreCase("*")) {
+        if (verbs.size() == 1 && verbs.iterator().next().equalsIgnoreCase("*")) {
             return Verb.values();
         }
         return verbs.stream()

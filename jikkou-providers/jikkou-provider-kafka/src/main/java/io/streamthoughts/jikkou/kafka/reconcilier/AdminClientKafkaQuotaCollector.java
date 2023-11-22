@@ -22,7 +22,6 @@ import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
@@ -86,13 +85,13 @@ public final class AdminClientKafkaQuotaCollector
      */
     @Override
     public ResourceListObject<V1KafkaClientQuota> listAll(@NotNull final Configuration configuration,
-                                                          @NotNull final List<Selector> selectors) {
+                                                          @NotNull final Selector selector) {
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
             final List<V1KafkaClientQuota> resources = new DescribeQuotas(context.getAdminClient()).describe();
             String clusterId = context.getClusterId();
             List<V1KafkaClientQuota> items = resources
                     .stream()
-                    .filter(new AggregateSelector(selectors)::apply)
+                    .filter(selector::apply)
                     .map(resource -> resource
                             .toBuilder()
                             .withMetadata(resource.getMetadata()

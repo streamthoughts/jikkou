@@ -26,8 +26,8 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.selectors.Selector;
-import java.util.Collections;
-import java.util.List;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,13 +43,20 @@ public interface Collector<R extends HasMetadata>
         extends HasMetadataAcceptable, Extension, Configurable {
 
     /**
-     * Gets all the resources that exist into the managed system.
+     * Gets a single resource by name.
      *
-     * @param configuration the configuration settings that may be used to get resources.
-     * @return the list of resources.
+     * The {@link Collector} interface provides a default and non-optimized implementation
+     * which applies a filter on the return of the method {@link #listAll(Configuration, Selector)}.
+     *
+     * @param name          The resource's name.
+     * @param configuration The configuration settings that may be used to get resource.
+     * @return The optional resource.
      */
-    default ResourceListObject<R> listAll(@NotNull Configuration configuration) {
-        return listAll(configuration, Collections.emptyList());
+    default Optional<R> get(@NotNull String name,
+                            @NotNull Configuration configuration) {
+        return listAll(configuration, Selectors.NO_SELECTOR).stream()
+                .filter(resource -> resource.getMetadata().getName().equalsIgnoreCase(name))
+                .findFirst();
     }
 
     /**
@@ -57,28 +64,19 @@ public interface Collector<R extends HasMetadata>
      * can be used as predicates to only select a subset of resources.
      *
      * @param configuration the configuration settings that may be used to get resources.
-     * @param selectors     the selectors to be used for filtering the resource to describe.
+     * @param selector      the selector to be used for filtering the resource to describe.
      * @return the list of resources.
      */
-    ResourceListObject<R> listAll(@NotNull Configuration configuration, @NotNull List<Selector> selectors);
+    ResourceListObject<R> listAll(@NotNull Configuration configuration,
+                                  @NotNull Selector selector);
 
     /**
      * Gets all the resources that exist on the remote system and that math the given selectors.
      *
-     * @param selectors the selector to be used for filtering the resource to describe.
+     * @param selector the selector to be used for filtering the resource to describe.
      * @return the list of resources.
      */
-    default ResourceListObject<R> listAll(@NotNull List<Selector> selectors) {
-        return listAll(getDefaultConfiguration(), selectors);
+    default ResourceListObject<R> listAll(@NotNull Selector selector) {
+        return listAll(getDefaultConfiguration(), selector);
     }
-
-    /**
-     * Gets all the resources that exist into the managed system.
-     *
-     * @return the list of resources.
-     */
-    default ResourceListObject<R> listAll() {
-        return listAll(Collections.emptyList());
-    }
-
 }

@@ -25,34 +25,6 @@ import org.junit.jupiter.api.Test;
 class HasItemsTest {
 
     @Test
-    void shouldGetAllResourcesForMatchingSelector() {
-        // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
-        // When
-        List<HasMetadata> allMatching = list.getAllMatching(List.of(resource -> true));
-
-        // Then
-        Assertions.assertNotNull(allMatching);
-        Assertions.assertEquals(1, allMatching.size());
-    }
-
-    @Test
-    void shouldGetNoResourceForNotMatchingSelector() {
-        // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
-        // When
-        List<HasMetadata> allMatching = list.getAllMatching(List.of(resource -> false));
-
-        // Then
-        Assertions.assertNotNull(allMatching);
-        Assertions.assertTrue(allMatching.isEmpty());
-    }
-
-    @Test
     void shouldGetAllResourcesByKindClass() {
         // Given
         DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(

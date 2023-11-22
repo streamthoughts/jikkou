@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.rest.services;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -29,8 +30,8 @@ public interface ApiResourceService {
     /**
      * Reconciles the specified resources.
      *
-     * @param identifier the resource identifier.
-     * @param context    the context.
+     * @param identifier The resource identifier.
+     * @param context    The reconciliation context.
      * @return an optional
      */
     ApiChangeResultList reconcile(ApiResourceIdentifier identifier,
@@ -41,8 +42,8 @@ public interface ApiResourceService {
     /**
      * Gets the differences for the specified resources.
      *
-     * @param identifier the resource identifier.
-     * @param context    the context.
+     * @param identifier The resource identifier.
+     * @param context    The reconciliation context.
      * @return an optional
      */
     ApiResourceChangeList diff(ApiResourceIdentifier identifier,
@@ -52,8 +53,8 @@ public interface ApiResourceService {
     /**
      * Validates the specified resources.
      *
-     * @param identifier the resource identifier.
-     * @param context    the context.
+     * @param identifier The resource identifier.
+     * @param context    The reconciliation context.
      * @return an optional
      */
     ResourceListObject<HasMetadata> validate(ApiResourceIdentifier identifier,
@@ -63,10 +64,22 @@ public interface ApiResourceService {
     /**
      * Search resources for the specified identifier and context.
      *
-     * @param identifier the resource identifier.
-     * @param context    the context.
+     * @param identifier The resource identifier.
+     * @param context    The reconciliation context.
      * @return an optional
      */
     ResourceListObject<HasMetadata> search(ApiResourceIdentifier identifier,
                                            ReconciliationContext context);
+
+    /**
+     * Gets the resource for the specified identifier and name.
+     *
+     * @param identifier    The resource identifier.
+     * @param name          The resource name.
+     * @param configuration The configuration.
+     * @return an optional
+     */
+    HasMetadata get(ApiResourceIdentifier identifier,
+                    String name,
+                    Configuration configuration);
 }

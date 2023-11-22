@@ -34,7 +34,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -120,13 +120,13 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Value
             @NotNull ReconciliationContext context) {
 
         // Get existing resources from the environment.
-        List<V1KafkaQuota> actualResources = collector.listAll(context.configuration()).stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+        List<V1KafkaQuota> actualResources = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
+                .filter(context.selector()::apply)
                 .toList();
 
         // Get expected resources which are candidates for this reconciliation.
         List<V1KafkaQuota> expectedResources = resources.stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.evaluate(context.configuration());

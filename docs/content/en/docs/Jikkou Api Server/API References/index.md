@@ -3,5 +3,5 @@ title: "Jikkou - API References"
 type: openapi
 description: "Jikkou - API References"
 linkTitle: "API References"
-specUrl: "https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou-rest-api/openapi/openapi.yaml"
+specUrl: "https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou-api/openapi/openapi.yaml"
 ---

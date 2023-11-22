@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.rest.services;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
@@ -39,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 @Singleton
-public class DefaultApiResourceService implements ApiResourceService {
+public final class DefaultApiResourceService implements ApiResourceService {
 
     public static final String LIST_KIND_SUFFIX = "List";
 
@@ -98,10 +99,25 @@ public class DefaultApiResourceService implements ApiResourceService {
     public ResourceListObject<HasMetadata> search(ApiResourceIdentifier identifier,
                                                   ReconciliationContext context) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
-        return api.getResources(
+        return api.listResources(
                 descriptor.resourceType(),
-                context.selectors(),
+                context.selector(),
                 context.configuration()
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public HasMetadata get(ApiResourceIdentifier identifier,
+                           String name,
+                           Configuration configuration) {
+        ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
+        return api.getResource(
+                descriptor.resourceType(),
+                name,
+                configuration
         );
     }
 

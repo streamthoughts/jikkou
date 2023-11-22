@@ -21,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class AggregateSelectorTest {
+class SelectorsTest {
 
     @Test
     void shouldReturnAllSelectorExpression() {
-        AggregateSelector selector = new AggregateSelector(List.of(
+        Selector selector = Selectors.allMatch(List.of(
                 getSelectorForExpressionString("expr1"),
                 getSelectorForExpressionString("expr2")
         ));

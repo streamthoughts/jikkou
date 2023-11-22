@@ -35,6 +35,7 @@ import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -93,12 +94,12 @@ class AdminClientKafkaAclControllerIT extends AbstractKafkaIntegrationTest {
 
         // WHEN
         ResourceListObject<V1KafkaPrincipalAuthorization> initialResourceList = api
-                .getResources(V1KafkaPrincipalAuthorization.class, Configuration.empty());
+                .listResources(V1KafkaPrincipalAuthorization.class, Selectors.NO_SELECTOR, Configuration.empty());
 
         ApiChangeResultList result = api.reconcile(resources, ReconciliationMode.CREATE, context);
 
         ResourceListObject<V1KafkaPrincipalAuthorization> actualResourceList = api
-                .getResources(V1KafkaPrincipalAuthorization.class, Configuration.empty());
+                .listResources(V1KafkaPrincipalAuthorization.class, Selectors.NO_SELECTOR, Configuration.empty());
 
         // THEN
         Assertions.assertEquals(

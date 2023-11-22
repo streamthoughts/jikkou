@@ -23,7 +23,6 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
@@ -75,7 +74,7 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
      **/
     @Override
     public ResourceListObject<V1KafkaTopicAclEntry> listAll(@NotNull Configuration configuration,
-                                                            @NotNull List<Selector> selectors) {
+                                                            @NotNull Selector selector) {
         AivenApiClient api = AivenApiClientFactory.create(config);
         try {
             ListKafkaAclResponse response = api.listKafkaAclEntries();
@@ -91,7 +90,7 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
 
             List<V1KafkaTopicAclEntry> items = KafkaAclEntryAdapter.map(response.acl())
                     .stream()
-                    .filter(new AggregateSelector(selectors)::apply)
+                    .filter(selector::apply)
                     .collect(Collectors.toList());
 
             return new V1KafkaTopicAclEntryList(items);

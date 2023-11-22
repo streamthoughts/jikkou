@@ -50,11 +50,11 @@ import lombok.extern.jackson.Jacksonized;
     "avnsra"
 })
 @Verbs({
-    Verb.LIST,
+    Verb.APPLY,
     Verb.CREATE,
-    Verb.UPDATE,
     Verb.DELETE,
-    Verb.APPLY
+    Verb.LIST,
+    Verb.UPDATE
 })
 @JsonPropertyOrder({
     "apiVersion",

@@ -29,7 +29,6 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.AclChange;
 import io.streamthoughts.jikkou.kafka.change.AclChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.acls.AclChangeDescription;
@@ -99,7 +98,7 @@ public final class AdminClientKafkaAclController
         // Get the list of remote resources that are candidates for this reconciliation
         List<V1KafkaPrincipalAuthorization> expectedStates = resources
                 .stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
@@ -110,7 +109,7 @@ public final class AdminClientKafkaAclController
             AdminClientKafkaAclCollector collector = new AdminClientKafkaAclCollector(adminClientContextFactory);
             List<V1KafkaPrincipalAuthorization> actualStates = collector.listAll(adminClient)
                     .stream()
-                    .filter(new AggregateSelector(context.selectors())::apply)
+                    .filter(context.selector()::apply)
                     .toList();
 
             // Compute state changes

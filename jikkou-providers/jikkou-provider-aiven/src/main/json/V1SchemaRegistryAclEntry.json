@@ -18,7 +18,13 @@
           "avnsra"
         ]
       },
-      "verbs": ["*"]
+      "verbs": [
+        "apply",
+        "create",
+        "delete",
+        "list",
+        "update"
+      ]
     }
   },
   "required": [

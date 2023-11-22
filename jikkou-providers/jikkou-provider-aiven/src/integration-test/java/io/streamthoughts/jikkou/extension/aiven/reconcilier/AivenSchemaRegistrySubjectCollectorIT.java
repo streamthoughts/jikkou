@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.extension.aiven.reconcilier;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.Collections;
@@ -76,7 +77,7 @@ class AivenSchemaRegistrySubjectCollectorIT extends AbstractAivenIntegrationTest
                         """)
         );
         // When
-        ResourceListObject<V1SchemaRegistrySubject> result = collector.listAll(Configuration.empty(), NO_SELECTOR);
+        ResourceListObject<V1SchemaRegistrySubject> result = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR);
 
         // Then
         Assertions.assertNotNull(result);

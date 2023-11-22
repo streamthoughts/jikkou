@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
@@ -67,7 +68,7 @@ public class GetCommandLineFactory {
 
                 // Create command for the current resource
                 final GetResourceCommand command = applicationContext.getBean(GetResourceCommand.class);
-                command.setResourceType(type);
+                command.setType(type);
 
                 // Create subcommand
                 final CommandLine subcommand = new CommandLine(command);
@@ -91,6 +92,24 @@ public class GetCommandLineFactory {
                         spec.addOption(createOptionSpec(option, command)
                         );
                     }
+                }
+                if (resource.isVerbSupported(Verb.GET)) {
+                    spec.addOption( CommandLine.Model.OptionSpec
+                            .builder("--name")
+                            .hasInitialValue(false)
+                            .paramLabel("<name>")
+                            .type(String.class)
+                            .description("The name of the resource.")
+                            .required(false)
+                            .setter(new CommandLine.Model.ISetter() {
+                                @Override
+                                public <T> T set(T value) {
+                                    String str = Optional.ofNullable(value).map(Objects::toString).orElse(null);
+                                    command.setName(str);
+                                    return null;
+                                }
+                            })
+                            .build());
                 }
                 cmd.addSubcommand(subcommand);
                 sections.computeIfAbsent("%nCOMMANDS FOR API GROUP '" + type.group() + "': %n%n", k -> new ArrayList<>())

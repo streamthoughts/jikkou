@@ -16,19 +16,18 @@
 package io.streamthoughts.jikkou.schema.registry.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
 
@@ -53,7 +52,7 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
         collector.defaultToGlobalCompatibilityLevel(true);
 
         // When
-        List<V1SchemaRegistrySubject> resources = collector.listAll(Configuration.empty(), Collections.emptyList())
+        List<V1SchemaRegistrySubject> resources = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
                 .getItems();
 
         // Then
@@ -72,7 +71,7 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
         collector.defaultToGlobalCompatibilityLevel(false);
 
         // When
-        List<V1SchemaRegistrySubject> resources = collector.listAll(Configuration.empty(), Collections.emptyList())
+        List<V1SchemaRegistrySubject> resources = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
                 .getItems();
 
         // Then

@@ -26,7 +26,6 @@ import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProper
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
@@ -43,6 +42,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -123,20 +123,44 @@ public final class AdminClientKafkaTopicCollector
      * {@inheritDoc}
      */
     @Override
+    public Optional<V1KafkaTopic> get(@NotNull final String name,
+                                      @NotNull final Configuration configuration) {
+        var options = new ConfigDescribeConfiguration(configuration);
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Getting kafka topic '{}' with options: {}", name, options.asConfiguration().asMap());
+        }
+
+        try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+
+            var predicate = getKafkaConfigPredicate(options);
+            List<V1KafkaTopic> resources = new KafkaTopicsClient(context.getAdminClient())
+                    .listAll(Set.of(name), predicate);
+
+            if (resources.isEmpty()) {
+                return Optional.empty();
+            }
+
+            V1KafkaTopic resource = resources.get(0);
+            resource = addClusterIdToMetadataAnnotations(resource, context.getClusterId());
+            return Optional.of(resource);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ResourceListObject<V1KafkaTopic> listAll(@NotNull final Configuration configuration,
-                                                    @NotNull final List<Selector> selectors) {
+                                                    @NotNull final Selector selector) {
 
         var options = new ConfigDescribeConfiguration(configuration);
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Listing all kafka topics using following options: {}", options.asConfiguration().asMap());
+            LOG.info("Listing all kafka topics with options: {}", options.asConfiguration().asMap());
         }
 
-        var predicate = new KafkaConfigPredicate()
-                .withDynamicTopicConfig(true)
-                .withDefaultConfig(options.isDescribeDefaultConfigs())
-                .withDynamicBrokerConfig(options.isDescribeDynamicBrokerConfigs())
-                .withStaticBrokerConfig(options.isDescribeStaticBrokerConfigs());
+        var predicate = getKafkaConfigPredicate(options);
 
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
 
@@ -151,19 +175,31 @@ public final class AdminClientKafkaTopicCollector
 
             List<V1KafkaTopic> items = resources
                     .stream()
-                    .filter(new AggregateSelector(selectors)::apply)
-                    .map(resource -> resource
-                            .toBuilder()
-                            .withMetadata(resource.getMetadata()
-                                    .toBuilder()
-                                    .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
-                                    .build()
-                            )
-                            .build()
-                    )
+                    .filter(selector::apply)
+                    .map(resource -> addClusterIdToMetadataAnnotations(resource, clusterId))
                     .toList();
             return new V1KafkaTopicList(items);
         }
+    }
+
+    private KafkaConfigPredicate getKafkaConfigPredicate(ConfigDescribeConfiguration options) {
+        return new KafkaConfigPredicate()
+                .withDynamicTopicConfig(true)
+                .withDefaultConfig(options.isDescribeDefaultConfigs())
+                .withDynamicBrokerConfig(options.isDescribeDynamicBrokerConfigs())
+                .withStaticBrokerConfig(options.isDescribeStaticBrokerConfigs());
+    }
+
+
+    private V1KafkaTopic addClusterIdToMetadataAnnotations(V1KafkaTopic resource,
+                                                           String clusterId) {
+        return resource.toBuilder()
+                .withMetadata(resource.getMetadata()
+                        .toBuilder()
+                        .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                        .build()
+                )
+                .build();
     }
 
     /**
@@ -192,14 +228,26 @@ public final class AdminClientKafkaTopicCollector
         public List<V1KafkaTopic> listAll(@NotNull final Predicate<ConfigEntry> configEntryPredicate) {
 
             // Gather all topic names
-            Set<String> topicNames = getValueOrThrowException(
+            Set<String> topics = getValueOrThrowException(
                     Futures.toCompletableFuture(client.listTopics().names()),
                     e -> new JikkouRuntimeException("Failed to list kafka topics", e)
             );
+            return listAll(topics, configEntryPredicate);
+        }
+
+        /**
+         * List all kafka topics with only config-entries matching the given predicate.
+         *
+         * @param topics               The set of topic names.
+         * @param configEntryPredicate The predicate to be used for matching config entries.
+         * @return The V1KafkaTopic.
+         */
+        public List<V1KafkaTopic> listAll(@NotNull final Set<String> topics,
+                                          @NotNull final Predicate<ConfigEntry> configEntryPredicate) {
 
             // Gather description and configuration for all topics
-            CompletableFuture<List<V1KafkaTopic>> results = getDescriptionForTopics(topicNames)
-                    .thenCombine(getConfigForTopics(topicNames), (descriptions, configs) -> descriptions.values()
+            CompletableFuture<List<V1KafkaTopic>> results = getDescriptionForTopics(topics)
+                    .thenCombine(getConfigForTopics(topics), (descriptions, configs) -> descriptions.values()
                             .stream()
                             .map(desc -> newTopicResources(desc, configs.get(desc.name()), configEntryPredicate))
                             .toList());

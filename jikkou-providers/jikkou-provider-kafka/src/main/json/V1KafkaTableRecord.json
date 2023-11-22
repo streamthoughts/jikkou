@@ -15,10 +15,17 @@
       "names": {
         "singular": "ktable-record",
         "plural": "kafkatablerecord",
-        "shortNames" : [ "ktr" ]
-
+        "shortNames": [
+          "ktr"
+        ]
       },
-      "verbs": ["*"]
+      "verbs": [
+        "list",
+        "create",
+        "update",
+        "delete",
+        "apply"
+      ]
     }
   },
   "required": [

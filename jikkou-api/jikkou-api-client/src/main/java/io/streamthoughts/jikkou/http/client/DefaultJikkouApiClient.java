@@ -33,7 +33,6 @@ import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.http.client.adapter.ResourceReconcileRequestFactory;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
@@ -219,14 +218,14 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      **/
     @Override
     public <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType type,
-                                                                       @NotNull List<Selector> selectors,
+                                                                       @NotNull Selector selector,
                                                                        @NotNull Configuration configuration) {
         ApiResource resource = queryApiResourceForType(type);
         HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.SELECT, type));
 
         ResourceListRequest payload = new ResourceListRequest(
                 configuration.asMap(),
-                new AggregateSelector(selectors).getSelectorExpressions()
+                selector.getSelectorExpressions()
         );
         RequestBody requestBody = apiClient.serialize(payload, "application/json");
         Request httpRequest = new Request.Builder()
@@ -283,7 +282,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends HasMetadata> ResourceListObject<T> validate(@NotNull ResourceType type,
                                                                   @NotNull List<T> resources,
-                                                                  @NotNull ReconciliationContext context)  {
+                                                                  @NotNull ReconciliationContext context) {
         ApiResource apiResource = queryApiResourceForType(type);
         HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.VALIDATE, type));
 
@@ -351,7 +350,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         return links.findLinkByKey(action)
                 .orElseThrow(() -> new JikkouApiClientException(String.format(
                         "Failed to %s resources for group '%s', version '%s', and kind '%s'. " +
-                        "Cannot find _links['%s'] field from returned ApiResourceList metadata.(%s)",
+                                "Cannot find _links['%s'] field from returned ApiResourceList metadata.(%s)",
                         action,
                         type.group(),
                         type.group(),

@@ -15,32 +15,26 @@
  */
 package io.streamthoughts.jikkou.core.selectors;
 
-import java.util.Collection;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
-abstract class AggregateSelector implements Selector {
-
-    protected final List<? extends Selector> selectors;
+class AllMatchSelector extends AggregateSelector {
 
     /**
-     * Creates a new {@link AggregateSelector} instance.
+     * Creates a new {@link AllMatchSelector} instance.
      *
-     * @param selectors the list of {@link Selector}.
+     * @param selectors The list of {@link Selector}.
      */
-    public AggregateSelector(List<? extends Selector> selectors) {
-        this.selectors = Objects.requireNonNull(selectors, "selectors must not be null");
+    public AllMatchSelector(List<? extends Selector> selectors) {
+       super(selectors);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public List<String> getSelectorExpressions() {
-        return selectors.stream()
-                .map(Selector::getSelectorExpressions)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+    public boolean apply(@NotNull HasMetadata resource) {
+        return selectors.stream().allMatch(selector -> selector.apply(resource));
     }
 }

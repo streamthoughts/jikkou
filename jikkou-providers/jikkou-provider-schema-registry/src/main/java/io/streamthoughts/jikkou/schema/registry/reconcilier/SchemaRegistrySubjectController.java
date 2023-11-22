@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
@@ -111,7 +111,7 @@ public class SchemaRegistrySubjectController implements Controller<V1SchemaRegis
 
         // Get described resources that are candidates for this reconciliation.
         List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         // Get existing resources from the environment.
@@ -119,8 +119,8 @@ public class SchemaRegistrySubjectController implements Controller<V1SchemaRegis
                 .prettyPrintSchema(false)
                 .defaultToGlobalCompatibilityLevel(false);
 
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration()).stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
+                .filter(context.selector()::apply)
                 .toList();
 
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();

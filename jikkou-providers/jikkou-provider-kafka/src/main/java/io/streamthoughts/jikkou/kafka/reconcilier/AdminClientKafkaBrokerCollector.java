@@ -24,7 +24,6 @@ import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProper
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
@@ -119,17 +118,17 @@ public final class AdminClientKafkaBrokerCollector
      */
     @Override
     public ResourceListObject<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
-                                                     @NotNull final List<Selector> selectors) {
+                                                     @NotNull final Selector selector) {
 
         LOG.info("Listing all kafka brokers");
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
-            return listAll(configuration, selectors, context);
+            return listAll(configuration, selector, context);
         }
     }
 
     @NotNull
     ResourceListObject<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
-                                              @NotNull final List<Selector> selectors,
+                                              @NotNull final Selector selector,
                                               @NotNull final AdminClientContext context) {
         var options = new ConfigDescribeConfiguration(configuration);
 
@@ -142,7 +141,7 @@ public final class AdminClientKafkaBrokerCollector
         final String clusterId = context.getClusterId();
         List<V1KafkaBroker> items = resources
                 .stream()
-                .filter(new AggregateSelector(selectors)::apply)
+                .filter(selector::apply)
                 .map(resource -> resource
                         .toBuilder()
                         .withMetadata(resource.getMetadata()

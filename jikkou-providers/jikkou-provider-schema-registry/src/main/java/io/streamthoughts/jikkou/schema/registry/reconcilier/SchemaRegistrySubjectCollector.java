@@ -37,6 +37,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1SchemaRegistrySubject.class)
@@ -87,7 +88,7 @@ public class SchemaRegistrySubjectCollector implements Collector<V1SchemaRegistr
      **/
     @Override
     public ResourceListObject<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
-                                                               @NotNull List<Selector> selectors) {
+                                                               @NotNull Selector selector) {
 
         AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config));
         try {
@@ -101,7 +102,11 @@ public class SchemaRegistrySubjectCollector implements Collector<V1SchemaRegistr
                         exception.get()
                 );
             }
-            return new V1SchemaRegistrySubjectList(result.join());
+            List<V1SchemaRegistrySubject> resources = result.join()
+                    .stream()
+                    .filter(selector::apply)
+                    .collect(Collectors.toList());
+            return new V1SchemaRegistrySubjectList(resources);
         } finally {
             api.close();
         }

@@ -32,7 +32,6 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.record.KafkaTableRecordChangeDescription;
@@ -133,7 +132,7 @@ public final class AdminClientKafkaTableController
 
         Map<String, List<V1KafkaTableRecord>> resourcesByTopic = resources.stream()
                 .filter(AdminClientKafkaTableController::recordWithNonEmptyKey)
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .collect(Collectors.groupingBy(it -> it.getMetadata().getName(), Collectors.toList()));
 
         List<HasMetadataChange<KafkaTableRecordChange>> changes = new ArrayList<>();
@@ -148,7 +147,7 @@ public final class AdminClientKafkaTableController
                     AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG.key(), first.getSpec().getValue().type().name(),
                     AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG.key(), true
             ));
-            ResourceListObject<V1KafkaTableRecord> list = collector.listAll(configuration, context.selectors());
+            ResourceListObject<V1KafkaTableRecord> list = collector.listAll(configuration, context.selector());
 
             KafkaTableRecordChangeComputer changeComputer = new KafkaTableRecordChangeComputer();
             changes.addAll(changeComputer.computeChanges(list.getItems(), entry.getValue()));

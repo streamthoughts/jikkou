@@ -17,17 +17,17 @@ package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
 import io.streamthoughts.jikkou.core.selectors.Selector;
-import java.util.List;
-import picocli.CommandLine;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
+import picocli.CommandLine.Option;
 
 public final class SelectorOptionsMixin {
 
-    @CommandLine.Option(names = { "--selector", "-s" },
+    @Option(names = {"--selector", "-s"},
             description = "The selector expression used for including or excluding resources.")
     public String[] expressions;
 
 
-    public List<Selector> getResourceSelectors() {
-        return new ExpressionSelectorFactory().make(expressions);
+    public Selector getResourceSelector() {
+        return Selectors.allMatch(new ExpressionSelectorFactory().make(expressions));
     }
 }

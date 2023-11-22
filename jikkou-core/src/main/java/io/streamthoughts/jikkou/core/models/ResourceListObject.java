@@ -19,7 +19,6 @@ package io.streamthoughts.jikkou.core.models;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.generics.GenericResourceListObject;
-import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -62,17 +61,6 @@ public interface ResourceListObject<E extends HasMetadata>
         return getItems()
                 .stream()
                 .collect(Collectors.toMap(i -> i.getMetadata().getName(), i -> i));
-    }
-
-    /**
-     * Gets the resources matching the given selectors.
-     *
-     * @param selectors the list of selectors to apply.
-     * @return the filtered resources.
-     */
-    @SuppressWarnings("unchecked")
-    default List<E> getAllMatching(final @NotNull List<Selector> selectors) {
-        return (List<E>) HasItems.super.getAllMatching(selectors);
     }
 
     /**

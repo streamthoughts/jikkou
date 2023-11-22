@@ -140,7 +140,7 @@ public interface JikkouApiClient {
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
     <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
-                                                                @NotNull List<Selector> selectors,
+                                                                @NotNull Selector selector,
                                                                 @NotNull Configuration configuration);
 
     /**

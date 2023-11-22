@@ -239,6 +239,16 @@ public class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
+    public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
+                                                 @NotNull String name,
+                                                 @NotNull Configuration configuration) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public ApiResourceChangeList getDiff(@NotNull HasItems resources,
                                          @NotNull ReconciliationContext context) {
 
@@ -256,10 +266,10 @@ public class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType,
-                                                        @NotNull List<Selector> selectors,
-                                                        @NotNull Configuration configuration) {
-        return apiClient.listResources(resourceType, selectors, configuration);
+    public <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
+                                                                       @NotNull Selector selector,
+                                                                       @NotNull Configuration configuration) {
+        return apiClient.listResources(resourceType, selector, configuration);
     }
 
     /**

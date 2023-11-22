@@ -56,6 +56,7 @@ import lombok.extern.jackson.Jacksonized;
     Verb.CREATE,
     Verb.UPDATE,
     Verb.DELETE,
+    Verb.GET,
     Verb.APPLY
 })
 @JsonPropertyOrder({

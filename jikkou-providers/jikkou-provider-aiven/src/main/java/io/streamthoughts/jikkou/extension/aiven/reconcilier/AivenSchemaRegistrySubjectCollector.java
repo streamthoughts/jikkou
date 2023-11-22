@@ -99,7 +99,7 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
      **/
     @Override
     public ResourceListObject<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
-                                                               @NotNull List<Selector> selectors) {
+                                                               @NotNull Selector selector) {
         AivenApiClient api = AivenApiClientFactory.create(this.configuration);
         try {
             ListSchemaSubjectsResponse response = api.listSchemaRegistrySubjects();

@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -132,7 +132,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
         LOG.info("Computing reconciliation ");
         // Get described resources that are candidates for this reconciliation.
         List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .map(this::useGlobalCompatibilityLevelIfUnspecified)
                 .toList();
 
@@ -140,8 +140,8 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
         AivenSchemaRegistrySubjectCollector collector = new AivenSchemaRegistrySubjectCollector(configuration)
                 .prettyPrintSchema(false);
 
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration()).stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
+                .filter(context.selector()::apply)
                 .toList();
 
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();

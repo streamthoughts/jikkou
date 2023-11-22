@@ -87,7 +87,7 @@ class JikkouApiProxyTest {
                         """
                 ));
         UnsupportedApiResourceException exception = Assertions.assertThrows(UnsupportedApiResourceException.class, () ->
-                API.getResources(new ResourceType("Test", "test.jikkou.io/v1", "v1"))
+                API.listResources(new ResourceType("Test", "test.jikkou.io/v1", "v1"))
         );
         Assertions.assertNotNull(exception.getLocalizedMessage());
     }

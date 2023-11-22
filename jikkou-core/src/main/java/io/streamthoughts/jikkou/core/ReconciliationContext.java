@@ -19,8 +19,7 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.selectors.Selector;
-import java.util.Collections;
-import java.util.List;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,7 +36,7 @@ public interface ReconciliationContext {
      *
      * @return the {@link Selector}.
      */
-    @NotNull List<Selector> selectors();
+    @NotNull Selector selector();
 
     /**
      * Returns the {@link Configuration} used for executing a specific resource reconciliation operation.
@@ -99,7 +98,7 @@ public interface ReconciliationContext {
          */
         public Builder configuration(Configuration configuration) {
             return new Builder(new Default(
-                    internal.selectors(),
+                    internal.selector(),
                     configuration,
                     internal.isDryRun(),
                     internal.labels(),
@@ -115,7 +114,7 @@ public interface ReconciliationContext {
          */
         public Builder dryRun(boolean dryRun) {
             return new Builder(new Default(
-                    internal.selectors(),
+                    internal.selector(),
                     internal.configuration(),
                     dryRun,
                     internal.labels(),
@@ -124,14 +123,14 @@ public interface ReconciliationContext {
         }
 
         /**
-         * Returns a new builder with the given selectors.
+         * Returns a new builder with the given selector.
          *
-         * @param selectors the selectors
+         * @param selector The selector
          * @return a new {@link Builder}
          */
-        public Builder selectors(List<Selector> selectors) {
+        public Builder selector(Selector selector) {
             return new Builder(new Default(
-                    selectors,
+                    selector,
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
@@ -147,7 +146,7 @@ public interface ReconciliationContext {
          */
         public Builder labels(Iterable<NamedValue> labels) {
             return new Builder(new Default(
-                    internal.selectors(),
+                    internal.selector(),
                     internal.configuration(),
                     internal.isDryRun(),
                     NamedValue.setOf(labels),
@@ -163,7 +162,7 @@ public interface ReconciliationContext {
          */
         public Builder label(NamedValue label) {
             return new Builder(new Default(
-                    internal.selectors(),
+                    internal.selector(),
                     internal.configuration(),
                     internal.isDryRun(),
                     NamedValue.setOf(internal.labels()).with(label),
@@ -178,7 +177,7 @@ public interface ReconciliationContext {
          */
         public Builder annotations(Iterable<NamedValue> annotations) {
             return new Builder(new Default(
-                    internal.selectors(),
+                    internal.selector(),
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
@@ -193,7 +192,7 @@ public interface ReconciliationContext {
          */
         public Builder annotation(NamedValue annotation) {
             return new Builder(new Default(
-                    internal.selectors(),
+                    internal.selector(),
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
@@ -215,11 +214,11 @@ public interface ReconciliationContext {
     /**
      * A default {@link ReconciliationContext} implementation.
      *
-     * @param selectors     the selectors to filter resources to be included in the reconciliation.
-     * @param configuration the config for computing resource changes.
-     * @param isDryRun      specify if the reconciliation should be run in dry-run.
+     * @param selector      The selector to filter resources to be included in the reconciliation.
+     * @param configuration The config for computing resource changes.
+     * @param isDryRun      Specify if the reconciliation should be run in dry-run.
      */
-    record Default(List<Selector> selectors,
+    record Default(Selector selector,
                    Configuration configuration,
                    boolean isDryRun,
                    NamedValue.Set labels,
@@ -227,7 +226,7 @@ public interface ReconciliationContext {
             implements ReconciliationContext {
 
         public static Default EMPTY = new Default(
-                Collections.emptyList(),
+                Selectors.NO_SELECTOR,
                 Configuration.empty(),
                 true,
                 NamedValue.emptySet(),

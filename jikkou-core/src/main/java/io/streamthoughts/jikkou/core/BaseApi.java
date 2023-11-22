@@ -32,7 +32,6 @@ import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.core.transform.TransformationChain;
 import io.streamthoughts.jikkou.core.validation.Validation;
@@ -169,7 +168,7 @@ public abstract class BaseApi implements JikkouApi {
 
         List<? extends HasMetadata> filtered = resources.getItems().stream()
                 .filter(Predicate.not(resource -> Resource.isTransient(resource.getClass())))
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
         return new DefaultResourceListObject<>(filtered);
     }
@@ -197,7 +196,7 @@ public abstract class BaseApi implements JikkouApi {
     }
 
     @SuppressWarnings("unchecked")
-    protected Collector<HasMetadata> getMatchingResourceCollector(@NotNull ResourceType resource) {
+    protected <T extends HasMetadata> Collector<T> getMatchingResourceCollector(@NotNull ResourceType resource) {
         LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
                 resource.group(),
                 resource.apiVersion(),

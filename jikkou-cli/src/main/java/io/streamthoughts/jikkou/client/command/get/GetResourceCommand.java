@@ -19,14 +19,14 @@ import io.micronaut.context.annotation.Prototype;
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
+import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
+import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
-import io.streamthoughts.jikkou.core.selectors.Selector;
 import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -36,9 +36,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
-import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
-import picocli.CommandLine.Spec;
 
 @Command(
         header = "Display one or many resources",
@@ -48,21 +46,31 @@ import picocli.CommandLine.Spec;
 public class GetResourceCommand extends CLIBaseCommand implements Callable<Integer> {
 
     // COMMAND OPTIONS
-    @Spec
-    private CommandSpec commandSpec;
     @Mixin
     SelectorOptionsMixin selectorOptions;
     @Mixin
     FormatOptionsMixin formatOptions;
 
-    @Option(names = { "--list" },
+    @Option(names = {"--list"},
             defaultValue = "false",
             description = "Get resources as ResourceListObject."
     )
-    private boolean list = false;
+    private boolean list;
 
+    /**
+     * The resource name (optional).
+     */
+    private String name;
+
+    /**
+     * The resource options (optional).
+     */
     private final Map<String, Object> options = new HashMap<>();
-    private ResourceType resourceType;
+
+    /**
+     * The resource type.
+     */
+    private ResourceType type;
 
     // SERVICES
     @Inject
@@ -70,17 +78,31 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
     @Inject
     ResourceWriter writer;
 
-    // Picocli require an empty constructor to generate the completion file
-    public GetResourceCommand() {}
 
-    /** {@inheritDoc} **/
+    // Picocli require an empty constructor to generate the completion file
+    public GetResourceCommand() {
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public Integer call() throws Exception {
-        ResourceListObject<HasMetadata> resources = api.getResources(
-                resourceType,
-                getResourceSelectors(),
-                Configuration.from(options)
-        );
+        ResourceListObject<HasMetadata> resources;
+        if (Strings.isBlank(name)) {
+            resources = api.listResources(
+                    type,
+                    selectorOptions.getResourceSelector(),
+                    Configuration.from(options)
+            );
+        } else {
+            HasMetadata resource = api.getResource(
+                    type,
+                    name,
+                    Configuration.from(options)
+            );
+            resources = new DefaultResourceListObject<>(List.of(resource));
+        }
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             if (list) {
                 writer.write(formatOptions.format(), resources, baos);
@@ -92,16 +114,16 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
         }
     }
 
-    private List<Selector> getResourceSelectors() {
-        return new ExpressionSelectorFactory().make(selectorOptions.expressions);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setResourceType(ResourceType resourceType) {
-        this.resourceType = resourceType;
+    public void setType(ResourceType type) {
+        this.type = type;
     }
 
     @SuppressWarnings("unchecked")
     public <T> T addOptions(final String name, final T value) {
-        return (T) this.options.put(name,value);
+        return (T) this.options.put(name, value);
     }
 }

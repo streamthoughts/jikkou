@@ -45,7 +45,7 @@ public final class ResourceDescriptorFactory {
      * @throws NullPointerException if either type or resource is {@code  null}.
      */
     public ResourceDescriptor make(@NotNull final ResourceType type,
-                                   @NotNull Class<? extends Resource> resource) {
+                                   @NotNull final Class<? extends Resource> resource) {
         Objects.requireNonNull(type, "Cannot make ResourceDescriptor for type 'null'");
         Objects.requireNonNull(type, "Cannot make ResourceDescriptor for resource 'null'");
         String description = extractDescription(resource);

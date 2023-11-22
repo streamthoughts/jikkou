@@ -38,8 +38,8 @@ import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +102,7 @@ public interface JikkouApi extends AutoCloseable {
     /**
      * List the supported API resources for the specified API group
      *
-     * @param group   the API group of the resource.
+     * @param group the API group of the resource.
      * @return {@link ApiResourceList}.
      */
     List<ApiResourceList> listApiResources(@NotNull String group);
@@ -220,46 +220,69 @@ public interface JikkouApi extends AutoCloseable {
                      final @NotNull ReconciliationContext context);
 
     /**
-     * Get the resources associated to the given type.
+     * Get the resource associated for the specified type.
+     *
+     * @param type The class of the resource to be described.
+     * @param name The name of the resource.
+     * @return the {@link HasMetadata}.
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    default <T extends HasMetadata> T getResource(@NotNull Class<? extends HasMetadata> type,
+                                                  @NotNull String name,
+                                                  @NotNull Configuration configuration) {
+        return getResource(ResourceType.of(type), name, configuration);
+    }
+
+    /**
+     * Get the resource associated for the specified type.
+     *
+     * @param type The class of the resource to be described.
+     * @param name The name of the resource.
+     * @return the {@link HasMetadata}.
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    <T extends HasMetadata> T getResource(@NotNull ResourceType type,
+                                          @NotNull String name,
+                                          @NotNull Configuration configuration);
+
+    /**
+     * Get all the changes for the given resources.
+     *
+     * @param resources The list of resource to be reconciled.
+     * @return the {@link HasMetadata}.
+     */
+    ApiResourceChangeList getDiff(@NotNull HasItems resources,
+                                  @NotNull ReconciliationContext context);
+
+    /**
+     * List the resources associated for the specified type.
+     *
+     * @param resourceClass The class of the resource to be described.
+     * @return the {@link HasMetadata}.
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    default ResourceListObject<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass) {
+        return listResources(resourceClass, Selectors.NO_SELECTOR, Configuration.empty());
+    }
+
+    /**
+     * List the resources associated for the specified type.
      *
      * @param resourceClass the class of the resource to be described.
      * @return the {@link HasMetadata}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default ResourceListObject<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass) {
-        return getResources(resourceClass, Collections.emptyList(), Configuration.empty());
+    default ResourceListObject<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass,
+                                                          @NotNull Selector selector) {
+        return listResources(resourceClass, selector, Configuration.empty());
     }
 
     /**
-     * Get the resources associated to the given type.
-     *
-     * @param resourceClass the class of the resource to be described.
-     * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
-     *                            or more than one descriptor match the type.
-     */
-    default ResourceListObject<HasMetadata> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
-                                                         @NotNull List<Selector> selectors) {
-        return getResources(resourceClass, selectors, Configuration.empty());
-    }
-
-    /**
-     * Get the resource associated to the given type.
-     *
-     * @param resourceClass the class of the resource to be described.
-     * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
-     *                            or more than one descriptor match the type.
-     */
-    default <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull Class<? extends HasMetadata> resourceClass,
-                                                                       @NotNull Configuration configuration) {
-        return getResources(resourceClass, Collections.emptyList(), configuration);
-    }
-
-
-    /**
-     * Get the resource associated to the given type.
+     * List the resources associated for the specified type.
      *
      * @param type          the class of the resource to be described.
      * @param configuration the configuration to be used for describing the resource-type.
@@ -267,65 +290,43 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    @SuppressWarnings("unchecked")
-    default <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull Class<? extends HasMetadata> type,
-                                                                       @NotNull List<Selector> selectors,
-                                                                       @NotNull Configuration configuration) {
-        return (ResourceListObject<T>) getResources(ResourceType.of(type), selectors, configuration);
+    default <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull Class<? extends HasMetadata> type,
+                                                                        @NotNull Selector selector,
+                                                                        @NotNull Configuration configuration) {
+        return listResources(ResourceType.of(type), selector, configuration);
     }
 
     /**
-     * Get all the changes for the given resources.
-     *
-     * @param resources the list of resource to be reconciled.
-     * @return the {@link HasMetadata}.
-     */
-    ApiResourceChangeList getDiff(@NotNull HasItems resources,
-                                  @NotNull ReconciliationContext context);
-
-    /**
-     * Get the resource associated to the given type.
+     * List the resources associated for the specified type.
      *
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType) {
-        return getResources(resourceType, Collections.emptyList(), Configuration.empty());
+    default <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType) {
+        return listResources(resourceType, Selectors.NO_SELECTOR, Configuration.empty());
     }
 
     /**
-     * Get the resource associated to the given type.
+     * List the resources associated for the specified type.
      *
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType,
-                                                         @NotNull List<Selector> selectors) {
-        return getResources(resourceType, selectors, Configuration.empty());
+    default <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
+                                                                        @NotNull Selector selector) {
+        return listResources(resourceType, selector, Configuration.empty());
     }
 
     /**
-     * Get the resource associated to the given type.
+     * List the resources associated for the specified type.
      *
      * @param resourceType  the type of the resource to be described.
      * @param configuration the option to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
      */
-    default <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull ResourceType resourceType,
-                                                                       @NotNull Configuration configuration) {
-        return (ResourceListObject<T>) getResources(resourceType, Collections.emptyList(), configuration);
-    }
-
-    /**
-     * Get the resource associated to the given type.
-     *
-     * @param resourceType  the type of the resource to be described.
-     * @param configuration the option to be used for describing the resource-type.
-     * @return the {@link HasMetadata}.
-     */
-    ResourceListObject<HasMetadata> getResources(@NotNull ResourceType resourceType,
-                                                 @NotNull List<Selector> selectors,
-                                                 @NotNull Configuration configuration);
+    <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
+                                                                @NotNull Selector selector,
+                                                                @NotNull Configuration configuration);
 
     @SuppressWarnings("rawtypes")
     ApiBuilder toBuilder();

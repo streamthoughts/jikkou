@@ -191,16 +191,23 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                             descriptor.orderedVerbs()
                     );
 
-                    if (resource.isVerbSupported(Verb.LIST)) {
+                    if (resource.isVerbSupported(Verb.LIST) || resource.isVerbSupported(Verb.GET)) {
                         Optional<ExtensionDescriptor<Collector>> optional = extensionFactory
                                 .findDescriptorByClass(Collector.class, Qualifiers.byAcceptedResource(type));
                         if (optional.isPresent()) {
                             ExtensionDescriptor<Collector> collector = optional.get();
                             List<ApiResourceVerbOptionSpec> optionSpecs = optionListFactory.make(collector.type());
                             if (!optionSpecs.isEmpty()) {
-                                resource = resource.withApiResourceVerbOptionList(
-                                        new ApiResourceVerbOptionList(Verb.LIST, optionSpecs)
-                                );
+                                if (resource.isVerbSupported(Verb.LIST)) {
+                                    resource = resource.withApiResourceVerbOptionList(
+                                            new ApiResourceVerbOptionList(Verb.LIST, optionSpecs)
+                                    );
+                                }
+                                if (resource.isVerbSupported(Verb.GET)) {
+                                    resource = resource.withApiResourceVerbOptionList(
+                                            new ApiResourceVerbOptionList(Verb.GET, optionSpecs)
+                                    );
+                                }
                             }
                         }
                     }
@@ -408,6 +415,20 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
+    public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
+                                                 @NotNull String name,
+                                                 @NotNull Configuration configuration) {
+        Collector<T> collector = getMatchingResourceCollector(type);
+        final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
+        return collector.get(name, configuration)
+                .map(item -> addBuiltInAnnotations(item, timestamp))
+                .orElseThrow();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public ApiResourceChangeList getDiff(final @NotNull HasItems resources,
                                          final @NotNull ReconciliationContext context) {
 
@@ -432,26 +453,30 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<HasMetadata> getResources(final @NotNull ResourceType resourceType,
-                                                        final @NotNull List<Selector> selectors,
-                                                        final @NotNull Configuration configuration) {
-        Collector<HasMetadata> collector = getMatchingResourceCollector(resourceType);
-        ResourceListObject<HasMetadata> resourceListObject = collector.listAll(configuration, selectors);
+    public <T extends HasMetadata> ResourceListObject<T> listResources(final @NotNull ResourceType type,
+                                                                       final @NotNull Selector selector,
+                                                                       final @NotNull Configuration configuration) {
+        final Collector<T> collector = getMatchingResourceCollector(type);
 
-        OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
+        ResourceListObject<T> result = collector.listAll(configuration, selector);
 
-        List<HasMetadata> items = resourceListObject.getItems()
+        final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
+
+        List<T> items = result.getItems()
                 .stream()
+                // Always apply selector on each item.
+                .filter(selector::apply)
+                // Always add build-in annotations on each item.
                 .map(item -> addBuiltInAnnotations(item, timestamp))
                 .collect(Collectors.toList());
 
-        DefaultResourceListObject<HasMetadata> metadata = new DefaultResourceListObject<>(
-                resourceListObject.getKind(),
-                resourceListObject.getApiVersion(),
-                resourceListObject.getMetadata(),
+        result = new DefaultResourceListObject<>(
+                result.getKind(),
+                result.getApiVersion(),
+                result.getMetadata(),
                 items
         );
-        return addBuiltInAnnotations(metadata, timestamp);
+        return addBuiltInAnnotations(result, timestamp);
     }
 
     private <T extends HasMetadata> T addBuiltInAnnotations(T resource, OffsetDateTime timestamp) {

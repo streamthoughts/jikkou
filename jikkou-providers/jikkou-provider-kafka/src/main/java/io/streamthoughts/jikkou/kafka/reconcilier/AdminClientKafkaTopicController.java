@@ -30,7 +30,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.CreateTopicChangeHandler;
@@ -120,7 +120,7 @@ public final class AdminClientKafkaTopicController
 
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         // Build the configuration for describing actual resources
@@ -132,9 +132,9 @@ public final class AdminClientKafkaTopicController
 
         // Get the list of remote resources that are candidates for this reconciliation
         AdminClientKafkaTopicCollector collector = new AdminClientKafkaTopicCollector(adminClientContextFactory);
-        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration)
+        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(describeConfiguration, Selectors.NO_SELECTOR)
                 .stream()
-                .filter(new AggregateSelector(context.selectors())::apply)
+                .filter(context.selector()::apply)
                 .toList();
 
         boolean isConfigDeletionEnabled = isConfigDeletionEnabled(context);

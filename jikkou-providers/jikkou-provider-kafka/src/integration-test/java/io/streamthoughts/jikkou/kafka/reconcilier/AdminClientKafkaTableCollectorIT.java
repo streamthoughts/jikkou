@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
@@ -71,10 +72,10 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         Configuration config = KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
         AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
         ResourceListObject<V1KafkaTableRecord> list = collector.listAll(Configuration.of(
-                AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
-                AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING.name())
-        );
+                        AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
+                        AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
+                        AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING.name())
+                , Selectors.NO_SELECTOR);
         // Then
         var expected = V1KafkaTableRecord
                 .builder()
@@ -107,10 +108,10 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
         Assertions.assertThrows(JikkouRuntimeException.class, () -> {
             collector.listAll(Configuration.of(
-                    AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
-                    AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
-                    AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING.name())
-            );
+                            AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
+                            AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
+                            AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME, DataType.STRING.name())
+                    , Selectors.NO_SELECTOR);
         });
     }
 }

@@ -31,6 +31,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -97,6 +98,27 @@ public class ApiResource extends AbstractController {
         ResourceListRequest listRequest = new ResourceListRequest(options);
         return doSelect(httpRequest, group, version, plural, listRequest );
     }
+
+    @Get(
+            value = "/apis/{group}/{version}/{plural}/{name}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
+    )
+    public HttpResponse<?> get(HttpRequest<?> httpRequest,
+                                @PathVariable("group") final String group,
+                                @PathVariable("version") final String version,
+                                @PathVariable("plural") final String plural,
+                                @PathVariable("name") final String name,
+                                HttpParameters parameters) {
+        ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
+        Map<String, Object> options = parameters.names()
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), parameters::get));
+
+        HasMetadata result = service.get(identifier, name, Configuration.from(options));
+        return HttpResponse.<HasMetadata>ok()
+                .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
+    }
+
 
     private MutableHttpResponse<?> doSelect(HttpRequest<?> httpRequest,
                                             String group,

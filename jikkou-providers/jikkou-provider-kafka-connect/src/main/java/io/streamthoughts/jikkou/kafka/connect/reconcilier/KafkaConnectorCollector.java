@@ -89,7 +89,7 @@ public final class KafkaConnectorCollector implements Collector<V1KafkaConnector
      **/
     @Override
     public ResourceListObject<V1KafkaConnector> listAll(@NotNull Configuration configuration,
-                                                        @NotNull List<Selector> selectors) {
+                                                        @NotNull Selector selector) {
         boolean expandStatus = new Config(configuration).expandStatus();
         List<V1KafkaConnector> list = this.configuration
                 .getClusters()

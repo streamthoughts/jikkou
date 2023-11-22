@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.extension.aiven.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.selectors.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaSpec;
@@ -47,7 +48,7 @@ class AivenKafkaQuotaCollectorIT extends AbstractAivenIntegrationTest {
                         """
                 ));
         // When
-        List<V1KafkaQuota> results = collector.listAll(Configuration.empty(), NO_SELECTOR).getItems();
+        List<V1KafkaQuota> results = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR).getItems();
 
         // Then
         Assertions.assertNotNull(results);

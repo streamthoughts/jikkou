@@ -25,7 +25,6 @@ import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProper
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.AggregateSelector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTableRecordList;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
@@ -132,7 +131,6 @@ public final class AdminClientKafkaTableCollector
      */
     @Override
     public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuring");
         if (consumerFactory == null) {
             Config config = new Config(configuration);
             consumerFactory = new DefaultConsumerFactory<byte[], byte[]>(config.clientConfig())
@@ -152,7 +150,7 @@ public final class AdminClientKafkaTableCollector
      */
     @Override
     public ResourceListObject<V1KafkaTableRecord> listAll(@NotNull final Configuration configuration,
-                                                          @NotNull final List<Selector> selectors) {
+                                                          @NotNull final Selector selector) {
 
         final Config config = new Config(configuration);
         String topic = config.topicName();
@@ -189,7 +187,7 @@ public final class AdminClientKafkaTableCollector
                     DataValue key = item.getSpec().getKey();
                     return key != null && !key.data().isNull();
                 })
-                .filter(new AggregateSelector(selectors)::apply)
+                .filter(selector::apply)
                 .collect(Collectors.toList());
         return new V1KafkaTableRecordList(items);
     }
