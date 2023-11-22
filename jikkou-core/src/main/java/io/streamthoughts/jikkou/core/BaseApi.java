@@ -15,11 +15,14 @@
  */
 package io.streamthoughts.jikkou.core;
 
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.converter.Converter;
 import io.streamthoughts.jikkou.core.converter.ConverterChain;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.models.ApiGroup;
+import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -35,6 +38,7 @@ import io.streamthoughts.jikkou.core.transform.TransformationChain;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationChain;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +49,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An abstract base implementation of the {@link JikkouApi}.
+ */
 public abstract class BaseApi implements JikkouApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseApi.class);
@@ -58,6 +65,37 @@ public abstract class BaseApi implements JikkouApi {
      */
     public BaseApi(@NotNull ExtensionFactory extensionFactory) {
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory cannot be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ApiResourceList> listApiResources() {
+        return listApiResources(listApiGroups().groups().stream());
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ApiResourceList> listApiResources(@NotNull String group) {
+        Stream<ApiGroup> stream = listApiGroups()
+                .groups()
+                .stream()
+                .filter(api -> api.name().equalsIgnoreCase(group));
+        return listApiResources(stream);
+    }
+
+    private List<ApiResourceList> listApiResources(@NotNull Stream<ApiGroup> stream) {
+        return stream
+                .flatMap(api -> api.versions()
+                        .stream()
+                        .map(apiGroupVersion -> Pair.of(api.name(), apiGroupVersion.version()))
+                )
+                .map(groupVersion -> listApiResources(groupVersion._1(), groupVersion._2()))
+                .sorted(Comparator.comparing(ApiResourceList::groupVersion))
+                .toList();
     }
 
     /**

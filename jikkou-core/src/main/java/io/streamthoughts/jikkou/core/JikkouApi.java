@@ -16,7 +16,6 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
-import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
 import io.streamthoughts.jikkou.core.extension.Extension;
@@ -41,7 +40,6 @@ import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selectors.Selector;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -94,24 +92,20 @@ public interface JikkouApi extends AutoCloseable {
         A build();
     }
 
-
     /**
      * List the supported API resources.
      *
      * @return {@link ApiResourceList}.
      */
-    default List<ApiResourceList> listApiResources() {
-        ApiGroupList apiGroupList = listApiGroups();
-        return apiGroupList.groups()
-                .stream()
-                .flatMap(group -> group.versions()
-                        .stream()
-                        .map(apiGroupVersion -> Pair.of(group.name(), apiGroupVersion.version()))
-                )
-                .map(groupVersion -> listApiResources(groupVersion._1(), groupVersion._2()))
-                .sorted(Comparator.comparing(ApiResourceList::groupVersion))
-                .toList();
-    }
+    List<ApiResourceList> listApiResources();
+
+    /**
+     * List the supported API resources for the specified API group
+     *
+     * @param group   the API group of the resource.
+     * @return {@link ApiResourceList}.
+     */
+    List<ApiResourceList> listApiResources(@NotNull String group);
 
     /**
      * List the supported API resources for the specified API group and API version.

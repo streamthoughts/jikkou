@@ -40,10 +40,19 @@ public enum Verb {
         return value;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String toString() {
         return value;
+    }
+
+    public static Verb getForNameIgnoreCase(final @Nullable String verb) {
+        return Arrays.stream(Verb.values())
+                .filter(e -> e.name().equals(verb.toUpperCase(Locale.ROOT)))
+                .findFirst()
+                .orElseThrow(() -> new JikkouRuntimeException("Unsupported verb '" + verb + "'"));
     }
 
     public static Verb[] getForNamesIgnoreCase(final @Nullable List<String> verbs) {
@@ -52,11 +61,8 @@ public enum Verb {
             return Verb.values();
         }
         return verbs.stream()
-                .map(str -> Arrays.stream(Verb.values())
-                        .filter(e -> e.name().equals(str.toUpperCase(Locale.ROOT)))
-                        .findFirst()
-                        .orElseThrow(() -> new JikkouRuntimeException("Unsupported verb '" + str + "'"))
-        ).toArray(Verb[]::new);
+                .map(Verb::getForNameIgnoreCase)
+                .toArray(Verb[]::new);
     }
 
 }

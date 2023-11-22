@@ -88,7 +88,7 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
         String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
                 new Column[]{
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("GROUP").dataAlign(HorizontalAlign.LEFT),
+                        new Column().header("PROVIDER").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT)
                 },
                 data);
