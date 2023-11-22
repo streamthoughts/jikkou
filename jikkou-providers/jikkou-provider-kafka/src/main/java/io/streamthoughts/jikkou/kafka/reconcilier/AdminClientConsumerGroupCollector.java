@@ -18,9 +18,9 @@ package io.streamthoughts.jikkou.kafka.reconcilier;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
-import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -42,20 +42,17 @@ import org.apache.kafka.common.ConsumerGroupState;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaConsumerGroup.class)
-@ExtensionConfigProperties(
-        properties = {
-                @ConfigPropertySpec(
+@ExtensionSpec(
+        options = {
+                @ExtensionOptionSpec(
                         name = AdminClientConsumerGroupCollector.Config.OFFSETS_CONFIG_NAME,
                         description = AdminClientConsumerGroupCollector.Config.OFFSETS_DESCRIPTION,
-                        defaultValue = "false",
-                        type = Boolean.class,
-                        isRequired = false
+                        type = Boolean.class
                 ),
-                @ConfigPropertySpec(
+                @ExtensionOptionSpec(
                         name = AdminClientConsumerGroupCollector.Config.IN_STATE_CONFIG_NAME,
                         description = AdminClientConsumerGroupCollector.Config.IN_STATE_CONFIG_DESCRIPTION,
-                        type = List.class,
-                        isRequired = false
+                        type = List.class
                 )
         }
 )
@@ -84,9 +81,9 @@ public final class AdminClientConsumerGroupCollector implements Collector<V1Kafk
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
+    public void init(@NotNull ExtensionContext context) {
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
         }
     }
 
@@ -126,7 +123,7 @@ public final class AdminClientConsumerGroupCollector implements Collector<V1Kafk
                     .ofBoolean(OFFSETS_CONFIG_NAME)
                     .description(OFFSETS_DESCRIPTION)
                     .orElse(false)
-                    .evaluate(configuration);
+                    .get(configuration);
         }
 
         public Set<ConsumerGroupState> inStates() {

@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
@@ -55,21 +56,12 @@ public final class TopicNamePrefixValidation extends TopicValidation {
     }
 
     /**
-     * Creates a new {@link TopicNamePrefixValidation}.
-     *
-     * @param prefixes the list of prefixes.
-     */
-    public TopicNamePrefixValidation(final List<String> prefixes) {
-        configure(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(prefixes));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        prefixes = VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.getOptional(config)
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        prefixes = VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.key(),

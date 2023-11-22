@@ -15,15 +15,86 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public record ResourceType(@NotNull String kind,
-                           @Nullable String group,
-                           @Nullable String apiVersion,
-                           boolean isTransient) implements HasMetadataAcceptable {
+/**
+ * Represent a resource type.
+ *
+ * @param kind          The resource Kind.
+ * @param group         The resource API Group.
+ * @param apiVersion    The resource API Version.
+ * @param isTransient   Specify whether the resource is transient.
+ */
+@JsonPropertyOrder({
+        "kind",
+        "group",
+        "apiVersion",
+        "isTransient"
+})
+@Reflectable
+public record ResourceType(@JsonProperty("kind") @NotNull String kind,
+                           @JsonProperty("group") @Nullable String group,
+                           @JsonProperty("apiVersion") @Nullable String apiVersion,
+                           @JsonProperty("isTransient") boolean isTransient) implements HasMetadataAcceptable {
+
+    @ConstructorProperties({
+            "kind",
+            "group",
+            "apiVersion",
+            "isTransient"
+    })
+    public ResourceType {
+        Objects.requireNonNull(kind, "'kind' cannot be null");
+    }
+
+    /**
+     * Creates a new {@link ResourceType} instance.
+     */
+    public ResourceType(@NotNull String kind,
+                        @Nullable String group,
+                        @Nullable String apiVersion) {
+        this(kind, group, apiVersion, false);
+    }
+
+    /**
+     * Gets a new {@link ResourceType} with the given version.
+     *
+     * @param version the resource version.
+     * @return a new {@link ResourceType}.
+     */
+    public ResourceType version(String version) {
+        return ResourceType.of(kind, version);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canAccept(@NotNull ResourceType that) {
+        if (equals(that)) {
+            return true;
+        }
+
+        if (that.group != null && this.group != null) {
+            return Objects.equals(group, that.group) &&
+                    Objects.equals(kind, that.kind) &&
+                    Objects.equals(apiVersion, that.apiVersion);
+        }
+
+        if (that.apiVersion != null && this.apiVersion != null) {
+            return Objects.equals(kind, that.kind) &&
+                    Objects.equals(apiVersion, that.apiVersion);
+        }
+
+        return Objects.equals(kind, that.kind);
+    }
 
     /**
      * Static helper method to create a new {@link ResourceType} from the given resource.
@@ -102,54 +173,5 @@ public record ResourceType(@NotNull String kind,
             }
             return new ResourceType(kind, versionParts[0], versionParts[1], isTransient);
         }
-    }
-
-    /**
-     * Creates a new {@link ResourceType} instance.
-     */
-    public ResourceType {
-        Objects.requireNonNull(kind, "'kind' cannot be null");
-    }
-
-    /**
-     * Creates a new {@link ResourceType} instance.
-     */
-    public ResourceType(@NotNull String kind,
-                        @Nullable String group,
-                        @Nullable String apiVersion) {
-        this(kind, group, apiVersion, false);
-    }
-
-    /**
-     * Gets a new {@link ResourceType} with the given version.
-     *
-     * @param version the resource version.
-     * @return a new {@link ResourceType}.
-     */
-    public ResourceType version(String version) {
-        return ResourceType.of(kind, version);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean canAccept(@NotNull ResourceType that) {
-        if (equals(that)) {
-            return true;
-        }
-
-        if (that.group != null && this.group != null) {
-            return Objects.equals(group, that.group) &&
-                    Objects.equals(kind, that.kind) &&
-                    Objects.equals(apiVersion, that.apiVersion);
-        }
-
-        if (that.apiVersion != null && this.apiVersion != null) {
-            return Objects.equals(kind, that.kind) &&
-                    Objects.equals(apiVersion, that.apiVersion);
-        }
-
-        return Objects.equals(kind, that.kind);
     }
 }

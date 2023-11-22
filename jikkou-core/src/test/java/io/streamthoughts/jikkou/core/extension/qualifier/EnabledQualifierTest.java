@@ -50,17 +50,17 @@ class EnabledQualifierTest {
 
     private static <T> ExtensionDescriptor<T> getDescriptor(Class<T> clazz, boolean isEnabled) {
         return new DefaultExtensionDescriptor<>(
-                clazz.getName(),
-                "",
-                "",
+                "Test",
+                "Title",
+                "Description",
                 Collections.emptyList(),
                 ExtensionCategory.EXTENSION,
-                "",
+                Collections.emptyList(),
+                "Provider",
                 clazz,
                 clazz.getClassLoader(),
                 () -> null,
                 isEnabled
         );
     }
-
 }

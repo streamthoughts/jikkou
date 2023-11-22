@@ -15,26 +15,39 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
+import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxReplicasTransformation.MAX_REPLICATION_FACTOR_CONFIG;
+
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class KafkaTopicMaxReplicasTransformationTest {
+
+    KafkaTopicMaxReplicasTransformation transformation;
+
+    @BeforeEach
+    void beforeEach() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(MAX_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
+        transformation = new KafkaTopicMaxReplicasTransformation();
+        transformation.init(context);
+    }
 
     @Test
     void shouldEnforceConstraintForInvalidValue() {
         // Given
-        KafkaTopicMaxReplicasTransformation transformation = new KafkaTopicMaxReplicasTransformation();
-        transformation.configure(KafkaTopicMaxReplicasTransformation.MAX_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
-                        .withReplicas((short)6)
+                        .withReplicas((short) 6)
                         .build())
                 .build();
         // When
@@ -46,18 +59,16 @@ class KafkaTopicMaxReplicasTransformationTest {
         Assertions.assertTrue(result.isPresent());
 
         V1KafkaTopic transformed = result.get();
-        Assertions.assertEquals((short)3, transformed.getSpec().getReplicas());
+        Assertions.assertEquals((short) 3, transformed.getSpec().getReplicas());
     }
 
     @Test
     void shouldNotEnforceConstraintForValidValue() {
         // Given
-        KafkaTopicMaxReplicasTransformation transformation = new KafkaTopicMaxReplicasTransformation();
-        transformation.configure(KafkaTopicMaxReplicasTransformation.MAX_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
-                        .withReplicas((short)2)
+                        .withReplicas((short) 2)
                         .build())
                 .build();
         // When
@@ -69,7 +80,7 @@ class KafkaTopicMaxReplicasTransformationTest {
         Assertions.assertTrue(result.isPresent());
 
         V1KafkaTopic transformed = result.get();
-        Assertions.assertEquals((short)2, transformed.getSpec().getReplicas());
+        Assertions.assertEquals((short) 2, transformed.getSpec().getReplicas());
     }
 
 }

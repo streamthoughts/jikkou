@@ -19,10 +19,13 @@ import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiExtension;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
@@ -167,9 +170,44 @@ public interface JikkouApi extends AutoCloseable {
     /**
      * List the supported API extensions for the specified extension type.
      *
+     * @param extensionType The type of the extension.
      * @return a {@link ApiExtensionList} instance.
      */
-    ApiExtensionList getApiExtensions(String type);
+    ApiExtensionList getApiExtensions(@NotNull String extensionType);
+
+    /**
+     * List the supported API extensions for the specified extension type.
+     *
+     * @param extensionType The type of the extension.
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtensionList getApiExtensions(@NotNull Class<?> extensionType);
+
+    /**
+     * List the supported API extensions for the specified category.
+     *
+     * @param extensionCategory The category of the extension.
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtensionList getApiExtensions(@NotNull ExtensionCategory extensionCategory);
+
+    /**
+     * Gets the API extension for the specified name.
+     *
+     * @param extensionName The name of the extension.
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtension getApiExtension(@NotNull String extensionName);
+
+    /**
+     * Gets the API extension for the specified name and type.
+     *
+     * @param extensionType The type of the extension.
+     * @param extensionName The name of the extension.
+     * @return a {@link ApiExtensionList} instance.
+     */
+    ApiExtension getApiExtension(@NotNull Class<?> extensionType,
+                                 @NotNull String extensionName);
 
     /**
      * Execute the reconciliation for the given resources using
@@ -184,6 +222,15 @@ public interface JikkouApi extends AutoCloseable {
     ApiChangeResultList reconcile(@NotNull HasItems resources,
                                   @NotNull ReconciliationMode mode,
                                   @NotNull ReconciliationContext context);
+
+    /**
+     * Executes the specified action for the specified resource type.
+     *
+     * @param action        The name of the action.
+     * @param configuration The configuration.
+     * @return The ApiExecutionResult.
+     */
+    ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration);
 
     /**
      * Execute validations on the given resources.

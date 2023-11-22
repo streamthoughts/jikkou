@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
@@ -54,18 +55,18 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
      * @param config the configuration.
      */
     public AivenKafkaTopicAclEntryCollector(AivenApiClientConfig config) {
-        configure(config);
+        init(config);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        configure(new AivenApiClientConfig(config));
+    public void init(@NotNull final ExtensionContext context) {
+        init(new AivenApiClientConfig(context.appConfiguration()));
     }
 
-    private void configure(@NotNull AivenApiClientConfig config) throws ConfigException {
+    private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
         this.config = config;
     }
 

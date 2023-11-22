@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link Transformation}
  * dynamically passed through the CLI configuration.
  */
-public class TransformationApiConfigurator extends ExtensionApiConfigurator<Transformation<?>> {
+public final class TransformationApiConfigurator extends ExtensionApiConfigurator<Transformation<?>> {
 
     /**
      * Creates a new {@link TransformationApiConfigurator} instance.
@@ -64,9 +64,9 @@ public class TransformationApiConfigurator extends ExtensionApiConfigurator<Tran
         public Transformation<?> get() {
             Transformation<?> extension = delegate.get();
             extension = new TransformationDecorator<>(extension)
-                    .withPriority(configEntry.priority())
-                    .withName(configEntry.name())
-                    .withConfiguration(configEntry.config());
+                    .priority(configEntry.priority())
+                    .name(configEntry.name())
+                    .configuration(configEntry.config());
             return extension;
         }
     }

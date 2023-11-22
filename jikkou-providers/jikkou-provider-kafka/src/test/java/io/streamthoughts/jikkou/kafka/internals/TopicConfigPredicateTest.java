@@ -27,7 +27,7 @@ class TopicConfigPredicateTest {
     void shouldReturnTrueForDynamicTopicConfigEntryEnable() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withDynamicTopicConfig(true);
+                .dynamicTopicConfig(true);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -48,7 +48,7 @@ class TopicConfigPredicateTest {
     void shouldReturnFalseForDynamicTopicConfigEntryDisable() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withDynamicTopicConfig(false);
+                .dynamicTopicConfig(false);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -69,7 +69,7 @@ class TopicConfigPredicateTest {
     void shouldReturnFalseForDefaultConfigEntryEnable() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withDefaultConfig(true);
+                .defaultConfig(true);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -90,7 +90,7 @@ class TopicConfigPredicateTest {
     void shouldReturnFalseForDefaultConfigEntryDisable() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withDefaultConfig(false);
+                .defaultConfig(false);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -111,7 +111,7 @@ class TopicConfigPredicateTest {
     void shouldReturnTrueForDynamicBrokerConfigEntry() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withDynamicBrokerConfig(true);
+                .dynamicBrokerConfig(true);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -132,7 +132,7 @@ class TopicConfigPredicateTest {
     void shouldReturnFalseForDynamicBrokerConfigEntryDisable() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withDynamicBrokerConfig(false);
+                .dynamicBrokerConfig(false);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -153,7 +153,7 @@ class TopicConfigPredicateTest {
     void shouldReturnTrueForStaticBrokerConfigEntry() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withStaticBrokerConfig(true);
+                .staticBrokerConfig(true);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",
@@ -174,7 +174,7 @@ class TopicConfigPredicateTest {
     void shouldReturnFalseForStaticBrokerConfigEntryDisable() {
         // Given
         KafkaConfigPredicate predicate = new KafkaConfigPredicate()
-                .withStaticBrokerConfig(false);
+                .staticBrokerConfig(false);
         // When
         boolean result = predicate.test(new ConfigEntry(
                 "",

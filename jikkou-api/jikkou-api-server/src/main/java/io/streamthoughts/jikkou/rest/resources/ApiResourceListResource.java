@@ -25,9 +25,9 @@ import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
-import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
 import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.rest.controller.AbstractController;
 import io.streamthoughts.jikkou.rest.entities.ResourceResponse;
@@ -140,7 +140,7 @@ public class ApiResourceListResource extends AbstractController {
                 .map(optionList -> optionList.options()
                         .stream()
                         .filter(spec -> includeOptionals || spec.required())
-                        .map(ApiResourceVerbOptionSpec::name)
+                        .map(ApiOptionSpec::name)
                 ).orElse(Stream.empty()).toList();
         if (options.isEmpty()) {
             return link;

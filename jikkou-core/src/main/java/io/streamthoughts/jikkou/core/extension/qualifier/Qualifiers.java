@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.Qualifier;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.Arrays;
@@ -34,8 +35,12 @@ public final class Qualifiers {
     public static<T> Qualifier<T> byName(final String name) {
         return new NamedQualifier<>(name);
     }
-    public static<T> Qualifier<T> byAcceptedResource(final ResourceType type) {
-        return new AcceptedResourceQualifier<>(type);
+    public static<T> Qualifier<T> bySupportedResource(final ResourceType type) {
+        return new SupportedResourceQualifier<>(type);
+    }
+
+    public static<T> Qualifier<T> byCategory(final ExtensionCategory category) {
+        return new CategoryQualifier<>(category);
     }
 
     public static <T> Qualifier<T> enabled() {

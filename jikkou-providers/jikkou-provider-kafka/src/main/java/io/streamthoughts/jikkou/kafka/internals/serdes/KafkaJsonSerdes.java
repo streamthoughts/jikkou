@@ -54,7 +54,7 @@ public class KafkaJsonSerdes implements Serializer<JsonNode>, Deserializer<JsonN
         objectMapper = new ObjectMapper();
         objectMapper.configure(
                 SerializationFeature.INDENT_OUTPUT,
-                PRETTY_PRINT.evaluate(Configuration.from(config))
+                PRETTY_PRINT.get(Configuration.from(config))
         );
     }
 

@@ -15,6 +15,8 @@
  */
 package io.streamthoughts.jikkou.rest.resources;
 
+import static io.streamthoughts.jikkou.rest.adapters.HttpParametersAdapter.toMap;
+
 import io.micronaut.http.HttpParameters;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -47,8 +49,6 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @Controller
@@ -62,7 +62,7 @@ public class ApiResource extends AbstractController {
     public ApiResource(@NotNull ApiResourceService service,
                        @NotNull ReconciliationContextAdapter adapter) {
         this.service = Objects.requireNonNull(service, "service cannot be null");
-        this.adapter =Objects.requireNonNull(adapter, "adapter cannot be null");
+        this.adapter = Objects.requireNonNull(adapter, "adapter cannot be null");
     }
 
     @Post(
@@ -75,10 +75,7 @@ public class ApiResource extends AbstractController {
                                   @PathVariable("plural") final String name,
                                   HttpParameters parameters,
                                   @Body ResourceListRequest payload) {
-
-        Map<String, Object> options = parameters.names()
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), parameters::get));
+        Map<String, Object> options = toMap(parameters);
         ResourceListRequest listRequest = payload.options(options);
         return doSelect(httpRequest, group, version, name, listRequest);
     }
@@ -92,11 +89,9 @@ public class ApiResource extends AbstractController {
                                 @PathVariable("version") final String version,
                                 @PathVariable("plural") final String plural,
                                 HttpParameters parameters) {
-        Map<String, Object> options = parameters.names()
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), parameters::get));
+        Map<String, Object> options = toMap(parameters);
         ResourceListRequest listRequest = new ResourceListRequest(options);
-        return doSelect(httpRequest, group, version, plural, listRequest );
+        return doSelect(httpRequest, group, version, plural, listRequest);
     }
 
     @Get(
@@ -104,16 +99,13 @@ public class ApiResource extends AbstractController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
     )
     public HttpResponse<?> get(HttpRequest<?> httpRequest,
-                                @PathVariable("group") final String group,
-                                @PathVariable("version") final String version,
-                                @PathVariable("plural") final String plural,
-                                @PathVariable("name") final String name,
-                                HttpParameters parameters) {
+                               @PathVariable("group") final String group,
+                               @PathVariable("version") final String version,
+                               @PathVariable("plural") final String plural,
+                               @PathVariable("name") final String name,
+                               HttpParameters parameters) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
-        Map<String, Object> options = parameters.names()
-                .stream()
-                .collect(Collectors.toMap(Function.identity(), parameters::get));
-
+        Map<String, Object> options = toMap(parameters);
         HasMetadata result = service.get(identifier, name, Configuration.from(options));
         return HttpResponse.<HasMetadata>ok()
                 .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
@@ -158,10 +150,10 @@ public class ApiResource extends AbstractController {
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<?> diff(HttpRequest<?> httpRequest,
-                                    @PathVariable("group") final String group,
-                                    @PathVariable("version") final String version,
-                                    @PathVariable("plural") final String plural,
-                                    @Body ResourceReconcileRequest requestBody
+                                @PathVariable("group") final String group,
+                                @PathVariable("version") final String version,
+                                @PathVariable("plural") final String plural,
+                                @Body ResourceReconcileRequest requestBody
     ) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
         ApiResourceChangeList result = service.diff(

@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
@@ -34,13 +35,13 @@ import org.jetbrains.annotations.NotNull;
         title = "Validate topic names match with one of the defined visibility prefixes.",
         full = true,
         code = {"""
-            validations:
-            - name: "topicMustHaveValidName"
-              type: "io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation"
-              priority: 100
-              config:
-                topicNameRegex: "[a-zA-Z0-9\\\\._\\\\-]+"
-            """
+                validations:
+                - name: "topicMustHaveValidName"
+                  type: "io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation"
+                  priority: 100
+                  config:
+                    topicNameRegex: "[a-zA-Z0-9\\\\._\\\\-]+"
+                """
         }
 )
 public class TopicNameRegexValidation extends TopicValidation {
@@ -53,25 +54,15 @@ public class TopicNameRegexValidation extends TopicValidation {
     /**
      * Empty constructor used by {@link Configuration}.
      */
-    public TopicNameRegexValidation() {
-    }
-
-    /**
-     * Creates a new {@link TopicNameRegexValidation} instance.
-     *
-     * @param regex the regex.
-     */
-    public TopicNameRegexValidation(final String regex) {
-        configure(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration(regex));
-    }
+    public TopicNameRegexValidation() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        final Optional<String> regex = VALIDATION_TOPIC_NAME_REGEX_CONFIG.getOptional(config);
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        final Optional<String> regex = VALIDATION_TOPIC_NAME_REGEX_CONFIG.getOptional(context.appConfiguration());
         pattern = regex
                 .map(pattern -> {
                     if (pattern.isEmpty()) {

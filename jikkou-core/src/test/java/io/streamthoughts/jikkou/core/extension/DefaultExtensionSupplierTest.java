@@ -15,15 +15,19 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.Configurable;
+import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class DefaultExtensionSupplierTest {
+
+    static final List<Example> NO_EXAMPLES = Collections.emptyList();
+    static final List<ConfigPropertySpec> NO_PROPERTIES = Collections.emptyList();
 
     @Test
     void shouldThrowExceptionForSupplierReturningNull() {
@@ -31,15 +35,16 @@ class DefaultExtensionSupplierTest {
                 ExtensionDescriptorModifiersTest.class.getName(),
                 "",
                 "",
-                Collections.emptyList(),
+                NO_EXAMPLES,
                 ExtensionCategory.EXTENSION,
+                NO_PROPERTIES,
                 "",
                 ExtensionDescriptorModifiersTest.class,
                 ExtensionDescriptorModifiersTest.class.getClassLoader(),
                 () -> null,
                 false
         );
-        var supplier = new DefaultExtensionSupplier<>(descriptor);
+        var supplier = new DefaultExtensionSupplier<>(Mockito.mock(ExtensionDescriptorRegistry.class), descriptor);
 
         Assertions.assertThrows(
                 ExtensionCreationException.class,
@@ -48,23 +53,24 @@ class DefaultExtensionSupplierTest {
     }
 
     @Test
-    void shouldInvokeConfigureMethodForConfigurableExtension() {
-        Configurable mock = Mockito.mock(Configurable.class);
+    void shouldInvokeInitMethodForExtension() {
+        Extension mock = Mockito.mock(Extension.class);
         var descriptor = new DefaultExtensionDescriptor<>(
-                Configurable.class.getName(),
+                Extension.class.getName(),
                 "",
                 "",
-                Collections.emptyList(),
+                NO_EXAMPLES,
                 ExtensionCategory.EXTENSION,
+                NO_PROPERTIES,
                 "",
-                Configurable.class,
-                Configurable.class.getClassLoader(),
+                Extension.class,
+                Extension.class.getClassLoader(),
                 () -> mock,
                 false
         );
-        var supplier = new DefaultExtensionSupplier<>(descriptor);
-        Configurable configurable = supplier.get(Configuration.empty());
-        Assertions.assertEquals(mock, configurable);
-        Mockito.verify(mock, Mockito.only()).configure(Mockito.any(Configuration.class));
+        var supplier = new DefaultExtensionSupplier<>(Mockito.mock(ExtensionDescriptorRegistry.class), descriptor);
+        Extension extension = supplier.get(Configuration.empty());
+        Assertions.assertEquals(mock, extension);
+        Mockito.verify(mock, Mockito.atLeastOnce()).init(Mockito.any(ExtensionContext.class));
     }
 }

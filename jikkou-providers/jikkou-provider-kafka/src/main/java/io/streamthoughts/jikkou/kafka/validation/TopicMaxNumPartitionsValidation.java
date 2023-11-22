@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -32,13 +33,13 @@ import org.jetbrains.annotations.NotNull;
         title = "Validate topics have a number of partitions equals or less than '50'.",
         full = true,
         code = {"""
-            validations:
-            - name: "topicMustHavePartitionsEqualsOrLessThanFifty"
-              type: "io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitionsValidation"
-              priority: 100
-              config:
-                topicMaxNumPartitions: 50
-            """
+                validations:
+                - name: "topicMustHavePartitionsEqualsOrLessThanFifty"
+                  type: "io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitionsValidation"
+                  priority: 100
+                  config:
+                    topicMaxNumPartitions: 50
+                """
         }
 )
 public final class TopicMaxNumPartitionsValidation extends TopicValidation {
@@ -55,21 +56,12 @@ public final class TopicMaxNumPartitionsValidation extends TopicValidation {
     }
 
     /**
-     * Creates a new {@link TopicMaxNumPartitionsValidation}
-     *
-     * @param maxNumPartitions the min number of partitions.
-     */
-    public TopicMaxNumPartitionsValidation(final int maxNumPartitions) {
-        configure(VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.asConfiguration(maxNumPartitions));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        maxNumPartitions = VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.getOptional(config)
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        maxNumPartitions = VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.key(),

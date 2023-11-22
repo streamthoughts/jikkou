@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.kafka.connect.health;
 
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthAggregator;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
@@ -48,8 +48,8 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        configure(new KafkaConnectExtensionConfig(configuration));
+    public void init(@NotNull ExtensionContext context) {
+        configure(new KafkaConnectExtensionConfig(context.appConfiguration()));
     }
 
     public void configure(@NotNull KafkaConnectExtensionConfig configuration) throws ConfigException {

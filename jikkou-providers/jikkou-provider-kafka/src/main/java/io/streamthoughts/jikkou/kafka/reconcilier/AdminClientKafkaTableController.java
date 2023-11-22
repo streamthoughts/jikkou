@@ -23,7 +23,7 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
@@ -94,25 +94,25 @@ public final class AdminClientKafkaTableController
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        LOG.info("Configuring");
+    public void init(@NotNull ExtensionContext context) {
         if (producerFactory == null) {
             producerFactory = new DefaultProducerFactory<>(
-                    () -> KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.evaluate(config),
+                    () -> KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.get(context.appConfiguration()),
                     new ByteArraySerializer(),
                     new ByteArraySerializer()
             );
         }
 
         collector = new AdminClientKafkaTableCollector(consumerFactory, adminClientFactory);
-        collector.configure(config);
+        collector.init(context.contextForExtension(AdminClientKafkaTableCollector.class));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult<KafkaTableRecordChange>> execute(@NotNull ChangeExecutor<KafkaTableRecordChange> executor, @NotNull ReconciliationContext context) {
+    public List<ChangeResult<KafkaTableRecordChange>> execute(@NotNull ChangeExecutor<KafkaTableRecordChange> executor,
+                                                              @NotNull ReconciliationContext context) {
         try (var producer = producerFactory.createProducer()) {
             List<ChangeHandler<KafkaTableRecordChange>> handlers = List.of(
                     new KafkaTableRecordChangeHandler(producer),

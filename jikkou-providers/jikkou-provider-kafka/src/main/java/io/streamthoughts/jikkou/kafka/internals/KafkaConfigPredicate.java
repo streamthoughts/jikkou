@@ -37,22 +37,22 @@ public class KafkaConfigPredicate implements Predicate<ConfigEntry> {
     private boolean filterDynamicBrokerConfig = false;
     private boolean filterDynamicTopicConfig = false;
 
-    public KafkaConfigPredicate withDefaultConfig(boolean filterDefaultConfig) {
+    public KafkaConfigPredicate defaultConfig(boolean filterDefaultConfig) {
         this.filterDefaultConfig = filterDefaultConfig;
         return this;
     }
 
-    public KafkaConfigPredicate withStaticBrokerConfig(boolean filterStaticBrokerConfig) {
+    public KafkaConfigPredicate staticBrokerConfig(boolean filterStaticBrokerConfig) {
         this.filterStaticBrokerConfig = filterStaticBrokerConfig;
         return this;
     }
 
-    public KafkaConfigPredicate withDynamicBrokerConfig(boolean filterDynamicBrokerConfig) {
+    public KafkaConfigPredicate dynamicBrokerConfig(boolean filterDynamicBrokerConfig) {
         this.filterDynamicBrokerConfig = filterDynamicBrokerConfig;
         return this;
     }
 
-    public KafkaConfigPredicate withDynamicTopicConfig(boolean filterDynamicTopicConfig) {
+    public KafkaConfigPredicate dynamicTopicConfig(boolean filterDynamicTopicConfig) {
         this.filterDynamicTopicConfig = filterDynamicTopicConfig;
         return this;
     }

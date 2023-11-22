@@ -28,7 +28,7 @@ public final class SelectorOptionsMixin {
 
     @Option(names = {"--selector-match"},
             defaultValue = "ALL",
-            description = "The selector matching strategy. Allowed values: ${COMPLETION-CANDIDATES} (default: ALL)")
+            description = "The selector matching strategy. Valid values: ${COMPLETION-CANDIDATES} (default: ALL)")
     public SelectorMatchingStrategy selectorMatchingStrategy;
 
     public Selector getResourceSelector() {

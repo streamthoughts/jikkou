@@ -16,10 +16,8 @@
 package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionDecorator;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,13 +27,9 @@ import org.jetbrains.annotations.Nullable;
  * @see Interceptor
  */
 @Evolving
-public class InterceptorDecorator<E extends Interceptor, D extends InterceptorDecorator<E, D>> implements Interceptor {
+public class InterceptorDecorator<E extends Interceptor, D extends InterceptorDecorator<E, D>> extends ExtensionDecorator<E, D> implements Interceptor {
 
-    protected final E extension;
     private Integer priority;
-    private String name;
-
-    private Configuration configuration;
 
     /**
      * Creates a new {@link InterceptorDecorator} instance.
@@ -43,15 +37,7 @@ public class InterceptorDecorator<E extends Interceptor, D extends InterceptorDe
      * @param extension the extension; must not be null.
      */
     public InterceptorDecorator(E extension) {
-        this.extension = Objects.requireNonNull(extension, "extension must not be null");
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        this.extension.configure(this.configuration.withFallback(config));
+        super(extension);
     }
 
     /**
@@ -63,23 +49,10 @@ public class InterceptorDecorator<E extends Interceptor, D extends InterceptorDe
     }
 
     @SuppressWarnings("unchecked")
-    public D withPriority(@Nullable Integer priority) {
+    public D priority(@Nullable Integer priority) {
         this.priority = priority;
         return (D) this;
     }
-
-    @SuppressWarnings("unchecked")
-    public D withName(@Nullable String name) {
-        this.name = name;
-        return (D) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public D withConfiguration(@Nullable Configuration configuration) {
-        this.configuration = configuration;
-        return (D) this;
-    }
-
 
     /**
      * {@inheritDoc}
@@ -93,19 +66,11 @@ public class InterceptorDecorator<E extends Interceptor, D extends InterceptorDe
      * {@inheritDoc}
      **/
     @Override
-    public String getName() {
-        return name != null ? name : extension.getName();
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
     public String toString() {
         return "[" +
                 "extension=" + extension +
                 ", priority=" + priority +
-                ", name='" + name +
+                ", name='" + getName() +
                 ']';
     }
 }

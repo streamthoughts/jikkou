@@ -22,8 +22,8 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
@@ -72,18 +72,18 @@ public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopi
      * @param config the schema registry client configuration.
      */
     public AivenKafkaTopicAclEntryController(@NotNull AivenApiClientConfig config) {
-        configure(config);
+        init(config);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        configure(new AivenApiClientConfig(config));
+    public void init(@NotNull final ExtensionContext context) {
+        init(new AivenApiClientConfig(context.appConfiguration()));
     }
 
-    private void configure(@NotNull AivenApiClientConfig config) throws ConfigException {
+    private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
         this.config = config;
         this.collector = new AivenKafkaTopicAclEntryCollector(config);
     }
@@ -128,7 +128,7 @@ public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopi
                 .filter(context.selector()::apply)
                 .toList();
 
-        Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.evaluate(context.configuration());
+        Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.get(context.configuration());
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(deleteOrphans);
 
         List<HasMetadataChange<ValueChange<KafkaAclEntry>>> changes = computer

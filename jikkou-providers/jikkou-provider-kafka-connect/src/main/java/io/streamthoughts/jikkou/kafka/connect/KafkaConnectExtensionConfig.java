@@ -98,7 +98,7 @@ public final class KafkaConnectExtensionConfig {
      */
     public Map<String, KafkaConnectClientConfig> getConfigurationsByClusterName() {
         if (configurationByClusterName == null) {
-            setKafkaConnectClientConfiguration(KAFKA_CONNECT_CLUSTERS_CONFIG.evaluate(configuration));
+            setKafkaConnectClientConfiguration(KAFKA_CONNECT_CLUSTERS_CONFIG.get(configuration));
         }
         return configurationByClusterName;
     }

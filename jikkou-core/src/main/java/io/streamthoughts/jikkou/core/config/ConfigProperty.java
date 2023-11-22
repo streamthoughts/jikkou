@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.config;
 
+import io.streamthoughts.jikkou.core.config.internals.Type;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,40 @@ import org.jetbrains.annotations.Nullable;
 public final class ConfigProperty<T> {
 
     /**
+     * Static helper method to create a new {@link ConfigProperty} for the specified type and path.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigProperty}.
+     * @throws IllegalArgumentException if the given type is unsupported by this method.
+     */
+    @SuppressWarnings("rawtypes")
+    public static ConfigProperty of(final @NotNull Type type,
+                                    final @NotNull String path) {
+        return switch (type) {
+            case SHORT -> ConfigProperty.ofShort(path);
+            case INTEGER -> ConfigProperty.ofInt(path);
+            case LONG -> ConfigProperty.ofLong(path);
+            case FLOAT -> ConfigProperty.ofFloat(path);
+            case DOUBLE -> ConfigProperty.ofDouble(path);
+            case BOOLEAN -> ConfigProperty.ofBoolean(path);
+            case STRING -> ConfigProperty.ofString(path);
+            case LIST -> ConfigProperty.ofList(path);
+            case MAP -> ConfigProperty.ofMap(path);
+            case BYTES, NULL -> throw new IllegalArgumentException("Unsupported type: " + type);
+        };
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link Short} value.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static ConfigProperty<Short> ofShort(final @NotNull String path) {
+        return new ConfigProperty<>(path, (p, config) -> config.findShort(p));
+    }
+
+    /**
      * Static helper method to create a new {@link ConfigProperty} with an expected {@link Integer} value.
      *
      * @param path the option string path.
@@ -45,6 +80,16 @@ public final class ConfigProperty<T> {
     }
 
     /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link Float} value.
+     *
+     * @param path the option string path.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static ConfigProperty<Float> ofFloat(final @NotNull String path) {
+        return new ConfigProperty<>(path, (p, config) -> config.findFloat(p));
+    }
+
+    /**
      * Static helper method to create a new {@link ConfigProperty} with an expected {@link Long} value.
      *
      * @param key the option string key.
@@ -52,6 +97,16 @@ public final class ConfigProperty<T> {
      */
     public static ConfigProperty<Long> ofLong(final @NotNull String key) {
         return new ConfigProperty<>(key, (p, config) -> config.findLong(p));
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link Double} value.
+     *
+     * @param key the option string key.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static ConfigProperty<Double> ofDouble(final @NotNull String key) {
+        return new ConfigProperty<>(key, (p, config) -> config.findDouble(p));
     }
 
     /**
@@ -169,11 +224,11 @@ public final class ConfigProperty<T> {
         this.description = description;
     }
 
-    public ConfigProperty<T> description(final @NotNull String description) {
+    public ConfigProperty<T> description(final String description) {
         return new ConfigProperty<>(key, accessor, defaultValueSupplier, description);
     }
 
-    public ConfigProperty<T> orElse(final @NotNull T other) {
+    public ConfigProperty<T> orElse(final T other) {
         return orElse(() -> other);
     }
 
@@ -205,7 +260,7 @@ public final class ConfigProperty<T> {
 
     public T orElseGet(final @NotNull Configuration config,
                        final @NotNull Supplier<? extends T> other) {
-        return orElse(other).evaluate(config);
+        return orElse(other).get(config);
     }
 
     /**
@@ -214,7 +269,7 @@ public final class ConfigProperty<T> {
      * @return the value for this param from the given {@link Configuration}.
      * @throws NoSuchElementException if this property does not exist in the given configuration.
      */
-    public T evaluate(final @NotNull Configuration config) {
+    public T get(final @NotNull Configuration config) {
         Optional<T> option = getOptional(config);
         return option.orElseThrow(() -> new ConfigException.Missing(this));
     }
@@ -239,7 +294,8 @@ public final class ConfigProperty<T> {
 
     /**
      * Gets the description of this property.
-     * @return  the description string, or {@code null} if no description was set.
+     *
+     * @return the description string, or {@code null} if no description was set.
      */
     public String description() {
         return description;
@@ -258,7 +314,9 @@ public final class ConfigProperty<T> {
         return Optional.ofNullable(defaultValueSupplier).map(Supplier::get).orElse(null);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -267,13 +325,17 @@ public final class ConfigProperty<T> {
         return key.equals(that.key) && Objects.equals(description, that.description);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public int hashCode() {
         return Objects.hash(key, description);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String toString() {
         return "ConfigProperty[" +

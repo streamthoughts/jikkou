@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -56,21 +57,12 @@ public class TopicMinReplicationFactorValidation extends TopicValidation {
     }
 
     /**
-     * Creates a new {@link TopicMinReplicationFactorValidation}
-     *
-     * @param minReplicationFactor the min replication factor.
-     */
-    public TopicMinReplicationFactorValidation(final int minReplicationFactor) {
-        configure(VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(minReplicationFactor));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        super.configure(config);
-        minReplicationFactor = VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.getOptional(config)
+    public void init(@NotNull final ExtensionContext context) {
+        super.init(context);
+        minReplicationFactor = VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.key(),

@@ -20,9 +20,10 @@ import static io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator.H
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
-import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
@@ -43,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 @Named(HEALTH_NAME)
 @Title("KafkaBrokerHealthIndicator allows checking whether the Kafka cluster is healthy.")
 @Description("Get the health of kafka brokers")
-public final class KafkaBrokerHealthIndicator implements HealthIndicator, Configurable {
+public final class KafkaBrokerHealthIndicator extends ContextualExtension implements HealthIndicator {
 
     public static final String HEALTH_NAME = "kafka";
 
@@ -71,11 +72,12 @@ public final class KafkaBrokerHealthIndicator implements HealthIndicator, Config
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
+    public void init(@NotNull ExtensionContext context) throws ConfigException {
+        Configuration appConfiguration = context.appConfiguration();
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(configuration);
+            this.adminClientContextFactory = new AdminClientContextFactory(appConfiguration);
         }
-        this.configuration = new KafkaClientConfiguration(configuration);
+        this.configuration = new KafkaClientConfiguration(appConfiguration);
     }
 
     /**

@@ -15,34 +15,42 @@
  */
 package io.streamthoughts.jikkou.core;
 
+import io.streamthoughts.jikkou.core.action.Action;
+import io.streamthoughts.jikkou.core.action.ExecutionResultSet;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthAggregator;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
+import io.streamthoughts.jikkou.core.models.ApiExtensionSpec;
+import io.streamthoughts.jikkou.core.models.ApiExtensionSummary;
 import io.streamthoughts.jikkou.core.models.ApiGroup;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiGroupVersion;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
-import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
@@ -53,7 +61,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
-import io.streamthoughts.jikkou.core.reconcilier.config.ApiResourceVerbOptionSpecFactory;
+import io.streamthoughts.jikkou.core.reconcilier.config.ApiOptionSpecFactory;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
@@ -174,7 +182,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
                 .toList();
 
-        ApiResourceVerbOptionSpecFactory optionListFactory = new ApiResourceVerbOptionSpecFactory();
+        ApiOptionSpecFactory optionListFactory = new ApiOptionSpecFactory();
         List<ApiResource> resources = descriptors.stream()
                 .map(descriptor -> {
                     ResourceType type = descriptor.resourceType();
@@ -193,10 +201,10 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
 
                     if (resource.isVerbSupported(Verb.LIST) || resource.isVerbSupported(Verb.GET)) {
                         Optional<ExtensionDescriptor<Collector>> optional = extensionFactory
-                                .findDescriptorByClass(Collector.class, Qualifiers.byAcceptedResource(type));
+                                .findDescriptorByClass(Collector.class, Qualifiers.bySupportedResource(type));
                         if (optional.isPresent()) {
                             ExtensionDescriptor<Collector> collector = optional.get();
-                            List<ApiResourceVerbOptionSpec> optionSpecs = optionListFactory.make(collector.type());
+                            List<ApiOptionSpec> optionSpecs = optionListFactory.make(collector);
                             if (!optionSpecs.isEmpty()) {
                                 if (resource.isVerbSupported(Verb.LIST)) {
                                     resource = resource.withApiResourceVerbOptionList(
@@ -312,34 +320,73 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      **/
     @Override
     public ApiExtensionList getApiExtensions() {
-        List<ApiExtension> extensions = extensionFactory.getAllDescriptors()
-                .stream()
-                .map(descriptor -> new ApiExtension(
-                                descriptor.name(),
-                                descriptor.title(),
-                                descriptor.description(),
-                                descriptor.examples(),
-                                descriptor.category().name(),
-                                descriptor.group()
-                        )
-                ).toList();
-        return new ApiExtensionList(extensions);
+        return getApiExtensionList(extensionFactory.getAllDescriptors());
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ApiExtensionList getApiExtensions(String type) {
-        List<ApiExtension> extensions = extensionFactory.findAllDescriptorsByAlias(type)
+    public ApiExtensionList getApiExtensions(@NotNull String type) {
+        return getApiExtensionList(extensionFactory.findAllDescriptorsByAlias(type));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions(@NotNull Class<?> extensionType) {
+        return getApiExtensionList(extensionFactory.findAllDescriptorsByClass(extensionType));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions(@NotNull ExtensionCategory category) {
+        return getApiExtensionList(extensionFactory.findAllDescriptors(Qualifiers.byCategory(category)));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtension getApiExtension(@NotNull String extensionName) {
+        return getApiExtension(Extension.class, extensionName);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtension getApiExtension(@NotNull Class<?> extensionType,
+                                        @NotNull String extensionName) {
+        ExtensionDescriptor<?> descriptor = extensionFactory
+                .findDescriptorByClass(extensionType, Qualifiers.byName(extensionName))
+                .orElseThrow(() -> new NoSuchExtensionException("No such extension exists for name '" + extensionName + "'"));
+
+        ApiOptionSpecFactory optionListFactory = new ApiOptionSpecFactory();
+        ApiExtensionSpec apiExtensionSpec = new ApiExtensionSpec(
+                descriptor.name(),
+                descriptor.title(),
+                descriptor.description(),
+                descriptor.examples(),
+                descriptor.category().name(),
+                descriptor.provider(),
+                optionListFactory.make(descriptor),
+                HasMetadataAcceptable.getSupportedResources(descriptor.type())
+        );
+        return new ApiExtension(apiExtensionSpec);
+    }
+
+    @NotNull
+    private static ApiExtensionList getApiExtensionList(List<? extends ExtensionDescriptor> descriptors) {
+        List<ApiExtensionSummary> extensions = descriptors
                 .stream()
-                .map(descriptor -> new ApiExtension(
+                .map(descriptor -> new ApiExtensionSummary(
                                 descriptor.name(),
-                                descriptor.title(),
-                                descriptor.description(),
-                                descriptor.examples(),
                                 descriptor.category().name(),
-                                descriptor.group()
+                                descriptor.provider()
                         )
                 ).toList();
         return new ApiExtensionList(extensions);
@@ -373,11 +420,48 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         );
     }
 
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiActionResultSet execute(@NotNull String name,
+                                      @NotNull Configuration configuration) {
+        Objects.requireNonNull(name, "name cannot be null");
+        Objects.requireNonNull(configuration, "configuration cannot be null");
+        Action<HasMetadata> action = getMatchingAction(name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                    "Executing action '{}' with configuration: {}",
+                    name,
+                    configuration.asMap()
+            );
+        }
+        ExecutionResultSet<HasMetadata> resultSet = action.execute(configuration);
+        ObjectMeta.ObjectMetaBuilder builder = ObjectMeta.builder();
+        for (String key : configuration.keys()) {
+            builder.withAnnotation(String.format("configs.jikkou.io/%s", key), configuration.getAny(key));
+        }
+        ObjectMeta objectMeta = builder.build();
+        return new ApiActionResultSet<>(objectMeta, resultSet.results());
+    }
+
+    @SuppressWarnings("unchecked")
+    private Action<HasMetadata> getMatchingAction(@NotNull String action) {
+        LOG.info("Looking for an action named '{}'", action);
+        return extensionFactory.findExtension(
+                Action.class,
+                Qualifiers.byQualifiers(
+                        Qualifiers.byName(action)
+                )
+
+        ).orElseThrow(() -> new NoSuchExtensionException(String.format("Cannot find action '%s'", action)));
+    }
+
     private List<ChangeResult<Change>> executeReconciliation(@NotNull ReconciliationMode mode,
                                                              @NotNull ReconciliationContext context,
                                                              @NotNull ResourceType resourceType,
                                                              @NotNull List<HasMetadata> resources) {
-        Controller<HasMetadata, Change> controller = getMatchingResourceController(resourceType);
+        Controller<HasMetadata, Change> controller = getMatchingController(resourceType);
         LOG.info("Starting reconciliation using controller: '{}' (mode: {}, dryRun: {})",
                 controller.getName(),
                 mode,
@@ -418,7 +502,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                                  @NotNull String name,
                                                  @NotNull Configuration configuration) {
-        Collector<T> collector = getMatchingResourceCollector(type);
+        Collector<T> collector = getMatchingCollector(type);
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
         return collector.get(name, configuration)
                 .map(item -> addBuiltInAnnotations(item, timestamp))
@@ -437,7 +521,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         List<ResourceListObject<HasMetadataChange<Change>>> changes = resourcesByType.entrySet()
                 .stream()
                 .map(e -> {
-                    Controller<HasMetadata, Change> controller = getMatchingResourceController(e.getKey());
+                    Controller<HasMetadata, Change> controller = getMatchingController(e.getKey());
                     List<HasMetadata> resource = e.getValue();
                     ResourceListObject<? extends HasMetadataChange<Change>> result = controller.plan(
                             resource,
@@ -456,7 +540,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public <T extends HasMetadata> ResourceListObject<T> listResources(final @NotNull ResourceType type,
                                                                        final @NotNull Selector selector,
                                                                        final @NotNull Configuration configuration) {
-        final Collector<T> collector = getMatchingResourceCollector(type);
+        final Collector<T> collector = getMatchingCollector(type);
 
         ResourceListObject<T> result = collector.listAll(configuration, selector);
 

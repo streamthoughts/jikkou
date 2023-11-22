@@ -19,7 +19,10 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiExtension;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
@@ -109,6 +112,9 @@ public interface JikkouApiClient {
      * Get the supported API extensions.
      *
      * @return a {@link ApiExtensionList} instance.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
     ApiExtensionList getApiExtensions();
 
@@ -116,8 +122,33 @@ public interface JikkouApiClient {
      * Get the supported API extensions for the supported type.
      *
      * @return a {@link ApiExtensionList} instance.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
     ApiExtensionList getApiExtensions(String type);
+
+    /**
+     * Get the supported API extensions for the supported category.
+     *
+     * @return a {@link ApiExtensionList} instance.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     */
+    ApiExtensionList getApiExtensions(ExtensionCategory category);
+
+    /**
+     * Gets the API extension for the specified name and type.
+     *
+     * @param extensionType The type of the extension.
+     * @param extensionName The name of the extension.
+     * @return a {@link ApiExtensionList} instance.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     */
+    ApiExtension getApiExtension(Class<?> extensionType, String extensionName);
 
     /**
      * List all resources matching the specified type and selectors.
@@ -189,5 +220,14 @@ public interface JikkouApiClient {
     <T extends HasMetadata> ApiResourceChangeList getDiff(@NotNull ResourceType type,
                                                           @NotNull List<T> resources,
                                                           @NotNull ReconciliationContext context);
+
+    /**
+     * Executes the specified action for the specified resource type.
+     *
+     * @param action        The name of the action.
+     * @param configuration The context of the execution.
+     * @return The ApiExecutionResult.
+     */
+    ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration);
 
 }

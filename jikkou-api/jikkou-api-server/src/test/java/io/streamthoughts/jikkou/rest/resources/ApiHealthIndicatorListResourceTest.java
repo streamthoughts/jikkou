@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 @MicronautTest
 class ApiHealthIndicatorListResourceTest {
 
-    public static final String JIKKOU_API = "/apis/core.jikkou.io/v1/healths";
+    public static final String JIKKOU_API = "/api/v1/healths";
 
     @Inject
     @Client("/")

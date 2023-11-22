@@ -19,12 +19,13 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIS
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 
 import io.micronaut.context.ApplicationContext;
+import io.streamthoughts.jikkou.client.command.AbstractCommandLineFactory;
 import io.streamthoughts.jikkou.client.renderer.CommandGroupRenderer;
 import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
-import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
 import jakarta.inject.Inject;
@@ -40,17 +41,12 @@ import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
 
 @Singleton
-public final class GetCommandLineFactory {
-
-    private final ApplicationContext applicationContext;
-
-    private final JikkouApi api;
+public final class GetCommandLineFactory extends AbstractCommandLineFactory {
 
     @Inject
     public GetCommandLineFactory(@NotNull ApplicationContext applicationContext,
                                  @NotNull JikkouApi api) {
-        this.applicationContext = applicationContext;
-        this.api = api;
+        super(applicationContext, api);
     }
 
     public CommandLine createCommandLine() {
@@ -93,7 +89,7 @@ public final class GetCommandLineFactory {
                             .exclusive(false)
                             .multiplicity("0..1");
                     ApiResourceVerbOptionList verbOptionList = optional.get();
-                    for (ApiResourceVerbOptionSpec option : verbOptionList.options()) {
+                    for (ApiOptionSpec option : verbOptionList.options()) {
                         argGroupSpecBuilder.addArg(createOptionSpec(option, command));
                     }
                     spec.addArgGroup(argGroupSpecBuilder.build());
@@ -127,22 +123,5 @@ public final class GetCommandLineFactory {
         cmd.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST, renderer);
 
         return cmd;
-    }
-
-    private CommandLine.Model.OptionSpec createOptionSpec(ApiResourceVerbOptionSpec option,
-                                                          GetResourceCommand command) {
-        return CommandLine.Model.OptionSpec
-                .builder("--" + option.name().replaceAll("\\.", "-"))
-                .type(option.typeClass())
-                .description(option.description())
-                .defaultValue(option.required() ? null : option.defaultValue())
-                .required(option.required())
-                .setter(new CommandLine.Model.ISetter() {
-                    @Override
-                    public <T> T set(T value) {
-                        return command.setOption(option.name(), value);
-                    }
-                })
-                .build();
     }
 }

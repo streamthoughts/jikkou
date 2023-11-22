@@ -22,8 +22,8 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeExecutor;
@@ -54,7 +54,7 @@ import org.jetbrains.annotations.NotNull;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 @SupportedResource(type = V1SchemaRegistrySubject.class)
-public class SchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject, SchemaSubjectChange> {
+public class SchemaRegistrySubjectController extends ContextualExtension implements Controller<V1SchemaRegistrySubject, SchemaSubjectChange> {
 
     private SchemaRegistryClientConfig configuration;
 
@@ -70,18 +70,19 @@ public class SchemaRegistrySubjectController implements Controller<V1SchemaRegis
      * @param configuration the schema registry client configuration.
      */
     public SchemaRegistrySubjectController(@NotNull SchemaRegistryClientConfig configuration) {
-        configure(configuration);
+        init(configuration);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        configure(new SchemaRegistryClientConfig(config));
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
+        init(new SchemaRegistryClientConfig(context.appConfiguration()));
     }
 
-    private void configure(@NotNull SchemaRegistryClientConfig config) throws ConfigException {
+    private void init(@NotNull SchemaRegistryClientConfig config) {
         this.configuration = config;
     }
 

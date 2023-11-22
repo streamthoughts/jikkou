@@ -44,6 +44,14 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
     <T> List<ExtensionDescriptor<T>> findAllDescriptorsByClass(@NotNull final Class<T> type);
 
     /**
+     * Finds all {@link ExtensionDescriptor} registered for the specified qualifier.
+     *
+     * @param qualifier The qualifier.
+     * @return the collection of {@link ExtensionDescriptor}.
+     */
+    List<ExtensionDescriptor<?>> findAllDescriptors(@NotNull final Qualifier<?> qualifier);
+
+    /**
      * Finds all {@link ExtensionDescriptor} registered for the specified type.
      *
      * @param type the extension class.
@@ -116,8 +124,14 @@ public interface ExtensionDescriptorRegistry extends ExtensionRegistry {
     <T> Optional<ExtensionDescriptor<T>> findDescriptorByClass(@NotNull final Class<T> type,
                                                                @Nullable final Qualifier<T> qualifier);
 
-
-    <T> ExtensionSupplier<T> getExtensionSupplier(ExtensionDescriptor<T> descriptor);
+    /**
+     * Gets the extension supplier for the specified descriptor.
+     *
+     * @param descriptor The description.
+     * @param <T>        The type of the extension.
+     * @return The ExtensionSupplier.
+     */
+    <T> ExtensionSupplier<T> getExtensionSupplier(@NotNull final ExtensionDescriptor<T> descriptor);
 
     /**
      * Registers the specified {@link ExtensionDescriptor} to this {@link ExtensionDescriptorRegistry}.

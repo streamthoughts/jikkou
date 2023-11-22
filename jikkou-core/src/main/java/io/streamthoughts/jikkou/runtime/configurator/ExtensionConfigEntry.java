@@ -49,10 +49,10 @@ public record ExtensionConfigEntry(String name, String type, Integer priority, C
     public static ExtensionConfigEntry of(final @NotNull Configuration config) {
         Objects.requireNonNull(config, "config must not be null");
         return new ExtensionConfigEntry(
-                NAME_CONFIG.evaluate(config),
-                TYPE_CONFIG.evaluate(config),
-                PRIORITY_CONFIG.evaluate(config),
-                CONFIGURATION_CONFIG.evaluate(config)
+                NAME_CONFIG.get(config),
+                TYPE_CONFIG.get(config),
+                PRIORITY_CONFIG.get(config),
+                CONFIGURATION_CONFIG.get(config)
         );
     }
 }

@@ -17,7 +17,6 @@ package io.streamthoughts.jikkou.core.health;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
-import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
@@ -29,14 +28,13 @@ import java.time.Duration;
 @Evolving
 @Enabled
 @Category(ExtensionCategory.HEALTH_INDICATOR)
-public interface HealthIndicator extends Extension, Configurable {
+public interface HealthIndicator extends Extension {
 
     /**
      * Gets the health for a service or sub-system.
      *
      * @param timeout the timeout to be used for getting health.
-     *
-     * @return  a new {@link Health} instance.
+     * @return a new {@link Health} instance.
      */
     Health getHealth(final Duration timeout);
 }

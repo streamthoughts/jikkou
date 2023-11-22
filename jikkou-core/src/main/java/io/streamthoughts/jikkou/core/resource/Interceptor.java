@@ -15,7 +15,6 @@
  */
 package io.streamthoughts.jikkou.core.resource;
 
-import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.HasPriority;
@@ -32,6 +31,5 @@ import io.streamthoughts.jikkou.core.validation.Validation;
 public interface Interceptor extends
         HasMetadataAcceptable,
         HasPriority,
-        Extension,
-        Configurable {
+        Extension {
 }

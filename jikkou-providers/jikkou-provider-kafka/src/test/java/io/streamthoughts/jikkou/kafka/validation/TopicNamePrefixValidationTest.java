@@ -15,8 +15,11 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import static io.streamthoughts.jikkou.kafka.validation.TopicNamePrefixValidation.VALIDATION_TOPIC_NAME_PREFIXES_CONFIG;
+
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -25,19 +28,27 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class TopicNamePrefixValidationTest {
 
     @Test
     void shouldThrowExceptionForMissingConfig() {
-        var validation = new TopicNamePrefixValidation();
-        Assertions.assertThrows(ConfigException.class, () -> validation.configure(Configuration.empty()));
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(Configuration.empty());
+
+        Assertions.assertThrows(ConfigException.class, () -> new TopicNamePrefixValidation().init(context));
     }
 
     @Test
     void shouldThrowExceptionForTopicNotStartingWithPrefix() {
         // Given
-        var validation = new TopicNamePrefixValidation(List.of("test-"));
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(List.of("test-")));
+
+        var validation = new TopicNamePrefixValidation();
+        validation.init(context);
+
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()
@@ -60,7 +71,12 @@ class TopicNamePrefixValidationTest {
     @Test
     void shouldNotThrowForTopicStartingWithPrefix() {
         // Given
-        var validation = new TopicNamePrefixValidation(List.of("test-"));
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(List.of("test-")));
+
+        var validation = new TopicNamePrefixValidation();
+        validation.init(context);
+
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()

@@ -53,6 +53,12 @@ class JikkouTest {
     }
 
     @Test
+    void shouldPrintUsageForActionCommand() {
+        int execute = Jikkou.execute(new String[]{"action"});
+        Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);
+    }
+
+    @Test
     void shouldPrintUsageForGetCommand() {
         int execute = Jikkou.execute(new String[]{"get"});
         Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);

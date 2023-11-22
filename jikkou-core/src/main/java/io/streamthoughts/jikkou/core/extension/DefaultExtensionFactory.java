@@ -15,7 +15,6 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import java.util.Collection;
@@ -45,7 +44,7 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
     /**
      * Creates a new {@link DefaultExtensionFactory} instance.
      *
-     * @param configuration the {@link Configuration} that will be passed to {@link Configurable} extension.
+     * @param configuration the {@link Configuration} that will be passed to extension.
      * @param registry      the {@link ExtensionDescriptorRegistry}.
      */
     public DefaultExtensionFactory(@NotNull final ExtensionDescriptorRegistry registry,
@@ -197,6 +196,14 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
     @Override
     public <T> List<ExtensionDescriptor<T>> findAllDescriptorsByClass(@NotNull Class<T> type) {
         return this.registry.findAllDescriptorsByClass(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ExtensionDescriptor<?>> findAllDescriptors(@NotNull Qualifier<?> qualifier) {
+        return this.registry.findAllDescriptors(qualifier);
     }
 
     /**

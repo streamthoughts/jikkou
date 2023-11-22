@@ -16,10 +16,9 @@
 package io.streamthoughts.jikkou.schema.registry.validation;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -48,8 +47,8 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        this.config = new SchemaRegistryClientConfig(config);
+    public void init(@NotNull final ExtensionContext context) {
+        this.config = new SchemaRegistryClientConfig(context.appConfiguration());
     }
 
     /**

@@ -15,22 +15,35 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
+import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation.MIN_REPLICATION_FACTOR_CONFIG;
+
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class KafkaTopicMinReplicasTransformationTest {
+
+    KafkaTopicMinReplicasTransformation transformation;
+
+    @BeforeEach
+    void beforeEach() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
+        transformation = new KafkaTopicMinReplicasTransformation();
+        transformation.init(context);
+    }
 
     @Test
     void shouldNotEnforceConstraintForValidValue() {
         // Given
-        KafkaTopicMinReplicasTransformation transformation = new KafkaTopicMinReplicasTransformation();
-        transformation.configure(KafkaTopicMinReplicasTransformation.MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
@@ -52,8 +65,6 @@ class KafkaTopicMinReplicasTransformationTest {
     @Test
     void shouldEnforceConstraintForInvalidValue() {
         // Given
-        KafkaTopicMinReplicasTransformation transformation = new KafkaTopicMinReplicasTransformation();
-        transformation.configure(KafkaTopicMinReplicasTransformation.MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()

@@ -26,7 +26,6 @@ import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.Resource;
-import io.streamthoughts.jikkou.kafka.change.AclChange;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -55,7 +54,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaAclChange implements HasMetadataChange<AclChange> , Resource
+public class V1KafkaAclChange implements HasMetadataChange<io.streamthoughts.jikkou.kafka.change.AclChange> , Resource
 {
 
     /**
@@ -82,7 +81,7 @@ public class V1KafkaAclChange implements HasMetadataChange<AclChange> , Resource
     @JsonProperty("metadata")
     private ObjectMeta metadata;
     @JsonProperty("change")
-    private AclChange change;
+    private io.streamthoughts.jikkou.kafka.change.AclChange change;
 
     /**
      * No args constructor for use in serialization
@@ -104,7 +103,7 @@ public class V1KafkaAclChange implements HasMetadataChange<AclChange> , Resource
         "metadata",
         "change"
     })
-    public V1KafkaAclChange(String apiVersion, String kind, ObjectMeta metadata, AclChange change) {
+    public V1KafkaAclChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.kafka.change.AclChange change) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -143,7 +142,7 @@ public class V1KafkaAclChange implements HasMetadataChange<AclChange> , Resource
     }
 
     @JsonProperty("change")
-    public AclChange getChange() {
+    public io.streamthoughts.jikkou.kafka.change.AclChange getChange() {
         return change;
     }
 

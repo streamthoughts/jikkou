@@ -46,7 +46,7 @@ class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
     void shouldCollectAllConnectorsWithExpandStatusFalse() throws URISyntaxException, IOException, InterruptedException {
         // Given
         KafkaConnectorCollector collector = new KafkaConnectorCollector();
-        collector.configure(new KafkaConnectExtensionConfig(List.of(new KafkaConnectClientConfig(Configuration.builder()
+        collector.init(new KafkaConnectExtensionConfig(List.of(new KafkaConnectClientConfig(Configuration.builder()
                 .with("name", KAFKA_CONNECTOR_NAME)
                 .with(KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl())
                 .build()))));
@@ -87,7 +87,7 @@ class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
     void shouldCollectAllConnectorsWithExpandStatusTrue() throws URISyntaxException, IOException, InterruptedException {
         // Given
         KafkaConnectorCollector collector = new KafkaConnectorCollector();
-        collector.configure(new KafkaConnectExtensionConfig(List.of(new KafkaConnectClientConfig(Configuration.builder()
+        collector.init(new KafkaConnectExtensionConfig(List.of(new KafkaConnectClientConfig(Configuration.builder()
                 .with("name", KAFKA_CONNECTOR_NAME)
                 .with(KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl())
                 .build()))));

@@ -48,7 +48,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-@Controller("/apis/core.jikkou.io/v1/healths")
+@Controller("/api/v1/healths")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class ApiHealthIndicatorListResource extends AbstractController {
 

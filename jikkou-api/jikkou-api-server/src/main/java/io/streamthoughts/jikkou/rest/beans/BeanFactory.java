@@ -31,9 +31,7 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
-import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
-import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
@@ -49,7 +47,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Factory
 public final class BeanFactory {
@@ -92,13 +89,7 @@ public final class BeanFactory {
 
     @Singleton
     public ResourceRegistry resourceRegistry() {
-        // manually register core resources
-        DefaultResourceRegistry registry = new DefaultResourceRegistry();
-        registry.register(ApiExtensionList.class)
-                .setVerbs(Set.of(Verb.LIST));
-        registry.register(ApiHealthIndicatorList.class)
-                .setVerbs(Set.of(Verb.LIST));
-        return registry;
+        return new DefaultResourceRegistry();
     }
 
     @Singleton

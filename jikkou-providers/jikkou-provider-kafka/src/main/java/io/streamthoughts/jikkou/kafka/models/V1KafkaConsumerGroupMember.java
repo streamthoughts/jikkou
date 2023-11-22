@@ -46,8 +46,7 @@ import lombok.extern.jackson.Jacksonized;
     "groupInstanceId",
     "clientId",
     "host",
-    "assignments",
-    "offsets"
+    "assignments"
 })
 @Jacksonized
 @Reflectable
@@ -91,14 +90,6 @@ public class V1KafkaConsumerGroupMember {
     @JsonPropertyDescription("List of topic-partitions assigned to the member.")
     @Singular
     private List<String> assignments = new ArrayList<String>();
-    /**
-     * List of topic-partitions offsets.
-     * 
-     */
-    @JsonProperty("offsets")
-    @JsonPropertyDescription("List of topic-partitions offsets.")
-    @Singular
-    private List<V1KafkaConsumerOffset> offsets = new ArrayList<V1KafkaConsumerOffset>();
 
     /**
      * No args constructor for use in serialization
@@ -112,7 +103,6 @@ public class V1KafkaConsumerGroupMember {
      * @param groupInstanceId
      * @param clientId
      * @param assignments
-     * @param offsets
      * @param host
      * @param memberId
      */
@@ -121,17 +111,15 @@ public class V1KafkaConsumerGroupMember {
         "groupInstanceId",
         "clientId",
         "host",
-        "assignments",
-        "offsets"
+        "assignments"
     })
-    public V1KafkaConsumerGroupMember(String memberId, String groupInstanceId, String clientId, String host, List<String> assignments, List<V1KafkaConsumerOffset> offsets) {
+    public V1KafkaConsumerGroupMember(String memberId, String groupInstanceId, String clientId, String host, List<String> assignments) {
         super();
         this.memberId = memberId;
         this.groupInstanceId = groupInstanceId;
         this.clientId = clientId;
         this.host = host;
         this.assignments = assignments;
-        this.offsets = offsets;
     }
 
     /**
@@ -180,15 +168,6 @@ public class V1KafkaConsumerGroupMember {
         return assignments;
     }
 
-    /**
-     * List of topic-partitions offsets.
-     * 
-     */
-    @JsonProperty("offsets")
-    public List<V1KafkaConsumerOffset> getOffsets() {
-        return offsets;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -213,10 +192,6 @@ public class V1KafkaConsumerGroupMember {
         sb.append('=');
         sb.append(((this.assignments == null)?"<null>":this.assignments));
         sb.append(',');
-        sb.append("offsets");
-        sb.append('=');
-        sb.append(((this.offsets == null)?"<null>":this.offsets));
-        sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
         } else {
@@ -232,7 +207,6 @@ public class V1KafkaConsumerGroupMember {
         result = ((result* 31)+((this.host == null)? 0 :this.host.hashCode()));
         result = ((result* 31)+((this.clientId == null)? 0 :this.clientId.hashCode()));
         result = ((result* 31)+((this.assignments == null)? 0 :this.assignments.hashCode()));
-        result = ((result* 31)+((this.offsets == null)? 0 :this.offsets.hashCode()));
         result = ((result* 31)+((this.memberId == null)? 0 :this.memberId.hashCode()));
         return result;
     }
@@ -246,7 +220,7 @@ public class V1KafkaConsumerGroupMember {
             return false;
         }
         V1KafkaConsumerGroupMember rhs = ((V1KafkaConsumerGroupMember) other);
-        return (((((((this.groupInstanceId == rhs.groupInstanceId)||((this.groupInstanceId!= null)&&this.groupInstanceId.equals(rhs.groupInstanceId)))&&((this.host == rhs.host)||((this.host!= null)&&this.host.equals(rhs.host))))&&((this.clientId == rhs.clientId)||((this.clientId!= null)&&this.clientId.equals(rhs.clientId))))&&((this.assignments == rhs.assignments)||((this.assignments!= null)&&this.assignments.equals(rhs.assignments))))&&((this.offsets == rhs.offsets)||((this.offsets!= null)&&this.offsets.equals(rhs.offsets))))&&((this.memberId == rhs.memberId)||((this.memberId!= null)&&this.memberId.equals(rhs.memberId))));
+        return ((((((this.groupInstanceId == rhs.groupInstanceId)||((this.groupInstanceId!= null)&&this.groupInstanceId.equals(rhs.groupInstanceId)))&&((this.host == rhs.host)||((this.host!= null)&&this.host.equals(rhs.host))))&&((this.clientId == rhs.clientId)||((this.clientId!= null)&&this.clientId.equals(rhs.clientId))))&&((this.assignments == rhs.assignments)||((this.assignments!= null)&&this.assignments.equals(rhs.assignments))))&&((this.memberId == rhs.memberId)||((this.memberId!= null)&&this.memberId.equals(rhs.memberId))));
     }
 
 }

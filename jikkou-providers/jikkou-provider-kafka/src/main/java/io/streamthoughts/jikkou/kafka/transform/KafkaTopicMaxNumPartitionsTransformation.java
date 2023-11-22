@@ -21,8 +21,8 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasPriority;
@@ -50,8 +50,8 @@ public class KafkaTopicMaxNumPartitionsTransformation implements Transformation<
      * {@inheritDoc}
      **/
     @Override
-    public void configure(@NotNull Configuration config) throws ConfigException {
-        maxNumPartitions = MAX_NUM_PARTITIONS_CONFIG.getOptional(config)
+    public void init(@NotNull ExtensionContext context) {
+        maxNumPartitions = MAX_NUM_PARTITIONS_CONFIG.getOptional(context.appConfiguration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MAX_NUM_PARTITIONS_CONFIG.key(),

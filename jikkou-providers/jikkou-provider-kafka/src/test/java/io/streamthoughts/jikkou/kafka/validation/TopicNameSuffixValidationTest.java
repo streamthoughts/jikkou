@@ -19,6 +19,7 @@ import static io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidatio
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -28,6 +29,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class TopicNameSuffixValidationTest {
 
@@ -40,14 +42,20 @@ class TopicNameSuffixValidationTest {
 
     @Test
     void shouldThrowExceptionForConfigMissing() {
-        Assertions.assertThrows(ConfigException.class, () -> validation.configure(Configuration.empty()));
+        // Given
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(Configuration.empty());
+        // When
+        Assertions.assertThrows(ConfigException.class, () -> validation.init(context));
     }
 
     @Test
     void shouldThrowExceptionForTopicNotEndingWithSuffix() {
         // Given
-        validation.configure(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")
-        ));
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
+        validation.init(context);
+
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()
@@ -70,7 +78,10 @@ class TopicNameSuffixValidationTest {
     @Test
     void shouldNotThrowForValidTopic() {
         // Given
-        validation.configure(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
+        validation.init(context);
+
         var topic = V1KafkaTopic.builder()
                 .withMetadata(ObjectMeta
                         .builder()

@@ -16,8 +16,7 @@
 package io.streamthoughts.jikkou.kafka.validation;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.Optional;
@@ -29,15 +28,15 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(type = V1KafkaTopic.class)
 public abstract class TopicValidation implements Validation<V1KafkaTopic> {
 
-    private Configuration config;
+    private ExtensionContext context;
 
     /** {@inheritDoc} */
     @Override
-    public void configure(@NotNull final Configuration config) throws ConfigException {
-        this.config = config;
+    public void init(@NotNull final ExtensionContext context) {
+        this.context = context;
     }
 
-    public Configuration config() {
-        return Optional.ofNullable(config).orElseThrow(() -> new IllegalStateException("not configured."));
+    public ExtensionContext context() {
+        return Optional.ofNullable(context).orElseThrow(() -> new IllegalStateException("not configured."));
     }
 }

@@ -23,9 +23,12 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
+import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
+import io.streamthoughts.jikkou.core.models.ApiExtension;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
@@ -59,7 +62,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Jikkou API delegating to Jikkou REST Proxy.
  */
-public class JikkouApiProxy extends BaseApi implements JikkouApi {
+public final class JikkouApiProxy extends BaseApi implements JikkouApi {
 
     /**
      * Builder class for creating a new {@link DefaultApi} object instance.
@@ -176,8 +179,41 @@ public class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ApiExtensionList getApiExtensions(String type) {
+    public ApiExtensionList getApiExtensions(@NotNull String type) {
         return apiClient.getApiExtensions(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions(@NotNull Class<?> extensionType) {
+        return getApiExtensions(extensionType.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtensionList getApiExtensions(@NotNull ExtensionCategory category) {
+        return apiClient.getApiExtensions(category);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtension getApiExtension(@NotNull String extensionName) {
+        return getApiExtension(Extension.class, extensionName);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiExtension getApiExtension(@NotNull Class<?> extensionType,
+                                        @NotNull String extensionName) {
+        return apiClient.getApiExtension(extensionType, extensionName);
     }
 
     /**
@@ -196,6 +232,15 @@ public class JikkouApiProxy extends BaseApi implements JikkouApi {
             changes.addAll(result.getChanges());
         }
         return new ApiChangeResultList(context.isDryRun(), CollectionUtils.cast(changes));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiActionResultSet<?> execute(@NotNull String action,
+                                         @NotNull Configuration configuration) {
+        return apiClient.execute(action, configuration);
     }
 
     /**

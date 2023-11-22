@@ -15,10 +15,8 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
-import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import java.util.Arrays;
+import io.streamthoughts.jikkou.common.utils.Enums;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,10 +48,7 @@ public enum Verb {
     }
 
     public static Verb getForNameIgnoreCase(final @Nullable String verb) {
-        return Arrays.stream(Verb.values())
-                .filter(e -> e.name().equals(verb.toUpperCase(Locale.ROOT)))
-                .findFirst()
-                .orElseThrow(() -> new JikkouRuntimeException("Unsupported verb '" + verb + "'"));
+        return Enums.getForNameIgnoreCase(verb, Verb.class);
     }
 
     public static Verb[] getForNamesIgnoreCase(final @Nullable Collection<String> verbs) {

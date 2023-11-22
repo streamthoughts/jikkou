@@ -31,7 +31,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Long> config = ConfigProperty.ofLong(KEY);
         // When
-        Long value = config.evaluate(Configuration.from(Map.of(KEY, 42L)));
+        Long value = config.get(Configuration.from(Map.of(KEY, 42L)));
         // Then
         Assertions.assertEquals(42L, value);
     }
@@ -41,7 +41,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).orElse(42L);
         // When
-        Long value = config.evaluate(Configuration.empty());
+        Long value = config.get(Configuration.empty());
         // Then
         Assertions.assertEquals(42L, value);
     }
@@ -51,7 +51,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Boolean> config = ConfigProperty.ofBoolean(KEY);
         // When
-        Boolean value = config.evaluate(Configuration.from(Map.of(KEY, true)));
+        Boolean value = config.get(Configuration.from(Map.of(KEY, true)));
         // Then
         Assertions.assertEquals(true, value);
     }
@@ -61,7 +61,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Boolean> config = ConfigProperty.ofBoolean(KEY).orElse(true);
         // When
-        Boolean value = config.evaluate(Configuration.empty());
+        Boolean value = config.get(Configuration.empty());
         // Then
         Assertions.assertEquals(true, value);
     }
@@ -71,7 +71,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Integer> config = ConfigProperty.ofInt(KEY);
         // When
-        Integer value = config.evaluate(Configuration.from(Map.of(KEY, 42)));
+        Integer value = config.get(Configuration.from(Map.of(KEY, 42)));
         // Then
         Assertions.assertEquals(42, value);
     }
@@ -81,7 +81,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Integer> config = ConfigProperty.ofInt(KEY).orElse(42);
         // When
-        Integer value = config.evaluate(Configuration.empty());
+        Integer value = config.get(Configuration.empty());
         // Then
         Assertions.assertEquals(42, value);
     }
@@ -91,7 +91,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
         // When
-        String value = config.evaluate(Configuration.from(Map.of(KEY, "test")));
+        String value = config.get(Configuration.from(Map.of(KEY, "test")));
         // Then
         Assertions.assertEquals("test", value);
     }
@@ -102,7 +102,7 @@ class ConfigPropertyTest {
         ConfigProperty<String> config = ConfigProperty.ofString(KEY).orElse("test");
 
         // When
-        String value = config.evaluate(Configuration.empty());
+        String value = config.get(Configuration.empty());
 
         // Then
         Assertions.assertEquals("test", value);
@@ -113,7 +113,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<List<String>> config = ConfigProperty.ofList(KEY);
         // When
-        List<String> value = config.evaluate(Configuration.from(Map.of(KEY, List.of("test"))));
+        List<String> value = config.get(Configuration.from(Map.of(KEY, List.of("test"))));
         // Then
         Assertions.assertEquals(List.of("test"), value);
     }
@@ -123,7 +123,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<List<String>> config = ConfigProperty.ofList(KEY).orElse(List.of("test"));
         // When
-        List<String> value = config.evaluate(Configuration.empty());
+        List<String> value = config.get(Configuration.empty());
         // Then
         Assertions.assertEquals(List.of("test"), value);
     }
@@ -134,7 +134,7 @@ class ConfigPropertyTest {
         ConfigProperty<String> config = ConfigProperty.ofString(KEY);
 
         // When, Then
-        ConfigException.Missing exception = assertThrows(ConfigException.Missing.class, () -> config.evaluate(Configuration.empty()));
+        ConfigException.Missing exception = assertThrows(ConfigException.Missing.class, () -> config.get(Configuration.empty()));
         Assertions.assertEquals(KEY, exception.property().key());
     }
 
@@ -178,7 +178,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<List<Class<TestClass>>> config = ConfigProperty.ofClasses(KEY);
         // When
-        List<Class<TestClass>> value = config.evaluate(Configuration.of(KEY, List.of(TestClass.class.getName())));
+        List<Class<TestClass>> value = config.get(Configuration.of(KEY, List.of(TestClass.class.getName())));
         // Then
         Assertions.assertEquals(1, value.size());
         Assertions.assertEquals(TestClass.class, value.get(0));
@@ -189,7 +189,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).orElse(42L);
         // When
-        Long value = config.evaluate(Configuration.empty());
+        Long value = config.get(Configuration.empty());
         // Then
         Assertions.assertEquals(42L, value);
     }
@@ -201,7 +201,7 @@ class ConfigPropertyTest {
                 .ofConfigList(KEY)
                 .orElse(List.of(Configuration.of("k1", "v1")));
         // When
-        List<Configuration> value = config.evaluate(Configuration.empty());
+        List<Configuration> value = config.get(Configuration.empty());
         // Then
         Assertions.assertNotNull(value);
         Assertions.assertEquals(1, value.size());
@@ -212,7 +212,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<List<Configuration>> config = ConfigProperty.ofConfigList(KEY);
         // When
-        List<Configuration> value = config.evaluate(Configuration.of(KEY, List.of(Map.of("k1", "v1"))));
+        List<Configuration> value = config.get(Configuration.of(KEY, List.of(Map.of("k1", "v1"))));
         // Then
         Assertions.assertNotNull(value);
         Assertions.assertEquals(1, value.size());

@@ -70,6 +70,14 @@
             "$ref": "#/$defs/V1KafkaConsumerGroupMember"
           }
         },
+        "offsets": {
+          "type": "array",
+          "description": "List of topic-partitions offsets.",
+          "items": {
+            "type": "object",
+            "$ref": "#/$defs/V1KafkaConsumerOffset"
+          }
+        },
         "coordinator": {
           "type": "object",
           "description": "The broker node responsible for coordinating this group.",
@@ -111,14 +119,6 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
-        },
-        "offsets": {
-          "type": "array",
-          "description": "List of topic-partitions offsets.",
-          "items": {
-            "type": "object",
-            "$ref": "#/$defs/V1KafkaConsumerOffset"
           }
         }
       }

@@ -15,7 +15,10 @@
  */
 package io.streamthoughts.jikkou.kafka.transform;
 
+import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation.MIN_RETENTIONS_MS_CONFIG;
+
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
@@ -24,17 +27,28 @@ import java.util.Collections;
 import java.util.Optional;
 import org.apache.kafka.common.config.TopicConfig;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class KafkaTopicMinRetentionMsTransformationTest {
 
     public static final long MIN_VALUE = 1000L;
 
+    KafkaTopicMinRetentionMsTransformation transformation;
+
+    @BeforeEach
+    void beforeEach() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(MIN_RETENTIONS_MS_CONFIG.asConfiguration(MIN_VALUE));
+        transformation = new KafkaTopicMinRetentionMsTransformation();
+        transformation.init(context);
+    }
+
+
     @Test
     void shouldEnforceConstraintForInvalidValue() {
         // Given
-        KafkaTopicMinRetentionMsTransformation transformation = new KafkaTopicMinRetentionMsTransformation();
-        transformation.configure(KafkaTopicMinRetentionMsTransformation.MIN_RETENTIONS_MS_CONFIG.asConfiguration(MIN_VALUE));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
@@ -59,8 +73,6 @@ class KafkaTopicMinRetentionMsTransformationTest {
     @Test
     void shouldEnforceConstraintForMissingValue() {
         // Given
-        KafkaTopicMinRetentionMsTransformation transformation = new KafkaTopicMinRetentionMsTransformation();
-        transformation.configure(KafkaTopicMinRetentionMsTransformation.MIN_RETENTIONS_MS_CONFIG.asConfiguration(MIN_VALUE));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
@@ -84,8 +96,6 @@ class KafkaTopicMinRetentionMsTransformationTest {
     @Test
     void shouldNotEnforceConstraintForValidValue() {
         // Given
-        KafkaTopicMinRetentionMsTransformation transformation = new KafkaTopicMinRetentionMsTransformation();
-        transformation.configure(KafkaTopicMinRetentionMsTransformation.MIN_RETENTIONS_MS_CONFIG.asConfiguration(MIN_VALUE));
         V1KafkaTopic resource = V1KafkaTopic.builder()
                 .withSpec(V1KafkaTopicSpec
                         .builder()
@@ -102,8 +112,8 @@ class KafkaTopicMinRetentionMsTransformationTest {
 
         V1KafkaTopic transformed = result.get();
         Assertions.assertEquals(
-            5000L,
-            transformed.getSpec().getConfigs().get(TopicConfig.RETENTION_MS_CONFIG).value()
+                5000L,
+                transformed.getSpec().getConfigs().get(TopicConfig.RETENTION_MS_CONFIG).value()
         );
     }
 }

@@ -53,6 +53,6 @@ public final class KafkaClientConfiguration {
     }
 
     public Duration getClientDefaultTimeout() {
-        return KAFKA_DEFAULT_TIMEOUT_CONFIG.evaluate(configuration);
+        return KAFKA_DEFAULT_TIMEOUT_CONFIG.get(configuration);
     }
 }

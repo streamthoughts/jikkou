@@ -26,7 +26,6 @@ import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.Resource;
-import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
@@ -55,7 +54,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaTopicChange implements HasMetadataChange<TopicChange> , Resource
+public class V1KafkaTopicChange implements HasMetadataChange<io.streamthoughts.jikkou.kafka.change.TopicChange> , Resource
 {
 
     /**
@@ -82,7 +81,7 @@ public class V1KafkaTopicChange implements HasMetadataChange<TopicChange> , Reso
     @JsonProperty("metadata")
     private ObjectMeta metadata;
     @JsonProperty("change")
-    private TopicChange change;
+    private io.streamthoughts.jikkou.kafka.change.TopicChange change;
 
     /**
      * No args constructor for use in serialization
@@ -104,7 +103,7 @@ public class V1KafkaTopicChange implements HasMetadataChange<TopicChange> , Reso
         "metadata",
         "change"
     })
-    public V1KafkaTopicChange(String apiVersion, String kind, ObjectMeta metadata, TopicChange change) {
+    public V1KafkaTopicChange(String apiVersion, String kind, ObjectMeta metadata, io.streamthoughts.jikkou.kafka.change.TopicChange change) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -143,7 +142,7 @@ public class V1KafkaTopicChange implements HasMetadataChange<TopicChange> , Reso
     }
 
     @JsonProperty("change")
-    public TopicChange getChange() {
+    public io.streamthoughts.jikkou.kafka.change.TopicChange getChange() {
         return change;
     }
 

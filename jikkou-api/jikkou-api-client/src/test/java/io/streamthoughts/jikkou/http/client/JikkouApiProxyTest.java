@@ -20,17 +20,17 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
-import io.streamthoughts.jikkou.core.models.ApiExtension;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
+import io.streamthoughts.jikkou.core.models.ApiExtensionSummary;
 import io.streamthoughts.jikkou.core.models.ApiGroup;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiGroupVersion;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
+import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
-import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.http.client.exception.UnsupportedApiResourceException;
@@ -192,10 +192,7 @@ class JikkouApiProxyTest {
                           "extensions": [
                             {
                               "name": "TestExtension",
-                              "title": "Title",
-                              "examples": [],
                               "category": "Category",
-                              "description": "Test",
                               "provider": "Provider"
                             }
                           ]
@@ -205,11 +202,8 @@ class JikkouApiProxyTest {
         ApiExtensionList result = API.getApiExtensions();
         ApiExtensionList expected = new ApiExtensionList(
                 List.of(
-                        new ApiExtension(
+                        new ApiExtensionSummary(
                                 "TestExtension",
-                                "Title",
-                                "Test",
-                                Collections.emptyList(),
                                 "Category",
                                 "Provider"
                         )
@@ -284,7 +278,7 @@ class JikkouApiProxyTest {
                         ),
                         List.of(new ApiResourceVerbOptionList(
                                 Verb.LIST,
-                                List.of(new ApiResourceVerbOptionSpec(
+                                List.of(new ApiOptionSpec(
                                         "value",
                                         "The description of the option",
                                         String.class,

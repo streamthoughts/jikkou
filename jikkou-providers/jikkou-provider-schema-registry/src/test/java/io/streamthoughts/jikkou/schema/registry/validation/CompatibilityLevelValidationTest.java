@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.schema.registry.validation;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -24,12 +25,25 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class CompatibilityLevelValidationTest {
 
     private static final Configuration CONFIGURATION = CompatibilityLevelValidation.VALIDATION_COMPATIBILITY_CONFIG
             .asConfiguration(List.of(CompatibilityLevels.FORWARD.name()));
+
+    private CompatibilityLevelValidation validation;
+
+    @BeforeEach
+    public void beforeEach() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(CONFIGURATION);
+        validation = new CompatibilityLevelValidation();
+        validation.init(context);
+
+    }
 
     @Test
     void shouldReturnSuccessForAcceptedCompatibilityLevel() {
@@ -44,8 +58,6 @@ class CompatibilityLevelValidationTest {
                 )
                 .build();
 
-        CompatibilityLevelValidation validation = new CompatibilityLevelValidation();
-        validation.configure(CONFIGURATION);
 
         // When
         ValidationResult result = validation.validate(subject);
@@ -66,9 +78,6 @@ class CompatibilityLevelValidationTest {
                         .build()
                 )
                 .build();
-
-        CompatibilityLevelValidation validation = new CompatibilityLevelValidation();
-        validation.configure(CONFIGURATION);
 
         // When
         ValidationResult result = validation.validate(subject);

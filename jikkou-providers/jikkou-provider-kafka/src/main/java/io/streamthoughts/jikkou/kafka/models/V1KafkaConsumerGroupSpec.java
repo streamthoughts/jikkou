@@ -42,6 +42,7 @@ import lombok.extern.jackson.Jacksonized;
 @JsonPropertyOrder({
     "state",
     "members",
+    "offsets",
     "coordinator"
 })
 @Jacksonized
@@ -65,6 +66,14 @@ public class V1KafkaConsumerGroupSpec {
     @Singular
     private List<V1KafkaConsumerGroupMember> members = new ArrayList<V1KafkaConsumerGroupMember>();
     /**
+     * List of topic-partitions offsets.
+     * 
+     */
+    @JsonProperty("offsets")
+    @JsonPropertyDescription("List of topic-partitions offsets.")
+    @Singular
+    private List<V1KafkaConsumerOffset> offsets = new ArrayList<V1KafkaConsumerOffset>();
+    /**
      * V1KafkaNode
      * <p>
      * Information about a Kafka node.
@@ -84,18 +93,21 @@ public class V1KafkaConsumerGroupSpec {
     /**
      * 
      * @param coordinator
+     * @param offsets
      * @param members
      * @param state
      */
     @ConstructorProperties({
         "state",
         "members",
+        "offsets",
         "coordinator"
     })
-    public V1KafkaConsumerGroupSpec(String state, List<V1KafkaConsumerGroupMember> members, V1KafkaNode coordinator) {
+    public V1KafkaConsumerGroupSpec(String state, List<V1KafkaConsumerGroupMember> members, List<V1KafkaConsumerOffset> offsets, V1KafkaNode coordinator) {
         super();
         this.state = state;
         this.members = members;
+        this.offsets = offsets;
         this.coordinator = coordinator;
     }
 
@@ -115,6 +127,15 @@ public class V1KafkaConsumerGroupSpec {
     @JsonProperty("members")
     public List<V1KafkaConsumerGroupMember> getMembers() {
         return members;
+    }
+
+    /**
+     * List of topic-partitions offsets.
+     * 
+     */
+    @JsonProperty("offsets")
+    public List<V1KafkaConsumerOffset> getOffsets() {
+        return offsets;
     }
 
     /**
@@ -140,6 +161,10 @@ public class V1KafkaConsumerGroupSpec {
         sb.append('=');
         sb.append(((this.members == null)?"<null>":this.members));
         sb.append(',');
+        sb.append("offsets");
+        sb.append('=');
+        sb.append(((this.offsets == null)?"<null>":this.offsets));
+        sb.append(',');
         sb.append("coordinator");
         sb.append('=');
         sb.append(((this.coordinator == null)?"<null>":this.coordinator));
@@ -156,8 +181,9 @@ public class V1KafkaConsumerGroupSpec {
     public int hashCode() {
         int result = 1;
         result = ((result* 31)+((this.state == null)? 0 :this.state.hashCode()));
-        result = ((result* 31)+((this.members == null)? 0 :this.members.hashCode()));
         result = ((result* 31)+((this.coordinator == null)? 0 :this.coordinator.hashCode()));
+        result = ((result* 31)+((this.offsets == null)? 0 :this.offsets.hashCode()));
+        result = ((result* 31)+((this.members == null)? 0 :this.members.hashCode()));
         return result;
     }
 
@@ -170,7 +196,7 @@ public class V1KafkaConsumerGroupSpec {
             return false;
         }
         V1KafkaConsumerGroupSpec rhs = ((V1KafkaConsumerGroupSpec) other);
-        return ((((this.state == rhs.state)||((this.state!= null)&&this.state.equals(rhs.state)))&&((this.members == rhs.members)||((this.members!= null)&&this.members.equals(rhs.members))))&&((this.coordinator == rhs.coordinator)||((this.coordinator!= null)&&this.coordinator.equals(rhs.coordinator))));
+        return (((((this.state == rhs.state)||((this.state!= null)&&this.state.equals(rhs.state)))&&((this.coordinator == rhs.coordinator)||((this.coordinator!= null)&&this.coordinator.equals(rhs.coordinator))))&&((this.offsets == rhs.offsets)||((this.offsets!= null)&&this.offsets.equals(rhs.offsets))))&&((this.members == rhs.members)||((this.members!= null)&&this.members.equals(rhs.members))));
     }
 
 }

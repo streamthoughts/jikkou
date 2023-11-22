@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.client.command.get;
 
 import io.micronaut.context.annotation.Prototype;
-import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
+import io.streamthoughts.jikkou.client.command.AbstractApiCommand;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.common.utils.Strings;
@@ -29,10 +29,7 @@ import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -43,7 +40,7 @@ import picocli.CommandLine.Option;
         description = "Display one or many resources"
 )
 @Prototype
-public class GetResourceCommand extends CLIBaseCommand implements Callable<Integer> {
+public class GetResourceCommand extends AbstractApiCommand {
 
     // COMMAND OPTIONS
     @Mixin
@@ -53,7 +50,7 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
 
     @Option(names = {"--list"},
             defaultValue = "false",
-            description = "Get resources as ResourceListObject."
+            description = "Get resources as ResourceListObject (default: ${DEFAULT-VALUE})."
     )
     private boolean list;
 
@@ -61,11 +58,6 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
      * The resource name (optional).
      */
     private String name;
-
-    /**
-     * The resource options (optional).
-     */
-    private final Map<String, Object> options = new HashMap<>();
 
     /**
      * The resource type.
@@ -92,13 +84,13 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
             resources = api.listResources(
                     type,
                     selectorOptions.getResourceSelector(),
-                    Configuration.from(options)
+                    Configuration.from(options())
             );
         } else {
             HasMetadata resource = api.getResource(
                     type,
                     name,
-                    Configuration.from(options)
+                    Configuration.from(options())
             );
             resources = new DefaultResourceListObject<>(List.of(resource));
         }
@@ -129,16 +121,4 @@ public class GetResourceCommand extends CLIBaseCommand implements Callable<Integ
         this.type = type;
     }
 
-    /**
-     * Sets the option for the specified name and value.
-     *
-     * @param name  The option name.
-     * @param value The option value.
-     * @return      The previous value.
-     * @param <T>   The option type.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T setOption(final String name, final T value) {
-        return (T) this.options.put(name, value);
-    }
 }

@@ -62,23 +62,23 @@ public class SchemaRegistryClientConfig {
     }
 
     public String getSchemaRegistryUrl() {
-        return SCHEMA_REGISTRY_URL.evaluate(configuration);
+        return SCHEMA_REGISTRY_URL.get(configuration);
     }
 
     public String getSchemaRegistryVendor() {
-        return SCHEMA_REGISTRY_VENDOR_NAME.evaluate(configuration);
+        return SCHEMA_REGISTRY_VENDOR_NAME.get(configuration);
     }
 
     public AuthMethod getAuthMethod() {
-        return AuthMethod.getForNameIgnoreCase(SCHEMA_REGISTRY_AUTH_METHOD.evaluate(configuration));
+        return AuthMethod.getForNameIgnoreCase(SCHEMA_REGISTRY_AUTH_METHOD.get(configuration));
     }
 
     public String getBasicAuthUsername() {
-        return SCHEMA_REGISTRY_BASIC_AUTH_USERNAME.evaluate(configuration);
+        return SCHEMA_REGISTRY_BASIC_AUTH_USERNAME.get(configuration);
     }
 
     public String getBasicAuthPassword() {
-        return SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD.evaluate(configuration);
+        return SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD.get(configuration);
     }
 
     public String getBasicAuthInfo() {
@@ -86,6 +86,6 @@ public class SchemaRegistryClientConfig {
     }
 
     public boolean getDebugLoggingEnabled() {
-        return SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED.evaluate(configuration);
+        return SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED.get(configuration);
     }
 }

@@ -19,8 +19,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.core.JikkouInfo;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
@@ -73,15 +73,6 @@ public class KafkaChangeReporter implements ChangeReporter {
     /**
      * Creates a new {@link KafkaChangeReporter} instance.
      *
-     * @param configuration the application's configuration.
-     */
-    public KafkaChangeReporter(final @NotNull Configuration configuration) {
-        configure(configuration);
-    }
-
-    /**
-     * Creates a new {@link KafkaChangeReporter} instance.
-     *
      * @param producerFactory the producer-client to be used for sending events.
      */
     public KafkaChangeReporter(final @NotNull ProducerFactory<byte[], byte[]> producerFactory,
@@ -94,12 +85,11 @@ public class KafkaChangeReporter implements ChangeReporter {
      * {@inheritDoc}
      */
     @Override
-    public void configure(@NotNull Configuration configuration) throws ConfigException {
-        LOG.info("Configuration");
-        this.configuration = new KafkaChangeReporterConfig(configuration);
+    public void init(@NotNull ExtensionContext context) throws ConfigException {
+        configuration = new KafkaChangeReporterConfig(context.appConfiguration());
         if (producerFactory == null) {
             producerFactory = new DefaultProducerFactory<>(
-                    this.configuration.producerConfig(),
+                    configuration.producerConfig(),
                     new ByteArraySerializer(),
                     new ByteArraySerializer()
             );

@@ -158,7 +158,7 @@ function _complete_jikkou() {
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} delete" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} update" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} apply" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} extensions" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-extensions" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-resources" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} diff" ];    then _picocli_jikkou; return $?; fi
@@ -167,7 +167,8 @@ function _complete_jikkou() {
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} help" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} generate-completion" ];    then _picocli_jikkou; return $?; fi
-  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} extensions list" ];    then _picocli_jikkou_extensions; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-extensions list" ];    then _picocli_jikkou_apiextensions; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-extensions get" ];    then _picocli_jikkou_apiextensions; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config view" ];    then _picocli_jikkou_config; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config set-context" ];    then _picocli_jikkou_config; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config get-contexts" ];    then _picocli_jikkou_config; return $?; fi
@@ -181,7 +182,7 @@ function _complete_jikkou() {
   local cmds1=(delete)
   local cmds2=(update)
   local cmds3=(apply)
-  local cmds4=(extensions)
+  local cmds4=(api-extensions)
   local cmds5=(api-resources)
   local cmds6=(config)
   local cmds7=(diff)
@@ -190,23 +191,25 @@ function _complete_jikkou() {
   local cmds10=(health)
   local cmds11=(help)
   local cmds12=(generate-completion)
-  local cmds13=(extensions list)
-  local cmds14=(config view)
-  local cmds15=(config set-context)
-  local cmds16=(config get-contexts)
-  local cmds17=(config current-context)
-  local cmds18=(config use-context)
-  local cmds19=(health get)
-  local cmds20=(health get-indicators)
+  local cmds13=(api-extensions list)
+  local cmds14=(api-extensions get)
+  local cmds15=(config view)
+  local cmds16=(config set-context)
+  local cmds17=(config get-contexts)
+  local cmds18=(config current-context)
+  local cmds19=(config use-context)
+  local cmds20=(health get)
+  local cmds21=(health get-indicators)
 
-  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
-  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_health_get; return $?; fi
-  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
-  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
-  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
-  if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
-  if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_config_view; return $?; fi
-  if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_extensions_list; return $?; fi
+  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
+  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_health_get; return $?; fi
+  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
+  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
+  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
+  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
+  if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_config_view; return $?; fi
+  if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_apiextensions_get; return $?; fi
+  if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_apiextensions_list; return $?; fi
   if CompWordsContainsArray "${cmds12[@]}"; then _picocli_jikkou_generatecompletion; return $?; fi
   if CompWordsContainsArray "${cmds11[@]}"; then _picocli_jikkou_help; return $?; fi
   if CompWordsContainsArray "${cmds10[@]}"; then _picocli_jikkou_health; return $?; fi
@@ -215,7 +218,7 @@ function _complete_jikkou() {
   if CompWordsContainsArray "${cmds7[@]}"; then _picocli_jikkou_diff; return $?; fi
   if CompWordsContainsArray "${cmds6[@]}"; then _picocli_jikkou_config; return $?; fi
   if CompWordsContainsArray "${cmds5[@]}"; then _picocli_jikkou_apiresources; return $?; fi
-  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_extensions; return $?; fi
+  if CompWordsContainsArray "${cmds4[@]}"; then _picocli_jikkou_apiextensions; return $?; fi
   if CompWordsContainsArray "${cmds3[@]}"; then _picocli_jikkou_apply; return $?; fi
   if CompWordsContainsArray "${cmds2[@]}"; then _picocli_jikkou_update; return $?; fi
   if CompWordsContainsArray "${cmds1[@]}"; then _picocli_jikkou_delete; return $?; fi
@@ -229,10 +232,19 @@ function _complete_jikkou() {
 function _picocli_jikkou() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands="create delete update apply extensions api-resources config diff prepare validate health help generate-completion"
+  local commands="create delete update apply api-extensions api-resources config diff prepare validate health help generate-completion"
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -251,12 +263,16 @@ function _picocli_jikkou_create() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --output|-o)
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
@@ -282,6 +298,11 @@ function _picocli_jikkou_create() {
       ;;
     --selector|-s)
       return
+      ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
       ;;
     --options)
       return
@@ -305,12 +326,16 @@ function _picocli_jikkou_delete() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --output|-o)
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
@@ -336,6 +361,11 @@ function _picocli_jikkou_delete() {
       ;;
     --selector|-s)
       return
+      ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
       ;;
     --options)
       return
@@ -359,12 +389,16 @@ function _picocli_jikkou_update() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --output|-o)
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
@@ -390,6 +424,11 @@ function _picocli_jikkou_update() {
       ;;
     --selector|-s)
       return
+      ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
       ;;
     --options)
       return
@@ -413,12 +452,16 @@ function _picocli_jikkou_apply() {
 
   local commands=""
   local flag_opts="--dry-run -h --help -V --version"
-  local arg_opts="--output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --output|-o)
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
@@ -445,6 +488,11 @@ function _picocli_jikkou_apply() {
     --selector|-s)
       return
       ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
     --options)
       return
       ;;
@@ -459,14 +507,23 @@ function _picocli_jikkou_apply() {
   fi
 }
 
-# Generates completions for the options and subcommands of the `extensions` subcommand.
-function _picocli_jikkou_extensions() {
+# Generates completions for the options and subcommands of the `api-extensions` subcommand.
+function _picocli_jikkou_apiextensions() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands="list"
+  local commands="list get"
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -481,10 +538,25 @@ function _picocli_jikkou_extensions() {
 function _picocli_jikkou_apiresources() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level --api-group --verbs"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+    --api-group)
+      return
+      ;;
+    --verbs)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -499,10 +571,19 @@ function _picocli_jikkou_apiresources() {
 function _picocli_jikkou_config() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands="view set-context get-contexts current-context use-context"
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -521,12 +602,16 @@ function _picocli_jikkou_diff() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --output -o --options"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --files|-f)
       return
       ;;
@@ -547,6 +632,11 @@ function _picocli_jikkou_diff() {
       ;;
     --selector|-s)
       return
+      ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
       ;;
     --output|-o)
       local IFS=$'\n'
@@ -575,12 +665,16 @@ function _picocli_jikkou_prepare() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --output -o --options"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --files|-f)
       return
       ;;
@@ -601,6 +695,11 @@ function _picocli_jikkou_prepare() {
       ;;
     --selector|-s)
       return
+      ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
       ;;
     --output|-o)
       local IFS=$'\n'
@@ -629,12 +728,16 @@ function _picocli_jikkou_validate() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --output -o --options"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --files|-f)
       return
       ;;
@@ -655,6 +758,11 @@ function _picocli_jikkou_validate() {
       ;;
     --selector|-s)
       return
+      ;;
+    --selector-match)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
       ;;
     --output|-o)
       local IFS=$'\n'
@@ -679,10 +787,19 @@ function _picocli_jikkou_validate() {
 function _picocli_jikkou_health() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands="get get-indicators"
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -698,7 +815,7 @@ function _picocli_jikkou_help() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="create delete update apply extensions api-resources config diff prepare validate health generate-completion"
+  local commands="create delete update apply api-extensions api-resources config diff prepare validate health generate-completion"
   local flag_opts="-h --help"
   local arg_opts=""
 
@@ -730,23 +847,62 @@ function _picocli_jikkou_generatecompletion() {
 }
 
 # Generates completions for the options and subcommands of the `list` subcommand.
-function _picocli_jikkou_extensions_list() {
+function _picocli_jikkou_apiextensions_list() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--type --kinds"
+  local arg_opts="--logger-level --category --provider --kind"
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
-    --type)
+    --logger-level)
       return
       ;;
-    --kinds)
+    --category)
       return
+      ;;
+    --provider)
+      return
+      ;;
+    --kind)
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `get` subcommand.
+function _picocli_jikkou_apiextensions_get() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="-h --help -V --version"
+  local arg_opts="--logger-level --output -o"
+  local format_option_args=("JSON" "YAML" "WIDE") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+    --output|-o)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
       ;;
   esac
 
@@ -767,11 +923,14 @@ function _picocli_jikkou_config_view() {
 
   local commands=""
   local flag_opts="--debug --comments -h --help -V --version"
-  local arg_opts="--name"
+  local arg_opts="--logger-level --name"
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --name)
       return
       ;;
@@ -794,11 +953,14 @@ function _picocli_jikkou_config_setcontext() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--config-props-file --config-props --config-file"
+  local arg_opts="--logger-level --config-props-file --config-props --config-file"
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --config-props-file)
       return
       ;;
@@ -823,10 +985,19 @@ function _picocli_jikkou_config_setcontext() {
 function _picocli_jikkou_config_getcontexts() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -841,10 +1012,19 @@ function _picocli_jikkou_config_getcontexts() {
 function _picocli_jikkou_config_currentcontext() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -859,10 +1039,19 @@ function _picocli_jikkou_config_currentcontext() {
 function _picocli_jikkou_config_usecontext() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
   local contextName_pos_param_args=("jikkou" "context-name-completions") # 0-0 values
 
   if [[ "${curr_word}" == -* ]]; then
@@ -887,12 +1076,15 @@ function _picocli_jikkou_health_get() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--output -o --timeout-ms"
+  local arg_opts="--logger-level --output -o --timeout-ms"
   local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
+    --logger-level)
+      return
+      ;;
     --output|-o)
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
@@ -916,10 +1108,19 @@ function _picocli_jikkou_health_get() {
 function _picocli_jikkou_health_getindicators() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts=""
+  local arg_opts="--logger-level"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    --logger-level)
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )

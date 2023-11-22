@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.kafka.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.selector.Selectors;
@@ -37,6 +38,7 @@ import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTest {
 
@@ -68,9 +70,13 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
             metadata = producer.send(RECORD_KEY_V2.toProducerRecord()).get();
         }
 
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig()));
+        AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector();
+        collector.init(context);
+
         // When
-        Configuration config = KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
-        AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
+
         ResourceListObject<V1KafkaTableRecord> list = collector.listAll(Configuration.of(
                         AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,
                         AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME, DataType.STRING.name(),
@@ -103,9 +109,12 @@ public class AdminClientKafkaTableCollectorIT extends AbstractKafkaIntegrationTe
         // Given
         createTopic(TEST_TOPIC_NAME, Map.of(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
 
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        Mockito.when(context.appConfiguration()).thenReturn(KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig()));
+        AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector();
+        collector.init(context);
+
         // When
-        Configuration config = KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.asConfiguration(clientConfig());
-        AdminClientKafkaTableCollector collector = new AdminClientKafkaTableCollector(config);
         Assertions.assertThrows(JikkouRuntimeException.class, () -> {
             collector.listAll(Configuration.of(
                             AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME, TEST_TOPIC_NAME,

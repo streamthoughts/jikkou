@@ -196,7 +196,7 @@ public abstract class BaseApi implements JikkouApi {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends HasMetadata> Collector<T> getMatchingResourceCollector(@NotNull ResourceType resource) {
+    protected <T extends HasMetadata> Collector<T> getMatchingCollector(@NotNull ResourceType resource) {
         LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
                 resource.group(),
                 resource.apiVersion(),
@@ -204,7 +204,7 @@ public abstract class BaseApi implements JikkouApi {
         );
         return extensionFactory.findExtension(
                 Collector.class,
-                Qualifiers.byAcceptedResource(resource)
+                Qualifiers.bySupportedResource(resource)
         ).orElseThrow(() -> new JikkouRuntimeException(String.format(
                 "Cannot find collector for resource type: group='%s', version='%s' and kind='%s",
                 resource.group(),
@@ -214,7 +214,7 @@ public abstract class BaseApi implements JikkouApi {
     }
 
     @SuppressWarnings("unchecked")
-    protected Controller<HasMetadata, Change> getMatchingResourceController(@NotNull ResourceType resource) {
+    protected Controller<HasMetadata, Change> getMatchingController(@NotNull ResourceType resource) {
         LOG.info("Looking for a controller accepting resource type: group={}, version={} and kind={}",
                 resource.group(),
                 resource.apiVersion(),
@@ -222,7 +222,7 @@ public abstract class BaseApi implements JikkouApi {
         );
         return extensionFactory.findExtension(
                 Controller.class,
-                Qualifiers.byAcceptedResource(resource)
+                Qualifiers.bySupportedResource(resource)
         ).orElseThrow(() -> new JikkouRuntimeException(String.format(
                 "Cannot find controller for resource type: group='%s', version='%s' and kind='%s",
                 resource.group(),
@@ -230,4 +230,5 @@ public abstract class BaseApi implements JikkouApi {
                 resource.kind()
         )));
     }
+
 }

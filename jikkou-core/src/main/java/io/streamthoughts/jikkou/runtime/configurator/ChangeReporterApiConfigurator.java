@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ChangeReporter}
  * dynamically passed through the CLI configuration.
  */
-public class ChangeReporterApiConfigurator extends ExtensionApiConfigurator<ChangeReporter> {
+public final class ChangeReporterApiConfigurator extends ExtensionApiConfigurator<ChangeReporter> {
 
     /**
      * Creates a new {@link BaseApiConfigurator} instance.
@@ -57,7 +57,7 @@ public class ChangeReporterApiConfigurator extends ExtensionApiConfigurator<Chan
 
         public ChangeReporterDecoratorSupplier(ExtensionConfigEntry configEntry,
                                                Supplier<ChangeReporter> delegate
-                                               ) {
+        ) {
             this.delegate = delegate;
             this.configEntry = configEntry;
         }
@@ -69,8 +69,8 @@ public class ChangeReporterApiConfigurator extends ExtensionApiConfigurator<Chan
         public ChangeReporter get() {
             ChangeReporter extension = delegate.get();
             return new ChangeReporterDecorator(extension)
-                    .withName(configEntry.name())
-                    .withConfiguration(configEntry.config());
+                    .name(configEntry.name())
+                    .configuration(configEntry.config());
         }
     }
 }
