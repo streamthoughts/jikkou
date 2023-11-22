@@ -70,10 +70,11 @@ class ResourceTransformationChainTest {
             }
 
             @Override
-            public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata toTransform,
-                                                            @NotNull HasItems resources) {
+            public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata resource,
+                                                            @NotNull HasItems resources,
+                                                            @NotNull ReconciliationContext context) {
                 onTransformation.run();
-                return Optional.of(toTransform);
+                return Optional.of(resource);
             }
         };
     }

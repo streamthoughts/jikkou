@@ -137,7 +137,7 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     }
 
     default List<ResourceType> supportedResources() {
-        return HasMetadataAcceptable.getAcceptedResources(type())
+        return HasMetadataAcceptable.getSupportedResources(type())
                 .stream()
                 .toList();
     }

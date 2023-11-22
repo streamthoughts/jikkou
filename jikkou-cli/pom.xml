@@ -104,33 +104,33 @@ limitations under the License.
             <artifactId>jikkou-template-jinja</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- START dependencies for Jikkou Extensions -->
+        <!-- START dependencies for Jikkou Extension Providers -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-extension-core</artifactId>
+            <artifactId>jikkou-provider-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-extension-kafka</artifactId>
+            <artifactId>jikkou-provider-kafka</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-extension-schema-registry</artifactId>
+            <artifactId>jikkou-provider-schema-registry</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-extension-aiven</artifactId>
+            <artifactId>jikkou-provider-aiven</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jikkou-extension-kafka-connect</artifactId>
+            <artifactId>jikkou-provider-kafka-connect</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- END dependencies for Jikkou Extensions -->
+        <!-- END dependencies for Jikkou Extension Providers -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

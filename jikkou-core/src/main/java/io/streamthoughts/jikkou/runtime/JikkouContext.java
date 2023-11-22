@@ -111,8 +111,11 @@ public final class JikkouContext {
         final String name = provider.getName();
         final boolean isExtensionProviderEnabled = isExtensionProviderEnabled(configuration, name, extensionEnabledByDefault);
         if (isExtensionProviderEnabled) {
+            LOG.info("Configuring extensions provider '{}'", name);
+            provider.configure(configuration);
+
             LOG.info("Loading extensions from provider '{}'", name);
-            provider.registerExtensions(new ExtensionGroupAwareRegistry(extensionFactory, name), configuration);
+            provider.registerExtensions(new ExtensionGroupAwareRegistry(extensionFactory, name));
 
             LOG.info("Loading resources from provider '{}'", name);
             var registry = new DefaultResourceRegistry(false);

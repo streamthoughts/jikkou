@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a named value.
+ */
 public final class NamedValue {
 
     /**
@@ -110,7 +113,9 @@ public final class NamedValue {
             return new Set(all);
         }
 
-        /** {@inheritDoc} **/
+        /**
+         * {@inheritDoc}
+         **/
         @Override
         public Iterator<NamedValue> iterator() {
             return valuesByName.values().iterator();
@@ -119,14 +124,16 @@ public final class NamedValue {
         public Map<String, Object> asMap() {
             return valuesByName.values()
                     .stream()
-                    .collect(Collectors.toMap(NamedValue::getName, NamedValue::getValue));
+                    .collect(Collectors.toMap(NamedValue::getName, NamedValue::unwrap));
         }
 
         public boolean isEmpty() {
             return valuesByName.isEmpty();
         }
 
-        /** {@inheritDoc} **/
+        /**
+         * {@inheritDoc}
+         **/
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -135,26 +142,31 @@ public final class NamedValue {
             return Objects.equals(valuesByName, values.valuesByName);
         }
 
-        /** {@inheritDoc} **/
+        /**
+         * {@inheritDoc}
+         **/
         @Override
         public int hashCode() {
             return Objects.hash(valuesByName);
         }
 
-        /** {@inheritDoc} **/
+        /**
+         * {@inheritDoc}
+         **/
         @Override
         public String toString() {
             return "Set" + valuesByName.values();
         }
     }
 
+    public final Object value;
     public final String name;
-    private final Object value;
 
     /**
      * Creates a new {@link NamedValue} instance.
-     * @param name      the name attached to the value.
-     * @param value     the value.
+     *
+     * @param name  the name attached to the value.
+     * @param value the value.
      */
     public NamedValue(final String name,
                       final Object value) {
@@ -166,7 +178,11 @@ public final class NamedValue {
         return name;
     }
 
-    public Object getValue() {
+    public Value getValue() {
+        return new Value(value);
+    }
+
+    public Object unwrap() {
         return value;
     }
 
@@ -178,7 +194,9 @@ public final class NamedValue {
         return new AbstractMap.SimpleEntry<>(name, value);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -187,13 +205,17 @@ public final class NamedValue {
         return Objects.equals(name, that.name) && Objects.equals(value, that.value);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public int hashCode() {
         return Objects.hash(name, value);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String
     toString() {

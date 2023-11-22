@@ -43,11 +43,11 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
     )
     public String category;
 
-    @Option(names = {"--group"},
+    @Option(names = {"--provider"},
             required = false,
-            description = "Limit to extensions of the specified group."
+            description = "Limit to extensions of the specified provider."
     )
-    public String group;
+    public String provider;
 
     @Option(names = {"--kind"},
             required = false,
@@ -69,7 +69,7 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
 
         Predicate<ApiExtension> predicate = Stream.<Predicate<ApiExtension>>of(
                 ext -> category == null || ext.category().equalsIgnoreCase(category),
-                ext -> group == null || ext.group().equalsIgnoreCase(category)
+                ext -> provider == null || ext.provider().equalsIgnoreCase(category)
         ).reduce(Predicate::and).get();
 
         Stream<ApiExtension> extensions = apiExtensions.extensions()
@@ -80,7 +80,7 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
         String[][] data = extensions
                 .map(extension -> new String[]{
                         extension.name(),
-                        extension.group(),
+                        extension.provider(),
                         extension.category()
                 })
                 .toArray(String[][]::new);

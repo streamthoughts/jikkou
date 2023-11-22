@@ -68,9 +68,9 @@ public class ObjectMeta implements Serializable {
     /**
      * Creates a new {@link ObjectMeta} instance.
      *
-     * @param name        the object name.
-     * @param labels      the objet labels.
-     * @param annotations the object annotations.
+     * @param name        The object name.
+     * @param labels      The objet labels.
+     * @param annotations The object annotations.
      */
     @ConstructorProperties({
             "name",
@@ -92,7 +92,7 @@ public class ObjectMeta implements Serializable {
     /**
      * Gets the name.
      *
-     * @return the string name.
+     * @return The string name.
      */
     @JsonProperty("name")
     public String getName() {
@@ -102,7 +102,7 @@ public class ObjectMeta implements Serializable {
     /**
      * Gets the labels.
      *
-     * @return the key/value map.
+     * @return The key/value map.
      */
     @JsonProperty("labels")
     public Map<String, Object> getLabels() {
@@ -112,7 +112,7 @@ public class ObjectMeta implements Serializable {
     /**
      * Gets the annotations.
      *
-     * @return the key/value map.
+     * @return The key/value map.
      */
     @JsonProperty("annotations")
     public Map<String, Object> getAnnotations() {
@@ -122,10 +122,10 @@ public class ObjectMeta implements Serializable {
     /**
      * Finds the label value for the specified key.
      *
-     * @param key the label key. Must not be {@code null}.
-     * @return the optional value.
+     * @param key The label key. Must not be {@code null}.
+     * @return The optional value.
      */
-    public Object getLabelByKey(final String key) {
+    public NamedValue getLabelByKey(final String key) {
         return findLabelByKey(key)
                 .orElseThrow(() -> new NoSuchElementException("no label for key '" + key + "'"));
     }
@@ -133,12 +133,22 @@ public class ObjectMeta implements Serializable {
     /**
      * Finds the label value for the specified key.
      *
-     * @param key the label key. Must not be {@code null}.
-     * @return the optional value.
+     * @param key The label key. Must not be {@code null}.
+     * @return The optional value.
      */
-    public Optional<Object> findLabelByKey(final String key) {
+    public Optional<NamedValue> findLabelByKey(final String key) {
         if (key == null) throw new IllegalArgumentException("key must not be null");
-        return Optional.ofNullable(labels.get(key));
+        return Optional.ofNullable(labels.get(key)).map(val -> new NamedValue(key, val));
+    }
+
+    /**
+     * Checks whether a label exists for the specified key.
+     *
+     * @param key The label key. Must not be {@code null}.
+     * @return {@code true} if the label is present, otherwise {@code false}.
+     */
+    public boolean hasLabel(final String key) {
+        return findLabelByKey(key).isPresent();
     }
 
     /**

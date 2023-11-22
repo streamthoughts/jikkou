@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.core.validation.Validation;
  *
  * @see Validation
  * @see Transformation
+ * @see io.streamthoughts.jikkou.core.converter.Converter
  */
 public interface Interceptor extends
         HasMetadataAcceptable,

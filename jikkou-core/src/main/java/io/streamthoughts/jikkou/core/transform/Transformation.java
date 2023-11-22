@@ -27,35 +27,24 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This interface is used to transform a resource.
+ * Interface for transforming or filtering resources. Transformations are executed on each resource.
+ * The resources resulting from a transformation will not themselves be transformed.
+ *
+ * @param <T> The resource type supported by the transformation.
  */
 @Evolving
 @Category(ExtensionCategory.TRANSFORMATION)
 public interface Transformation<T extends HasMetadata> extends Interceptor {
 
     /**
-     * Applies this transformation on the given {@link HasMetadata} object.
+     * Executes the transformation on the specified {@link HasMetadata} object.
      *
-     * @param toTransform  the {@link HasMetadata} to be transformed.
-     * @param resources    the {@link ResourceListObject} involved in the current operation.
-     *
-     * @return            the list of resources resulting from that transformation.
+     * @param resource  The {@link HasMetadata} to be transformed.
+     * @param resources The {@link ResourceListObject} involved in the current operation.
+     * @param context   The {@link ReconciliationContext}.
+     * @return The list of resources resulting from the transformation.
      */
-    default @NotNull Optional<T> transform(@NotNull T toTransform,
-                                           @NotNull HasItems resources,
-                                           @NotNull ReconciliationContext context) {
-        return transform(toTransform, resources);
-    }
-
-    /**
-     * Applies this transformation on the given {@link HasMetadata} object.
-     *
-     * @param toTransform  the {@link HasMetadata} to be transformed.
-     * @param resources    the {@link ResourceListObject} involved in the current operation.
-     *
-     * @return            the list of resources resulting from that transformation.
-     */
-    default @NotNull Optional<T> transform(@NotNull T toTransform, @NotNull HasItems resources) {
-        throw new UnsupportedOperationException();
-    }
+    @NotNull Optional<T> transform(@NotNull T resource,
+                                   @NotNull HasItems resources,
+                                   @NotNull ReconciliationContext context);
 }

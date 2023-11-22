@@ -19,12 +19,12 @@ import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
-import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.config.ConfigPropertyDescriptor;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
@@ -49,16 +49,7 @@ import java.util.stream.Collectors;
  * @see HealthIndicator
  */
 @Evolving
-public interface Extension {
-
-    /**
-     * Get the runtime name of this extension.
-     *
-     * @return the extension name.
-     */
-    default String getName() {
-        return getName(this);
-    }
+public interface Extension extends HasName {
 
     /**
      * Gets the default configuration of this extension.
@@ -72,28 +63,6 @@ public interface Extension {
                 .filter(Predicate.not(ConfigPropertyDescriptor::isRequired))
                 .collect(Collectors.toMap(ConfigPropertyDescriptor::name, ConfigPropertyDescriptor::defaultValue));
         return Configuration.from(defaultProperties);
-    }
-
-    /**
-     * Get the static name of the given extension class.
-     *
-     * @param extension the extension for which to extract the name.
-     * @return the extension name.
-     */
-    static String getName(final Object extension) {
-        return getName(extension.getClass());
-    }
-
-    /**
-     * Get the static name of the given extension class.
-     *
-     * @param clazz the extension class for which to extract the name.
-     * @return the extension name.
-     */
-    static String getName(final Class<?> clazz) {
-        return Optional.ofNullable(clazz.getAnnotation(Named.class))
-                .map(Named::value)
-                .orElse(clazz.getSimpleName());
     }
 
     /**

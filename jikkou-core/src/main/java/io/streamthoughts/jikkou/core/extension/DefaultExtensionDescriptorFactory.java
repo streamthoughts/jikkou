@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
+import io.streamthoughts.jikkou.core.models.HasName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
 
         return new ExtensionDescriptorBuilder<T>()
                 .type(extensionType)
-                .name(Extension.getName(extensionType))
+                .name(HasName.getName(extensionType))
                 .title(getTitle(extensionType))
                 .description(Extension.getDescription(extensionType))
                 .examples(getExamples(extensionType))

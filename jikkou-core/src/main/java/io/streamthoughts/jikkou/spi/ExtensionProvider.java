@@ -15,42 +15,34 @@
  */
 package io.streamthoughts.jikkou.spi;
 
-import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * <pre>
  * Service interface for registering extensions and resources to Jikkou at runtime.
+ * The implementations are discovered using the standard Java {@link java.util.ServiceLoader} mechanism.
+ *
+ * Hence, the fully qualified name of the extension classes that implement the {@link ExtensionProvider}
+ * interface must be added to a {@code META-INF/services/io.streamthoughts.jikkou.spi.ExtensionProvider} file.
+ * </pre>
  */
-public interface ExtensionProvider {
-
-    /**
-     * Returns the name of this provider.
-     *
-     * @return The provider name.
-     */
-    default String getName() {
-        return this.getClass()
-                .getSimpleName()
-                .replace(ExtensionProvider.class.getSimpleName(), "")
-                .toLowerCase(Locale.ROOT);
-    }
+public interface ExtensionProvider extends HasName, Configurable {
 
     /**
      * Registers the extensions for this provider.
      *
-     * @param registry      The ExtensionRegistry.
-     * @param configuration The configuration.
+     * @param registry The ExtensionRegistry.
      */
-    void registerExtensions(@NotNull ExtensionRegistry registry,
-                            @NotNull Configuration configuration);
+    void registerExtensions(@NotNull ExtensionRegistry registry);
 
     /**
      * Registers the resources for this provider.
      *
-     * @param registry The ResourceRegistry
+     * @param registry The ResourceRegistry.
      */
     void registerResources(@NotNull ResourceRegistry registry);
 }

@@ -58,12 +58,13 @@ public interface HasMetadata extends Resource {
      * @param annotationKey the key of the annotation
      * @return the optional value for the annotation.
      */
-    static Optional<Object> getMetadataAnnotation(@NotNull HasMetadata resource,
-                                                  @NotNull String annotationKey) {
+    static Optional<NamedValue> getMetadataAnnotation(@NotNull HasMetadata resource,
+                                                      @NotNull String annotationKey) {
         return resource.optionalMetadata()
                 .stream()
                 .map(meta -> meta.findAnnotationByKey(annotationKey))
                 .flatMap(Optional::stream)
+                .map(value -> new NamedValue(annotationKey, value))
                 .findFirst();
     }
 

@@ -28,12 +28,11 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This interface is used to validate all resources of the same before executing any
+ * Interface for validating all resources of the same before executing any
  * reconciliation operation. Validations are always applied after transformations.
  *
- * @see Transformation
- *
  * @param <T> type of resources accepted by the validation.
+ * @see Transformation
  */
 @Reflectable
 @Evolving
@@ -43,8 +42,8 @@ public interface Validation<T extends HasMetadata> extends Interceptor {
     /**
      * Validates the given the resource.
      *
-     * @param resources              the resource objects to validate.
-     * @throws ValidationException   if the given {@link HasMetadata} object is not valid.
+     * @param resources the resource objects to validate.
+     * @return The ValidationResult.
      */
     default ValidationResult validate(@NotNull final List<T> resources) {
         List<ValidationError> errors = new LinkedList<>();
@@ -62,12 +61,12 @@ public interface Validation<T extends HasMetadata> extends Interceptor {
     }
 
     /**
-     * Validates the given the resource.
+     * Validates the specified resource.
      *
-     * @param resource              the resource object to validate.
-     * @throws ValidationException  if the given {@link HasMetadata} object is not valid.
+     * @param resource The resource to be validated.
+     * @return The ValidationResult.
      */
-    default ValidationResult validate(@NotNull final T resource)  {
+    default ValidationResult validate(@NotNull final T resource) {
         return ValidationResult.success();
     }
 }

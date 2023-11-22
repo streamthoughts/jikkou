@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
-import io.streamthoughts.jikkou.core.annotation.HandledResource;
+import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
@@ -54,7 +54,7 @@ class AcceptedResourceQualifierTest {
         return factory.make(clazz, () -> null);
     }
 
-    @HandledResource(apiVersion = "test.jikkou.io/v1", kind = "Bar")
-    @HandledResource(apiVersion = "test.jikkou.io/v1", kind = "Foo")
+    @SupportedResource(apiVersion = "test.jikkou.io/v1", kind = "Bar")
+    @SupportedResource(apiVersion = "test.jikkou.io/v1", kind = "Foo")
     public static class TestExtension implements Extension { }
 }

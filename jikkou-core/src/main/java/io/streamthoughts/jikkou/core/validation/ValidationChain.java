@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Transform an input {@link HasMetadata} into one ore multiple {@link HasMetadata}.
  */
-public class ValidationChain implements Validation<HasMetadata> {
+public final class ValidationChain implements Validation<HasMetadata> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationChain.class);
 

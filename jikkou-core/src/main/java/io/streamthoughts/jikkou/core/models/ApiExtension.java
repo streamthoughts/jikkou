@@ -39,7 +39,7 @@ public record ApiExtension(@JsonProperty String name,
                            @JsonProperty String description,
                            @JsonProperty List<Example> examples,
                            @JsonProperty String category,
-                           @JsonProperty String group) {
+                           @JsonProperty String provider) {
 
     @ConstructorProperties({
             "name",
@@ -47,7 +47,7 @@ public record ApiExtension(@JsonProperty String name,
             "description",
             "examples",
             "category",
-            "group",
+            "provider",
             "description"
     })
     public ApiExtension {

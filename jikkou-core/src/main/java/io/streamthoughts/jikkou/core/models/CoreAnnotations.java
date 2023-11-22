@@ -58,8 +58,8 @@ public final class CoreAnnotations {
     @NotNull
     public static Boolean isAnnotatedWith(@NotNull HasMetadata resource, @NotNull String annotation) {
         return HasMetadata.getMetadataAnnotation(resource, annotation)
-                .map(Object::toString)
-                .map(Boolean::parseBoolean)
+                .map(NamedValue::getValue)
+                .map(Value::asBoolean)
                 .orElse(false);
     }
 }

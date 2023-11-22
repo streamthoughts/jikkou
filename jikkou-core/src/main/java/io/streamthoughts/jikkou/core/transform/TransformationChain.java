@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Transform an input {@link HasMetadata} into one ore multiple {@link HasMetadata}.
  */
-public class TransformationChain implements Transformation<HasMetadata> {
+public final class TransformationChain implements Transformation<HasMetadata> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransformationChain.class);
 

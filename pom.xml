@@ -28,15 +28,15 @@ limitations under the License.
         <module>jikkou-core</module>
         <module>jikkou-cli</module>
         <module>jikkou-template-jinja</module>
-        <module>jikkou-extension-kafka</module>
-        <module>jikkou-extension-aiven</module>
-        <module>jikkou-extension-schema-registry</module>
         <module>jikkou-extension-rest-client</module>
-        <module>jikkou-extension-core</module>
-        <module>jikkou-extension-kafka-connect</module>
-        <module>jikkou-rest-api/jikkou-api-client</module>
-        <module>jikkou-rest-api/jikkou-api-server</module>
-        <module>jikkou-rest-api/jikkou-api-data</module>
+        <module>jikkou-providers/jikkou-provider-kafka</module>
+        <module>jikkou-providers/jikkou-provider-aiven</module>
+        <module>jikkou-providers/jikkou-provider-schema-registry</module>
+        <module>jikkou-providers/jikkou-provider-core</module>
+        <module>jikkou-providers/jikkou-provider-kafka-connect</module>
+        <module>jikkou-api/jikkou-api-client</module>
+        <module>jikkou-api/jikkou-api-server</module>
+        <module>jikkou-api/jikkou-api-data</module>
     </modules>
 
     <name>Jikkou Project</name>

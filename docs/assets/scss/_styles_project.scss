@@ -93,7 +93,12 @@ h3 > code {
 
 .pageinfo-info {
     border-style: solid;
-    border-color: #33c5c5;
+    border-color: #33c5c5!important;
+}
+
+.pageinfo.pageinfo-dark-pink {
+    border-style: solid;
+    border-color: $dark-pink!important;
 }
 
 .alert-heading {

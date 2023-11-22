@@ -15,10 +15,10 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
-import static io.streamthoughts.jikkou.core.models.HasMetadataAcceptable.getAcceptedResources;
+import static io.streamthoughts.jikkou.core.models.HasMetadataAcceptable.getSupportedResources;
 
 import io.streamthoughts.jikkou.core.TestResource;
-import io.streamthoughts.jikkou.core.annotation.HandledResource;
+import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class HasMetadataAcceptableTest {
     @Test
     void shouldGetAcceptedResources() {
         // When
-        List<ResourceType> types = getAcceptedResources(TestHasMetadataAcceptable.class);
+        List<ResourceType> types = getSupportedResources(TestHasMetadataAcceptable.class);
 
         // Then
         Assertions.assertNotNull(types);
@@ -53,10 +53,10 @@ class HasMetadataAcceptableTest {
         Assertions.assertTrue(acceptable.canAccept(ResourceType.of(TestResource.class)));
     }
 
-    @HandledResource(type = TestResource.class)
+    @SupportedResource(type = TestResource.class)
     public static class TestHasMetadataAcceptable implements HasMetadataAcceptable { }
 
-    @HandledResource(kind = "Test")
+    @SupportedResource(kind = "Test")
     public static class TestHasMetadataAcceptableWithKindOnly implements HasMetadataAcceptable { }
 
 }

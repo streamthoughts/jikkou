@@ -3,7 +3,7 @@ title: "Developer Guide"
 linkTitle: "Developer Guide"
 weight: 6
 description: >
-  Learn how to use the Jikkou API
+  Learn how to use the Jikkou Core API
 ---
 
 {{% pageinfo %}}

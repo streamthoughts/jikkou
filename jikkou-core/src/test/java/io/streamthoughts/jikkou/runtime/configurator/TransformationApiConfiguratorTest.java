@@ -21,6 +21,7 @@ import static io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry
 import static io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry.TYPE_CONFIG;
 
 import io.streamthoughts.jikkou.core.DefaultApi;
+import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
@@ -28,6 +29,7 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
@@ -37,6 +39,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -76,5 +80,12 @@ class TransformationApiConfiguratorTest {
         Assertions.assertNotNull(actual);
     }
 
-    public static final class TestTransformation implements Transformation<HasMetadata> { }
+    public static final class TestTransformation implements Transformation<HasMetadata> {
+        @Override
+        public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata resource,
+                                                        @NotNull HasItems resources,
+                                                        @NotNull ReconciliationContext context) {
+            return Optional.of(resource);
+        }
+    }
 }

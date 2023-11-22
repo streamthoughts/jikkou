@@ -34,7 +34,6 @@ public class TypeConverter implements Serializable {
 
     private static final String BOOLEAN_TRUE = "true";
     private static final String BOOLEAN_FALSE = "false";
-
     private static final String MIN_LONG_STR_NO_SIGN = String.valueOf(Long.MIN_VALUE).substring(1);
     private static final String MAX_LONG_STR = String.valueOf(Long.MAX_VALUE);
 
@@ -86,8 +85,7 @@ public class TypeConverter implements Serializable {
         if (value instanceof String && isIntegerNumber((String) value)) {
             return new BigDecimal(value.toString()).shortValue();
         }
-        if (value instanceof Number) {
-            Number number = (Number) value;
+        if (value instanceof Number number) {
             return number.shortValue();
         }
         throw new ConfigException(String.format("Cannot parse 32-bits int content from \"%s\"", value));
@@ -99,8 +97,7 @@ public class TypeConverter implements Serializable {
         if (value instanceof String && isIntegerNumber((String) value)) {
             return new BigDecimal(value.toString()).intValue();
         }
-        if (value instanceof Number) {
-            Number number = (Number) value;
+        if (value instanceof Number number) {
             return number.intValue();
         }
         throw new ConfigException(String.format("Cannot parse 32-bits int content from \"%s\"", value));
@@ -115,8 +112,7 @@ public class TypeConverter implements Serializable {
                 return new BigDecimal(trimmed).longValue();
             }
         }
-        if (value instanceof Number) {
-            Number number = (Number) value;
+        if (value instanceof Number number) {
             return number.longValue();
         }
         throw new ConfigException(String.format("Cannot parse 64-bits long content from \"%s\"", value));
@@ -132,8 +128,7 @@ public class TypeConverter implements Serializable {
                             new ConfigException(String.format("Cannot parse 64-bits double content from \"%s\"", value))
                     );
         }
-        if (value instanceof Number) {
-            Number number = (Number) value;
+        if (value instanceof Number number) {
             return number.floatValue();
         }
         throw new ConfigException(String.format("Cannot parse 32-bits float content from \"%s\"", value));
@@ -157,8 +152,7 @@ public class TypeConverter implements Serializable {
                             new ConfigException(String.format("Cannot parse 64-bits double content from \"%s\"", value))
                     );
         }
-        if (value instanceof Number) {
-            Number number = (Number) value;
+        if (value instanceof Number number) {
             return number.doubleValue();
         }
         throw new ConfigException(String.format("Cannot parse 64-bits double content from \"%s\"", value));
@@ -171,8 +165,7 @@ public class TypeConverter implements Serializable {
             return (Date) value;
         }
 
-        if (value instanceof Number) {
-            Number number = (Number) value;
+        if (value instanceof Number number) {
             return new Date(number.longValue());
         }
 
@@ -208,23 +201,17 @@ public class TypeConverter implements Serializable {
     public static BigDecimal getDecimal(final Object value) {
         Objects.requireNonNull(value, "value can't be null");
 
-        String result = null;
+        String result = switch (value) {
+            case Double ignored -> String.valueOf(value);
+            case Integer ignored ->String.valueOf(value);
+            case String ignored -> String.valueOf(value);
+            case null, default -> {
+                throw new ConfigException(
+                        String.format("Cannot parse decimal content from \"%s\"", value));
+            }
+        };
 
-        if (value instanceof Double) {
-            result = String.valueOf(value);
-        }
-        if (value instanceof Integer) {
-            result = String.valueOf(value);
-        }
-        if (value instanceof String) {
-            result = (String) value;
-        }
-        if (result == null) {
-            throw new ConfigException(
-                    String.format("Cannot parse decimal content from \"%s\"", value));
-        }
-
-        if (result.trim().length() == 0) {
+        if (result.trim().isEmpty()) {
             return null;
         }
 

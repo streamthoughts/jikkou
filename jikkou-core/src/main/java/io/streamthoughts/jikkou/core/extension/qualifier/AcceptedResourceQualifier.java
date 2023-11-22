@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
-import io.streamthoughts.jikkou.core.annotation.HandledResource;
+import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.extension.ExtensionAttribute;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.Qualifier;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 public final class AcceptedResourceQualifier<T> implements Qualifier<T> {
 
-    private static final String METADATA_ATTRIBUTE_NAME = HandledResource.class
+    private static final String METADATA_ATTRIBUTE_NAME = SupportedResource.class
             .getSimpleName()
             .toLowerCase(Locale.ROOT);
 

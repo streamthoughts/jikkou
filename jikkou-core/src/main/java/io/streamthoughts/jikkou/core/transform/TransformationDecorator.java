@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.transform;
 
+import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.resource.InterceptorDecorator;
@@ -44,7 +45,9 @@ public class TransformationDecorator<T extends HasMetadata>
      * {@inheritDoc}
      **/
     @Override
-    public @NotNull Optional<T> transform(@NotNull T toTransform, @NotNull HasItems resources) {
-        return extension.transform(toTransform, resources);
+    public @NotNull Optional<T> transform(@NotNull T resource,
+                                          @NotNull HasItems resources,
+                                          @NotNull ReconciliationContext context) {
+        return extension.transform(resource, resources, context);
     }
 }

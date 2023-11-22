@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.resource.transform;
 
+import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -57,7 +58,9 @@ class TransformationDecoratorTest {
     @Description("test")
     private static class TestTransformation implements Transformation<HasMetadata> {
         @Override
-        public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata toTransform, @NotNull HasItems resources) {
+        public @NotNull Optional<HasMetadata> transform(@NotNull HasMetadata resource,
+                                                        @NotNull HasItems resources,
+                                                        @NotNull ReconciliationContext context) {
             return Optional.empty();
         }
     }

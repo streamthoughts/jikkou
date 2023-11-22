@@ -1,38 +1,23 @@
 ---
-categories: []
-tags: ["feature", "extensions"] 
+categories: [ ]
+tags: [ "feature", "extensions" ]
 title: "Extensions"
 linkTitle: "Extensions"
 weight: 10
 ---
 
-## Extensions
+## Extension Providers
 
-Jikkou allows implementing and configuring extensions, i.e., _`Validation`_, and _`Transformer`_.
+Most of the Jikkou's features are provided by **Jikkou Extension Providers**. A provider is a module providing a set of
+extensions used to manage one or more resources.
 
-Jikkou's sources are available on[Maven Central]( https://mvnrepository.com/artifact/io.streamthoughts/jikkou)
+## Built-in Extension Providers
 
-**For Maven:**
+Jikkou ships with a number of extension providers:
 
-```xml
-<dependency>
-    <groupId>io.streamthoughts</groupId>
-    <artifactId>jikkou-api</artifactId>
-    <version>${jikkou.version}</version>
-</dependency>
-```
+* [Aiven]({{< ref "/docs/providers/aiven" >}} "Aiven")
+* [Apache Kafka]({{< ref "/docs/providers/kafka" >}} "Apache Kafka")
+* [Core]({{< ref "/docs/providers/core" >}} "Core")
+* [Kafka Connect]({{< ref "/docs/providers/kafka connect" >}} "Kafka Connect")
+* [Schema Registry]({{< ref "/docs/providers/schema registry" >}} "Schema Registry")
 
-**For Gradle:**
-```text
-implementation group: 'io.streamthoughts', name: 'jikkou', version: ${jikkou.version}
-```
-
-## Packaging
-
-To make your extensions available to Jikkou, install them into one or many local directories.
-Then, use the `jikkou.extension.paths` property to configure the list of locations from which the extensions will be loaded.
-
-Each configured directories may contain:
-
-* an uber JAR containing all the classes and third-party dependencies for the extensions.
-* a directory containing all JARs for the extensions.

@@ -23,7 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Used to provide a lon description of an element.
+ * Used to provide a long description of an element.
  *
  * @see io.streamthoughts.jikkou.core.extension.Extension
  * @see io.streamthoughts.jikkou.core.models.Resource

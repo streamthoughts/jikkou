@@ -21,6 +21,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Used to automatically enabled an extension.
+ */
 @Documented
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target({TYPE})

@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core.models;
 
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.utils.Strings;
-import io.streamthoughts.jikkou.core.annotation.HandledResource;
+import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,25 +27,25 @@ import org.jetbrains.annotations.NotNull;
 public interface HasMetadataAcceptable {
 
     /**
-     * Checks whether a given resource-type is acceptable.
+     * Checks whether a given resource-type is supported.
      *
-     * @param type the type of the resource.
-     * @return {@code true} if the given resource is acceptable.
+     * @param type The type of the resource.
+     * @return {@code true} if the given resource is supported.
      */
     default boolean canAccept(@NotNull ResourceType type) {
-        List<ResourceType> resources = getAcceptedResources(this.getClass());
+        List<ResourceType> resources = getSupportedResources(this.getClass());
         return resources.isEmpty() || resources.stream().anyMatch(resourceType -> resourceType.canAccept(type));
     }
 
     /**
-     * Gets the acceptable resource types.
+     * Gets the supported resource types.
      *
-     * @param clazz the class accepting resources.
-     * @return the list of acceptable types.
+     * @param clazz The class supporting resources.
+     * @return The list of supporting types.
      */
-    static List<ResourceType> getAcceptedResources(final Class<?> clazz) {
-        List<HandledResource> annotations = AnnotationResolver
-                .findAllAnnotationsByType(clazz, HandledResource.class);
+    static List<ResourceType> getSupportedResources(final Class<?> clazz) {
+        List<SupportedResource> annotations = AnnotationResolver
+                .findAllAnnotationsByType(clazz, SupportedResource.class);
 
         return annotations.stream()
                 .map(accept -> {
@@ -61,7 +61,7 @@ public interface HasMetadataAcceptable {
                     }
 
                     throw new IllegalArgumentException(
-                            "Invalid 'AcceptsResource' annotation on class '" + clazz.getName() + "'." +
+                            "Invalid 'SupportedResource' annotation on class '" + clazz.getName() + "'." +
                                     " At least one of the following must be specified: type, apiVersion or kind."
                     );
                 })

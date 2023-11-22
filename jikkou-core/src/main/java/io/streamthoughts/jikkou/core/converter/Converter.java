@@ -27,10 +27,10 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface to convert resources from one type to another.
+ * Interface for converting resources from one type to another.
  *
- * @param <T>  – the type of the input resources to convert.
- * @param <TT> – the type of the result resources.
+ * @param <T>  The type of the input resources to convert.
+ * @param <TT> The type of the result resources.
  */
 @Evolving
 @Reflectable
