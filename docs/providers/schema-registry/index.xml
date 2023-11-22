@@ -1,0 +1,96 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Schema Registry</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/</link><description>Recent content in Schema Registry on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported for SchemaRegistry.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>You can configure the properties to be used to connect the SchemaRegistry service
+through the Jikkou client configuration property &lt;code>jikkou.schemaRegistry&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+schemaRegistry {
+# Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas
+url = &amp;#34;http://localhost:8081&amp;#34;
+# The name of the schema registry implementation vendor - can be any value
+vendor = generic
+# Method to use for authenticating on Schema Registry. Available values are: [none, basicauth]
+authMethod = none
+# Use when &amp;#39;schemaRegistry.authMethod&amp;#39; is &amp;#39;basicauth&amp;#39; to specify the username for Authorization Basic header
+basicAuthUser = null
+# Use when &amp;#39;schemaRegistry.authMethod&amp;#39; is &amp;#39;basicauth&amp;#39; to specify the password for Authorization Basic header
+basicAuthPassword = null
+# Enable debug logging
+debugLoggingEnabled = false
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/resources/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported for Schema Registry.&lt;/p>
+&lt;/div>
+&lt;h2 id="schema-registry-resources">Schema Registry Resources&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
+&lt;h2 id="subject">Subject&lt;/h2>
+&lt;h3 id="schemacompatibilityvalidation">&lt;code>SchemaCompatibilityValidation&lt;/code>&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation
+&lt;/code>&lt;/pre>&lt;p>The &lt;code>SchemaCompatibilityValidation&lt;/code> allows testing the compatibility of the schema with the latest
+version already registered in the Schema Registry using the provided compatibility-level.&lt;/p>
+&lt;h3 id="avroschemavalidation">&lt;code>AvroSchemaValidation&lt;/code>&lt;/h3>
+&lt;p>The &lt;code>AvroSchemaValidation&lt;/code> allows checking if the specified Avro schema matches some specific avro schema definition
+rules;&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Name&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fieldsMustHaveDoc&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Verify that all record fields have a &lt;code>doc&lt;/code> property&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fieldsMustBeNullable&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Verify that all record fields are nullable&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fieldsMustBeOptional&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Verify that all record fields are optional&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: Annotations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/annotations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information about the annotations provided by the Schema Registry extension for Jikkou.&lt;/p>
+&lt;/div>
+&lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
+&lt;h4 id="schemaregistryjikkouiourl">&lt;code>schemaregistry.jikkou.io/url&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou to describe the SchemaRegistry URL from which a subject schema is
+retrieved.&lt;/p>
+&lt;h4 id="schemaregistryjikkouioschema-version">&lt;code>schemaregistry.jikkou.io/schema-version&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou to describe the version of a subject schema.&lt;/p>
+&lt;h4 id="schemaregistryjikkouioschema-id">&lt;code>schemaregistry.jikkou.io/schema-id&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou to describe the version of a subject id.&lt;/p>
+&lt;h4 id="schemaregistryjikkouionormalize-schema">&lt;code>schemaregistry.jikkou.io/normalize-schema&lt;/code>&lt;/h4>
+&lt;p>Used on: &lt;code>schemaregistry.jikkou.io/v1beta2:SchemaRegistrySubject&lt;/code>&lt;/p>
+&lt;p>This annotation can be used to normalize the schema on SchemaRegistry server side. Note, that Jikkou will attempt
+to normalize AVRO and JSON schema.&lt;/p>
+&lt;p>See: &lt;a href="https://docs.confluent.io/platform/current/schema-registry/develop/api.html#post--subjects-(string-%20subject)-versions">Confluent SchemaRegistry API Reference&lt;/a>&lt;/p>
+&lt;h4 id="schemaregistryjikkouiopermanante-delete">&lt;code>schemaregistry.jikkou.io/permanante-delete&lt;/code>&lt;/h4>
+&lt;p>Used on: &lt;code>schemaregistry.jikkou.io/v1beta2:SchemaRegistrySubject&lt;/code>&lt;/p>
+&lt;p>The annotation can be used to specify a hard delete of the subject, which removes all associated metadata including
+the schema ID. The default is false. If the flag is not included, a soft delete is performed. You must perform a soft
+delete first, then the hard delete.&lt;/p>
+&lt;p>See: &lt;a href="https://docs.confluent.io/platform/current/schema-registry/develop/api.html#delete--subjects-(string-%20subject)">Confluent SchemaRegistry API Reference&lt;/a>&lt;/p></description></item></channel></rss>

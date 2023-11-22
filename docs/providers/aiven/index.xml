@@ -1,0 +1,37 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Aiven</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/</link><description>Recent content in Aiven on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/providers/aiven/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported by the extension for Aiven.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>You can configure the properties to be used to connect the Aiven service
+through the Jikkou client configuration property &lt;code>jikkou.aiven&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+aiven {
+# Aiven project name
+project = &amp;#34;http://localhost:8081&amp;#34;
+# Aiven service name
+service = generic
+# URL to the Aiven REST API.
+apiUrl = &amp;#34;https://api.aiven.io/v1/&amp;#34;
+# Aiven Bearer Token. Tokens can be obtained from your Aiven profile page
+tokenAuth = null
+# Enable debug logging
+debugLoggingEnabled = false
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported by the extensions for Aiven.&lt;/p>
+&lt;/div>
+&lt;h2 id="aiven-for-apache-kafka-resources">Aiven for Apache Kafka Resources&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
+&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/annotations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information about the annotations provided by the Aiven extension for Jikkou.&lt;/p>
+&lt;/div>
+&lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
+&lt;h4 id="kafkaaivenioacl-entry-id">&lt;code>kafka.aiven.io/acl-entry-id&lt;/code>&lt;/h4>
+&lt;p>Used by jikkou.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou to describe the ID of an ACL entry.&lt;/p></description></item></channel></rss>

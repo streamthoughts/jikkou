@@ -1,0 +1,64 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Apache Kafka Connect</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/</link><description>Recent content in Apache Kafka Connect on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>This section describes how to configure the Kafka Connect extension.&lt;/p>
+&lt;/div>
+&lt;h2 id="extension">Extension&lt;/h2>
+&lt;p>The Kafka Connect extension can be enabled/disabled via the configuration properties:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon"># Example
+jikkou {
+extensions.provider.kafkaconnect.enabled = true
+}
+&lt;/code>&lt;/pre>&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>You can configure the properties to be used to connect the Kafka Connect cluster
+through the Jikkou client configuration property: &lt;code>jikkou.kafkaConnect&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+kafkaConnect {
+# Array of Kafka Connect clusters configurations.
+clusters = [
+{
+# Name of the cluster (e.g., dev, staging, production, etc.)
+name = &amp;#34;locahost&amp;#34;
+# URL of the Kafka Connect service
+url = &amp;#34;http://localhost:8083&amp;#34;
+# Method to use for authenticating on Kafka Connect. Available values are: [none, basicauth]
+authMethod = none
+# Use when &amp;#39;authMethod&amp;#39; is &amp;#39;basicauth&amp;#39; to specify the username for Authorization Basic header
+basicAuthUser = null
+# Use when &amp;#39;authMethod&amp;#39; is &amp;#39;basicauth&amp;#39; to specify the password for Authorization Basic header
+basicAuthPassword = null
+# Enable debug logging
+debugLoggingEnabled = false
+}
+]
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported by the Kafka Connect Extension.&lt;/p>
+&lt;/div>
+&lt;h2 id="kafka-connect-resources">Kafka Connect Resources&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/annotations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>This section lists a number of well known annotations, that have defined semantics. They can be attached
+to &lt;code>KafkaConnect&lt;/code> resources through the &lt;code>metadata.annotations&lt;/code> field and consumed as needed by extensions (i.e., validations, transformations, controller,
+collector, etc.).&lt;/p>
+&lt;/div>
+&lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3></description></item><item><title>Docs: Labels</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/labels/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/labels/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>This section lists a number of well known labels, that have defined semantics. They can be attached
+to &lt;code>KafkaConnect&lt;/code> resources through the &lt;code>metadata.labels&lt;/code> field and consumed as needed by extensions (i.e., validations, transformations, controller,
+collector, etc.).&lt;/p>
+&lt;/div>
+&lt;h2 id="labels">Labels&lt;/h2>
+&lt;h3 id="kafkajikkouioconnect-cluster">&lt;code>kafka.jikkou.io/connect-cluster&lt;/code>&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Example&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#000">---&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;kafka.jikkou.io/v1beta1&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;KafkaConnector&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">kafka.jikkou.io/connect-cluster&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;my-connect-cluster&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The value of this label defined the name of the Kafka Connect cluster to create the connector instance in.
+The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p></description></item></channel></rss>
