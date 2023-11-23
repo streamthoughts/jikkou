@@ -13,28 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
-import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 
-class NoneMatchSelector extends AggregateSelector {
+class AnyMatchSelector extends AggregateSelector {
 
     /**
-     * Creates a new {@link NoneMatchSelector} instance.
+     * Creates a new {@link AnyMatchSelector} instance.
      *
      * @param selectors The list of {@link Selector}.
      */
-    public NoneMatchSelector(List<? extends Selector> selectors) {
-        super(selectors);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean apply(@NotNull HasMetadata resource) {
-        return selectors.stream().noneMatch(selector -> selector.apply(resource));
+    public AnyMatchSelector(List<? extends Selector> selectors) {
+        super(selectors, SelectorMatchingStrategy.ANY);
     }
 }

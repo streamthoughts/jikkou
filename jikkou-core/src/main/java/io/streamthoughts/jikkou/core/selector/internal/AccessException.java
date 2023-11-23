@@ -13,12 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
-
-import io.streamthoughts.jikkou.core.models.HasMetadata;
-import org.jetbrains.annotations.NotNull;
-
-public interface MatchExpression {
-
-    boolean apply(@NotNull HasMetadata resource);
-}
+package io.streamthoughts.jikkou.core.selector.internal;

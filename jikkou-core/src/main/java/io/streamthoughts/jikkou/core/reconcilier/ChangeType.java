@@ -39,5 +39,5 @@ public enum ChangeType {
     /**
      * the change is not applicable and should be ignored or filtered - internal usage
      */
-    IGNORE;
+    IGNORE
 }

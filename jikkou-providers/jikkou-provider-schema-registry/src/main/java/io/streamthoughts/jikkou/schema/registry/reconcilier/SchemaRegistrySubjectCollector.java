@@ -23,7 +23,7 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;

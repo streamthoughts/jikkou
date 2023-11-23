@@ -13,4 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors.internal;
+package io.streamthoughts.jikkou.core.selector;
+
+import java.util.List;
+
+class NoneMatchSelector extends AggregateSelector {
+
+    /**
+     * Creates a new {@link NoneMatchSelector} instance.
+     *
+     * @param selectors The list of {@link Selector}.
+     */
+    public NoneMatchSelector(List<? extends Selector> selectors) {
+        super(selectors, SelectorMatchingStrategy.NONE);
+    }
+}

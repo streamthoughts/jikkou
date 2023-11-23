@@ -54,7 +54,8 @@ public final class ResourceReconcileRequestFactory {
                         context.annotations().asMap(),
                         context.labels().asMap(),
                         context.configuration().asMap(),
-                        context.selector().getSelectorExpressions()
+                        context.selector().getSelectorExpressions(),
+                        context.selector().getSelectorMatchingStrategy()
                 ), resources);
     }
 }

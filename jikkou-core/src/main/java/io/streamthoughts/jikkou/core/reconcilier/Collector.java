@@ -25,8 +25,8 @@ import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.selectors.Selector;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 

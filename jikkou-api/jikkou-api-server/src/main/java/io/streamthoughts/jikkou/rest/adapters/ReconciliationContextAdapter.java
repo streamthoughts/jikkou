@@ -18,8 +18,8 @@ package io.streamthoughts.jikkou.rest.adapters;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import jakarta.inject.Inject;
@@ -40,22 +40,27 @@ public final class ReconciliationContextAdapter {
 
     public ReconciliationContext getReconciliationContext(ResourceReconcileRequest request, boolean dryRun) {
         ResourceReconcileRequest.Params params = request.params();
+        Selector selector = params.selectorMatchingStrategy()
+                .combines(selectorFactory.make(params.selectors()));
+
         return ReconciliationContext
                 .builder()
                 .dryRun(dryRun)
                 .configuration(Configuration.from(params.options()))
-                .selector(Selectors.allMatch(selectorFactory.make(params.selectors())))
+                .selector(selector)
                 .annotations(NamedValue.setOf(params.annotations()))
                 .labels(NamedValue.setOf(params.labels()))
                 .build();
     }
 
     public ReconciliationContext getReconciliationContext(ResourceListRequest request) {
+        Selector selector = request.selectorMatchingStrategy()
+                .combines(selectorFactory.make(request.selectors()));
         return ReconciliationContext
                 .builder()
                 .dryRun(true)
                 .configuration(Configuration.from(request.options()))
-                .selector(Selectors.allMatch(selectorFactory.make(request.selectors())))
+                .selector(selector)
                 .build();
     }
 }

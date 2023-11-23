@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-class AnyMatchSelector extends AggregateSelector {
+public interface ExpressionKeyValueExtractor {
 
-    /**
-     * Creates a new {@link AnyMatchSelector} instance.
-     *
-     * @param selectors The list of {@link Selector}.
-     */
-    public AnyMatchSelector(List<? extends Selector> selectors) {
-        super(selectors);
-    }
+    String getKeyValue(final @NotNull HasMetadata resource,
+                       final @Nullable String key);
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean apply(@NotNull HasMetadata resource) {
-        return selectors.stream().anyMatch(selector -> selector.apply(resource));
-    }
+    boolean isKeyExists(final @NotNull HasMetadata resource,
+                        final @Nullable String key);
+
+
 }

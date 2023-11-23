@@ -24,7 +24,7 @@ import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;

@@ -36,7 +36,7 @@ import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
 import io.streamthoughts.jikkou.rest.configs.security.SecurityConfiguration;
 import io.streamthoughts.jikkou.rest.health.indicator.JikkouHealthIndicator;
 import io.streamthoughts.jikkou.rest.health.indicator.JikkouHealthIndicatorConfiguration;

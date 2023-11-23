@@ -18,8 +18,8 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import io.streamthoughts.jikkou.core.selectors.Selector;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import org.jetbrains.annotations.NotNull;
 
 /**

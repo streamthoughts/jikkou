@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors.internal;
+package io.streamthoughts.jikkou.core.selector.internal;
 
 import io.streamthoughts.jikkou.core.exceptions.SelectorException;
 import java.lang.reflect.Method;

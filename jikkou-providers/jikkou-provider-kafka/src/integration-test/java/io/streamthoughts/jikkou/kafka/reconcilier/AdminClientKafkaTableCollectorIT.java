@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;

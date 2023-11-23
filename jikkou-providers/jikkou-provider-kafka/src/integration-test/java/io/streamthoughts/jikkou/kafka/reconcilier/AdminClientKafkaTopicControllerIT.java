@@ -38,7 +38,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.DefaultChangeResult;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;

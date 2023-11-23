@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
+import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.selectors.internal.PropertyAccessors;
+import io.streamthoughts.jikkou.core.selector.internal.PropertyAccessors;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Named("field")
 public final class FieldSelector extends ExpressionSelector {
 
     /**

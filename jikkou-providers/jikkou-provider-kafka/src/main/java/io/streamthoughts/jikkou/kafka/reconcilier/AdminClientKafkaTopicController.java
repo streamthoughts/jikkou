@@ -30,7 +30,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.change.TopicChange;
 import io.streamthoughts.jikkou.kafka.change.TopicChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.topics.CreateTopicChangeHandler;

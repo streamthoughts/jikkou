@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
@@ -23,17 +23,34 @@ import org.junit.jupiter.api.Test;
 
 class SelectorsTest {
 
+    static final List<Selector> EXPRESSIONS = List.of(
+            getSelectorForExpressionString("expr1"),
+            getSelectorForExpressionString("expr2")
+    );
+
     @Test
-    void shouldReturnAllSelectorExpression() {
-        Selector selector = Selectors.allMatch(List.of(
-                getSelectorForExpressionString("expr1"),
-                getSelectorForExpressionString("expr2")
-        ));
+    void shouldGetSelectorForAllMatch() {
+        Selector selector = Selectors.allMatch(EXPRESSIONS);
         Assertions.assertEquals(List.of("expr1", "expr2"), selector.getSelectorExpressions());
+        Assertions.assertEquals(SelectorMatchingStrategy.ALL, selector.getSelectorMatchingStrategy());
+    }
+
+    @Test
+    void shouldGetSelectorForAnyMatch() {
+        Selector selector = Selectors.anyMatch(EXPRESSIONS);
+        Assertions.assertEquals(List.of("expr1", "expr2"), selector.getSelectorExpressions());
+        Assertions.assertEquals(SelectorMatchingStrategy.ANY, selector.getSelectorMatchingStrategy());
+    }
+
+    @Test
+    void shouldGetSelectorForNoneMatch() {
+        Selector selector = Selectors.noneMatch(EXPRESSIONS);
+        Assertions.assertEquals(List.of("expr1", "expr2"), selector.getSelectorExpressions());
+        Assertions.assertEquals(SelectorMatchingStrategy.NONE, selector.getSelectorMatchingStrategy());
     }
 
     @NotNull
-    private static Selector getSelectorForExpressionString(String expr1) {
+    private static Selector getSelectorForExpressionString(String expressonString) {
         return new Selector() {
             @Override
             public boolean apply(@NotNull HasMetadata resource) {
@@ -42,7 +59,7 @@ class SelectorsTest {
 
             @Override
             public List<String> getSelectorExpressions() {
-                return List.of(expr1);
+                return List.of(expressonString);
             }
         };
     }

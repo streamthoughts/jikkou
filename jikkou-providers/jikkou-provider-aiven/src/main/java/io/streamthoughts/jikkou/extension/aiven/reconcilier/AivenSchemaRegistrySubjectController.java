@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;

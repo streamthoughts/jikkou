@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.kafka.connect.reconcilier;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;

@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface ExpressionKeyValueExtractor {
+public interface MatchExpression {
 
-    String getKeyValue(final @NotNull HasMetadata resource,
-                       final @Nullable String key);
-
-    boolean isKeyExists(final @NotNull HasMetadata resource,
-                        final @Nullable String key);
-
-
+    boolean apply(@NotNull HasMetadata resource);
 }

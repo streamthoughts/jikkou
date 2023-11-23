@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.extension.aiven.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;

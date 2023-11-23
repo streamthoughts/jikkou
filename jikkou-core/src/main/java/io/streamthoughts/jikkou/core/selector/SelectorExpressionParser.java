@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.exceptions.InvalidSelectorException;

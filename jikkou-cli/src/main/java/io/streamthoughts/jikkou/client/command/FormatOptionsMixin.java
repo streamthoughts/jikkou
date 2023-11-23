@@ -16,13 +16,13 @@
 package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
-import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 public final class FormatOptionsMixin {
 
-    @CommandLine.Option(names = { "--output", "-o" },
+    @Option(names = { "--output", "-o" },
             defaultValue = "YAML",
-            description = "Prints the output in the specified format. Allowed values: json, yaml (default yaml)."
+            description = "Prints the output in the specified format. Allowed values: ${COMPLETION-CANDIDATES} (default YAML)."
     )
     ResourceWriter.Format format;
 

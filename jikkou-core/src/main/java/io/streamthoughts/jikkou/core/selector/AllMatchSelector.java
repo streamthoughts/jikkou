@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.selectors;
+package io.streamthoughts.jikkou.core.selector;
 
-import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 
 class AllMatchSelector extends AggregateSelector {
 
@@ -27,14 +25,6 @@ class AllMatchSelector extends AggregateSelector {
      * @param selectors The list of {@link Selector}.
      */
     public AllMatchSelector(List<? extends Selector> selectors) {
-       super(selectors);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean apply(@NotNull HasMetadata resource) {
-        return selectors.stream().allMatch(selector -> selector.apply(resource));
+        super(selectors, SelectorMatchingStrategy.ALL);
     }
 }

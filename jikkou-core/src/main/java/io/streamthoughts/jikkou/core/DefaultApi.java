@@ -58,7 +58,7 @@ import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationChain;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import java.time.Duration;

@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

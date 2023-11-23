@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.rest.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.selector.SelectorMatchingStrategy;
 import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +69,8 @@ public record ResourceReconcileRequest(
             @Nullable @JsonProperty("annotations") Map<String, Object> annotations,
             @Nullable @JsonProperty("labels") Map<String, Object> labels,
             @Nullable @JsonProperty("options") Map<String, Object> options,
-            @Nullable @JsonProperty("selectors") List<String> selectors) {
+            @Nullable @JsonProperty("selectors") List<String> selectors,
+            @Nullable @JsonProperty("selectors_match") SelectorMatchingStrategy selectorMatchingStrategy) {
 
         @ConstructorProperties({
                 "annotations",
@@ -83,12 +85,20 @@ public record ResourceReconcileRequest(
          * Creates a new {@link Params} instance.
          */
         public Params() {
-            this(null, null, null, null);
+            this(null, null, null, null, null);
         }
 
         @Override
         public List<String> selectors() {
             return Optional.ofNullable(selectors).orElse(Collections.emptyList());
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        public SelectorMatchingStrategy selectorMatchingStrategy() {
+            return Optional.ofNullable(selectorMatchingStrategy).orElse(SelectorMatchingStrategy.ALL);
         }
 
         @Override

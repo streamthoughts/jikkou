@@ -17,8 +17,8 @@ package io.streamthoughts.jikkou.extension.aiven.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
-import io.streamthoughts.jikkou.core.selectors.Selector;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.Collections;

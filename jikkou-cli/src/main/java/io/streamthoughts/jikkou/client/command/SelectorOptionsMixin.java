@@ -15,9 +15,9 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
-import io.streamthoughts.jikkou.core.selectors.Selector;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.SelectorMatchingStrategy;
 import picocli.CommandLine.Option;
 
 public final class SelectorOptionsMixin {
@@ -26,8 +26,12 @@ public final class SelectorOptionsMixin {
             description = "The selector expression used for including or excluding resources.")
     public String[] expressions;
 
+    @Option(names = {"--selector-match"},
+            defaultValue = "ALL",
+            description = "The selector matching strategy. Allowed values: ${COMPLETION-CANDIDATES} (default: ALL)")
+    public SelectorMatchingStrategy selectorMatchingStrategy;
 
     public Selector getResourceSelector() {
-        return Selectors.allMatch(new ExpressionSelectorFactory().make(expressions));
+        return selectorMatchingStrategy.combines(new ExpressionSelectorFactory().make(expressions));
     }
 }

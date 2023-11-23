@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.rest.adapters;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.selectors.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import java.util.Collections;

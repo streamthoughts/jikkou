@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProper
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTableRecordList;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;

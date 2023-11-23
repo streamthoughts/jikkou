@@ -23,7 +23,7 @@ import io.streamthoughts.jikkou.core.extension.annotations.ConfigPropertySpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionConfigProperties;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;

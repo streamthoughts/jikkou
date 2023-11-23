@@ -33,7 +33,7 @@ import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.adapter.ResourceReconcileRequestFactory;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
 import io.streamthoughts.jikkou.http.client.exception.UnsupportedApiResourceException;
@@ -225,7 +225,8 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
 
         ResourceListRequest payload = new ResourceListRequest(
                 configuration.asMap(),
-                selector.getSelectorExpressions()
+                selector.getSelectorExpressions(),
+                selector.getSelectorMatchingStrategy()
         );
         RequestBody requestBody = apiClient.serialize(payload, "application/json");
         Request httpRequest = new Request.Builder()

@@ -30,7 +30,7 @@ import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
 import io.streamthoughts.jikkou.core.reconcilier.Controller;
 import io.streamthoughts.jikkou.core.reconcilier.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selectors.Selectors;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.change.QuotaChange;
 import io.streamthoughts.jikkou.kafka.change.QuotaChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.handlers.quotas.CreateQuotasChangeHandlerKafka;

@@ -41,7 +41,7 @@ import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
-import io.streamthoughts.jikkou.core.selectors.Selector;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
 import io.streamthoughts.jikkou.rest.data.ErrorEntity;
