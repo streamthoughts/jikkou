@@ -10,7 +10,7 @@ with Jikkou.&lt;/p>
 &lt;li>Using Docker, &lt;a href="https://docs.docker.com/compose/">Docker Compose&lt;/a> is the easiest way to use it.&lt;/li>
 &lt;/ul>
 &lt;/li>
-&lt;li>Java 17 (not required when using the binary version).&lt;/li>
+&lt;li>Java 21 (not required when using the binary version).&lt;/li>
 &lt;/ul>
 &lt;h2 id="start-your-local-apache-kafka-cluster">Start your local Apache Kafka Cluster&lt;/h2>
 &lt;p>You must have access to an Apache Kafka cluster for using Jikkou.
@@ -23,9 +23,9 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="run-jikkou">Run Jikkou&lt;/h2>
 &lt;h3 id="download-the-latest-distribution-for-linux">Download the latest distribution (For Linux)&lt;/h3>
 &lt;p>Run the following commands to install the latest version:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/jikkou/releases/download/v0.26.0/jikkou-0.26.0-linux-x86_64.zip &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>unzip jikkou-0.26.0-linux-x86_64.zip &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>cp jikkou-0.26.0-linux-x86_64/bin/jikkou &lt;span style="color:#000">$HOME&lt;/span>/.local/bin &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>unzip jikkou-0.31.0-linux-x86_64.zip &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>cp jikkou-0.31.0-linux-x86_64/bin/jikkou &lt;span style="color:#000">$HOME&lt;/span>/.local/bin &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>jikkou --version
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/install/">installation&lt;/a> guide.&lt;/p>
@@ -35,7 +35,7 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Show the complete configuration.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config view --name localhost
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally, let&amp;rsquo;s check if your cluster is accessible:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou health get kafkabroker
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou health get kafka
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;em>(output&lt;/em>)&lt;/p>
 &lt;p>If OK, you should get an output similar to :&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">---&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
@@ -130,11 +130,11 @@ In the above command, we chose to use the &lt;code>create&lt;/code> command to c
 But we could just as easily use the &lt;code>update&lt;/code> or &lt;code>apply&lt;/code> command to get the same result depending on our needs.
 &lt;/div>
 &lt;p>Finally, you can verify that topics are created on the cluster&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">jikkou get kafkatopics --describe-default-configs&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">jikkou get kafkatopics --default-configs&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Tips&lt;/h4>
-We use the &lt;code>--describe-default-configs&lt;/code> to export built-in default configuration for configs that have a default value.
+We use the &lt;code>--default-configs&lt;/code> to export built-in default configuration for configs that have a default value.
 &lt;/div>
 &lt;h2 id="update-kafka-topics">Update Kafka Topics&lt;/h2>
 &lt;p>Edit your &lt;code>kafka-topics.yaml&lt;/code> to add a &lt;code>retention.ms: 86400000&lt;/code> property to the defined topics.&lt;/p>
