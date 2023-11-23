@@ -80,7 +80,7 @@ import picocli.CommandLine.Mixin;
         commandListHeading = "%nCommands:%n%n",
         headerHeading = "Usage: ",
         synopsisHeading = "%n",
-        description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision the assets of your data streaming platform. %n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
+        description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision all the assets of your data infrastructure. %n%nFind more information at: https://streamthoughts.github.io/jikkou/.",
         mixinStandardHelpOptions = true,
         versionProvider = Jikkou.ResourcePropertiesVersionProvider.class,
         subcommands = {

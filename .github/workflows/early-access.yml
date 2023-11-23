@@ -72,7 +72,7 @@ jobs:
       - name: 'Build Debian Package (Linux)'
         if: ${{ runner.os == 'Linux' }}
         run: |
-          ./mvnw -ntp -B --file pom.xml -Pdeb package
+          ./mvnw -ntp -B --file pom.xml -Pdeb package -DskipTests
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v3

@@ -17,11 +17,10 @@ package io.streamthoughts.jikkou.core.selector;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Strategy for matching resources when multiple selectors are used.

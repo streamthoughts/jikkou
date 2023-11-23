@@ -30,8 +30,8 @@ limitations under the License.
     <name>Jikkou :: CLI</name>
 
     <description>
-        Jikkou CLI :: A command-line client designed to provide an efficient and easy way to manage, automate, and
-        provision resources for any kafka infrastructure
+        Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and
+        provision all the assets of your data infrastructure
     </description>
 
     <packaging>${packaging}</packaging>
@@ -65,6 +65,12 @@ limitations under the License.
                 <version>${micronaut.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.micronaut</groupId>
@@ -293,48 +299,6 @@ limitations under the License.
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>jikkou-runner</finalName>
-                            <minimizeJar>false</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>runner</shadedClassifierName>
-                            <filters>
-                                <filter>
-                                    <artifact>*.*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>module-info.class</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>${exec.mainClass}</mainClass>
-                                    <manifestEntries>
-                                        <Implementation-Title>Jikkou</Implementation-Title>
-                                        <Implementation-Version>${project.version}</Implementation-Version>
-                                    </manifestEntries>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <attach>false</attach>
@@ -353,6 +317,10 @@ limitations under the License.
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -440,6 +408,16 @@ limitations under the License.
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration combine.self="append">
+                            <skipAssembly>false</skipAssembly>
+                            <descriptors>
+                                <descriptor>src/main/assembly/assembly-native.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -453,12 +431,50 @@ limitations under the License.
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>appassembler-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-java-binary</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>assemble</goal>
+                                </goals>
+                                <configuration>
+                                    <assembleDirectory>
+                                        ${project.build.directory}/distribution
+                                    </assembleDirectory>
+                                    <licenseHeaderFile>${project.basedir}/license-header</licenseHeaderFile>
+                                    <platforms>
+                                        <platform>unix</platform>
+                                    </platforms>
+                                    <binFileExtensions>
+                                        <unix/>
+                                    </binFileExtensions>
+                                    <programs>
+                                        <program>
+                                            <mainClass>${exec.mainClass}</mainClass>
+                                            <name>jikkou</name>
+                                        </program>
+                                    </programs>
+                                    <configurationDirectory>etc</configurationDirectory>
+                                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                                    <generateRepository>true</generateRepository>
+                                    <repositoryLayout>flat</repositoryLayout>
+                                    <repositoryName>lib</repositoryName>
+                                    <extraJvmArguments/>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <configuration combine.self="append">
+                            <finalName>jikkou-${project.version}-java-binary</finalName>
                             <skipAssembly>false</skipAssembly>
                             <descriptors>
-                                <descriptor>${project.basedir}/src/main/assembly/assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/assembly-binary.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </plugin>

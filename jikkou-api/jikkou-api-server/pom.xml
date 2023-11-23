@@ -366,7 +366,7 @@
                                     <programs>
                                         <program>
                                             <mainClass>${exec.mainClass}</mainClass>
-                                            <name>${artifactId}</name>
+                                            <name>${project.artifactId}</name>
                                         </program>
                                     </programs>
                                     <configurationDirectory>etc</configurationDirectory>
@@ -388,7 +388,7 @@
                         <configuration combine.self="append">
                             <attach>false</attach>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>${artifactId}-${project.version}</finalName>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
                             <outputDirectory>${app.distribution.directory}</outputDirectory>
                             <workDirectory>${project.build.directory}/assembly/work</workDirectory>
                             <skipAssembly>false</skipAssembly>

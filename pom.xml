@@ -298,6 +298,7 @@ limitations under the License.
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                 </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
@@ -305,13 +306,25 @@ limitations under the License.
                     <executions>
                         <execution>
                             <id>default-shade</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
                             <configuration>
                                 <createDependencyReducedPom>false</createDependencyReducedPom>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                                <shadedClassifierName>runner</shadedClassifierName>
                                 <transformers>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                         <mainClass>${exec.mainClass}</mainClass>
+                                        <manifestEntries>
+                                            <Implementation-Title>Jikkou</Implementation-Title>
+                                            <Implementation-Version>${project.version}</Implementation-Version>
+                                        </manifestEntries>
                                     </transformer>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 </transformers>
                                 <filters>
                                     <filter>
@@ -744,12 +757,30 @@ limitations under the License.
                                                 <platform>osx-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip
+                                                </transform>
                                                 <platform>windows-x86_64</platform>
                                             </artifact>
                                         </artifacts>
                                     </jikkou>
+                                    <jikkou-java-binary>
+                                        <name>jikkou-java-binary</name>
+                                        <type>JAVA_BINARY</type>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>
+                                                    {{artifactsDir}}/jikkou-{{projectVersion}}-java-binary.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/jikkou-{{projectEffectiveVersion}}-java-binary.zip
+                                                </transform>
+                                            </artifact>
+                                        </artifacts>
+                                    </jikkou-java-binary>
                                     <jikkou-api-server>
                                         <name>jikkou-api-server</name>
                                         <type>JAVA_BINARY</type>
@@ -758,7 +789,9 @@ limitations under the License.
                                                 <path>
                                                     {{artifactsDir}}/{{distributionName}}-{{projectVersion}}.zip
                                                 </path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}.zip</transform>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}.zip
+                                                </transform>
                                             </artifact>
                                         </artifacts>
                                     </jikkou-api-server>
