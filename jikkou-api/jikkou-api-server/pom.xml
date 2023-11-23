@@ -263,9 +263,20 @@
                     </annotationProcessorPaths>
                     <compilerArgs>
                         <arg>-Amicronaut.processing.group=io.streamthoughts</arg>
-                        <arg>-Amicronaut.processing.module=jikkou-rest</arg>
+                        <arg>-Amicronaut.processing.module=jikkou-api-server</arg>
                         <arg>-verbose</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <!-- Micronaut -->
+            <plugin>
+                <groupId>io.micronaut.maven</groupId>
+                <artifactId>micronaut-maven-plugin</artifactId>
+                <version>${micronaut-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <micronautAotVersion>2.0.1</micronautAotVersion>
+                    <testResourcesVersion>1.2.5</testResourcesVersion>
                 </configuration>
             </plugin>
         </plugins>
@@ -295,6 +306,7 @@
                                 <image>${docker.image.name}:${docker.image.tag}</image>
                             </to>
                             <container>
+                                <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                                 <ports>
                                     <port>28082</port>
                                 </ports>
@@ -303,21 +315,6 @@
                                 </environment>
                             </container>
                         </configuration>
-                    </plugin>
-                    <!-- Micronaut -->
-                    <plugin>
-                        <groupId>io.micronaut.maven</groupId>
-                        <artifactId>micronaut-maven-plugin</artifactId>
-                        <version>${micronaut-maven-plugin.version}</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <micronautAotVersion>2.0.1</micronautAotVersion>
-                            <testResourcesVersion>1.2.5</testResourcesVersion>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
@@ -357,11 +354,9 @@
                                     <licenseHeaderFile>${project.basedir}/license-header</licenseHeaderFile>
                                     <platforms>
                                         <platform>unix</platform>
-                                        <platform>windows</platform>
                                     </platforms>
                                     <binFileExtensions>
                                         <unix>.sh</unix>
-                                        <windows>.bat</windows>
                                     </binFileExtensions>
                                     <programs>
                                         <program>
