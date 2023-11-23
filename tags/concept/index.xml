@@ -120,15 +120,27 @@ definition:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou.io/delete&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
-&lt;p>You can use &lt;em>selectors&lt;/em> to select only a subset of resource objects to describe from your system or for which you want
-to perform a reconciliation process.&lt;/p>
+&lt;p>&lt;strong>Selectors&lt;/strong> allows you to include or exclude some resource objects from being returned or reconciled by Jikkou.&lt;/p>
 &lt;/div>
-&lt;h2 id="field-selector-default">Field Selector (default)&lt;/h2>
-&lt;p>Jikkou provides the built-in &lt;code>FieldSelector&lt;/code> that allows you to filter resource objects based on a &lt;em>field key&lt;/em>.&lt;/p>
-&lt;h3 id="selector-expression">Selector Expression&lt;/h3>
-&lt;p>The expression below shows you how to select only resource having a label &lt;code>environement&lt;/code> equals to either &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>.&lt;/p>
-&lt;pre tabindex="0">&lt;code>metadata.labels.environement IN (staging,production)
-&lt;/code>&lt;/pre>&lt;h3 id="expression-operators">Expression Operators&lt;/h3>
+&lt;h2 id="selector-expressions">Selector Expressions&lt;/h2>
+&lt;p>Selectors are passed as arguments to Jikkou as expression strings in the following form:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>&amp;lt;SELECTOR&amp;gt;: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE&lt;/code>&lt;/li>
+&lt;li>&lt;code>&amp;lt;SELECTOR&amp;gt;: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE[, VALUES])&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>or (using default field selector):&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE&lt;/code>&lt;/li>
+&lt;li>&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE[, VALUES])&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="selectors">Selectors&lt;/h3>
+&lt;h4 id="field-default">Field (default)&lt;/h4>
+&lt;p>Jikkou packs with a built-in &lt;code>FieldSelector&lt;/code> allowing to filter resource objects based on a &lt;em>field key&lt;/em>.&lt;/p>
+&lt;p>For example, the expression below shows you how to select only resource having a label &lt;code>environement&lt;/code> equals to
+either &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>.&lt;/p>
+&lt;pre tabindex="0">&lt;code>metadata.labels.environement IN (staging, production)
+&lt;/code>&lt;/pre>&lt;p>&lt;em>Note: In the above example, we have omitted the selector because &lt;code>field&lt;/code> is the default selector.&lt;/em>&lt;/p>
+&lt;h3 id="expression-operators">Expression Operators&lt;/h3>
 &lt;p>Five kinds of operators are supported:&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>IN&lt;/strong>&lt;/li>
@@ -140,7 +152,20 @@ to perform a reconciliation process.&lt;/p>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Using JIKKOU CLI&lt;/h4>
 Selectors can be specified via the Jikkou CLI option: &lt;code>--selector&lt;/code>.
-&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</guid><description>
+&lt;/div>
+&lt;h3 id="matching-strategies">Matching Strategies&lt;/h3>
+&lt;p>Jikkou allows you to use multiple selector expressions. To indicate how these expressions are to be combined, you can pass one of the following matching strategies:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>ALL&lt;/code>: A resource is selected if it matches all selectors.&lt;/li>
+&lt;li>&lt;code>ANY&lt;/code>: A resource is selected if it matches one of the selectors.&lt;/li>
+&lt;li>&lt;code>NONE&lt;/code>: A resource is selected if it matches none of the selectors.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;em>Example:&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector-match ANY
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Transformations&lt;/em>&lt;/strong> are applied to inbound resources. &lt;em>Transformations&lt;/em> are used to transform, enrich, or filter
 resource entities
