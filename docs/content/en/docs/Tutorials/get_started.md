@@ -16,7 +16,7 @@ Make sure the following is installed:
 
 * An Apache Kafka cluster.
     * Using Docker, [Docker Compose](https://docs.docker.com/compose/) is the easiest way to use it.
-* Java 17 (not required when using the binary version).
+* Java 21 (not required when using the binary version).
 
 ## Start your local Apache Kafka Cluster
 
@@ -40,9 +40,9 @@ $ ./up              # use ./down for stopping the docker-compose stack
 Run the following commands to install the latest version:
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.26.0/jikkou-0.26.0-linux-x86_64.zip && \
-unzip jikkou-0.26.0-linux-x86_64.zip  && \
-cp jikkou-0.26.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip && \
+unzip jikkou-0.31.0-linux-x86_64.zip  && \
+cp jikkou-0.31.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
 source <(jikkou generate-completion) && \
 jikkou --version
 ```
@@ -66,7 +66,7 @@ jikkou config view --name localhost
 Finally, let's check if your cluster is accessible:
 
 ```bash
-jikkou health get kafkabroker
+jikkou health get kafka
 ```
 
 _(output_)
@@ -183,11 +183,11 @@ But we could just as easily use the `update` or `apply` command to get the same 
 Finally, you can verify that topics are created on the cluster
 
 ```yaml
-jikkou get kafkatopics --describe-default-configs
+jikkou get kafkatopics --default-configs
 ```
 
 {{% alert title="Tips" color="info" %}}
-We use the `--describe-default-configs` to export built-in default configuration for configs that have a default value.
+We use the `--default-configs` to export built-in default configuration for configs that have a default value.
 {{% /alert %}}
 
 ## Update Kafka Topics
