@@ -81,7 +81,7 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator {
                 } else {
                     builder = builder.down();
                 }
-            } catch (RestClientException e) {
+            } catch (Exception e) {
                 builder = builder.down().exception(e);
             }
             if (response != null) {
