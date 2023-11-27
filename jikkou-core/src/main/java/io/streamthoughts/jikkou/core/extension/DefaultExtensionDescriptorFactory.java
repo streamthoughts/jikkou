@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -124,6 +125,7 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
         return AnnotationResolver.findAllAnnotationsByType(extensionType, Category.class)
                 .stream()
                 .map(Category::value)
+                .filter(Predicate.not(Predicate.isEqual(ExtensionCategory.EXTENSION)))
                 .findFirst()
                 .orElse(ExtensionCategory.EXTENSION);
     }

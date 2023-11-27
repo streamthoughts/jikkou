@@ -15,9 +15,6 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.reconcilier;
 
-import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
-import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
-
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -25,26 +22,20 @@ import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
-import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
 import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
-import io.streamthoughts.jikkou.kafka.connect.excetion.KafkaConnectClusterNotFoundException;
-import io.streamthoughts.jikkou.kafka.connect.internals.KafkaConnectUtils;
-import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
+import io.streamthoughts.jikkou.kafka.connect.exception.KafkaConnectClusterNotFoundException;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
-import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorStatus;
+import io.streamthoughts.jikkou.kafka.connect.service.KafkaConnectClusterService;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -74,7 +65,7 @@ import org.slf4j.LoggerFactory;
 public final class KafkaConnectorCollector extends ContextualExtension implements Collector<V1KafkaConnector> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConnectorCollector.class);
-    private static final String DEFAULT_CONNECTOR_TASKS_MAX = "1";
+
     public static final String EXPAND_STATUS_CONFIG = "expand-status";
     public static final String CONNECT_CLUSTER_CONFIG = "connect-cluster";
 
@@ -126,7 +117,8 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
             final List<String> connectors = api.listConnectors();
             for (String connector : connectors) {
                 try {
-                    CompletableFuture<V1KafkaConnector> future = getConnectorAsync(cluster, connector, api, expandStatus);
+                    KafkaConnectClusterService service = new KafkaConnectClusterService(cluster, api);
+                    CompletableFuture<V1KafkaConnector> future = service.getConnectorAsync(connector, expandStatus);
                     V1KafkaConnector result = future.get();
                     results.add(result);
                 } catch (Exception ex) {
@@ -142,42 +134,5 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
         return results;
     }
 
-    private static CompletableFuture<V1KafkaConnector> getConnectorAsync(String cluster,
-                                                                         String connector,
-                                                                         KafkaConnectApi api,
-                                                                         boolean expandStatus) {
-        return CompletableFuture
-                .supplyAsync(() -> api.getConnectorConfig(connector))
-                .thenCombine(
-                        CompletableFuture.supplyAsync(() -> api.getConnectorStatus(connector)),
-                        (config, status) -> {
-                            String connectorClass = Optional.ofNullable(config.get(CONNECTOR_CLASS_CONFIG))
-                                    .map(Object::toString)
-                                    .orElse(null);
 
-                            String connectorTasksMax = Optional.ofNullable(config.get(CONNECTOR_TASKS_MAX_CONFIG))
-                                    .map(Object::toString)
-                                    .orElse(DEFAULT_CONNECTOR_TASKS_MAX);
-
-                            return V1KafkaConnector.
-                                    builder()
-                                    .withMetadata(ObjectMeta
-                                            .builder()
-                                            .withName(connector)
-                                            .withLabel(KafkaConnectLabels.KAFKA_CONNECT_CLUSTER, cluster)
-                                            .build()
-                                    )
-                                    .withSpec(V1KafkaConnectorSpec
-                                            .builder()
-                                            .withConnectorClass(connectorClass)
-                                            .withTasksMax(Integer.parseInt(connectorTasksMax))
-                                            .withConfig(KafkaConnectUtils.removeCommonConnectorConfig(config))
-                                            .withState(KafkaConnectorState.fromValue(status.connector().state()))
-                                            .build()
-                                    )
-                                    .withStatus(expandStatus ? new V1KafkaConnectorStatus(status) : null)
-                                    .build();
-                        }
-                );
-    }
 }

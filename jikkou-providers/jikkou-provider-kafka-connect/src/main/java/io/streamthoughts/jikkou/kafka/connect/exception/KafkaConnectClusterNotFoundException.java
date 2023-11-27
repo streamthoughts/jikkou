@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.kafka.connect.excetion;
+package io.streamthoughts.jikkou.kafka.connect.exception;
 
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 

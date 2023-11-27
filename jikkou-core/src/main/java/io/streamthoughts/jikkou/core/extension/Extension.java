@@ -17,7 +17,6 @@ package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.action.Action;
-import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.models.Resource;
@@ -39,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
  * @see HealthIndicator
  */
 @Evolving
-@Category(ExtensionCategory.EXTENSION)
 public interface Extension extends HasName {
 
     /**

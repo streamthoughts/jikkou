@@ -35,10 +35,4 @@ public record ExecutionError(@JsonProperty("message") @NotNull String message,
     })
     public ExecutionError {
     }
-
-
-    @Override
-    public String toString() {
-        return message;
-    }
 }

@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.kafka.connect;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.kafka.connect.action.KafkaConnectRestartConnectorsAction;
 import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
 import io.streamthoughts.jikkou.kafka.connect.health.KafkaConnectHealthIndicator;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
@@ -39,20 +40,12 @@ public final class KafkaConnectExtensionProvider implements ExtensionProvider {
      **/
     @Override
     public void registerExtensions(@NotNull ExtensionRegistry registry) {
-        // Collectors
         registry.register(KafkaConnectorCollector.class, KafkaConnectorCollector::new);
-
-        // Controllers
         registry.register(KafkaConnectorController.class, KafkaConnectorController::new);
-
-        // Validations
         registry.register(KafkaConnectorResourceValidation.class, KafkaConnectorResourceValidation::new);
-
-        // Transformations
         registry.register(KafkaConnectorResourceTransformation.class, KafkaConnectorResourceTransformation::new);
-
-        // Health indicators
         registry.register(KafkaConnectHealthIndicator.class, KafkaConnectHealthIndicator::new);
+        registry.register(KafkaConnectRestartConnectorsAction.class, KafkaConnectRestartConnectorsAction::new);
 
     }
 

@@ -40,8 +40,8 @@ public final class SystemTimeAction implements Action<SystemTimeResource> {
                 .<SystemTimeResource>newBuilder()
                 .result(ExecutionResult
                         .<SystemTimeResource>newBuilder()
-                        .resource(SystemTimeResource.now())
-                        .status(ExecutionStatus.SUCCEED)
+                        .data(SystemTimeResource.now())
+                        .status(ExecutionStatus.SUCCEEDED)
                         .build()
                 )
                 .build();

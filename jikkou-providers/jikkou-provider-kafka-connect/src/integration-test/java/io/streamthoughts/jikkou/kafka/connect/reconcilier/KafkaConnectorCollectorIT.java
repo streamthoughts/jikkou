@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorStatusResponse;
-import io.streamthoughts.jikkou.kafka.connect.excetion.KafkaConnectClusterNotFoundException;
+import io.streamthoughts.jikkou.kafka.connect.exception.KafkaConnectClusterNotFoundException;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;

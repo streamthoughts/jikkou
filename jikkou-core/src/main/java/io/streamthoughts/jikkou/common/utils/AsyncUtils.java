@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class AsyncUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncUtils.class);
-    public static final int DEFAULT_TIMEOUT = 10;
+    public static final int DEFAULT_TIMEOUT = 30;
 
     public static <T> CompletableFuture<List<T>> waitForAll(Stream<CompletableFuture<List<T>>> futures) {
         return futures.reduce(CompletableFuture.completedFuture(new ArrayList<>()),
@@ -50,6 +51,19 @@ public class AsyncUtils {
                         .map(CompletableFuture::join)
                         .collect(Collectors.toList())
                 );
+    }
+
+    public static <T> Either<T, Throwable> get(CompletableFuture<T> future) {
+        T res;
+        try {
+            res = future.get(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return Either.right(e);
+        } catch (ExecutionException | TimeoutException e) {
+            return Either.right(e.getCause());
+        }
+        return Either.left(res);
     }
 
     public static <T> Optional<T> getValue(CompletableFuture<T> future) {

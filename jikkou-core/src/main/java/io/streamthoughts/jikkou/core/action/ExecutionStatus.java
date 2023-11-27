@@ -26,7 +26,11 @@ public enum ExecutionStatus {
     /**
      * Action was executed successfully.
      **/
-    SUCCEED,
+    SUCCEEDED,
+    /**
+     * Action execution has timed out.
+     */
+    TIMED_OUT,
     /**
      * Action was executed with one or more errors.
      **/

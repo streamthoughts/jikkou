@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
@@ -99,8 +100,9 @@ import org.slf4j.LoggerFactory;
         }
 )
 @SupportedResource(type = V1KafkaConsumerGroup.class)
-public final class KafkaConsumerGroupsResetOffsets implements Action<V1KafkaConsumerGroup> {
+public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension implements Action<V1KafkaConsumerGroup> {
 
+    // OPTIONS
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerGroupsResetOffsets.class);
     public static final String TO_EARLIEST = "to-earliest";
     public static final String TO_LATEST = "to-latest";
@@ -109,8 +111,6 @@ public final class KafkaConsumerGroupsResetOffsets implements Action<V1KafkaCons
     public static final String GROUP = "group";
     public static final String TO_OFFSET = "to-offset";
     public static final String DRY_RUN = "dry-run";
-
-    private ExtensionContext context;
 
     private AdminClientFactory adminClientFactory;
 
@@ -126,7 +126,7 @@ public final class KafkaConsumerGroupsResetOffsets implements Action<V1KafkaCons
      */
     @Override
     public void init(@NotNull ExtensionContext context) {
-        this.context = context;
+        super.init(context);
         this.adminClientFactory = new DefaultAdminClientFactory(() ->
                 KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.get(context.appConfiguration())
         );
@@ -144,23 +144,23 @@ public final class KafkaConsumerGroupsResetOffsets implements Action<V1KafkaCons
             KafkaOffsetSpec offsetSpec = null;
 
 
-            offsetSpec = context.<Boolean>configProperty(TO_EARLIEST)
+            offsetSpec = extensionContext().<Boolean>configProperty(TO_EARLIEST)
                     .getOptional(configuration)
                     .map(unused -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToEarliest())
                     .orElse(offsetSpec);
 
-            offsetSpec = context.<Boolean>configProperty(TO_LATEST)
+            offsetSpec = extensionContext().<Boolean>configProperty(TO_LATEST)
                     .getOptional(configuration)
                     .map(unused -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToLatest())
                     .orElse(offsetSpec);
 
-            offsetSpec = context.<String>configProperty(TO_DATETIME)
+            offsetSpec = extensionContext().<String>configProperty(TO_DATETIME)
                     .getOptional(configuration)
                     .filter(Predicate.not(Strings::isBlank))
                     .map(dataTime -> (KafkaOffsetSpec) KafkaOffsetSpec.ToTimestamp.fromISODateTime(dataTime))
                     .orElse(offsetSpec);
 
-            offsetSpec = context.<Long>configProperty(TO_OFFSET)
+            offsetSpec = extensionContext().<Long>configProperty(TO_OFFSET)
                     .getOptional(configuration)
                     .map(offset -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToOffset(offset))
                     .orElse(offsetSpec);
@@ -179,13 +179,13 @@ public final class KafkaConsumerGroupsResetOffsets implements Action<V1KafkaCons
             }
 
             try {
-                final String groupId = context.<String>configProperty(GROUP)
+                final String groupId = extensionContext().<String>configProperty(GROUP)
                         .get(configuration);
 
-                final List<String> topics = context.<List<String>>configProperty(TOPIC)
+                final List<String> topics = extensionContext().<List<String>>configProperty(TOPIC)
                         .get(configuration);
 
-                final Boolean dryRun = context.<Boolean>configProperty(DRY_RUN)
+                final Boolean dryRun = extensionContext().<Boolean>configProperty(DRY_RUN)
                         .get(configuration);
 
                 if (LOG.isInfoEnabled()) {
@@ -204,8 +204,8 @@ public final class KafkaConsumerGroupsResetOffsets implements Action<V1KafkaCons
                 );
                 return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder()
                         .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
-                                .status(ExecutionStatus.SUCCEED)
-                                .resource(group)
+                                .status(ExecutionStatus.SUCCEEDED)
+                                .data(group)
                                 .build()
                         )
                         .build();

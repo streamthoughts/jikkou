@@ -38,7 +38,7 @@ public interface ExecutionResult<T extends HasMetadata> {
 
     /**
      * Gets the list of execution errors. This method should return an empty list if no errors occurred
-     * during the action. i.e., {@link #status()} is returning {@link ExecutionStatus#SUCCEED}.
+     * during the action. e.g., {@link #status()} is returning {@link ExecutionStatus#SUCCEEDED}.
      *
      * @return The execution errors.
      */

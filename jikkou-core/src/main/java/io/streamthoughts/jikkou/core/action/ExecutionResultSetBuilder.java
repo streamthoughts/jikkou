@@ -33,6 +33,18 @@ public final class ExecutionResultSetBuilder<T extends HasMetadata> {
     ExecutionResultSetBuilder() {}
 
     /**
+     * Adds the specified results to this builder.
+     *
+     * @param results The list of ExecutionResult.
+     * @return {@code this}.s
+     */
+    public ExecutionResultSetBuilder<T> results(@NotNull List<ExecutionResult<T>> results) {
+        this.results.addAll(Objects.requireNonNull(results, "results cannot be null"));
+        return this;
+    }
+
+
+    /**
      * Adds the specified result to this builder.
      *
      * @param result The ExecutionResult.

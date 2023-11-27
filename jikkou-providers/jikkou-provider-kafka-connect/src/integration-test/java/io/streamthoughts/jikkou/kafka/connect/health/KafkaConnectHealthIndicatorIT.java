@@ -34,7 +34,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Tag("integration")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class KafkaConnectHealthIndicatorTest extends AbstractKafkaConnectorIT {
+class KafkaConnectHealthIndicatorIT extends AbstractKafkaConnectorIT {
 
     @Test
     void shouldGetHealthIndicator() {
