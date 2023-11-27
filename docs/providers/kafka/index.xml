@@ -204,7 +204,12 @@ waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 &lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
 &lt;h4 id="kafkajikkouiocluster-id">&lt;code>kafka.jikkou.io/cluster-id&lt;/code>&lt;/h4>
 &lt;p>Used by jikkou.&lt;/p>
-&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item><item><title>Docs: Compatibility</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/compatibility/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/compatibility/</guid><description>
+&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/actions/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of actions provided by the Extension Provider for Apache Kafka.&lt;/p>
+&lt;/div>
+&lt;h2 id="apache-kafka-action">Apache Kafka Action&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Compatibility</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/compatibility/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/compatibility/</guid><description>
 &lt;p>The Apache Kafka extension for Jikkou utilizes the &lt;a href="https://kafka.apache.org/documentation/#adminapi">Kafka Admin Client&lt;/a>
 which is compatible with any Kafka infrastructure, such as :&lt;/p>
 &lt;ul>
