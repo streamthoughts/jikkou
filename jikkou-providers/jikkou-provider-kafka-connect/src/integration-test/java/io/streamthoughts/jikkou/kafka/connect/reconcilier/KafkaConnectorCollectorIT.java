@@ -16,13 +16,17 @@
 package io.streamthoughts.jikkou.kafka.connect.reconcilier;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionContext;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorStatusResponse;
+import io.streamthoughts.jikkou.kafka.connect.excetion.KafkaConnectClusterNotFoundException;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
@@ -30,7 +34,9 @@ import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorStatus;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -42,20 +48,51 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
 
+    private ExtensionContext context;
+
+    @BeforeEach
+    public void beforeEach() {
+        DefaultExtensionDescriptorFactory descriptorFactory = new DefaultExtensionDescriptorFactory();
+        ExtensionDescriptor<KafkaConnectorCollector> descriptor = descriptorFactory
+                .make(KafkaConnectorCollector.class, KafkaConnectorCollector::new);
+
+        Configuration configuration = Configuration.from(Map.of(
+                "kafkaConnect.clusters", List.of(Map.of(
+                        KafkaConnectClientConfig.KAFKA_CONNECT_NAME.key(), KAFKA_CONNECTOR_NAME,
+                        KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl()
+
+                ))
+        ));
+        context = new DefaultExtensionContext(null, descriptor, configuration);
+    }
+
+    @Test
+    void shouldThrowExceptionForInvalidClusterName() {
+        // Given
+        KafkaConnectorCollector collector = new KafkaConnectorCollector();
+        collector.init(context);
+
+        // When / Then
+        Assertions.assertThrows(KafkaConnectClusterNotFoundException.class, () -> collector.listAll(
+                Configuration.from(Map.of(
+                        KafkaConnectorCollector.EXPAND_STATUS_CONFIG, false,
+                        KafkaConnectorCollector.CONNECT_CLUSTER_CONFIG, "dummy"
+                )),
+                Selectors.NO_SELECTOR)
+        );
+    }
+
     @Test
     void shouldCollectAllConnectorsWithExpandStatusFalse() throws URISyntaxException, IOException, InterruptedException {
         // Given
         KafkaConnectorCollector collector = new KafkaConnectorCollector();
-        collector.init(new KafkaConnectExtensionConfig(List.of(new KafkaConnectClientConfig(Configuration.builder()
-                .with("name", KAFKA_CONNECTOR_NAME)
-                .with(KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl())
-                .build()))));
+        collector.init(context);
 
         deployFilestreamSinkConnectorAndWait();
 
         // When
         List<V1KafkaConnector> results = collector.listAll(
-                        Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME, false),
+                        Configuration.of(KafkaConnectorCollector.EXPAND_STATUS_CONFIG, false),
                         Selectors.NO_SELECTOR)
                 .getItems();
 
@@ -87,16 +124,13 @@ class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
     void shouldCollectAllConnectorsWithExpandStatusTrue() throws URISyntaxException, IOException, InterruptedException {
         // Given
         KafkaConnectorCollector collector = new KafkaConnectorCollector();
-        collector.init(new KafkaConnectExtensionConfig(List.of(new KafkaConnectClientConfig(Configuration.builder()
-                .with("name", KAFKA_CONNECTOR_NAME)
-                .with(KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl())
-                .build()))));
+        collector.init(context);
 
         deployFilestreamSinkConnectorAndWait();
 
         // When
         List<V1KafkaConnector> results = collector.listAll(
-                        Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME, true),
+                        Configuration.of(KafkaConnectorCollector.EXPAND_STATUS_CONFIG, true),
                         Selectors.NO_SELECTOR)
                 .getItems();
 

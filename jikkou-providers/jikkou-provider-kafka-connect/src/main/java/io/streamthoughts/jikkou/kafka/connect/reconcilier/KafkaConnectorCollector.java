@@ -19,10 +19,8 @@ import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNE
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
-import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
@@ -37,15 +35,17 @@ import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
 import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
+import io.streamthoughts.jikkou.kafka.connect.excetion.KafkaConnectClusterNotFoundException;
 import io.streamthoughts.jikkou.kafka.connect.internals.KafkaConnectUtils;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorStatus;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -59,9 +59,15 @@ import org.slf4j.LoggerFactory;
 @ExtensionSpec(
         options = {
                 @ExtensionOptionSpec(
-                        name = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_NAME,
-                        description = KafkaConnectorCollector.Config.EXPAND_STATUS_CONFIG_DESCRIPTION,
-                        type = Boolean.class
+                        name = KafkaConnectorCollector.EXPAND_STATUS_CONFIG,
+                        description = "Retrieves additional information about the status of the connector and its tasks.",
+                        type = Boolean.class,
+                        defaultValue = "false"
+                ),
+                @ExtensionOptionSpec(
+                        name = KafkaConnectorCollector.CONNECT_CLUSTER_CONFIG,
+                        description = "List of Kafka Connect cluster from which to list connectors.",
+                        type = List.class
                 )
         }
 )
@@ -69,6 +75,8 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConnectorCollector.class);
     private static final String DEFAULT_CONNECTOR_TASKS_MAX = "1";
+    public static final String EXPAND_STATUS_CONFIG = "expand-status";
+    public static final String CONNECT_CLUSTER_CONFIG = "connect-cluster";
 
     private KafkaConnectExtensionConfig configuration;
 
@@ -81,7 +89,7 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
         init(new KafkaConnectExtensionConfig(context.appConfiguration()));
     }
 
-    public void init(@NotNull KafkaConnectExtensionConfig configuration) throws ConfigException {
+    public void init(@NotNull KafkaConnectExtensionConfig configuration) {
         this.configuration = configuration;
     }
 
@@ -91,9 +99,17 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
     @Override
     public ResourceListObject<V1KafkaConnector> listAll(@NotNull Configuration configuration,
                                                         @NotNull Selector selector) {
-        boolean expandStatus = new Config(configuration).expandStatus();
-        List<V1KafkaConnector> list = this.configuration
-                .getClusters()
+
+        Boolean expandStatus = extensionContext()
+                .<Boolean>configProperty(EXPAND_STATUS_CONFIG).get(configuration);
+
+        Set<String> clusters = extensionContext()
+                .<List<String>>configProperty(CONNECT_CLUSTER_CONFIG)
+                .getOptional(configuration)
+                .map(list -> (Set<String>) new HashSet<>(list))
+                .orElseGet(() -> this.configuration.getClusters());
+
+        List<V1KafkaConnector> list = clusters
                 .stream()
                 .flatMap(connectCluster -> listAll(connectCluster, expandStatus).stream())
                 .collect(Collectors.toList());
@@ -104,7 +120,7 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
         List<V1KafkaConnector> results = new LinkedList<>();
         KafkaConnectClientConfig connectClientConfig = configuration
                 .getConfigForCluster(cluster)
-                .orElseThrow(() -> new JikkouRuntimeException("Cannot list connectors. Unknown Kafka Connect cluster '" + cluster + "'"));
+                .orElseThrow(() -> new KafkaConnectClusterNotFoundException("No connect cluster configured for name '" + cluster + "'"));
         KafkaConnectApi api = KafkaConnectApiFactory.create(connectClientConfig);
         try {
             final List<String> connectors = api.listConnectors();
@@ -163,24 +179,5 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
                                     .build();
                         }
                 );
-    }
-
-    public static class Config {
-        public static final String EXPAND_STATUS_CONFIG_NAME = "expand-status";
-        public static final String EXPAND_STATUS_CONFIG_DESCRIPTION =
-                "Retrieves additional information about the status of the connector and its tasks.";
-        public ConfigProperty<Boolean> EXPEND_STATUS = ConfigProperty.ofBoolean(EXPAND_STATUS_CONFIG_NAME)
-                .description(EXPAND_STATUS_CONFIG_DESCRIPTION)
-                .orElse(false);
-
-        private final Configuration configuration;
-
-        public Config(@NotNull Configuration configuration) {
-            this.configuration = Objects.requireNonNull(configuration, "configuration must not be null");
-        }
-
-        public boolean expandStatus() {
-            return EXPEND_STATUS.get(configuration);
-        }
     }
 }

@@ -20,6 +20,7 @@ import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels.KAFKA_CO
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -39,14 +40,19 @@ public class KafkaConnectorResourceValidation implements Validation<V1KafkaConne
     @Override
     public ValidationResult validate(@NotNull V1KafkaConnector resource) {
         List<ValidationError> errors = new ArrayList<>();
+        ObjectMeta metadata = resource.getMetadata();
+        if (metadata == null) {
+            errors.add(newError(resource, "Missing or empty field: 'metadata'"));
+            return new ValidationResult(errors);
+        }
 
-        String name = resource.getMetadata().getName();
+        String name = metadata.getName();
         if (Strings.isBlank(name)) {
             errors.add(newError(resource, "Missing or empty field: 'metadata.name'."));
         }
 
-        if (resource.getMetadata().hasLabel(KAFKA_CONNECT_CLUSTER)) {
-            errors.add(newError(resource, "Missing or empty field: 'metadata.labels.'" + KAFKA_CONNECT_CLUSTER + "'."));
+        if (!metadata.hasLabel(KAFKA_CONNECT_CLUSTER)) {
+            errors.add(newError(resource, "Missing or empty field: 'metadata.labels." + KAFKA_CONNECT_CLUSTER + "'."));
         }
 
         V1KafkaConnectorSpec spec = resource.getSpec();

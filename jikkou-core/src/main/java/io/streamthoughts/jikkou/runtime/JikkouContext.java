@@ -123,16 +123,16 @@ public final class JikkouContext {
             registry.allDescriptors().forEach(resourceRegistry::register);
         } else {
             LOG.info(
-                    "Extensions for group '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
-                    EXTENSION_PROVIDER_CONFIG_PREFIX,
+                    "Extensions from provider '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
                     name,
-                    name
+                    EXTENSION_PROVIDER_CONFIG_PREFIX,
+                    name.toLowerCase(Locale.ROOT)
             );
             LOG.info(
-                    "Resources for group '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
-                    EXTENSION_PROVIDER_CONFIG_PREFIX,
+                    "Resources from provider '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
                     name,
-                    name
+                    EXTENSION_PROVIDER_CONFIG_PREFIX,
+                    name.toLowerCase(Locale.ROOT)
             );
         }
 

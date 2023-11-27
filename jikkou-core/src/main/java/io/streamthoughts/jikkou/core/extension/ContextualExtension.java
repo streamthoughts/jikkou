@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +25,9 @@ public abstract class ContextualExtension implements Extension {
 
     private ExtensionContext context;
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void init(@NotNull ExtensionContext context) {
         this.context = context;
@@ -33,9 +36,11 @@ public abstract class ContextualExtension implements Extension {
     /**
      * Get the extension's context set during initialization.
      *
-     * @return  The ExtensionContext.
+     * @return The ExtensionContext.
      */
     public ExtensionContext extensionContext() {
-        return context;
+        return Optional
+                .ofNullable(context)
+                .orElseThrow(() -> new IllegalStateException("Not initialized"));
     }
 }
