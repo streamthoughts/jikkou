@@ -26,7 +26,6 @@ import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ObjectTemplate;
 import io.streamthoughts.jikkou.core.models.Resource;
@@ -59,14 +58,14 @@ import lombok.extern.jackson.Jacksonized;
     "kind",
     "metadata",
     "template",
-    "spec"
+    "status"
 })
 @ApiVersion("kafka.jikkou.io/v1beta1")
 @Kind("KafkaConsumerGroup")
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsumerGroupSpec> , Resource
+public class V1KafkaConsumerGroup implements HasMetadata, Resource
 {
 
     /**
@@ -105,14 +104,14 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
     @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
-     * V1KafkaConsumerGroupSpec
+     * V1KafkaConsumerGroupStatus
      * <p>
      * 
      * (Required)
      * 
      */
-    @JsonProperty("spec")
-    private io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec spec;
+    @JsonProperty("status")
+    private V1KafkaConsumerGroupStatus status;
 
     /**
      * No args constructor for use in serialization
@@ -127,22 +126,22 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
      * @param metadata
      * @param apiVersion
      * @param kind
-     * @param spec
+     * @param status
      */
     @ConstructorProperties({
         "apiVersion",
         "kind",
         "metadata",
         "template",
-        "spec"
+        "status"
     })
-    public V1KafkaConsumerGroup(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec spec) {
+    public V1KafkaConsumerGroup(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, V1KafkaConsumerGroupStatus status) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
         this.metadata = metadata;
         this.template = template;
-        this.spec = spec;
+        this.status = status;
     }
 
     /**
@@ -189,15 +188,15 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
     }
 
     /**
-     * V1KafkaConsumerGroupSpec
+     * V1KafkaConsumerGroupStatus
      * <p>
      * 
      * (Required)
      * 
      */
-    @JsonProperty("spec")
-    public io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec getSpec() {
-        return spec;
+    @JsonProperty("status")
+    public V1KafkaConsumerGroupStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -220,9 +219,9 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
         sb.append('=');
         sb.append(((this.template == null)?"<null>":this.template));
         sb.append(',');
-        sb.append("spec");
+        sb.append("status");
         sb.append('=');
-        sb.append(((this.spec == null)?"<null>":this.spec));
+        sb.append(((this.status == null)?"<null>":this.status));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -239,7 +238,7 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
         result = ((result* 31)+((this.metadata == null)? 0 :this.metadata.hashCode()));
         result = ((result* 31)+((this.apiVersion == null)? 0 :this.apiVersion.hashCode()));
         result = ((result* 31)+((this.kind == null)? 0 :this.kind.hashCode()));
-        result = ((result* 31)+((this.spec == null)? 0 :this.spec.hashCode()));
+        result = ((result* 31)+((this.status == null)? 0 :this.status.hashCode()));
         return result;
     }
 
@@ -252,7 +251,7 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
             return false;
         }
         V1KafkaConsumerGroup rhs = ((V1KafkaConsumerGroup) other);
-        return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
+        return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.status == rhs.status)||((this.status!= null)&&this.status.equals(rhs.status))));
     }
 
 }

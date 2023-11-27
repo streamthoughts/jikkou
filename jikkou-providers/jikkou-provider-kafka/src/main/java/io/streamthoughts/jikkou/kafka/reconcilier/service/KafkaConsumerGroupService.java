@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.kafka.collections.V1KafkaConsumerGroupList;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupMember;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupSpec;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupStatus;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerOffset;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaNode;
 import io.streamthoughts.jikkou.kafka.reconcilier.service.KafkaOffsetSpec.ToEarliest;
@@ -166,8 +166,8 @@ public final class KafkaConsumerGroupService {
 
         // DRY-RUN = TRUE
         if (dryRun) {
-            V1KafkaConsumerGroupSpec spec = group.getSpec();
-            Map<TopicPartition, V1KafkaConsumerOffset> offsetsByTopicPartitions = spec.getOffsets()
+            V1KafkaConsumerGroupStatus status = group.getStatus();
+            Map<TopicPartition, V1KafkaConsumerOffset> offsetsByTopicPartitions = status.getOffsets()
                     .stream()
                     .collect(Collectors.toMap(it -> new TopicPartition(it.getTopic(), it.getPartition()), it -> it));
 
@@ -186,7 +186,7 @@ public final class KafkaConsumerGroupService {
                     newOffsetsByTopicPartitions.put(tp, offset);
                 }
             });
-            group = group.withSpec(spec.withOffsets(new ArrayList<>(newOffsetsByTopicPartitions.values())));
+            group = group.withStatus(status.withOffsets(new ArrayList<>(newOffsetsByTopicPartitions.values())));
         }
         return group;
     }
@@ -228,7 +228,8 @@ public final class KafkaConsumerGroupService {
      * @return The {@link V1KafkaConsumerGroupList}.
      */
     @NotNull
-    public V1KafkaConsumerGroupList listConsumerGroups(@NotNull Set<ConsumerGroupState> inStates, boolean describeOffsets) {
+    public V1KafkaConsumerGroupList listConsumerGroups(@NotNull Set<ConsumerGroupState> inStates,
+                                                       boolean describeOffsets) {
         final List<String> groupIds = getConsumerGroupIds(inStates);
         return listConsumerGroups(groupIds, describeOffsets);
     }
@@ -241,7 +242,8 @@ public final class KafkaConsumerGroupService {
      * @return The {@link V1KafkaConsumerGroupList}.
      */
     @NotNull
-    public V1KafkaConsumerGroupList listConsumerGroups(@NotNull List<String> groups, boolean describeOffsets) {
+    public V1KafkaConsumerGroupList listConsumerGroups(@NotNull List<String> groups,
+                                                       boolean describeOffsets) {
         // Describe Consumer Groups
         DescribeConsumerGroupsResult consumerGroupResult = client.describeConsumerGroups(groups);
         List<Pair<String, CompletableFuture<ConsumerGroupDescription>>> descriptionsByGroup = consumerGroupResult
@@ -336,7 +338,7 @@ public final class KafkaConsumerGroupService {
                 )
                 .toList();
 
-        V1KafkaConsumerGroupSpec.V1KafkaConsumerGroupSpecBuilder groupSpecBuilder = V1KafkaConsumerGroupSpec
+        V1KafkaConsumerGroupStatus.V1KafkaConsumerGroupStatusBuilder groupStatusBuilder = V1KafkaConsumerGroupStatus
                 .builder()
                 .withState(description.state().name())
                 .withCoordinator(V1KafkaNode
@@ -358,10 +360,10 @@ public final class KafkaConsumerGroupService {
                                     entry.getValue().offset()
                             )
                     ).toList();
-            groupSpecBuilder = groupSpecBuilder.withOffsets(offsets);
+            groupStatusBuilder = groupStatusBuilder.withOffsets(offsets);
         }
 
-        V1KafkaConsumerGroupSpec spec = groupSpecBuilder.build();
+        V1KafkaConsumerGroupStatus status = groupStatusBuilder.build();
 
         return V1KafkaConsumerGroup.builder()
                 .withMetadata(ObjectMeta
@@ -370,7 +372,7 @@ public final class KafkaConsumerGroupService {
                         .withLabel(JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER, description.isSimpleConsumerGroup())
                         .build()
                 )
-                .withSpec(spec)
+                .withStatus(status)
                 .build();
     }
 }

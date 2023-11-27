@@ -28,8 +28,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Reconcile resources.
  *
- * @param <R>   type of the resource.
- * @param <C>   type of the changes.
+ * @param <R> type of the resource.
+ * @param <C> type of the changes.
  */
 public final class Reconcilier<R extends HasMetadata, C extends Change> {
 
@@ -38,7 +38,7 @@ public final class Reconcilier<R extends HasMetadata, C extends Change> {
     /**
      * Creates a new {@link Reconcilier} instance.
      *
-     * @param controller    the controller instance. Cannot be {@code null}.
+     * @param controller the controller instance. Cannot be {@code null}.
      */
     public Reconcilier(@NotNull Controller<R, C> controller) {
         this.controller = controller;
@@ -59,8 +59,9 @@ public final class Reconcilier<R extends HasMetadata, C extends Change> {
         if (!Controller.supportedReconciliationModes(controller.getClass()).contains(mode)) {
             throw new JikkouRuntimeException(
                     String.format(
-                            "Reconciliation mode '%s' is not supported by the controller '%s'",
-                            mode, getClass().getName()
+                            "Cannot execute reconciliation. Mode '%s' is not supported by controller '%s'",
+                            mode,
+                            controller.getName()
                     )
             );
         }

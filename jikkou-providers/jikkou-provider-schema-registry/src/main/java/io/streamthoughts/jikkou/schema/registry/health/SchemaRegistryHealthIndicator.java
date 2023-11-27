@@ -22,7 +22,6 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;

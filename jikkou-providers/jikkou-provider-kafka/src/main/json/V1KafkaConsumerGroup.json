@@ -4,8 +4,7 @@
   "description": "V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaConsumerGroupSpec>"
+    "io.streamthoughts.jikkou.core.models.HasMetadata"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -28,7 +27,7 @@
     "apiVersion",
     "kind",
     "metadata",
-    "spec"
+    "status"
   ],
   "properties": {
     "apiVersion": {
@@ -45,13 +44,13 @@
     "template": {
       "$ref": "./Template.json"
     },
-    "spec": {
-      "$ref": "#/$defs/V1KafkaConsumerGroupSpec"
+    "status": {
+      "$ref": "#/$defs/V1KafkaConsumerGroupStatus"
     }
   },
   "$defs": {
-    "V1KafkaConsumerGroupSpec": {
-      "title": "V1KafkaConsumerGroupSpec",
+    "V1KafkaConsumerGroupStatus": {
+      "title": "V1KafkaConsumerGroupStatus",
       "type": "object",
       "additionalProperties": {
         "lombok-builder": true,

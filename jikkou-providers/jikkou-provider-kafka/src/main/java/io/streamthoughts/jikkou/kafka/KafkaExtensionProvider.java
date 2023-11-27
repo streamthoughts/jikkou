@@ -31,6 +31,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientConsumerGroupCollector;
+import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientConsumerGroupController;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclCollector;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaAclController;
 import io.streamthoughts.jikkou.kafka.reconcilier.AdminClientKafkaBrokerCollector;
@@ -76,6 +77,7 @@ public final class KafkaExtensionProvider implements ExtensionProvider {
         registry.register(AdminClientKafkaAclController.class, AdminClientKafkaAclController::new);
         registry.register(AdminClientKafkaTopicController.class, AdminClientKafkaTopicController::new);
         registry.register(AdminClientKafkaQuotaController.class, AdminClientKafkaQuotaController::new);
+        registry.register(AdminClientConsumerGroupController.class, AdminClientConsumerGroupController::new);
 
         // collectors
         registry.register(AdminClientKafkaBrokerCollector.class, AdminClientKafkaBrokerCollector::new);

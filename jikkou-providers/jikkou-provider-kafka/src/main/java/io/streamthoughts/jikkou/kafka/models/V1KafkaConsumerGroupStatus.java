@@ -31,7 +31,7 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * V1KafkaConsumerGroupSpec
+ * V1KafkaConsumerGroupStatus
  * <p>
  * 
  * 
@@ -48,7 +48,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaConsumerGroupSpec {
+public class V1KafkaConsumerGroupStatus {
 
     /**
      * The consumer group state.
@@ -87,7 +87,7 @@ public class V1KafkaConsumerGroupSpec {
      * No args constructor for use in serialization
      * 
      */
-    public V1KafkaConsumerGroupSpec() {
+    public V1KafkaConsumerGroupStatus() {
     }
 
     /**
@@ -103,7 +103,7 @@ public class V1KafkaConsumerGroupSpec {
         "offsets",
         "coordinator"
     })
-    public V1KafkaConsumerGroupSpec(String state, List<V1KafkaConsumerGroupMember> members, List<V1KafkaConsumerOffset> offsets, V1KafkaNode coordinator) {
+    public V1KafkaConsumerGroupStatus(String state, List<V1KafkaConsumerGroupMember> members, List<V1KafkaConsumerOffset> offsets, V1KafkaNode coordinator) {
         super();
         this.state = state;
         this.members = members;
@@ -152,7 +152,7 @@ public class V1KafkaConsumerGroupSpec {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(V1KafkaConsumerGroupSpec.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(V1KafkaConsumerGroupStatus.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("state");
         sb.append('=');
         sb.append(((this.state == null)?"<null>":this.state));
@@ -192,10 +192,10 @@ public class V1KafkaConsumerGroupSpec {
         if (other == this) {
             return true;
         }
-        if ((other instanceof V1KafkaConsumerGroupSpec) == false) {
+        if ((other instanceof V1KafkaConsumerGroupStatus) == false) {
             return false;
         }
-        V1KafkaConsumerGroupSpec rhs = ((V1KafkaConsumerGroupSpec) other);
+        V1KafkaConsumerGroupStatus rhs = ((V1KafkaConsumerGroupStatus) other);
         return (((((this.state == rhs.state)||((this.state!= null)&&this.state.equals(rhs.state)))&&((this.coordinator == rhs.coordinator)||((this.coordinator!= null)&&this.coordinator.equals(rhs.coordinator))))&&((this.offsets == rhs.offsets)||((this.offsets!= null)&&this.offsets.equals(rhs.offsets))))&&((this.members == rhs.members)||((this.members!= null)&&this.members.equals(rhs.members))));
     }
 

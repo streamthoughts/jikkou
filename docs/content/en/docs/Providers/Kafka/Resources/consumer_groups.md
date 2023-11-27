@@ -79,7 +79,7 @@ metadata:
   name: "my-group"
   labels:
     kafka.jikkou.io/is-simple-consumer: false
-spec:
+status:
   state: "STABLE"
   members:
     - memberId: "console-consumer-b103994e-bcd5-4236-9d03-97065057e594"
