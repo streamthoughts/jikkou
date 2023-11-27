@@ -165,7 +165,7 @@ class JikkouApiProxyTest {
                                     {
                                       "name": "value",
                                       "description": "The description of the option",
-                                      "type": "string",
+                                      "type": "String",
                                       "required": true
                                     }
                                   ]

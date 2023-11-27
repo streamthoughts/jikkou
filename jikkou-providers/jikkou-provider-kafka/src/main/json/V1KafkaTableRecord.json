@@ -63,10 +63,15 @@
         "all-args-constructor": false
       },
       "required": [
+        "topic",
         "key",
         "value"
       ],
       "properties": {
+        "topic": {
+          "type": "string",
+          "description": "The topic name."
+        },
         "headers": {
           "type": "array",
           "description": "The record header.",

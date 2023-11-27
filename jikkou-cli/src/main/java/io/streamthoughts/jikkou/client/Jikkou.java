@@ -210,6 +210,7 @@ public final class Jikkou {
                 commandLine.addSubcommand(context.getBean(GetCommandLineFactory.class).createCommandLine());
                 commandLine.addSubcommand(context.getBean(ActionCommandLineFactory.class).createCommandLine());
             } catch (Exception e) {
+                LOG.error("Cannot generate 'get/action' subcommands.", e);
                 System.err.println("Error: Cannot generate 'get/action' subcommands. Cause: " + e.getLocalizedMessage());
             }
         }

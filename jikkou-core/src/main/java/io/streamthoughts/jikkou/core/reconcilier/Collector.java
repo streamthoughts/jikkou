@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
@@ -54,7 +55,11 @@ public interface Collector<R extends HasMetadata>
     default Optional<R> get(@NotNull String name,
                             @NotNull Configuration configuration) {
         return listAll(configuration, Selectors.NO_SELECTOR).stream()
-                .filter(resource -> resource.getMetadata().getName().equalsIgnoreCase(name))
+                .filter(resource -> {
+                    ObjectMeta metadata = resource.getMetadata();
+                    if (metadata == null) return false;
+                    return name.equalsIgnoreCase(metadata.getName());
+                })
                 .findFirst();
     }
 

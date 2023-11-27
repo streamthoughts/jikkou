@@ -84,18 +84,13 @@ public final class GetCommandLineFactory extends AbstractCommandLineFactory {
                 spec.aliases(resource.shortNames().toArray(new String[0]));
                 Optional<ApiResourceVerbOptionList> optional = resource.getVerbOptionList(Verb.LIST);
                 if (optional.isPresent()) {
-                    CommandLine.Model.ArgGroupSpec.Builder argGroupSpecBuilder = CommandLine.Model.ArgGroupSpec.builder()
-                            .heading("RESOURCE OPTIONS:%n%n")
-                            .exclusive(false)
-                            .multiplicity("0..1");
                     ApiResourceVerbOptionList verbOptionList = optional.get();
                     for (ApiOptionSpec option : verbOptionList.options()) {
-                        argGroupSpecBuilder.addArg(createOptionSpec(option, command));
+                        spec.addOption(createOptionSpec(option, command));
                     }
-                    spec.addArgGroup(argGroupSpecBuilder.build());
                 }
                 if (resource.isVerbSupported(Verb.GET)) {
-                    spec.addOption( CommandLine.Model.OptionSpec
+                    spec.addOption(CommandLine.Model.OptionSpec
                             .builder("--name")
                             .hasInitialValue(false)
                             .paramLabel("<name>")

@@ -39,7 +39,7 @@ public final class KafkaTableRecordChangeComputer
      **/
     @Override
     public List<KafkaTableRecordChange> buildChangeForCreating(@NotNull V1KafkaTableRecord after) {
-        return List.of(buildChange(ChangeType.ADD, getTopicName(after), ValueChange.withAfterValue(after.getSpec())));
+        return List.of(buildChange(ChangeType.ADD, ValueChange.withAfterValue(after.getSpec())));
     }
 
     /**
@@ -47,7 +47,7 @@ public final class KafkaTableRecordChangeComputer
      **/
     @Override
     public List<KafkaTableRecordChange> buildChangeForDeleting(@NotNull V1KafkaTableRecord before) {
-        return List.of(buildChange(ChangeType.DELETE, getTopicName(before), ValueChange.withBeforeValue(before.getSpec())));
+        return List.of(buildChange(ChangeType.DELETE, ValueChange.withBeforeValue(before.getSpec())));
     }
 
     /**
@@ -68,17 +68,13 @@ public final class KafkaTableRecordChangeComputer
                 before.getSpec(),
                 after.getSpec()
         );
-        return List.of(buildChange(record.operation(), getTopicName(after), record));
+        return List.of(buildChange(record.operation(), record));
     }
 
-    private static String getTopicName(@NotNull V1KafkaTableRecord after) {
-        return after.getMetadata().getName();
-    }
 
     private static KafkaTableRecordChange buildChange(ChangeType type,
-                                                      String topic,
                                                       ValueChange<V1KafkaTableRecordSpec> record) {
-        return new KafkaTableRecordChange(type, topic, record);
+        return new KafkaTableRecordChange(type,  record);
     }
 
     /**
@@ -94,7 +90,7 @@ public final class KafkaTableRecordChangeComputer
     private static class V1KafkaTableRecordChangeKeyMapper implements ChangeKeyMapper<V1KafkaTableRecord> {
         @Override
         public @NotNull Object apply(@NotNull V1KafkaTableRecord object) {
-            return new TopicAndKey(object.getMetadata().getName(), object.getSpec().getKey());
+            return new TopicAndKey(object.getSpec().getTopic(), object.getSpec().getKey());
         }
     }
 }

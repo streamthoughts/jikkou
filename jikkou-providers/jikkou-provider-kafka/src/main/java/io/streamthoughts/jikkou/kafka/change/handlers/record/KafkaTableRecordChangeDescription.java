@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.kafka.change.handlers.record;
 
 import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
+import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.change.KafkaTableRecordChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
@@ -46,12 +47,14 @@ public class KafkaTableRecordChangeDescription implements ChangeDescription {
     @Override
     public String textual() {
         KafkaTableRecordChange change = item.getChange();
-        ValueChange<V1KafkaTableRecordSpec> record = change.getRecord();
+        ValueChange<V1KafkaTableRecordSpec> record = change.record();
         String keyRawValue = Optional.ofNullable(record.getAfter()).orElse(record.getBefore()).getKey().data().rawValue();
         return String.format("%s record for key '%s' into topic '%s'",
                 ChangeDescription.humanize(change.operation()),
                 keyRawValue,
-                change.getTopic()
+                change.operation() == ChangeType.DELETE ?
+                        record.getBefore().getTopic() :
+                        record.getAfter().getTopic()
         );
     }
 }

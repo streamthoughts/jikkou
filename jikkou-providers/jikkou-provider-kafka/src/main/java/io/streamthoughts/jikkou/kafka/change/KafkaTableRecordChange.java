@@ -15,68 +15,44 @@
  */
 package io.streamthoughts.jikkou.kafka.change;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.reconcilier.Change;
 import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
 import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
-import java.util.Objects;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 
-@Builder(setterPrefix = "with")
-@AllArgsConstructor
-public final class KafkaTableRecordChange implements Change {
+@JsonPropertyOrder({
+        "operation",
+        "record"
+})
+public record KafkaTableRecordChange(@JsonProperty("operation") ChangeType operation,
+                                     @JsonProperty("record") ValueChange<V1KafkaTableRecordSpec> record) implements Change {
 
-    private final String topic;
-    private final ChangeType changeType;
-    private final ValueChange<V1KafkaTableRecordSpec> record;
 
-    public KafkaTableRecordChange(ChangeType changeType,
-                                  String topic,
-                                  ValueChange<V1KafkaTableRecordSpec> record) {
-        this.changeType = changeType;
-        this.topic = topic;
-        this.record = record;
+    public static KafkaTableRecordChangeBuilder builder() {
+        return new KafkaTableRecordChangeBuilder();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ChangeType operation() {
-        return changeType;
-    }
+    public static class KafkaTableRecordChangeBuilder {
+        private ChangeType changeType;
+        private ValueChange<V1KafkaTableRecordSpec> record;
 
-    @JsonIgnore
-    public String getTopic() {
-        return topic;
-    }
+        KafkaTableRecordChangeBuilder() {
+        }
 
-    @JsonUnwrapped
-    public ValueChange<V1KafkaTableRecordSpec> getRecord() {
-        return record;
-    }
+        public KafkaTableRecordChangeBuilder withChangeType(ChangeType changeType) {
+            this.changeType = changeType;
+            return this;
+        }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KafkaTableRecordChange that = (KafkaTableRecordChange) o;
-        return Objects.equals(topic, that.topic) &&
-                changeType == that.changeType &&
-                Objects.equals(record, that.record);
-    }
+        public KafkaTableRecordChangeBuilder withRecord(ValueChange<V1KafkaTableRecordSpec> record) {
+            this.record = record;
+            return this;
+        }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(topic, changeType, record);
+        public KafkaTableRecordChange build() {
+            return new KafkaTableRecordChange(this.changeType, this.record);
+        }
     }
 }

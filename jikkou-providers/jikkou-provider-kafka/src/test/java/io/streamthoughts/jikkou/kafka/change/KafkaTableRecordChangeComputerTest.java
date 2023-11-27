@@ -37,18 +37,14 @@ class KafkaTableRecordChangeComputerTest {
 
     static final V1KafkaTableRecord KAFKA_TABLE_RECORD = V1KafkaTableRecord
             .builder()
-            .withMetadata(ObjectMeta.builder()
-                    .withName(TEST_TOPIC_NAME)
-                    .build()
-            )
             .withSpec(V1KafkaTableRecordSpec
                     .builder()
+                    .withTopic(TEST_TOPIC_NAME)
                     .withHeader(new KafkaRecordHeader("k", "v"))
                     .withKey(new DataValue(DataType.STRING, new DataHandle(new TextNode("key"))))
                     .withValue(new DataValue(DataType.STRING, new DataHandle(new TextNode("value"))))
                     .build())
             .build();
-
 
     @Test
     void shouldReturnNoneChangeForIdentityResource() {
@@ -62,7 +58,6 @@ class KafkaTableRecordChangeComputerTest {
         // Then
         List<KafkaTableRecordChange> expected = List.of(KafkaTableRecordChange
                 .builder()
-                .withTopic(TEST_TOPIC_NAME)
                 .withChangeType(ChangeType.NONE)
                 .withRecord(ValueChange.none(KAFKA_TABLE_RECORD.getSpec()))
                 .build()
@@ -85,7 +80,6 @@ class KafkaTableRecordChangeComputerTest {
         // Then
         List<KafkaTableRecordChange> expected = List.of(KafkaTableRecordChange
                 .builder()
-                .withTopic(TEST_TOPIC_NAME)
                 .withChangeType(ChangeType.ADD)
                 .withRecord(ValueChange.withAfterValue(KAFKA_TABLE_RECORD.getSpec()))
                 .build()
@@ -98,11 +92,10 @@ class KafkaTableRecordChangeComputerTest {
         // Given
         List<V1KafkaTableRecord> before = List.of(KAFKA_TABLE_RECORD);
 
-        V1KafkaTableRecord recordToDelete = KAFKA_TABLE_RECORD.withMetadata(
-                KAFKA_TABLE_RECORD
-                        .getMetadata().toBuilder()
-                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
-                        .build()
+        V1KafkaTableRecord recordToDelete = KAFKA_TABLE_RECORD.withMetadata(ObjectMeta
+                .builder()
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
+                .build()
         );
         List<V1KafkaTableRecord> after = List.of(recordToDelete);
 
@@ -117,7 +110,6 @@ class KafkaTableRecordChangeComputerTest {
         // Then
         List<KafkaTableRecordChange> expected = List.of(KafkaTableRecordChange
                 .builder()
-                .withTopic(TEST_TOPIC_NAME)
                 .withChangeType(ChangeType.DELETE)
                 .withRecord(ValueChange.withBeforeValue(KAFKA_TABLE_RECORD.getSpec()))
                 .build()

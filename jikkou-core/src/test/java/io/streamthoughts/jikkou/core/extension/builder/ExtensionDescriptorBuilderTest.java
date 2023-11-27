@@ -48,7 +48,7 @@ class ExtensionDescriptorBuilderTest {
         );
         // WHEN
         ExtensionDescriptor<ExtensionDescriptorBuilderTest> result = ExtensionDescriptorBuilder
-                .create(descriptor)
+                .builder(descriptor)
                 .build();
         // THEN
         Assertions.assertNotSame(result, descriptor);

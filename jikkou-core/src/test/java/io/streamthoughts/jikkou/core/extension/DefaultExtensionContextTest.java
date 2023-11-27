@@ -13,43 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.jikkou.core.reconcilier.config;
+package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
-import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ApiOptionSpecFactoryTest {
-
-    private final ApiOptionSpecFactory factory = new ApiOptionSpecFactory();
+class DefaultExtensionContextTest {
 
     @Test
-    void shouldCreateApiResourceVerbOptionListFromExtension() {
-        ExtensionDescriptor<Object> descriptor = ExtensionDescriptorBuilder.builder()
+    void shouldGetConfigPropertiesFromDescriptorForEnum() {
+        List<ConfigProperty> properties = DefaultExtensionContext.getConfigProperties(ExtensionDescriptorBuilder
+                .builder()
                 .type(Object.class)
                 .supplier(Object::new)
                 .properties(List.of(new ConfigPropertySpec(
-                        "Test",
-                        String.class,
-                        "Description",
-                        "default",
+                        "prop",
+                        TestEnum.class,
+                        "",
+                        null,
                         false
                 )))
-                .build();
-        List<ApiOptionSpec> result = factory.make(descriptor);
-        Assertions.assertEquals(
-                List.of(new ApiOptionSpec(
-                        "Test",
-                        "Description",
-                        String.class,
-                        "default",
-                        false)
-                ),
-                result
+                .build()
         );
+        Assertions.assertNotNull(properties);
+        Assertions.assertEquals(TestEnum.VALUE, properties.get(0).get(Configuration.of("prop", "VALUE")));
+    }
+
+    private enum TestEnum {
+        VALUE
     }
 }

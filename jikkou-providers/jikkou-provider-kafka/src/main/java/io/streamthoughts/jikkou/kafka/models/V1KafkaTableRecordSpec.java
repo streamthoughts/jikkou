@@ -37,6 +37,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Setter
 @JsonPropertyOrder({
+    "topic",
     "headers",
     "key",
     "value"
@@ -46,6 +47,14 @@ import lombok.extern.jackson.Jacksonized;
 @Generated("jsonschema2pojo")
 public class V1KafkaTableRecordSpec {
 
+    /**
+     * The topic name.
+     * (Required)
+     * 
+     */
+    @JsonProperty("topic")
+    @JsonPropertyDescription("The topic name.")
+    private String topic;
     /**
      * The record header.
      * 
@@ -79,19 +88,32 @@ public class V1KafkaTableRecordSpec {
     /**
      * 
      * @param headers
+     * @param topic
      * @param value
      * @param key
      */
     @ConstructorProperties({
+        "topic",
         "headers",
         "key",
         "value"
     })
-    public V1KafkaTableRecordSpec(List<KafkaRecordHeader> headers, DataValue key, DataValue value) {
+    public V1KafkaTableRecordSpec(String topic, List<KafkaRecordHeader> headers, DataValue key, DataValue value) {
         super();
+        this.topic = topic;
         this.headers = headers;
         this.key = key;
         this.value = value;
+    }
+
+    /**
+     * The topic name.
+     * (Required)
+     * 
+     */
+    @JsonProperty("topic")
+    public String getTopic() {
+        return topic;
     }
 
     /**
@@ -127,6 +149,10 @@ public class V1KafkaTableRecordSpec {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(V1KafkaTableRecordSpec.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append("topic");
+        sb.append('=');
+        sb.append(((this.topic == null)?"<null>":this.topic));
+        sb.append(',');
         sb.append("headers");
         sb.append('=');
         sb.append(((this.headers == null)?"<null>":this.headers));
@@ -150,6 +176,7 @@ public class V1KafkaTableRecordSpec {
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.topic == null)? 0 :this.topic.hashCode()));
         result = ((result* 31)+((this.headers == null)? 0 :this.headers.hashCode()));
         result = ((result* 31)+((this.value == null)? 0 :this.value.hashCode()));
         result = ((result* 31)+((this.key == null)? 0 :this.key.hashCode()));
@@ -165,7 +192,7 @@ public class V1KafkaTableRecordSpec {
             return false;
         }
         V1KafkaTableRecordSpec rhs = ((V1KafkaTableRecordSpec) other);
-        return ((((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers)))&&((this.value == rhs.value)||((this.value!= null)&&this.value.equals(rhs.value))))&&((this.key == rhs.key)||((this.key!= null)&&this.key.equals(rhs.key))));
+        return (((((this.topic == rhs.topic)||((this.topic!= null)&&this.topic.equals(rhs.topic)))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.value == rhs.value)||((this.value!= null)&&this.value.equals(rhs.value))))&&((this.key == rhs.key)||((this.key!= null)&&this.key.equals(rhs.key))));
     }
 
 }

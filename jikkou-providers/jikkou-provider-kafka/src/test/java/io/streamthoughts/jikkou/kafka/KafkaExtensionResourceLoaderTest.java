@@ -166,9 +166,9 @@ class KafkaExtensionResourceLoaderTest {
                 """);
         V1KafkaTableRecord expected = V1KafkaTableRecord
                 .builder()
-                .withMetadata(new ObjectMeta("topic-compacted"))
                 .withSpec(V1KafkaTableRecordSpec
                         .builder()
+                        .withTopic("topic-compacted")
                         .withHeader(new KafkaRecordHeader("content-type", "application/json"))
                         .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
                         .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
@@ -196,9 +196,9 @@ class KafkaExtensionResourceLoaderTest {
                 """);
         V1KafkaTableRecord expected = V1KafkaTableRecord
                 .builder()
-                .withMetadata(new ObjectMeta("topic-compacted"))
                 .withSpec(V1KafkaTableRecordSpec
                         .builder()
+                        .withTopic("topic-compacted")
                         .withHeader(new KafkaRecordHeader("content-type", "application/json"))
                         .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
                         .withValue(new DataValue(DataType.JSON, new DataHandle(value)))

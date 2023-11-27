@@ -16,9 +16,9 @@
 package io.streamthoughts.jikkou.kafka.reconcilier;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
@@ -47,9 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -64,36 +62,41 @@ import org.slf4j.LoggerFactory;
 @ExtensionSpec(
         options = {
                 @ExtensionOptionSpec(
-                        name = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_NAME,
-                        description = AdminClientKafkaTableCollector.Config.TOPIC_CONFIG_DESCRIPTION,
+                        name = AdminClientKafkaTableCollector.TOPIC_NAME_CONFIG,
+                        description = "The topic name to consume on.",
                         type = String.class,
                         required = true
                 ),
                 @ExtensionOptionSpec(
-                        name = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_NAME,
-                        description = AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG_DESCRIPTION,
-                        type = String.class,
+                        name = AdminClientKafkaTableCollector.KEY_TYPE_CONFIG,
+                        description = "The record key type. Valid values: ${COMPLETION-CANDIDATES}.",
+                        type = DataType.class,
                         required = true
                 ),
                 @ExtensionOptionSpec(
-                        name = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_NAME,
-                        description = AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG_DESCRIPTION,
-                        type = String.class,
+                        name = AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG,
+                        description = "The record value type. Valid values: ${COMPLETION-CANDIDATES}.",
+                        type = DataType.class,
                         required = true
                 ),
                 @ExtensionOptionSpec(
-                        name = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_NAME,
-                        description = AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION,
-                        type = Boolean.class
+                        name = AdminClientKafkaTableCollector.SKIP_MESSAGE_ON_ERROR_CONFIG,
+                        description = "If there is an error when processing a message, skip it instead of halt.",
+                        type = Boolean.class,
+                        defaultValue = "false",
+                        required = false
                 )
         }
 )
 
-public final class AdminClientKafkaTableCollector
-        implements Collector<V1KafkaTableRecord> {
+public final class AdminClientKafkaTableCollector extends ContextualExtension implements Collector<V1KafkaTableRecord> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTableCollector.class);
     public static final Map<String, Object> EMPTY_CONFIG = Collections.emptyMap();
+    public static final String TOPIC_NAME_CONFIG = "topic-name";
+    public static final String KEY_TYPE_CONFIG = "key-type";
+    public static final String VALUE_TYPE_CONFIG = "value-type";
+    public static final String SKIP_MESSAGE_ON_ERROR_CONFIG = "skip-message-on-error";
 
     private ConsumerFactory<byte[], byte[]> consumerFactory;
 
@@ -122,9 +125,10 @@ public final class AdminClientKafkaTableCollector
      */
     @Override
     public void init(@NotNull ExtensionContext context) {
+        super.init(context);
         if (consumerFactory == null) {
-            Config config = new Config(context.appConfiguration());
-            consumerFactory = new DefaultConsumerFactory<byte[], byte[]>(config.clientConfig())
+            Map<String, Object> clientConfig = KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.get(context.appConfiguration());
+            consumerFactory = new DefaultConsumerFactory<byte[], byte[]>(clientConfig)
                     .setKeyDeserializer(new ByteArrayDeserializer())
                     .setValueDeserializer(new ByteArrayDeserializer());
         }
@@ -143,16 +147,16 @@ public final class AdminClientKafkaTableCollector
     public ResourceListObject<V1KafkaTableRecord> listAll(@NotNull final Configuration configuration,
                                                           @NotNull final Selector selector) {
 
-        final Config config = new Config(configuration);
-        String topic = config.topicName();
-        LOG.debug("Checking if kafka topic {} is compacted", topic);
+        //final Config config = new Config(configuration);
+        final String topicName = extensionContext().<String>configProperty(TOPIC_NAME_CONFIG).get(configuration);
+        LOG.debug("Checking if kafka topic {} is compacted", topicName);
         try (AdminClientContext client = new AdminClientContext(adminClientFactory)) {
-            boolean isCompacted = client.isTopicCleanupPolicyCompact(topic, false);
+            boolean isCompacted = client.isTopicCleanupPolicyCompact(topicName, false);
             if (!isCompacted) {
                 throw new JikkouRuntimeException(
                         String.format(
                                 "Cannot list records from non compacted topic '%s'. Topic must be configured with: %s=%s",
-                                topic,
+                                topicName,
                                 TopicConfig.CLEANUP_POLICY_CONFIG,
                                 TopicConfig.CLEANUP_POLICY_COMPACT
                         )
@@ -160,16 +164,16 @@ public final class AdminClientKafkaTableCollector
             }
         }
 
-        LOG.debug("Listing all records from kafka topic {}", config.topicName());
+        LOG.debug("Listing all records from kafka topic {}", topicName);
         KafkaLogToEndConsumer<byte[], byte[]> consumer = new KafkaLogToEndConsumer<>(consumerFactory);
 
         InternalConsumerRecordCallback callback = new InternalConsumerRecordCallback(
-                config.keyType(),
-                config.valueType(),
-                config.skipMessageOnError()
+                extensionContext().<DataType>configProperty(KEY_TYPE_CONFIG).get(configuration),
+                extensionContext().<DataType>configProperty(VALUE_TYPE_CONFIG).get(configuration),
+                extensionContext().<Boolean>configProperty(SKIP_MESSAGE_ON_ERROR_CONFIG).get(configuration)
         );
 
-        consumer.readTopicToEnd(config.topicName(), callback);
+        consumer.readTopicToEnd(topicName, callback);
 
         List<V1KafkaTableRecord> items = callback.allRecords()
                 .stream()
@@ -246,7 +250,6 @@ public final class AdminClientKafkaTableCollector
                     .builder()
                     .withMetadata(ObjectMeta
                             .builder()
-                            .withName(record.topic())
                             .withAnnotation("kafka.jikkou.io/record-partition", record.partition())
                             .withAnnotation("kafka.jikkou.io/record-offset", record.offset())
                             .withAnnotation("kafka.jikkou.io/record-timestamp", record.timestamp())
@@ -254,6 +257,7 @@ public final class AdminClientKafkaTableCollector
                     )
                     .withSpec(V1KafkaTableRecordSpec
                             .builder()
+                            .withTopic(record.topic())
                             .withKey(new DataValue(
                                     keyType,
                                     key
@@ -306,65 +310,6 @@ public final class AdminClientKafkaTableCollector
 
         public List<V1KafkaTableRecord> allRecords() {
             return new ArrayList<>(accumulator.values());
-        }
-    }
-
-    public static class Config {
-
-        public static final String TOPIC_CONFIG_NAME = "topic-name";
-        public static final String TOPIC_CONFIG_DESCRIPTION = "The topic name to consume on.";
-        public static ConfigProperty<String> TOPIC_NAME_CONFIG = ConfigProperty
-                .ofString(TOPIC_CONFIG_NAME)
-                .description(TOPIC_CONFIG_DESCRIPTION);
-
-        public static final String KEY_TYPE_CONFIG_NAME = "key-type";
-        public static final String KEY_TYPE_CONFIG_DESCRIPTION = "The record key type.";
-        public static ConfigProperty<String> KEY_TYPE_CONFIG = ConfigProperty
-                .ofString(KEY_TYPE_CONFIG_NAME)
-                .description(KEY_TYPE_CONFIG_DESCRIPTION);
-
-        public static final String VALUE_TYPE_CONFIG_NAME = "value-type";
-        public static final String VALUE_TYPE_CONFIG_DESCRIPTION = "The record value type.";
-        public static ConfigProperty<String> VALUE_TYPE_CONFIG = ConfigProperty
-                .ofString(VALUE_TYPE_CONFIG_NAME)
-                .description(VALUE_TYPE_CONFIG_DESCRIPTION);
-
-        public static final String SKIP_MESSAGE_ON_ERROR_CONFIG_NAME = "skip-message-on-error";
-        public static final String SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION = "If there is an error when processing a message, skip it instead of halt.";
-        public static ConfigProperty<Boolean> SKIP_MESSAGE_ON_ERROR_CONFIG = ConfigProperty
-                .ofBoolean(SKIP_MESSAGE_ON_ERROR_CONFIG_NAME)
-                .description(SKIP_MESSAGE_ON_ERROR_CONFIG_DESCRIPTION)
-                .orElse(false);
-
-        private final Configuration configuration;
-
-        /**
-         * Creates a new {@link Config} instance.
-         *
-         * @param configuration the configuration object.
-         */
-        public Config(Configuration configuration) {
-            this.configuration = Objects.requireNonNull(configuration, "configuration must not be null");
-        }
-
-        public boolean skipMessageOnError() {
-            return SKIP_MESSAGE_ON_ERROR_CONFIG.get(configuration);
-        }
-
-        public String topicName() {
-            return TOPIC_NAME_CONFIG.get(configuration);
-        }
-
-        public DataType keyType() {
-            return DataType.valueOf(KEY_TYPE_CONFIG.get(configuration).toUpperCase(Locale.ROOT));
-        }
-
-        public DataType valueType() {
-            return DataType.valueOf(VALUE_TYPE_CONFIG.get(configuration).toUpperCase(Locale.ROOT));
-        }
-
-        public Map<String, Object> clientConfig() {
-            return KafkaClientConfiguration.CONSUMER_CLIENT_CONFIG.get(configuration);
         }
     }
 }

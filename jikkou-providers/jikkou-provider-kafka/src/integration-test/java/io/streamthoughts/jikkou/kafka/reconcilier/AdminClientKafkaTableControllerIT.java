@@ -118,9 +118,9 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
         JsonNode value = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_AFTER_VALUE);
         KafkaTableRecordChange expected = KafkaTableRecordChange.builder()
                 .withChangeType(ChangeType.ADD)
-                .withTopic(TEST_TOPIC_COMPACTED)
                 .withRecord(ValueChange.withAfterValue(V1KafkaTableRecordSpec
                                 .builder()
+                                .withTopic(TEST_TOPIC_COMPACTED)
                                 .withHeader(KAFKA_RECORD_HEADER)
                                 .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
                                 .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
@@ -165,16 +165,17 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
         JsonNode afterValue = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_AFTER_VALUE);
         KafkaTableRecordChange expected = KafkaTableRecordChange.builder()
                 .withChangeType(ChangeType.UPDATE)
-                .withTopic(TEST_TOPIC_COMPACTED)
                 .withRecord(ValueChange.with(
                         V1KafkaTableRecordSpec
                                 .builder()
+                                .withTopic(TEST_TOPIC_COMPACTED)
                                 .withHeader(KAFKA_RECORD_HEADER)
                                 .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
                                 .withValue(new DataValue(DataType.JSON, new DataHandle(beforeValue)))
                                 .build(),
                         V1KafkaTableRecordSpec
                                 .builder()
+                                .withTopic(TEST_TOPIC_COMPACTED)
                                 .withHeader(KAFKA_RECORD_HEADER)
                                 .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
                                 .withValue(new DataValue(DataType.JSON, new DataHandle(afterValue)))

@@ -37,10 +37,10 @@ class KafkaTableKafkaTableRecordChangeHandlerTest {
         // Given
         KafkaTableRecordChange change = KafkaTableRecordChange
                 .builder()
-                .withTopic("test")
                 .withChangeType(ChangeType.ADD)
                 .withRecord(ValueChange.withAfterValue(V1KafkaTableRecordSpec
                         .builder()
+                        .withTopic("test")
                         .withHeader(new KafkaRecordHeader("k", "v"))
                         .withKey(new DataValue(DataType.STRING, DataHandle.ofString("key")))
                         .withValue(new DataValue(DataType.STRING, DataHandle.ofString("value")))

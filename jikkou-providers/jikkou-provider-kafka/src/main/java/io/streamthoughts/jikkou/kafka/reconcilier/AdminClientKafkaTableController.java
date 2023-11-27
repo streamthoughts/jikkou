@@ -133,7 +133,7 @@ public final class AdminClientKafkaTableController
         Map<String, List<V1KafkaTableRecord>> resourcesByTopic = resources.stream()
                 .filter(AdminClientKafkaTableController::recordWithNonEmptyKey)
                 .filter(context.selector()::apply)
-                .collect(Collectors.groupingBy(it -> it.getMetadata().getName(), Collectors.toList()));
+                .collect(Collectors.groupingBy(it -> it.getSpec().getTopic(), Collectors.toList()));
 
         List<HasMetadataChange<KafkaTableRecordChange>> changes = new ArrayList<>();
 
@@ -142,10 +142,10 @@ public final class AdminClientKafkaTableController
             // assuming that all the records in a theme have the same key/value format.
             V1KafkaTableRecord first = entry.getValue().get(0);
             Configuration configuration = Configuration.from(Map.of(
-                    AdminClientKafkaTableCollector.Config.TOPIC_NAME_CONFIG.key(), topicName,
-                    AdminClientKafkaTableCollector.Config.KEY_TYPE_CONFIG.key(), first.getSpec().getKey().type().name(),
-                    AdminClientKafkaTableCollector.Config.VALUE_TYPE_CONFIG.key(), first.getSpec().getValue().type().name(),
-                    AdminClientKafkaTableCollector.Config.SKIP_MESSAGE_ON_ERROR_CONFIG.key(), true
+                    AdminClientKafkaTableCollector.TOPIC_NAME_CONFIG, topicName,
+                    AdminClientKafkaTableCollector.KEY_TYPE_CONFIG, first.getSpec().getKey().type().name(),
+                    AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG, first.getSpec().getValue().type().name(),
+                    AdminClientKafkaTableCollector.SKIP_MESSAGE_ON_ERROR_CONFIG, true
             ));
             ResourceListObject<V1KafkaTableRecord> list = collector.listAll(configuration, context.selector());
 

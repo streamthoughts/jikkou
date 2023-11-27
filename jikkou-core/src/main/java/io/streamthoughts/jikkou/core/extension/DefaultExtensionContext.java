@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Default ExtensionContext.
@@ -34,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 public final class DefaultExtensionContext implements ExtensionContext {
 
     private final Configuration appConfiguration;
-
     private final ExtensionDescriptorRegistry registry;
     private final ExtensionDescriptor<?> descriptor;
     private final Map<String, ConfigProperty> propertiesByName;
@@ -45,12 +44,12 @@ public final class DefaultExtensionContext implements ExtensionContext {
      * @param appConfiguration The Configuration.
      * @param descriptor       The ExtensionDescriptor
      */
-    DefaultExtensionContext(@NotNull ExtensionDescriptorRegistry registry,
-                            @NotNull ExtensionDescriptor<?> descriptor,
-                            @NotNull Configuration appConfiguration) {
+    public DefaultExtensionContext(ExtensionDescriptorRegistry registry,
+                                   ExtensionDescriptor<?> descriptor,
+                                   Configuration appConfiguration) {
         this.registry = registry;
-        this.appConfiguration = appConfiguration;
-        this.descriptor = descriptor;
+        this.appConfiguration = Objects.requireNonNull(appConfiguration, "appConfiguration cannot be null");
+        this.descriptor = Objects.requireNonNull(descriptor, "descriptor cannot be null");
         this.propertiesByName = getConfigProperties(descriptor)
                 .stream()
                 .collect(Collectors.toMap(ConfigProperty::key, Function.identity()));
@@ -98,9 +97,10 @@ public final class DefaultExtensionContext implements ExtensionContext {
      **/
     @Override
     public ExtensionContext contextForExtension(Class<? extends Extension> extension) {
+        if (registry == null) throw new IllegalStateException("No registry configured");
         return registry.findDescriptorByClass(extension)
                 .map(descriptor ->
-                    new DefaultExtensionContext(registry, descriptor, appConfiguration)
+                        new DefaultExtensionContext(registry, descriptor, appConfiguration)
                 )
                 .orElseThrow(() -> new NoSuchExtensionException("No extension registered for type: " + extension.getName()));
     }
@@ -111,14 +111,26 @@ public final class DefaultExtensionContext implements ExtensionContext {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static List<ConfigProperty> getConfigProperties(final @NotNull ExtensionDescriptor<?> descriptor) {
+    static List<ConfigProperty> getConfigProperties(final ExtensionDescriptor<?> descriptor) {
+        if (descriptor == null || descriptor.properties() == null) {
+            return Collections.emptyList();
+        }
         return descriptor.properties()
                 .stream()
                 .map(spec -> {
-                    Type type = Type.forClass(spec.type());
-                    ConfigProperty property = ConfigProperty
-                            .of(type, spec.name())
-                            .description(spec.description());
+                    Class specType = spec.type();
+                    Type type = Type.forClass(specType);
+                    ConfigProperty property = null;
+                    if (type != null) {
+                        property = ConfigProperty.of(type, spec.name());
+                    } else if (Enum.class.isAssignableFrom(specType)) {
+                        Class<Enum> enumType = (Class<Enum>) specType;
+                        property = ConfigProperty.ofEnum(spec.name(), enumType);
+                    } else {
+                        throw new IllegalArgumentException("Cannot generate ConfigProperty. " +
+                                "Type " + specType.getName() + "is not supported");
+                    }
+                    property = property.description(spec.description());
                     if (!spec.required()) {
                         property = property.orElse(() -> type.convert(spec.defaultValue()));
                     }
@@ -127,7 +139,9 @@ public final class DefaultExtensionContext implements ExtensionContext {
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String toString() {
         return String.format("ExtensionContext[name=%s, type=%s]", name(), descriptor.className());

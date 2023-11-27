@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.config;
 
+import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.config.internals.Type;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import java.util.List;
@@ -57,6 +58,17 @@ public final class ConfigProperty<T> {
             case MAP -> ConfigProperty.ofMap(path);
             case BYTES, NULL -> throw new IllegalArgumentException("Unsupported type: " + type);
         };
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link Enum} value.
+     *
+     * @param path     the option string path.
+     * @param enumType the enum type.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static <T extends Enum<T>> ConfigProperty<T> ofEnum(final @NotNull String path, final @NotNull Class<T> enumType) {
+        return new ConfigProperty<>(path, (p, config) -> config.findString(p).map(val -> Enums.getForNameIgnoreCase(val, enumType)));
     }
 
     /**

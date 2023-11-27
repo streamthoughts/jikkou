@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Utility method for manipulating enums.
+ * Utility method for manipulating enumSpec.
  */
 public final class Enums {
 

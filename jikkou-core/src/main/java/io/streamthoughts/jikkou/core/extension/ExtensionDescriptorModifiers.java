@@ -32,7 +32,7 @@ public final class ExtensionDescriptorModifiers {
         return new ExtensionDescriptorModifier() {
             @Override
             public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
-                return ExtensionDescriptorBuilder.<T>create(descriptor)
+                return ExtensionDescriptorBuilder.<T>builder(descriptor)
                         .provider(name)
                         .build();
             }
@@ -48,7 +48,7 @@ public final class ExtensionDescriptorModifiers {
         return new ExtensionDescriptorModifier() {
             @Override
             public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
-                return ExtensionDescriptorBuilder.<T>create(descriptor)
+                return ExtensionDescriptorBuilder.<T>builder(descriptor)
                         .name(name)
                         .build();
             }
@@ -64,7 +64,7 @@ public final class ExtensionDescriptorModifiers {
         return new ExtensionDescriptorModifier() {
             @Override
             public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
-                return ExtensionDescriptorBuilder.<T>create(descriptor)
+                return ExtensionDescriptorBuilder.<T>builder(descriptor)
                         .isEnabled(enabled)
                         .build();
             }

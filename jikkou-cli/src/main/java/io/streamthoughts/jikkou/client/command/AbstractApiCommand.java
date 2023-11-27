@@ -55,7 +55,14 @@ public abstract class AbstractApiCommand extends CLIBaseCommand implements Calla
             }
             return (T) elements;
         }
+        if (isClassEnum(spec.typeClass())) {
+            return (T) this.options.put(name, ((Enum)value).name());
+        }
         return (T) this.options.put(name, value);
+    }
+
+    private static boolean isClassEnum(Class<?> clazz) {
+        return Enum.class.isAssignableFrom(clazz);
     }
 
     private static boolean isClassList(Class<?> clazz) {

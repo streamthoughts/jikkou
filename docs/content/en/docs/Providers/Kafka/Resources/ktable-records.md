@@ -23,26 +23,27 @@ Here is the _resource definition file_ for defining a `KafkaTableRecord`.
 apiVersion: "kafka.jikkou.io/v1beta1" # The api version (required)
 kind: "KafkaTableRecord"              # The resource kind (required)
 metadata:
-  name: <string>                      # The topic name (required)        
   labels: { }
   annotations: { }
 spec:
+  type: <string>      # The topic name (required)        
   headers: # The list of headers
     - name: <string>
       value: <string>
-  key:    # The record-key (required)
+  key: # The record-key (required)
     type: <string>                   # The record-key type. Must be one of: BINARY, STRING, JSON (required)
-    data:                            # The record-key in JSON serialized form.
+    data: # The record-key in JSON serialized form.
       $ref: <url or path>            # Or an url to a local file containing the JSON string value.
-  value:  # The record-value (required)
+  value: # The record-value (required)
     type: <string>                   # The record-value type. Must be one of: BINARY, STRING, JSON (required)
-    data:                            # The record-value in JSON serialized form.
+    data: # The record-value in JSON serialized form.
       $ref: <url or path>            # Or an url to a local file containing the JSON string value.
 ```
 
 ### Usage
 
-The `KafkaTableRecord` resource has been designed primarily to manage reference data published and shared via Kafka. Therefore, it
+The `KafkaTableRecord` resource has been designed primarily to manage reference data published and shared via Kafka.
+Therefore, it
 is highly recommended to use this resource only with compacted Kafka topics containing a small amount of data.
 
 ### Examples
@@ -55,10 +56,8 @@ Here are some examples that show how to a `KafkaTableRecord` using the different
 ---
 apiVersion: "kafka.jikkou.io/v1beta1"
 kind: "KafkaTableRecord"
-metadata:
-  # The name of the kafka table topic.
-  name: "my-topic"
 spec:
+  topic: "my-topic"
   headers:
     - name: "content-type"
       value: "application/text"
@@ -78,10 +77,8 @@ spec:
 ---
 apiVersion: "kafka.jikkou.io/v1beta1"
 kind: "KafkaTableRecord"
-metadata:
-  # The name of the kafka table topic.
-  name: "my-topic"
 spec:
+  topic: "my-topic"
   headers:
     - name: "content-type"
       value: "application/text"
@@ -103,10 +100,8 @@ spec:
 ---
 apiVersion: "kafka.jikkou.io/v1beta1"
 kind: "KafkaTableRecord"
-metadata:
-  # The name of the kafka table topic.
-  name: "my-topic"
 spec:
+  topic: "my-topic"
   headers:
     - name: "content-type"
       value: "application/text"
@@ -115,7 +110,7 @@ spec:
     data: |
       "bar"
   value:
-    type: JSON
+    type: BINARY
     data: |
       "eyJmb28iOiAiYmFyIn0K"
 ```

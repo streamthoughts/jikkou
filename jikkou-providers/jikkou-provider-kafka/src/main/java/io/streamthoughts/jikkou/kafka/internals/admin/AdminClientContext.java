@@ -109,14 +109,14 @@ public class AdminClientContext implements AutoCloseable {
                 return configEntry.value().contains(TopicConfig.CLEANUP_POLICY_COMPACT);
             }
         } catch (InterruptedException e) {
-            LOG.debug("Interrupted while checking if topic '{}' is configured with {}={}",
+            LOG.warn("Interrupted while checking if topic '{}' is configured with {}={}",
                     topic,
                     TopicConfig.CLEANUP_POLICY_CONFIG,
                     TopicConfig.CLEANUP_POLICY_COMPACT
             );
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
-            LOG.debug("Failed to check if topic '{}' is configured with {}={}",
+            LOG.warn("Failed to check if topic '{}' is configured with {}={}",
                     topic,
                     TopicConfig.CLEANUP_POLICY_CONFIG,
                     TopicConfig.CLEANUP_POLICY_COMPACT

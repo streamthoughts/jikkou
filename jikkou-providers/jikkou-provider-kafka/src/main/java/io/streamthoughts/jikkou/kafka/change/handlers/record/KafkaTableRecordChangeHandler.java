@@ -101,13 +101,15 @@ public final class KafkaTableRecordChangeHandler implements ChangeHandler<KafkaT
         KafkaTableRecordChange change = item.getChange();
         ChangeType changeType = change.operation();
 
-        ValueChange<V1KafkaTableRecordSpec> spec = change.getRecord();
+        ValueChange<V1KafkaTableRecordSpec> spec = change.record();
 
         DataValue key = changeType == ChangeType.ADD ?
                 spec.getAfter().getKey() :
                 spec.getBefore().getKey();
 
-        final String topic = change.getTopic();
+        final String topic = changeType == ChangeType.DELETE ?
+                spec.getBefore().getTopic() :
+                spec.getAfter().getTopic();
         Optional<ByteBuffer> rawKey = key.type().getDataSerde().serialize(
                 topic,
                 key.data(),

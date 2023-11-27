@@ -1,10 +1,9 @@
 ---
 apiVersion: "kafka.jikkou.io/v1beta1"
 kind: "KafkaTableRecord"
-metadata:
-  # The name of the kafka table topic.
-  name: "datamesh-dataproducts-catalog"
 spec:
+  # The name of the kafka table topic.
+  topic: "datamesh-dataproducts-catalog"
   # The record headers
   headers:
     - name: "content-type"

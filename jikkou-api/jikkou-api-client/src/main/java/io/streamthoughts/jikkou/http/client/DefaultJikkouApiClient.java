@@ -312,7 +312,10 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                                                                        @NotNull Selector selector,
                                                                        @NotNull Configuration configuration) {
         ApiResource resource = queryApiResourceForType(type);
-        HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.SELECT, type));
+        Link link = findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.SELECT, type);
+        final URI uri = UriBuilder.of(apiClient.getBasePath())
+                .path(link.getHref())
+                .expand(configuration.asMap());
 
         ResourceListRequest payload = new ResourceListRequest(
                 configuration.asMap(),
@@ -322,7 +325,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         // Build Request
         RequestBody requestBody = apiClient.serialize(payload, "application/json");
         Request httpRequest = new Request.Builder()
-                .url(url)
+                .url(HttpUrl.get(uri))
                 .post(requestBody)
                 .build();
         // Execute Request

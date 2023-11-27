@@ -53,7 +53,7 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * @param <T> the Extension type.
      * @return the new {@link ExtensionDescriptorBuilder} instance.
      */
-    public static <T> ExtensionDescriptorBuilder<T> create() {
+    public static <T> ExtensionDescriptorBuilder<T> builder() {
         return new ExtensionDescriptorBuilder<>();
     }
 
@@ -64,7 +64,7 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * @param <T>        the Extension type.
      * @return the new {@link ExtensionDescriptorBuilder} instance.
      */
-    public static <T> ExtensionDescriptorBuilder<T> create(final ExtensionDescriptor<T> descriptor) {
+    public static <T> ExtensionDescriptorBuilder<T> builder(final ExtensionDescriptor<T> descriptor) {
         return new ExtensionDescriptorBuilder<T>()
                 .name(descriptor.name())
                 .title(descriptor.title())

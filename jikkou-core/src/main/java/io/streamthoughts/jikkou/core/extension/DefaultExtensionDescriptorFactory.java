@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 public final class DefaultExtensionDescriptorFactory implements ExtensionDescriptorFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExtensionDescriptorFactory.class);
+    private static final String PLACEHOLDER_COMPLETION_CANDIDATES = "${COMPLETION-CANDIDATES}";
+    private static final String PLACEHOLDER_DEFAULT_VALUE = "${DEFAULT-VALUE}";
 
     /**
      * Creates a new {@link DefaultExtensionDescriptorFactory} instance.
@@ -155,7 +157,22 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
                                     if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(descriptionSpec) &&
                                             !ConfigPropertySpec.NULL_VALUE.equals(descriptionSpec)) {
                                         description = descriptionSpec;
+
+                                        if (description.contains(PLACEHOLDER_COMPLETION_CANDIDATES)) {
+                                            if (Enum.class.isAssignableFrom(spec.type())) {
+                                                String candidatesString = Arrays.stream(((Class<Enum>) spec.type()).getEnumConstants())
+                                                        .map(Enum::name)
+                                                        .collect(Collectors.joining(", "));
+                                                description = description.replace(
+                                                        PLACEHOLDER_COMPLETION_CANDIDATES, candidatesString);
+                                            }
+                                        }
+                                        if (description.contains(PLACEHOLDER_DEFAULT_VALUE)) {
+                                            description = description.replace(
+                                                    PLACEHOLDER_DEFAULT_VALUE, spec.defaultValue());
+                                        }
                                     }
+
                                     return new ConfigPropertySpec(
                                             spec.name(),
                                             spec.type(),

@@ -29,37 +29,37 @@ import java.lang.annotation.Target;
 public @interface ExtensionOptionSpec {
 
     /**
-     * The name of the configuration options.
+     * The name of this property.
      *
-     * @return  the string name.
+     * @return the string name.
      */
     String name();
 
     /**
-     * The description of the configuration options.
+     * The description of this property.
      *
-     * @return  the string description.
+     * @return the string description.
      */
     String description() default ConfigPropertySpec.NO_DEFAULT_VALUE;
 
     /**
-     * The default value of the configuration options (optional).
+     * The default value of this property.
      *
-     * @return  the string representation of the default value.
+     * @return the string representation of the default value.
      */
     String defaultValue() default ConfigPropertySpec.NO_DEFAULT_VALUE;
 
     /**
-     * The type of the configuration options.
+     * The type of this property.
      *
-     * @return  the type.
+     * @return The type of this option
      */
     Class<?> type();
 
     /**
-     * Specifies if the option is required.
+     * Specifies if the property is required.
      *
-     * @return  {@code true} if the option is required, otherwise {@code false}.
+     * @return {@code true} if the property is required, otherwise {@code false}.
      */
     boolean required() default false;
 }

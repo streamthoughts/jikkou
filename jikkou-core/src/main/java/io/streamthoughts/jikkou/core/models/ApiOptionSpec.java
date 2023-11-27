@@ -23,9 +23,10 @@ import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * ApiOptionSpec.
@@ -40,6 +41,7 @@ import java.util.function.Function;
         "name",
         "description",
         "type",
+        "enum",
         "defaultValue",
         "required"
 })
@@ -48,8 +50,12 @@ public record ApiOptionSpec(
         @JsonProperty("name") String name,
         @JsonProperty("description") String description,
         @JsonProperty("type") String type,
+        @JsonProperty("enum") EnumSpec enumSpec,
         @JsonProperty("defaultValue") String defaultValue,
         @JsonProperty("required") boolean required) {
+
+    @SuppressWarnings("rawtypes")
+    private static final Map<String, Class> TYPES;
 
     /**
      * Creates a new {@link ApiOptionSpec} instance.
@@ -58,6 +64,7 @@ public record ApiOptionSpec(
             "name",
             "description",
             "type",
+            "enum",
             "defaultValue",
             "required"
     })
@@ -78,11 +85,26 @@ public record ApiOptionSpec(
                          Class<?> type,
                          String defaultValue,
                          boolean required) {
-        this(name, description, getTypeString(type), defaultValue, required);
+        this(name, description, getTypeString(type), getEnumSpec(type), defaultValue, required);
     }
 
-    @SuppressWarnings("rawtypes")
-    private static final Map<String, Class> TYPES;
+    @JsonPropertyOrder({
+            "name",
+            "symbols"
+    })
+    @Reflectable
+    public record EnumSpec(@JsonProperty("name") String name,
+                           @JsonProperty("symbols") Set<String> symbols) {
+        @ConstructorProperties({
+                "name",
+                "symbols"
+        })
+        public EnumSpec {
+
+        }
+    }
+
+    public static final Class<String> DEFAULT_TYPE = String.class;
 
     static {
         var type = new Class[]{
@@ -91,30 +113,42 @@ public record ApiOptionSpec(
                 Short.class,
                 Integer.class,
                 Long.class,
+                Float.class,
                 Double.class,
                 List.class,
                 Map.class
         };
         TYPES = Arrays.stream(type)
                 .collect(toMap(
-                        ApiOptionSpec::getTypeString,
+                        Class::getSimpleName,
                         Function.identity())
                 );
     }
 
+
     public Class<?> typeClass() {
-        return getTypeClass(type);
-    }
-
-    private static String getTypeString(final Class<?> clazz) {
-        return clazz.getSimpleName().toLowerCase(Locale.ROOT);
-    }
-
-    public static Class<?> getTypeClass(final String type) {
         return TYPES.entrySet().stream()
                 .filter(e -> e.getKey().equalsIgnoreCase(type))
                 .map(Map.Entry::getValue)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Type '" + type + "' is not supported"));
+                .orElse(DEFAULT_TYPE);
+    }
+
+    private static EnumSpec getEnumSpec(final Class<?> clazz) {
+        if (Enum.class.isAssignableFrom(clazz)) {
+            return new EnumSpec(
+                    clazz.getSimpleName(),
+                    Arrays.stream(((Class<Enum<?>>) clazz).getEnumConstants())
+                            .map(Enum::name)
+                            .collect(Collectors.toSet())
+            );
+        }
+        return null;
+    }
+
+    private static String getTypeString(final Class<?> clazz) {
+        return TYPES.containsKey(clazz.getSimpleName()) ?
+                clazz.getSimpleName() :
+                DEFAULT_TYPE.getSimpleName();
     }
 }
