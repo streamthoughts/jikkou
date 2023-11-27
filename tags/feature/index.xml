@@ -114,7 +114,7 @@ takes place.&lt;/p>
 &lt;/div>
 &lt;h2 id="available-validations">Available Validations&lt;/h2>
 &lt;p>You can list all the available validations using the Jikkou CLI command:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Validation &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --category&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>validation &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="validation-chain">Validation chain&lt;/h2>
 &lt;p>When using Jikkou CLI, you can configure a &lt;em>validation chain&lt;/em> that will be applied to every resource.
 This chain consists of multiple validations, each designed to handle different types of resources. Jikkou ensures
@@ -963,7 +963,17 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Kafka Authorizations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/acls/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;strong>&lt;em>Actions&lt;/em>&lt;/strong> allow a user to execute a specific and one-shot operation on resources.&lt;/p>
+&lt;/div>
+&lt;h2 id="available-actions-cli">Available Actions (CLI)&lt;/h2>
+&lt;p>You can list all the available actions using the Jikkou CLI command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --category&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>action &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="execution-actions-cli">Execution Actions (CLI)&lt;/h2>
+&lt;p>You can execute a specific extension using the Jikkou CLI command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action &amp;lt;ACTION_NAME&amp;gt; execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>&amp;lt;options&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Authorizations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/acls/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaPrincipalAuthorization resources are used to define Access Control Lists (ACLs) for principals authenticated
 to your Kafka Cluster.&lt;/p>
