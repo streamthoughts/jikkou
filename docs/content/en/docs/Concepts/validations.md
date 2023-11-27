@@ -17,7 +17,7 @@ takes place.
 You can list all the available validations using the Jikkou CLI command:
 
 ```bash
-jikkou extensions list --type=Validation [-kinds <a resource kind to filter returned results>]
+jikkou api-extensions list --category=validation [--kinds <a resource kind to filter returned results>]
 ```
 
 ## Validation chain
