@@ -23,10 +23,10 @@ import java.util.function.Function;
 /**
  * Simple {@link Either} monad type.
  *
- * @param <L>   the {@link Left} type.
- * @param <R>   the {@link Right} type.
+ * @param <L> the {@link Left} type.
+ * @param <R> the {@link Right} type.
  */
-public abstract class Either<L, R> {
+public abstract sealed class Either<L, R> permits Either.Left, Either.Right {
 
     public static <L, R> Either<L, R> left(L value) {
         return new Left<>(value);
@@ -48,6 +48,7 @@ public abstract class Either<L, R> {
      * Returns {@code true} if this is a {@link Left}, {@code false} otherwise.
      */
     public abstract boolean isLeft();
+
     /**
      * Returns {@code true} if this is a {@link Right}, {@code false} otherwise.
      */
@@ -65,11 +66,12 @@ public abstract class Either<L, R> {
         return isLeft() ? fl.apply(left) : fr.apply(right);
     }
 
-    public static class Left<L, R> extends Either<L, R> {
+    public static final class Left<L, R> extends Either<L, R> {
 
         private Left(L left) {
             super(left, null);
         }
+
         /**
          * @return {@code true}.
          */
@@ -77,6 +79,7 @@ public abstract class Either<L, R> {
         public boolean isLeft() {
             return true;
         }
+
         /**
          * @return {@code false}.
          */
@@ -86,7 +89,7 @@ public abstract class Either<L, R> {
         }
     }
 
-    public static class Right<L, R> extends Either<L, R> {
+    public static final class Right<L, R> extends Either<L, R> {
 
         private Right(R right) {
             super(null, right);

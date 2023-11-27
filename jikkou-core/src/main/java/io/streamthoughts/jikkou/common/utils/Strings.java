@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-public class Strings {
+/**
+ * Utilities for manipulating string.
+ */
+public final class Strings {
 
     private Strings() {
     }

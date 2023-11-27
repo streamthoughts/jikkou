@@ -162,7 +162,10 @@ public final class JikkouConfig implements Configuration {
         });
 
         ConfigFactory.invalidateCaches();
-        Config config = ConfigFactory.load().getConfig(ROOT_CONFIG_KEY);
+        Config loaded = ConfigFactory.load();
+        Config config = loaded.hasPath(ROOT_CONFIG_KEY) ?
+                loaded.getConfig(ROOT_CONFIG_KEY) :
+                ConfigFactory.empty();
 
         if (configOverrides != null && !configOverrides.isEmpty()) {
             final Config overridingConfig = ConfigFactory.parseMap(configOverrides);
