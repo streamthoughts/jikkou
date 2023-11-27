@@ -15,7 +15,7 @@
  */
 package io.streamthoughts.jikkou.kafka.reconcilier.service;
 
-import static io.streamthoughts.jikkou.kafka.MetadataAnnotations.JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER;
+import static io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER;
 
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.common.utils.Pair;
@@ -95,11 +95,9 @@ public final class KafkaConsumerGroupService {
                                                           boolean dryRun) {
         return switch (offsetSpec) {
             // TO_EARLIEST
-            case ToEarliest ignored ->
-                    resetConsumerGroupOffsets(groupId, topics, OffsetSpec.earliest(), dryRun);
+            case ToEarliest ignored -> resetConsumerGroupOffsets(groupId, topics, OffsetSpec.earliest(), dryRun);
             // TO_LATEST
-            case ToLatest ignored ->
-                    resetConsumerGroupOffsets(groupId, topics, OffsetSpec.latest(), dryRun);
+            case ToLatest ignored -> resetConsumerGroupOffsets(groupId, topics, OffsetSpec.latest(), dryRun);
             // TO_TIMESTAMP
             case ToTimestamp spec ->
                     resetConsumerGroupOffsets(groupId, topics, OffsetSpec.forTimestamp(spec.timestamp()), dryRun);

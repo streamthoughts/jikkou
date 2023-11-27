@@ -23,7 +23,7 @@ import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
+import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
@@ -95,7 +95,7 @@ public final class AdminClientKafkaQuotaCollector
                             .toBuilder()
                             .withMetadata(resource.getMetadata()
                                     .toBuilder()
-                                    .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                                    .withAnnotation(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
                                     .build()
                             )
                             .build()

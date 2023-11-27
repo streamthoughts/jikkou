@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconcilier.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.kafka.MetadataAnnotations;
+import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaPrincipalAuthorizationSupport;
 import io.streamthoughts.jikkou.kafka.collections.V1V1KafkaPrincipalAuthorizationList;
@@ -99,7 +99,7 @@ public final class AdminClientKafkaAclCollector
                             .toBuilder()
                             .withMetadata(resource.getMetadata()
                                     .toBuilder()
-                                    .withAnnotation(MetadataAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                                    .withAnnotation(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
                                     .build()
                             )
                             .build()
