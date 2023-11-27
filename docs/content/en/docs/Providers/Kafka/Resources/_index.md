@@ -3,7 +3,7 @@ title: "Resources"
 linkTitle: "Resources"
 weight: 2
 description: >
-  Learn how to use the built-in resources provided by the extensions for Apache Kafka.
+  Learn how to use the built-in resources provided by the Extension Provider for Apache Kafka.
 ---
 
 {{% pageinfo %}}

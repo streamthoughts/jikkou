@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 @Named(KafkaConnectRestartConnectorsAction.NAME)
 @Title("Restart Kafka Connect connector instances and task instances")
-@Description("The KafkaConnectRestartConnector action a user to restart all or just the failed Connector and Task instances for one or multiple named connectors.")
+@Description("The KafkaConnectRestartConnectors action a user to restart all or just the failed Connector and Task instances for one or multiple named connectors.")
 @ExtensionSpec(
         options = {
                 @ExtensionOptionSpec(
@@ -101,10 +101,10 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConnectRestartConnectorsAction.class);
 
-    public static final String NAME = "KafkaConnectRestartConnector";
+    public static final String NAME = "KafkaConnectRestartConnectors";
 
     // OPTIONS
-    public static final String CONNECTOR_NAME_CONFIG = "name";
+    public static final String CONNECTOR_NAME_CONFIG = "connector-name";
     public static final String CONNECT_CLUSTER_CONFIG = "connect-cluster";
     public static final String INCLUDE_TASKS_CONFIG = "include-tasks";
     public static final String ONLY_FAILED_CONFIG = "only-failed";

@@ -5,7 +5,7 @@ title: "Validations"
 linkTitle: "Validations"
 weight: 50
 description: >
-  Learn how to use the built-in validations provided by the extensions for Apache Kafka.
+  Learn how to use the built-in validations provided by the Extension Provider for Apache Kafka.
 ---
 
 Jikkou ships with the following built-in _validations_:

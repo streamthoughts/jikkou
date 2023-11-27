@@ -3,7 +3,7 @@ title: "Transformations"
 linkTitle: "Transformations"
 weight: 2
 description: >
-  Learn how to use the built-in transformation provided by the extensions for Apache Kafka.
+  Learn how to use the built-in transformation provided by the Extension Provider for Apache Kafka.
 ---
 
 {{% pageinfo %}}
