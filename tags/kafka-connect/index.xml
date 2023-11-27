@@ -1,0 +1,87 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – kafka connect</title><link>https://streamthoughts.github.io/jikkou/tags/kafka-connect/</link><description>Recent content in kafka connect on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/tags/kafka-connect/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaConnectRestartConnectors</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>The &lt;code>KafkaConnectRestartConnectors&lt;/code> action allows a user to restart all or just the
+failed Connector and Task instances for one or multiple named connectors.&lt;/p>
+&lt;/div>
+&lt;h2 id="usage-cli">Usage (CLI)&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Usage:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Execute the action.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action KafkaConnectRestartConnectors execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--include-tasks&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--only-failed&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--connect-cluster&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-o&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;format&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--connector-name&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DESCRIPTION:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>The KafkaConnectRestartConnectors action a user to restart all or just the
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>failed Connector and Task instances &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> one or multiple named connectors.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OPTIONS:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --connect-cluster&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> The name of the connect cluster.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --connector-name&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> The connector&lt;span style="color:#a40000">&amp;#39;&lt;/span>s name.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --include-tasks Specifies whether to restart the connector instance
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> and task instances &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">includeTasks&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">true&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> or just the
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> connector instance &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">includeTasks&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">false&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Specify the log level verbosity to be used &lt;span style="color:#204a87;font-weight:bold">while&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> running a command.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Valid level values are: TRACE, DEBUG, INFO, WARN,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ERROR.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> For example, &lt;span style="color:#4e9a06">`&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>INFO&lt;span style="color:#4e9a06">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -o, --output&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;format&amp;gt; Prints the output in the specified format. Allowed
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> values: JSON, YAML &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>default YAML&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --only-failed Specifies whether to restart just the instances with
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> a FAILED status &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">onlyFailed&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">true&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> or all instances
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">onlyFailed&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">false&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="examples">Examples&lt;/h3>
+&lt;h3 id="restart-all-connectors-for-all-kafka-connect-clusters">Restart all connectors for all Kafka Connect clusters.&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action kafkaconnectrestartconnectors execute
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kind: &amp;#34;ApiActionResultSet&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>apiVersion: &amp;#34;core.jikkou.io/v1&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>metadata:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> labels: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> annotations: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>results:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- status: &amp;#34;SUCCEEDED&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> data:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apiVersion: &amp;#34;kafka.jikkou.io/v1beta1&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kind: &amp;#34;KafkaConnector&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> metadata:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name: &amp;#34;local-file-sink&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> labels:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> kafka.jikkou.io/connect-cluster: &amp;#34;my-connect-cluster&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> annotations: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> spec:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> connectorClass: &amp;#34;FileStreamSink&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tasksMax: 1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> config:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> file: &amp;#34;/tmp/test.sink.txt&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> topics: &amp;#34;connect-test&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> state: &amp;#34;RUNNING&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> status:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> connectorStatus:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name: &amp;#34;local-file-sink&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> connector:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> state: &amp;#34;RUNNING&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> workerId: &amp;#34;connect:8083&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> tasks:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - id: 0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> state: &amp;#34;RUNNING&amp;#34;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> workerId: &amp;#34;connect:8083&amp;#34;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="restart-all-connectors-with-a-failed-status-on-all-kafka-connect-clusters">Restart all connectors with a FAILED status on all Kafka Connect clusters.&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action kafkaconnectrestartconnectors execute &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--only-failed
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="restart-specific-connector-and-tasks-for-on-kafka-connect-cluster">Restart specific connector and tasks for on Kafka Connect cluster&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action kafkaconnectrestartconnectors execute &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--cluster-name my-connect-cluster
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>--connector-name local-file-sink &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--include-tasks
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>

@@ -61,4 +61,9 @@ collector, etc.).&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">kafka.jikkou.io/connect-cluster&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;my-connect-cluster&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The value of this label defined the name of the Kafka Connect cluster to create the connector instance in.
-The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p></description></item></channel></rss>
+The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/actions/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of actions provided by the Extension Provider for Kafka Connect.&lt;/p>
+&lt;/div>
+&lt;h2 id="kafka-connect-action">Kafka Connect Action&lt;/h2>
+&lt;p>More information:&lt;/p></description></item></channel></rss>
