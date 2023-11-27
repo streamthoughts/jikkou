@@ -46,6 +46,7 @@ import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import java.net.URI;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,6 +68,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     private static final String API_EXTENSIONS = "extensions";
     private static final String API_ACTIONS = "actions";
     private static final String PATH_PARAM_RECONCILE_MODE = "mode";
+    private static final String PATH_PARAM_NAME = "name";
     private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
     private static final RequestBody EMPTY_REQUEST = RequestBody.create(null, new byte[0]);
 
@@ -79,6 +81,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         static String VALIDATE = "validate";
         static String DIFF = "diff";
         static String SELECT = "select";
+        static String GET = "get";
     }
 
     /**
@@ -302,6 +305,36 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                 ResourceListObject.class
         );
         return (ResourceListObject<T>) response.getData();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
+                                                 @NotNull String name,
+                                                 @NotNull Configuration configuration) {
+        ApiResource resource = queryApiResourceForType(type);
+        Link link = findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.GET, type);
+        HashMap<String, Object> expandValues = new HashMap<>(configuration.asMap());
+        expandValues.put(PATH_PARAM_NAME, name);
+        final URI uri = UriBuilder.of(apiClient.getBasePath())
+                .path(link.getHref())
+                .expand(expandValues);
+
+        HttpUrl url = toHttpUrl(link);
+        // Build Request
+        Request httpRequest = new Request.Builder()
+                .url(HttpUrl.get(uri))
+                .get()
+                .build();
+        // Execute Request
+        ApiResponse<HasMetadata> response = apiClient.execute(
+                httpRequest,
+                HasMetadata.class
+        );
+        return (T) response.getData();
     }
 
     /**

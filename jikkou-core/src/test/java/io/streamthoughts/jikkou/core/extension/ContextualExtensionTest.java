@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.core.extension;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class ContextualExtensionTest {
 
@@ -24,5 +25,13 @@ class ContextualExtensionTest {
     void shouldThrowIllegalStateWhenNotInitialized() {
         ContextualExtension extension = new ContextualExtension() {};
         Assertions.assertThrows(IllegalStateException.class, extension::extensionContext);
+    }
+
+    @Test
+    void shouldGetSameContextPassedThroughInitMethod() {
+        ExtensionContext context = Mockito.mock(ExtensionContext.class);
+        ContextualExtension extension = new ContextualExtension() {};
+        extension.init(context);
+        Assertions.assertSame(context, extension.extensionContext());
     }
 }

@@ -65,8 +65,6 @@ jikkou:
     #<provider_name>.enabled: <boolean>
     core.enabled: true
     kafka.enabled: true
-    file.enabled: true
-    kafkaconnect.enabled: true
 
   kafka:
     client:
@@ -74,13 +72,6 @@ jikkou:
 
   schemaRegistry:
     url: http://localhost:8081
-
-  kafkaConnect:
-    clusters:
-      - name: "my-connect-cluster"
-        url: "http://localhost:8083"
-      - name: "my-connect-cluster2"
-        url: "http://localhost:8083"
 
   # The default custom transformations to apply on any resources.
   transformations: [ ]

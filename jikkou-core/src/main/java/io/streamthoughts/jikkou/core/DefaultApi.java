@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.core.action.Action;
 import io.streamthoughts.jikkou.core.action.ExecutionResultSet;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
@@ -506,7 +507,15 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
         return collector.get(name, configuration)
                 .map(item -> addBuiltInAnnotations(item, timestamp))
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(
+                                "Cannot found resource for group '%s', version '%s', kind '%s', and name '%s'.",
+                                type.group(),
+                                type.apiVersion(),
+                                type.kind(),
+                                name
+                        ))
+                );
     }
 
     /**

@@ -162,6 +162,20 @@ public interface JikkouApiClient {
     <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull ResourceType resourceType);
 
     /**
+     * Get the resource associated for the specified type.
+     *
+     * @param type The class of the resource to be described.
+     * @param name The name of the resource.
+     * @return the {@link HasMetadata}.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     */
+    <T extends HasMetadata> T getResource(@NotNull ResourceType type,
+                                          @NotNull String name,
+                                          @NotNull Configuration configuration);
+
+    /**
      * List all resources matching the specified type and selectors.
      *
      * @param <T> type of the resource-list items.
@@ -227,6 +241,10 @@ public interface JikkouApiClient {
      * @param action        The name of the action.
      * @param configuration The context of the execution.
      * @return The ApiExecutionResult.
+     *
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
     ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration);
 

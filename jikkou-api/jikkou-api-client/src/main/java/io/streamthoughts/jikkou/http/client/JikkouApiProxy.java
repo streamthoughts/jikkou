@@ -287,7 +287,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                                  @NotNull String name,
                                                  @NotNull Configuration configuration) {
-        return null;
+        return apiClient.getResource(type, name, configuration);
     }
 
     /**

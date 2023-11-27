@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
+import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
@@ -289,6 +290,7 @@ public interface JikkouApi extends AutoCloseable {
      * @return the {@link HasMetadata}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
+     * @throws ResourceNotFoundException if no resource can be found for the given name.
      */
     <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                           @NotNull String name,
