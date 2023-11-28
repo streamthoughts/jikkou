@@ -72,9 +72,9 @@ jobs:
             NEXT_VERSION="${PLAIN_VERSION}-SNAPSHOT"
           fi
           chmod +x ./mvnw
-          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=${{ env.RELEASE_VERSION }}
+          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=$RELEASE_VERSION
           find . -name 'pom.xml' | xargs git add
-          git commit -m "ci: release version ${{ env.RELEASE_VERSION }} 🎉"
+          git commit -m "ci: release version $RELEASE_VERSION 🎉"
           git push --atomic origin HEAD:main
           HEAD=$(git rev-parse HEAD)
           echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
