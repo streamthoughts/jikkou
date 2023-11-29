@@ -1,4 +1,4 @@
-module github.com/google/docsy-example
+module github.com/jikkou/docs
 
 go 1.12
 

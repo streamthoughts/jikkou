@@ -2,41 +2,66 @@
 title: Jikkou
 linkTitle: Jikkou
 ---
+
+<script>
+$(function () {
+  count = 0;
+  wordsArray = ["Apache Kafka", "Everything", "________?"];
+  setInterval(function () {
+    count++;
+    $("#hero-title-end").fadeOut(400, function () {
+      $(this).text(wordsArray[count % wordsArray.length]).fadeIn(400);
+    });
+  }, 2000);
+});
+</script>
+
 {{% blocks/cover title="Jikkou (jikkō / 実行)!" image_anchor="top" height="max" color="white" %}}
 <div class="mx-auto">
-	<h2 class="mb-5">Efficient and easy automation and provisioning of resources for any Kafka infrastructure.</h2>
-	<a class="btn btn-lg btn-secondary mr-3 mb-4" href="{{< relref "/docs" >}}">
-	Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
-	</a>
-	<a class="btn btn-lg btn-github mr-3 mb-4" href="https://github.com/streamthoughts/jikkou">
+	<h2 class="hero-title mb-5">The <span class="text-light">Open source</span> Data Infrastructure <br /> as code framework for <br /><span id="hero-title-end" class="hero-end">Apache Kafka</span></h2>
+	<a class="btn btn-lg btn-secondary mx-4" href="">
+        Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+    </a>
+	<a class="btn btn-lg btn-github mx-4" href="https://github.com/streamthoughts/jikkou">
 		Download <i class="fab fa-github ml-2 "></i>
 	</a>
 </div>
 {{% /blocks/cover %}}
 
-{{% blocks/lead color="white" %}}
+{{% blocks/showcase color="white" %}}
+{{% asciinema key="demo" autoPlay="true" loop="true" fit="none" rows="45" cols="200" terminalFontSize="15px" terminalLineHeight="1.1" theme="solarized-dark" %}}
+{{% /blocks/showcase %}}
 
-[<img src="./images/jikkou-no-title-logo-450px.png" width="100px"/>](./images/jikkou-no-title-logo-450px.png)
+{{% blocks/section type="row features"%}}
+{{% blocks/feature icon="fas fa-globe-asia" title="Declarative & Automated" %}}
+Describe the entire desired state of any resource you need to manage using [YAML](https://yaml.org/) descriptor files.
+{{% /blocks/feature %}}
 
-**[Jikkou](https://github.com/streamthoughts/jikkou)** (**jikkō / 実行**) is an open-source product designed to
-provide an efficient and easy way to manage, automate and provision resources on your self-service Event-Driven
-[Data Mesh](https://martinfowler.com/articles/data-mesh-principles.html) platforms (or, more simply, on any Apache Kafka Infrastructures).
+{{% blocks/feature icon="fas fa-medal" title="Designed for Apache Kafka&reg;" %}}
+Jikkou was initially developed to manage Apache Kafka resources. You can use it with most of Apache Kafka
+vendors: [Apache Kafka](https://kafka.apache.org/), [Aiven](https://aiven.io/kafka), [Amazon MSK](https://aws.amazon.com/fr/msk/), [Confluent Cloud](https://www.confluent.io/confluent-cloud/), [Redpanda](https://redpanda.com/).
+{{% /blocks/feature %}}
 
-Developed by Kafka ❤️, Jikkou aims to streamline daily operations on [Apache Kafka](https://kafka.apache.org/documentation/),
-ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
+{{% blocks/feature icon="fa-solid fa-expand" title="Extensible and Customizable" %}}
+Jikkou can be extended to manage almost anything. It provides a simple and powerful Core API (in Java) allowing you
+to write custom extensions for managing your own system and resources.
+{{% /blocks/feature %}}
 
-Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schemas**, **Connectors** and
-even more with the use of YAML files called **_Resource Definitions_**.
+{{% blocks/feature icon="fas fa-feather" title="Open source" %}}
+Jikkou is released under the **Apache License 2.0**.
+Anyone can contribute to Jikkou by opening an issue, a pull request (PR) or just by discussing with
+other users on the [Slack Channel](https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA).
+{{% /blocks/feature %}}
+{{% /blocks/section %}}
 
-Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
+{{% blocks/section type="row" color="dark" %}}
+{{% blocks/feature icon="fab fa-slack" title="Join us on Slack" %}}
+Join the Jikkou community on Slack
 
-Jikkou can be used with [Apache Kafka](https://kafka.apache.org/), [Aiven](https://aiven.io/kafka), [Amazon MSK](https://aws.amazon.com/fr/msk/), [Confluent Cloud](https://www.confluent.io/confluent-cloud/), [Redpanda](https://redpanda.com/).
-
-Jikkou is distributed under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0). Apache, Apache Kafka, Kafka, and associated open source project names are trademarks of the Apache Software Foundation.
-
-{{% /blocks/lead %}}
-
-{{% blocks/section type="row" color="dark"%}}
+<a class="text-white" href="https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VAy">
+<button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Joins Us</button>
+</a>
+{{% /blocks/feature %}}
 
 {{% blocks/feature icon="fab fa-github" title="Contributions welcome" %}}
 Want to join the fun on Github? New users are always welcome!
@@ -44,9 +69,6 @@ Want to join the fun on Github? New users are always welcome!
 <a class="text-white" href="docs/contribution-guidelines/">
 	<button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Contribute</button>
 </a>
-{{% /blocks/feature %}}
-
-{{% blocks/feature icon="fas"  %}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-star" title="Support Jikkou Team" %}}

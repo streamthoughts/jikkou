@@ -1,7 +1,10 @@
 @import "buttons";
 
-footer.bg-dark {
-   background-color: #192a34 !important;
+footer {
+    border-top: 1px solid #fff;
+    background-color: #192a34 !important;
+    padding-top: 1rem!important;
+    min-height: 4rem!important;
 }
 
 .td-home h2 {
@@ -18,19 +21,19 @@ p > a, li > a {
     color: $light-purple;
 
     &:hover {
-        text-decoration: underline;
-        text-decoration-color: #192A34;
+        color: $primary;
     }
 }
 
-main {
-    p > a, li > a {
-       background: #f3fafd !important;
-       transition: all .3s ease-in-out;
+.row.features {
+     p > a {
+       color: white;
+       font-weight: 700;
+       text-decoration: underline;
 
-       &:hover {
-          color: $dark-pink !important;
-       }
+        &:hover {
+            color: $primary;
+        }
     }
 }
 
@@ -124,3 +127,30 @@ h1.display-1 {
    font-weight: 800;
 }
 
+pre { border: 1px solid $light;}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+h2.section-title {
+     color: $primary;
+     font-weight: 700;
+     font-size: 46px;
+     margin: 12px 0;
+}
+
+h2.hero-title {
+    font-weight: 700;
+
+    .hero-end {
+        color: $dark-pink!important;
+        border-bottom: 3px solid $light;
+        padding: 0 0.8em 0 0.8em;
+        line-height: 12px;
+        border-radius: 2em;
+    }
+}

@@ -56,8 +56,22 @@ file that you can use as a template to define your own configuration.
 **_reference.conf_**:
 ```hocon
 jikkou {
-  # The paths from which to load extensions
-  extension.paths = [${?JIKKOU_EXTENSION_PATH}]
+
+  extension.providers {
+    # By default, disable all extensions
+    default.enabled: true
+    # Explicitly enabled/disable extensions
+    #<provider_name>.enabled: <boolean>
+    # schemaregistry.enabled = true
+    # kafka.enabled = true
+    # aiven.enabled = true
+    # kafkaconnect.enabled = true
+  }
+
+  # Configure Jikkou Proxy Mode
+  # proxy {
+  #  url = "http://localhost:8080"
+  # }
 
   # Kafka Extension
   kafka {
@@ -102,7 +116,7 @@ jikkou {
       }
     },
     {
-      name = "topicMustHaveParitionsEqualsOrGreaterThanOne"
+      name = "topicMustHavePartitionsEqualsOrGreaterThanOne"
       type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
       priority = 100
       config = {

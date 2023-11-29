@@ -1,8 +1,13 @@
 ---
 title: "Jikkou Getting Started"
+linkTitle: "Get Started"
 weight: 1
 description: >
   This guide covers how you can quickly get started using Jikkou.
+menu:
+  main:
+    weight: 25
+    pre: <i class='fa-solid fa-rocket'></i>
 ---
 
 This document will guide you through setting up Jikkou in a few minutes and managing your first resources

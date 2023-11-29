@@ -1,6 +1,5 @@
 baseURL = "https://streamthoughts.github.io/jikkou/"
-title = "Jikkou Documentation"
-description = "Jikkou is an open-source product designed to swiftly and efficiently manage, automate and provision all the assets of your data streaming platform."
+title = "Jikkou"
 
 # Language settings
 contentDir = "content/en"
@@ -24,13 +23,13 @@ category = "categories"
 
 [params.taxonomy]
 # set taxonomyCloud = [] to hide taxonomy clouds
-taxonomyCloud = ["tags", "categories"] 
+taxonomyCloud = ["tags", "categories"]
 
 # If used, must have same length as taxonomyCloud
-taxonomyCloudTitle = ["Tag Cloud", "Categories"] 
+taxonomyCloudTitle = ["Tag Cloud", "Categories"]
 
 # set taxonomyPageHeader = [] to hide taxonomies on the page headers
-taxonomyPageHeader = ["tags", "categories"] 
+taxonomyPageHeader = ["tags", "categories"]
 
 
 # Highlighting config
@@ -46,36 +45,27 @@ pygmentsStyle = "tango"
 [permalinks]
 blog = "/:section/:year/:month/:day/:slug/"
 
-## Configuration for BlackFriday markdown parser: https://github.com/russross/blackfriday
-[blackfriday]
-plainIDAnchors = true
-hrefTargetBlank = true
-angledQuotes = false
-latexDashes = true
-
 # Image processing configuration.
 [imaging]
 resampleFilter = "CatmullRom"
 quality = 75
 anchor = "smart"
 
-[services]
-[services.googleAnalytics]
-# Comment out the next line to disable GA tracking. Also disables the feature described in [params.ui.feedback].
-# id = "UA-00000000-0"
-
 # Language configuration
 
 [languages]
 [languages.en]
-title = "Jikkou"
-description = "The Jikkou documentation"
 languageName ="English"
 # Weight used for sorting.
 weight = 1
+[languages.en.params]
+title = "Jikkou"
+description = "A Docsy example site"
 
 [markup]
   [markup.goldmark]
+    [markup.goldmark.parser.attribute]
+      block = true
     [markup.goldmark.renderer]
       unsafe = true
   [markup.highlight]
@@ -88,7 +78,7 @@ weight = 1
 
 # Comment out if you don't want the "print entire section" link enabled.
 [outputs]
-section = ["HTML", "RSS"]
+section = ["HTML", "print", "RSS"]
 
 [params]
 copyright = "The Jikkou Authors"
@@ -101,13 +91,13 @@ privacy_policy = ""
 # This menu appears only if you have at least one [params.versions] set.
 version_menu = "Releases"
 
-# Flag used in the "version-banner" partial to decide whether to display a 
+# Flag used in the "version-banner" partial to decide whether to display a
 # banner on every page indicating that this is an archived version of the docs.
 # Set this flag to "true" if you want to display the banner.
 archived_version = false
 
 # The version number for the version of the docs represented in this doc set.
-# Used in the "version-banner" partial to display a version number for the 
+# Used in the "version-banner" partial to display a version number for the
 # current doc set.
 version = "0.0"
 
@@ -125,13 +115,10 @@ github_project_repo = "https://github.com/streamthoughts/jikkou"
 
 # Uncomment this if your GitHub repo does not have "main" as the default branch,
 # or specify a new value if you want to reference another branch in your GitHub links
-github_branch = "main"
+github_branch= "main"
 
 # Google Custom Search Engine ID. Remove or comment out to disable search.
-#gcs_engine_id = "d72aa9b2712488cc3"
-
-# Enable Algolia DocSearch
-algolia_docsearch = false
+# gcs_engine_id = "d72aa9b2712488cc3"
 
 # Enable Lunr.js offline search
 offlineSearch = true
@@ -139,12 +126,23 @@ offlineSearch = true
 # Enable syntax highlighting and copy buttons on code blocks with Prism
 prism_syntax_highlighting = false
 
+[[menu.main]]
+name = "GitHub"
+weight = 50
+url = "https://github.com/streamthoughts/jikkou"
+pre = "<i class='fa-brands fa-github'></i>"
+[[menu.main]]
+name = "Slack"
+weight = 50
+url = "https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA"
+pre = "<i class='fa-brands fa-slack'></i>"
+
 # User interface configuration
 [params.ui]
 #  Set to true to disable breadcrumb navigation.
 breadcrumb_disable = false
 # Set to true to disable the About link in the site footer
-footer_about_disable = true
+footer_about_disable = false
 # Set to false if you don't want to display a logo (/assets/icons/logo.svg) in the top navbar
 navbar_logo = true
 # Set to true if you don't want the top navbar to be translucent when over a `block/cover`, like on the homepage.
@@ -165,15 +163,10 @@ yes = 'Glad to hear it! Please <a href="https://github.com/USERNAME/REPOSITORY/i
 no = 'Sorry to hear that. Please <a href="https://github.com/USERNAME/REPOSITORY/issues/new">tell us how we can improve</a>.'
 
 # Adds a reading time to the top of each doc.
-# If you want this feature, but occasionally need to remove the Reading time from a single page, 
+# If you want this feature, but occasionally need to remove the Reading time from a single page,
 # add "hide_readingtime: true" to the page's front matter
 [params.ui.readingtime]
-enable = true
-
-[[menu.main]]
-name = "GitHub"
-weight = 50
-url = "https://github.com/streamthoughts/jikkou"
+enable = false
 
 [params.links]
 # End user relevant links. These will show up on left side of footer and in the community page if you have one.
@@ -188,18 +181,22 @@ url = "https://github.com/streamthoughts/jikkou"
   url = "https://github.com/streamthoughts/jikkou"
   icon = "fab fa-github"
   desc = "Development takes place here!"
-
+[[params.links.developer]]
+  name = "Slack"
+  url = "https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA"
+  icon = "fab fa-slack"
+  desc = "Chat with other project developers"
 # hugo module configuration
 
 [module]
-  # uncomment line below for temporary local development of module
-  # replacements = "github.com/google/docsy -> ../../docsy"
+  # Uncomment the next line to build and serve using local docsy clone declared in the named Hugo workspace:
+  # workspace = "docsy.work"
   [module.hugoVersion]
     extended = true
-    min = "0.75.0"
+    min = "0.110.0"
   [[module.imports]]
     path = "github.com/google/docsy"
     disable = false
   [[module.imports]]
     path = "github.com/google/docsy/dependencies"
-    disable = false    
+    disable = false

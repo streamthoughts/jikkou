@@ -1,0 +1,23 @@
+<div id='{{ with .Get "key" }}{{ . }}{{ end }}'></div>
+
+{{ $jsAsciinema := resources.Get "js/asciinema-player.min.js" }}
+{{ $jsAsciinema := $jsAsciinema | minify | fingerprint }}
+<script src="{{ $jsAsciinema.RelPermalink }}" integrity="{{ $jsAsciinema.Data.Integrity }}"></script>
+<script>
+    AsciinemaPlayer.create('{{ .Site.BaseURL }}/asciinema/{{ with .Get "key" }}{{ . }}{{ end }}.cast', document.getElementById('{{ with .Get "key" }}{{ . }}{{ end }}'), {
+        {{ if .Get "cols" }}cols: "{{ .Get "cols" }}",{{ end }}
+        {{ if .Get "rows" }}rows: "{{ .Get "rows" }}",{{ end }}
+        {{ if .Get "autoPlay" }}autoPlay: "{{ .Get "autoPlay" }}",{{ end }}
+        {{ if .Get "preload" }}preload: "{{ .Get "preload" }}",{{ end }}
+        {{ if .Get "loop" }}loop: "{{ .Get "loop" }}",{{ end }}
+        {{ if .Get "startAt" }}startAt: "{{ .Get "startAt" }}",{{ end }}
+        {{ if .Get "speed" }}speed: "{{ .Get "speed" }}",{{ end }}
+        {{ if .Get "idleTimeLimit" }}idleTimeLimit: "{{ .Get "idleTimeLimit" }}",{{ end }}
+        {{ if .Get "theme" }}theme: "{{ .Get "theme" }}",{{ end }}
+        {{ if .Get "poster" }}poster: "{{ .Get "poster" }}",{{ end }}
+        {{ if .Get "fit" }}fit: "{{ .Get "fit" }}",{{ end }}
+        {{ if .Get "terminalFontSize" }}terminalFontSize: "{{ .Get "terminalFontSize" }}",{{ end }}
+        {{ if .Get "terminalFontFamily" }}terminalFontFamily: "{{ .Get "terminalFontFamily" }}",{{ end }}
+        {{ if .Get "terminalLineHeight" }}terminalLineHeight: "{{ .Get "terminalLineHeight" }}",{{ end }}
+     });
+</script>

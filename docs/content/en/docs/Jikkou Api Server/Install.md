@@ -4,9 +4,6 @@ linkTitle: "Install"
 weight: 1
 description: >
   This guide shows how to install Jikkou API Server.
-menu:
-  main:
-    weight: 20
 ---
 
 ## Releases

@@ -1,0 +1,27 @@
+{{ $_hugo_config := `{ "version": 1 }` }}
+{{ $col_id := .Get "color" | default .Ordinal }}
+{{ $height := .Get "height" | default "auto"  }}
+{{/* Height can be one of: auto, min, med, max, full. */}}
+<a id="td-block-{{ .Ordinal }}" class="td-offset-anchor"></a>
+<section class="row td-box td-box--{{ $col_id }} position-relative td-box--gradient td-box--height-{{ $height }}">
+    <div class="container">
+        <div class="col">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <h2 class="section-title">What is Jikkou ?</h2>
+                    <div class="text-left">
+                        <p class="h3 text-light d-inline">Jikkou is a powerful and flexible&nbsp;</p>
+                        <p class="h3 text-dark d-inline ">open-source framework for building self-service data platforms,&nbsp;</p>
+                        <p class="h3 text-light d-inline">allowing developers and devops teams to&nbsp;</p>
+                        <p class="h3 text-dark d-inline"> easily manage, automate and provision&nbsp;</p>
+                        <p class="h3 text-light d-inline"> all the assets needed for their projects.&nbsp;</p>
+                        <a class="h3 text-danger d-inline" href="/docs/getting-started">Get started with Jikkou.</a>
+                    </div>
+                </div>
+                <div class="col-lg-8 mb-5 mb-lg-0">
+                    {{ .Inner }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
