@@ -6,37 +6,47 @@
 &lt;code>jikkou apply&lt;/code> or &lt;code>jikkou validate&lt;/code>.&lt;/p>
 &lt;p>To view a list of the commands available in your current Jikkou version, run &lt;code>jikkou&lt;/code> with no additional arguments:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Usage:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> any kafka infrastructure.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision all the assets of your data infrastructure.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Find more information at: https://streamthoughts.github.io/jikkou/.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Options:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OPTIONS:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Specify the log level verbosity to be used &lt;span style="color:#204a87;font-weight:bold">while&lt;/span> running a command.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Valid level values are: TRACE, DEBUG, INFO, WARN, ERROR.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> For example, &lt;span style="color:#4e9a06">`&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>INFO&lt;span style="color:#4e9a06">`&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Commands:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>CORE COMMANDS:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Update the resources as described by the resource definition files.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> create Create resources from the resource definition files &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>only non-existing resources will be created&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete resources that are no longer described by the resource definition files.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> diff Show changes required by the current resource definitions.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> get Display one or many specific resources.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prepare Prepare the resource definition files &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> validation.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> update Create or update resources from the resource definition files
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Update the resources as described by the resource definition files.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> resources List supported resources
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> extensions List or describe the extensions of Jikkou
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> config Sets or retrieves the configuration of this client
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> diff Display all resource changes.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> validate Validate resource definition files.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> validate Check whether the resources definitions meet all validation requirements.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SYSTEM MANAGEMENT COMMANDS:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> action List/execute actions.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> health Print or describe health indicators.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ADDITIONAL COMMANDS:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> api-extensions Print the supported API extensions
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> api-resources Print the supported API resources
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> config Sets or retrieves the configuration of this client
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> generate-completion Generate bash/zsh completion script &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> jikkou.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87">help&lt;/span> Display &lt;span style="color:#204a87">help&lt;/span> information about the specified command.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> get List and describe all resources of a specific kind.
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>(The output from your current Jikkou version may be different than the above example.)&lt;/p>
 &lt;h2 id="checking-jikkou-version">Checking Jikkou Version&lt;/h2>
 &lt;p>Run the &lt;code>jikkou --version&lt;/code> to display your current installation version:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Jikkou version &lt;span style="color:#4e9a06">&amp;#34;0.29.0&amp;#34;&lt;/span> 2023-09-29
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>JVM: 17.0.7 &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>Oracle Corporation Substrate VM 17.0.7+8-LTS&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Jikkou version &lt;span style="color:#4e9a06">&amp;#34;0.32.0&amp;#34;&lt;/span> 2023-11-28
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>JVM: 21.0.1 &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>GraalVM Community Substrate VM 21.0.1+12&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="shell-tab-completion">Shell Tab-completion&lt;/h2>
 &lt;p>It is recommended to install the bash/zsh completion script &lt;code>jikkou_completion&lt;/code>.&lt;/p>
 &lt;p>The completion script can be downloaded from the project Github repository:&lt;/p>
@@ -77,8 +87,20 @@ to a &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/s
 file that you can use as a template to define your own configuration.&lt;/p>
 &lt;p>&lt;strong>&lt;em>reference.conf&lt;/em>&lt;/strong>:&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-# The paths from which to load extensions
-extension.paths = [${?JIKKOU_EXTENSION_PATH}]
+extension.providers {
+# By default, disable all extensions
+default.enabled: true
+# Explicitly enabled/disable extensions
+#&amp;lt;provider_name&amp;gt;.enabled: &amp;lt;boolean&amp;gt;
+# schemaregistry.enabled = true
+# kafka.enabled = true
+# aiven.enabled = true
+# kafkaconnect.enabled = true
+}
+# Configure Jikkou Proxy Mode
+# proxy {
+# url = &amp;#34;http://localhost:8080&amp;#34;
+# }
 # Kafka Extension
 kafka {
 # The default Kafka Client configuration
@@ -119,7 +141,7 @@ topicNameRegex = ${?VALIDATION_DEFAULT_TOPIC_NAME_REGEX}
 }
 },
 {
-name = &amp;#34;topicMustHaveParitionsEqualsOrGreaterThanOne&amp;#34;
+name = &amp;#34;topicMustHavePartitionsEqualsOrGreaterThanOne&amp;#34;
 type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
 priority = 100
 config = {
