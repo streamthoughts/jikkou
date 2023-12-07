@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaConfigs;
+import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaEntity;
 import io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType;
 import java.beans.ConstructorProperties;
 import javax.annotation.processing.Generated;
@@ -51,12 +52,14 @@ public class V1KafkaClientQuotaSpec {
     @JsonProperty("type")
     private KafkaClientQuotaType type;
     /**
+     * V1KafkaClientQuotaEntity
+     * <p>
      * A secure logical group of clients that share both user principal and client ID.
      * 
      */
     @JsonProperty("entity")
     @JsonPropertyDescription("A secure logical group of clients that share both user principal and client ID.")
-    private V1KafkaClientQuotaEntity entity;
+    private KafkaClientQuotaEntity entity;
     @JsonProperty("configs")
     private KafkaClientQuotaConfigs configs;
 
@@ -78,7 +81,7 @@ public class V1KafkaClientQuotaSpec {
         "entity",
         "configs"
     })
-    public V1KafkaClientQuotaSpec(KafkaClientQuotaType type, V1KafkaClientQuotaEntity entity, KafkaClientQuotaConfigs configs) {
+    public V1KafkaClientQuotaSpec(KafkaClientQuotaType type, KafkaClientQuotaEntity entity, KafkaClientQuotaConfigs configs) {
         super();
         this.type = type;
         this.entity = entity;
@@ -91,11 +94,13 @@ public class V1KafkaClientQuotaSpec {
     }
 
     /**
+     * V1KafkaClientQuotaEntity
+     * <p>
      * A secure logical group of clients that share both user principal and client ID.
      * 
      */
     @JsonProperty("entity")
-    public V1KafkaClientQuotaEntity getEntity() {
+    public KafkaClientQuotaEntity getEntity() {
         return entity;
     }
 

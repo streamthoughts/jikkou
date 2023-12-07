@@ -37,8 +37,8 @@ import java.util.Map;
  * @param status     The status of the health indicator.
  * @param details    The detailed information about the status.
  */
-@ApiVersion("core.jikkou.io/v1")
-@Kind("ApiHealthResult")
+@ApiVersion(ApiHealthResult.API_VERSION)
+@Kind(ApiHealthResult.KIND)
 @JsonPropertyOrder({
         "apiVersion",
         "kind",
@@ -54,6 +54,9 @@ public record ApiHealthResult(@NotNull @JsonProperty("apiVersion") String apiVer
                               @NotNull @JsonProperty("name") String name,
                               @NotNull @JsonProperty("status") HealthStatus status,
                               @JsonProperty("details") Map<String, Object> details) implements Resource {
+
+    public static final String API_VERSION = "core.jikkou.io/v1";
+    public static final String KIND = "ApiHealthResult";
 
     @ConstructorProperties({
             "apiVersion",
@@ -73,8 +76,8 @@ public record ApiHealthResult(@NotNull @JsonProperty("apiVersion") String apiVer
      */
     public static ApiHealthResult from(Health health) {
         return new ApiHealthResult(
-                Resource.getApiVersion(ApiHealthResult.class),
-                Resource.getKind(ApiHealthResult.class),
+                API_VERSION,
+                KIND,
                 health.getName(),
                 health.getStatus(),
                 health.getDetails()

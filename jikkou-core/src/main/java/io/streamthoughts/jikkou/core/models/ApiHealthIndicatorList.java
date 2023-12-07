@@ -26,8 +26,8 @@ import java.beans.ConstructorProperties;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
-@ApiVersion("core.jikkou.io/v1")
-@Kind("ApiHealthIndicatorList")
+@ApiVersion(ApiHealthIndicatorList.API_VERSION)
+@Kind(ApiHealthIndicatorList.KIND)
 @JsonPropertyOrder({
         "kind",
         "apiVersion",
@@ -44,6 +44,9 @@ public record ApiHealthIndicatorList(@JsonProperty("kind") @NotNull String kind,
                                      @JsonProperty("indicators") @NotNull List<ApiHealthIndicator> indicators)
         implements Resource {
 
+    public static final String API_VERSION = "core.jikkou.io/v1";
+    public static final String KIND = "ApiHealthIndicatorList";
+
     @ConstructorProperties({
             "kind",
             "apiVersion",
@@ -54,8 +57,8 @@ public record ApiHealthIndicatorList(@JsonProperty("kind") @NotNull String kind,
 
     public ApiHealthIndicatorList(@NotNull List<ApiHealthIndicator> indicators) {
         this(
-                Resource.getKind(ApiHealthIndicatorList.class),
-                Resource.getApiVersion(ApiHealthIndicatorList.class),
+                KIND,
+                API_VERSION,
                 indicators
         );
     }

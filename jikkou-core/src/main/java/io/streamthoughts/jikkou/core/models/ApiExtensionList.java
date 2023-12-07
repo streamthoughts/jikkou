@@ -41,7 +41,7 @@ import javax.validation.constraints.NotNull;
 @Reflectable
 public record ApiExtensionList(@JsonProperty("kind") @NotNull String kind,
                                @JsonProperty("apiVersion") @NotNull String apiVersion,
-                               @JsonProperty("extensions") @NotNull List<ApiExtensionSummary> extensions) {
+                               @JsonProperty("extensions") @NotNull List<ApiExtensionSummary> extensions) implements Resource {
 
     public static final String API_VERSION = "core.jikkou.io/v1";
     public static final String KIND = "ApiExtensionList";

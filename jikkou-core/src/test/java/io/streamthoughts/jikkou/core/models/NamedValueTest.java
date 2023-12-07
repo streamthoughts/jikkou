@@ -15,8 +15,6 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,20 +23,20 @@ class NamedValueTest {
 
     @Test
     void shouldGetEmptySet() {
-        NamedValue.Set values = NamedValue.emptySet();
+        NamedValueSet values = NamedValueSet.emptySet();
         Assertions.assertTrue(values.isEmpty());
     }
 
     @Test
     void shouldGetSetOfMap() {
         Map<String, Object> map = Map.of("k1", "v1", "k2", "v2");
-        NamedValue.Set values = NamedValue.setOf(map);
+        NamedValueSet values = NamedValueSet.setOf(map);
         Assertions.assertEquals(map, values.asMap());
     }
 
     @Test
     void shouldGetSetOfValues() {
-        NamedValue.Set values = NamedValue.emptySet()
+        NamedValueSet values = NamedValueSet.emptySet()
                 .with(new NamedValue("k1", "v1"))
                 .with(new NamedValue("k2", "v2"));
 

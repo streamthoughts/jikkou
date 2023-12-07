@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.Objects;
@@ -29,7 +30,16 @@ import java.util.Objects;
  * @param id         ID
  */
 @Reflectable
-public record KafkaAclEntry(String permission, String topic, String username, String id) {
+@JsonPropertyOrder({
+        "permission",
+        "topic",
+        "username",
+        "id"
+})
+public record KafkaAclEntry(@JsonProperty("permission") String permission,
+                            @JsonProperty("topic") String topic,
+                            @JsonProperty("username") String username,
+                            @JsonProperty("id") String id) {
 
     /**
      * Creates a new {@link KafkaAclEntry} instance.
@@ -40,7 +50,8 @@ public record KafkaAclEntry(String permission, String topic, String username, St
             "username",
             "id"
     })
-    public KafkaAclEntry {}
+    public KafkaAclEntry {
+    }
 
     /**
      * Creates a new {@link KafkaAclEntry} instance.
@@ -53,30 +64,6 @@ public record KafkaAclEntry(String permission, String topic, String username, St
                          final String topic,
                          final String username) {
         this(permission, topic, username, null);
-    }
-
-    @Override
-    @JsonProperty("permission")
-    public String permission() {
-        return permission;
-    }
-
-    @Override
-    @JsonProperty("topic")
-    public String topic() {
-        return topic;
-    }
-
-    @Override
-    @JsonProperty("username")
-    public String username() {
-        return username;
-    }
-
-    @Override
-    @JsonProperty("id")
-    public String id() {
-        return id;
     }
 
     /**
@@ -98,18 +85,5 @@ public record KafkaAclEntry(String permission, String topic, String username, St
     @Override
     public int hashCode() {
         return Objects.hash(permission, topic, username);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return "KafkaAclEntry{" +
-                "permission=" + permission +
-                ", topic='" + topic + '\'' +
-                ", username='" + username + '\'' +
-                ", id='" + id + '\'' +
-                '}';
     }
 }

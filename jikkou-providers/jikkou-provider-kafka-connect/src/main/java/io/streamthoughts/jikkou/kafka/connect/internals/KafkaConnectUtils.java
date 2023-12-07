@@ -15,21 +15,18 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.internals;
 
-import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class KafkaConnectUtils {
 
-    public static Configs removeCommonConnectorConfig(Configs config) {
-        return removeCommonConnectorConfig(config.toMap());
-    }
-    public static Configs removeCommonConnectorConfig(Map<String, Object> config) {
+    public static Map<String, Object> removeCommonConnectorConfig(Map<String, Object> config) {
         Map<String, Object> mutableConfig = new HashMap<>(config);
         mutableConfig.remove(KafkaConnectConstants.CONNECTOR_NAME_CONFIG);
         mutableConfig.remove(KafkaConnectConstants.CONNECTOR_CLASS_CONFIG);
         mutableConfig.remove(KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG);
-        return Configs.of(mutableConfig);
+        return Collections.unmodifiableMap(mutableConfig);
     }
 }

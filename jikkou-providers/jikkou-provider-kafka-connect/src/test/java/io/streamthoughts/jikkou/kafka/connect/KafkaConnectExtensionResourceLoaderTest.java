@@ -19,7 +19,6 @@ import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.io.ResourceLoader;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
-import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
@@ -62,14 +61,14 @@ class KafkaConnectExtensionResourceLoaderTest {
                                 .withConnectorClass("FileStreamSink")
                                 .withTasksMax(1)
                                 .withState(KafkaConnectorState.RUNNING)
-                                .withConfig(Configs.of(Map.of(
+                                .withConfig(Map.of(
                                     "file", "/tmp/test.sink.txt",
                                     "topics", "connect-test"
-                                )))
+                                ))
                                 .build()
                         )
                         .build(),
-                resource.get(0)
+                resource.getFirst()
         );
     }
 }

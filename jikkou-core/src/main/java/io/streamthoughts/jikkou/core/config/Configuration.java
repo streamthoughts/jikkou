@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.core.config;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.common.utils.Classes;
 import io.streamthoughts.jikkou.common.utils.PropertiesUtils;
-import io.streamthoughts.jikkou.core.config.internals.TypeConverter;
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import java.util.Collections;
 import java.util.HashMap;
@@ -505,7 +505,7 @@ public interface Configuration {
     default Boolean getBoolean(@NotNull final String key,
                                @Nullable final BooleanSupplier defaultValueSupplier) {
         return findString(key)
-                .map(TypeConverter::getBool)
+                .map(o -> TypeConverter.Boolean().convertValue(o))
                 .orElseGet(() -> defaultValueSupplier != null ? defaultValueSupplier.getAsBoolean() : null);
     }
 
@@ -519,7 +519,7 @@ public interface Configuration {
     default Long getLong(@NotNull final String key,
                          @Nullable final LongSupplier defaultValueSupplier) {
         return findString(key)
-                .map(TypeConverter::getLong)
+                .map(o -> TypeConverter.Long().convertValue(o))
                 .orElseGet(() -> defaultValueSupplier != null ? defaultValueSupplier.getAsLong() : null);
     }
 
@@ -533,7 +533,7 @@ public interface Configuration {
     default Integer getInteger(@NotNull final String key,
                                @Nullable final IntSupplier defaultValueSupplier) {
         return findString(key)
-                .map(TypeConverter::getInt)
+                .map(o -> TypeConverter.Integer().convertValue(o))
                 .orElseGet(() -> defaultValueSupplier != null ? defaultValueSupplier.getAsInt() : null);
     }
 
@@ -547,7 +547,7 @@ public interface Configuration {
     default Short getShort(@NotNull final String key,
                            @Nullable final Supplier<Short> defaultValueSupplier) {
         return findString(key)
-                .map(TypeConverter::getShort)
+                .map(o -> TypeConverter.Short().convertValue(o))
                 .orElseGet(() -> defaultValueSupplier != null ? defaultValueSupplier.get() : null);
     }
 
@@ -562,7 +562,7 @@ public interface Configuration {
                                        @Nullable final Supplier<List<String>> defaultValueSupplier) {
         Object object = getAny(key);
         if (object != null) {
-            return (List<String>) TypeConverter.getList(object, true);
+            return TypeConverter.ofList(String.class).convertValue(object);
         }
         return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
     }
@@ -594,7 +594,7 @@ public interface Configuration {
                            @Nullable final Supplier<Float> defaultValueSupplier) {
         Optional<String> value = findString(key);
         if (value.isPresent()) {
-            return TypeConverter.getFloat(value);
+            return TypeConverter.Float().convertValue(value);
         }
         return defaultValueSupplier != null ? defaultValueSupplier.get() : null;
     }
@@ -610,7 +610,7 @@ public interface Configuration {
                              @Nullable final DoubleSupplier defaultValueSupplier) {
         Optional<String> value = findString(key);
         if (value.isPresent()) {
-            return TypeConverter.getDouble(value);
+            return TypeConverter.Double().convertValue(value);
         }
         return defaultValueSupplier != null ? defaultValueSupplier.getAsDouble() : null;
     }
@@ -784,8 +784,8 @@ public interface Configuration {
 
     /**
      * Static helper method to create a new empty configuration.
-     * 
-     * @return  a new {@link Configuration}.
+     *
+     * @return a new {@link Configuration}.
      */
     static Configuration empty() {
         return from(Collections.emptyMap());

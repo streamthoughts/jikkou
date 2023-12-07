@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.core.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
@@ -25,6 +26,7 @@ import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.annotation.Transient;
 import io.streamthoughts.jikkou.core.annotation.Verbs;
 import java.beans.ConstructorProperties;
+import java.util.Map;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
@@ -67,7 +69,7 @@ public class ConfigMap implements HasMetadata, Resource
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "core.jikkou.io/v1beta2";
+    private java.lang.String apiVersion = "core.jikkou.io/v1beta2";
     /**
      * 
      * (Required)
@@ -75,13 +77,32 @@ public class ConfigMap implements HasMetadata, Resource
      */
     @JsonProperty("kind")
     @Builder.Default
-    private String kind = "ConfigMap";
+    private java.lang.String kind = "ConfigMap";
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resources.")
     private ObjectMeta metadata;
+    /**
+     * ObjectTemplate
+     * <p>
+     * Data values to be passed to the template engine.
+     * 
+     */
     @JsonProperty("template")
+    @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
+    /**
+     * Map of key/value pairs.
+     * 
+     */
     @JsonProperty("data")
-    private Configs data;
+    @JsonPropertyDescription("Map of key/value pairs.")
+    private Map<String, Object> data;
 
     /**
      * No args constructor for use in serialization
@@ -105,7 +126,7 @@ public class ConfigMap implements HasMetadata, Resource
         "template",
         "data"
     })
-    public ConfigMap(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, Configs data) {
+    public ConfigMap(java.lang.String apiVersion, java.lang.String kind, ObjectMeta metadata, ObjectTemplate template, Map<String, Object> data) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -120,7 +141,7 @@ public class ConfigMap implements HasMetadata, Resource
      * 
      */
     @JsonProperty("apiVersion")
-    public String getApiVersion() {
+    public java.lang.String getApiVersion() {
         return apiVersion;
     }
 
@@ -130,27 +151,43 @@ public class ConfigMap implements HasMetadata, Resource
      * 
      */
     @JsonProperty("kind")
-    public String getKind() {
+    public java.lang.String getKind() {
         return kind;
     }
 
+    /**
+     * ObjectMeta
+     * <p>
+     * Metadata attached to the resources.
+     * 
+     */
     @JsonProperty("metadata")
     public ObjectMeta getMetadata() {
         return metadata;
     }
 
+    /**
+     * ObjectTemplate
+     * <p>
+     * Data values to be passed to the template engine.
+     * 
+     */
     @JsonProperty("template")
     public ObjectTemplate getTemplate() {
         return template;
     }
 
+    /**
+     * Map of key/value pairs.
+     * 
+     */
     @JsonProperty("data")
-    public Configs getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(ConfigMap.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("apiVersion");
@@ -193,7 +230,7 @@ public class ConfigMap implements HasMetadata, Resource
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(java.lang.Object other) {
         if (other == this) {
             return true;
         }

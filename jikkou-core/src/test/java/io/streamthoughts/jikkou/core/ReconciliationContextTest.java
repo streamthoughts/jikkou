@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,8 +39,8 @@ class ReconciliationContextTest {
                 Selectors.NO_SELECTOR,
                 Configuration.empty(),
                 true,
-                NamedValue.setOf(new NamedValue("label", "value")),
-                NamedValue.setOf(new NamedValue("annotation", "value"))
+                NamedValueSet.setOf(new NamedValue("label", "value")),
+                NamedValueSet.setOf(new NamedValue("annotation", "value"))
         ), context);
     }
 

@@ -15,19 +15,23 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+
+import io.streamthoughts.jikkou.core.data.TypeConverter;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.TextDescription;
+import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import java.util.Objects;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
-public class SchemaSubjectChangeDescription implements ChangeDescription {
+public final class SchemaSubjectChangeDescription implements TextDescription {
 
-    private final HasMetadataChange<SchemaSubjectChange> item;
+    private final ResourceChange change;
 
-    public SchemaSubjectChangeDescription(final @NotNull HasMetadataChange<SchemaSubjectChange> item) {
-        this.item = Objects.requireNonNull(item, "change must not be null");
+    public SchemaSubjectChangeDescription(final @NotNull ResourceChange change) {
+        this.change = Objects.requireNonNull(change, "change cannot be null");
     }
 
     /**
@@ -35,14 +39,21 @@ public class SchemaSubjectChangeDescription implements ChangeDescription {
      **/
     @Override
     public String textual() {
-        SchemaSubjectChange change = item.getChange();
+        final String subject = change.getMetadata().getName();
+
+        String compatibilityLevel = change.getSpec().getChanges()
+                .findLast(DATA_COMPATIBILITY_LEVEL, TypeConverter.of(CompatibilityLevels.class))
+                .map(SpecificStateChange::getAfter)
+                .map(Enum::name)
+                .orElse("<global>");
+
+
+        final Operation op = change.getSpec().getOp();
         return String.format("%s subject '%s' (type=%s, compatibilityLevel=%s)",
-                ChangeDescription.humanize(change.operation()),
-                change.getSubject(),
-                change.operation().name(),
-                Optional.ofNullable(change.getCompatibilityLevels()).map(ValueChange::getAfter)
-                        .map(Enum::name)
-                        .orElse("<global>")
+                op.humanize(),
+                subject,
+                op,
+                compatibilityLevel
         );
     }
 }

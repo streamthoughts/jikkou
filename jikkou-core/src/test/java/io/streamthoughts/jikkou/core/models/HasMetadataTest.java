@@ -55,7 +55,7 @@ class HasMetadataTest {
         }
 
         @Override
-        public HasMetadata withMetadata(ObjectMeta objectMeta) {
+        public HasMetadata withMetadata(ObjectMeta metadata) {
             return null;
         }
 

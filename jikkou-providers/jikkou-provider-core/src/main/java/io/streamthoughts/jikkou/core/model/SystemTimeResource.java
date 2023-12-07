@@ -95,7 +95,7 @@ public record SystemTimeResource(@JsonProperty("kind") String kind,
      * {@inheritDoc}
      **/
     @Override
-    public HasMetadata withMetadata(ObjectMeta objectMeta) {
+    public HasMetadata withMetadata(ObjectMeta metadata) {
         return null;
     }
 }

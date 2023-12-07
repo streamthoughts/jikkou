@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderOptions;
 import io.streamthoughts.jikkou.core.io.reader.TemplateResourceReader;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.models.generics.GenericResource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ class JinjaResourceTemplateRendererTest {
 
         Map<String, Object> mapValues = OBJECT_MAPPER.readValue(values, Map.class);
         ResourceReaderOptions options = new ResourceReaderOptions()
-                .withValues(NamedValue.setOf(mapValues));
+                .withValues(NamedValueSet.setOf(mapValues));
 
         try (var reader = new TemplateResourceReader(
                 new JinjaResourceTemplateRenderer(),

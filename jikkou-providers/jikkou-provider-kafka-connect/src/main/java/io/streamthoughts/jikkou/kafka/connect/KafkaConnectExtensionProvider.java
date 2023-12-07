@@ -22,8 +22,8 @@ import io.streamthoughts.jikkou.kafka.connect.action.KafkaConnectRestartConnecto
 import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
 import io.streamthoughts.jikkou.kafka.connect.health.KafkaConnectHealthIndicator;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import io.streamthoughts.jikkou.kafka.connect.reconcilier.KafkaConnectorCollector;
-import io.streamthoughts.jikkou.kafka.connect.reconcilier.KafkaConnectorController;
+import io.streamthoughts.jikkou.kafka.connect.reconciler.KafkaConnectorCollector;
+import io.streamthoughts.jikkou.kafka.connect.reconciler.KafkaConnectorController;
 import io.streamthoughts.jikkou.kafka.connect.transform.KafkaConnectorResourceTransformation;
 import io.streamthoughts.jikkou.kafka.connect.validation.KafkaConnectorResourceValidation;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;

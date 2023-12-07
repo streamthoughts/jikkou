@@ -71,10 +71,10 @@ public final class SubjectSchemaReference {
     /** {@inheritDoc} **/
     @Override
     public String toString() {
-        return "SubjectSchemaReference{" +
-                "name='" + name + '\'' +
-                ", subject='" + subject + '\'' +
+        return "SubjectSchemaReference[" +
+                "name=" + name +
+                ", subject='" + subject +
                 ", version=" + version +
-                '}';
+                ']';
     }
 }

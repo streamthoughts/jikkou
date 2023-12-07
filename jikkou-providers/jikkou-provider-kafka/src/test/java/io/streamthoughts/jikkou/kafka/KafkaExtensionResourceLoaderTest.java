@@ -39,6 +39,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -86,7 +87,7 @@ class KafkaExtensionResourceLoaderTest {
                         .withApiVersion(Resource.getApiVersion(ConfigMap.class))
                         .withKind(Resource.getKind(ConfigMap.class))
                         .withMetadata(ObjectMeta.builder().withName("test").build())
-                        .withData(Configs.of("retention.ms", 10000))
+                        .withData(Map.of("retention.ms", 10000))
                         .build(),
                 configMap
         );

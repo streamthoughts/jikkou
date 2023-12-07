@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class ConfigMapsTransformationTest {
                     .builder()
                     .withName(TEST_CONFIG_MAP_NAME)
                     .build())
-            .withData(Configs.of(TEST_CONFIG_K1, "v1"))
+            .withData(Map.of(TEST_CONFIG_K1, "v1"))
             .build();
 
 
@@ -53,7 +54,7 @@ class ConfigMapsTransformationTest {
 
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new DefaultResourceListObject(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
+                .transform(resource, new DefaultResourceListObject<>(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
                 .get();
 
         // Then
@@ -71,7 +72,7 @@ class ConfigMapsTransformationTest {
 
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new DefaultResourceListObject(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
+                .transform(resource, new DefaultResourceListObject<>(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
                 .get();
 
         // Then
@@ -90,7 +91,7 @@ class ConfigMapsTransformationTest {
         ));
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new DefaultResourceListObject(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
+                .transform(resource, new DefaultResourceListObject<>(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
                 .get();
 
         // Then
@@ -145,7 +146,7 @@ class ConfigMapsTransformationTest {
         }
 
         @Override
-        public HasMetadata withMetadata(ObjectMeta objectMeta) {
+        public HasMetadata withMetadata(ObjectMeta metadata) {
             return null;
         }
 

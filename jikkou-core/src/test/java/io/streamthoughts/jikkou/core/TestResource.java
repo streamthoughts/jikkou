@@ -32,8 +32,8 @@ public class TestResource implements HasMetadata {
     }
     /** {@inheritDoc} **/
     @Override
-    public TestResource withMetadata(ObjectMeta objectMeta) {
-        this.meta = objectMeta;
+    public TestResource withMetadata(ObjectMeta metadata) {
+        this.meta = metadata;
         return this;
     }
 }

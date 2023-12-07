@@ -98,7 +98,7 @@
             "all-args-constructor": false,
             "type": "string"
           },
-          "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs"
+          "existingJavaType" : "java.util.Map<String,Object>"
         },
         "state": {
           "type" : "string",

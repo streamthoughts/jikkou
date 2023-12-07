@@ -15,166 +15,91 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChangeComputer;
-import io.streamthoughts.jikkou.core.reconcilier.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.reconciler.Change;
+import io.streamthoughts.jikkou.core.reconciler.change.ChangeComputer;
+import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
-public class KafkaConnectorChangeComputer extends ResourceChangeComputer<V1KafkaConnector, V1KafkaConnector, KafkaConnectorChange> {
+public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<String, V1KafkaConnector, ResourceChange> {
+
+    public static final String DATA_CONNECTOR_CLASS = "connectorClass";
+    public static final String DATA_TASKS_MAX = "tasksMax";
+    public static final String DATA_STATE = "state";
+    public static final String DATA_CONFIG_PREFIX = "config.";
 
     /**
      * Creates a new {@link ResourceChangeComputer} instance.
      */
     public KafkaConnectorChangeComputer() {
-        super(
-                ResourceChangeComputer.metadataNameKeyMapper(),
-                ResourceChangeComputer.identityChangeValueMapper(),
-                false
-        );
+        super(object -> object.getMetadata().getName(), new KafkaConnectorChangeFactory());
     }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<KafkaConnectorChange> buildChangeForUpdating(V1KafkaConnector before,
-                                                             V1KafkaConnector after) {
-        return List.of(buildChange(before, after));
-    }
+    public static class KafkaConnectorChangeFactory extends ResourceChangeFactory<String, V1KafkaConnector, ResourceChange> {
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<KafkaConnectorChange> buildChangeForNone(V1KafkaConnector before,
-                                                         V1KafkaConnector after) {
-        return List.of(buildChange(before, after));
-    }
+        @Override
+        public ResourceChange createChangeForCreate(String key, V1KafkaConnector after) {
+            return createChangeForUpdate(key, null, after);
+        }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<KafkaConnectorChange> buildChangeForDeleting(V1KafkaConnector before) {
-        // Compute change for 'connector.class'
-        ValueChange<String> connectClassChange = ValueChange
-                .withBeforeValue(before.getSpec().getConnectorClass());
+        @Override
+        public ResourceChange createChangeForDelete(String key, V1KafkaConnector before) {
+            return createChangeForUpdate(key, before, null);
+        }
 
-        // Compute change for 'tasks.max'
-        ValueChange<Integer> tasksMaxChange = ValueChange
-                .withBeforeValue(before.getSpec().getTasksMax());
-
-        // Compute change for 'config'
-        List<ConfigEntryChange> configChanges =  before.getSpec().getConfig()
-                .values()
-                .stream()
-                .map(config -> new ConfigEntryChange(config.getName(), ValueChange.withBeforeValue(config.value())))
-                .toList();
-
-        // Compute change for 'state'
-        ValueChange<KafkaConnectorState> stateChange = ValueChange
-                .withBeforeValue(before.getSpec().getState());
-
-        return List.of(new KafkaConnectorChange(
-                ChangeType.DELETE,
-                before.getMetadata().getName(),
-                connectClassChange,
-                tasksMaxChange,
-                stateChange,
-                configChanges
-        ));
-    }
-
-    @NotNull
-    private static KafkaConnectorChange buildChange(V1KafkaConnector before,
+        @Override
+        public ResourceChange createChangeForUpdate(String key,
+                                                    V1KafkaConnector before,
                                                     V1KafkaConnector after) {
-        // Compute change for 'config'
-        List<ConfigEntryChange> configChanges = new ConfigEntryChangeComputer(true)
-                .computeChanges(
-                        before.getSpec().getConfig(),
-                        after.getSpec().getConfig()
-                ).stream()
-                .map(HasMetadataChange::getChange)
-                .toList();
-
-        // Compute change for 'connector.class'
-        ValueChange<String> connectClassChange = ValueChange
-                .with(before.getSpec().getConnectorClass(), after.getSpec().getConnectorClass());
-
-        // Compute change for 'tasks.max'
-        ValueChange<Integer> tasksMaxChange = ValueChange
-                .with(before.getSpec().getTasksMax(), after.getSpec().getTasksMax());
-
-        // Compute change for 'state'
-        KafkaConnectorState beforeState = before.getSpec().getState();
-
-        // 'state' is optional and can be empty.
-        KafkaConnectorState afterState = Optional.ofNullable(after.getSpec().getState())
-                .orElse(KafkaConnectorState.RUNNING);
-
-        ValueChange<KafkaConnectorState> stateChange = ValueChange
-                .with(beforeState, afterState);
-
-        List<Change> allChanges = new ArrayList<>(configChanges);
-        allChanges.add(connectClassChange);
-        allChanges.add(tasksMaxChange);
-        allChanges.add(stateChange);
-        ChangeType changeType = Change.computeChangeTypeFrom(allChanges);
-
-        return new KafkaConnectorChange(
-                changeType,
-                after.getMetadata().getName(),
-                connectClassChange,
-                tasksMaxChange,
-                stateChange,
-                configChanges
-        );
+            List<StateChange> changes = new ArrayList<>();
+            // Compute change for 'connector.class'
+            changes.add(StateChange.with(DATA_CONNECTOR_CLASS, getConnectorClass(before), getConnectorClass(after)));
+            // Compute change for 'tasks.max'
+            changes.add(StateChange.with(DATA_TASKS_MAX, getTasksMax(before), getTasksMax(after)));
+            // Compute change for 'state'
+            changes.add(StateChange.with(DATA_STATE, getState(before), getState(after)));
+            // Compute change for 'config'
+            changes.addAll(ChangeComputer.computeChanges(getConfig(before), getConfig(after), true)
+                    .stream()
+                    .map(change -> change.withName(DATA_CONFIG_PREFIX + change.getName()))
+                    .toList()
+            );
+            return GenericResourceChange
+                    .builder(V1KafkaConnector.class)
+                    .withMetadata(after.getMetadata())
+                    .withSpec(ResourceChangeSpec
+                            .builder()
+                            .withOperation(Change.computeOperation(changes))
+                            .withChanges(changes)
+                            .build()
+                    )
+                    .build();
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<KafkaConnectorChange> buildChangeForCreating(V1KafkaConnector after) {
+    private static Map<String, Object> getConfig(V1KafkaConnector connector) {
+        return Optional.ofNullable(connector).map(o -> o.getSpec().getConfig()).orElse(Collections.emptyMap());
+    }
 
-        final V1KafkaConnectorSpec spec = after.getSpec();
+    private static KafkaConnectorState getState(V1KafkaConnector connector) {
+        return Optional.ofNullable(connector).map(o -> o.getSpec().getState()).orElse(null);
+    }
 
-        // Compute change for connector 'config'
-        List<ConfigEntryChange> configChanges =  spec.getConfig()
-                .values()
-                .stream()
-                .map(config -> new ConfigEntryChange(config.getName(), ValueChange.withAfterValue(config.value())))
-                .toList();
+    private static Integer getTasksMax(V1KafkaConnector connector) {
+        return Optional.ofNullable(connector).map(o -> o.getSpec().getTasksMax()).orElse(null);
+    }
 
-        // Compute change for 'connector.class'
-        ValueChange<String> connectClassChange = ValueChange
-                .withAfterValue(spec.getConnectorClass());
-
-        // Compute change for 'tasks.max'
-        ValueChange<Integer> tasksMaxChange = ValueChange
-                .withAfterValue(spec.getTasksMax());
-
-        // Compute change for 'state'
-        ValueChange<KafkaConnectorState> stateChange = ValueChange
-                .withAfterValue(spec.getState());
-
-        return List.of(new KafkaConnectorChange(
-                ChangeType.ADD,
-                after.getMetadata().getName(),
-                connectClassChange,
-                tasksMaxChange,
-                stateChange,
-                configChanges
-        ));
+    private static String getConnectorClass(V1KafkaConnector connector) {
+        return Optional.ofNullable(connector).map(o -> o.getSpec().getConnectorClass()).orElse(null);
     }
 }

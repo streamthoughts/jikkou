@@ -15,8 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.reporter;
 
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +39,7 @@ public final class CombineChangeReporter implements ChangeReporter {
 
     /** {@inheritDoc} **/
     @Override
-    public void report(List<ChangeResult<Change>> results) {
+    public void report(List<ChangeResult> results) {
         for (ChangeReporter reporter : reporters) {
             try {
                 reporter.report(results);

@@ -39,11 +39,10 @@ import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
@@ -226,10 +225,10 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
 
-        List<ChangeResult<?>> changes = new ArrayList<>();
+        List<ChangeResult> changes = new ArrayList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {
             ApiChangeResultList result = apiClient.reconcile(entry.getKey(), entry.getValue(), mode, context);
-            changes.addAll(result.getChanges());
+            changes.addAll(result.results());
         }
         return new ApiChangeResultList(context.isDryRun(), CollectionUtils.cast(changes));
     }
@@ -299,7 +298,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
 
-        List<ResourceListObject<HasMetadataChange<Change>>> changes = new ArrayList<>();
+        List<ResourceChange> changes = new ArrayList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {
             ApiResourceChangeList result = apiClient.getDiff(entry.getKey(), entry.getValue(), context);
             changes.addAll(result.changes());

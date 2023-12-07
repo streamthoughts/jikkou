@@ -16,8 +16,7 @@
 package io.streamthoughts.jikkou.client.printer;
 
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import java.util.List;
 
 public interface Printer {
@@ -30,7 +29,7 @@ public interface Printer {
      */
     int print(ApiChangeResultList result, long executionTimeMs);
 
-    static int getNumberOfFailedChange(final List<ChangeResult<Change>> results) {
+    static int getNumberOfFailedChange(final List<ChangeResult> results) {
         return (int) results.stream()
                 .filter(ChangeResult::isFailed)
                 .count();

@@ -123,8 +123,8 @@ public class GenericResource implements HasMetadata {
      * (Required)
      */
     @Override
-    public HasMetadata withMetadata(final ObjectMeta objectMeta) {
-        return new GenericResource(apiVersion, kind, objectMeta, template);
+    public HasMetadata withMetadata(final ObjectMeta metadata) {
+        return new GenericResource(apiVersion, kind, metadata, template);
     }
 
     @JsonProperty("template")

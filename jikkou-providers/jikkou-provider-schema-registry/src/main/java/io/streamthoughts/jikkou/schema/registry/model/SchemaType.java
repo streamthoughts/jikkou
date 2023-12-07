@@ -16,21 +16,17 @@
 package io.streamthoughts.jikkou.schema.registry.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.Arrays;
-import java.util.Locale;
+import io.streamthoughts.jikkou.common.utils.Enums;
 import org.jetbrains.annotations.Nullable;
 
 public enum SchemaType {
 
-    AVRO, PROTOBUF, JSON, INVALID;
+    AVRO, PROTOBUF, JSON;
 
     @JsonCreator
     public static SchemaType getForNameIgnoreCase(final @Nullable String str) {
         if (str == null) return AVRO;
-        return Arrays.stream(SchemaType.values())
-                .filter(e -> e.name().equals(str.toUpperCase(Locale.ROOT)))
-                .findFirst()
-                .orElse(SchemaType.INVALID);
+        return Enums.getForNameIgnoreCase(str, SchemaType.class);
     }
 
     public static SchemaType defaultType() {

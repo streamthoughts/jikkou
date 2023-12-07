@@ -16,7 +16,6 @@
 package io.streamthoughts.jikkou.kafka.connect.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
@@ -34,11 +33,11 @@ class KafkaConnectorResourceTransformationTest {
                 .builder()
                 .withSpec(V1KafkaConnectorSpec
                         .builder()
-                        .withConfig(Configs.of(Map.of(
+                        .withConfig(Map.of(
                                 "connector.class", "???",
                                 "tasks.max", "???",
                                 "name", "???"
-                        )))
+                        ))
                         .build()
                 )
                 .build();

@@ -16,6 +16,7 @@
 package io.streamthoughts.jikkou.core.io.reader;
 
 import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 
 /**
  * An immutable class to represents options to be passed to a resource reader.
@@ -27,15 +28,15 @@ public class ResourceReaderOptions {
     public static final String DEFAULT_PATTERN = "**/*.{yaml,yml,tpl}";
 
     private final String pattern;
-    private final NamedValue.Set values;
-    private final NamedValue.Set labels;
+    private final NamedValueSet values;
+    private final NamedValueSet labels;
 
     public ResourceReaderOptions() {
-        this(NamedValue.emptySet(), NamedValue.emptySet(), DEFAULT_PATTERN);
+        this(NamedValueSet.emptySet(), NamedValueSet.emptySet(), DEFAULT_PATTERN);
     }
 
-    private ResourceReaderOptions(final NamedValue.Set values,
-                                  final NamedValue.Set labels,
+    private ResourceReaderOptions(final NamedValueSet values,
+                                  final NamedValueSet labels,
                                   final String pattern) {
         this.values = values;
         this.labels = labels;
@@ -66,11 +67,11 @@ public class ResourceReaderOptions {
         return pattern;
     }
 
-    public NamedValue.Set values() {
+    public NamedValueSet values() {
         return values;
     }
 
-    public NamedValue.Set labels() {
+    public NamedValueSet labels() {
         return labels;
     }
 

@@ -28,9 +28,8 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
-import io.streamthoughts.jikkou.core.models.NamedValue;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
@@ -59,7 +58,7 @@ class ChangeReporterApiConfiguratorTest {
         DefaultApi.Builder builder = DefaultApi.builder(factory, new DefaultResourceRegistry());
         // When
         Map<Object, Object> extensionConfig = Collections.emptyMap();
-        Map<String, Object> extensionConfigEntry = NamedValue.emptySet()
+        Map<String, Object> extensionConfigEntry = NamedValueSet.emptySet()
                 .with(NAME_CONFIG.asValue("test"))
                 .with(TYPE_CONFIG.asValue(TestReporter.class.getName()))
                 .with(PRIORITY_CONFIG.asValue(1))
@@ -79,7 +78,7 @@ class ChangeReporterApiConfiguratorTest {
 
     public static final class TestReporter implements ChangeReporter {
         @Override
-        public void report(List<ChangeResult<Change>> results) {
+        public void report(List<ChangeResult> results) {
 
         }
     }

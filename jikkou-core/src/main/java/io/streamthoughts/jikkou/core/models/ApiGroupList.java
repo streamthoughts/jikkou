@@ -25,8 +25,8 @@ import java.beans.ConstructorProperties;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
-@ApiVersion("v1")
-@Kind("ApiGroupList")
+@ApiVersion(ApiGroupList.API_VERSION)
+@Kind(ApiGroupList.KIND)
 @JsonPropertyOrder({
         "kind",
         "apiVersion",
@@ -38,6 +38,9 @@ public record ApiGroupList(@JsonProperty("kind") @NotNull String kind,
                            @JsonProperty("apiVersion") @NotNull String apiVersion,
                            @JsonProperty("groups") @NotNull List<ApiGroup> groups) implements Resource {
 
+    public static final String API_VERSION = "v1";
+    public static final String KIND = "ApiGroupList";
+
     @ConstructorProperties({
             "kind",
             "apiVersion",
@@ -47,8 +50,8 @@ public record ApiGroupList(@JsonProperty("kind") @NotNull String kind,
 
     public ApiGroupList(@NotNull List<ApiGroup> groups) {
         this(
-                Resource.getKind(ApiGroupList.class),
-                Resource.getApiVersion(ApiGroupList.class),
+                KIND,
+                API_VERSION,
                 groups
         );
     }

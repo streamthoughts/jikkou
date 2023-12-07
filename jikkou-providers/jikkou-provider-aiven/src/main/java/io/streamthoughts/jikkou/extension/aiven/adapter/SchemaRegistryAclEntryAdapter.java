@@ -24,14 +24,16 @@ import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec;
 import java.util.List;
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class SchemaRegistryAclEntryAdapter {
 
     public static final @Nullable String NO_ENTRY_ID = null;
 
-    public static SchemaRegistryAclEntry map(final @NotNull V1SchemaRegistryAclEntry entry, @Nullable String id) {
+    public static SchemaRegistryAclEntry map(final V1SchemaRegistryAclEntry entry,
+                                             String id) {
+        if (entry == null) return null;
+
         V1SchemaRegistryAclEntrySpec spec = entry.getSpec();
         if (id == null) {
             id = entry.optionalMetadata()
@@ -48,18 +50,19 @@ public final class SchemaRegistryAclEntryAdapter {
         );
     }
 
-    public static SchemaRegistryAclEntry map(final @NotNull V1SchemaRegistryAclEntry entry) {
+    public static SchemaRegistryAclEntry map(final V1SchemaRegistryAclEntry entry) {
         return map(entry, NO_ENTRY_ID);
     }
 
-    public static List<V1SchemaRegistryAclEntry> map(final @NotNull List<SchemaRegistryAclEntry> entries) {
-        return  entries
+    public static List<V1SchemaRegistryAclEntry> map(final List<SchemaRegistryAclEntry> entries) {
+        return entries
                 .stream()
                 .map(SchemaRegistryAclEntryAdapter::map)
                 .toList();
     }
 
-    public static V1SchemaRegistryAclEntry map(final @NotNull SchemaRegistryAclEntry entry) {
+    public static V1SchemaRegistryAclEntry map(final SchemaRegistryAclEntry entry) {
+        if (entry == null) return null;
         ObjectMeta.ObjectMetaBuilder objectMetaBuilder = ObjectMeta.builder();
         if (entry.id() != null) {
             objectMetaBuilder = objectMetaBuilder
@@ -77,7 +80,7 @@ public final class SchemaRegistryAclEntryAdapter {
                 .build();
     }
 
-    static class AivenPermissionMapper {
+    public static class AivenPermissionMapper {
 
         public static final String SCHEMA_REGISTRY_WRITE = "schema_registry_write";
         public static final String SCHEMA_REGISTRY_READ = "schema_registry_read";

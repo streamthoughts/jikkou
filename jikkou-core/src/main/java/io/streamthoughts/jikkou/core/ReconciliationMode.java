@@ -16,8 +16,8 @@
 package io.streamthoughts.jikkou.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
@@ -31,22 +31,22 @@ public enum ReconciliationMode {
     /**
      * Only changes that create new resource objects on the system will be applied.
      */
-    CREATE(ChangeType.ADD),
+    CREATE(Operation.CREATE),
 
     /**
      * Only changes that delete an existing resource objects on your system will be applied.
      */
-    DELETE(ChangeType.DELETE),
+    DELETE(Operation.DELETE),
 
     /**
      * Only changes that create or update existing resource objects on the system will be applied.
      */
-    UPDATE(ChangeType.ADD, ChangeType.UPDATE),
+    UPDATE(Operation.CREATE, Operation.UPDATE),
 
     /**
      * Apply all reconciliation changes
      */
-    FULL(ChangeType.ADD, ChangeType.UPDATE, ChangeType.DELETE);
+    FULL(Operation.CREATE, Operation.UPDATE, Operation.DELETE);
 
     @JsonCreator
     public static ReconciliationMode getForNameIgnoreCase(final @Nullable String str) {
@@ -60,24 +60,24 @@ public enum ReconciliationMode {
     /**
      * Set of change-type supported for this reconciliation mode.
      */
-    private final Set<ChangeType> changeTypes;
+    private final Set<Operation> operations;
 
     /**
      * Creates a new {@link ReconciliationMode} instance.
      *
-     * @param changeTypes {@link #changeTypes}
+     * @param operations {@link #operations}
      */
-    ReconciliationMode(ChangeType... changeTypes) {
-        this(Set.of(changeTypes));
+    ReconciliationMode(Operation... operations) {
+        this(Set.of(operations));
     }
 
     /**
      * Creates a new {@link ReconciliationMode} instance.
      *
-     * @param changeTypes {@link #changeTypes}
+     * @param operations {@link #operations}
      */
-    ReconciliationMode(Set<ChangeType> changeTypes) {
-        this.changeTypes = changeTypes;
+    ReconciliationMode(Set<Operation> operations) {
+        this.operations = operations;
     }
 
     /**
@@ -86,8 +86,8 @@ public enum ReconciliationMode {
      * @param change the change to test.
      * @return {@code true} if the change is supported, otherwise {@code false}.
      */
-    public boolean isSupported(HasMetadataChange<?> change) {
-        ChangeType changeType = change.getChange().operation();
-        return changeType == ChangeType.NONE || changeTypes.contains(changeType);
+    public boolean isSupported(ResourceChange change) {
+        Operation operation = change.getSpec().getOp();
+        return operation == Operation.NONE || operations.contains(operation);
     }
 }

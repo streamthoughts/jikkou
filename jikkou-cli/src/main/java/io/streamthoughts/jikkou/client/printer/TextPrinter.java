@@ -21,10 +21,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import java.io.PrintStream;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +59,7 @@ public class TextPrinter implements Printer {
         int changed = 0;
         int deleted = 0;
         int failed = 0;
-        for (ChangeResult<Change> change : result.getChanges()) {
+        for (ChangeResult change : result.results()) {
             final String json;
             try {
                 json = Jackson.JSON_OBJECT_MAPPER
@@ -71,10 +70,10 @@ public class TextPrinter implements Printer {
             }
 
             String color = Ansi.Color.WHITE;
-            ChangeType changeType = change.data().getChange().operation();
+            Operation operation = change.change().getSpec().getOp();
             if (change.isChanged()) {
-                switch (changeType) {
-                    case ADD -> {
+                switch (operation) {
+                    case CREATE -> {
                         color = Ansi.Color.GREEN;
                         created++;
                     }
@@ -94,23 +93,23 @@ public class TextPrinter implements Printer {
                 ok++;
             }
 
-            TextPrinter.printTask(change.data().getChange().operation(), change.description(), change.status().name());
+            TextPrinter.printTask(change.change().getSpec().getOp(), change.description(), change.status().name());
             if (printChangeDetail) {
                 TextPrinter.PS.printf("%s%s%n", isColor() ? color : "", json);
             }
         }
 
-        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", isColor() ? Ansi.Color.WHITE : "", formatExecutionTime(executionTimeMs), result.isDryRun() ? "(DRY_RUN)" : "");
+        TextPrinter.PS.printf("%sEXECUTION in %s %s%n", isColor() ? Ansi.Color.WHITE : "", formatExecutionTime(executionTimeMs), result.dryRun() ? "(DRY_RUN)" : "");
         TextPrinter.PS.printf("%sok : %d, created : %d, altered : %d, deleted : %d failed : %d%n", isColor() ? Ansi.Color.WHITE : "", ok, created, changed, deleted, failed);
         return failed > 0 ? 1 : 0;
     }
 
-    private static void printTask(final ChangeType changeType,
-                                  final ChangeDescription description,
+    private static void printTask(final Operation operation,
+                                  final TextDescription description,
                                   final String status) {
-        String text = Optional.ofNullable(description).map(ChangeDescription::textual).orElse("");
+        String text = Optional.ofNullable(description).map(TextDescription::textual).orElse("");
         String padding = (text.length() < PADDING.length()) ? PADDING.substring(text.length()) : "";
-        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? Ansi.Color.WHITE : "", changeType, text, status, padding);
+        PS.printf("%sTASK [%s] %s - %s %s%n", isColor() ? Ansi.Color.WHITE : "", operation, text, status, padding);
     }
 
     private String formatExecutionTime(long execTimeInMillis) {

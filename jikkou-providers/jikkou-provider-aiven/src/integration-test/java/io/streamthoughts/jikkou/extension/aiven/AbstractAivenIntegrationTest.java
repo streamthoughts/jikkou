@@ -20,8 +20,8 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import java.io.IOException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 @Tag("integration")
@@ -31,8 +31,8 @@ public class AbstractAivenIntegrationTest {
 
     static AivenApiClientConfig AIVEN_API_CONFIG;
 
-    @BeforeAll
-    public static void beforeAll() throws IOException {
+    @BeforeEach
+    public void beforeAll() throws IOException {
         SERVER = new MockWebServer();
         SERVER.start();
         Configuration configuration = new Configuration
@@ -46,8 +46,8 @@ public class AbstractAivenIntegrationTest {
         AIVEN_API_CONFIG = new AivenApiClientConfig(configuration);
     }
 
-    @AfterAll
-    static void tearDown() throws IOException {
+    @AfterEach
+    public void tearDown() throws IOException {
         SERVER.shutdown();
     }
 

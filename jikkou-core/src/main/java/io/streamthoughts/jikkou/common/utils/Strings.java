@@ -53,4 +53,8 @@ public final class Strings {
         }
         return s;
     }
+
+    public static String prunePrefix(final String s, final String prefix) {
+        return s.replaceFirst(prefix, "");
+    }
 }

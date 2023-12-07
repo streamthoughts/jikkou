@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import java.beans.ConstructorProperties;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -29,9 +29,9 @@ import javax.validation.constraints.NotNull;
 /**
  * ApiResourceChangeList.
  *
- * @param kind          The resource Kind.
- * @param apiVersion    The API version.
- * @param changes       The changes.
+ * @param kind       The resource Kind.
+ * @param apiVersion The API version.
+ * @param changes    The changes.
  */
 @ApiVersion("core.jikkou.io/v1")
 @Kind("ApiResourceChangeList")
@@ -44,7 +44,7 @@ import javax.validation.constraints.NotNull;
 @JsonDeserialize
 public record ApiResourceChangeList(@JsonProperty("kind") @NotNull String kind,
                                     @JsonProperty("apiVersion") @NotNull String apiVersion,
-                                    @JsonProperty("changes") @NotNull List<ResourceListObject<HasMetadataChange<Change>>> changes) implements Resource {
+                                    @JsonProperty("changes") @NotNull List<ResourceChange> changes) implements Resource {
 
     /**
      * Creates a new {@link ApiResourceChangeList} instance.
@@ -54,9 +54,10 @@ public record ApiResourceChangeList(@JsonProperty("kind") @NotNull String kind,
             "apiVersion",
             "changes"
     })
-    public ApiResourceChangeList {}
+    public ApiResourceChangeList {
+    }
 
-    public ApiResourceChangeList(@NotNull List<ResourceListObject<HasMetadataChange<Change>>> changes) {
+    public ApiResourceChangeList(@NotNull List<ResourceChange> changes) {
         this(
                 Resource.getKind(ApiResourceChangeList.class),
                 Resource.getApiVersion(ApiResourceChangeList.class),

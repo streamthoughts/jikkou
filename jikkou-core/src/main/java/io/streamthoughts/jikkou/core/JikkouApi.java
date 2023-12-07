@@ -40,7 +40,7 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.reconcilier.Collector;
+import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import java.time.Duration;

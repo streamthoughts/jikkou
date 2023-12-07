@@ -16,148 +16,13 @@
 package io.streamthoughts.jikkou.core.models;
 
 import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Represents a named value.
  */
-public final class NamedValue {
-
-    /**
-     * Create an empty set of named values.
-     *
-     * @return the named value set; never null
-     */
-    public static Set emptySet() {
-        return new Set();
-    }
-
-    /**
-     * Create a set of named values.
-     *
-     * @param values the named values to include
-     * @return the named value set; never null
-     */
-    public static Set setOf(Map<String, Object> values) {
-        return setOf(values.entrySet().stream().map(e -> new NamedValue(e.getKey(), e.getValue())).toList());
-    }
-
-    /**
-     * Create a set of named values.
-     *
-     * @param values the named values to include
-     * @return the named value set; never null
-     */
-    public static Set setOf(NamedValue... values) {
-        return new Set().with(values);
-    }
-
-    /**
-     * Create a set of named values.
-     *
-     * @param values the values to include
-     * @return the named value set; never null
-     */
-    public static Set setOf(Iterable<NamedValue> values) {
-        return new Set().with(values);
-    }
-
-    /**
-     * A set of NamedValue
-     */
-    public static class Set implements Iterable<NamedValue> {
-
-        private final Map<String, NamedValue> valuesByName;
-
-        private Set() {
-            this.valuesByName = Collections.emptyMap();
-        }
-
-        private Set(final Collection<NamedValue> values) {
-            Map<String, NamedValue> all = new LinkedHashMap<>();
-            values.forEach(field -> {
-                if (field != null) {
-                    all.put(field.getName(), field);
-                }
-            });
-            this.valuesByName = Collections.unmodifiableMap(all);
-        }
-
-        public Set with(NamedValue... values) {
-            if (values.length == 0) {
-                return this;
-            }
-            LinkedHashSet<NamedValue> all = new LinkedHashSet<>(this.valuesByName.values());
-            for (NamedValue f : values) {
-                if (f != null) {
-                    all.add(f);
-                }
-            }
-            return new Set(all);
-        }
-
-        public Set with(final Iterable<NamedValue> fields) {
-            LinkedHashSet<NamedValue> all = new LinkedHashSet<>(this.valuesByName.values());
-            fields.forEach(field -> {
-                if (field != null) {
-                    all.add(field);
-                }
-            });
-            return new Set(all);
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public Iterator<NamedValue> iterator() {
-            return valuesByName.values().iterator();
-        }
-
-        public Map<String, Object> asMap() {
-            return valuesByName.values()
-                    .stream()
-                    .collect(Collectors.toMap(NamedValue::getName, NamedValue::unwrap));
-        }
-
-        public boolean isEmpty() {
-            return valuesByName.isEmpty();
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Set values = (Set) o;
-            return Objects.equals(valuesByName, values.valuesByName);
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public int hashCode() {
-            return Objects.hash(valuesByName);
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public String toString() {
-            return "Set" + valuesByName.values();
-        }
-    }
+public class NamedValue implements Nameable<NamedValue> {
 
     public final Object value;
     public final String name;
@@ -174,15 +39,19 @@ public final class NamedValue {
         this.value = Objects.requireNonNull(value, "value should not be null");
     }
 
+    /** {@inheritDoc} **/
+    @Override
     public String getName() {
         return name;
     }
 
-    public Value getValue() {
-        return new Value(value);
+    /** {@inheritDoc} **/
+    @Override
+    public NamedValue withName(String name) {
+        return new NamedValue(name, value);
     }
 
-    public Object unwrap() {
+    public Object getValue() {
         return value;
     }
 
