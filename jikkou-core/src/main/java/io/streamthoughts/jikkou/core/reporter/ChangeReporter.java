@@ -19,8 +19,7 @@ import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import java.util.List;
 
 /**
@@ -35,6 +34,6 @@ public interface ChangeReporter extends Extension {
      *
      * @param results the change-results to be reported.
      */
-    void report(final List<ChangeResult<Change>> results);
+    void report(final List<ChangeResult> results);
 
 }

@@ -27,8 +27,9 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * List of resource objects.
  *
- * @param <E>
+ * @param <E> The type of resource.
  */
 @Reflectable
 @JsonDeserialize(as = GenericResourceListObject.class)

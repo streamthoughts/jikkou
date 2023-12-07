@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 public record ApiActionResultSet<T extends HasMetadata>(@JsonProperty("kind") String kind,
                                                         @JsonProperty("apiVersion") String apiVersion,
                                                         @JsonProperty("metadata") ObjectMeta metadata,
-                                                        @JsonProperty("results") List<ExecutionResult<T>> results) {
+                                                        @JsonProperty("results") List<ExecutionResult<T>> results) implements Resource {
 
     public static final String KIND = "ApiActionResultSet";
     public static final String API_VERSION = "core.jikkou.io/v1";

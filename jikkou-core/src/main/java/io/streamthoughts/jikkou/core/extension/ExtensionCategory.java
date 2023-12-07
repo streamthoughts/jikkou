@@ -31,7 +31,7 @@ public enum ExtensionCategory {
      */
     TRANSFORMATION,
     /**
-     * For any class that implements {@link io.streamthoughts.jikkou.core.reconcilier.Controller}.
+     * For any class that implements {@link io.streamthoughts.jikkou.core.reconciler.Controller}.
      */
     CONTROLLER,
     /**
@@ -39,7 +39,7 @@ public enum ExtensionCategory {
      */
     CONVERTER,
     /**
-     * For any class that implements {@link io.streamthoughts.jikkou.core.reconcilier.Collector}.
+     * For any class that implements {@link io.streamthoughts.jikkou.core.reconciler.Collector}.
      */
     COLLECTOR,
     /**

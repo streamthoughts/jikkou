@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
         "labels",
         "annotations"
 })
-public class ObjectMeta implements Serializable {
+public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
 
     private final String name;
 
@@ -99,6 +99,12 @@ public class ObjectMeta implements Serializable {
         return name;
     }
 
+    /** {@inheritDoc} **/
+    @Override
+    public ObjectMeta withName(String name) {
+        return new ObjectMeta(name, labels, annotations);
+    }
+
     /**
      * Gets the labels.
      *
@@ -127,7 +133,7 @@ public class ObjectMeta implements Serializable {
      */
     public NamedValue getLabelByKey(final String key) {
         return findLabelByKey(key)
-                .orElseThrow(() -> new NoSuchElementException("no label for key '" + key + "'"));
+                .orElseThrow(() -> new NoSuchElementException("Cannot found label for key '" + key + "'"));
     }
 
     /**

@@ -15,14 +15,15 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 
 /**
- * This class provides a textual description of {@link KafkaConnectorChange}.
+ * KafkaConnectorChangeDescription.
  */
-public final class KafkaConnectorChangeDescription implements ChangeDescription {
+public final class KafkaConnectorChangeDescription implements TextDescription {
 
-    private final KafkaConnectorChange change;
+    private final ResourceChange change;
     private final String cluster;
 
     /**
@@ -32,7 +33,7 @@ public final class KafkaConnectorChangeDescription implements ChangeDescription 
      * @param change  the data change.
      */
     public KafkaConnectorChangeDescription(final String cluster,
-                                           final KafkaConnectorChange change) {
+                                           final ResourceChange change) {
         this.change = change;
         this.cluster = cluster;
     }
@@ -43,8 +44,8 @@ public final class KafkaConnectorChangeDescription implements ChangeDescription 
     @Override
     public String textual() {
         return String.format("%s connector '%s' on Kafka Connect cluster '%s'",
-                ChangeDescription.humanize(change.operation()),
-                change.name(),
+                change.getSpec().getOp().humanize(),
+                change.getMetadata().getName(),
                 cluster
         );
     }

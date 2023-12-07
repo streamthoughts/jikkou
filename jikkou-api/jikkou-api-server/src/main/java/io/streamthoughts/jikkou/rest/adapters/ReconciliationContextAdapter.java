@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.rest.adapters;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
@@ -48,8 +48,8 @@ public final class ReconciliationContextAdapter {
                 .dryRun(dryRun)
                 .configuration(Configuration.from(params.options()))
                 .selector(selector)
-                .annotations(NamedValue.setOf(params.annotations()))
-                .labels(NamedValue.setOf(params.labels()))
+                .annotations(NamedValueSet.setOf(params.annotations()))
+                .labels(NamedValueSet.setOf(params.labels()))
                 .build();
     }
 

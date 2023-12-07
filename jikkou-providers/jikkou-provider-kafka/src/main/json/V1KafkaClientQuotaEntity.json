@@ -1,17 +1,21 @@
 {
   "type": "object",
+  "title": "V1KafkaClientQuotaEntity",
   "description": "A secure logical group of clients that share both user principal and client ID.",
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,
     "all-args-constructor": false
   },
+  "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaEntity",
   "properties": {
     "user": {
-      "type": "string"
+      "type": "string",
+      "description": "The user principal."
     },
     "clientId": {
-      "type": "string"
+      "type": "string",
+      "description": "The client-id."
     }
   }
 }

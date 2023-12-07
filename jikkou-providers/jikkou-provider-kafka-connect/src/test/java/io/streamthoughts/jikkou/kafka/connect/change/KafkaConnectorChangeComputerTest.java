@@ -15,24 +15,24 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import io.streamthoughts.jikkou.core.models.Configs;
-import io.streamthoughts.jikkou.core.models.DefaultResourceChange;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChange;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 class KafkaConnectorChangeComputerTest {
+
+    public static final String TEST_CONNECTOR_NAME = "test";
 
     @Test
     void shouldComputeChangeForNewConnector() {
@@ -41,15 +41,15 @@ class KafkaConnectorChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test")
-                        .withLabel("kafka.jikkou.io/connect-cluster", "test")
+                        .withName(TEST_CONNECTOR_NAME)
+                        .withLabel("kafka.jikkou.io/connect-cluster", TEST_CONNECTOR_NAME)
                         .build()
                 )
                 .withSpec(V1KafkaConnectorSpec
                         .builder()
                         .withConnectorClass("FileStreamSink")
                         .withTasksMax(1)
-                        .withConfig(Configs.of(
+                        .withConfig(Map.of(
                                 "topics", "connect-test",
                                 "file", "/tmp/test.sink.txt"
                         ))
@@ -60,32 +60,27 @@ class KafkaConnectorChangeComputerTest {
         KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer();
 
         // When
-        List<HasMetadataChange<KafkaConnectorChange>> results = computer.computeChanges(
+        List<ResourceChange> results = computer.computeChanges(
                 Collections.emptyList(),
                 List.of(newConnector));
 
-        // Then
-        DefaultResourceChange<Change> change = DefaultResourceChange
-                .builder()
-                .withMetadata(ObjectMeta
-                    .builder()
-                    .withName("test")
-                    .withLabel("kafka.jikkou.io/connect-cluster", "test")
-                    .build()
+        ResourceChange expected = GenericResourceChange
+                .builder(V1KafkaConnector.class)
+                .withMetadata(newConnector.getMetadata())
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.CREATE)
+                        .withChange(StateChange.create("connectorClass", "FileStreamSink"))
+                        .withChange(StateChange.create("tasksMax", 1))
+                        .withChange(StateChange.create(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.RUNNING))
+                        .withChange(StateChange.create("config.topics", "connect-test"))
+                        .withChange(StateChange.create("config.file", "/tmp/test.sink.txt"))
+                        .build()
                 )
-                .withChange(new KafkaConnectorChange(
-                    ChangeType.ADD,
-                    "test",
-                    ValueChange.withAfterValue("FileStreamSink"),
-                    ValueChange.withAfterValue(1),
-                    ValueChange.withAfterValue(KafkaConnectorState.RUNNING),
-                    List.of(
-                        new ConfigEntryChange("file", ValueChange.withAfterValue("/tmp/test.sink.txt")),
-                        new ConfigEntryChange("topics", ValueChange.withAfterValue("connect-test"))
-                    )
-                ))
                 .build();
-        Assertions.assertEquals(List.of(change), results);
+
+        // Then
+        Assertions.assertEquals(List.of(expected), results);
     }
 
     @Test
@@ -95,15 +90,15 @@ class KafkaConnectorChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test")
-                        .withLabel("kafka.jikkou.io/connect-cluster", "test")
+                        .withName(TEST_CONNECTOR_NAME)
+                        .withLabel("kafka.jikkou.io/connect-cluster", TEST_CONNECTOR_NAME)
                         .build()
                 )
                 .withSpec(V1KafkaConnectorSpec
                         .builder()
                         .withConnectorClass("FileStreamSink")
                         .withTasksMax(1)
-                        .withConfig(Configs.of(
+                        .withConfig(Map.of(
                                 "topics", "connect-test",
                                 "file", "/tmp/test.sink.txt"
                         ))
@@ -115,15 +110,15 @@ class KafkaConnectorChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test")
-                        .withLabel("kafka.jikkou.io/connect-cluster", "test")
+                        .withName(TEST_CONNECTOR_NAME)
+                        .withLabel("kafka.jikkou.io/connect-cluster", TEST_CONNECTOR_NAME)
                         .build()
                 )
                 .withSpec(V1KafkaConnectorSpec
                         .builder()
                         .withConnectorClass("FileStreamSink")
                         .withTasksMax(2)
-                        .withConfig(Configs.of(
+                        .withConfig(Map.of(
                                 "topics", "connect-test",
                                 "file", "/tmp/test.sink.txt"
                         ))
@@ -134,32 +129,110 @@ class KafkaConnectorChangeComputerTest {
         KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer();
 
         // When
-        List<HasMetadataChange<KafkaConnectorChange>> results = computer.computeChanges(
+        List<ResourceChange> results = computer.computeChanges(
                 List.of(oldConnector),
                 List.of(newConnector));
 
         // Then
-        DefaultResourceChange<Change> change = DefaultResourceChange
-                .builder()
-                .withMetadata(ObjectMeta
+        ResourceChange expected = GenericResourceChange
+                .builder(V1KafkaConnector.class)
+                .withMetadata(newConnector.getMetadata())
+                .withSpec(ResourceChangeSpec
                         .builder()
-                        .withName("test")
-                        .withLabel("kafka.jikkou.io/connect-cluster", "test")
+                        .withOperation(Operation.UPDATE)
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS, "FileStreamSink"))
+                        .withChange(StateChange.update(KafkaConnectorChangeComputer.DATA_TASKS_MAX, 2, 1))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.RUNNING))
+                        .withChange(StateChange.none("config.topics", "connect-test"))
+                        .withChange(StateChange.none("config.file", "/tmp/test.sink.txt"))
                         .build()
                 )
-                .withChange(new KafkaConnectorChange(
-                        ChangeType.UPDATE,
-                        "test",
-                        ValueChange.none("FileStreamSink"),
-                        ValueChange.with(2, 1),
-                        ValueChange.none(KafkaConnectorState.RUNNING),
-                        List.of(
-                                new ConfigEntryChange("file", ValueChange.none("/tmp/test.sink.txt")),
-                                new ConfigEntryChange("topics", ValueChange.none("connect-test"))
-                        )
-                ))
                 .build();
-        Assertions.assertEquals(List.of(change), results);
+        Assertions.assertEquals(List.of(expected), results);
+    }
+
+    @Test
+    void shouldReturnFalseForStateOnlyGivenNoChange() {
+        // Given
+        ResourceChange change = GenericResourceChange
+                .builder()
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.NONE)
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS, "connector.class"))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_TASKS_MAX, 1))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.RUNNING))
+                        .build()
+                )
+                .build();
+        // When
+        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+
+        // Then
+        Assertions.assertFalse(stateOnlyChange);
+    }
+
+    @Test
+    void shouldReturnFalseForStateOnlyGivenMaxTasksUpdate() {
+        // Given
+        ResourceChange change = GenericResourceChange
+                .builder()
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.UPDATE)
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS, "connector.class"))
+                        .withChange(StateChange.with(KafkaConnectorChangeComputer.DATA_TASKS_MAX, 1, 2))
+                        .withChange(StateChange.with(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.RUNNING, KafkaConnectorState.PAUSED))
+                        .build()
+                )
+                .build();
+        // When
+        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+
+        // Then
+        Assertions.assertFalse(stateOnlyChange);
+    }
+
+    @Test
+    void shouldReturnFalseForStateOnlyGivenConnectorClassUpdate() {
+        // Given
+        ResourceChange change = GenericResourceChange
+                .builder()
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.UPDATE)
+                        .withChange(StateChange.with(KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS, "connector1.class", "connector2.class"))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_TASKS_MAX, 1 ))
+                        .withChange(StateChange.with(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.RUNNING, KafkaConnectorState.PAUSED))
+                        .build()
+                )
+                .build();
+        // When
+        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+
+        // Then
+        Assertions.assertFalse(stateOnlyChange);
+    }
+
+    @Test
+    void shouldReturnTrueForStateOnly() {
+        // Given
+        ResourceChange change = GenericResourceChange
+                .builder()
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.UPDATE)
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS, "connector.class"))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_TASKS_MAX, 1 ))
+                        .withChange(StateChange.with(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.RUNNING, KafkaConnectorState.PAUSED))
+                        .build()
+                )
+                .build();
+        // When
+        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+
+        // Then
+        Assertions.assertTrue(stateOnlyChange);
     }
 
 }

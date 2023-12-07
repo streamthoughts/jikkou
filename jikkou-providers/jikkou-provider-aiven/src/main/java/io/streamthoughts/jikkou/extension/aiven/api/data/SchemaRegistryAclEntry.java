@@ -15,33 +15,31 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 /**
- * Schema Registry ACL entry
+ * Schema Registry ACL entry.
+ *
+ * @param permission The permission.
+ * @param resource   The Schema Registry ACL entry resource name pattern
+ * @param username   The Username
+ * @param id         The ID.
  */
 @Reflectable
-public final class SchemaRegistryAclEntry {
-
-    /**
-     * ACL entry for Schema Registry
-     */
-    private final String permission;
-    /**
-     * Schema Registry ACL entry resource name pattern
-     */
-    private final String resource;
-    /**
-     * Username
-     */
-    private final String username;
-    /**
-     * ID
-     */
-    private final String id;
+@JsonPropertyOrder({
+        "permission",
+        "resource",
+        "username",
+        "id"
+})
+public record SchemaRegistryAclEntry(@JsonProperty("permission") String permission,
+                                     @JsonProperty("resource") String resource,
+                                     @JsonProperty("username") String username,
+                                     @JsonProperty("id") String id) {
 
     /**
      * Creates a new {@link SchemaRegistryAclEntry} instance.
@@ -64,35 +62,13 @@ public final class SchemaRegistryAclEntry {
      * @param username   Username
      * @param id         ID
      */
-    @JsonCreator
-    public SchemaRegistryAclEntry(@JsonProperty("permission") final String permission,
-                                  @JsonProperty("resource") final String resource,
-                                  @JsonProperty("username") final String username,
-                                  @JsonProperty("id") final String id) {
-        this.permission = permission;
-        this.resource = resource;
-        this.username = username;
-        this.id = id;
-    }
-
-    @JsonProperty("permission")
-    public String permission() {
-        return permission;
-    }
-
-    @JsonProperty("resource")
-    public String resource() {
-        return resource;
-    }
-
-    @JsonProperty("username")
-    public String username() {
-        return username;
-    }
-
-    @JsonProperty("id")
-    public String id() {
-        return id;
+    @ConstructorProperties({
+            "permission",
+            "resource",
+            "username",
+            "id"
+    })
+    public SchemaRegistryAclEntry {
     }
 
     /**
@@ -116,16 +92,4 @@ public final class SchemaRegistryAclEntry {
         return Objects.hash(permission, resource, username);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return "SchemaRegistryAclEntry{" +
-                "permission=" + permission +
-                ", resource='" + resource + '\'' +
-                ", username='" + username + '\'' +
-                ", id='" + id + '\'' +
-                '}';
-    }
 }

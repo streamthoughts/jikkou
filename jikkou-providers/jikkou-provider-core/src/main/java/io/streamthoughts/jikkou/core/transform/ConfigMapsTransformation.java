@@ -89,7 +89,7 @@ public class ConfigMapsTransformation implements Transformation<HasMetadata> {
                             configMapRef)
                     ));
             Optional.ofNullable(configMap.getData())
-                    .ifPresent(config -> configsFromConfigMaps.putAll(config.toMap()));
+                    .ifPresent(configsFromConfigMaps::putAll);
         }
 
         var allConfigs = Optional

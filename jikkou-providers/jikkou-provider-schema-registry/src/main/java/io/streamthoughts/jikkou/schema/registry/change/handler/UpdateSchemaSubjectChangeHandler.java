@@ -15,19 +15,20 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.ADD;
-import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.DELETE;
-import static io.streamthoughts.jikkou.core.reconcilier.ChangeType.UPDATE;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.CREATE;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.DELETE;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.models.change.StateChangeList;
+import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
-import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class UpdateSchemaSubjectChangeHandler
         extends AbstractSchemaSubjectChangeHandler
-        implements ChangeHandler<SchemaSubjectChange> {
+        implements ChangeHandler<ResourceChange> {
 
     /**
      * Creates a new {@link UpdateSchemaSubjectChangeHandler} instance.
@@ -51,7 +52,7 @@ public final class UpdateSchemaSubjectChangeHandler
      * {@inheritDoc}
      */
     @Override
-    public Set<ChangeType> supportedChangeTypes() {
+    public Set<Operation> supportedChangeTypes() {
         return Set.of(UPDATE);
     }
 
@@ -59,27 +60,32 @@ public final class UpdateSchemaSubjectChangeHandler
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<SchemaSubjectChange>> apply(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items) {
+    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
 
-        List<ChangeResponse<SchemaSubjectChange>> results = new ArrayList<>();
-        for (HasMetadataChange<SchemaSubjectChange> item : items) {
-            SchemaSubjectChange change = item.getChange();
+        List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
+        for (ResourceChange change : changes) {
             CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
-            ValueChange<String> schema = change.getSchema();
 
-            if (UPDATE == schema.operation()) {
-                future = future.thenComposeAsync(unused -> registerSubjectVersion(item));
+            StateChange schema = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_SCHEMA);
+
+            if (UPDATE == schema.getOp()) {
+                future = future.thenComposeAsync(unused -> registerSubjectVersion(change));
             }
 
-            ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();
-            if (UPDATE == compatibilityLevels.operation() || ADD == compatibilityLevels.operation()) {
+            StateChange compatibilityLevels = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_COMPATIBILITY_LEVEL);
+
+            if (UPDATE == compatibilityLevels.getOp() || CREATE == compatibilityLevels.getOp()) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
             }
 
-            if (DELETE == compatibilityLevels.operation()) {
+            if (DELETE == compatibilityLevels.getOp()) {
                 future = future.thenComposeAsync(unused -> deleteCompatibilityLevel(change));
             }
-            results.add(toChangeResponse(item, future));
+            results.add(toChangeResponse(change, future));
         }
         return results;
     }

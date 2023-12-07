@@ -24,14 +24,13 @@ import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntrySpec;
 import java.util.List;
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class KafkaAclEntryAdapter {
 
-    public static final @Nullable String NO_ENTRY_ID = null;
+    public static final String NO_ENTRY_ID = null;
 
-    public static KafkaAclEntry map(final @NotNull V1KafkaTopicAclEntry entry, @Nullable String id) {
+    public static KafkaAclEntry map(final V1KafkaTopicAclEntry entry, String id) {
+        if (entry == null) return null;
         V1KafkaTopicAclEntrySpec spec = entry.getSpec();
         if (id == null) {
             id = entry.optionalMetadata()
@@ -48,18 +47,19 @@ public final class KafkaAclEntryAdapter {
         );
     }
 
-    public static KafkaAclEntry map(final @NotNull V1KafkaTopicAclEntry entry) {
+    public static KafkaAclEntry map(final V1KafkaTopicAclEntry entry) {
         return map(entry, NO_ENTRY_ID);
     }
 
-    public static List<V1KafkaTopicAclEntry> map(final @NotNull List<KafkaAclEntry> entries) {
-        return  entries
+    public static List<V1KafkaTopicAclEntry> map(final List<KafkaAclEntry> entries) {
+        return entries
                 .stream()
                 .map(KafkaAclEntryAdapter::map)
                 .toList();
     }
 
-    public static V1KafkaTopicAclEntry map(final @NotNull KafkaAclEntry entry) {
+    public static V1KafkaTopicAclEntry map(final KafkaAclEntry entry) {
+        if (entry == null) return null;
         ObjectMeta.ObjectMetaBuilder objectMetaBuilder = ObjectMeta.builder();
         if (entry.id() != null) {
             objectMetaBuilder = objectMetaBuilder

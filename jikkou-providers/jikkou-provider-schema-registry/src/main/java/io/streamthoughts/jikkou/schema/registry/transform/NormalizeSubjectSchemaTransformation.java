@@ -15,11 +15,11 @@
  */
 package io.streamthoughts.jikkou.schema.registry.transform;
 
-import io.streamthoughts.jikkou.common.utils.Json;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.transform.Transformation;
@@ -52,7 +52,7 @@ public class NormalizeSubjectSchemaTransformation implements Transformation<V1Sc
         try {
             normalized = switch (spec.getSchemaType()) {
                 case AVRO, JSON -> Json.normalize(value);
-                case PROTOBUF, INVALID -> value;
+                case PROTOBUF -> value;
             };
         } catch (Exception e) {
             LOG.error("Failed to normalize AVRO/JSON schema. Cause: " + e.getLocalizedMessage());

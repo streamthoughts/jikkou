@@ -19,9 +19,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.Objects;
+import org.apache.kafka.common.acl.AccessControlEntry;
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.acl.AclBindingFilter;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,5 +101,25 @@ public record KafkaAclBinding(
                 type,
                 host
         );
+    }
+
+    public AclBinding toAclBinding() {
+        return new AclBinding(
+                new ResourcePattern(
+                        resourceType(),
+                        resourcePattern(),
+                        patternType()
+                ),
+                new AccessControlEntry(
+                        principal(),
+                        host(),
+                        operation(),
+                        type()
+                )
+        );
+    }
+
+    public AclBindingFilter toAclBindingFilter() {
+        return toAclBinding().toFilter();
     }
 }

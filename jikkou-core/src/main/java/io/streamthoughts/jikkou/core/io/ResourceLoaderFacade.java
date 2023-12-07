@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderOptions;
 import io.streamthoughts.jikkou.core.models.HasItems;
-import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,6 @@ public final class ResourceLoaderFacade {
 
     @NotNull
     public HasItems load(final @NotNull ResourceLoaderInputs inputs) {
-
         ResourceLoader loader = new ResourceLoader(
                 createResourceReaderFactory(),
                 createResourceReaderOptions(inputs)
@@ -69,13 +68,13 @@ public final class ResourceLoaderFacade {
     }
 
     @NotNull
-    private NamedValue.Set getLabels(final @NotNull ResourceLoaderInputs inputs) {
-        return NamedValue.setOf(inputs.getLabels());
+    private NamedValueSet getLabels(final @NotNull ResourceLoaderInputs inputs) {
+        return NamedValueSet.setOf(inputs.getLabels());
     }
 
     @NotNull
-    private NamedValue.Set getValues(final @NotNull ResourceLoaderInputs inputs) {
-        NamedValue.Set all = NamedValue.emptySet();
+    private NamedValueSet getValues(final @NotNull ResourceLoaderInputs inputs) {
+        NamedValueSet all = NamedValueSet.emptySet();
         if (!inputs.getValuesFileLocations().isEmpty()) {
             ValuesLoader loader = new ValuesLoader(objectMapper);
             all = all.with(loader.load(inputs.getValuesFileLocations()));

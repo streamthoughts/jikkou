@@ -17,15 +17,19 @@ package io.streamthoughts.jikkou.kafka.connect.change;
 
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
+import static io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeError;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.ConfigEntryChange;
+import io.streamthoughts.jikkou.core.data.TypeConverter;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.reconciler.Change;
+import io.streamthoughts.jikkou.core.reconciler.ChangeError;
+import io.streamthoughts.jikkou.core.reconciler.ChangeMetadata;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.TextDescription;
+import io.streamthoughts.jikkou.core.reconciler.change.BaseChangeHandler;
 import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
@@ -41,8 +45,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
-public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaConnectorChange> {
+public final class KafkaConnectorChangeHandler extends BaseChangeHandler<ResourceChange> {
 
     private final KafkaConnectApi api;
     private final String cluster;
@@ -53,6 +58,7 @@ public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaCon
      * @param api the KafkaConnect client.
      */
     public KafkaConnectorChangeHandler(@NotNull KafkaConnectApi api, @NotNull String cluster) {
+        super(Set.of(Operation.CREATE, Operation.DELETE, Operation.UPDATE));
         this.api = Objects.requireNonNull(api);
         this.cluster = cluster;
     }
@@ -61,37 +67,29 @@ public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaCon
      * {@inheritDoc}
      **/
     @Override
-    public Set<ChangeType> supportedChangeTypes() {
-        return Set.of(ChangeType.ADD, ChangeType.DELETE, ChangeType.UPDATE);
+    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        return changes.stream().flatMap(this::handleChange).toList();
     }
 
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<ChangeResponse<KafkaConnectorChange>> apply(@NotNull List<HasMetadataChange<KafkaConnectorChange>> items) {
-        return items.stream().flatMap(this::handleChange).toList();
-    }
-
-    private Stream<ChangeResponse<KafkaConnectorChange>> handleChange(HasMetadataChange<KafkaConnectorChange> item) {
-        KafkaConnectorChange change = item.getChange();
-        return switch (change.operation()) {
-            case NONE, IGNORE -> Stream.empty(); // no change of these types should be handled by this class.
-            case UPDATE -> updateConnector(item);
-            case ADD -> createOrUpdateConnectorConfig(item);
-            case DELETE -> deleteConnector(item);
+    private Stream<ChangeResponse<ResourceChange>> handleChange(ResourceChange change) {
+        return switch (change.getSpec().getOp()) {
+            case NONE -> Stream.empty(); // no change of these types should be handled by this class.
+            case UPDATE -> updateConnector(change);
+            case CREATE -> createOrUpdateConnectorConfig(change);
+            case DELETE -> deleteConnector(change);
         };
     }
 
     @NotNull
-    private Stream<ChangeResponse<KafkaConnectorChange>> updateConnector(HasMetadataChange<KafkaConnectorChange> item) {
-        KafkaConnectorChange change = item.getChange();
-        if (!change.isStateOnlyChange()) {
-            return createOrUpdateConnectorConfig(item);
+    private Stream<ChangeResponse<ResourceChange>> updateConnector(ResourceChange change) {
+        if (!isStateOnlyChange(change)) {
+            return createOrUpdateConnectorConfig(change);
         }
-        KafkaConnectorState newState = change.state().getAfter();
+        SpecificStateChange<KafkaConnectorState> stateChange = getState(change);
 
-        String connectorName = change.name();
+        KafkaConnectorState newState = stateChange.getAfter();
+
+        String connectorName = change.getMetadata().getName();
         Optional<CompletableFuture<Void>> future = switch (newState) {
             case PAUSED -> Optional.of(CompletableFuture
                     .runAsync(() -> api.pauseConnector(connectorName)));
@@ -103,25 +101,26 @@ public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaCon
             case UNASSIGNED, RESTARTING, FAILED -> Optional.empty();
         };
 
-        return future.map(f -> toChangeResponse(item, f)).map(Stream::of).orElse(Stream.empty());
+        return future.map(f -> toChangeResponse(change, f)).stream();
     }
 
-    @NotNull
-    private Stream<ChangeResponse<KafkaConnectorChange>> deleteConnector(HasMetadataChange<KafkaConnectorChange> item) {
-        CompletableFuture<Void> future = CompletableFuture
-                .runAsync(() -> api.deleteConnector(item.getChange().name()));
 
-        ChangeResponse<KafkaConnectorChange> response = toChangeResponse(item, future);
+    @NotNull
+    private Stream<ChangeResponse<ResourceChange>> deleteConnector(ResourceChange change) {
+        CompletableFuture<Void> future = CompletableFuture
+                .runAsync(() -> api.deleteConnector(change.getMetadata().getName()));
+
+        ChangeResponse<ResourceChange> response = toChangeResponse(change, future);
         return Stream.of(response);
     }
 
     @NotNull
-    private Stream<ChangeResponse<KafkaConnectorChange>> createOrUpdateConnectorConfig(HasMetadataChange<KafkaConnectorChange> item) {
+    private Stream<ChangeResponse<ResourceChange>> createOrUpdateConnectorConfig(ResourceChange change) {
         CompletableFuture<ConnectorInfoResponse> future = CompletableFuture.supplyAsync(() ->
-                api.createOrUpdateConnector(item.getChange().name(), buildConnectorConfig(item.getChange()))
+                api.createOrUpdateConnector(change.getMetadata().getName(), buildConnectorConfig(change))
         );
 
-        ChangeResponse<KafkaConnectorChange> response = toChangeResponse(item, future);
+        ChangeResponse<ResourceChange> response = toChangeResponse(change, future);
         return Stream.of(response);
     }
 
@@ -129,23 +128,61 @@ public final class KafkaConnectorChangeHandler implements ChangeHandler<KafkaCon
      * {@inheritDoc}
      **/
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<KafkaConnectorChange> item) {
-        return new KafkaConnectorChangeDescription(cluster, item.getChange());
+    public TextDescription describe(@NotNull ResourceChange change) {
+        return new KafkaConnectorChangeDescription(cluster, change);
     }
 
-    private Map<String, Object> buildConnectorConfig(KafkaConnectorChange change) {
+    @VisibleForTesting
+    static boolean isStateOnlyChange(ResourceChange change) {
+        if (change.getSpec().getOp() != Operation.UPDATE)
+            return false;
+
+        if (getConnectorClass(change).getOp() != Operation.NONE)
+            return false;
+
+        if (getTasksMax(change).getOp() != Operation.NONE)
+            return false;
+
+        if (Change.computeOperation(getConfig(change)) != Operation.NONE)
+            return false;
+
+        return getState(change).getOp() != Operation.NONE;
+    }
+
+    private Map<String, Object> buildConnectorConfig(ResourceChange change) {
+        Map<String, Object> configs = getConfig(change)
+                .stream()
+                .collect(Collectors.toMap(StateChange::getName, StateChange::getAfter));
         Map<String, Object> config = new HashMap<>();
-        config.put(CONNECTOR_TASKS_MAX_CONFIG, change.tasksMax().getAfter());
-        config.put(CONNECTOR_CLASS_CONFIG, change.connectorClass().getAfter());
-        config.putAll(change.config().stream()
-                .filter(it -> it.operation() != ChangeType.DELETE)
-                .collect(Collectors.toMap(ConfigEntryChange::name, it -> it.valueChange().getAfter()))
-        );
+        config.put(CONNECTOR_TASKS_MAX_CONFIG, getTasksMax(change).getAfter());
+        config.put(CONNECTOR_CLASS_CONFIG, getConnectorClass(change).getAfter());
+        config.putAll(configs);
         return config;
     }
 
-    private ChangeResponse<KafkaConnectorChange> toChangeResponse(HasMetadataChange<KafkaConnectorChange> change,
-                                                                  CompletableFuture<?> future) {
+    private static List<StateChange> getConfig(ResourceChange change) {
+        return change.getSpec().getChanges()
+                .allWithPrefix(KafkaConnectorChangeComputer.DATA_CONFIG_PREFIX)
+                .all();
+    }
+
+    private static SpecificStateChange<KafkaConnectorState> getState(ResourceChange change) {
+        return change
+                .getSpec()
+                .getChanges()
+                .getLast(KafkaConnectorChangeComputer.DATA_STATE, TypeConverter.of(KafkaConnectorState.class));
+    }
+
+    private static SpecificStateChange<String> getConnectorClass(ResourceChange change) {
+        return change.getSpec().getChanges().getLast(DATA_CONNECTOR_CLASS, TypeConverter.String());
+    }
+
+    private static SpecificStateChange<Integer> getTasksMax(ResourceChange change) {
+        return change.getSpec().getChanges().getLast(KafkaConnectorChangeComputer.DATA_TASKS_MAX, TypeConverter.Integer());
+    }
+
+    private ChangeResponse<ResourceChange> toChangeResponse(ResourceChange change,
+                                                            CompletableFuture<?> future) {
         CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
             if (throwable == null) {
                 return ChangeMetadata.empty();

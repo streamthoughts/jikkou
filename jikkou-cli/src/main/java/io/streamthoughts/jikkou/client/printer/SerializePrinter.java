@@ -28,7 +28,9 @@ public class SerializePrinter implements Printer {
         this.mapper = mapper;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public int print(ApiChangeResultList result, long executionTimeMs) {
         final String json;
@@ -40,7 +42,7 @@ public class SerializePrinter implements Printer {
         } catch (JsonProcessingException e) {
             throw new JikkouRuntimeException(e);
         }
-        return Printer.getNumberOfFailedChange(result.getChanges()) > 0 ? 1 : 0;
+        return Printer.getNumberOfFailedChange(result.results()) > 0 ? 1 : 0;
     }
 
 

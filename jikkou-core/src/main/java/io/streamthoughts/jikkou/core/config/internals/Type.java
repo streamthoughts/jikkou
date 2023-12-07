@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.config.internals;
 
+import io.streamthoughts.jikkou.core.data.internal.TypeConverter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public enum Type {
     // This is a special type used to deal with NULL object.
     NULL(null) {
         @Override
-        public Short convert(@Nullable final Object o) {
+        public Object convert(@Nullable final Object o) {
             throw new UnsupportedOperationException("Cannot convert an object to type NULL");
         }
 

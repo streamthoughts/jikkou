@@ -15,15 +15,16 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.models.change.StateChangeList;
+import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
-import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CreateSchemaSubjectChangeHandler
         extends AbstractSchemaSubjectChangeHandler
-        implements ChangeHandler<SchemaSubjectChange> {
+        implements ChangeHandler<ResourceChange> {
 
     /**
      * Creates a new {@link CreateSchemaSubjectChangeHandler} instance.
@@ -47,27 +48,29 @@ public final class CreateSchemaSubjectChangeHandler
      * {@inheritDoc}
      */
     @Override
-    public Set<ChangeType> supportedChangeTypes() {
-        return Set.of(ChangeType.ADD);
+    public Set<Operation> supportedChangeTypes() {
+        return Set.of(Operation.CREATE);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<SchemaSubjectChange>> apply(@NotNull List<HasMetadataChange<SchemaSubjectChange>> items) {
+    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
 
-        List<ChangeResponse<SchemaSubjectChange>> results = new ArrayList<>();
-        for (HasMetadataChange<SchemaSubjectChange> item : items) {
+        List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
+        for (ResourceChange change : changes) {
+            CompletableFuture<Void> future = registerSubjectVersion(change);
 
-            SchemaSubjectChange change = item.getChange();
-            CompletableFuture<Void> future = registerSubjectVersion(item);
-            ValueChange<CompatibilityLevels> compatibilityLevels = change.getCompatibilityLevels();
+            StateChange compatibilityLevels = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_COMPATIBILITY_LEVEL);
+
             if (compatibilityLevels != null) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
             }
 
-            results.add(toChangeResponse(item, future));
+            results.add(toChangeResponse(change, future));
         }
         return results;
     }

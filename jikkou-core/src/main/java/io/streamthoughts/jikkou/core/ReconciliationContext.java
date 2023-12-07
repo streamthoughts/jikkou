@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import org.jetbrains.annotations.NotNull;
@@ -50,14 +51,14 @@ public interface ReconciliationContext {
      *
      * @return the labels.
      */
-    @NotNull NamedValue.Set labels();
+    @NotNull NamedValueSet labels();
 
     /**
      * Returns the 'annotations' to be applied on the metadata of the resources to be reconciled.
      *
      * @return the annotations.
      */
-    @NotNull NamedValue.Set annotations();
+    @NotNull NamedValueSet annotations();
 
     /**
      * Checks whether this operation should be run in dry-run.
@@ -149,7 +150,7 @@ public interface ReconciliationContext {
                     internal.selector(),
                     internal.configuration(),
                     internal.isDryRun(),
-                    NamedValue.setOf(labels),
+                    NamedValueSet.setOf(labels),
                     internal.annotations()
             ));
         }
@@ -165,7 +166,7 @@ public interface ReconciliationContext {
                     internal.selector(),
                     internal.configuration(),
                     internal.isDryRun(),
-                    NamedValue.setOf(internal.labels()).with(label),
+                    NamedValueSet.setOf(internal.labels()).with(label),
                     internal.annotations()
             ));
         }
@@ -181,7 +182,7 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
-                    NamedValue.setOf(annotations)
+                    NamedValueSet.setOf(annotations)
             ));
         }
 
@@ -196,7 +197,7 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
-                    NamedValue.setOf(internal.annotations()).with(annotation)
+                    NamedValueSet.setOf(internal.annotations()).with(annotation)
             ));
         }
 
@@ -221,16 +222,16 @@ public interface ReconciliationContext {
     record Default(Selector selector,
                    Configuration configuration,
                    boolean isDryRun,
-                   NamedValue.Set labels,
-                   NamedValue.Set annotations)
+                   NamedValueSet labels,
+                   NamedValueSet annotations)
             implements ReconciliationContext {
 
         public static Default EMPTY = new Default(
                 Selectors.NO_SELECTOR,
                 Configuration.empty(),
                 true,
-                NamedValue.emptySet(),
-                NamedValue.emptySet()
+                NamedValueSet.emptySet(),
+                NamedValueSet.emptySet()
         );
     }
 }

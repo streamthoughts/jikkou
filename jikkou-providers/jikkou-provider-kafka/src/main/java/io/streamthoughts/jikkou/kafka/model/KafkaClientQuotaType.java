@@ -16,7 +16,6 @@
 package io.streamthoughts.jikkou.kafka.model;
 
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaEntity;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
@@ -45,7 +44,7 @@ public enum KafkaClientQuotaType {
      */
     USERS_DEFAULT() {
         @Override
-        public void validate(final V1KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
+        public void validate(final KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
             if (!isValid(toEntities(entity))) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -62,7 +61,7 @@ public enum KafkaClientQuotaType {
         }
 
         @Override
-        public Map<String, String> toEntities(@NotNull final V1KafkaClientQuotaEntity entity) {
+        public Map<String, String> toEntities(@NotNull final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.USER, DEFAULT);
             return entities;
@@ -84,7 +83,7 @@ public enum KafkaClientQuotaType {
      */
     USER() {
         @Override
-        public void validate(final V1KafkaClientQuotaEntity entityObject) throws JikkouRuntimeException {
+        public void validate(final KafkaClientQuotaEntity entityObject) throws JikkouRuntimeException {
             if (!isValid(toEntities(entityObject))) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -102,7 +101,7 @@ public enum KafkaClientQuotaType {
         }
 
         @Override
-        public Map<String, String> toEntities(@NotNull final V1KafkaClientQuotaEntity entity) {
+        public Map<String, String> toEntities(@NotNull final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.USER, entity.getUser());
             return entities;
@@ -124,7 +123,7 @@ public enum KafkaClientQuotaType {
      */
     USER_CLIENT() {
         @Override
-        public void validate(final V1KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
+        public void validate(final KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
             if (!isValid(toEntities(entity))) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -143,7 +142,7 @@ public enum KafkaClientQuotaType {
         }
 
         @Override
-        public Map<String, String> toEntities(@NotNull final V1KafkaClientQuotaEntity entity) {
+        public Map<String, String> toEntities(@NotNull final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.USER, entity.getUser());
             entities.put(ClientQuotaEntity.CLIENT_ID, entity.getClientId());
@@ -168,7 +167,7 @@ public enum KafkaClientQuotaType {
      */
     USER_ALL_CLIENTS() {
         @Override
-        public void validate(final V1KafkaClientQuotaEntity entityObject) throws JikkouRuntimeException {
+        public void validate(final KafkaClientQuotaEntity entityObject) throws JikkouRuntimeException {
             if (!isValid(toEntities(entityObject))) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -187,7 +186,7 @@ public enum KafkaClientQuotaType {
         }
 
         @Override
-        public Map<String, String> toEntities(@NotNull final V1KafkaClientQuotaEntity entity) {
+        public Map<String, String> toEntities(@NotNull final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.USER, entity.getUser());
             entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
@@ -212,7 +211,7 @@ public enum KafkaClientQuotaType {
      */
     CLIENTS_DEFAULT() {
         @Override
-        public void validate(final V1KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
+        public void validate(final KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
             if (!isValid(toEntities(entity))) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -230,7 +229,7 @@ public enum KafkaClientQuotaType {
         }
 
         @Override
-        public Map<String, String> toEntities(final V1KafkaClientQuotaEntity entity) {
+        public Map<String, String> toEntities(final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
             return entities;
@@ -248,7 +247,7 @@ public enum KafkaClientQuotaType {
      */
     CLIENT() {
         @Override
-        public void validate(final V1KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
+        public void validate(final KafkaClientQuotaEntity entity) throws JikkouRuntimeException {
             if (!isValid(toEntities(entity))) {
                 throw new JikkouRuntimeException(
                         String.format(
@@ -266,7 +265,7 @@ public enum KafkaClientQuotaType {
         }
 
         @Override
-        public Map<String, String> toEntities(final @NotNull V1KafkaClientQuotaEntity entity) {
+        public Map<String, String> toEntities(final @NotNull KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.CLIENT_ID, entity.getClientId());
             return entities;
@@ -283,10 +282,10 @@ public enum KafkaClientQuotaType {
     /**
      * Validates the given map of quota entities for this type.
      *
-     * @param entityObject the {@link V1KafkaClientQuotaEntity} to validate.
+     * @param entityObject the {@link KafkaClientQuotaEntity} to validate.
      * @throws JikkouRuntimeException if the given map is not valid.
      */
-    public abstract void validate(final V1KafkaClientQuotaEntity entityObject) throws JikkouRuntimeException;
+    public abstract void validate(final KafkaClientQuotaEntity entityObject) throws JikkouRuntimeException;
 
     /**
      * Checks if the given map of entities is valid for this type and return the list of missing entities.
@@ -297,12 +296,12 @@ public enum KafkaClientQuotaType {
     public abstract boolean isValid(@NotNull final Map<String, String> entities);
 
     /**
-     * Converts a given {@link V1KafkaClientQuotaEntity} into map of quota entities.
+     * Converts a given {@link KafkaClientQuotaEntity} into map of quota entities.
      *
-     * @param entity the {@link V1KafkaClientQuotaEntity}.
+     * @param entity the {@link KafkaClientQuotaEntity}.
      * @return the {@link Map}.
      */
-    public abstract Map<String, String> toEntities(final V1KafkaClientQuotaEntity entity);
+    public abstract Map<String, String> toEntities(final KafkaClientQuotaEntity entity);
 
     /**
      * Helper method to get a {@link KafkaClientQuotaType} from the given map of entities.
@@ -325,7 +324,7 @@ public enum KafkaClientQuotaType {
      * @param entity the entity to print.
      * @return the string representation of the entities.
      */
-    public String toPettyString(@NotNull final V1KafkaClientQuotaEntity entity) {
+    public String toPettyString(@NotNull final KafkaClientQuotaEntity entity) {
         return toPettyString(this.toEntities(entity));
     }
 

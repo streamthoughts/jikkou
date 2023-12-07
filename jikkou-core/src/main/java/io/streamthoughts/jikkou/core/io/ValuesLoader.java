@@ -17,7 +17,7 @@ package io.streamthoughts.jikkou.core.io;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
-import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -47,13 +47,13 @@ public final class ValuesLoader {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
     }
 
-    public @NotNull NamedValue.Set load(final @NotNull List<String> locations) {
+    public @NotNull NamedValueSet load(final @NotNull List<String> locations) {
         return locations
                 .parallelStream()
                 .flatMap(this::load)
                 .sorted(Comparator.comparing(ValuesFile::file))
                 .map(ValuesFile::values)
-                .reduce(NamedValue.emptySet(), NamedValue.Set::with);
+                .reduce(NamedValueSet.emptySet(), NamedValueSet::with);
     }
 
     private @NotNull Stream<ValuesFile> load(final String location) {
@@ -63,7 +63,7 @@ public final class ValuesLoader {
                 try (InputStream stream = Files.newInputStream(path)) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> values = objectMapper.readValue(stream, Map.class);
-                    return Stream.of(new ValuesFile(location, NamedValue.setOf(values)));
+                    return Stream.of(new ValuesFile(location, NamedValueSet.setOf(values)));
                 }
             } else {
                 LOG.debug("Ignore values from '{}'. File is empty.", location);
@@ -82,5 +82,5 @@ public final class ValuesLoader {
         }
     }
 
-    private record ValuesFile(String file, NamedValue.Set values) { }
+    private record ValuesFile(String file, NamedValueSet values) { }
 }

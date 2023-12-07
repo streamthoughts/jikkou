@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.client.command;
 
 import io.streamthoughts.jikkou.core.io.ResourceLoaderInputs;
 import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,16 +87,16 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
     /** {@inheritDoc} **/
     @Override
     public Iterable<NamedValue> getLabels() {
-        return NamedValue.setOf(clientLabels);
+        return NamedValueSet.setOf(clientLabels);
     }
 
     public Iterable<NamedValue> getAnnotations() {
-        return NamedValue.setOf(clientAnnotations);
+        return NamedValueSet.setOf(clientAnnotations);
     }
 
     /** {@inheritDoc} **/
     @Override
     public Iterable<NamedValue> getValues() {
-        return NamedValue.setOf(clientValues);
+        return NamedValueSet.setOf(clientValues);
     }
 }

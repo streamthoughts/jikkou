@@ -29,7 +29,7 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
@@ -60,7 +60,7 @@ class ValidationApiConfiguratorTest {
 
         // When
         Map<Object, Object> validationConfig = Collections.emptyMap();
-        Map<String, Object> validationConfigEntry = NamedValue.emptySet()
+        Map<String, Object> validationConfigEntry = NamedValueSet.emptySet()
                 .with(NAME_CONFIG.asValue("test"))
                 .with(TYPE_CONFIG.asValue(TestValidation.class.getName()))
                 .with(PRIORITY_CONFIG.asValue(1))

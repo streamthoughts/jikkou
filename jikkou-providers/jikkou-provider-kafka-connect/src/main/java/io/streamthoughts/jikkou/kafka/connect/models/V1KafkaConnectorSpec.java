@@ -20,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import io.streamthoughts.jikkou.core.models.Configs;
 import java.beans.ConstructorProperties;
+import java.util.Map;
 import javax.annotation.processing.Generated;
 import lombok.Builder;
 import lombok.With;
@@ -47,7 +47,7 @@ public class V1KafkaConnectorSpec {
      */
     @JsonProperty("connectorClass")
     @JsonPropertyDescription("Name or alias of the class for this connector. Must be a subclass of org.apache.kafka.connect.connector.Connector.")
-    private String connectorClass;
+    private java.lang.String connectorClass;
     /**
      * The maximum number of tasks for the Kafka Connector.
      * 
@@ -61,7 +61,7 @@ public class V1KafkaConnectorSpec {
      */
     @JsonProperty("config")
     @JsonPropertyDescription("Configuration properties of the connector.")
-    private Configs config;
+    private Map<String, Object> config;
     /**
      * The state the connector should be in [running, stopped, paused]. Defaults to running.
      * 
@@ -91,7 +91,7 @@ public class V1KafkaConnectorSpec {
         "config",
         "state"
     })
-    public V1KafkaConnectorSpec(String connectorClass, Integer tasksMax, Configs config, KafkaConnectorState state) {
+    public V1KafkaConnectorSpec(java.lang.String connectorClass, Integer tasksMax, Map<String, Object> config, KafkaConnectorState state) {
         super();
         this.connectorClass = connectorClass;
         this.tasksMax = tasksMax;
@@ -104,7 +104,7 @@ public class V1KafkaConnectorSpec {
      * 
      */
     @JsonProperty("connectorClass")
-    public String getConnectorClass() {
+    public java.lang.String getConnectorClass() {
         return connectorClass;
     }
 
@@ -122,7 +122,7 @@ public class V1KafkaConnectorSpec {
      * 
      */
     @JsonProperty("config")
-    public Configs getConfig() {
+    public Map<String, Object> getConfig() {
         return config;
     }
 
@@ -136,7 +136,7 @@ public class V1KafkaConnectorSpec {
     }
 
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(V1KafkaConnectorSpec.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("connectorClass");
@@ -174,7 +174,7 @@ public class V1KafkaConnectorSpec {
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(java.lang.Object other) {
         if (other == this) {
             return true;
         }

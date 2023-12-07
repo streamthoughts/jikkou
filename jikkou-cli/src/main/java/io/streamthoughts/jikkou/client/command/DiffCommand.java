@@ -34,9 +34,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
 @Command(name = "diff",
-        header = "Show changes required by the current resource definitions.",
+        header = "Show resource changes required by the current resource definitions.",
         description = """
-               Generates a speculative reconciliation plan, showing the changes Jikkou would apply to reconcile the resource definitions.
+               Generates a speculative reconciliation plan, showing the resource changes Jikkou would apply to reconcile the resource definitions.
                This command does not actually perform the reconciliation actions.
                """)
 @Singleton

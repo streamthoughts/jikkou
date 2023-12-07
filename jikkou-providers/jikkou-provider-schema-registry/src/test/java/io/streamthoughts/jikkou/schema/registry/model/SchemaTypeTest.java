@@ -21,14 +21,6 @@ import org.junit.jupiter.api.Test;
 class SchemaTypeTest {
 
     @Test
-    void shouldReturnInvalid() {
-        // Given - When
-        SchemaType res = SchemaType.getForNameIgnoreCase("dummy");
-        // Then
-        Assertions.assertEquals( SchemaType.INVALID, res);
-    }
-
-    @Test
     void shouldReturnAvro() {
         // Given - When
         SchemaType res = SchemaType.getForNameIgnoreCase("avro");

@@ -18,7 +18,7 @@ package io.streamthoughts.jikkou.kafka;
 import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
-import io.streamthoughts.jikkou.core.reconcilier.Controller;
+import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import org.junit.jupiter.api.Assertions;

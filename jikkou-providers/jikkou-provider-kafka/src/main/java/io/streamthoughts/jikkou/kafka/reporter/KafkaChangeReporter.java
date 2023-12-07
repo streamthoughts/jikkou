@@ -22,8 +22,7 @@ import io.streamthoughts.jikkou.core.JikkouInfo;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
@@ -100,14 +99,14 @@ public class KafkaChangeReporter implements ChangeReporter {
      * {@inheritDoc}
      **/
     @Override
-    public void report(List<ChangeResult<Change>> results) {
+    public void report(List<ChangeResult> results) {
         LOG.info("Starting reporting for {} changes", results.size());
 
         checkIfTopicNeedToBeCreated();
 
         final String topic = configuration.topicName();
         final String source = configuration.eventSource();
-        Stream<ChangeResult<Change>> stream = filterRelevantChangeResults(results);
+        Stream<ChangeResult> stream = filterRelevantChangeResults(results);
         List<KafkaRecord<byte[], byte[]>> records = stream.map(result -> {
                     CloudEventEntity<Object> entity = CloudEventEntityBuilder.newBuilder()
                             .withSpecVersion("1.0")
@@ -148,7 +147,7 @@ public class KafkaChangeReporter implements ChangeReporter {
         }
     }
 
-    private Stream<ChangeResult<Change>> filterRelevantChangeResults(List<ChangeResult<Change>> results) {
+    private Stream<ChangeResult> filterRelevantChangeResults(List<ChangeResult> results) {
         return results.stream().filter(it -> it.isChanged() && !it.isFailed());
     }
 

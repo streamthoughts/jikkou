@@ -11,7 +11,7 @@
     "lombok-with": true,
     "all-args-constructor": false,
     "spec": {
-      "isTransient" : true
+      "isTransient": true
     }
   },
   "required": [
@@ -22,23 +22,31 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default":"core.jikkou.io/v1beta2"
+      "default": "core.jikkou.io/v1beta2"
     },
     "kind": {
       "type": "string",
       "default": "ConfigMap"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
-      "type": "object"
+      "$ref": "./Metadata.json"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
-      "type": "object"
+      "$ref": "./Template.json"
     },
     "data": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
-      "type": "object"
+      "type": "object",
+      "$ref": "#/$defs/Map"
+    }
+  },
+  "$defs": {
+    "Map": {
+      "type": "object",
+      "description": "Map of key/value pairs.",
+      "additionalProperties": {
+        "type": "object"
+      },
+      "existingJavaType" : "java.util.Map<String,Object>"
     }
   }
 }

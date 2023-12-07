@@ -28,7 +28,7 @@ import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
-import io.streamthoughts.jikkou.kafka.reconcilier.KafkaClientConfiguration;
+import io.streamthoughts.jikkou.kafka.reconciler.KafkaClientConfiguration;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedHashMap;

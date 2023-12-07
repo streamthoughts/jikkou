@@ -21,35 +21,34 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import javax.validation.constraints.NotNull;
 
 /**
- * ReconciliationChangeResultList.
+ * ApiChangeResultList.
  */
-@Kind("ApiChangeResultList")
-@ApiVersion("core.jikkou.io/v1")
+@Kind(ApiChangeResultList.KIND)
+@ApiVersion(ApiChangeResultList.API_VERSION)
 @JsonPropertyOrder({
         "kind",
         "apiVersion",
-        "dryRun",
         "metadata",
+        "dryRun",
         "changes"
 })
 @Reflectable
 @JsonDeserialize
-public class ApiChangeResultList {
-    private final String kind;
-    private final String apiVersion;
-    private final boolean dryRun;
-    private final ObjectMeta metadata;
-    private final List<ChangeResult<Change>> changes;
+public record ApiChangeResultList(@JsonProperty("kind") String kind,
+                                  @JsonProperty("apiVersion") String apiVersion,
+                                  @JsonProperty("metadata") ObjectMeta metadata,
+                                  @JsonProperty("dryRun") boolean dryRun,
+                                  @JsonProperty("results") List<ChangeResult> results
+) {
+    public static final String KIND = "ApiChangeResultList";
+    public static final String API_VERSION = "core.jikkou.io/v1";
 
     /**
      * Creates a new {@link ApiChangeResultList} instance.
@@ -57,118 +56,48 @@ public class ApiChangeResultList {
     @ConstructorProperties({
             "kind",
             "apiVersion",
-            "dryRun",
             "metadata",
-            "changes"
+            "dryRun",
+            "results"
     })
-    public ApiChangeResultList(@NotNull String kind,
-                               @NotNull String apiVersion,
-                               boolean dryRun,
-                               @NotNull ObjectMeta metadata,
-                               @NotNull List<? extends ChangeResult<Change>> changes) {
-        this.kind = kind;
-        this.apiVersion = apiVersion;
-        this.dryRun = dryRun;
-        this.metadata = metadata;
-        this.changes = Collections.unmodifiableList(changes);
+    public ApiChangeResultList {
+        results = Collections.unmodifiableList(results);
     }
 
     /**
      * Creates a new {@link ApiChangeResultList} instance.
      *
      * @param dryRun  specify whether teh reconciliation have benn executed in dry-run.
-     * @param changes list of change result.
+     * @param results list of change result.
      */
-    public ApiChangeResultList(boolean dryRun,
-                               List<ChangeResult<Change>> changes) {
-        this(
-                Resource.getKind(ApiChangeResultList.class),
-                Resource.getApiVersion(ApiChangeResultList.class),
-                dryRun,
-                new ObjectMeta(),
-                changes
-        );
+    public ApiChangeResultList(boolean dryRun, List<ChangeResult> results) {
+        this(dryRun, new ObjectMeta(), results);
     }
 
     /**
      * Creates a new {@link ApiChangeResultList} instance.
      *
-     * @param dryRun  specify whether teh reconciliation have benn executed in dry-run.
-     * @param changes list of change result.
+     * @param dryRun  specify whether the reconciliation have benn executed in dry-run.
+     * @param results list of change result.
      */
     public ApiChangeResultList(boolean dryRun,
                                ObjectMeta metadata,
-                               List<ChangeResult<Change>> changes) {
+                               List<ChangeResult> results) {
         this(
-                Resource.getKind(ApiChangeResultList.class),
-                Resource.getApiVersion(ApiChangeResultList.class),
-                dryRun,
+                KIND,
+                API_VERSION,
                 metadata,
-                changes
+                dryRun,
+                results
         );
     }
 
-    @JsonProperty("kind")
-    public @NotNull String getKind() {
-        return kind;
-    }
-
-    @JsonProperty("apiVersion")
-    public @NotNull String getApiVersion() {
-        return apiVersion;
-    }
-
-    @JsonProperty("dryRun")
-    public boolean isDryRun() {
-        return dryRun;
-    }
-
     @JsonProperty("metadata")
-    public ObjectMeta getMetadata() {
+    @Override
+    public ObjectMeta metadata() {
         ObjectMeta objectMeta = Optional.ofNullable(metadata).orElse(new ObjectMeta());
         return objectMeta.toBuilder()
-                .withAnnotation(CoreAnnotations.JIKKOU_IO_CHANGE_COUNT, changes.size())
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_CHANGE_COUNT, results.size())
                 .build();
-    }
-
-    @JsonProperty("changes")
-    public @NotNull List<ChangeResult<Change>> getChanges() {
-        return changes;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ApiChangeResultList) obj;
-        return Objects.equals(this.kind, that.kind) &&
-                Objects.equals(this.apiVersion, that.apiVersion) &&
-                this.dryRun == that.dryRun &&
-                Objects.equals(this.metadata, that.metadata) &&
-                Objects.equals(this.changes, that.changes);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(kind, apiVersion, dryRun, metadata, changes);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return "ReconciliationChangeResultList[" +
-                "kind=" + kind + ", " +
-                "apiVersion=" + apiVersion + ", " +
-                "dryRun=" + dryRun + ", " +
-                "metadata=" + metadata + ", " +
-                "changes=" + changes + ']';
     }
 }

@@ -16,8 +16,7 @@
 package io.streamthoughts.jikkou.core.reporter;
 
 import io.streamthoughts.jikkou.core.extension.ExtensionDecorator;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import java.util.List;
 
 /**
@@ -37,7 +36,7 @@ public class ChangeReporterDecorator extends ExtensionDecorator<ChangeReporter, 
     }
 
     @Override
-    public void report(List<ChangeResult<Change>> results) {
+    public void report(List<ChangeResult> results) {
         this.extension.report(results);
     }
 }

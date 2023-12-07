@@ -15,49 +15,24 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import java.util.Objects;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.With;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import java.beans.ConstructorProperties;
 
 /**
  * Represents options that can be used to apply a change.
  */
-@Getter
-@AllArgsConstructor
-@With
-public class SchemaSubjectChangeOptions {
+@Reflectable
+public record SchemaSubjectChangeOptions(
+        @JsonProperty("permanentDelete") boolean permanentDelete,
+        @JsonProperty("normalizeSchema") boolean normalizeSchema
+) {
 
-    private boolean isPermanentDeleteEnabled;
+    @ConstructorProperties({
+            "permanentDelete",
+            "normalizeSchema"
+    })
+    public SchemaSubjectChangeOptions {
 
-    private boolean isSchemaOptimizationEnabled;
-
-    /**
-     * Creates a new {@link SchemaSubjectChangeOptions} instance.
-     */
-    public SchemaSubjectChangeOptions() {
-        this(false, false);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SchemaSubjectChangeOptions that = (SchemaSubjectChangeOptions) o;
-        return isPermanentDeleteEnabled == that.isPermanentDeleteEnabled &&
-                isSchemaOptimizationEnabled == that.isSchemaOptimizationEnabled;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(isPermanentDeleteEnabled, isSchemaOptimizationEnabled);
-    }
-
-    @Override
-    public String toString() {
-        return "SchemaSubjectChangeOptions{" +
-                "isPermanentDeleteEnabled=" + isPermanentDeleteEnabled +
-                ", isSchemaOptimizationEnabled=" + isSchemaOptimizationEnabled +
-                '}';
     }
 }

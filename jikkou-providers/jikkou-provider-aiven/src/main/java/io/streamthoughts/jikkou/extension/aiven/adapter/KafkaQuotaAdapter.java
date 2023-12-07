@@ -19,7 +19,6 @@ import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaSpec;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -28,7 +27,8 @@ public final class KafkaQuotaAdapter {
 
     public static final String DEFAULT = "default";
 
-    public static KafkaQuotaEntry map(final @NotNull V1KafkaQuota entry) {
+    public static KafkaQuotaEntry map(final  V1KafkaQuota entry) {
+        if (entry == null) return null;
         return new KafkaQuotaEntry(
                 Optional.ofNullable(entry.getSpec().getClientId()).orElse(DEFAULT),
                 Optional.ofNullable(entry.getSpec().getUser()).orElse(DEFAULT),
@@ -38,7 +38,8 @@ public final class KafkaQuotaAdapter {
         );
     }
 
-    public static V1KafkaQuota map(final @NotNull KafkaQuotaEntry entry) {
+    public static V1KafkaQuota map(final KafkaQuotaEntry entry) {
+        if (entry == null) return null;
         return V1KafkaQuota.builder()
                 .withSpec(V1KafkaQuotaSpec
                         .builder()

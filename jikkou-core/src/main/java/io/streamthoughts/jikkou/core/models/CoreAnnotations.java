@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -59,7 +60,7 @@ public final class CoreAnnotations {
     public static Boolean isAnnotatedWith(@NotNull HasMetadata resource, @NotNull String annotation) {
         return HasMetadata.getMetadataAnnotation(resource, annotation)
                 .map(NamedValue::getValue)
-                .map(Value::asBoolean)
+                .map(o -> TypeConverter.Boolean().convertValue(o))
                 .orElse(false);
     }
 }

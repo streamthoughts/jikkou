@@ -15,13 +15,13 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.validation;
 
-import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +38,7 @@ class KafkaConnectorResourceValidationTest {
                 .withSpec(V1KafkaConnectorSpec
                         .builder()
                         .withConnectorClass("connectClass")
-                        .withConfig(Configs.empty())
+                        .withConfig(Collections.emptyMap())
                         .withTasksMax(1)
                         .build())
                 .build();
@@ -69,7 +69,7 @@ class KafkaConnectorResourceValidationTest {
                 .withSpec(V1KafkaConnectorSpec
                         .builder()
                         .withConnectorClass("connectClass")
-                        .withConfig(Configs.empty())
+                        .withConfig(Collections.emptyMap())
                         .withTasksMax(1)
                         .build())
                 .build();

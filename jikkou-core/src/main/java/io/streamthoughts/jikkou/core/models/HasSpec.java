@@ -15,13 +15,18 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
-import java.util.Optional;
-
+/**
+ * Interface for defining a resource with a specification.
+ *
+ * @param <T> type of the specification.
+ */
 public interface HasSpec<T> extends HasMetadata {
 
+    /**
+     * Returns the resource specification.
+     *
+     * @return the specification.
+     */
     T getSpec();
 
-    default Optional<T> optionalSpec() {
-        return Optional.ofNullable(getSpec());
-    }
 }

@@ -15,35 +15,35 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.change;
 
-import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 
 public final class KafkaChangeDescriptions {
 
-    public static ChangeDescription of(ChangeType type, KafkaAclEntry entry) {
+    public static TextDescription of(Operation type, KafkaAclEntry entry) {
         return () -> String.format("%s Kafka ACL Entry for user '%s' (topic=%s, permission=%s)",
-                ChangeDescription.humanize(type),
+                type.humanize(),
                 entry.username(),
                 entry.topic(),
                 entry.permission()
         );
     }
 
-    public static ChangeDescription of(ChangeType type, SchemaRegistryAclEntry entry) {
+    public static TextDescription of(Operation type, SchemaRegistryAclEntry entry) {
         return () -> String.format("%s Schema Registry ACL Entry for user '%s' (resource=%s, permission=%s)",
-                ChangeDescription.humanize(type),
+                type.humanize(),
                 entry.username(),
                 entry.resource(),
                 entry.permission()
         );
     }
 
-    public static ChangeDescription of(ChangeType type, KafkaQuotaEntry entry) {
+    public static TextDescription of(Operation type, KafkaQuotaEntry entry) {
         return () -> String.format("%s Kafka quotas for user '%s' and client-id '%s'",
-                ChangeDescription.humanize(type),
+                type.humanize(),
                 entry.user(),
                 entry.clientId()
         );

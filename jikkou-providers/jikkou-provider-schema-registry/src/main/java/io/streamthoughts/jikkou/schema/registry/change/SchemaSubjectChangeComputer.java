@@ -15,159 +15,169 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeComputer;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.JsonValueChange;
-import io.streamthoughts.jikkou.core.reconcilier.change.ResourceChangeComputer;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import com.fasterxml.jackson.core.type.TypeReference;
+import io.streamthoughts.jikkou.core.data.TypeConverter;
+import io.streamthoughts.jikkou.core.data.converter.ObjectTypeConverter;
+import io.streamthoughts.jikkou.core.data.json.Json;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.models.change.StateChangeList;
+import io.streamthoughts.jikkou.core.reconciler.Change;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
+import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
-import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
-import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class SchemaSubjectChangeComputer extends ResourceChangeComputer<V1SchemaRegistrySubject, V1SchemaRegistrySubject, SchemaSubjectChange>
+public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<String, V1SchemaRegistrySubject, ResourceChange> {
 
-        implements ChangeComputer<V1SchemaRegistrySubject, SchemaSubjectChange> {
-
+    public static final String DATA_COMPATIBILITY_LEVEL = "compatibilityLevel";
+    public static final String DATA_SCHEMA = "schema";
+    public static final String DATA_SCHEMA_TYPE = "schemaType";
+    public static final String DATA_REFERENCES = "references";
+    public static final TypeConverter<Map<String, Object>> TYPE_CONVERTER = ObjectTypeConverter.newForType(new TypeReference<>() {
+    });
 
     /**
      * Creates a new {@link SchemaSubjectChangeComputer} instance.
      */
     public SchemaSubjectChangeComputer() {
-        super(metadataNameKeyMapper(), identityChangeValueMapper(), false);
+        super(object -> object.getMetadata().getName(), new SchemaSubjectChangeFactory());
     }
 
-    /** {@inheritDoc} **/
-    @Override
-    public List<SchemaSubjectChange> buildChangeForDeleting(V1SchemaRegistrySubject before) {
-        SchemaSubjectChange change = SchemaSubjectChange.builder()
-                .withSubject(before.getMetadata().getName())
-                .withChangeType(ChangeType.DELETE)
-                .withOptions(getOptions(before))
-                .build();
-        return List.of(change);
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public List<SchemaSubjectChange> buildChangeForUpdating(V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
-        // Compute change for Schema
-        var changeForSchema = getChangeForSchema(
-                before, after);
+    public static class SchemaSubjectChangeFactory extends ResourceChangeFactory<String, V1SchemaRegistrySubject, ResourceChange> {
 
-        // Compute change for Compatibility
-        var changeForCompatibility = getChangeForCompatibility(
-                before, after);
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        public ResourceChange createChangeForDelete(String key, V1SchemaRegistrySubject before) {
+            return GenericResourceChange
+                    .builder(V1SchemaRegistrySubject.class)
+                    .withMetadata(before.getMetadata())
+                    .withSpec(ResourceChangeSpec
+                            .builder()
+                            .withData(TYPE_CONVERTER.convertValue(getOptions(before)))
+                            .withOperation(Operation.DELETE)
+                            .build()
+                    )
+                    .build();
+        }
 
-        // Compute change for References
-        var changeForReferences =
-                getChangeForReferences(before, after);
+        @Override
+        public ResourceChange createChangeForCreate(String key, V1SchemaRegistrySubject after) {
+            return GenericResourceChange
+                    .builder(V1SchemaRegistrySubject.class)
+                    .withMetadata(after.getMetadata())
+                    .withSpec(ResourceChangeSpec
+                            .builder()
+                            .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
+                            .withOperation(Operation.CREATE)
+                            .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, Optional.ofNullable(after.getSpec().getCompatibilityLevel()).orElse(null)))
+                            .withChange(StateChange.create(DATA_SCHEMA, after.getSpec().getSchema().value()))
+                            .withChange(StateChange.create(DATA_SCHEMA_TYPE, after.getSpec().getSchemaType()))
+                            .withChange(StateChange.create(DATA_REFERENCES, after.getSpec().getReferences()))
+                            .build()
+                    )
+                    .build();
+        }
 
-        // Compute change for Schema Type
-        var changeForSchemaType = getChangeForSchemaType(
-                before, after);
+        @Override
+        public ResourceChange createChangeForUpdate(String key, V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
+            StateChangeList<StateChange> changes = StateChangeList.emptyList()
+                    .with(getChangeForCompatibility(before, after))
+                    .with(getChangeForSchema(before, after))
+                    .with(getChangeForSchemaType(before, after))
+                    .with(getChangeForReferences(before, after));
 
-        var changeType = Change.computeChangeTypeFrom(
-                changeForSchema, changeForCompatibility, changeForReferences, changeForSchemaType);
+            return GenericResourceChange
+                    .builder(V1SchemaRegistrySubject.class)
+                    .withMetadata(after.getMetadata())
+                    .withSpec(ResourceChangeSpec
+                            .builder()
+                            .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
+                            .withOperation(Change.computeOperation(changes.all()))
+                            .withChanges(changes)
+                            .build()
+                    )
+                    .build();
+        }
 
-        SchemaSubjectChange change = SchemaSubjectChange.builder()
-                .withSubject(before.getMetadata().getName())
-                .withChangeType(changeType)
-                .withSchemaType(changeForSchemaType)
-                .withSchema(changeForSchema)
-                .withReferences(changeForReferences)
-                .withCompatibilityLevels(changeForCompatibility)
-                .withOptions(getOptions(after))
-                .build();
+        @NotNull
+        private SchemaSubjectChangeOptions getOptions(@NotNull V1SchemaRegistrySubject subject) {
+            return new SchemaSubjectChangeOptions(
+                    SchemaRegistryAnnotations.isAnnotatedWitPermananteDelete(subject),
+                    SchemaRegistryAnnotations.isAnnotatedWithNormalizeSchema(subject)
+            );
+        }
 
-        return List.of(change);
-    }
+        @NotNull
+        private StateChange getChangeForReferences(
+                @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
 
-    /** {@inheritDoc} **/
-    @Override
-    public List<SchemaSubjectChange> buildChangeForNone(V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
-        return null;
-    }
-    /** {@inheritDoc} **/
-    @Override
-    public List<SchemaSubjectChange> buildChangeForCreating(V1SchemaRegistrySubject after) {
-        V1SchemaRegistrySubjectSpec spec = after.getSpec();
+            return StateChange.with(
+                    DATA_REFERENCES,
+                    before.getSpec().getReferences()
+                            .stream()
+                            .map(TYPE_CONVERTER::convertValue)
+                            .toList(),
+                    after.getSpec().getReferences()
+                            .stream()
+                            .map(TYPE_CONVERTER::convertValue)
+                            .toList()
+            );
+        }
 
-        ValueChange<CompatibilityLevels> compatibilityLevels = Optional
-                .ofNullable(spec.getCompatibilityLevel())
-                .map(ValueChange::withAfterValue)
-                .orElse(null);
-
-        SchemaSubjectChange change = SchemaSubjectChange.builder()
-                .withChangeType(ChangeType.ADD)
-                .withSubject(after.getMetadata().getName())
-                .withSchemaType(ValueChange.withAfterValue(spec.getSchemaType()))
-                .withSchema(getChangeForSchema(null, after))
-                .withReferences(ValueChange.withAfterValue(spec.getReferences()))
-                .withCompatibilityLevels(compatibilityLevels)
-                .withOptions(getOptions(after))
-                .build();
-
-        return List.of(change);
-    }
-
-    @NotNull
-    private SchemaSubjectChangeOptions getOptions(@NotNull V1SchemaRegistrySubject subject) {
-        return new SchemaSubjectChangeOptions()
-                .withPermanentDeleteEnabled(SchemaRegistryAnnotations.isAnnotatedWitPermananteDelete(subject))
-                .withSchemaOptimizationEnabled(SchemaRegistryAnnotations.isAnnotatedWithNormalizeSchema(subject));
-    }
-
-    @NotNull
-    private ValueChange<List<SubjectSchemaReference>> getChangeForReferences(
-            @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
-
-        return ValueChange.with(before.getSpec().getReferences(), after.getSpec().getReferences());
-    }
-
-    @NotNull
-    private ValueChange<SchemaType> getChangeForSchemaType(
-            @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
-
-        return ValueChange.with(before.getSpec().getSchemaType(), after.getSpec().getSchemaType());
-    }
+        @NotNull
+        private StateChange getChangeForSchemaType(V1SchemaRegistrySubject before,
+                                                   V1SchemaRegistrySubject after) {
+            return StateChange.with(
+                    DATA_SCHEMA_TYPE,
+                    Optional.ofNullable(before).map(o -> o.getSpec().getSchemaType()).orElse(null),
+                    Optional.ofNullable(after).map(o -> o.getSpec().getSchemaType()).orElse(null)
+            );
+        }
 
 
-    @NotNull
-    private ValueChange<CompatibilityLevels> getChangeForCompatibility(
-            @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
+        @NotNull
+        private StateChange getChangeForCompatibility(V1SchemaRegistrySubject before,
+                                                      V1SchemaRegistrySubject after) {
+            return StateChange.with(
+                    DATA_COMPATIBILITY_LEVEL,
+                    Optional.ofNullable(before).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null),
+                    Optional.ofNullable(after).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null)
+            );
+        }
 
-        return ValueChange.with(before.getSpec().getCompatibilityLevel(), after.getSpec().getCompatibilityLevel());
-    }
+        @NotNull
+        private StateChange getChangeForSchema(V1SchemaRegistrySubject before,
+                                               V1SchemaRegistrySubject after) {
 
-    @NotNull
-    private ValueChange<String> getChangeForSchema(
-            @Nullable V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
+            SchemaAndType beforeSchema = Optional.ofNullable(before)
+                    .map(V1SchemaRegistrySubject::getSpec)
+                    .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
+                    .orElse(SchemaAndType.empty());
 
-        SchemaAndType beforeSchemaAndType = Optional.ofNullable(before)
-                .map(V1SchemaRegistrySubject::getSpec)
-                .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
-                .orElse(SchemaAndType.empty());
+            SchemaAndType afterSchema = Optional.ofNullable(after)
+                    .map(V1SchemaRegistrySubject::getSpec)
+                    .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
+                    .orElse(SchemaAndType.empty());
 
-        SchemaAndType afterSchemaAndType = new SchemaAndType(
-                after.getSpec().getSchema().value(),
-                after.getSpec().getSchemaType()
-        );
+            return StateChange.with(DATA_SCHEMA,
+                    isJsonBasedSchema(beforeSchema) ? Json.normalize(beforeSchema.schema()) : beforeSchema.schema(),
+                    isJsonBasedSchema(afterSchema) ? Json.normalize(afterSchema.schema()) : afterSchema.schema()
+            );
+        }
 
-        return switch (afterSchemaAndType.type()) {
-            case AVRO, JSON -> JsonValueChange
-                    .with(beforeSchemaAndType.schema(), afterSchemaAndType.schema());
-            case PROTOBUF -> ValueChange
-                    .with(beforeSchemaAndType.schema(), afterSchemaAndType.schema());
-            case INVALID -> throw new JikkouRuntimeException("unsupported schema type");
-        };
+        private boolean isJsonBasedSchema(SchemaAndType schemaAndType) {
+            return schemaAndType.type() == SchemaType.JSON || schemaAndType.type() == SchemaType.AVRO;
+        }
     }
 }

@@ -118,11 +118,11 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
      * {@inheritDoc}
      **/
     @Override
-    public HasMetadata withMetadata(ObjectMeta objectMeta) {
+    public HasMetadata withMetadata(ObjectMeta metadata) {
         return new GenericResourceListObject<>(
                 kind,
                 apiVersion,
-                objectMeta,
+                metadata,
                 items,
                 additionalProperties
         );

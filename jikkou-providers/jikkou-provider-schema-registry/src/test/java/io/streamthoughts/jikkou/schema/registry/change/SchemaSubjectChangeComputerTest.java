@@ -15,17 +15,26 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import io.streamthoughts.jikkou.common.utils.Json;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_REFERENCES;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
+
+import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeType;
-import io.streamthoughts.jikkou.core.reconcilier.change.ValueChange;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
+import io.streamthoughts.jikkou.core.models.change.StateChange;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -47,6 +56,7 @@ class SchemaSubjectChangeComputerTest {
             .optionalString("fieldB")
             .optionalString("fieldC")
             .endRecord();
+    public static final String TEST_SUBJECT = "test-subject";
 
     private final SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();
 
@@ -57,7 +67,7 @@ class SchemaSubjectChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test-subject")
+                        .withName(TEST_SUBJECT)
                         .build())
                 .withSpec(V1SchemaRegistrySubjectSpec
                         .builder()
@@ -66,12 +76,33 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(), List.of(resource))
-                .stream().map(HasMetadataChange::getChange).toList();
+        List<ResourceChange> changes = computer.computeChanges(List.of(), List.of(resource));
 
         // Then
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).operation());
+        List<ResourceChange> expected = List.of(
+                GenericResourceChange
+                        .builder(V1SchemaRegistrySubject.class)
+                        .withMetadata(ObjectMeta
+                                .builder()
+                                .withName(TEST_SUBJECT)
+                                .build()
+                        )
+                        .withSpec(ResourceChangeSpec
+                                .builder()
+                                .withOperation(Operation.CREATE)
+                                .withData(Map.of(
+                                        "permanentDelete", false,
+                                        "normalizeSchema", false
+                                ))
+                                .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, null))
+                                .withChange(StateChange.create(DATA_SCHEMA, SCHEMA_V1.toString()))
+                                .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                                .withChange(StateChange.create(DATA_REFERENCES, Collections.emptyList()))
+                                .build()
+                        )
+                        .build()
+        );
+        Assertions.assertEquals(expected, changes);
     }
 
     @Test
@@ -81,7 +112,7 @@ class SchemaSubjectChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test-subject")
+                        .withName(TEST_SUBJECT)
                         .build())
                 .withSpec(V1SchemaRegistrySubjectSpec
                         .builder()
@@ -90,12 +121,33 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(resource), List.of(resource))
-                .stream().map(HasMetadataChange::getChange).toList();
+        List<ResourceChange> changes = computer.computeChanges(List.of(resource), List.of(resource));
 
         // Then
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).operation());
+        List<ResourceChange> expected = List.of(
+                GenericResourceChange
+                        .builder(V1SchemaRegistrySubject.class)
+                        .withMetadata(ObjectMeta
+                                .builder()
+                                .withName(TEST_SUBJECT)
+                                .build()
+                        )
+                        .withSpec(ResourceChangeSpec
+                                .builder()
+                                .withOperation(Operation.NONE)
+                                .withData(Map.of(
+                                        "permanentDelete", false,
+                                        "normalizeSchema", false
+                                ))
+                                .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
+                                .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
+                                .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                                .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
+                                .build()
+                        )
+                        .build()
+        );
+        Assertions.assertEquals(expected, changes);
     }
 
     @Test
@@ -105,7 +157,7 @@ class SchemaSubjectChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test-subject")
+                        .withName(TEST_SUBJECT)
                         .build())
                 .withSpec(V1SchemaRegistrySubjectSpec
                         .builder()
@@ -118,7 +170,7 @@ class SchemaSubjectChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test-subject")
+                        .withName(TEST_SUBJECT)
                         .build())
                 .withSpec(V1SchemaRegistrySubjectSpec
                         .builder()
@@ -128,18 +180,33 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(before), List.of(after))
-                .stream().map(HasMetadataChange::getChange).toList();
+        List<ResourceChange> changes = computer.computeChanges(List.of(before), List.of(after));
 
         // Then
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).operation());
-        Assertions.assertEquals(ChangeType.ADD, changes.get(0).getCompatibilityLevels().operation());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchema().operation());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchemaType().operation());
-
-        Assertions.assertNull(changes.get(0).getCompatibilityLevels().getBefore());
-        Assertions.assertEquals(CompatibilityLevels.BACKWARD, changes.get(0).getCompatibilityLevels().getAfter());
+        List<ResourceChange> expected = List.of(
+                GenericResourceChange
+                        .builder(V1SchemaRegistrySubject.class)
+                        .withMetadata(ObjectMeta
+                                .builder()
+                                .withName(TEST_SUBJECT)
+                                .build()
+                        )
+                        .withSpec(ResourceChangeSpec
+                                .builder()
+                                .withOperation(Operation.UPDATE)
+                                .withData(Map.of(
+                                        "permanentDelete", false,
+                                        "normalizeSchema", false
+                                ))
+                                .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
+                                .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
+                                .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                                .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
+                                .build()
+                        )
+                        .build()
+        );
+        Assertions.assertEquals(expected, changes);
     }
 
     @Test
@@ -149,7 +216,7 @@ class SchemaSubjectChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test-subject")
+                        .withName(TEST_SUBJECT)
                         .build())
                 .withSpec(V1SchemaRegistrySubjectSpec
                         .builder()
@@ -162,7 +229,7 @@ class SchemaSubjectChangeComputerTest {
                 .builder()
                 .withMetadata(ObjectMeta
                         .builder()
-                        .withName("test-subject")
+                        .withName(TEST_SUBJECT)
                         .build())
                 .withSpec(V1SchemaRegistrySubjectSpec
                         .builder()
@@ -171,19 +238,35 @@ class SchemaSubjectChangeComputerTest {
                         .build())
                 .build();
         // When
-        List<SchemaSubjectChange> changes = computer.computeChanges(List.of(before), List.of(after))
-                .stream().map(HasMetadataChange::getChange).toList();
+        List<ResourceChange> changes = computer.computeChanges(List.of(before), List.of(after));
         // Then
-        Assertions.assertEquals(1, changes.size());
-        Assertions.assertEquals(ChangeType.UPDATE, changes.get(0).operation());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getCompatibilityLevels().operation());
-        Assertions.assertEquals(ChangeType.NONE, changes.get(0).getSchemaType().operation());
-
-        ValueChange<String> schemaChange = changes.get(0).getSchema();
-        Assertions.assertEquals(ChangeType.UPDATE, schemaChange.operation());
-        Assertions.assertNull(changes.get(0).getCompatibilityLevels().getBefore());
-
-        Assertions.assertEquals(Json.normalize(SCHEMA_V2.toString()), schemaChange.getAfter());
-        Assertions.assertEquals(Json.normalize(SCHEMA_V1.toString()), schemaChange.getBefore());
+        List<ResourceChange> expected = List.of(
+                GenericResourceChange
+                        .builder(V1SchemaRegistrySubject.class)
+                        .withMetadata(ObjectMeta
+                                .builder()
+                                .withName(TEST_SUBJECT)
+                                .build()
+                        )
+                        .withSpec(ResourceChangeSpec
+                                .builder()
+                                .withOperation(Operation.UPDATE)
+                                .withData(Map.of(
+                                        "permanentDelete", false,
+                                        "normalizeSchema", false
+                                ))
+                                .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
+                                .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                                .withChange(StateChange.update(
+                                        DATA_SCHEMA,
+                                        Json.normalize(SCHEMA_V1.toString()),
+                                        Json.normalize(SCHEMA_V2.toString()))
+                                )
+                                .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
+                                .build()
+                        )
+                        .build()
+        );
+        Assertions.assertEquals(expected, changes);
     }
 }

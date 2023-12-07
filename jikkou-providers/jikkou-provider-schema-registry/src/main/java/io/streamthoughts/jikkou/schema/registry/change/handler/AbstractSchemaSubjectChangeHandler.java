@@ -15,31 +15,39 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeDescription;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeError;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeHandler;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeMetadata;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResponse;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_REFERENCES;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
+
+import io.streamthoughts.jikkou.core.data.TypeConverter;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.StateChangeList;
+import io.streamthoughts.jikkou.core.reconciler.ChangeError;
+import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
+import io.streamthoughts.jikkou.core.reconciler.ChangeMetadata;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
+import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
-import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChange;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescription;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandler<SchemaSubjectChange> {
+public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandler<ResourceChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSchemaSubjectChangeHandler.class);
 
@@ -54,50 +62,71 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         this.api = Objects.requireNonNull(api, "api must not be null");
     }
 
-    protected CompletableFuture<Void> updateCompatibilityLevel(SchemaSubjectChange change) {
-        CompatibilityLevels compatibilityLevels = change.getCompatibilityLevels().getAfter();
+    protected CompletableFuture<Void> updateCompatibilityLevel(ResourceChange change) {
+        final CompatibilityLevels compatibilityLevels = StateChangeList
+                .of(change.getSpec().getChanges())
+                .getLast(DATA_COMPATIBILITY_LEVEL, TypeConverter.of(CompatibilityLevels.class))
+                .getAfter();
+
+        final String subjectName = change.getMetadata().getName();
         LOG.info("Updating compatibility-level for Schema Registry subject '{}'.",
-                change.getSubject()
+                subjectName
         );
         return api
-                .updateSubjectCompatibilityLevel(change.getSubject(), new CompatibilityObject(compatibilityLevels.name()))
+                .updateSubjectCompatibilityLevel(subjectName, new CompatibilityObject(compatibilityLevels.name()))
                 .thenApply(compatibilityObject -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
                                 "Updated compatibility-level for Schema Registry subject '{}' to '{}'.",
-                                change.getSubject(),
+                                subjectName,
                                 compatibilityObject.compatibility());
                     }
                     return null;
                 });
     }
 
-    protected CompletableFuture<Void> registerSubjectVersion(@NotNull HasMetadataChange<SchemaSubjectChange> item) {
-        SchemaSubjectChange change = item.getChange();
-        String schema = change.getSchema().getAfter();
-        SchemaType type = change.getSchemaType().getAfter();
-        SchemaSubjectChangeOptions options = change.getOptions();
+    protected CompletableFuture<Void> registerSubjectVersion(@NotNull ResourceChange change) {
+        String schema = change.getSpec()
+                .getChanges()
+                .getLast(DATA_SCHEMA, TypeConverter.String())
+                .getAfter();
 
-        final String subject = change.getSubject();
-        LOG.info("Registering new Schema Registry subject version: subject '{}', optimization={}, schema={}.",
-                subject,
-                options.isSchemaOptimizationEnabled(),
-                schema
-        );
+        SchemaType type = change.getSpec()
+                .getChanges()
+                .getLast(DATA_SCHEMA_TYPE, TypeConverter.of(SchemaType.class))
+                .getAfter();
+
+
+        SchemaSubjectChangeOptions options = getSchemaSubjectChangeOptions(change);
+
+        final String subjectName = change.getMetadata().getName();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Registering new Schema Registry subject version: subject '{}', optimization={}, schema={}.",
+                    subjectName,
+                    options.normalizeSchema(),
+                    schema
+            );
+        }
+
+        List<SubjectSchemaReference> references = change.getSpec()
+                .getChanges()
+                .getLast(DATA_REFERENCES, TypeConverter.ofList(SubjectSchemaReference.class))
+                .getAfter();
+
         return api
                 .registerSubjectVersion(
-                        subject,
-                        new SubjectSchemaRegistration(schema, type, change.getReferences().getAfter()),
-                        options.isSchemaOptimizationEnabled()
+                        subjectName,
+                        new SubjectSchemaRegistration(schema, type, references),
+                        options.normalizeSchema()
                 )
                 .thenApply(subjectSchemaId -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
                                 "Registered Schema Registry subject version: subject '{}', id '{}'.",
-                                subject,
+                                subjectName,
                                 subjectSchemaId.id()
                         );
-                        item.getMetadata()
+                        change.getMetadata()
                                 .addAnnotationIfAbsent(
                                         SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID,
                                         subjectSchemaId.id()
@@ -107,25 +136,34 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 });
     }
 
-    protected CompletableFuture<Void> deleteCompatibilityLevel(@NotNull SchemaSubjectChange change) {
-        LOG.info("Deleting compatibility-level for Schema Registry subject '{}'.",
-                change.getSubject()
-        );
+    protected SchemaSubjectChangeOptions getSchemaSubjectChangeOptions(@NotNull ResourceChange change) {
+        return TypeConverter
+                .of(SchemaSubjectChangeOptions.class)
+                .convertValue(change.getSpec().getData());
+    }
+
+    protected CompletableFuture<Void> deleteCompatibilityLevel(@NotNull ResourceChange change) {
+        final String subject = change.getMetadata().getName();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Deleting compatibility-level for Schema Registry subject '{}'.",
+                    subject
+            );
+        }
         return api
-                .deleteSubjectCompatibilityLevel(change.getSubject())
+                .deleteSubjectCompatibilityLevel(subject)
                 .thenApplyAsync(compatibilityObject -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
                                 "Deleted compatibility-level for Schema Registry subject '{}' to '{}'.",
-                                change.getSubject(),
+                                change.getMetadata().getName(),
                                 compatibilityObject.compatibility());
                     }
                     return null;
                 });
     }
 
-    public ChangeResponse<SchemaSubjectChange> toChangeResponse(HasMetadataChange<SchemaSubjectChange> change,
-                                                                CompletableFuture<?> future) {
+    public ChangeResponse<ResourceChange> toChangeResponse(ResourceChange change,
+                                                           CompletableFuture<?> future) {
         CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
             if (throwable == null) {
                 return ChangeMetadata.empty();
@@ -149,7 +187,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
      * {@inheritDoc}
      */
     @Override
-    public ChangeDescription getDescriptionFor(@NotNull HasMetadataChange<SchemaSubjectChange> item) {
+    public TextDescription describe(@NotNull ResourceChange item) {
         return new SchemaSubjectChangeDescription(item);
     }
 }

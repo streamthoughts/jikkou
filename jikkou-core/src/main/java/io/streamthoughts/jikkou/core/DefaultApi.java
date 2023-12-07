@@ -52,17 +52,16 @@ import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
-import io.streamthoughts.jikkou.core.models.HasMetadataChange;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
-import io.streamthoughts.jikkou.core.reconcilier.Change;
-import io.streamthoughts.jikkou.core.reconcilier.ChangeResult;
-import io.streamthoughts.jikkou.core.reconcilier.Collector;
-import io.streamthoughts.jikkou.core.reconcilier.Controller;
-import io.streamthoughts.jikkou.core.reconcilier.Reconcilier;
-import io.streamthoughts.jikkou.core.reconcilier.config.ApiOptionSpecFactory;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.Collector;
+import io.streamthoughts.jikkou.core.reconciler.Controller;
+import io.streamthoughts.jikkou.core.reconciler.Reconciler;
+import io.streamthoughts.jikkou.core.reconciler.config.ApiOptionSpecFactory;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
@@ -402,17 +401,18 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                                          @NotNull final ReconciliationContext context) {
         LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
-        List<ChangeResult<Change>> results = resourcesByType
+        List<ChangeResult> results = resourcesByType
                 .entrySet()
                 .stream()
                 .map(e -> executeReconciliation(mode, context, e.getKey(), e.getValue()))
                 .flatMap(Collection::stream)
-                .toList();
+                .collect(Collectors.toList());
         if (!context.isDryRun() && !reporters.isEmpty()) {
-            List<ChangeResult<Change>> reportable = results.stream()
-                    .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.data()))
-                    .toList();
-            new CombineChangeReporter(reporters).report(reportable);
+            List<ChangeResult> reportable = results.stream()
+                    .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.change()))
+                    .collect(Collectors.toList());
+            CombineChangeReporter reporter = new CombineChangeReporter(reporters);
+            reporter.report(reportable);
         }
         return new ApiChangeResultList(
                 context.isDryRun(),
@@ -458,19 +458,19 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ).orElseThrow(() -> new NoSuchExtensionException(String.format("Cannot find action '%s'", action)));
     }
 
-    private List<ChangeResult<Change>> executeReconciliation(@NotNull ReconciliationMode mode,
-                                                             @NotNull ReconciliationContext context,
-                                                             @NotNull ResourceType resourceType,
-                                                             @NotNull List<HasMetadata> resources) {
-        Controller<HasMetadata, Change> controller = getMatchingController(resourceType);
+    private List<ChangeResult> executeReconciliation(@NotNull ReconciliationMode mode,
+                                                     @NotNull ReconciliationContext context,
+                                                     @NotNull ResourceType resourceType,
+                                                     @NotNull List<HasMetadata> resources) {
+        Controller<HasMetadata, ResourceChange> controller = getMatchingController(resourceType);
         LOG.info("Starting reconciliation using controller: '{}' (mode: {}, dryRun: {})",
                 controller.getName(),
                 mode,
                 context.isDryRun()
         );
 
-        Reconcilier<HasMetadata, Change> reconcilier = new Reconcilier<>(controller);
-        List<ChangeResult<Change>> changes = reconcilier.reconcile(resources, mode, context);
+        Reconciler<HasMetadata, ResourceChange> reconciler = new Reconciler<>(controller);
+        List<ChangeResult> changes = reconciler.reconcile(resources, mode, context);
 
         LOG.info("Reconciliation completed using controller: '{}' (mode: {}, dryRun: {})",
                 controller.getName(),
@@ -526,19 +526,15 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                                          final @NotNull ReconciliationContext context) {
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
-
-        List<ResourceListObject<HasMetadataChange<Change>>> changes = resourcesByType.entrySet()
+        List<ResourceChange> changes = resourcesByType.entrySet()
                 .stream()
                 .map(e -> {
-                    Controller<HasMetadata, Change> controller = getMatchingController(e.getKey());
+                    Controller<HasMetadata, ResourceChange> controller = getMatchingController(e.getKey());
                     List<HasMetadata> resource = e.getValue();
-                    ResourceListObject<? extends HasMetadataChange<Change>> result = controller.plan(
-                            resource,
-                            context
-                    );
-                    return (ResourceListObject<HasMetadataChange<Change>>) result;
+                    return controller.plan(resource, context);
                 })
-                .toList();
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         return new ApiResourceChangeList(changes);
     }
 
