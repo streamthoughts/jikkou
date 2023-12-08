@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Resources</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaConnectors</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/connector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/connector/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Resources</title><link>https://www.jikkou.io/docs/providers/kafka-connect/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/kafka-connect/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaConnectors</title><link>https://www.jikkou.io/docs/providers/kafka-connect/resources/connector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka-connect/resources/connector/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This section describes the resource definition format for &lt;code>KafkaConnector&lt;/code> entities, which can be used to define the
 configuration and status of connectors you plan to create and manage on specific Kafka Connect clusters.&lt;/p>
@@ -26,7 +26,7 @@ configuration and status of connectors you plan to create and manage on specific
 &lt;p>The name of the connector.&lt;/p>
 &lt;h4 id="labelskafkajikkouioconnect-cluster--required">&lt;code>labels.kafka.jikkou.io/connect-cluster&lt;/code> [required]&lt;/h4>
 &lt;p>the name of the Kafka Connect cluster to create the connector instance in.
-The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p>
+The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p>
 &lt;h3 id="specification">Specification&lt;/h3>
 &lt;h4 id="specconnectorclass-required">&lt;code>spec.connectorClass&lt;/code> [required]&lt;/h4>
 &lt;p>The name or alias of the class for this connector.&lt;/p>

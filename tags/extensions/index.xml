@@ -1,16 +1,16 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extensions</title><link>https://streamthoughts.github.io/jikkou/tags/extensions/</link><description>Recent content in extensions on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/tags/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extensions</title><link>https://www.jikkou.io/tags/extensions/</link><description>Recent content in extensions on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/tags/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Extensions</title><link>https://www.jikkou.io/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/extensions/</guid><description>
 &lt;h2 id="extension-providers">Extension Providers&lt;/h2>
 &lt;p>Most of the Jikkou&amp;rsquo;s features are provided by &lt;strong>Jikkou Extension Providers&lt;/strong>. A provider is a module providing a set of
 extensions used to manage one or more resources.&lt;/p>
 &lt;h2 id="built-in-extension-providers">Built-in Extension Providers&lt;/h2>
 &lt;p>Jikkou ships with a number of extension providers:&lt;/p>
 &lt;ul>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Reporters</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</guid><description>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Reporters</title><link>https://www.jikkou.io/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reporters/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Reporters&lt;/em>&lt;/strong> can be used to report changes applied by Jikkou to a third-party system.&lt;/p>
 &lt;/div>
@@ -68,7 +68,7 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://www.jikkou.io/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/actions/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Actions&lt;/em>&lt;/strong> allow a user to execute a specific and one-shot operation on resources.&lt;/p>
 &lt;/div>
@@ -78,10 +78,10 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="execution-actions-cli">Execution Actions (CLI)&lt;/h2>
 &lt;p>You can execute a specific extension using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action &amp;lt;ACTION_NAME&amp;gt; execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>&amp;lt;options&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/validations/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/providers/aiven/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
-&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/validations/</guid><description>
-&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/validations/</guid><description>
+&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/providers/kafka-connect/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka-connect/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/providers/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="topics">Topics&lt;/h2>
 &lt;h3 id="noduplicatetopicsallowedvalidation">&lt;code>NoDuplicateTopicsAllowedValidation&lt;/code>&lt;/h3>
@@ -229,7 +229,7 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 &lt;p>(auto registered)&lt;/p>
 &lt;h2 id="quotas">Quotas&lt;/h2>
 &lt;h3 id="quotasentityvalidation">&lt;code>QuotasEntityValidation&lt;/code>&lt;/h3>
-&lt;p>(auto registered)&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/validations/</guid><description>
+&lt;p>(auto registered)&lt;/p></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/providers/schema-registry/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/schema-registry/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="subject">Subject&lt;/h2>
 &lt;h3 id="schemacompatibilityvalidation">&lt;code>SchemaCompatibilityValidation&lt;/code>&lt;/h3>

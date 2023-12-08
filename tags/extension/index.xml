@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extension</title><link>https://streamthoughts.github.io/jikkou/tags/extension/</link><description>Recent content in extension on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/tags/extension/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extension</title><link>https://www.jikkou.io/tags/extension/</link><description>Recent content in extension on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/tags/extension/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Transformations</title><link>https://www.jikkou.io/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/transformations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Transformations&lt;/em>&lt;/strong> are applied to inbound resources. &lt;em>Transformations&lt;/em> are used to transform, enrich, or filter
 resource entities
@@ -58,7 +58,7 @@ minInSyncReplicas = 2
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/validations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Validations&lt;/strong>&lt;/em> are applied to inbound resources to ensure that the resource entities adhere to specific rules or
 constraints.
@@ -111,7 +111,7 @@ topicNameRegex = &amp;#34;(europe|northamerica|asiapacific)-.+&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Collectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Collectors</title><link>https://www.jikkou.io/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/collector/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Collectors&lt;/strong>&lt;/em> are used to collect and describe all entities that exist into your system for a
 specific resource type.&lt;/p>
@@ -119,7 +119,7 @@ specific resource type.&lt;/p>
 &lt;h2 id="available-collectors">Available Collectors&lt;/h2>
 &lt;p>You can list all the available collectors using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Collector &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Controllers</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Controllers</title><link>https://www.jikkou.io/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/controller/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Controllers&lt;/strong>&lt;/em> are used to compute and apply changes required to reconcile resources into a managed
 system.&lt;/p>

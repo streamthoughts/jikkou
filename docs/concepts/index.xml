@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Concepts</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/</link><description>Recent content in Concepts on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/concepts/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Resource</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Concepts</title><link>https://www.jikkou.io/docs/concepts/</link><description>Recent content in Concepts on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/concepts/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Resource</title><link>https://www.jikkou.io/docs/concepts/resource/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/resource/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>Jikkou Resources&lt;/em> are entities that represent the state of a concrete instance of a concept that are part of the state
 of your system, like a Topic on an Apache Kafka cluster.&lt;/p>
@@ -64,7 +64,7 @@ All resource are scoped by an API &lt;em>Group&lt;/em> and &lt;em>Version&lt;/em
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: Labels and annotations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</guid><description>
+&lt;/table></description></item><item><title>Docs: Labels and annotations</title><link>https://www.jikkou.io/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/labels-and-annotations/</guid><description>
 &lt;h2 id="labels">Labels&lt;/h2>
 &lt;p>You can use labels to attach arbitrary identifying metadata to objects.&lt;/p>
 &lt;p>Labels are key/value maps:&lt;/p>
@@ -115,7 +115,7 @@ applied on the object.&lt;/p>
 &lt;p>This annotation is automatically added by Jikkou to an object when loaded from your local filesystem.&lt;/p>
 &lt;h4 id="jikkouioitems-count">&lt;code>jikkou.io/items-count&lt;/code>&lt;/h4>
 &lt;p>Used by jikkou.&lt;/p>
-&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p></description></item><item><title>Docs: Reconciliation</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</guid><description>
+&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p></description></item><item><title>Docs: Reconciliation</title><link>https://www.jikkou.io/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reconciliation/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>In the context of Jikkou, reconciliation refers to the process of comparing the desired state of an object with the
 actual state of the system and making any necessary corrections or adjustments to align them.&lt;/p>
@@ -169,7 +169,7 @@ definition:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou.io/delete&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://www.jikkou.io/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/selectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>Selectors&lt;/strong> allows you to include or exclude some resource objects from being returned or reconciled by Jikkou.&lt;/p>
 &lt;/div>
@@ -216,7 +216,7 @@ Selectors can be specified via the Jikkou CLI option: &lt;code>--selector&lt;/co
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector-match ANY
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://www.jikkou.io/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/transformations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Transformations&lt;/em>&lt;/strong> are applied to inbound resources. &lt;em>Transformations&lt;/em> are used to transform, enrich, or filter
 resource entities
@@ -276,7 +276,7 @@ minInSyncReplicas = 2
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/validations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Validations&lt;/strong>&lt;/em> are applied to inbound resources to ensure that the resource entities adhere to specific rules or
 constraints.
@@ -329,7 +329,7 @@ topicNameRegex = &amp;#34;(europe|northamerica|asiapacific)-.+&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Template</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/template/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Template</title><link>https://www.jikkou.io/docs/concepts/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/template/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>Template&lt;/em> helps you to dynamically define &lt;em>resource definition files&lt;/em> from external data.&lt;/p>
 &lt;/div>
@@ -514,7 +514,7 @@ fields:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">max.message.bytes&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">20971520&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">3600000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Collectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Collectors</title><link>https://www.jikkou.io/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/collector/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Collectors&lt;/strong>&lt;/em> are used to collect and describe all entities that exist into your system for a
 specific resource type.&lt;/p>
@@ -522,7 +522,7 @@ specific resource type.&lt;/p>
 &lt;h2 id="available-collectors">Available Collectors&lt;/h2>
 &lt;p>You can list all the available collectors using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Collector &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Controllers</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Controllers</title><link>https://www.jikkou.io/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/controller/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Controllers&lt;/strong>&lt;/em> are used to compute and apply changes required to reconcile resources into a managed
 system.&lt;/p>
@@ -530,19 +530,19 @@ system.&lt;/p>
 &lt;h2 id="available-controllers">Available Controllers&lt;/h2>
 &lt;p>You can list all the available controllers using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Controller &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Extensions</title><link>https://www.jikkou.io/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/extensions/</guid><description>
 &lt;h2 id="extension-providers">Extension Providers&lt;/h2>
 &lt;p>Most of the Jikkou&amp;rsquo;s features are provided by &lt;strong>Jikkou Extension Providers&lt;/strong>. A provider is a module providing a set of
 extensions used to manage one or more resources.&lt;/p>
 &lt;h2 id="built-in-extension-providers">Built-in Extension Providers&lt;/h2>
 &lt;p>Jikkou ships with a number of extension providers:&lt;/p>
 &lt;ul>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Reporters</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</guid><description>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Reporters</title><link>https://www.jikkou.io/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reporters/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Reporters&lt;/em>&lt;/strong> can be used to report changes applied by Jikkou to a third-party system.&lt;/p>
 &lt;/div>
@@ -600,7 +600,7 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://www.jikkou.io/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/actions/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Actions&lt;/em>&lt;/strong> allow a user to execute a specific and one-shot operation on resources.&lt;/p>
 &lt;/div>

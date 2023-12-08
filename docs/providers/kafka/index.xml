@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Apache Kafka</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/</link><description>Recent content in Apache Kafka on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/providers/kafka/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/configuration/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Apache Kafka</title><link>https://www.jikkou.io/docs/providers/kafka/</link><description>Recent content in Apache Kafka on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/kafka/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://www.jikkou.io/docs/providers/kafka/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/configuration/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find the list of resources supported for Apache Kafka.&lt;/p>
 &lt;/div>
@@ -40,16 +40,16 @@ waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 }
 }
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://www.jikkou.io/docs/providers/kafka/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find the list of resources supported for Apache Kafka.&lt;/p>
 &lt;/div>
 &lt;h2 id="apache-kafka-resources">Apache Kafka Resources&lt;/h2>
-&lt;p>More information:&lt;/p></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/</guid><description>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Transformations</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the built-in transformations for Apache Kafka resources.&lt;/p>
 &lt;/div>
-&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/validations/</guid><description>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/providers/kafka/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/validations/</guid><description>
 &lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="topics">Topics&lt;/h2>
 &lt;h3 id="noduplicatetopicsallowedvalidation">&lt;code>NoDuplicateTopicsAllowedValidation&lt;/code>&lt;/h3>
@@ -197,19 +197,19 @@ waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 &lt;p>(auto registered)&lt;/p>
 &lt;h2 id="quotas">Quotas&lt;/h2>
 &lt;h3 id="quotasentityvalidation">&lt;code>QuotasEntityValidation&lt;/code>&lt;/h3>
-&lt;p>(auto registered)&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/annotations/</guid><description>
+&lt;p>(auto registered)&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://www.jikkou.io/docs/providers/kafka/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/annotations/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information about the annotations provided the Apache Kafka extension for Jikkou.&lt;/p>
 &lt;/div>
 &lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
 &lt;h4 id="kafkajikkouiocluster-id">&lt;code>kafka.jikkou.io/cluster-id&lt;/code>&lt;/h4>
 &lt;p>Used by jikkou.&lt;/p>
-&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/actions/</guid><description>
+&lt;p>The annotation is automatically added by Jikkou to a describe object part of an Apache Kafka cluster.&lt;/p></description></item><item><title>Docs: Actions</title><link>https://www.jikkou.io/docs/providers/kafka/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/actions/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find the list of actions provided by the Extension Provider for Apache Kafka.&lt;/p>
 &lt;/div>
 &lt;h2 id="apache-kafka-action">Apache Kafka Action&lt;/h2>
-&lt;p>More information:&lt;/p></description></item><item><title>Docs: Compatibility</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/compatibility/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/compatibility/</guid><description>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Compatibility</title><link>https://www.jikkou.io/docs/providers/kafka/compatibility/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/compatibility/</guid><description>
 &lt;p>The Apache Kafka extension for Jikkou utilizes the &lt;a href="https://kafka.apache.org/documentation/#adminapi">Kafka Admin Client&lt;/a>
 which is compatible with any Kafka infrastructure, such as :&lt;/p>
 &lt;ul>

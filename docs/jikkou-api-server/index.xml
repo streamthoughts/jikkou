@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Jikkou API Server Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/</link><description>Recent content in Jikkou API Server Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Install Jikkou API Server</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Jikkou API Server Documentation</title><link>https://www.jikkou.io/docs/jikkou-api-server/</link><description>Recent content in Jikkou API Server Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-api-server/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Install Jikkou API Server</title><link>https://www.jikkou.io/docs/jikkou-api-server/install/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/install/</guid><description>
 &lt;h2 id="releases">Releases&lt;/h2>
 &lt;p>The latest stable release of Jikkou API Server is available:&lt;/p>
 &lt;ul>
@@ -53,7 +53,7 @@ branch.&lt;/p>
 &lt;p>They are not official releases, and may not be stable.
 However, they offer the opportunity to test the cutting edge features.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ docker run -it streamthoughts/jikkou-api-server:main
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configurations</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configurations</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/</guid><description>
 &lt;p>Jikkou API Server is built with &lt;a href="https://micronaut.io/">Micronaut Framework&lt;/a>.&lt;/p>
 &lt;p>The default configuration file is located in the installation directory of you server under the
 path &lt;code>/etc/application.yaml&lt;/code>.&lt;/p>
@@ -64,4 +64,4 @@ here: &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-rest
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Note&lt;/h4>
 For more information about how to configure the application, we recommend you to read the official Micronaut documentation (see: &lt;a href="https://docs.micronaut.io/latest/guide/#config">Application Configuration&lt;/a>).
-&lt;/div></description></item><item><title>Docs: Jikkou - API References</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/api-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/api-references/</guid><description/></item></channel></rss>
+&lt;/div></description></item><item><title>Docs: Jikkou - API References</title><link>https://www.jikkou.io/docs/jikkou-api-server/api-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/api-references/</guid><description/></item></channel></rss>

@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/</link><description>Recent content in Transformations on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaTopicMaxNumPartitions</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Transformations</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/</link><description>Recent content in Transformations on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/kafka/transformations/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaTopicMaxNumPartitions</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the number of partitions of kafka topics.&lt;/p>
 &lt;/div>
@@ -33,7 +33,7 @@ maxNumPartitions = 50
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMaxRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMaxRetentionMs</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
 &lt;/div>
@@ -68,7 +68,7 @@ maxRetentionMs = 2592000000 # 30 days
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinInSyncReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinInSyncReplicas</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>min.insync.replicas&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
 &lt;/div>
@@ -103,7 +103,7 @@ minInSyncReplicas = 2
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminreplicas/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinReplicas</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminreplicas/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a minimum value for the replication factor of kafka topics.&lt;/p>
 &lt;/div>
@@ -138,7 +138,7 @@ minReplicationFactor = 3
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminretentionms/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinRetentionMs</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminretentionms/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
 &lt;/div>

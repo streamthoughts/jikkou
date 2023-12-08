@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Jikkou Tutorials</title><link>https://streamthoughts.github.io/jikkou/docs/tutorials/</link><description>Recent content in Jikkou Tutorials on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Jikkou Getting Started</title><link>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Jikkou Tutorials</title><link>https://www.jikkou.io/docs/tutorials/</link><description>Recent content in Jikkou Tutorials on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/tutorials/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Jikkou Getting Started</title><link>https://www.jikkou.io/docs/tutorials/get_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/tutorials/get_started/</guid><description>
 &lt;p>This document will guide you through setting up Jikkou in a few minutes and managing your first resources
 with Jikkou.&lt;/p>
 &lt;h2 id="prerequisites">Prerequisites&lt;/h2>
@@ -28,7 +28,7 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>cp jikkou-0.31.0-linux-x86_64/bin/jikkou &lt;span style="color:#000">$HOME&lt;/span>/.local/bin &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>jikkou --version
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/install/">installation&lt;/a> guide.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="https://www.jikkou.io/docs/install/">installation&lt;/a> guide.&lt;/p>
 &lt;h2 id="configure-jikkou-for-your-local-apache-kafka-cluster">Configure Jikkou for your local Apache Kafka cluster&lt;/h2>
 &lt;p>Set configuration context for localhost&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context localhost --config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>kafka.client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>localhost:9092
@@ -185,7 +185,7 @@ that will be executed by Jikkou before continuing.
 &lt;p>Now, you&amp;rsquo;re ready to use Jikkou!🚀&lt;/p>
 &lt;p>As next steps, we suggest reading the following documentation in this order:&lt;/p>
 &lt;ul>
-&lt;li>Learn Jikkou &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/concepts/">concepts&lt;/a>&lt;/li>
+&lt;li>Learn Jikkou &lt;a href="https://www.jikkou.io/docs/concepts/">concepts&lt;/a>&lt;/li>
 &lt;li>Read the Developer Guide to understand how to use the Jikkou API for Java&lt;/li>
 &lt;li>Look at the &lt;a href="https://github.com/streamthoughts/jikkou/tree/main/examples">examples&lt;/a>&lt;/li>
 &lt;/ul></description></item></channel></rss>

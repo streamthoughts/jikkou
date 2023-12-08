@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Documentation</title><link>https://streamthoughts.github.io/jikkou/docs/</link><description>Recent content in Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://streamthoughts.github.io/jikkou/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: API Server</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/server_configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/server_configuration/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Documentation</title><link>https://www.jikkou.io/docs/</link><description>Recent content in Documentation on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: API Server</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/server_configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/server_configuration/</guid><description>
 &lt;h2 id="running-server-on-a-specific-port">Running Server on a Specific Port&lt;/h2>
 &lt;p>By default, the server runs on port &lt;code>28082&lt;/code>. However, you can set the server to run on a specific port:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># ./etc/application.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
@@ -24,9 +24,9 @@ However, you can enable (or disable) additional providers:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># schemaregistry.enabled: true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># aiven.enabled: true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># kafkaconnect.enabled: true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Basic CLI Features</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/basic-cli-features/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Basic CLI Features</title><link>https://www.jikkou.io/docs/jikkou-cli/basic-cli-features/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/basic-cli-features/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
 &lt;/div>
 &lt;p>The command line interface to &lt;strong>Jikkou&lt;/strong> is the &lt;code>jikkou&lt;/code> command, which accepts a variety of subcommands such as
 &lt;code>jikkou apply&lt;/code> or &lt;code>jikkou validate&lt;/code>.&lt;/p>
@@ -79,7 +79,7 @@ However, you can enable (or disable) additional providers:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion . jikkou_completion
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or alternatively, you can run the following command to generate it.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ConfigMap</title><link>https://streamthoughts.github.io/jikkou/docs/providers/core/resources/configmap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/core/resources/configmap/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ConfigMap</title><link>https://www.jikkou.io/docs/providers/core/resources/configmap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/resources/configmap/</guid><description>
 &lt;p>You can use a &lt;code>ConfigMap&lt;/code> to define reusable data in the form of key/value pairs that can then be referenced and used by
 other resources.&lt;/p>
 &lt;h2 id="specification">Specification&lt;/h2>
@@ -92,7 +92,7 @@ other resources.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;lt;KEY_1&amp;gt;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;lt;VALUE_1&amp;gt;&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="example">Example&lt;/h2>
 &lt;p>For example, the below &lt;code>ConfigMap&lt;/code> show how to define default config properties namedc&lt;code>KafkaTopicConfig&lt;/code> that can then
-reference and used to define multiple &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/providers/kafka/resources/topics/">KafkaTopic&lt;/a>. resources.&lt;/p>
+reference and used to define multiple &lt;a href="https://www.jikkou.io/docs/providers/kafka/resources/topics/">KafkaTopic&lt;/a>. resources.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">---&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;core.jikkou.io/v1beta2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">ConfigMap&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
@@ -102,7 +102,7 @@ reference and used to define multiple &lt;a href="https://streamthoughts.github.
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">cleanup.policy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;delete&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">2&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">86400000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#8f5902;font-style:italic"># (1 day)&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>&lt;/code>&lt;/pre></description></item><item><title>Docs: Jikkou Getting Started</title><link>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/tutorials/get_started/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>&lt;/code>&lt;/pre></description></item><item><title>Docs: Jikkou Getting Started</title><link>https://www.jikkou.io/docs/tutorials/get_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/tutorials/get_started/</guid><description>
 &lt;p>This document will guide you through setting up Jikkou in a few minutes and managing your first resources
 with Jikkou.&lt;/p>
 &lt;h2 id="prerequisites">Prerequisites&lt;/h2>
@@ -132,7 +132,7 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>cp jikkou-0.31.0-linux-x86_64/bin/jikkou &lt;span style="color:#000">$HOME&lt;/span>/.local/bin &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>&lt;span style="color:#204a87">source&lt;/span> &amp;lt;&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>jikkou generate-completion&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>jikkou --version
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/install/">installation&lt;/a> guide.&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more details, or for other options, see the &lt;a href="https://www.jikkou.io/docs/install/">installation&lt;/a> guide.&lt;/p>
 &lt;h2 id="configure-jikkou-for-your-local-apache-kafka-cluster">Configure Jikkou for your local Apache Kafka cluster&lt;/h2>
 &lt;p>Set configuration context for localhost&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context localhost --config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>kafka.client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>localhost:9092
@@ -289,10 +289,10 @@ that will be executed by Jikkou before continuing.
 &lt;p>Now, you&amp;rsquo;re ready to use Jikkou!🚀&lt;/p>
 &lt;p>As next steps, we suggest reading the following documentation in this order:&lt;/p>
 &lt;ul>
-&lt;li>Learn Jikkou &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/concepts/">concepts&lt;/a>&lt;/li>
+&lt;li>Learn Jikkou &lt;a href="https://www.jikkou.io/docs/concepts/">concepts&lt;/a>&lt;/li>
 &lt;li>Read the Developer Guide to understand how to use the Jikkou API for Java&lt;/li>
 &lt;li>Look at the &lt;a href="https://github.com/streamthoughts/jikkou/tree/main/examples">examples&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Install Jikkou API Server</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/install/</guid><description>
+&lt;/ul></description></item><item><title>Docs: Install Jikkou API Server</title><link>https://www.jikkou.io/docs/jikkou-api-server/install/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/install/</guid><description>
 &lt;h2 id="releases">Releases&lt;/h2>
 &lt;p>The latest stable release of Jikkou API Server is available:&lt;/p>
 &lt;ul>
@@ -347,7 +347,7 @@ branch.&lt;/p>
 &lt;p>They are not official releases, and may not be stable.
 However, they offer the opportunity to test the cutting edge features.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ docker run -it streamthoughts/jikkou-api-server:main
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Package Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/package/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/package/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Package Extensions</title><link>https://www.jikkou.io/docs/developer-guide/extensions/package/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/developer-guide/extensions/package/</guid><description>
 &lt;h2 id="packaging-extensions">Packaging Extensions&lt;/h2>
 &lt;p>You can extend Jikkou&amp;rsquo;s capabilities by developing custom extensions and resources.&lt;/p>
 &lt;p>An extension must be developed in Java and packaged as a tarball or ZIP archive. The archive must contain a single
@@ -482,7 +482,7 @@ property accepts a list of paths from which to load extension providers.&lt;/p>
 &lt;ul>
 &lt;li>The Jikkou CLI: &lt;code>jikkou api-extensions list&lt;/code> command, or&lt;/li>
 &lt;li>The Jikkou API Server: &lt;code>GET /apis/core.jikkou.io/v1/extensions -H &amp;quot;Accept: application/json&amp;quot;&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Resource</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/resource/</guid><description>
+&lt;/ul></description></item><item><title>Docs: Resource</title><link>https://www.jikkou.io/docs/concepts/resource/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/resource/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>Jikkou Resources&lt;/em> are entities that represent the state of a concrete instance of a concept that are part of the state
 of your system, like a Topic on an Apache Kafka cluster.&lt;/p>
@@ -548,9 +548,9 @@ All resource are scoped by an API &lt;em>Group&lt;/em> and &lt;em>Version&lt;/em
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: CLI Configuration</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/cli-configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/cli-configuration/</guid><description>
+&lt;/table></description></item><item><title>Docs: CLI Configuration</title><link>https://www.jikkou.io/docs/jikkou-cli/cli-configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/cli-configuration/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Hands-on:&lt;/strong> Try the Jikkou: &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Get Started tutorials&lt;/a>.&lt;/p>
 &lt;/div>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;p>To set up the configuration settings used by Jikkou CLI, you will need create a &lt;em>jikkou config file&lt;/em>, which is created
@@ -558,7 +558,7 @@ automatically when you create a configuration context using:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context &amp;lt;context-name&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-gile&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;config-value&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>By default, the configuration of &lt;code>jikkou&lt;/code> is located under the path &lt;code>$HOME/.jikkou/config&lt;/code>.&lt;/p>
 &lt;p>This &lt;em>jikkou config file&lt;/em> defines all the contexts that can be used by jikkou CLI.&lt;/p>
-&lt;p>For example, below is the config file created during the &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/p>
+&lt;p>For example, below is the config file created during the &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;currentContext&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;localhost&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;localhost&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
@@ -696,7 +696,7 @@ reporters = [
 &lt;h4 class="alert-heading">Tips&lt;/h4>
 To debug the configuration use by Jikkou, you can run the following command: &lt;code>jikkou config view --comments&lt;/code>
 or &lt;code>jikkou config view --debug&lt;/code>
-&lt;/div></description></item><item><title>Docs: Develop Custom Validations</title><link>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/validation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/validation/</guid><description>
+&lt;/div></description></item><item><title>Docs: Develop Custom Validations</title><link>https://www.jikkou.io/docs/developer-guide/extensions/validation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/developer-guide/extensions/validation/</guid><description>
 &lt;div class="pageinfo pageinfo-dark-pink">
 &lt;p>This section covers the core classes to develop validation extensions.&lt;/p>
 &lt;/div>
@@ -798,7 +798,7 @@ all resources accepted by validation at once, or each resource one by one.&lt;/p
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">return&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">ValidationResult&lt;/span>&lt;span style="color:#000;font-weight:bold">.&lt;/span>&lt;span style="color:#c4a000">success&lt;/span>&lt;span style="color:#000;font-weight:bold">();&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Labels and annotations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/labels-and-annotations/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Labels and annotations</title><link>https://www.jikkou.io/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/labels-and-annotations/</guid><description>
 &lt;h2 id="labels">Labels&lt;/h2>
 &lt;p>You can use labels to attach arbitrary identifying metadata to objects.&lt;/p>
 &lt;p>Labels are key/value maps:&lt;/p>
@@ -849,7 +849,7 @@ applied on the object.&lt;/p>
 &lt;p>This annotation is automatically added by Jikkou to an object when loaded from your local filesystem.&lt;/p>
 &lt;h4 id="jikkouioitems-count">&lt;code>jikkou.io/items-count&lt;/code>&lt;/h4>
 &lt;p>Used by jikkou.&lt;/p>
-&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p></description></item><item><title>Docs: Basic Auth</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/basic_auth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/basic_auth/</guid><description>
+&lt;p>This annotation is automatically added by Jikkou to an object collection grouping several resources of homogeneous type.&lt;/p></description></item><item><title>Docs: Basic Auth</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/basic_auth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/basic_auth/</guid><description>
 &lt;p>Jikkou API Server can be secured using a &lt;strong>Basic HTTP Authentication Scheme&lt;/strong>.&lt;/p>
 &lt;p>&lt;a href="https://datatracker.ietf.org/doc/html/rfc7617">RFC7617&lt;/a> defines the &amp;ldquo;Basic&amp;rdquo; Hypertext Transfer Protocol (HTTP)
 authentication scheme, which transmits credentials as user-id/password pairs, encoded using Base64.&lt;/p>
@@ -893,7 +893,7 @@ request&lt;/strong>&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>HTTP/1.1 &lt;span style="color:#0000cf;font-weight:bold">200&lt;/span> OK
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Content-Type: application/hal+json
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>content-length: &lt;span style="color:#0000cf;font-weight:bold">576&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Develop Custom Action</title><link>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/action/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/action/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Develop Custom Action</title><link>https://www.jikkou.io/docs/developer-guide/extensions/action/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/developer-guide/extensions/action/</guid><description>
 &lt;div class="pageinfo pageinfo-dark-pink">
 &lt;p>This section covers the core classes to develop action extensions.&lt;/p>
 &lt;/div>
@@ -965,7 +965,7 @@ interface: &lt;code>io.streamthoughts.jikkou.core.action.Action&lt;/code>.&lt;/p
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Develop Custom Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/transformation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/developer-guide/extensions/transformation/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Develop Custom Transformations</title><link>https://www.jikkou.io/docs/developer-guide/extensions/transformation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/developer-guide/extensions/transformation/</guid><description>
 &lt;div class="pageinfo pageinfo-dark-pink">
 &lt;p>This section covers the core classes to develop transformation extensions.&lt;/p>
 &lt;/div>
@@ -1019,7 +1019,7 @@ interface: &lt;code>io.streamthoughts.jikkou.core.transformation.Transformation&
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">);&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Automate Jikkou with GitHub Actions</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/githubactions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-cli/automating/githubactions/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Automate Jikkou with GitHub Actions</title><link>https://www.jikkou.io/docs/jikkou-cli/automating/githubactions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/automating/githubactions/</guid><description>
 &lt;h2 id="setup-jikkou">Setup Jikkou&lt;/h2>
 &lt;p>The &lt;a href="https://github.com/streamthoughts/setup-jikkou">&lt;code>streamthoughts/setup-jikkou&lt;/code>&lt;/a> action is a JavaScript action that
 sets up Jikkou in your &lt;strong>GitHub Actions&lt;/strong> workflow by:&lt;/p>
@@ -1064,7 +1064,7 @@ Actions run syntax. This allows most Jikkou commands to work exactly like they d
 &lt;td>The path to the Jikkou CLI config file. If set, Jikkou CLI will be configured through the &lt;code>JIKKOUCONFIG&lt;/code> environment variable.&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: JWT</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/jwt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/authentication/jwt/</guid><description>
+&lt;/table></description></item><item><title>Docs: JWT</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/jwt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/jwt/</guid><description>
 &lt;p>Jikkou API Server can be secured using &lt;strong>JWT (JSON Web Token) Authentication&lt;/strong>.&lt;/p>
 &lt;h2 id="configure-jwt">Configure JWT&lt;/h2>
 &lt;h3 id="step1-set-jwt-signature-secret">Step1: Set JWT signature secret&lt;/h3>
@@ -1097,7 +1097,7 @@ Actions run syntax. This allows most Jikkou commands to work exactly like they d
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>HTTP/1.1 &lt;span style="color:#0000cf;font-weight:bold">200&lt;/span> OK
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Content-Type: application/hal+json
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>content-length: &lt;span style="color:#0000cf;font-weight:bold">576&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Reconciliation</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reconciliation/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Reconciliation</title><link>https://www.jikkou.io/docs/concepts/reconciliation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reconciliation/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>In the context of Jikkou, reconciliation refers to the process of comparing the desired state of an object with the
 actual state of the system and making any necessary corrections or adjustments to align them.&lt;/p>
@@ -1151,7 +1151,7 @@ definition:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou.io/delete&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: CLI Proxy Mode</title><link>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/cli_proxy_mode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/jikkou-api-server/configuration/cli_proxy_mode/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: CLI Proxy Mode</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/cli_proxy_mode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/cli_proxy_mode/</guid><description>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;h3 id="step-1-enable-proxy-mode">Step 1: Enable Proxy Mode&lt;/h3>
 &lt;p>To enable proxy mode so that the CLI communicates directly with your API Server, add the following parameters to your
@@ -1195,7 +1195,7 @@ connectivity with teh server.&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;build_time&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;2023-11-15T10:35:22+0100&amp;#34;&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;commit_id&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;f3384d38e606fb32599c175895d0cbef28258540&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/selectors/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://www.jikkou.io/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/selectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>Selectors&lt;/strong> allows you to include or exclude some resource objects from being returned or reconciled by Jikkou.&lt;/p>
 &lt;/div>
@@ -1242,7 +1242,7 @@ Selectors can be specified via the Jikkou CLI option: &lt;code>--selector&lt;/co
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector-match ANY
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/transformations/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://www.jikkou.io/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/transformations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Transformations&lt;/em>&lt;/strong> are applied to inbound resources. &lt;em>Transformations&lt;/em> are used to transform, enrich, or filter
 resource entities
@@ -1302,7 +1302,7 @@ minInSyncReplicas = 2
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/validations/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/concepts/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/validations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Validations&lt;/strong>&lt;/em> are applied to inbound resources to ensure that the resource entities adhere to specific rules or
 constraints.
@@ -1355,7 +1355,7 @@ topicNameRegex = &amp;#34;(europe|northamerica|asiapacific)-.+&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Template</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/template/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Template</title><link>https://www.jikkou.io/docs/concepts/template/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/template/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>Template&lt;/em> helps you to dynamically define &lt;em>resource definition files&lt;/em> from external data.&lt;/p>
 &lt;/div>
@@ -1540,7 +1540,7 @@ fields:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">max.message.bytes&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">20971520&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">3600000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Collectors</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/collector/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Collectors</title><link>https://www.jikkou.io/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/collector/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Collectors&lt;/strong>&lt;/em> are used to collect and describe all entities that exist into your system for a
 specific resource type.&lt;/p>
@@ -1548,7 +1548,7 @@ specific resource type.&lt;/p>
 &lt;h2 id="available-collectors">Available Collectors&lt;/h2>
 &lt;p>You can list all the available collectors using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Collector &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Controllers</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/controller/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Controllers</title><link>https://www.jikkou.io/docs/concepts/controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/controller/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Controllers&lt;/strong>&lt;/em> are used to compute and apply changes required to reconcile resources into a managed
 system.&lt;/p>
@@ -1556,7 +1556,7 @@ system.&lt;/p>
 &lt;h2 id="available-controllers">Available Controllers&lt;/h2>
 &lt;p>You can list all the available controllers using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Controller &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ACL for Aiven Apache Kafka®</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/kafka-topic-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/kafka-topic-acl/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ACL for Aiven Apache Kafka®</title><link>https://www.jikkou.io/docs/providers/aiven/resources/kafka-topic-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/kafka-topic-acl/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaTopicAclEntry&lt;/code> resources are used to manage the Access Control Lists in Aiven for Apache Kafka®. A
 &lt;code>KafkaTopicAclEntry&lt;/code> resource defines the permission to be granted to a user for one or more kafka topics.&lt;/p>
@@ -1615,7 +1615,7 @@ the &lt;code>KafkaTopicAclEntryList&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">permission&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;READ&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">username&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;bob&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">topic&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;public-*&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Brokers</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/brokers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/brokers/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Brokers</title><link>https://www.jikkou.io/docs/providers/kafka/resources/brokers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/brokers/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This section describes the resource definition format for &lt;code>kafkabrokers&lt;/code> entities, which can be used to define the
 brokers you plan to manage on a specific Kafka cluster.&lt;/p>
@@ -1694,7 +1694,7 @@ brokers you plan to manage on a specific Kafka cluster.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">process.roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;broker,controller&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">transaction.state.log.replication.factor&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;1&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">zookeeper.connect&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Consumer Groups</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/consumer_groups/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/consumer_groups/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Consumer Groups</title><link>https://www.jikkou.io/docs/providers/kafka/resources/consumer_groups/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/consumer_groups/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This section describes the resource definition format for &lt;code>KafkaConsumerGroup&lt;/code> entities, which can be used to define the
 consumer groups you plan to manage on a specific Kafka cluster.&lt;/p>
@@ -1767,19 +1767,19 @@ consumer groups you plan to manage on a specific Kafka cluster.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">id&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;101&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">host&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;localhost&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">port&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">9092&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Extensions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/extensions/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Extensions</title><link>https://www.jikkou.io/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/extensions/</guid><description>
 &lt;h2 id="extension-providers">Extension Providers&lt;/h2>
 &lt;p>Most of the Jikkou&amp;rsquo;s features are provided by &lt;strong>Jikkou Extension Providers&lt;/strong>. A provider is a module providing a set of
 extensions used to manage one or more resources.&lt;/p>
 &lt;h2 id="built-in-extension-providers">Built-in Extension Providers&lt;/h2>
 &lt;p>Jikkou ships with a number of extension providers:&lt;/p>
 &lt;ul>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: KafkaConnectors</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/connector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/resources/connector/</guid><description>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Docs: KafkaConnectors</title><link>https://www.jikkou.io/docs/providers/kafka-connect/resources/connector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka-connect/resources/connector/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This section describes the resource definition format for &lt;code>KafkaConnector&lt;/code> entities, which can be used to define the
 configuration and status of connectors you plan to create and manage on specific Kafka Connect clusters.&lt;/p>
@@ -1807,7 +1807,7 @@ configuration and status of connectors you plan to create and manage on specific
 &lt;p>The name of the connector.&lt;/p>
 &lt;h4 id="labelskafkajikkouioconnect-cluster--required">&lt;code>labels.kafka.jikkou.io/connect-cluster&lt;/code> [required]&lt;/h4>
 &lt;p>the name of the Kafka Connect cluster to create the connector instance in.
-The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://streamthoughts.github.io/jikkou/jikkou/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p>
+The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]&lt;/code> Jikkou&amp;rsquo;s configuration setting (see: &lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/configuration/">Configuration&lt;/a>).&lt;/p>
 &lt;h3 id="specification">Specification&lt;/h3>
 &lt;h4 id="specconnectorclass-required">&lt;code>spec.connectorClass&lt;/code> [required]&lt;/h4>
 &lt;p>The name or alias of the class for this connector.&lt;/p>
@@ -1896,7 +1896,7 @@ The cluster name must be configured through the &lt;code>kafkaConnect.clusters[]
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">id&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">state&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;RUNNING&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">worker_id&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;localhost:8083&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>status.connectorStatus&lt;/code> provides the connector status, as reported by the Kafka Connect REST API.&lt;/p></description></item><item><title>Docs: Schema Registry Subjects</title><link>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/resources/subject/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/schema-registry/resources/subject/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>status.connectorStatus&lt;/code> provides the connector status, as reported by the Kafka Connect REST API.&lt;/p></description></item><item><title>Docs: Schema Registry Subjects</title><link>https://www.jikkou.io/docs/providers/schema-registry/resources/subject/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/schema-registry/resources/subject/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>SchemaRegistrySubject&lt;/em> resources are used to define the subject schemas you want to manage on your SchemaRegistry. A
 SchemaRegistrySubject resource defines the schema, the compatibility level, and the references to be associated with a
@@ -2002,7 +2002,7 @@ the &lt;code>SchemaRegistrySubject&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> ]
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Topics</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/topics/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Topics</title><link>https://www.jikkou.io/docs/providers/kafka/resources/topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/topics/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaTopic resources are used to define the topics you want to manage on your Kafka Cluster(s). A KafkaTopic resource
 defines the number of partitions, the replication factor, and the configuration properties to be associated to a topics.&lt;/p>
@@ -2102,7 +2102,7 @@ only once.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">data&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">cleanup.policy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#39;delete&amp;#39;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Reporters</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/reporters/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Reporters</title><link>https://www.jikkou.io/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reporters/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Reporters&lt;/em>&lt;/strong> can be used to report changes applied by Jikkou to a third-party system.&lt;/p>
 &lt;/div>
@@ -2160,7 +2160,7 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/concepts/actions/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Actions</title><link>https://www.jikkou.io/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/actions/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Actions&lt;/em>&lt;/strong> allow a user to execute a specific and one-shot operation on resources.&lt;/p>
 &lt;/div>
@@ -2170,7 +2170,7 @@ client.id = &amp;#34;jikkou-reporter-producer&amp;#34;
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="execution-actions-cli">Execution Actions (CLI)&lt;/h2>
 &lt;p>You can execute a specific extension using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action &amp;lt;ACTION_NAME&amp;gt; execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>&amp;lt;options&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Authorizations</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/acls/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Authorizations</title><link>https://www.jikkou.io/docs/providers/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/acls/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaPrincipalAuthorization resources are used to define Access Control Lists (ACLs) for principals authenticated
 to your Kafka Cluster.&lt;/p>
@@ -2323,7 +2323,7 @@ documentation: &lt;a href="https://kafka.apache.org/documentation/#resources_in_
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">roles&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#4e9a06">&amp;#34;KafkaTopicPublicRead&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaConnectRestartConnectors</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaConnectRestartConnectors</title><link>https://www.jikkou.io/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaConnectRestartConnectors&lt;/code> action allows a user to restart all or just the
 failed Connector and Task instances for one or multiple named connectors.&lt;/p>
@@ -2409,7 +2409,7 @@ failed Connector and Task instances for one or multiple named connectors.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--cluster-name my-connect-cluster
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>--connector-name local-file-sink &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--include-tasks
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaConsumerGroupsResetOffsets</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaConsumerGroupsResetOffsets</title><link>https://www.jikkou.io/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaConsumerGroupsResetOffsets&lt;/code> action allows resetting offsets of consumer group.
 It supports one consumer group at the time, and group should be in EMPTY state.&lt;/p>
@@ -2503,7 +2503,7 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> id: &amp;#34;101&amp;#34;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> host: &amp;#34;localhost&amp;#34;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> port: 9092
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Quotas for Aiven Apache Kafka®</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/kafka-quota/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/kafka-quota/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Quotas for Aiven Apache Kafka®</title><link>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaQuota&lt;/code> resources are used to manage the Quotas in Aiven for Apache Kafka® service.
 For more details, see &lt;a href="https://docs.aiven.io/docs/products/kafka/concepts/kafka-quotas">https://docs.aiven.io/docs/products/kafka/concepts/kafka-quotas&lt;/a>&lt;/p>
@@ -2565,7 +2565,7 @@ the &lt;code>KafkaQuotaList&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">consumerByteRate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">5242880&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">producerByteRate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">5242880&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">requestPercentage&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">25&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ACL for Aiven Schema Registry</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/schema-registry-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/schema-registry-acl/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: ACL for Aiven Schema Registry</title><link>https://www.jikkou.io/docs/providers/aiven/resources/schema-registry-acl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/schema-registry-acl/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>SchemaRegistryAclEntry&lt;/code> resources are used to manage the Access Control Lists in Aiven for Schema Registry. A
 &lt;code>SchemaRegistryAclEntry&lt;/code> resource defines the permission to be granted to a user for one or more Schema Registry
@@ -2624,7 +2624,7 @@ the &lt;code>SchemaRegistryAclEntryList&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">permission&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;WRITE&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">username&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;alice&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">resource&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Subject:*&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Quotas</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/quotas/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Quotas</title><link>https://www.jikkou.io/docs/providers/kafka/resources/quotas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/quotas/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaClientQuota resources are used to define the quota limits to be applied on Kafka consumers and producers.
 A KafkaClientQuota resource can be used to apply limit to consumers and/or producers identified by a &lt;code>client-id&lt;/code> or a
@@ -2727,7 +2727,7 @@ the &lt;code>KafkaClientQuotaList&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">requestPercentage&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">10&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">producerByteRate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1024&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">consumerByteRate&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1024&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Table Records</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/ktable-records/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/resources/ktable-records/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Kafka Table Records</title><link>https://www.jikkou.io/docs/providers/kafka/resources/ktable-records/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/ktable-records/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>A KafkaTableRecord resource can be used to produce a key/value record into a given &lt;em>compacted&lt;/em> topic, i.e., a topic
 with &lt;code>cleanup.policy=compact&lt;/code> (a.k.a. &lt;em>KTable&lt;/em>).&lt;/p>
@@ -2812,7 +2812,7 @@ is highly recommended to use this resource only with compacted Kafka topics cont
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">type&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">BINARY&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">data&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">|&lt;/span>&lt;span style="color:#8f5902;font-style:italic">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;eyJmb28iOiAiYmFyIn0K&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Releases v0.32.0</title><link>https://streamthoughts.github.io/jikkou/docs/releases/release-v0.32.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/releases/release-v0.32.0/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Releases v0.32.0</title><link>https://www.jikkou.io/docs/releases/release-v0.32.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v0.32.0/</guid><description>
 &lt;h2 id="jikkou-0320-moving-beyond-apache-kafka-introducing-new-features-extension-providers-actions-etc">Jikkou 0.32.0: Moving Beyond Apache Kafka. Introducing new features: Extension Providers, Actions, etc.!&lt;/h2>
 &lt;p>I’m thrilled to announce the release of Jikkou &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.32.0">0.32.0&lt;/a>
 which packs two major features: &lt;strong>External Extension Providers&lt;/strong> and &lt;strong>Actions&lt;/strong>. 🙂&lt;/p>
@@ -3146,7 +3146,7 @@ its name.&lt;/p>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>Note : Currently not all resources have been updated to use that new API, so it’s possible that selectors are used as
 a default implementation by internal Jikkou API.&lt;/p>
-&lt;/blockquote></description></item><item><title>Docs: Subject for Aiven Schema Registry</title><link>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/schema-registry-subject/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/aiven/resources/schema-registry-subject/</guid><description>
+&lt;/blockquote></description></item><item><title>Docs: Subject for Aiven Schema Registry</title><link>https://www.jikkou.io/docs/providers/aiven/resources/schema-registry-subject/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/schema-registry-subject/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>SchemaRegistrySubject&lt;/em> resources are used to define the subject schemas you want to manage on your Schema Registry. A
 SchemaRegistrySubject resource defines the schema, the compatibility level, and the references to be associated with a
@@ -3252,7 +3252,7 @@ the &lt;code>SchemaRegistrySubject&lt;/code> resource type.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> ]
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaTopicMaxNumPartitions</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: KafkaTopicMaxNumPartitions</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxnumpartitions/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the number of partitions of kafka topics.&lt;/p>
 &lt;/div>
@@ -3287,7 +3287,7 @@ maxNumPartitions = 50
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMaxRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMaxRetentionMs</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmaxretentionms/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>maximum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
 &lt;/div>
@@ -3322,7 +3322,7 @@ maxRetentionMs = 2592000000 # 30 days
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinInSyncReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinInSyncReplicas</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>min.insync.replicas&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
 &lt;/div>
@@ -3357,7 +3357,7 @@ minInSyncReplicas = 2
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinReplicas</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminreplicas/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinReplicas</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminreplicas/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a minimum value for the replication factor of kafka topics.&lt;/p>
 &lt;/div>
@@ -3392,7 +3392,7 @@ minReplicationFactor = 3
 }
 ]
 }
-&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinRetentionMs</title><link>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/jikkou/docs/providers/kafka/transformations/kafkatopicminretentionms/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: KafkaTopicMinRetentionMs</title><link>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminretentionms/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/transformations/kafkatopicminretentionms/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>This transformation can be used to enforce a &lt;strong>minimum&lt;/strong> value for the &lt;strong>&lt;code>retention.ms&lt;/code>&lt;/strong> property of kafka topics.&lt;/p>
 &lt;/div>
