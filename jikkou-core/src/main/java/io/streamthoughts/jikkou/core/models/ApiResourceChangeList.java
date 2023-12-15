@@ -15,6 +15,7 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -31,20 +32,23 @@ import javax.validation.constraints.NotNull;
  *
  * @param kind       The resource Kind.
  * @param apiVersion The API version.
- * @param changes    The changes.
+ * @param metadata   The resource metadata.
+ * @param items      The changes.
  */
 @ApiVersion("core.jikkou.io/v1")
 @Kind("ApiResourceChangeList")
 @JsonPropertyOrder({
         "kind",
         "apiVersion",
-        "changes"
+        "metadata",
+        "items"
 })
 @Reflectable
 @JsonDeserialize
 public record ApiResourceChangeList(@JsonProperty("kind") @NotNull String kind,
                                     @JsonProperty("apiVersion") @NotNull String apiVersion,
-                                    @JsonProperty("changes") @NotNull List<ResourceChange> changes) implements Resource {
+                                    @JsonProperty("metadata") @NotNull ObjectMeta metadata,
+                                    @JsonProperty("items") @NotNull List<ResourceChange> items) implements ResourceListObject<ResourceChange> {
 
     /**
      * Creates a new {@link ApiResourceChangeList} instance.
@@ -52,16 +56,39 @@ public record ApiResourceChangeList(@JsonProperty("kind") @NotNull String kind,
     @ConstructorProperties({
             "kind",
             "apiVersion",
-            "changes"
+            "items"
     })
     public ApiResourceChangeList {
     }
 
-    public ApiResourceChangeList(@NotNull List<ResourceChange> changes) {
+    public ApiResourceChangeList(@NotNull List<ResourceChange> items) {
         this(
                 Resource.getKind(ApiResourceChangeList.class),
                 Resource.getApiVersion(ApiResourceChangeList.class),
-                changes
+                null,
+                items
         );
+    }
+
+    @Override
+    public ApiResourceChangeList withMetadata(ObjectMeta metadata) {
+        return new ApiResourceChangeList(
+                kind,
+                apiVersion,
+                metadata,
+                items
+        );
+    }
+
+    @JsonIgnore
+    @Override
+    public List<ResourceChange> getItems() {
+        return items;
+    }
+
+    @JsonIgnore
+    @Override
+    public ObjectMeta getMetadata() {
+        return metadata;
     }
 }

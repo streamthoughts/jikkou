@@ -37,7 +37,7 @@ import java.util.Optional;
         "apiVersion",
         "metadata",
         "dryRun",
-        "changes"
+        "results"
 })
 @Reflectable
 @JsonDeserialize

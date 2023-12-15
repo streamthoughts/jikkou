@@ -15,19 +15,29 @@
  */
 package io.streamthoughts.jikkou.core.models.change;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.reconciler.Change;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 
 /**
  * A resource change.
  */
 @Reflectable
 @JsonDeserialize(as = GenericResourceChange.class)
-public interface ResourceChange extends HasSpec<ResourceChangeSpec> {
+public interface ResourceChange extends HasSpec<ResourceChangeSpec>, Change {
 
     String RESOURCE_CHANGE_KIND_SUFFIX = "Change";
+
+    /** {@inheritDoc} **/
+    @Override
+    @JsonIgnore
+    default Operation getOp() {
+        return getSpec().getOp();
+    }
 
     static String getChangeKindFromResource(Class<? extends Resource> resourceClass) {
         return Resource.getKind(resourceClass) + RESOURCE_CHANGE_KIND_SUFFIX;

@@ -602,9 +602,11 @@ function _picocli_jikkou_diff() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options --filter-resource-op --filter-change-op"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
+  local filterOutAllResourcesExcept_option_args=("NONE" "CREATE" "DELETE" "UPDATE") # --filter-resource-op values
+  local filterOutAllChangesExcept_option_args=("NONE" "CREATE" "DELETE" "UPDATE") # --filter-change-op values
 
   type compopt &>/dev/null && compopt +o default
 
@@ -645,6 +647,16 @@ function _picocli_jikkou_diff() {
       ;;
     --options)
       return
+      ;;
+    --filter-resource-op)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${filterOutAllResourcesExcept_option_args[@]}" ) )
+      return $?
+      ;;
+    --filter-change-op)
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${filterOutAllChangesExcept_option_args[@]}" ) )
+      return $?
       ;;
   esac
 

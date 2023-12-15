@@ -15,6 +15,9 @@
  */
 package io.streamthoughts.jikkou.rest.resources;
 
+import static io.streamthoughts.jikkou.common.utils.Enums.getForNamesIgnoreCase;
+import static io.streamthoughts.jikkou.core.reconciler.SimpleResourceChangeFilter.FILTER_CHANGE_OP_NAME;
+import static io.streamthoughts.jikkou.core.reconciler.SimpleResourceChangeFilter.FILTER_RESOURCE_OPS_NAME;
 import static io.streamthoughts.jikkou.rest.adapters.HttpParametersAdapter.toMap;
 
 import io.micronaut.http.HttpParameters;
@@ -38,6 +41,8 @@ import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.SimpleResourceChangeFilter;
 import io.streamthoughts.jikkou.rest.adapters.ReconciliationContextAdapter;
 import io.streamthoughts.jikkou.rest.controller.AbstractController;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
@@ -146,19 +151,24 @@ public class ApiResource extends AbstractController {
                 .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
-    @Post(value = "/apis/{group}/{version}/{plural}/diff",
+    @Post(value = "/apis/{group}/{version}/{plural}/diff{?" + FILTER_RESOURCE_OPS_NAME + "," + FILTER_CHANGE_OP_NAME + "}",
             produces = MediaType.APPLICATION_JSON,
             consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<?> diff(HttpRequest<?> httpRequest,
                                 @PathVariable("group") final String group,
                                 @PathVariable("version") final String version,
                                 @PathVariable("plural") final String plural,
+                                @QueryValue(value = FILTER_RESOURCE_OPS_NAME, defaultValue = "") final String keepChangesOp,
+                                @QueryValue(value = FILTER_CHANGE_OP_NAME, defaultValue = "") final String keepStatesOp,
                                 @Body ResourceReconcileRequest requestBody
     ) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
         ApiResourceChangeList result = service.diff(
                 identifier,
                 new ArrayList<>(requestBody.resources()),
+                new SimpleResourceChangeFilter()
+                        .filterOutAllResourcesExcept(getForNamesIgnoreCase(keepChangesOp, Operation.class))
+                        .filterOutAllChangesExcept(getForNamesIgnoreCase(keepStatesOp, Operation.class)),
                 adapter.getReconciliationContext(requestBody, true)
         );
 

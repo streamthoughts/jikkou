@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
@@ -233,6 +234,7 @@ public interface JikkouApiClient {
      */
     <T extends HasMetadata> ApiResourceChangeList getDiff(@NotNull ResourceType type,
                                                           @NotNull List<T> resources,
+                                                          @NotNull ResourceChangeFilter filter,
                                                           @NotNull ReconciliationContext context);
 
     /**
