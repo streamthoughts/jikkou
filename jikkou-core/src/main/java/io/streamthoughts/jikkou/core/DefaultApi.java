@@ -61,6 +61,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.Reconciler;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.reconciler.config.ApiOptionSpecFactory;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
@@ -522,20 +523,22 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
-    public ApiResourceChangeList getDiff(final @NotNull HasItems resources,
-                                         final @NotNull ReconciliationContext context) {
+    public ApiResourceChangeList getDiff(@NotNull HasItems resources,
+                                         @NotNull ResourceChangeFilter filter,
+                                         @NotNull ReconciliationContext context) {
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
-        List<ResourceChange> changes = resourcesByType.entrySet()
+        List<ResourceChange> results = resourcesByType.entrySet()
                 .stream()
                 .map(e -> {
                     Controller<HasMetadata, ResourceChange> controller = getMatchingController(e.getKey());
                     List<HasMetadata> resource = e.getValue();
-                    return controller.plan(resource, context);
+                    List<ResourceChange> changes = controller.plan(resource, context);
+                    return filter.filter(changes);
                 })
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        return new ApiResourceChangeList(changes);
+        return new ApiResourceChangeList(results);
     }
 
     /**

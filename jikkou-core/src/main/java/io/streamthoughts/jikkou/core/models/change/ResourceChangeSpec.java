@@ -59,6 +59,13 @@ public interface ResourceChangeSpec extends Change {
     StateChangeList<? extends StateChange> getChanges();
 
     /**
+     * Sets the changes.
+     *
+     * @param changes   The changes.
+     */
+    void setChanges(StateChangeList<StateChange> changes);
+
+    /**
      * Creates a new {@link ResourceChangeSpecBuilder} instance.
      *
      * @return The new {@link ResourceChangeSpecBuilder}.

@@ -15,10 +15,11 @@
  */
 package io.streamthoughts.jikkou.core.reconciler;
 
-import io.streamthoughts.jikkou.core.models.change.StateChange;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
-final class FilterExceptChangeFilter implements StateChangeFilter {
+final class FilterExceptChangeFilter<T extends Change> implements ChangeFilter<T> {
 
     private final Set<Operation> operationsToInclude;
 
@@ -28,14 +29,24 @@ final class FilterExceptChangeFilter implements StateChangeFilter {
      * @param operationsToInclude The operations to include.
      */
     FilterExceptChangeFilter(Set<Operation> operationsToInclude) {
-        this.operationsToInclude = operationsToInclude;
+        this.operationsToInclude = Optional.ofNullable(operationsToInclude).orElse(Collections.emptySet());
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public boolean test(StateChange change) {
-        return operationsToInclude.contains(change.getOp());
+    public boolean test(T change) {
+        return operationsToInclude.isEmpty() || operationsToInclude.contains(change.getOp());
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public String toString() {
+        return "FilterExceptChangeFilter[" +
+                ", operationsToInclude=" + operationsToInclude +
+                ']';
     }
 }

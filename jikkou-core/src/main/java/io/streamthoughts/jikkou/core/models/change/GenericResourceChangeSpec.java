@@ -44,7 +44,7 @@ public final class GenericResourceChangeSpec implements SpecificResourceChangeSp
 
     private final Operation operation;
     private final Map<String, Object> data;
-    private final StateChangeList<StateChange> changes;
+    private StateChangeList<StateChange> changes;
 
     /**
      * Creates a new {@link GenericResourceChangeSpec} instance.
@@ -100,6 +100,14 @@ public final class GenericResourceChangeSpec implements SpecificResourceChangeSp
     @JsonProperty("changes")
     public StateChangeList<StateChange> getChanges() {
         return changes;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void setChanges(StateChangeList<StateChange> changes) {
+        this.changes = changes;
     }
 
     /**

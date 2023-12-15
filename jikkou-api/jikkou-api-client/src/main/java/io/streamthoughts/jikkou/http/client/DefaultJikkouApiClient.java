@@ -34,8 +34,10 @@ import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.adapter.ResourceReconcileRequestFactory;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
@@ -438,17 +440,24 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @Override
     public <T extends HasMetadata> ApiResourceChangeList getDiff(@NotNull ResourceType type,
                                                                  @NotNull List<T> resources,
+                                                                 @NotNull ResourceChangeFilter filter,
                                                                  @NotNull ReconciliationContext context) {
         ApiResource apiResource = queryApiResourceForType(type);
-        HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.DIFF, type));
+        HttpUrl.Builder urlBuilder = toHttpUrl(findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.DIFF, type))
+                .newBuilder();
         // Build Request
         ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(resources, context);
+
+        NamedValueSet values = filter.toValues();
+        values.forEach(val -> urlBuilder.addQueryParameter(val.name, val.value.toString()));
+
         RequestBody body = apiClient.serialize(request, CONTENT_TYPE_APPLICATION_JSON);
 
         Request httpRequest = new Request.Builder()
                 .post(body)
-                .url(url)
+                .url(urlBuilder.build())
                 .build();
+
         // Execute Request
         ApiResponse<ApiResourceChangeList> response = apiClient.execute(
                 httpRequest,

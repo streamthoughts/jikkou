@@ -47,27 +47,6 @@ import java.util.Optional;
 @Reflectable
 public final class GenericResourceChange implements ResourceChange {
 
-    private final String kind;
-    private final String apiVersion;
-    private final ObjectMeta metadata;
-    private final GenericResourceChangeSpec spec;
-
-    @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "spec"
-    })
-    public GenericResourceChange(@NotNull String kind,
-                                 @NotNull String apiVersion,
-                                 @NotNull ObjectMeta metadata,
-                                 @NotNull GenericResourceChangeSpec spec) {
-        this.kind = kind;
-        this.apiVersion = apiVersion;
-        this.metadata = metadata;
-        this.spec = spec;
-    }
-
     /**
      * Creates a builder for creating a new resource change.
      *
@@ -97,6 +76,27 @@ public final class GenericResourceChange implements ResourceChange {
                         build.metadata(),
                         build.spec()
                 ));
+    }
+
+    private final String kind;
+    private final String apiVersion;
+    private final ObjectMeta metadata;
+    private final GenericResourceChangeSpec spec;
+
+    @ConstructorProperties({
+            "apiVersion",
+            "kind",
+            "metadata",
+            "spec"
+    })
+    public GenericResourceChange(@NotNull String kind,
+                                 @NotNull String apiVersion,
+                                 @NotNull ObjectMeta metadata,
+                                 @NotNull GenericResourceChangeSpec spec) {
+        this.kind = kind;
+        this.apiVersion = apiVersion;
+        this.metadata = metadata;
+        this.spec = spec;
     }
 
     /**

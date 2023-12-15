@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.rest.models.ApiResourceIdentifier;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public interface ApiResourceService {
      */
     ApiResourceChangeList diff(ApiResourceIdentifier identifier,
                                List<HasMetadata> resources,
+                               ResourceChangeFilter filter,
                                ReconciliationContext context);
 
     /**

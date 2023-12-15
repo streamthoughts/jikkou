@@ -41,6 +41,7 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import java.time.Duration;
@@ -288,8 +289,8 @@ public interface JikkouApi extends AutoCloseable {
      * @param type The class of the resource to be described.
      * @param name The name of the resource.
      * @return the {@link HasMetadata}.
-     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
-     *                            or more than one descriptor match the type.
+     * @throws JikkouApiException        if no {@link Collector} can be found for the specified type,
+     *                                   or more than one descriptor match the type.
      * @throws ResourceNotFoundException if no resource can be found for the given name.
      */
     <T extends HasMetadata> T getResource(@NotNull ResourceType type,
@@ -302,7 +303,19 @@ public interface JikkouApi extends AutoCloseable {
      * @param resources The list of resource to be reconciled.
      * @return the {@link HasMetadata}.
      */
+    default ApiResourceChangeList getDiff(@NotNull HasItems resources,
+                                          @NotNull ReconciliationContext context) {
+        return getDiff(resources, new ResourceChangeFilter.Noop(), context);
+    }
+
+    /**
+     * Get all the changes for the given resources.
+     *
+     * @param resources The list of resource to be reconciled.
+     * @return the {@link HasMetadata}.
+     */
     ApiResourceChangeList getDiff(@NotNull HasItems resources,
+                                  @NotNull ResourceChangeFilter filter,
                                   @NotNull ReconciliationContext context);
 
     /**

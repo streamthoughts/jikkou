@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.rest.exception.ApiResourceNotFoundException;
@@ -75,9 +76,12 @@ public final class DefaultApiResourceService implements ApiResourceService {
      * {@inheritDoc}
      **/
     @Override
-    public ApiResourceChangeList diff(ApiResourceIdentifier identifier, List<HasMetadata> resources, ReconciliationContext context) {
+    public ApiResourceChangeList diff(ApiResourceIdentifier identifier,
+                                      List<HasMetadata> resources,
+                                      ResourceChangeFilter filter,
+                                      ReconciliationContext context) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
-        return api.getDiff(filterResources(resources, descriptor), context);
+        return api.getDiff(filterResources(resources, descriptor), filter, context);
     }
 
     /**

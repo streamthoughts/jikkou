@@ -15,24 +15,22 @@
  */
 package io.streamthoughts.jikkou.core.reconciler;
 
-import io.streamthoughts.jikkou.core.models.change.StateChange;
 import java.util.Set;
 import java.util.function.Predicate;
 
 /**
  * Interface for filtering changes.
  */
-@FunctionalInterface
-public interface StateChangeFilter extends Predicate<StateChange> {
+public interface ChangeFilter<C extends Change> extends Predicate<C> {
 
     /**
      * Factory method to construct filter that filters out all changes except ones for operations includes in the given set.
      *
      * @param operations The operations.
-     * @return The new {@link StateChangeFilter}.
+     * @return The new {@link ChangeFilter}.
      */
-    static StateChangeFilter filterOutAllExcept(Set<Operation> operations) {
-        return new FilterExceptChangeFilter(operations);
+    static <C extends Change> ChangeFilter<C> filterOutAllExcept(Set<Operation> operations) {
+        return new FilterExceptChangeFilter<>(operations);
     }
 
     /**
@@ -42,5 +40,5 @@ public interface StateChangeFilter extends Predicate<StateChange> {
      * @return {@code true} if the input change matches the filter, otherwise {@code false}.
      */
     @Override
-    boolean test(StateChange change);
+    boolean test(C change);
 }

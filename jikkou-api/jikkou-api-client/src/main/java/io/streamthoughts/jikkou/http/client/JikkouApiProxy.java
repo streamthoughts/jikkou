@@ -43,6 +43,7 @@ import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
+import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
@@ -294,14 +295,15 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      **/
     @Override
     public ApiResourceChangeList getDiff(@NotNull HasItems resources,
+                                         @NotNull ResourceChangeFilter filter,
                                          @NotNull ReconciliationContext context) {
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
 
         List<ResourceChange> changes = new ArrayList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {
-            ApiResourceChangeList result = apiClient.getDiff(entry.getKey(), entry.getValue(), context);
-            changes.addAll(result.changes());
+            ApiResourceChangeList result = apiClient.getDiff(entry.getKey(), entry.getValue(), filter, context);
+            changes.addAll(result.items());
         }
         return new ApiResourceChangeList(changes);
     }
