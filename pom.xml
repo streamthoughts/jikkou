@@ -136,7 +136,7 @@ limitations under the License.
         <logback.version>1.4.11</logback.version>
         <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
         <!-- Build -->
-        <graal-sdk.version>23.1.0</graal-sdk.version>
+        <graal-sdk.version>23.1.2</graal-sdk.version>
         <reflections.version>0.10.2</reflections.version>
         <spotless.version>2.40.0</spotless.version>
         <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
