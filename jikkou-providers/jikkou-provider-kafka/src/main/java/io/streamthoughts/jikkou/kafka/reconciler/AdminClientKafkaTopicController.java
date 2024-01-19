@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.change.topics.CreateTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.topics.DeleteTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.topics.TopicChange;
@@ -51,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaTopic.class)
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaTopicChange")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

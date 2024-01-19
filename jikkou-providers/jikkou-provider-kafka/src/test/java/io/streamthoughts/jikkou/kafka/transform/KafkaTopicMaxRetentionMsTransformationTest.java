@@ -20,10 +20,9 @@ import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxRetentionMsT
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.Configs;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
-import java.util.Collections;
 import java.util.Optional;
 import org.apache.kafka.common.config.TopicConfig;
 import org.junit.jupiter.api.Assertions;
@@ -57,7 +56,7 @@ class KafkaTopicMaxRetentionMsTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);
@@ -80,7 +79,7 @@ class KafkaTopicMaxRetentionMsTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);
@@ -104,7 +103,7 @@ class KafkaTopicMaxRetentionMsTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);

@@ -32,6 +32,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -40,18 +41,24 @@ import io.streamthoughts.jikkou.extension.aiven.change.quota.KafkaQuotaChangeHan
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 @SupportedResource(type = V1KafkaQuota.class)
+@SupportedResource(
+        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        kind = "KafkaQuotaChange"
+)
 public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, ResourceChange> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
             .orElse(false);
 
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
     private AivenApiClientConfig config;
     private AivenKafkaQuotaCollector collector;
 
@@ -79,8 +86,10 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
     }
 
     private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.config = config;
-        this.collector = new AivenKafkaQuotaCollector(config);
+        if (initialized.compareAndSet(false, true)) {
+            this.config = config;
+            this.collector = new AivenKafkaQuotaCollector(config);
+        }
     }
 
     /**

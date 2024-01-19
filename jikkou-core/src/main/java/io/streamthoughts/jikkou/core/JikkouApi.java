@@ -40,6 +40,7 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -212,18 +213,32 @@ public interface JikkouApi extends AutoCloseable {
                                  @NotNull String extensionName);
 
     /**
-     * Execute the reconciliation for the given resources using
+     * Executes the reconciliation for the given resources using
      *
      * @param resources the list of resource to be reconciled.
      * @param mode      the reconciliation mode.
      * @param context   the context to be used for conciliation.
-     * @return the list of 0all changes applied on the target system.
+     * @return the results of the changes applied on resources.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     ApiChangeResultList reconcile(@NotNull HasItems resources,
                                   @NotNull ReconciliationMode mode,
                                   @NotNull ReconciliationContext context);
+
+    /**
+     * Applies the given list of resource changes.
+     *
+     * @param changes The resource changes.
+     * @param mode    the reconciliation mode.
+     * @param context the context to be used for conciliation.
+     * @return the results of the changes applied on resources.
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+                              @NotNull ReconciliationMode mode,
+                              @NotNull ReconciliationContext context);
 
     /**
      * Executes the specified action for the specified resource type.

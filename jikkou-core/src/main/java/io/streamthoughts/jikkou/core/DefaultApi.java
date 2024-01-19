@@ -96,6 +96,8 @@ import org.slf4j.LoggerFactory;
 public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultApi.class);
+    public static final ResourceChangeFilter.Noop NOOP_RESOURCE_CHANGE_FILTER = new ResourceChangeFilter.Noop();
+    private static final String GROUP_API_VERSION_SEPARATOR = "/";
 
     /**
      * Gets a new builder.
@@ -225,7 +227,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 })
                 .sorted(Comparator.comparing(ApiResource::name))
                 .toList();
-        return new ApiResourceList(group + "/" + version, resources);
+        return new ApiResourceList(group + GROUP_API_VERSION_SEPARATOR + version, resources);
     }
 
     /**
@@ -248,7 +250,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                     Set<ApiGroupVersion> versions = descriptors
                             .stream()
                             .map(it -> new ApiGroupVersion(
-                                    it.group() + "/" + it.apiVersion(),
+                                    it.group() + GROUP_API_VERSION_SEPARATOR + it.apiVersion(),
                                     it.apiVersion())
                             )
                             .collect(Collectors.toSet());
@@ -400,26 +402,57 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList reconcile(@NotNull final HasItems resources,
                                          @NotNull final ReconciliationMode mode,
                                          @NotNull final ReconciliationContext context) {
-        LOG.info("Starting reconciliation of {} resource objects in {} mode.", resources.getItems().size(), mode);
-        Map<ResourceType, List<HasMetadata>> resourcesByType = validate(resources, context).get().groupByType();
-        List<ChangeResult> results = resourcesByType
-                .entrySet()
-                .stream()
-                .map(e -> executeReconciliation(mode, context, e.getKey(), e.getValue()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return patch(getDiff(resources, NOOP_RESOURCE_CHANGE_FILTER, context).getItems(), mode, context);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+                                     @NotNull ReconciliationMode mode,
+                                     @NotNull ReconciliationContext context) {
+        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceListObject
+                .of(changes)
+                .groupBy(ResourceType::of);
+
+        final List<ChangeResult> changeResults = new LinkedList<>();
+
+        for (Map.Entry<ResourceType, List<ResourceChange>> entry : changesGroupByResourceType.entrySet()) {
+            ResourceType type = entry.getKey();
+            Controller<HasMetadata, ResourceChange> controller = getMatchingController(type);
+            List<ResourceChange> items = entry.getValue();
+            LOG.info("Applying {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
+                    items.size(),
+                    type.group(),
+                    type.apiVersion(),
+                    type.kind(),
+                    controller.getName(),
+                    mode,
+                    context.isDryRun()
+            );
+            Reconciler<HasMetadata, ResourceChange> reconciler = new Reconciler<>(controller);
+            List<ChangeResult> results = reconciler.apply(changes, mode, context);
+            changeResults.addAll(results);
+            LOG.info("Executed {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
+                    results.size(),
+                    type.group(),
+                    type.apiVersion(),
+                    type.kind(),
+                    controller.getName(),
+                    mode,
+                    context.isDryRun()
+            );
+        }
+
         if (!context.isDryRun() && !reporters.isEmpty()) {
-            List<ChangeResult> reportable = results.stream()
+            List<ChangeResult> reportable = changeResults.stream()
                     .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.change()))
                     .collect(Collectors.toList());
             CombineChangeReporter reporter = new CombineChangeReporter(reporters);
             reporter.report(reportable);
         }
-        return new ApiChangeResultList(
-                context.isDryRun(),
-                new ObjectMeta(),
-                results
-        );
+        return new ApiChangeResultList(context.isDryRun(), new ObjectMeta(), changeResults);
     }
 
     /**
@@ -459,28 +492,6 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ).orElseThrow(() -> new NoSuchExtensionException(String.format("Cannot find action '%s'", action)));
     }
 
-    private List<ChangeResult> executeReconciliation(@NotNull ReconciliationMode mode,
-                                                     @NotNull ReconciliationContext context,
-                                                     @NotNull ResourceType resourceType,
-                                                     @NotNull List<HasMetadata> resources) {
-        Controller<HasMetadata, ResourceChange> controller = getMatchingController(resourceType);
-        LOG.info("Starting reconciliation using controller: '{}' (mode: {}, dryRun: {})",
-                controller.getName(),
-                mode,
-                context.isDryRun()
-        );
-
-        Reconciler<HasMetadata, ResourceChange> reconciler = new Reconciler<>(controller);
-        List<ChangeResult> changes = reconciler.reconcile(resources, mode, context);
-
-        LOG.info("Reconciliation completed using controller: '{}' (mode: {}, dryRun: {})",
-                controller.getName(),
-                mode,
-                context.isDryRun()
-        );
-        return changes;
-    }
-
     /**
      * {@inheritDoc}
      **/
@@ -493,7 +504,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ValidationResult result = validationChain.validate(items);
 
         return result.isValid() ?
-                new ApiValidationResult(new DefaultResourceListObject<>(items)) :
+                new ApiValidationResult(ResourceListObject.of(items)) :
                 new ApiValidationResult(result.errors());
     }
 
@@ -531,9 +542,17 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         List<ResourceChange> results = resourcesByType.entrySet()
                 .stream()
                 .map(e -> {
-                    Controller<HasMetadata, ResourceChange> controller = getMatchingController(e.getKey());
-                    List<HasMetadata> resource = e.getValue();
-                    List<ResourceChange> changes = controller.plan(resource, context);
+                    final ResourceType type = e.getKey();
+                    Controller<HasMetadata, ResourceChange> controller = getMatchingController(type);
+                    List<HasMetadata> items = e.getValue();
+                    LOG.info("Planning changes of {} resources for group={}, apiVersion={} and kind={} using controller: '{}'.",
+                            items.size(),
+                            type.group(),
+                            type.apiVersion(),
+                            type.kind(),
+                            controller.getName()
+                    );
+                    List<ResourceChange> changes = controller.plan(items, context);
                     return filter.filter(changes);
                 })
                 .flatMap(Collection::stream)

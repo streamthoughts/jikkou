@@ -32,6 +32,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.DefaultChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.streamthoughts.jikkou.kafka.connect.ApiVersions;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaConnector.class)
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA, kind = "KafkaConnectorChange")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

@@ -47,7 +47,6 @@ public class GetResourceCommand extends AbstractApiCommand {
     SelectorOptionsMixin selectorOptions;
     @Mixin
     FormatOptionsMixin formatOptions;
-
     @Option(names = {"--list"},
             defaultValue = "false",
             description = "Get resources as ResourceListObject (default: ${DEFAULT-VALUE})."

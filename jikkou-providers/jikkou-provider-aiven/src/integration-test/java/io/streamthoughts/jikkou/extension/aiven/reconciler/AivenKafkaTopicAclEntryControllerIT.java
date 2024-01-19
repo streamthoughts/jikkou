@@ -15,17 +15,25 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
+import io.streamthoughts.jikkou.core.DefaultApi;
+import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import io.streamthoughts.jikkou.core.reconciler.Reconciler;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
@@ -41,11 +49,18 @@ import org.junit.jupiter.api.Test;
 @Tag("integration")
 class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
 
-    private static AivenKafkaTopicAclEntryController controller;
+    private volatile JikkouApi api;
 
     @BeforeEach
     public void beforeEach() {
-        controller = new AivenKafkaTopicAclEntryController(getAivenApiConfig());
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
+                new DefaultExtensionDescriptorFactory(),
+                new ClassExtensionAliasesGenerator()
+        );
+        AivenKafkaTopicAclEntryController controller = new AivenKafkaTopicAclEntryController(getAivenApiConfig());
+        api = DefaultApi.builder(new DefaultExtensionFactory(registry, Configuration.empty()), new DefaultResourceRegistry())
+                .register(AivenKafkaTopicAclEntryController.class, () -> controller)
+                .build();
     }
 
     @Test
@@ -91,8 +106,10 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        Reconciler<V1KafkaTopicAclEntry, ResourceChange> reconciler = new Reconciler<>(controller);
-        List<ChangeResult> results = reconciler.reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
+        ReconciliationContext context = ReconciliationContext.builder().dryRun(false).build();
+        List<ChangeResult> results = api
+                .reconcile(ResourceListObject.of(List.of(entry)), ReconciliationMode.CREATE, context)
+                .results();
 
         // Then
         ResourceChange actual = results.getFirst().change();
@@ -142,9 +159,10 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        Reconciler<V1KafkaTopicAclEntry, ResourceChange> reconciler = new Reconciler<>(controller);
-        List<ChangeResult> results = reconciler
-                .reconcile(List.of(entry), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build());
+        ReconciliationContext context = ReconciliationContext.builder().dryRun(false).build();
+        List<ChangeResult> results = api
+                .reconcile(ResourceListObject.of(List.of(entry)), ReconciliationMode.DELETE, context)
+                .results();
 
         // Then
         ResourceChange actual = results.getFirst().change();
@@ -191,9 +209,10 @@ class AivenKafkaTopicAclEntryControllerIT extends AbstractAivenIntegrationTest {
                 .build();
 
         // When
-        Reconciler<V1KafkaTopicAclEntry, ResourceChange> reconciler = new Reconciler<>(controller);
-        List<ChangeResult> results = reconciler
-                .reconcile(List.of(entry), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build());
+        ReconciliationContext context = ReconciliationContext.builder().dryRun(false).build();
+        List<ChangeResult> results = api
+                .reconcile(ResourceListObject.of(List.of(entry)), ReconciliationMode.CREATE, context)
+                .results();
 
         // Then
         ChangeResult result = results.getFirst();

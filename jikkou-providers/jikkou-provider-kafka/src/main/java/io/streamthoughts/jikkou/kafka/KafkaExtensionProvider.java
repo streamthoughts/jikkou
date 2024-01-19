@@ -60,11 +60,12 @@ import io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValida
 import io.streamthoughts.jikkou.kafka.validation.TopicNamePrefixValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation;
-import io.streamthoughts.jikkou.spi.ExtensionProvider;
+import io.streamthoughts.jikkou.spi.AbstractExtensionProvider;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 @Named("Kafka")
-public final class KafkaExtensionProvider implements ExtensionProvider {
+public final class KafkaExtensionProvider extends AbstractExtensionProvider {
 
     /**
      * {@inheritDoc}
@@ -112,7 +113,6 @@ public final class KafkaExtensionProvider implements ExtensionProvider {
 
         // reporters
         registry.register(KafkaChangeReporter.class, KafkaChangeReporter::new);
-
         registry.register(KafkaConsumerGroupsResetOffsets.class, KafkaConsumerGroupsResetOffsets::new);
     }
 
@@ -121,15 +121,17 @@ public final class KafkaExtensionProvider implements ExtensionProvider {
      **/
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
-        registry.register(V1KafkaBrokerList.class);
-        registry.register(V1KafkaBroker.class);
-        registry.register(V1KafkaClientQuota.class);
-        registry.register(V1KafkaClientQuotaList.class);
-        registry.register(V1KafkaTopicList.class);
-        registry.register(V1KafkaTopic.class);
-        registry.register(V1KafkaPrincipalAuthorization.class);
-        registry.register(V1KafkaPrincipalRole.class);
-        registry.register(V1KafkaTableRecord.class);
-        registry.register(V1KafkaConsumerGroup.class);
+        Stream.of(
+            V1KafkaBrokerList.class,
+            V1KafkaBroker.class,
+            V1KafkaClientQuota.class,
+            V1KafkaClientQuotaList.class,
+            V1KafkaTopicList.class,
+            V1KafkaTopic.class,
+            V1KafkaPrincipalAuthorization.class,
+            V1KafkaPrincipalRole.class,
+            V1KafkaTableRecord.class,
+            V1KafkaConsumerGroup.class
+        ).forEach(cls -> registerResource(registry, cls));
     }
 }

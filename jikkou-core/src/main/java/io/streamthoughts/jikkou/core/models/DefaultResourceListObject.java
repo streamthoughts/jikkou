@@ -25,8 +25,6 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -45,22 +43,6 @@ import org.jetbrains.annotations.Nullable;
 @JsonDeserialize
 @Reflectable
 public class DefaultResourceListObject<T extends HasMetadata> implements ResourceListObject<T> {
-
-    public static DefaultResourceListObject<HasMetadata> empty() {
-        return new DefaultResourceListObject<>(Collections.emptyList());
-    }
-
-    public static DefaultResourceListObject<HasMetadata> of(final HasItems items) {
-        return new DefaultResourceListObject<>(new ArrayList<>(items.getItems()));
-    }
-
-    public static DefaultResourceListObject<HasMetadata> of(final HasMetadata... resources) {
-        return new DefaultResourceListObject<>(Arrays.asList(resources));
-    }
-
-    public static DefaultResourceListObject<HasMetadata> of(final List<HasMetadata> resources) {
-        return new DefaultResourceListObject<>(resources);
-    }
 
     private final String kind;
     private final String apiVersion;

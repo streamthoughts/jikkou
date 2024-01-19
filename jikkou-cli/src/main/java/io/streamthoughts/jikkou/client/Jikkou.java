@@ -39,6 +39,7 @@ import io.streamthoughts.jikkou.client.command.health.HealthCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.ApplyResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.CreateResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.DeleteResourceCommand;
+import io.streamthoughts.jikkou.client.command.reconcile.PatchResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.UpdateResourceCommand;
 import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand;
 import io.streamthoughts.jikkou.client.command.server.ServerInfoCommand;
@@ -89,6 +90,7 @@ import picocli.CommandLine.Mixin;
                 DeleteResourceCommand.class,
                 UpdateResourceCommand.class,
                 ApplyResourceCommand.class,
+                PatchResourceCommand.class,
                 ApiExtensionCommand.class,
                 ListApiResourcesCommand.class,
                 ConfigCommand.class,
@@ -238,6 +240,7 @@ public final class Jikkou {
             core.add("delete");
             core.add("diff");
             core.add("get");
+            core.add("patch");
             core.add("prepare");
             core.add("update");
             core.add("validate");

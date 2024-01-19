@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.change.consumer.ConsumerGroupChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.consumer.ConsumerGroupChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.consumer.DeleteConsumerGroupHandler;
@@ -40,6 +41,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaConsumerGroup.class)
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA1, kind = "KafkaConsumerGroupChange")
 @ControllerConfiguration(
         supportedModes = {DELETE}
 )

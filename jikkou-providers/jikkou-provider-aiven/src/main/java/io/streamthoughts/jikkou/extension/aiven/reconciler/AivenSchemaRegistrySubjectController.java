@@ -23,6 +23,8 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
@@ -30,7 +32,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
-import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
+import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -45,6 +47,7 @@ import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -57,15 +60,18 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 @SupportedResource(
-        apiVersion = AivenExtensionProvider.SCHEMA_REGISTRY_API_VERSION,
-        kind = AivenExtensionProvider.SCHEMA_REGISTRY_KIND
+        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        kind = ApiVersions.SCHEMA_REGISTRY_KIND
+)
+@SupportedResource(
+        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        kind = ApiVersions.SCHEMA_REGISTRY_CHANGE_KIND
 )
 public class AivenSchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject, ResourceChange> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenSchemaRegistrySubjectController.class);
 
     private AivenApiClientConfig configuration;
-
     private CompatibilityLevels globalCompatibilityLevel = null;
 
     /**
@@ -92,7 +98,9 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
     }
 
     private void init(@NotNull AivenApiClientConfig configuration) {
-        this.configuration = configuration;
+        if (this.configuration == null) {
+            this.configuration = configuration;
+        }
     }
 
     /**
@@ -140,7 +148,17 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();
 
         // Compute changes
-        return computer.computeChanges(actualSubjects, expectedSubjects);
+        return computer.computeChanges(actualSubjects, expectedSubjects)
+                .stream()
+                .map(change -> GenericResourceChange
+                        .builder()
+                        .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
+                        .withKind(ApiVersions.SCHEMA_REGISTRY_CHANGE_KIND)
+                        .withMetadata(change.getMetadata())
+                        .withSpec((GenericResourceChangeSpec) change.getSpec())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     @NotNull

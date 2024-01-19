@@ -238,6 +238,16 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
+    public ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+                                     @NotNull ReconciliationMode mode,
+                                     @NotNull ReconciliationContext context) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public ApiActionResultSet<?> execute(@NotNull String action,
                                          @NotNull Configuration configuration) {
         return apiClient.execute(action, configuration);

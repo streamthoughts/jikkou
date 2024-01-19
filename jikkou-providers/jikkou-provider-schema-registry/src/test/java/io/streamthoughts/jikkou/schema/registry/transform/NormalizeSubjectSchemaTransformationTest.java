@@ -16,7 +16,7 @@
 package io.streamthoughts.jikkou.schema.registry.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -49,7 +49,7 @@ class NormalizeSubjectSchemaTransformationTest {
                 .build();
         // When
         var transform = new NormalizeSubjectSchemaTransformation();
-        V1SchemaRegistrySubject result = transform.transform(subject, DefaultResourceListObject.empty(), ReconciliationContext.Default.EMPTY)
+        V1SchemaRegistrySubject result = transform.transform(subject, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY)
                 .orElse(null);
 
         // Then
@@ -69,7 +69,7 @@ class NormalizeSubjectSchemaTransformationTest {
                 .build();
         // When
         var transform = new NormalizeSubjectSchemaTransformation();
-        V1SchemaRegistrySubject result = transform.transform(subject, DefaultResourceListObject.empty(), ReconciliationContext.Default.EMPTY)
+        V1SchemaRegistrySubject result = transform.transform(subject, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY)
                 .orElse(null);
 
         // Then

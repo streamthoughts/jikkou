@@ -43,29 +43,18 @@ public final class Reconciler<R extends HasMetadata, C extends ResourceChange> {
     }
 
     /**
-     * Executes the reconciliation of all the given resources.
+     * Executes all changes for the given reconciliation mode.
      *
-     * @param resources the list of resources to be reconciled.
-     * @param mode      the reconciliation mode to be executed.
-     * @param context   the context of the reconciliation.
-     * @return the list of changes
+     * @param changes The list of changes.
+     * @param mode    The reconciliation mode.
+     * @param context The reconciliation context.
+     * @return The list of results.
      */
-    public List<ChangeResult> reconcile(@NotNull List<R> resources,
-                                           @NotNull ReconciliationMode mode,
-                                           @NotNull ReconciliationContext context) {
+    public List<ChangeResult> apply(@NotNull List<C> changes,
+                                    @NotNull ReconciliationMode mode,
+                                    @NotNull ReconciliationContext context) {
         // Check whether this reconciliation mode is supported.
-        if (!Controller.supportedReconciliationModes(controller.getClass()).contains(mode)) {
-            throw new JikkouRuntimeException(
-                    String.format(
-                            "Cannot execute reconciliation. Mode '%s' is not supported by controller '%s'",
-                            mode,
-                            controller.getName()
-                    )
-            );
-        }
-
-        // Plans all the changes to be executed to reconcile the specified resources.
-        List<C> changes = controller.plan(resources, context);
+        checkReconciliationModeIsSupported(mode);
 
         // Keep only changes relevant for this reconciliation mode.
         List<C> filtered = changes
@@ -77,4 +66,19 @@ public final class Reconciler<R extends HasMetadata, C extends ResourceChange> {
         return controller.execute(new DefaultChangeExecutor<>(context, filtered), context);
     }
 
+    private void checkReconciliationModeIsSupported(@NotNull ReconciliationMode mode) {
+        if (!isReconciliationModeSupported(mode)) {
+            throw new JikkouRuntimeException(
+                    String.format(
+                            "Cannot execute reconciliation. Mode '%s' is not supported by controller '%s'",
+                            mode,
+                            controller.getName()
+                    )
+            );
+        }
+    }
+
+    private boolean isReconciliationModeSupported(@NotNull ReconciliationMode mode) {
+        return Controller.supportedReconciliationModes(controller.getClass()).contains(mode);
+    }
 }

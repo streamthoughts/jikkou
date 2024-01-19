@@ -202,33 +202,31 @@ public abstract class BaseApi implements JikkouApi {
                 resource.apiVersion(),
                 resource.kind()
         );
-        return extensionFactory.findExtension(
-                Collector.class,
-                Qualifiers.bySupportedResource(resource)
-        ).orElseThrow(() -> new JikkouRuntimeException(String.format(
-                "Cannot find collector for resource type: group='%s', version='%s' and kind='%s",
-                resource.group(),
-                resource.apiVersion(),
-                resource.kind()
-        )));
+        return extensionFactory.
+                findExtension(Collector.class, Qualifiers.bySupportedResource(resource))
+                .orElseThrow(() -> new JikkouRuntimeException(String.format(
+                        "Cannot find collector for resource type: group='%s', apiVersion='%s' and kind='%s",
+                        resource.group(),
+                        resource.apiVersion(),
+                        resource.kind()
+                )));
     }
 
     @SuppressWarnings("unchecked")
     protected Controller<HasMetadata, ResourceChange> getMatchingController(@NotNull ResourceType resource) {
-        LOG.info("Looking for a controller accepting resource type: group={}, version={} and kind={}",
+        LOG.info("Looking for a controller accepting resource type: group={}, apiVersion={} and kind={}",
                 resource.group(),
                 resource.apiVersion(),
                 resource.kind()
         );
-        return extensionFactory.findExtension(
-                Controller.class,
-                Qualifiers.bySupportedResource(resource)
-        ).orElseThrow(() -> new JikkouRuntimeException(String.format(
-                "Cannot find controller for resource type: group='%s', version='%s' and kind='%s",
-                resource.group(),
-                resource.apiVersion(),
-                resource.kind()
-        )));
+        return extensionFactory
+                .findExtension(Controller.class, Qualifiers.bySupportedResource(resource))
+                .orElseThrow(() -> new JikkouRuntimeException(String.format(
+                        "Cannot find controller for resource type: group='%s', apiVersion='%s' and kind='%s",
+                        resource.group(),
+                        resource.apiVersion(),
+                        resource.kind()
+                )));
     }
 
 }

@@ -19,10 +19,9 @@ import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTran
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +51,7 @@ class KafkaTopicMinReplicasTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);
@@ -73,7 +72,7 @@ class KafkaTopicMinReplicasTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, DefaultResourceListObject.of(Collections.emptyList()), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);

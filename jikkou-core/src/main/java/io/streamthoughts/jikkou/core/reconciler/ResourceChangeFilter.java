@@ -32,7 +32,6 @@ public interface ResourceChangeFilter {
      */
     List<ResourceChange> filter(List<ResourceChange> changes);
 
-
     /**
      * Gets an optional representation of this filter as a set of named values.
      *

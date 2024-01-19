@@ -28,7 +28,7 @@ import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
+import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientException;
@@ -47,8 +47,8 @@ import org.jetbrains.annotations.NotNull;
  * Aiven - Schema Registry Subjects Collector.
  */
 @SupportedResource(
-        apiVersion = AivenExtensionProvider.SCHEMA_REGISTRY_API_VERSION,
-        kind = AivenExtensionProvider.SCHEMA_REGISTRY_KIND
+        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        kind = ApiVersions.SCHEMA_REGISTRY_KIND
 )
 public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRegistrySubject> {
 
@@ -127,7 +127,7 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
             }
 
             List<V1SchemaRegistrySubject> items = result.join().stream()
-                    .map(subject -> subject.withApiVersion(AivenExtensionProvider.SCHEMA_REGISTRY_API_VERSION))
+                    .map(subject -> subject.withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION))
                     .toList();
             return new V1SchemaRegistrySubjectList(items);
 
@@ -169,9 +169,9 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
                 .thenCompose(subjectSchemaVersion -> CompletableFuture.supplyAsync(
                         // Get Subject Compatibility
                         () -> Pair.of(subjectSchemaVersion, api.getSchemaRegistrySubjectCompatibility(subject))))
-                .thenApply(tuple ->
+                .thenApply(pair ->
                         // Create SchemaRegistrySubject object
-                        factory.createSchemaRegistrySubject(tuple._1().version(), tuple._2().compatibilityLevel())
+                        factory.createSchemaRegistrySubject(pair._1().version(), pair._2().compatibilityLevel())
                 );
     }
 }

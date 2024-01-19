@@ -16,10 +16,9 @@
 package io.streamthoughts.jikkou.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +33,7 @@ public enum ReconciliationMode {
     CREATE(Operation.CREATE),
 
     /**
-     * Only changes that delete an existing resource objects on your system will be applied.
+     * Only changes that delete existing resource objects on your system will be applied.
      */
     DELETE(Operation.DELETE),
 
@@ -50,11 +49,7 @@ public enum ReconciliationMode {
 
     @JsonCreator
     public static ReconciliationMode getForNameIgnoreCase(final @Nullable String str) {
-        if (str == null) throw new IllegalArgumentException("Unsupported mode 'null'");
-        return Arrays.stream(ReconciliationMode.values())
-                .filter(e -> e.name().equals(str.toUpperCase(Locale.ROOT)))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported mode '" + str + "'"));
+        return Enums.getForNameIgnoreCase(str, ReconciliationMode.class);
     }
 
     /**

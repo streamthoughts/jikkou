@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.change.quota.KafkaClientQuotaChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.quota.KafkaClientQuotaChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.quota.KafkaClientQuotaChangeHandler;
@@ -46,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 @SupportedResource(type = V1KafkaClientQuota.class)
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "V1KafkaClientQuotaChange")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

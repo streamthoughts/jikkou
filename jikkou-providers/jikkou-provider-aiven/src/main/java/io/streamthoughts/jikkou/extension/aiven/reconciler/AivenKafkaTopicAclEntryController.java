@@ -31,6 +31,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -39,18 +40,24 @@ import io.streamthoughts.jikkou.extension.aiven.change.acl.KafkaAclEntryChangeHa
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, FULL}
 )
 @SupportedResource(type = V1KafkaTopicAclEntry.class)
+@SupportedResource(
+        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        kind = "KafkaTopicAclEntryChange"
+)
 public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopicAclEntry, ResourceChange> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
             .orElse(false);
 
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
     private AivenApiClientConfig config;
     private AivenKafkaTopicAclEntryCollector collector;
 
@@ -78,8 +85,10 @@ public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopi
     }
 
     private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.config = config;
-        this.collector = new AivenKafkaTopicAclEntryCollector(config);
+        if (initialized.compareAndSet(false, true)) {
+            this.config = config;
+            this.collector = new AivenKafkaTopicAclEntryCollector(config);
+        }
     }
 
     /**

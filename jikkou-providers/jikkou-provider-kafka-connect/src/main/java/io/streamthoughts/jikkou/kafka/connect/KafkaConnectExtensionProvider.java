@@ -26,14 +26,14 @@ import io.streamthoughts.jikkou.kafka.connect.reconciler.KafkaConnectorCollector
 import io.streamthoughts.jikkou.kafka.connect.reconciler.KafkaConnectorController;
 import io.streamthoughts.jikkou.kafka.connect.transform.KafkaConnectorResourceTransformation;
 import io.streamthoughts.jikkou.kafka.connect.validation.KafkaConnectorResourceValidation;
-import io.streamthoughts.jikkou.spi.ExtensionProvider;
+import io.streamthoughts.jikkou.spi.AbstractExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Extension provider for Kafka Connect.
  */
 @Named("KafkaConnect")
-public final class KafkaConnectExtensionProvider implements ExtensionProvider {
+public final class KafkaConnectExtensionProvider extends AbstractExtensionProvider {
 
     /**
      * {@inheritDoc}
@@ -54,7 +54,7 @@ public final class KafkaConnectExtensionProvider implements ExtensionProvider {
      **/
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
-        registry.register(V1KafkaConnector.class);
-        registry.register(V1KafkaConnectorList.class);
+        registerResource(registry, V1KafkaConnector.class);
+        registerResource(registry, V1KafkaConnectorList.class);
     }
 }

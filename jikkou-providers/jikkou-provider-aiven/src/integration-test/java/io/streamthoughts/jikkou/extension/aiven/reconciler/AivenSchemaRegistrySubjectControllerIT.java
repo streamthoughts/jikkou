@@ -20,18 +20,27 @@ import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChang
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
 
+import io.streamthoughts.jikkou.core.DefaultApi;
+import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.data.json.Json;
+import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import io.streamthoughts.jikkou.core.reconciler.Reconciler;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
+import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
@@ -76,13 +85,20 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
             }
             """;
 
-    private AivenSchemaRegistrySubjectController controller;
-
+    private volatile JikkouApi api;
 
     @BeforeEach
     public void beforeEach() {
-        controller = new AivenSchemaRegistrySubjectController(getAivenApiConfig());
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
+                new DefaultExtensionDescriptorFactory(),
+                new ClassExtensionAliasesGenerator()
+        );
+        AivenSchemaRegistrySubjectController controller = new AivenSchemaRegistrySubjectController(getAivenApiConfig());
+        api = DefaultApi.builder(new DefaultExtensionFactory(registry, Configuration.empty()), new DefaultResourceRegistry())
+                .register(AivenSchemaRegistrySubjectController.class, () -> controller)
+                .build();
     }
+
 
     @Test
     void shouldCreateSchemaRegistrySubject() {
@@ -114,7 +130,9 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                         {}
                         """)
         );
-        V1SchemaRegistrySubject resource = V1SchemaRegistrySubject.builder()
+        V1SchemaRegistrySubject resource = V1SchemaRegistrySubject
+                .builder()
+                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_SUBJECT)
                         .build()
@@ -128,18 +146,18 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                 .build();
 
         // When
-        Reconciler<V1SchemaRegistrySubject, ResourceChange> reconciler = new Reconciler<>(controller);
-        List<ChangeResult> results = reconciler.reconcile
-                (
-                        List.of(resource),
+        List<ChangeResult> results = api.reconcile(
+                        ResourceListObject.of(List.of(resource)),
                         ReconciliationMode.CREATE,
                         ReconciliationContext.builder().dryRun(false).build()
-                );
+                )
+                .results();
         // Then
         ChangeResult result = results.getFirst();
         ResourceChange actual = result.change();
         ResourceChange expected = GenericResourceChange
                 .builder(V1SchemaRegistrySubject.class)
+                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_SUBJECT)
@@ -208,6 +226,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                         """)
         );
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject.builder()
+                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_SUBJECT)
                         .build()
@@ -221,18 +240,19 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                 .build();
 
         // When
-        Reconciler<V1SchemaRegistrySubject, ResourceChange> reconciler = new Reconciler<>(controller);
-        List<ChangeResult> results = reconciler.reconcile
+        List<ChangeResult> results = api.reconcile
                 (
-                        List.of(resource),
+                        ResourceListObject.of(List.of(resource)),
                         ReconciliationMode.UPDATE,
                         ReconciliationContext.builder().dryRun(false).build()
-                );
+                )
+                .results();
         // Then
         ChangeResult result = results.getFirst();
         ResourceChange actual = result.change();
         ResourceChange expected = GenericResourceChange
                 .builder(V1SchemaRegistrySubject.class)
+                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_SUBJECT)

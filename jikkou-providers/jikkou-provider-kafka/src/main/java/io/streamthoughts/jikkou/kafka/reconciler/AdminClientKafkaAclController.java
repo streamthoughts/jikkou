@@ -31,6 +31,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.change.acl.AclChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.acl.CreateAclChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.acl.DeleteAclChangeHandler;
@@ -47,6 +48,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaPrincipalAuthorizationChange")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, FULL}
 )

@@ -27,14 +27,14 @@ import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchema
 import io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.CompatibilityLevelValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
-import io.streamthoughts.jikkou.spi.ExtensionProvider;
+import io.streamthoughts.jikkou.spi.AbstractExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Extension provider for Schema Registry.
  */
 @Named("SchemaRegistry")
-public final class SchemaRegistryExtensionProvider implements ExtensionProvider {
+public final class SchemaRegistryExtensionProvider extends AbstractExtensionProvider {
 
     /**
      * {@inheritDoc}
@@ -57,7 +57,6 @@ public final class SchemaRegistryExtensionProvider implements ExtensionProvider 
 
         // Health indicators
         registry.register(SchemaRegistryHealthIndicator.class, SchemaRegistryHealthIndicator::new);
-
     }
 
     /**
@@ -65,7 +64,7 @@ public final class SchemaRegistryExtensionProvider implements ExtensionProvider 
      **/
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
-        registry.register(V1SchemaRegistrySubject.class);
-        registry.register(V1SchemaRegistrySubjectList.class);
+        registerResource(registry, V1SchemaRegistrySubject.class);
+        registerResource(registry, V1SchemaRegistrySubjectList.class);
     }
 }

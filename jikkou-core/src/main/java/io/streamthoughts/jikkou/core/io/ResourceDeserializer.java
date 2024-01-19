@@ -37,6 +37,11 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
     private static final Logger LOG = LoggerFactory.getLogger(ResourceDeserializer.class);
 
     record TypeKey(String kind, String group, String version) {
+
+        @Override
+        public String toString() {
+            return "[apiVersion=" + group + "/" + version + ", kind=" + kind + "]";
+        }
     }
 
     private static final String KIND = "kind";
@@ -88,7 +93,7 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
         }
 
         if (resourceType == null) {
-            LOG.debug("No specific resource found");
+            LOG.debug("No specific resource found for type: {}" + key);
             return jp.getCodec().treeToValue(node, GenericResource.class);
         } else if (Resource.class.isAssignableFrom(resourceType)) {
             LOG.debug("Read specific resource for apiVersion={}, kind={}",

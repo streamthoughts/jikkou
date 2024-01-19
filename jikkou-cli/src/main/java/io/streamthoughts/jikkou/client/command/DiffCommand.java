@@ -69,6 +69,12 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
     )
     Set<Operation> filterOutAllChangesExcept = new HashSet<>();
 
+    @Option(names = {"--list"},
+            defaultValue = "false",
+            description = "Get resources as ApiResourceChangeList (default: ${DEFAULT-VALUE})."
+    )
+    private boolean list;
+
     // API
     @Inject
     JikkouApi api;
@@ -92,7 +98,11 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
                     getReconciliationContext()
             );
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                writer.write(formatOptions.format, result, baos);
+                if (list) {
+                    writer.write(formatOptions.format(), result, baos);
+                } else {
+                    writer.write(formatOptions.format(), result.getItems(), baos);
+                }
                 System.out.println(baos);
                 return CommandLine.ExitCode.OK;
             }

@@ -17,9 +17,9 @@ package io.streamthoughts.jikkou.core.validation;
 
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasPriority;
+import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -58,7 +58,7 @@ public final class ValidationChain implements Validation<HasMetadata> {
     @Override
     public ValidationResult validate(@NotNull final List<HasMetadata> resources) {
         LOG.info("Starting validation-chain execution on {} resources", resources.size());
-        return validate(new DefaultResourceListObject<>(resources).groupByType());
+        return validate(ResourceListObject.of(resources).groupByType());
     }
 
     public ValidationResult validate(@NotNull final Map<ResourceType, List<HasMetadata>> resources) {

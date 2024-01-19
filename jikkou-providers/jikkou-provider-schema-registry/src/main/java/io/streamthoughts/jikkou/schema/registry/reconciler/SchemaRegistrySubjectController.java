@@ -31,6 +31,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.schema.registry.ApiVersions;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
@@ -46,12 +47,13 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 @ControllerConfiguration(
-        supportedModes = {CREATE, DELETE, UPDATE, FULL}
+    supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 @SupportedResource(type = V1SchemaRegistrySubject.class)
+@SupportedResource(apiVersion = ApiVersions.SCHEMA_REGISTRY_V1BETA2, kind = "SchemaRegistrySubjectChange")
 public class SchemaRegistrySubjectController
-        extends ContextualExtension
-        implements Controller<V1SchemaRegistrySubject, ResourceChange> {
+    extends ContextualExtension
+    implements Controller<V1SchemaRegistrySubject, ResourceChange> {
 
     private SchemaRegistryClientConfig configuration;
 
@@ -67,7 +69,7 @@ public class SchemaRegistrySubjectController
      * @param configuration the schema registry client configuration.
      */
     public SchemaRegistrySubjectController(@NotNull SchemaRegistryClientConfig configuration) {
-        init(configuration);
+        this.configuration = configuration;
     }
 
     /**
@@ -76,11 +78,9 @@ public class SchemaRegistrySubjectController
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        init(new SchemaRegistryClientConfig(context.appConfiguration()));
-    }
-
-    private void init(@NotNull SchemaRegistryClientConfig config) {
-        this.configuration = config;
+        if (configuration == null) {
+            configuration = new SchemaRegistryClientConfig(context.appConfiguration());
+        }
     }
 
     /**
@@ -91,10 +91,10 @@ public class SchemaRegistrySubjectController
                                       @NotNull ReconciliationContext context) {
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration))) {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
-                    new CreateSchemaSubjectChangeHandler(api),
-                    new UpdateSchemaSubjectChangeHandler(api),
-                    new DeleteSchemaSubjectChangeHandler(api),
-                    new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
+                new CreateSchemaSubjectChangeHandler(api),
+                new UpdateSchemaSubjectChangeHandler(api),
+                new DeleteSchemaSubjectChangeHandler(api),
+                new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }
@@ -105,22 +105,22 @@ public class SchemaRegistrySubjectController
      **/
     @Override
     public List<ResourceChange> plan(
-            @NotNull Collection<V1SchemaRegistrySubject> resources,
-            @NotNull ReconciliationContext context) {
+        @NotNull Collection<V1SchemaRegistrySubject> resources,
+        @NotNull ReconciliationContext context) {
 
         // Get described resources that are candidates for this reconciliation.
         List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
-                .filter(context.selector()::apply)
-                .toList();
+            .filter(context.selector()::apply)
+            .toList();
 
         // Get existing resources from the environment.
         SchemaRegistrySubjectCollector collector = new SchemaRegistrySubjectCollector(configuration)
-                .prettyPrintSchema(false)
-                .defaultToGlobalCompatibilityLevel(false);
+            .prettyPrintSchema(false)
+            .defaultToGlobalCompatibilityLevel(false);
 
         List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
-                .filter(context.selector()::apply)
-                .toList();
+            .filter(context.selector()::apply)
+            .toList();
 
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();
 

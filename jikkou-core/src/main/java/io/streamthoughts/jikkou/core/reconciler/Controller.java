@@ -52,7 +52,7 @@ public interface Controller<R extends HasMetadata, C extends ResourceChange> ext
      * @return The list of ChangeResult.
      */
     List<ChangeResult> execute(@NotNull ChangeExecutor<C> executor,
-                                  @NotNull ReconciliationContext context);
+                               @NotNull ReconciliationContext context);
 
     /**
      * Plans all the changes to be executed to reconcile the specified resources.

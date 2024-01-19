@@ -30,6 +30,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -38,18 +39,24 @@ import io.streamthoughts.jikkou.extension.aiven.change.schema.SchemaRegistryAclE
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, FULL}
 )
 @SupportedResource(type = V1SchemaRegistryAclEntry.class)
+@SupportedResource(
+        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        kind = "SchemaRegistryAclEntryChange"
+)
 public final class AivenSchemaRegistryAclEntryController implements Controller<V1SchemaRegistryAclEntry, ResourceChange> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
             .orElse(false);
 
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
     private AivenApiClientConfig config;
     private AivenSchemaRegistryAclEntryCollector collector;
 
@@ -77,8 +84,10 @@ public final class AivenSchemaRegistryAclEntryController implements Controller<V
     }
 
     private void init(@NotNull AivenApiClientConfig config) {
-        this.config = config;
-        this.collector = new AivenSchemaRegistryAclEntryCollector(config);
+        if (this.initialized.compareAndSet(false, true)) {
+            this.config = config;
+            this.collector = new AivenSchemaRegistryAclEntryCollector(config);
+        }
     }
 
     /**
