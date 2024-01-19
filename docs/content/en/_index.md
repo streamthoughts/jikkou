@@ -18,7 +18,7 @@ $(function () {
 
 {{% blocks/cover title="Jikkou (jikkō / 実行)!" image_anchor="top" height="max" color="white" %}}
 <div class="mx-auto">
-	<h2 class="hero-title mb-5">The <span class="text-light">Open source</span> Data Infrastructure <br /> as code framework for <br /><span id="hero-title-end" class="hero-end">Apache Kafka</span></h2>
+	<h2 class="hero-title mb-5">The <span class="text-light">Open source</span> Resource<br /> as Code framework for <br /><span id="hero-title-end" class="hero-end">Apache Kafka</span></h2>
 	<a class="btn btn-lg btn-secondary mx-4" href="">
         Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
     </a>
