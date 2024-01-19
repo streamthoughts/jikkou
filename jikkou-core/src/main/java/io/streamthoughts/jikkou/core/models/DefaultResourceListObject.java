@@ -33,10 +33,10 @@ import org.jetbrains.annotations.Nullable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Description("")
 @JsonPropertyOrder({
-        "apiVersion",
-        "kind",
-        "metadata",
-        "items"
+    "apiVersion",
+    "kind",
+    "metadata",
+    "items"
 })
 @ApiVersion("core.jikkou.io/v1beta2")
 @Kind("GenericResourceList")
@@ -61,10 +61,10 @@ public class DefaultResourceListObject<T extends HasMetadata> implements Resourc
      * Creates a new {@link DefaultResourceListObject} instance.
      */
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "items"
+        "kind",
+        "apiVersion",
+        "metadata",
+        "items"
     })
     public DefaultResourceListObject(@Nullable final String kind,
                                      @Nullable final String apiVersion,
@@ -105,8 +105,8 @@ public class DefaultResourceListObject<T extends HasMetadata> implements Resourc
     @Override
     public ObjectMeta getMetadata() {
         return Optional.ofNullable(metadata).orElse(new ObjectMeta()).toBuilder()
-                .withAnnotation(CoreAnnotations.JIKKOU_IO_ITEMS_COUNT, items.size())
-                .build();
+            .withAnnotation(CoreAnnotations.JIKKOU_IO_ITEMS_COUNT, items.size())
+            .build();
     }
 
     /**
@@ -119,27 +119,28 @@ public class DefaultResourceListObject<T extends HasMetadata> implements Resourc
     }
 
     public DefaultResourceListObject<T> withKind(String kind) {
-        return this.kind == kind ? this : new DefaultResourceListObject<T>(kind, this.apiVersion, this.metadata, this.items);
+        return new DefaultResourceListObject<T>(kind, this.apiVersion, this.metadata, this.items);
     }
 
     public DefaultResourceListObject<T> withApiVersion(String apiVersion) {
-        return this.apiVersion == apiVersion ? this : new DefaultResourceListObject<T>(this.kind, apiVersion, this.metadata, this.items);
+        return new DefaultResourceListObject<T>(this.kind, apiVersion, this.metadata, this.items);
     }
 
+    @Override
     public DefaultResourceListObject<T> withMetadata(ObjectMeta metadata) {
-        return this.metadata == metadata ? this : new DefaultResourceListObject<T>(this.kind, this.apiVersion, metadata, this.items);
+        return new DefaultResourceListObject<T>(this.kind, this.apiVersion, metadata, this.items);
     }
 
     public DefaultResourceListObject<T> withItems(List<T> items) {
-        return this.items == items ? this : new DefaultResourceListObject<T>(this.kind, this.apiVersion, this.metadata, items);
+        return new DefaultResourceListObject<T>(this.kind, this.apiVersion, this.metadata, items);
     }
 
     public DefaultResourceListObjectBuilder<T> toBuilder() {
         return new DefaultResourceListObjectBuilder<T>()
-                .withKind(this.kind)
-                .withApiVersion(this.apiVersion)
-                .withMetadata(this.metadata)
-                .withItems(this.items);
+            .withKind(this.kind)
+            .withApiVersion(this.apiVersion)
+            .withMetadata(this.metadata)
+            .withItems(this.items);
     }
 
     public static class DefaultResourceListObjectBuilder<T extends HasMetadata> {
