@@ -60,7 +60,7 @@ languageName ="English"
 weight = 1
 [languages.en.params]
 title = "Jikkou"
-description = "A Docsy example site"
+description = "The Open source Resource as Code framework for Apache Kafka"
 
 [markup]
   [markup.goldmark]
