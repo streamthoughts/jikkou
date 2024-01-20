@@ -64,7 +64,8 @@ import lombok.extern.jackson.Jacksonized;
     "kind",
     "metadata",
     "template",
-    "spec"
+    "spec",
+    "status"
 })
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaTopic")
@@ -116,6 +117,8 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
      */
     @JsonProperty("spec")
     private io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec spec;
+    @JsonProperty("status")
+    private V1KafkaTopicStatus status;
 
     /**
      * No args constructor for use in serialization
@@ -131,21 +134,24 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
      * @param apiVersion
      * @param kind
      * @param spec
+     * @param status
      */
     @ConstructorProperties({
         "apiVersion",
         "kind",
         "metadata",
         "template",
-        "spec"
+        "spec",
+        "status"
     })
-    public V1KafkaTopic(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec spec) {
+    public V1KafkaTopic(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec spec, V1KafkaTopicStatus status) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
         this.metadata = metadata;
         this.template = template;
         this.spec = spec;
+        this.status = status;
     }
 
     /**
@@ -201,6 +207,11 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
         return spec;
     }
 
+    @JsonProperty("status")
+    public V1KafkaTopicStatus getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -225,6 +236,10 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
         sb.append('=');
         sb.append(((this.spec == null)?"<null>":this.spec));
         sb.append(',');
+        sb.append("status");
+        sb.append('=');
+        sb.append(((this.status == null)?"<null>":this.status));
+        sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
         } else {
@@ -241,6 +256,7 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
         result = ((result* 31)+((this.apiVersion == null)? 0 :this.apiVersion.hashCode()));
         result = ((result* 31)+((this.kind == null)? 0 :this.kind.hashCode()));
         result = ((result* 31)+((this.spec == null)? 0 :this.spec.hashCode()));
+        result = ((result* 31)+((this.status == null)? 0 :this.status.hashCode()));
         return result;
     }
 
@@ -253,7 +269,7 @@ public class V1KafkaTopic implements HasMetadata, HasSpec<V1KafkaTopicSpec> , Re
             return false;
         }
         V1KafkaTopic rhs = ((V1KafkaTopic) other);
-        return ((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
+        return (((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))))&&((this.status == rhs.status)||((this.status!= null)&&this.status.equals(rhs.status))));
     }
 
 }

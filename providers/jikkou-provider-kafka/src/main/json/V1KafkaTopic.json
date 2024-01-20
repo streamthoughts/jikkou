@@ -12,12 +12,16 @@
     "lombok-with": true,
     "all-args-constructor": false,
     "spec": {
-      "names" : {
+      "names": {
         "singular": "kafkatopic",
-        "plural" : "kafkatopics",
-        "shortNames" : [ "kt" ]
+        "plural": "kafkatopics",
+        "shortNames": [
+          "kt"
+        ]
       },
-      "verbs": ["*"]
+      "verbs": [
+        "*"
+      ]
     }
   },
   "required": [
@@ -42,10 +46,57 @@
       "$ref": "./Template.json"
     },
     "spec": {
-     "$ref": "#/$defs/V1KafkaTopicSpec"
+      "$ref": "#/$defs/V1KafkaTopicSpec"
+    },
+    "status": {
+      "$ref": "#/$defs/V1KafkaTopicStatus"
     }
   },
   "$defs": {
+    "V1KafkaTopicStatus": {
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "partitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/$defs/KafkaTopicPartitionInfo"
+          }
+        }
+      }
+    },
+    "KafkaTopicPartitionInfo": {
+      "type": "object",
+      "additionalProperties": {
+        "all-args-constructor": false
+      },
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "leader": {
+          "type": "integer"
+        },
+        "isr": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "replicas": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
     "V1KafkaTopicSpec": {
       "type": "object",
       "javaInterfaces": [

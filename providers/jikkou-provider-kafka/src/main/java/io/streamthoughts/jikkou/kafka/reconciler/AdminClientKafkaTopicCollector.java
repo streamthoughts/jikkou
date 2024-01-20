@@ -18,6 +18,8 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -36,10 +38,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaTopic.class)
+@ExtensionSpec(
+    options = {
+        @ExtensionOptionSpec(
+            name = AdminClientKafkaTopicCollector.STATUS_CONFIG_NAME,
+            description = AdminClientKafkaTopicCollector.STATUS_CONFIG_DESCRIPTION,
+            type = Boolean.class,
+            defaultValue = "false"
+        )
+    }
+)
 public final class AdminClientKafkaTopicCollector
-        extends AdminClientKafkaConfigs implements Collector<V1KafkaTopic> {
+    extends AdminClientKafkaConfigs implements Collector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);
+    public static final String STATUS_CONFIG_NAME = "status";
+    public static final String STATUS_CONFIG_DESCRIPTION = "Specify whether to describe status information about the topic-partitions";
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -83,14 +97,19 @@ public final class AdminClientKafkaTopicCollector
 
         final KafkaConfigPredicate predicate = kafkaConfigPredicate(configuration);
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
+
+            boolean status = extensionContext()
+                .<Boolean>configProperty(STATUS_CONFIG_NAME)
+                .get(configuration);
+
             List<V1KafkaTopic> resources = new KafkaTopicService(context.getAdminClient())
-                    .listAll(Set.of(name), predicate);
+                .listAll(Set.of(name), predicate, status);
 
             if (resources.isEmpty()) {
                 return Optional.empty();
             }
 
-            V1KafkaTopic resource = resources.get(0);
+            V1KafkaTopic resource = resources.getFirst();
             resource = addClusterIdToMetadataAnnotations(resource, context.getClusterId());
             return Optional.of(resource);
         }
@@ -110,8 +129,13 @@ public final class AdminClientKafkaTopicCollector
         final KafkaConfigPredicate predicate = kafkaConfigPredicate(configuration);
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
 
+            boolean status = extensionContext()
+                .<Boolean>configProperty(STATUS_CONFIG_NAME)
+                .get(configuration);
+
+
             List<V1KafkaTopic> resources = new KafkaTopicService(context.getAdminClient())
-                    .listAll(predicate);
+                .listAll(predicate, status);
 
             if (LOG.isInfoEnabled()) {
                 LOG.info("Found '{}' kafka topics matching the given selector(s).", resources.size());
@@ -120,10 +144,10 @@ public final class AdminClientKafkaTopicCollector
             String clusterId = context.getClusterId();
 
             List<V1KafkaTopic> items = resources
-                    .stream()
-                    .filter(selector::apply)
-                    .map(resource -> addClusterIdToMetadataAnnotations(resource, clusterId))
-                    .toList();
+                .stream()
+                .filter(selector::apply)
+                .map(resource -> addClusterIdToMetadataAnnotations(resource, clusterId))
+                .toList();
             return new V1KafkaTopicList(items);
         }
     }
@@ -131,11 +155,11 @@ public final class AdminClientKafkaTopicCollector
     private V1KafkaTopic addClusterIdToMetadataAnnotations(V1KafkaTopic resource,
                                                            String clusterId) {
         return resource.toBuilder()
-                .withMetadata(resource.getMetadata()
-                        .toBuilder()
-                        .withAnnotation(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
-                        .build()
-                )
-                .build();
+            .withMetadata(resource.getMetadata()
+                .toBuilder()
+                .withAnnotation(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                .build()
+            )
+            .build();
     }
 }
