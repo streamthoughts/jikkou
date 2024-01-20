@@ -24,29 +24,28 @@ limitations under the License.
     <packaging>pom</packaging>
     <version>0.33.0</version>
     <modules>
-        <module>jikkou-resource-generator</module>
-        <module>jikkou-core</module>
-        <module>jikkou-cli</module>
-        <module>jikkou-template-jinja</module>
-        <module>jikkou-extension-rest-client</module>
-        <module>jikkou-providers/jikkou-provider-kafka</module>
-        <module>jikkou-providers/jikkou-provider-aiven</module>
-        <module>jikkou-providers/jikkou-provider-schema-registry</module>
-        <module>jikkou-providers/jikkou-provider-core</module>
-        <module>jikkou-providers/jikkou-provider-kafka-connect</module>
-        <module>jikkou-api/jikkou-api-client</module>
-        <module>jikkou-api/jikkou-api-server</module>
-        <module>jikkou-api/jikkou-api-data</module>
+        <module>resource-generator</module>
+        <module>core</module>
+        <module>cli</module>
+        <module>template-jinja</module>
+        <module>extension-rest-client</module>
+        <module>providers/jikkou-provider-kafka</module>
+        <module>providers/jikkou-provider-aiven</module>
+        <module>providers/jikkou-provider-schema-registry</module>
+        <module>providers/jikkou-provider-core</module>
+        <module>providers/jikkou-provider-kafka-connect</module>
+        <module>server/jikkou-api-client</module>
+        <module>server/jikkou-api-server</module>
+        <module>server/jikkou-api-data</module>
     </modules>
 
     <name>Jikkou Project</name>
 
     <description>
-        Jikkou :: A tool designed to provide an efficient and easy way to manage, automate, and provision resource
-        configurations for Kafka
+        Jikkou :: A tool designed to provide an efficient and easy way to manage, automate, and provision resources.
     </description>
 
-    <url>https://streamthoughts.github.io/jikkou/</url>
+    <url>https://www.jikkou.io/</url>
 
     <inceptionYear>2023</inceptionYear>
 

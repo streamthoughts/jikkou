@@ -31,7 +31,7 @@ limitations under the License.
 
     <description>
         Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and
-        provision all the assets of your data infrastructure
+        provision resources.
     </description>
 
     <packaging>${packaging}</packaging>
