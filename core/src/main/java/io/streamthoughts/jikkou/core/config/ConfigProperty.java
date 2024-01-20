@@ -56,7 +56,7 @@ public final class ConfigProperty<T> {
             case STRING -> ConfigProperty.ofString(path);
             case LIST -> ConfigProperty.ofList(path);
             case MAP -> ConfigProperty.ofMap(path);
-            case BYTES, NULL -> throw new IllegalArgumentException("Unsupported type: " + type);
+            case BYTES -> throw new IllegalArgumentException("Unsupported type: " + type);
         };
     }
 

@@ -15,146 +15,56 @@
  */
 package io.streamthoughts.jikkou.core.config.internals;
 
-import io.streamthoughts.jikkou.core.data.internal.TypeConverter;
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents the convertible type.
  */
 public enum Type {
 
-    // This is a special type used to deal with NULL object.
-    NULL(null) {
-        @Override
-        public Object convert(@Nullable final Object o) {
-            throw new UnsupportedOperationException("Cannot convert an object to type NULL");
-        }
-
-        @Override
-        protected boolean isInternal() {
-            return true;
-        }
-    },
-
-    SHORT(Collections.singletonList(Short.class)) {
-        @Override
-        public Short convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getShort).orElse(null);
-        }
-    },
-
-    INTEGER(Collections.singletonList(Integer.class)) {
-        @Override
-        public Integer convert(final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getInt).orElse(null);
-        }
-    },
-
-    LONG(Collections.singletonList(Long.class)) {
-        @Override
-        public Long convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getLong).orElse(null);
-        }
-    },
-
-    FLOAT(Collections.singletonList(Float.class)) {
-        @Override
-        public Float convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getFloat).orElse(null);
-        }
-    },
-
-    DOUBLE(Collections.singletonList(Double.class)) {
-        @Override
-        public Double convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getDouble).orElse(null);
-        }
-    },
-
-    BOOLEAN(Collections.singletonList(Boolean.class)) {
-        @Override
-        public Boolean convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getBool).orElse(null);
-        }
-    },
-
-    STRING(Collections.singletonList(String.class)) {
-        @Override
-        public String convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getString).orElse(null);
-        }
-    },
-
-    LIST(List.of(Collection.class, List.class, Set.class)) {
-        @Override
-        public Collection convert(@Nullable final Object o) {
-            return Optional.ofNullable(o)
-                    .map(it -> TypeConverter.getList(it, true))
-                    .orElse(null);
-        }
-
-    },
-    MAP(List.of(Map.class)) {
-        @Override
-        @SuppressWarnings("unchecked")
-        public Map<String, Object> convert(@Nullable final Object o) {
-            return Optional.ofNullable(o)
-                    .map(it -> (Map<String, Object>) o)
-                    .orElse(null);
-        }
-
-    },
-    BYTES(Collections.emptyList()) {
-        @Override
-        public byte[] convert(@Nullable final Object o) {
-            return Optional.ofNullable(o).map(TypeConverter::getBytes).orElse(null);
-        }
-    };
+    SHORT(Collections.singletonList(Short.class), TypeConverter.Short()),
+    INTEGER(Collections.singletonList(Integer.class), TypeConverter.Integer()),
+    LONG(Collections.singletonList(Long.class), TypeConverter.Long()),
+    FLOAT(Collections.singletonList(Float.class), TypeConverter.Float()),
+    DOUBLE(Collections.singletonList(Double.class), TypeConverter.Double()),
+    BOOLEAN(Collections.singletonList(Boolean.class), TypeConverter.Boolean()),
+    STRING(Collections.singletonList(String.class), TypeConverter.String()),
+    LIST(List.of(Collection.class, List.class, Set.class), TypeConverter.ofList(Object.class)),
+    MAP(List.of(Map.class), TypeConverter.ofMap()),
+    BYTES(Collections.emptyList(), TypeConverter.Bytes());
 
     private final static Map<Class<?>, Type> JAVA_CLASS_TYPES = new HashMap<>();
 
     static {
         for (Type type : Type.values()) {
-            if (!type.isInternal()) {
-                for (Class<?> typeClass : type.classes) {
-                    JAVA_CLASS_TYPES.put(typeClass, type);
-                }
+            for (Class<?> typeClass : type.classes) {
+                JAVA_CLASS_TYPES.put(typeClass, type);
             }
         }
     }
 
     private final Collection<Class<?>> classes;
+    private final TypeConverter<?> converter;
 
     /**
      * Creates a new {@link Type} instance.
      */
-    Type(final Collection<Class<?>> classes) {
-        this.classes = classes;
+    Type(final Collection<Class<?>> classes,
+         final TypeConverter<?> converter) {
+        this.classes = Objects.requireNonNull(classes);
+        this.converter = Objects.requireNonNull(converter);
     }
 
-    /**
-     * Converts the specified object to this type.
-     *
-     * @param o The object to be converted - can be null.
-     * @return The converted object, or {@code null} if the passed object is {@code null}.
-     */
-    public abstract Object convert(@Nullable final Object o);
-
-    /**
-     * Checks whether this is type is internal.
-     * Internal types cannot be resolved from a class or string name.
-     *
-     * @return {@code false}.
-     */
-    protected boolean isInternal() {
-        return false;
+    @SuppressWarnings("unchecked")
+    public <T> TypeConverter<T> converter() {
+        return (TypeConverter<T>) converter;
     }
 
     public static Type forClass(final Class<?> cls) {

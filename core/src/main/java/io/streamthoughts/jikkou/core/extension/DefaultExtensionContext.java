@@ -132,7 +132,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
                     }
                     property = property.description(spec.description());
                     if (!spec.required()) {
-                        property = property.orElse(() -> type.convert(spec.defaultValue()));
+                        property = property.orElse(() -> type.converter().convertValue(spec.defaultValue()));
                     }
                     return property;
                 })

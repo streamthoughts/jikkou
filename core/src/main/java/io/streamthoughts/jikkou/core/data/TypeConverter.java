@@ -32,7 +32,6 @@ public interface TypeConverter<T> {
      *
      * @param value The value to be converted
      * @return The converted value, or {@code null} if the passed value was {@code null}.
-     *
      * @throws TypeConversionException if the value cannot be converted.
      */
     T convertValue(final Object value);
@@ -117,7 +116,7 @@ public interface TypeConverter<T> {
     static TypeConverter<ByteBuffer> Bytes() {
         return TypeConverters.BYTES_TYPE_CONVERTER;
     }
-    
+
     /**
      * Returns a converter for converting an object to the given type.
      *
@@ -140,14 +139,14 @@ public interface TypeConverter<T> {
         return ObjectTypeConverter.newForList(elementType);
     }
 
-
     /**
      * Returns a converter for converting an object into a list of the given type.
      *
      * @return The converter for converting an object to a list of the given type.
      */
     static <K, V> TypeConverter<Map<K, V>> ofMap() {
-        return ObjectTypeConverter.newForType(new TypeReference<>() {});
+        return ObjectTypeConverter.newForType(new TypeReference<>() {
+        });
     }
 
 }
