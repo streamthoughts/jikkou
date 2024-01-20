@@ -60,7 +60,7 @@ jobs:
       run: |
         chmod +x ./mvnw  && \
         ./mvnw -ntp -B clean package -Pnative -Dgraalvm.build.arg="--static --libc=musl" -DskipTests && \
-        cp ./jikkou-cli/target/jikkou-cli-${{ env.VERSION }}-runner ./docker/jikkou-cli-${{ env.VERSION }}-runner
+        cp ./cli/target/jikkou-cli-${{ env.VERSION }}-runner ./docker/jikkou-cli-${{ env.VERSION }}-runner
 
     - name: 'Build & Push to Docker Hub (Jikkou CLI)'
       if: github.ref_name == 'main'
