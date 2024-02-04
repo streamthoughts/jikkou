@@ -17,6 +17,7 @@ package io.streamthoughts.jikkou.core.config;
 
 import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.config.internals.Type;
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,18 @@ public final class ConfigProperty<T> {
             case MAP -> ConfigProperty.ofMap(path);
             case BYTES -> throw new IllegalArgumentException("Unsupported type: " + type);
         };
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigProperty} with a convertible value.
+     *
+     * @param path      the option string path.
+     * @param converter the type converter.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static <T> ConfigProperty<T> of(final @NotNull String path,
+                                           final @NotNull TypeConverter<T> converter) {
+        return new ConfigProperty<>(path, (p, configuration) -> configuration.findAny(p).map(converter::convertValue));
     }
 
     /**
@@ -258,15 +271,15 @@ public final class ConfigProperty<T> {
     public <U> ConfigProperty<U> map(Function<? super T, ? extends U> mapper) {
 
         Supplier<? extends U> defaultValueSupplierWithMapper = () -> Optional
-                .ofNullable(defaultValueSupplier)
-                .flatMap(supplier -> Optional.ofNullable(supplier.get()).map(mapper))
-                .orElse(null);
+            .ofNullable(defaultValueSupplier)
+            .flatMap(supplier -> Optional.ofNullable(supplier.get()).map(mapper))
+            .orElse(null);
 
         return new ConfigProperty<>(
-                key,
-                (p, config) -> accessor.apply(p, config).map(mapper),
-                defaultValueSupplierWithMapper,
-                description
+            key,
+            (p, config) -> accessor.apply(p, config).map(mapper),
+            defaultValueSupplierWithMapper,
+            description
         );
     }
 
@@ -291,8 +304,8 @@ public final class ConfigProperty<T> {
      */
     public Optional<T> getOptional(final @NotNull Configuration config) {
         return accessor
-                .apply(key, config)
-                .or(() -> Optional.ofNullable(defaultValueSupplier).map(Supplier::get));
+            .apply(key, config)
+            .or(() -> Optional.ofNullable(defaultValueSupplier).map(Supplier::get));
     }
 
     /**
@@ -351,8 +364,8 @@ public final class ConfigProperty<T> {
     @Override
     public String toString() {
         return "ConfigProperty[" +
-                "key=" + key +
-                ", description=" + description +
-                ']';
+            "key=" + key +
+            ", description=" + description +
+            ']';
     }
 }

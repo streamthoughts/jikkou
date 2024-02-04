@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public final class ObjectTypeConverter<T> implements TypeConverter<T> {
 
@@ -74,6 +75,19 @@ public final class ObjectTypeConverter<T> implements TypeConverter<T> {
     public static <T> ObjectTypeConverter<List<T>> newForList(Class<T> elementClass) {
         TypeFactory typeFactory = DEFAULT_OBJECT_OBJECT.getTypeFactory();
         CollectionType type = typeFactory.constructCollectionType(List.class, elementClass);
+        return new ObjectTypeConverter<>(DEFAULT_OBJECT_OBJECT, type);
+    }
+
+    /**
+     * Creates a new converter for converting object into a list of elements of the given type.
+     *
+     * @param elementClass Type of elements.
+     * @param <T>          Type of object.
+     * @return The converter.
+     */
+    public static <T> ObjectTypeConverter<Set<T>> newForSet(Class<T> elementClass) {
+        TypeFactory typeFactory = DEFAULT_OBJECT_OBJECT.getTypeFactory();
+        CollectionType type = typeFactory.constructCollectionType(Set.class, elementClass);
         return new ObjectTypeConverter<>(DEFAULT_OBJECT_OBJECT, type);
     }
 

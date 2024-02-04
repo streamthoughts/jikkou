@@ -648,6 +648,17 @@ public interface Configuration {
                                       @Nullable final Supplier<List<Configuration>> defaultValueSupplier);
 
     /**
+     * Finds the string value associated with the given key.
+     *
+     * @param key the key of the configuration property
+     * @return the {@link java.util.Optional} configuration value.
+     */
+    default Optional<Object> findAny(@NotNull final String key) {
+        return Optional.ofNullable(getAny(key));
+    }
+
+
+    /**
      * Finds the boolean configuration value for the specified config key.
      *
      * @param key the key for the configuration property.

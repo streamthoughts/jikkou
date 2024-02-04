@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for converting Objects of one type to another.
@@ -137,6 +138,17 @@ public interface TypeConverter<T> {
      */
     static <T> TypeConverter<List<T>> ofList(Class<T> elementType) {
         return ObjectTypeConverter.newForList(elementType);
+    }
+
+    /**
+     * Returns a converter for converting an object into a set of the given type.
+     *
+     * @param elementType The type to list elements.
+     * @param <T>         The type of elements.
+     * @return The converter for converting an object to a list of the given type.
+     */
+    static <T> TypeConverter<Set<T>> ofSet(Class<T> elementType) {
+        return ObjectTypeConverter.newForSet(elementType);
     }
 
     /**

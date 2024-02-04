@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.config.internals.Type;
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import java.util.Collections;
 import java.util.List;
@@ -127,8 +128,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
                         Class<Enum> enumType = (Class<Enum>) specType;
                         property = ConfigProperty.ofEnum(spec.name(), enumType);
                     } else {
-                        throw new IllegalArgumentException("Cannot generate ConfigProperty. " +
-                                "Type " + specType.getName() + "is not supported");
+                        property = ConfigProperty.of(spec.name(), TypeConverter.of(specType));
                     }
                     property = property.description(spec.description());
                     if (!spec.required()) {
