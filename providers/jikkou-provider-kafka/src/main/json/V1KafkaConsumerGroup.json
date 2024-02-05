@@ -143,6 +143,10 @@
         "offset": {
           "type": "any",
           "description": "The offset."
+        },
+        "offset-lag": {
+          "type": "any",
+          "description": "The consumer lag for this partition."
         }
       }
     },

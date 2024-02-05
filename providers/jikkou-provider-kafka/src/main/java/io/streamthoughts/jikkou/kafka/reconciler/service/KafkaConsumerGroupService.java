@@ -18,7 +18,6 @@ package io.streamthoughts.jikkou.kafka.reconciler.service;
 import static io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER;
 
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
@@ -39,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeConsumerGroupsResult;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsResult;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsSpec;
 import org.apache.kafka.clients.admin.ListConsumerGroupsOptions;
@@ -58,9 +57,11 @@ import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * Service to manage Kafka Consumer Groups.
@@ -76,7 +77,7 @@ public final class KafkaConsumerGroupService {
      *
      * @param client The AdminClient.
      */
-    public KafkaConsumerGroupService(@NotNull AdminClient client) {
+    public KafkaConsumerGroupService(final @NotNull AdminClient client) {
         this.client = Objects.requireNonNull(client, "client cannot be null");
     }
 
@@ -89,9 +90,9 @@ public final class KafkaConsumerGroupService {
      * @param dryRun     Specify whether to run this method in dry-run.
      * @return The V1KafkaConsumerGroup.
      */
-    public V1KafkaConsumerGroup resetConsumerGroupOffsets(@NotNull String groupId,
-                                                          @NotNull List<String> topics,
-                                                          @NotNull KafkaOffsetSpec offsetSpec,
+    public V1KafkaConsumerGroup resetConsumerGroupOffsets(final @NotNull String groupId,
+                                                          final @NotNull List<String> topics,
+                                                          final @NotNull KafkaOffsetSpec offsetSpec,
                                                           boolean dryRun) {
         return switch (offsetSpec) {
             // TO_EARLIEST
@@ -100,14 +101,14 @@ public final class KafkaConsumerGroupService {
             case ToLatest ignored -> resetConsumerGroupOffsets(groupId, topics, OffsetSpec.latest(), dryRun);
             // TO_TIMESTAMP
             case ToTimestamp spec ->
-                    resetConsumerGroupOffsets(groupId, topics, OffsetSpec.forTimestamp(spec.timestamp()), dryRun);
+                resetConsumerGroupOffsets(groupId, topics, OffsetSpec.forTimestamp(spec.timestamp()), dryRun);
             // TO_OFFSETS
             case ToOffset spec -> {
                 // Get the partitions for the given topics.
                 CompletableFuture<List<TopicPartition>> future = listTopicPartitions(topics);
                 Map<TopicPartition, OffsetAndMetadata> offsets = AsyncUtils.getValueOrThrowException(future, JikkouRuntimeException::new)
-                        .stream()
-                        .collect(Collectors.toMap(Function.identity(), unused -> new OffsetAndMetadata(spec.offset())));
+                    .stream()
+                    .collect(Collectors.toMap(Function.identity(), unused -> new OffsetAndMetadata(spec.offset())));
                 // Alter the consumer group offsets.
                 yield alterConsumerGroupOffsets(groupId, offsets, dryRun);
             }
@@ -131,7 +132,6 @@ public final class KafkaConsumerGroupService {
         if (Strings.isBlank(groupId)) {
             throw new IllegalArgumentException("groupId cannot be null");
         }
-
         if (topics == null) {
             throw new IllegalArgumentException("topics cannot be null");
         }
@@ -139,9 +139,9 @@ public final class KafkaConsumerGroupService {
         // List offsets and Map to OffsetAndMetadata
         CompletableFuture<Map<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo>> future = listOffsets(topics, offsetSpec);
         Map<TopicPartition, OffsetAndMetadata> offsets = AsyncUtils.getValueOrThrowException(future, JikkouRuntimeException::new)
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> new OffsetAndMetadata(entry.getValue().offset())));
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> new OffsetAndMetadata(entry.getValue().offset())));
 
         return alterConsumerGroupOffsets(groupId, offsets, dryRun);
     }
@@ -168,19 +168,19 @@ public final class KafkaConsumerGroupService {
         if (dryRun) {
             V1KafkaConsumerGroupStatus status = group.getStatus();
             Map<TopicPartition, V1KafkaConsumerOffset> offsetsByTopicPartitions = status.getOffsets()
-                    .stream()
-                    .collect(Collectors.toMap(it -> new TopicPartition(it.getTopic(), it.getPartition()), it -> it));
+                .stream()
+                .collect(Collectors.toMap(it -> new TopicPartition(it.getTopic(), it.getPartition()), it -> it));
 
             Map<TopicPartition, V1KafkaConsumerOffset> newOffsetsByTopicPartitions = new HashMap<>(offsets.
-                    entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, it -> V1KafkaConsumerOffset
-                            .builder()
-                            .withTopic(it.getKey().topic())
-                            .withPartition(it.getKey().partition())
-                            .withOffset(it.getValue().offset())
-                            .build()
-                    )));
+                entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, it -> V1KafkaConsumerOffset
+                    .builder()
+                    .withTopic(it.getKey().topic())
+                    .withPartition(it.getKey().partition())
+                    .withOffset(it.getValue().offset())
+                    .build()
+                )));
             offsetsByTopicPartitions.forEach((tp, offset) -> {
                 if (!newOffsetsByTopicPartitions.containsKey(tp)) {
                     newOffsetsByTopicPartitions.put(tp, offset);
@@ -199,8 +199,8 @@ public final class KafkaConsumerGroupService {
         // Gets EARLIEST offsets for each topic partitions.
         return future.thenCompose(partitions -> {
             var partitionOffsets = partitions.
-                    stream()
-                    .collect(Collectors.toMap(Function.identity(), it -> offsetSpec));
+                stream()
+                .collect(Collectors.toMap(Function.identity(), it -> offsetSpec));
             return client.listOffsets(partitionOffsets).all().toCompletionStage();
         });
 
@@ -208,16 +208,16 @@ public final class KafkaConsumerGroupService {
 
     CompletableFuture<List<TopicPartition>> listTopicPartitions(@NotNull final List<String> topics) {
         return client.describeTopics(topics)
-                .allTopicNames()
-                .toCompletionStage()
-                .thenApply(topicByName -> topicByName.values()
-                        .stream()
-                        .flatMap(topic -> topic.partitions()
-                                .stream().
-                                map(partitionInfo -> new TopicPartition(topic.name(), partitionInfo.partition()))
-                        ).toList()
-                )
-                .toCompletableFuture();
+            .allTopicNames()
+            .toCompletionStage()
+            .thenApply(topicByName -> topicByName.values()
+                .stream()
+                .flatMap(topic -> topic.partitions()
+                    .stream().
+                    map(partitionInfo -> new TopicPartition(topic.name(), partitionInfo.partition()))
+                ).toList()
+            )
+            .toCompletableFuture();
     }
 
     /**
@@ -244,41 +244,54 @@ public final class KafkaConsumerGroupService {
     @NotNull
     public V1KafkaConsumerGroupList listConsumerGroups(@NotNull List<String> groups,
                                                        boolean describeOffsets) {
-        // Describe Consumer Groups
-        DescribeConsumerGroupsResult consumerGroupResult = client.describeConsumerGroups(groups);
-        List<Pair<String, CompletableFuture<ConsumerGroupDescription>>> descriptionsByGroup = consumerGroupResult
-                .describedGroups()
-                .entrySet()
-                .stream()
-                .map(Pair::of)
-                .map(p -> p.mapRight(Futures::toCompletableFuture))
-                .toList();
 
         // List Consumer Group Offsets
         final ListConsumerGroupOffsetsResult groupOffsetsResult;
         if (describeOffsets) {
-            Map<String, ListConsumerGroupOffsetsSpec> groupSpecs = groups
-                    .stream()
-                    .collect(Collectors.toMap(Function.identity(), it -> new ListConsumerGroupOffsetsSpec()));
-            groupOffsetsResult = client.listConsumerGroupOffsets(groupSpecs);
+            groupOffsetsResult = client.listConsumerGroupOffsets(groups.stream().collect(Collectors.toMap(
+                Function.identity(),
+                it -> new ListConsumerGroupOffsetsSpec()
+            )));
         } else {
             groupOffsetsResult = null;
         }
 
-        // Build Resources
-        List<CompletableFuture<V1KafkaConsumerGroup>> futures = descriptionsByGroup
-                .stream()
-                .map(future -> mergeResults(future._1(), future._2(), groupOffsetsResult))
-                .toList();
+        // Describe Consumer Groups
+        try {
+            List<V1KafkaConsumerGroup> items = Flux
+                .fromStream(client
+                    .describeConsumerGroups(groups)
+                    .describedGroups()
+                    .values()
+                    .stream()
+                    .map(consumerGroupDescriptionKafkaFuture -> Futures
+                        .toCompletableFuture(consumerGroupDescriptionKafkaFuture)
+                        .thenApply(this::mapToResource)
+                    )
+                )
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(Mono::fromFuture)
+                .map(group -> {
+                    String groupName = group.getMetadata().getName();
+                    if (groupOffsetsResult != null) {
+                        Map<TopicPartition, OffsetAndMetadata> partitions = AsyncUtils.getValueOrThrowException(
+                            Futures.toCompletableFuture(groupOffsetsResult.partitionsToOffsetAndMetadata(groupName)),
+                            JikkouRuntimeException::new
+                        );
+                        return group.withStatus(group.getStatus().withOffsets(mapToResources(partitions)));
+                    }
+                    return group;
+                })
+                .collectList()
+                .block();
 
-        CompletableFuture<List<V1KafkaConsumerGroup>> all = AsyncUtils.waitForAll(futures);
-        List<V1KafkaConsumerGroup> items = AsyncUtils.getValueOrThrowException(all, e -> {
+            return new V1KafkaConsumerGroupList(items);
+        } catch (Exception e) {
             LOG.error("Failed to describe consumer groups.", e);
-            return new JikkouRuntimeException(String.format(
-                    "Failed to describe consumer groups. Cause %s: %s.", e.getClass().getSimpleName(), e.getLocalizedMessage())
+            throw new JikkouRuntimeException(String.format(
+                "Failed to describe consumer groups. Cause %s: %s.", e.getClass().getSimpleName(), e.getLocalizedMessage())
             );
-        });
-        return new V1KafkaConsumerGroupList(items);
+        }
     }
 
     @NotNull
@@ -290,89 +303,81 @@ public final class KafkaConsumerGroupService {
         Collection<ConsumerGroupListing> listings = AsyncUtils.getValueOrThrowException(groupListingFuture, e -> {
             LOG.error("Failed to list consumer groups.", e);
             return new JikkouRuntimeException(String.format(
-                    "Failed to list consumer groups. Cause %s: %s.",
-                    e.getClass().getSimpleName(),
-                    e.getLocalizedMessage()
+                "Failed to list consumer groups. Cause %s: %s.",
+                e.getClass().getSimpleName(),
+                e.getLocalizedMessage()
             ));
         });
 
         return listings.stream().map(ConsumerGroupListing::groupId).toList();
     }
 
-    private CompletableFuture<V1KafkaConsumerGroup> mergeResults(@NotNull String groupId,
-                                                                 @NotNull CompletableFuture<ConsumerGroupDescription> future,
-                                                                 @Nullable ListConsumerGroupOffsetsResult groupOffsetsResult) {
-        if (groupOffsetsResult == null) {
-            return future.thenApply(this::mapToResource);
-        }
-
-        KafkaFuture<Map<TopicPartition, OffsetAndMetadata>> offsetsFuture = groupOffsetsResult
-                .partitionsToOffsetAndMetadata(groupId);
-
-        return future.thenCombine(Futures.toCompletableFuture(offsetsFuture), this::mapToResource);
-    }
-
     public V1KafkaConsumerGroup mapToResource(@NotNull ConsumerGroupDescription description) {
-        return mapToResource(description, null);
-    }
-
-    public V1KafkaConsumerGroup mapToResource(@NotNull ConsumerGroupDescription description,
-                                              @Nullable Map<TopicPartition, OffsetAndMetadata> offsetsByTopicPartition) {
 
         List<V1KafkaConsumerGroupMember> members = description.members().stream()
-                .map(member -> {
-                            V1KafkaConsumerGroupMember.V1KafkaConsumerGroupMemberBuilder builder = V1KafkaConsumerGroupMember
-                                    .builder()
-                                    .withHost(member.host())
-                                    .withClientId(member.clientId())
-                                    .withMemberId(member.consumerId());
-                            // groupInstanceId
-                            builder = member.groupInstanceId()
-                                    .map(builder::withGroupInstanceId)
-                                    .orElse(builder);
-                            // assignments
-                            List<String> assignments = member.assignment().topicPartitions().stream().map(TopicPartition::toString).toList();
-                            builder = builder.withAssignments(assignments);
-                            return builder.build();
-                        }
-                )
-                .toList();
+            .map(member -> {
+                    V1KafkaConsumerGroupMember.V1KafkaConsumerGroupMemberBuilder builder = V1KafkaConsumerGroupMember
+                        .builder()
+                        .withHost(member.host())
+                        .withClientId(member.clientId())
+                        .withMemberId(member.consumerId());
+                    // groupInstanceId
+                    builder = member.groupInstanceId()
+                        .map(builder::withGroupInstanceId)
+                        .orElse(builder);
+                    // assignments
+                    List<String> assignments = member.assignment().topicPartitions().stream().map(TopicPartition::toString).toList();
+                    builder = builder.withAssignments(assignments);
+                    return builder.build();
+                }
+            )
+            .toList();
 
         V1KafkaConsumerGroupStatus.V1KafkaConsumerGroupStatusBuilder groupStatusBuilder = V1KafkaConsumerGroupStatus
+            .builder()
+            .withState(description.state().name())
+            .withCoordinator(V1KafkaNode
                 .builder()
-                .withState(description.state().name())
-                .withCoordinator(V1KafkaNode
-                        .builder()
-                        .withId(description.coordinator().idString())
-                        .withHost(description.coordinator().host())
-                        .withPort(description.coordinator().port())
-                        .withRack(description.coordinator().rack())
-                        .build()
-                )
-                .withMembers(members);
-        // offsets
-        if (offsetsByTopicPartition != null) {
-            List<V1KafkaConsumerOffset> offsets = offsetsByTopicPartition.entrySet()
-                    .stream()
-                    .map(entry -> new V1KafkaConsumerOffset(
-                                    entry.getKey().topic(),
-                                    entry.getKey().partition(),
-                                    entry.getValue().offset()
-                            )
-                    ).toList();
-            groupStatusBuilder = groupStatusBuilder.withOffsets(offsets);
-        }
+                .withId(description.coordinator().idString())
+                .withHost(description.coordinator().host())
+                .withPort(description.coordinator().port())
+                .withRack(description.coordinator().rack())
+                .build()
+            )
+            .withMembers(members);
 
         V1KafkaConsumerGroupStatus status = groupStatusBuilder.build();
 
         return V1KafkaConsumerGroup.builder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(description.groupId())
-                        .withLabel(JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER, description.isSimpleConsumerGroup())
-                        .build()
-                )
-                .withStatus(status)
-                .build();
+            .withMetadata(ObjectMeta
+                .builder()
+                .withName(description.groupId())
+                .withLabel(JIKKOU_IO_KAFKA_IS_SIMPLE_CONSUMER, description.isSimpleConsumerGroup())
+                .build()
+            )
+            .withStatus(status)
+            .build();
+    }
+
+    private List<V1KafkaConsumerOffset> mapToResources(final Map<TopicPartition, OffsetAndMetadata> offsetsByTopicPartition) {
+        Map<TopicPartition, Long> logEndOffsetForTopicPartition = new KafkaTopicService(client)
+            .getLogEndOffsetForTopicPartition(offsetsByTopicPartition.keySet());
+
+        return offsetsByTopicPartition.entrySet()
+            .stream()
+            .map(entry -> {
+                    TopicPartition tp = entry.getKey();
+                    long offset = entry.getValue().offset();
+                    long offsetLag = Optional
+                        .ofNullable(logEndOffsetForTopicPartition.get(tp))
+                        .map(endOffset -> endOffset - offset).orElse(-1L);
+                    return new V1KafkaConsumerOffset(
+                        tp.topic(),
+                        tp.partition(),
+                        offset,
+                        offsetLag
+                    );
+                }
+            ).toList();
     }
 }

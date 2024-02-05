@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -42,8 +44,10 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
@@ -142,6 +146,26 @@ public final class KafkaTopicService {
             );
         }
         return builder.build();
+    }
+
+    public Map<TopicPartition, Long> getLogEndOffsetForTopicPartition(final Set<TopicPartition> topicPartitions) {
+        try {
+            Map<TopicPartition, OffsetSpec> offsetSpecByPartition = topicPartitions
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), it -> OffsetSpec.latest()));
+            return client.listOffsets(offsetSpecByPartition)
+                .all()
+                .get()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, it -> it.getValue().offset()));
+        } catch (InterruptedException | ExecutionException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new JikkouRuntimeException(
+                "Failed to get log end-offset for topic partitions: " + topicPartitions, e);
+        }
     }
 
     /**

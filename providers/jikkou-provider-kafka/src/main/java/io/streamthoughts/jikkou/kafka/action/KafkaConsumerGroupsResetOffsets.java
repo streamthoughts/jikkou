@@ -49,55 +49,55 @@ import org.slf4j.LoggerFactory;
 @Named("KafkaConsumerGroupsResetOffsets")
 @Title("Reset offsets of consumer group.")
 @Description("""
-        Reset offsets of consumer group. Supports one consumer group at the time, and group should be in EMPTY state.
-        You must choose one of the following reset specifications: to-datetime, by-duration, to-earliest, to-latest, to-offset.
-        """
+    Reset offsets of consumer group. Supports one consumer group at the time, and group should be in EMPTY state.
+    You must choose one of the following reset specifications: to-datetime, by-duration, to-earliest, to-latest, to-offset.
+    """
 )
 @ExtensionSpec(
-        options = {
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.GROUP,
-                        description = "The consumer group to act on.",
-                        type = String.class,
-                        required = true
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.TOPIC,
-                        description = "The topic whose partitions must be included in the reset-offset action.",
-                        type = List.class,
-                        required = true
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.TO_DATETIME,
-                        description = "Reset offsets to offset from datetime. Format: 'YYYY-MM-DDTHH:mm:SS.sss'",
-                        type = String.class,
-                        defaultValue = NULL_VALUE
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.TO_EARLIEST,
-                        description = "Reset offsets to earliest offset.",
-                        type = Boolean.class,
-                        defaultValue = NULL_VALUE
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.TO_LATEST,
-                        description = "Reset offsets to latest offset.",
-                        type = Boolean.class,
-                        defaultValue = NULL_VALUE
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.TO_OFFSET,
-                        description = "Reset offsets to a specific offset.",
-                        type = Long.class,
-                        defaultValue = NULL_VALUE
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConsumerGroupsResetOffsets.DRY_RUN,
-                        description = "Only show results without executing changes on Consumer Groups.",
-                        type = Boolean.class,
-                        defaultValue = "false"
-                )
-        }
+    options = {
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.GROUP,
+            description = "The consumer group to act on.",
+            type = String.class,
+            required = true
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.TOPIC,
+            description = "The topic whose partitions must be included in the reset-offset action.",
+            type = List.class,
+            required = true
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.TO_DATETIME,
+            description = "Reset offsets to offset from datetime. Format: 'YYYY-MM-DDTHH:mm:SS.sss'",
+            type = String.class,
+            defaultValue = NULL_VALUE
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.TO_EARLIEST,
+            description = "Reset offsets to earliest offset.",
+            type = Boolean.class,
+            defaultValue = NULL_VALUE
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.TO_LATEST,
+            description = "Reset offsets to latest offset.",
+            type = Boolean.class,
+            defaultValue = NULL_VALUE
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.TO_OFFSET,
+            description = "Reset offsets to a specific offset.",
+            type = Long.class,
+            defaultValue = NULL_VALUE
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.DRY_RUN,
+            description = "Only show results without executing changes on Consumer Groups.",
+            type = Boolean.class,
+            defaultValue = "false"
+        )
+    }
 )
 @SupportedResource(type = V1KafkaConsumerGroup.class)
 public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension implements Action<V1KafkaConsumerGroup> {
@@ -128,7 +128,7 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         this.adminClientFactory = new DefaultAdminClientFactory(() ->
-                KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.get(context.appConfiguration())
+            KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.get(context.appConfiguration())
         );
     }
 
@@ -145,78 +145,78 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
 
 
             offsetSpec = extensionContext().<Boolean>configProperty(TO_EARLIEST)
-                    .getOptional(configuration)
-                    .map(unused -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToEarliest())
-                    .orElse(offsetSpec);
+                .getOptional(configuration)
+                .map(unused -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToEarliest())
+                .orElse(offsetSpec);
 
             offsetSpec = extensionContext().<Boolean>configProperty(TO_LATEST)
-                    .getOptional(configuration)
-                    .map(unused -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToLatest())
-                    .orElse(offsetSpec);
+                .getOptional(configuration)
+                .map(unused -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToLatest())
+                .orElse(offsetSpec);
 
             offsetSpec = extensionContext().<String>configProperty(TO_DATETIME)
-                    .getOptional(configuration)
-                    .filter(Predicate.not(Strings::isBlank))
-                    .map(dataTime -> (KafkaOffsetSpec) KafkaOffsetSpec.ToTimestamp.fromISODateTime(dataTime))
-                    .orElse(offsetSpec);
+                .getOptional(configuration)
+                .filter(Predicate.not(Strings::isBlank))
+                .map(dataTime -> (KafkaOffsetSpec) KafkaOffsetSpec.ToTimestamp.fromISODateTime(dataTime))
+                .orElse(offsetSpec);
 
             offsetSpec = extensionContext().<Long>configProperty(TO_OFFSET)
-                    .getOptional(configuration)
-                    .map(offset -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToOffset(offset))
-                    .orElse(offsetSpec);
+                .getOptional(configuration)
+                .map(offset -> (KafkaOffsetSpec) new KafkaOffsetSpec.ToOffset(offset))
+                .orElse(offsetSpec);
 
             if (offsetSpec == null) {
                 return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder()
-                        .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
-                                .status(ExecutionStatus.FAILED)
-                                .errors(List.of(new ExecutionError("No reset specification for offsets: "
-                                        + "One of these options is expected: "
-                                        + "[to-datetime, by-duration, to-earliest, to-latest, to-offset]."
-                                )))
-                                .build()
-                        )
-                        .build();
+                    .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
+                        .status(ExecutionStatus.FAILED)
+                        .errors(List.of(new ExecutionError("No reset specification for offsets: "
+                            + "One of these options is expected: "
+                            + "[to-datetime, by-duration, to-earliest, to-latest, to-offset]."
+                        )))
+                        .build()
+                    )
+                    .build();
             }
 
             try {
                 final String groupId = extensionContext().<String>configProperty(GROUP)
-                        .get(configuration);
+                    .get(configuration);
 
                 final List<String> topics = extensionContext().<List<String>>configProperty(TOPIC)
-                        .get(configuration);
+                    .get(configuration);
 
                 final Boolean dryRun = extensionContext().<Boolean>configProperty(DRY_RUN)
-                        .get(configuration);
+                    .get(configuration);
 
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Alter consumer group '{}' for topics '{}', and offsets: {} (DRY_RUN: {}).",
-                            groupId,
-                            topics,
-                            offsetSpec,
-                            dryRun
-                    );
-                }
-                V1KafkaConsumerGroup group = service.resetConsumerGroupOffsets(
                         groupId,
                         topics,
                         offsetSpec,
                         dryRun
+                    );
+                }
+                V1KafkaConsumerGroup group = service.resetConsumerGroupOffsets(
+                    groupId,
+                    topics,
+                    offsetSpec,
+                    dryRun
                 );
                 return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder()
-                        .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
-                                .status(ExecutionStatus.SUCCEEDED)
-                                .data(group)
-                                .build()
-                        )
-                        .build();
+                    .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
+                        .status(ExecutionStatus.SUCCEEDED)
+                        .data(group)
+                        .build()
+                    )
+                    .build();
             } catch (Exception ex) {
                 return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder()
-                        .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
-                                .status(ExecutionStatus.FAILED)
-                                .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
-                                .build()
-                        )
-                        .build();
+                    .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
+                        .status(ExecutionStatus.FAILED)
+                        .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
+                        .build()
+                    )
+                    .build();
             }
         }
     }

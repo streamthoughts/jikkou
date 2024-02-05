@@ -41,7 +41,8 @@ import lombok.extern.jackson.Jacksonized;
 @JsonPropertyOrder({
     "topic",
     "partition",
-    "offset"
+    "offset",
+    "offset-lag"
 })
 @Jacksonized
 @Reflectable
@@ -69,6 +70,13 @@ public class V1KafkaConsumerOffset {
     @JsonProperty("offset")
     @JsonPropertyDescription("The offset.")
     private Object offset;
+    /**
+     * The consumer lag for this partition.
+     * 
+     */
+    @JsonProperty("offset-lag")
+    @JsonPropertyDescription("The consumer lag for this partition.")
+    private Object offsetLag;
 
     /**
      * No args constructor for use in serialization
@@ -82,17 +90,20 @@ public class V1KafkaConsumerOffset {
      * @param partition
      * @param offset
      * @param topic
+     * @param offsetLag
      */
     @ConstructorProperties({
         "topic",
         "partition",
-        "offset"
+        "offset",
+        "offsetLag"
     })
-    public V1KafkaConsumerOffset(String topic, Integer partition, Object offset) {
+    public V1KafkaConsumerOffset(String topic, Integer partition, Object offset, Object offsetLag) {
         super();
         this.topic = topic;
         this.partition = partition;
         this.offset = offset;
+        this.offsetLag = offsetLag;
     }
 
     /**
@@ -122,6 +133,15 @@ public class V1KafkaConsumerOffset {
         return offset;
     }
 
+    /**
+     * The consumer lag for this partition.
+     * 
+     */
+    @JsonProperty("offset-lag")
+    public Object getOffsetLag() {
+        return offsetLag;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -138,6 +158,10 @@ public class V1KafkaConsumerOffset {
         sb.append('=');
         sb.append(((this.offset == null)?"<null>":this.offset));
         sb.append(',');
+        sb.append("offsetLag");
+        sb.append('=');
+        sb.append(((this.offsetLag == null)?"<null>":this.offsetLag));
+        sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
         } else {
@@ -149,9 +173,10 @@ public class V1KafkaConsumerOffset {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.offset == null)? 0 :this.offset.hashCode()));
         result = ((result* 31)+((this.topic == null)? 0 :this.topic.hashCode()));
         result = ((result* 31)+((this.partition == null)? 0 :this.partition.hashCode()));
+        result = ((result* 31)+((this.offset == null)? 0 :this.offset.hashCode()));
+        result = ((result* 31)+((this.offsetLag == null)? 0 :this.offsetLag.hashCode()));
         return result;
     }
 
@@ -164,7 +189,7 @@ public class V1KafkaConsumerOffset {
             return false;
         }
         V1KafkaConsumerOffset rhs = ((V1KafkaConsumerOffset) other);
-        return ((((this.offset == rhs.offset)||((this.offset!= null)&&this.offset.equals(rhs.offset)))&&((this.topic == rhs.topic)||((this.topic!= null)&&this.topic.equals(rhs.topic))))&&((this.partition == rhs.partition)||((this.partition!= null)&&this.partition.equals(rhs.partition))));
+        return (((((this.topic == rhs.topic)||((this.topic!= null)&&this.topic.equals(rhs.topic)))&&((this.partition == rhs.partition)||((this.partition!= null)&&this.partition.equals(rhs.partition))))&&((this.offset == rhs.offset)||((this.offset!= null)&&this.offset.equals(rhs.offset))))&&((this.offsetLag == rhs.offsetLag)||((this.offsetLag!= null)&&this.offsetLag.equals(rhs.offsetLag))));
     }
 
 }
