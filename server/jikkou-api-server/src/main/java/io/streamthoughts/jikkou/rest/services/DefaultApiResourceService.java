@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
@@ -76,6 +77,17 @@ public final class DefaultApiResourceService implements ApiResourceService {
      * {@inheritDoc}
      **/
     @Override
+    public ApiChangeResultList patch(ReconciliationMode mode,
+                                     List<HasMetadata> resources,
+                                     ReconciliationContext context) {
+        List<ResourceChange> changes = ResourceListObject.of(resources).getAllByClass(ResourceChange.class);
+        return api.patch(changes, mode, context);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public ApiResourceChangeList diff(ApiResourceIdentifier identifier,
                                       List<HasMetadata> resources,
                                       ResourceChangeFilter filter,
@@ -104,9 +116,9 @@ public final class DefaultApiResourceService implements ApiResourceService {
                                                   ReconciliationContext context) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
         return api.listResources(
-                descriptor.resourceType(),
-                context.selector(),
-                context.configuration()
+            descriptor.resourceType(),
+            context.selector(),
+            context.configuration()
         );
     }
 
@@ -119,20 +131,20 @@ public final class DefaultApiResourceService implements ApiResourceService {
                            Configuration configuration) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
         return api.getResource(
-                descriptor.resourceType(),
-                name,
-                configuration
+            descriptor.resourceType(),
+            name,
+            configuration
         );
     }
 
     private ResourceListObject<HasMetadata> toResourceListObject(ResourceDescriptor descriptor,
                                                                  List<HasMetadata> items) {
         return DefaultResourceListObject.builder()
-                .withApiVersion(descriptor.group() + "/" + descriptor.apiVersion())
-                .withKind(descriptor.kind() + LIST_KIND_SUFFIX)
-                .withMetadata(new ObjectMeta())
-                .withItems(items)
-                .build();
+            .withApiVersion(descriptor.group() + "/" + descriptor.apiVersion())
+            .withKind(descriptor.kind() + LIST_KIND_SUFFIX)
+            .withMetadata(new ObjectMeta())
+            .withItems(items)
+            .build();
     }
 
     /**
@@ -147,18 +159,18 @@ public final class DefaultApiResourceService implements ApiResourceService {
     ResourceDescriptor getResourceDescriptorByIdentifier(@NotNull ApiResourceIdentifier identifier) {
         Objects.requireNonNull(identifier, "identifier must not be null");
         return resourceRegistry
-                .getDescriptorsByGroupAndVersion(identifier.group(), identifier.version())
-                .stream()
-                .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
-                .filter(ResourceDescriptor::isEnabled)
-                .filter(descriptor -> {
-                    String name = descriptor.pluralName()
-                            .orElse(descriptor.resourceType().kind())
-                            .toLowerCase(Locale.ROOT);
-                    return identifier.plural().equalsIgnoreCase(name);
-                })
-                .findFirst()
-                .orElseThrow(() -> new ApiResourceNotFoundException(identifier));
+            .getDescriptorsByGroupAndVersion(identifier.group(), identifier.version())
+            .stream()
+            .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
+            .filter(ResourceDescriptor::isEnabled)
+            .filter(descriptor -> {
+                String name = descriptor.pluralName()
+                    .orElse(descriptor.resourceType().kind())
+                    .toLowerCase(Locale.ROOT);
+                return identifier.plural().equalsIgnoreCase(name);
+            })
+            .findFirst()
+            .orElseThrow(() -> new ApiResourceNotFoundException(identifier));
     }
 
     @NotNull

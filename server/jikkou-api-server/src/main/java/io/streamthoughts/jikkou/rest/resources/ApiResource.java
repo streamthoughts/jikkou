@@ -71,8 +71,8 @@ public class ApiResource extends AbstractController {
     }
 
     @Post(
-            value = "/apis/{group}/{version}/{plural}/select",
-            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
+        value = "/apis/{group}/{version}/{plural}/select",
+        produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
     )
     public HttpResponse<?> select(HttpRequest<?> httpRequest,
                                   @PathVariable("group") final String group,
@@ -86,8 +86,8 @@ public class ApiResource extends AbstractController {
     }
 
     @Get(
-            value = "/apis/{group}/{version}/{plural}",
-            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
+        value = "/apis/{group}/{version}/{plural}",
+        produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
     )
     public HttpResponse<?> list(HttpRequest<?> httpRequest,
                                 @PathVariable("group") final String group,
@@ -100,8 +100,8 @@ public class ApiResource extends AbstractController {
     }
 
     @Get(
-            value = "/apis/{group}/{version}/{plural}/{name}",
-            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
+        value = "/apis/{group}/{version}/{plural}/{name}",
+        produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_YAML}
     )
     public HttpResponse<?> get(HttpRequest<?> httpRequest,
                                @PathVariable("group") final String group,
@@ -113,7 +113,7 @@ public class ApiResource extends AbstractController {
         Map<String, Object> options = toMap(parameters);
         HasMetadata result = service.get(identifier, name, Configuration.from(options));
         return HttpResponse.<HasMetadata>ok()
-                .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
+            .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
 
@@ -124,16 +124,16 @@ public class ApiResource extends AbstractController {
                                             ResourceListRequest requestBody) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
         ResourceListObject<HasMetadata> result = service.search(
-                identifier,
-                adapter.getReconciliationContext(requestBody)
+            identifier,
+            adapter.getReconciliationContext(requestBody)
         );
         return HttpResponse.<ResourceListObject<?>>ok()
-                .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
+            .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
     @Post(value = "/apis/{group}/{version}/{plural}/validate",
-            produces = MediaType.APPLICATION_JSON,
-            consumes = MediaType.APPLICATION_JSON)
+        produces = MediaType.APPLICATION_JSON,
+        consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<?> validate(HttpRequest<?> httpRequest,
                                     @PathVariable("group") final String group,
                                     @PathVariable("version") final String version,
@@ -142,18 +142,18 @@ public class ApiResource extends AbstractController {
     ) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
         ResourceListObject<HasMetadata> result = service.validate(
-                identifier,
-                new ArrayList<>(requestBody.resources()),
-                adapter.getReconciliationContext(requestBody, true)
+            identifier,
+            new ArrayList<>(requestBody.resources()),
+            adapter.getReconciliationContext(requestBody, true)
         );
 
         return HttpResponse.<ResourceListObject<?>>ok()
-                .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
+            .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
     @Post(value = "/apis/{group}/{version}/{plural}/diff{?" + FILTER_RESOURCE_OPS_NAME + "," + FILTER_CHANGE_OP_NAME + "}",
-            produces = MediaType.APPLICATION_JSON,
-            consumes = MediaType.APPLICATION_JSON)
+        produces = MediaType.APPLICATION_JSON,
+        consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<?> diff(HttpRequest<?> httpRequest,
                                 @PathVariable("group") final String group,
                                 @PathVariable("version") final String version,
@@ -164,21 +164,21 @@ public class ApiResource extends AbstractController {
     ) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
         ApiResourceChangeList result = service.diff(
-                identifier,
-                new ArrayList<>(requestBody.resources()),
-                new SimpleResourceChangeFilter()
-                        .filterOutAllResourcesExcept(getForNamesIgnoreCase(keepChangesOp, Operation.class))
-                        .filterOutAllChangesExcept(getForNamesIgnoreCase(keepStatesOp, Operation.class)),
-                adapter.getReconciliationContext(requestBody, true)
+            identifier,
+            new ArrayList<>(requestBody.resources()),
+            new SimpleResourceChangeFilter()
+                .filterOutAllResourcesExcept(getForNamesIgnoreCase(keepChangesOp, Operation.class))
+                .filterOutAllChangesExcept(getForNamesIgnoreCase(keepStatesOp, Operation.class)),
+            adapter.getReconciliationContext(requestBody, true)
         );
 
         return HttpResponse.<ApiResourceChangeList>ok()
-                .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
+            .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
     @Post(value = "/apis/{group}/{version}/{plural}/reconcile/mode/{mode}{?dry-run}",
-            produces = MediaType.APPLICATION_JSON,
-            consumes = MediaType.APPLICATION_JSON)
+        produces = MediaType.APPLICATION_JSON,
+        consumes = MediaType.APPLICATION_JSON)
     public HttpResponse<?> reconcile(@PathVariable("group") final String group,
                                      @PathVariable("version") final String version,
                                      @PathVariable("plural") final String plural,
@@ -190,10 +190,26 @@ public class ApiResource extends AbstractController {
 
         ReconciliationContext context = adapter.getReconciliationContext(request, dryRun);
         ApiChangeResultList result = service.reconcile(
-                identifier,
-                mode,
-                new ArrayList<>(request.resources()),
-                context
+            identifier,
+            mode,
+            new ArrayList<>(request.resources()),
+            context
+        );
+        return HttpResponse.<ResourceListObject<?>>ok().body(result);
+    }
+
+    @Post(value = "/api/v1/resources/patch/mode/{mode}{?dry-run}",
+        produces = MediaType.APPLICATION_JSON,
+        consumes = MediaType.APPLICATION_JSON)
+    public HttpResponse<?> patch(@PathVariable("mode") final ReconciliationMode mode,
+                                 @QueryValue(value = "dry-run", defaultValue = "false") final boolean dryRun,
+                                 @Body ResourceReconcileRequest request
+    ) {
+        ReconciliationContext context = adapter.getReconciliationContext(request, dryRun);
+        ApiChangeResultList result = service.patch(
+            mode,
+            new ArrayList<>(request.resources()),
+            context
         );
         return HttpResponse.<ResourceListObject<?>>ok().body(result);
     }

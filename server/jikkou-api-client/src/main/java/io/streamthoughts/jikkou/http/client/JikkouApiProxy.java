@@ -241,7 +241,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     public ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
-        return null;
+        return apiClient.patch(changes, mode, context);
     }
 
     /**

@@ -33,6 +33,7 @@ import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
@@ -207,6 +208,21 @@ public interface JikkouApiClient {
                                                           @NotNull ReconciliationContext context);
 
     /**
+     * Applies the given list of resource changes.
+     *
+     * @param changes The resource changes.
+     * @param mode    the reconciliation mode.
+     * @param context the context to be used for conciliation.
+     * @return the validated {@link DefaultResourceListObject}.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     */
+    <T extends HasMetadata> ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+                                                      @NotNull ReconciliationMode mode,
+                                                      @NotNull ReconciliationContext context);
+
+    /**
      * Validates the specified resources.
      *
      * @param type      the type of the resources.
@@ -243,7 +259,6 @@ public interface JikkouApiClient {
      * @param action        The name of the action.
      * @param configuration The context of the execution.
      * @return The ApiExecutionResult.
-     *
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.

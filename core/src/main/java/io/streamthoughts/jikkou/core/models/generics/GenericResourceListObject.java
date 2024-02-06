@@ -38,10 +38,10 @@ import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "apiVersion",
-        "kind",
-        "metadata",
-        "items"
+    "apiVersion",
+    "kind",
+    "metadata",
+    "items"
 })
 @ApiVersion("core.jikkou.io/v1beta2")
 @Kind("GenericResourceList")
@@ -60,23 +60,23 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
      * Creates a new {@link GenericResourceListObject} instance.
      */
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "items"
+        "apiVersion",
+        "kind",
+        "metadata",
+        "items"
     })
-    public GenericResourceListObject(@NotNull final String kind,
-                                     @NotNull final String apiVersion,
+    public GenericResourceListObject(@NotNull final String apiVersion,
+                                     @NotNull final String kind,
                                      @NotNull final ObjectMeta metadata,
                                      @NotNull final List<T> items) {
-        this(kind, apiVersion, metadata, items, new LinkedHashMap<>());
+        this(apiVersion, kind, metadata, items, new LinkedHashMap<>());
     }
 
     /**
      * Creates a new {@link GenericResourceListObject} instance.
      */
-    public GenericResourceListObject(String kind,
-                                     String apiVersion,
+    public GenericResourceListObject(String apiVersion,
+                                     String kind,
                                      ObjectMeta metadata,
                                      List<T> items,
                                      Map<String, Object> additionalProperties) {
@@ -120,11 +120,11 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
     @Override
     public HasMetadata withMetadata(ObjectMeta metadata) {
         return new GenericResourceListObject<>(
-                kind,
-                apiVersion,
-                metadata,
-                items,
-                additionalProperties
+            apiVersion,
+            kind,
+            metadata,
+            items,
+            additionalProperties
         );
     }
 
@@ -138,7 +138,9 @@ public final class GenericResourceListObject<T extends HasMetadata> implements R
         this.additionalProperties.put(name, value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<T> getItems() {
         return items;

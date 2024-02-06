@@ -32,8 +32,10 @@ public interface ApiResourceService {
      * Reconciles the specified resources.
      *
      * @param identifier The resource identifier.
+     * @param mode       The reconciliation mode.
+     * @param resources  The list of resources.
      * @param context    The reconciliation context.
-     * @return an optional
+     * @return the {@link ApiChangeResultList}.
      */
     ApiChangeResultList reconcile(ApiResourceIdentifier identifier,
                                   ReconciliationMode mode,
@@ -41,10 +43,21 @@ public interface ApiResourceService {
                                   ReconciliationContext context);
 
     /**
+     * Reconciles the specified resources.
+     *
+     * @param mode      The reconciliation mode.
+     * @param resources The list of resources.
+     * @param context   The reconciliation context.
+     * @return the {@link ApiChangeResultList}.
+     */
+    ApiChangeResultList patch(ReconciliationMode mode,
+                              List<HasMetadata> resources,
+                              ReconciliationContext context);
+
+    /**
      * Gets the differences for the specified resources.
      *
-     * @param identifier The resource identifier.
-     * @param context    The reconciliation context.
+     * @param context The reconciliation context.
      * @return an optional
      */
     ApiResourceChangeList diff(ApiResourceIdentifier identifier,
@@ -84,4 +97,5 @@ public interface ApiResourceService {
     HasMetadata get(ApiResourceIdentifier identifier,
                     String name,
                     Configuration configuration);
+
 }

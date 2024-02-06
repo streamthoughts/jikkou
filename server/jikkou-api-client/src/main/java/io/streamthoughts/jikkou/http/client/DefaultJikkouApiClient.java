@@ -37,6 +37,7 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.models.ResourceListObject;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.adapter.ResourceReconcileRequestFactory;
@@ -69,6 +70,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     private static final String API_HEALTHS = "healths";
     private static final String API_EXTENSIONS = "extensions";
     private static final String API_ACTIONS = "actions";
+    private static final String API_RESOURCES = "resources";
     private static final String PATH_PARAM_RECONCILE_MODE = "mode";
     private static final String PATH_PARAM_NAME = "name";
     private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
@@ -103,9 +105,9 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         String basePath = apiClient.getBasePath();
         // Build Request
         Request request = new Request.Builder()
-                .url(basePath)
-                .get()
-                .build();
+            .url(basePath)
+            .get()
+            .build();
         // Execute Request
         return apiClient.execute(request, Info.class).getData();
     }
@@ -118,8 +120,8 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         HttpUrl url = baseHttpUrlBuilder(PATH_SEGMENT_APIS).build();
         // Build Request
         Request request = new Request.Builder()
-                .url(url)
-                .build();
+            .url(url)
+            .build();
         ApiResponse<ApiGroupList> response = apiClient.execute(request, ApiGroupList.class);
         // Execute Request
         return response.getData();
@@ -144,13 +146,13 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @Override
     public ApiHealthIndicatorList getApiHealthIndicators() {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_HEALTHS)
-                .build();
+            .addPathSegments(API_HEALTHS)
+            .build();
         // Build Request
         Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
         // Execute Request
         ApiResponse<ApiHealthIndicatorList> response = apiClient.execute(request, ApiHealthIndicatorList.class);
         return response.getData();
@@ -163,16 +165,16 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     public ApiHealthResult getApiHealth(@NotNull String name,
                                         @NotNull Duration timeout) {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_HEALTHS)
-                .addPathSegments(name)
-                .addPathSegments("status")
-                .addQueryParameter("timeout", String.valueOf(timeout.toMillis()))
-                .build();
+            .addPathSegments(API_HEALTHS)
+            .addPathSegments(name)
+            .addPathSegments("status")
+            .addQueryParameter("timeout", String.valueOf(timeout.toMillis()))
+            .build();
         // Build Request
         Request httpRequest = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
         // Execute Request
         ApiResponse<ApiHealthResult> response = apiClient.execute(httpRequest, ApiHealthResult.class);
         return response.getData();
@@ -185,15 +187,15 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     public ApiHealthResult getApiHealth(@NotNull Duration timeout) {
         ApiHealthIndicatorList list = getApiHealthIndicators();
         List<Health> health = list.indicators().stream()
-                .map(indicator -> getApiHealth(indicator.name(), timeout))
-                .map(result -> Health
-                        .builder()
-                        .name(result.name())
-                        .status(result.status())
-                        .details(result.details())
-                        .build()
-                )
-                .toList();
+            .map(indicator -> getApiHealth(indicator.name(), timeout))
+            .map(result -> Health
+                .builder()
+                .name(result.name())
+                .status(result.status())
+                .details(result.details())
+                .build()
+            )
+            .toList();
 
         HealthAggregator aggregator = new HealthAggregator();
         Health aggregated = aggregator.aggregate(health);
@@ -206,17 +208,17 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @Override
     public ApiExtensionList getApiExtensions() {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_EXTENSIONS)
-                .build();
+            .addPathSegments(API_EXTENSIONS)
+            .build();
         // Build Request
         Request httpRequest = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
         // Execute Request
         ApiResponse<ApiExtensionList> response = apiClient.execute(
-                httpRequest,
-                ApiExtensionList.class
+            httpRequest,
+            ApiExtensionList.class
         );
         return response.getData();
     }
@@ -227,17 +229,17 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @Override
     public ApiExtensionList getApiExtensions(String type) {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_EXTENSIONS)
-                .addQueryParameter("type", type)
-                .build();
+            .addPathSegments(API_EXTENSIONS)
+            .addQueryParameter("type", type)
+            .build();
         // Build Request
         Request httpRequest = new Request.Builder()
-                .url(url).get()
-                .build();
+            .url(url).get()
+            .build();
         // Execute Request
         ApiResponse<ApiExtensionList> response = apiClient.execute(
-                httpRequest,
-                ApiExtensionList.class
+            httpRequest,
+            ApiExtensionList.class
         );
         return response.getData();
     }
@@ -248,19 +250,19 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @Override
     public ApiExtensionList getApiExtensions(ExtensionCategory category) {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_EXTENSIONS)
-                .addQueryParameter("category", category.name())
-                .build();
+            .addPathSegments(API_EXTENSIONS)
+            .addQueryParameter("category", category.name())
+            .build();
         // Build Request
         Request httpRequest = new Request
-                .Builder()
-                .url(url)
-                .get()
-                .build();
+            .Builder()
+            .url(url)
+            .get()
+            .build();
         // Execute Request
         ApiResponse<ApiExtensionList> response = apiClient.execute(
-                httpRequest,
-                ApiExtensionList.class
+            httpRequest,
+            ApiExtensionList.class
         );
         return response.getData();
     }
@@ -272,18 +274,18 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     public ApiExtension getApiExtension(Class<?> extensionType,
                                         String extensionName) {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_EXTENSIONS)
-                .addPathSegments(extensionName)
-                .build();
+            .addPathSegments(API_EXTENSIONS)
+            .addPathSegments(extensionName)
+            .build();
         // Build Request
         Request httpRequest = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
         // Execute Request
         ApiResponse<ApiExtension> response = apiClient.execute(
-                httpRequest,
-                ApiExtension.class
+            httpRequest,
+            ApiExtension.class
         );
         return response.getData();
     }
@@ -298,13 +300,13 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.LIST, type));
         // Build Request
         Request httpRequest = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+            .url(url)
+            .get()
+            .build();
         // Execute Request
         ApiResponse<ResourceListObject> response = apiClient.execute(
-                httpRequest,
-                ResourceListObject.class
+            httpRequest,
+            ResourceListObject.class
         );
         return (ResourceListObject<T>) response.getData();
     }
@@ -322,19 +324,19 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         HashMap<String, Object> expandValues = new HashMap<>(configuration.asMap());
         expandValues.put(PATH_PARAM_NAME, name);
         final URI uri = UriBuilder.of(apiClient.getBasePath())
-                .path(link.getHref())
-                .expand(expandValues);
+            .path(link.getHref())
+            .expand(expandValues);
 
         HttpUrl url = toHttpUrl(link);
         // Build Request
         Request httpRequest = new Request.Builder()
-                .url(HttpUrl.get(uri))
-                .get()
-                .build();
+            .url(HttpUrl.get(uri))
+            .get()
+            .build();
         // Execute Request
         ApiResponse<HasMetadata> response = apiClient.execute(
-                httpRequest,
-                HasMetadata.class
+            httpRequest,
+            HasMetadata.class
         );
         return (T) response.getData();
     }
@@ -349,24 +351,24 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         ApiResource resource = queryApiResourceForType(type);
         Link link = findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.SELECT, type);
         final URI uri = UriBuilder.of(apiClient.getBasePath())
-                .path(link.getHref())
-                .expand(configuration.asMap());
+            .path(link.getHref())
+            .expand(configuration.asMap());
 
         ResourceListRequest payload = new ResourceListRequest(
-                configuration.asMap(),
-                selector.getSelectorExpressions(),
-                selector.getSelectorMatchingStrategy()
+            configuration.asMap(),
+            selector.getSelectorExpressions(),
+            selector.getSelectorMatchingStrategy()
         );
         // Build Request
         RequestBody requestBody = apiClient.serialize(payload, "application/json");
         Request httpRequest = new Request.Builder()
-                .url(HttpUrl.get(uri))
-                .post(requestBody)
-                .build();
+            .url(HttpUrl.get(uri))
+            .post(requestBody)
+            .build();
         // Execute Request
         ApiResponse<ResourceListObject> response = apiClient.execute(
-                httpRequest,
-                ResourceListObject.class
+            httpRequest,
+            ResourceListObject.class
         );
         return (ResourceListObject<T>) response.getData();
     }
@@ -383,12 +385,12 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
 
         Link link = findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.RECONCILE, type);
         final URI uri = UriBuilder.of(apiClient.getBasePath())
-                .path(link.getHref())
-                .expand(Map.of(
-                                PATH_PARAM_RECONCILE_MODE, mode.name().toLowerCase(Locale.ROOT),
-                                QUERY_PARAM_DRY_RUN, context.isDryRun()
-                        )
-                );
+            .path(link.getHref())
+            .expand(Map.of(
+                    PATH_PARAM_RECONCILE_MODE, mode.name().toLowerCase(Locale.ROOT),
+                    QUERY_PARAM_DRY_RUN, context.isDryRun()
+                )
+            );
 
         // Build Request
         ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(resources, context);
@@ -396,12 +398,44 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
 
         Request.Builder builder = new Request.Builder();
         Request httpRequest = builder.url(HttpUrl.get(uri))
-                .post(body)
-                .build();
+            .post(body)
+            .build();
         // Execute Request
         ApiResponse<ApiChangeResultList> response = apiClient.execute(
-                httpRequest,
-                ApiChangeResultList.class
+            httpRequest,
+            ApiChangeResultList.class
+        );
+
+        return response.getData();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T extends HasMetadata> ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+                                                             @NotNull ReconciliationMode mode,
+                                                             @NotNull ReconciliationContext context) {
+        HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
+            .addPathSegments(API_RESOURCES)
+            .addPathSegments("patch")
+            .addPathSegments("mode")
+            .addPathSegments(mode.name().toLowerCase(Locale.ROOT))
+            .addQueryParameter("dry-run", String.valueOf(context.isDryRun()))
+            .build();
+        
+        // Build Request
+        ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(changes, context);
+        RequestBody body = apiClient.serialize(request, CONTENT_TYPE_APPLICATION_JSON);
+
+        Request.Builder builder = new Request.Builder();
+        Request httpRequest = builder.url(url)
+            .post(body)
+            .build();
+        // Execute Request
+        ApiResponse<ApiChangeResultList> response = apiClient.execute(
+            httpRequest,
+            ApiChangeResultList.class
         );
 
         return response.getData();
@@ -423,13 +457,13 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         RequestBody body = apiClient.serialize(request, CONTENT_TYPE_APPLICATION_JSON);
 
         Request httpRequest = new Request.Builder()
-                .post(body)
-                .url(url)
-                .build();
+            .post(body)
+            .url(url)
+            .build();
         // Execute Request
         ApiResponse<ResourceListObject> response = apiClient.execute(
-                httpRequest,
-                ResourceListObject.class
+            httpRequest,
+            ResourceListObject.class
         );
         return (ResourceListObject<T>) response.getData();
     }
@@ -444,7 +478,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                                                                  @NotNull ReconciliationContext context) {
         ApiResource apiResource = queryApiResourceForType(type);
         HttpUrl.Builder urlBuilder = toHttpUrl(findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.DIFF, type))
-                .newBuilder();
+            .newBuilder();
         // Build Request
         ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(resources, context);
 
@@ -454,14 +488,14 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         RequestBody body = apiClient.serialize(request, CONTENT_TYPE_APPLICATION_JSON);
 
         Request httpRequest = new Request.Builder()
-                .post(body)
-                .url(urlBuilder.build())
-                .build();
+            .post(body)
+            .url(urlBuilder.build())
+            .build();
 
         // Execute Request
         ApiResponse<ApiResourceChangeList> response = apiClient.execute(
-                httpRequest,
-                ApiResourceChangeList.class
+            httpRequest,
+            ApiResourceChangeList.class
         );
         return response.getData();
     }
@@ -474,9 +508,9 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     public ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration) {
         // Build Path
         HttpUrl.Builder builder = baseHttpUrlBuilder(API_CORE_VERSION)
-                .addPathSegments(API_ACTIONS)
-                .addPathSegments(action)
-                .addPathSegments("execute");
+            .addPathSegments(API_ACTIONS)
+            .addPathSegments(action)
+            .addPathSegments("execute");
 
         for (String key : configuration.keys()) {
             Object value = configuration.getAny(key);
@@ -490,13 +524,13 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         HttpUrl url = builder.build();
         // Build Request
         Request httpRequest = new Request.Builder().url(url)
-                .post(EMPTY_REQUEST)
-                .header("Content-Length", "0")
-                .build();
+            .post(EMPTY_REQUEST)
+            .header("Content-Length", "0")
+            .build();
         // Execute Request
         ApiResponse<ApiActionResultSet> response = apiClient.execute(
-                httpRequest,
-                ApiActionResultSet.class
+            httpRequest,
+            ApiActionResultSet.class
         );
         return response.getData();
     }
@@ -512,10 +546,10 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                                                 @NotNull String kind) {
         ApiResourceList apiResources = getApiResources(group, version);
         return apiResources.resources()
-                .stream()
-                .filter(r -> r.kind().equalsIgnoreCase(kind))
-                .findFirst()
-                .orElseThrow(() -> new UnsupportedApiResourceException(group, version, kind));
+            .stream()
+            .filter(r -> r.kind().equalsIgnoreCase(kind))
+            .findFirst()
+            .orElseThrow(() -> new UnsupportedApiResourceException(group, version, kind));
     }
 
     @NotNull
@@ -523,16 +557,16 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                                        @NotNull String action,
                                        @NotNull ResourceType type) {
         return links.findLinkByKey(action)
-                .orElseThrow(() -> new JikkouApiClientException(String.format(
-                        "Failed to %s resources for group '%s', version '%s', and kind '%s'. " +
-                                "Cannot find _links['%s'] field from returned ApiResourceList metadata.(%s)",
-                        action,
-                        type.group(),
-                        type.group(),
-                        type.kind(),
-                        action,
-                        getHttpUrlBuilderForApiGroupVersion(type.group(), type.apiVersion()).build()
-                )));
+            .orElseThrow(() -> new JikkouApiClientException(String.format(
+                "Failed to %s resources for group '%s', version '%s', and kind '%s'. " +
+                    "Cannot find _links['%s'] field from returned ApiResourceList metadata.(%s)",
+                action,
+                type.group(),
+                type.group(),
+                type.kind(),
+                action,
+                getHttpUrlBuilderForApiGroupVersion(type.group(), type.apiVersion()).build()
+            )));
     }
 
     @NotNull
@@ -549,7 +583,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     private HttpUrl.Builder getHttpUrlBuilderForApiGroupVersion(String group,
                                                                 String version) {
         return baseHttpUrlBuilder(PATH_SEGMENT_APIS)
-                .addPathSegments(group)
-                .addPathSegments(version);
+            .addPathSegments(group)
+            .addPathSegments(version);
     }
 }

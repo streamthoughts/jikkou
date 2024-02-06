@@ -18,6 +18,7 @@ package io.streamthoughts.jikkou.common.utils;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +82,10 @@ public final class Enums {
     public static <T extends Enum<T>> Set<T> getForNamesIgnoreCase(final @Nullable Set<String> values,
                                                                    final @NotNull Class<T> enumType) {
         if (values == null) throw new IllegalArgumentException("Unsupported values 'null'");
-        return values.stream().map(value -> getForNameIgnoreCase(value, enumType)).collect(Collectors.toSet());
+        return values.stream()
+            .filter(Predicate.not(String::isBlank))
+            .map(value -> getForNameIgnoreCase(value, enumType))
+            .collect(Collectors.toSet());
     }
 
     private Enums() {

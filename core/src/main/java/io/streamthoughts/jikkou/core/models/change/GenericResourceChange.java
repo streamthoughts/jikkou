@@ -36,10 +36,10 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Description("")
 @JsonPropertyOrder({
-        "apiVersion",
-        "kind",
-        "metadata",
-        "spec"
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
 })
 @ApiVersion("core.jikkou.io/v1beta2")
 @Kind("GenericResourceChange")
@@ -54,10 +54,10 @@ public final class GenericResourceChange implements ResourceChange {
      */
     public static HasSpecBuilder<GenericResourceChange, GenericResourceChangeSpec> builder() {
         return new DefaultHasSpecBuilder<>(build -> new GenericResourceChange(
-                build.kind(),
-                build.apiVersion(),
-                build.metadata(),
-                build.spec()
+            build.apiVersion(),
+            build.kind(),
+            build.metadata(),
+            build.spec()
         ));
     }
 
@@ -68,14 +68,14 @@ public final class GenericResourceChange implements ResourceChange {
      */
     public static HasSpecBuilder<GenericResourceChange, GenericResourceChangeSpec> builder(Class<? extends Resource> resource) {
         return new DefaultHasSpecBuilder<>(
-                Resource.getApiVersion(resource),
-                ResourceChange.getChangeKindFromResource(resource),
-                build -> new GenericResourceChange(
-                        build.kind(),
-                        build.apiVersion(),
-                        build.metadata(),
-                        build.spec()
-                ));
+            Resource.getApiVersion(resource),
+            ResourceChange.getChangeKindFromResource(resource),
+            build -> new GenericResourceChange(
+                build.apiVersion(),
+                build.kind(),
+                build.metadata(),
+                build.spec()
+            ));
     }
 
     private final String kind;
@@ -84,17 +84,17 @@ public final class GenericResourceChange implements ResourceChange {
     private final GenericResourceChangeSpec spec;
 
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "spec"
+        "apiVersion",
+        "kind",
+        "metadata",
+        "spec"
     })
-    public GenericResourceChange(@NotNull String kind,
-                                 @NotNull String apiVersion,
+    public GenericResourceChange(@NotNull String apiVersion,
+                                 @NotNull String kind,
                                  @NotNull ObjectMeta metadata,
                                  @NotNull GenericResourceChangeSpec spec) {
-        this.kind = kind;
         this.apiVersion = apiVersion;
+        this.kind = kind;
         this.metadata = metadata;
         this.spec = spec;
     }
@@ -149,11 +149,11 @@ public final class GenericResourceChange implements ResourceChange {
     @Override
     public String toString() {
         return "GenericResourceChange[" +
-                "kind=" + kind +
-                ", apiVersion=" + apiVersion +
-                ", metadata=" + metadata +
-                ", spec=" + spec +
-                ']';
+            "kind=" + kind +
+            ", apiVersion=" + apiVersion +
+            ", metadata=" + metadata +
+            ", spec=" + spec +
+            ']';
     }
 
     /**
@@ -165,9 +165,9 @@ public final class GenericResourceChange implements ResourceChange {
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (GenericResourceChange) obj;
         return Objects.equals(this.kind, that.kind) &&
-                Objects.equals(this.apiVersion, that.apiVersion) &&
-                Objects.equals(this.metadata, that.metadata) &&
-                Objects.equals(this.spec, that.spec);
+            Objects.equals(this.apiVersion, that.apiVersion) &&
+            Objects.equals(this.metadata, that.metadata) &&
+            Objects.equals(this.spec, that.spec);
     }
 
     /**
