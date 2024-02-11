@@ -62,16 +62,14 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         this.api = Objects.requireNonNull(api, "api must not be null");
     }
 
-    protected CompletableFuture<Void> updateCompatibilityLevel(ResourceChange change) {
+    protected CompletableFuture<Void> updateCompatibilityLevel(final ResourceChange change) {
         final CompatibilityLevels compatibilityLevels = StateChangeList
                 .of(change.getSpec().getChanges())
                 .getLast(DATA_COMPATIBILITY_LEVEL, TypeConverter.of(CompatibilityLevels.class))
                 .getAfter();
 
         final String subjectName = change.getMetadata().getName();
-        LOG.info("Updating compatibility-level for Schema Registry subject '{}'.",
-                subjectName
-        );
+        LOG.info("Updating compatibility-level for Schema Registry subject '{}'.", subjectName);
         return api
                 .updateSubjectCompatibilityLevel(subjectName, new CompatibilityObject(compatibilityLevels.name()))
                 .thenApply(compatibilityObject -> {
@@ -85,7 +83,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 });
     }
 
-    protected CompletableFuture<Void> registerSubjectVersion(@NotNull ResourceChange change) {
+    protected CompletableFuture<Void> registerSubjectVersion(@NotNull final ResourceChange change) {
         String schema = change.getSpec()
                 .getChanges()
                 .getLast(DATA_SCHEMA, TypeConverter.String())

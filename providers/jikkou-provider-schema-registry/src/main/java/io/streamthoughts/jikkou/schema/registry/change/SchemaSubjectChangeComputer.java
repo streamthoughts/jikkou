@@ -22,6 +22,7 @@ import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
+import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpecBuilder;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.models.change.StateChangeList;
 import io.streamthoughts.jikkou.core.reconciler.Change;
@@ -73,19 +74,23 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
 
         @Override
         public ResourceChange createChangeForCreate(String key, V1SchemaRegistrySubject after) {
+            ResourceChangeSpecBuilder specBuilder = ResourceChangeSpec
+                .builder()
+                .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
+                .withOperation(Operation.CREATE)
+                .withChange(StateChange.create(DATA_SCHEMA, after.getSpec().getSchema().value()))
+                .withChange(StateChange.create(DATA_SCHEMA_TYPE, after.getSpec().getSchemaType()))
+                .withChange(StateChange.create(DATA_REFERENCES, after.getSpec().getReferences()));
+
+            if (after.getSpec().getCompatibilityLevel() != null) {
+                specBuilder = specBuilder.withChange(
+                    StateChange.create(DATA_COMPATIBILITY_LEVEL, after.getSpec().getCompatibilityLevel()));
+            }
+
             return GenericResourceChange
                     .builder(V1SchemaRegistrySubject.class)
                     .withMetadata(after.getMetadata())
-                    .withSpec(ResourceChangeSpec
-                            .builder()
-                            .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
-                            .withOperation(Operation.CREATE)
-                            .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, Optional.ofNullable(after.getSpec().getCompatibilityLevel()).orElse(null)))
-                            .withChange(StateChange.create(DATA_SCHEMA, after.getSpec().getSchema().value()))
-                            .withChange(StateChange.create(DATA_SCHEMA_TYPE, after.getSpec().getSchemaType()))
-                            .withChange(StateChange.create(DATA_REFERENCES, after.getSpec().getReferences()))
-                            .build()
-                    )
+                    .withSpec(specBuilder.build())
                     .build();
         }
 

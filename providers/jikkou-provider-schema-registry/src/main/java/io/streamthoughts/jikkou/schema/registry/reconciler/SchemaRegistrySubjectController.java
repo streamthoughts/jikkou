@@ -88,7 +88,7 @@ public class SchemaRegistrySubjectController
      **/
     @Override
     public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
-                                      @NotNull ReconciliationContext context) {
+                                      @NotNull final ReconciliationContext context) {
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration))) {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
                 new CreateSchemaSubjectChangeHandler(api),
