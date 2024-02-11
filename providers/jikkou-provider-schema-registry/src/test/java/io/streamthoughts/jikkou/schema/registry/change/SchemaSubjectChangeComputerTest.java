@@ -94,7 +94,6 @@ class SchemaSubjectChangeComputerTest {
                                         "permanentDelete", false,
                                         "normalizeSchema", false
                                 ))
-                                .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, null))
                                 .withChange(StateChange.create(DATA_SCHEMA, SCHEMA_V1.toString()))
                                 .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.create(DATA_REFERENCES, Collections.emptyList()))
