@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 @SupportedResource(type = V1KafkaClientQuota.class)
-@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "V1KafkaClientQuotaChange")
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaClientQuotaChange")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
