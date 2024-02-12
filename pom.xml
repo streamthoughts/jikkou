@@ -122,7 +122,7 @@ limitations under the License.
         <junit-bom.version>5.10.1</junit-bom.version>
         <testcontainer.version>1.19.1</testcontainer.version>
         <!-- Dependencies -->
-        <kafka.version>3.6.0</kafka.version>
+        <kafka.version>3.6.1</kafka.version>
         <picocli.version>4.7.5</picocli.version>
         <jackson.version>2.16.1</jackson.version>
         <jinjava.version>2.7.1</jinjava.version>
