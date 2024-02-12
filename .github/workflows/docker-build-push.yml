@@ -98,7 +98,7 @@ jobs:
       if: github.ref_name == 'main'
       run: |
         ./mvnw -ntp -B install -DskipTests && \
-        ./mvnw -ntp -B package -DskipTests -f ./jikkou-api/jikkou-api-server/pom.xml \
+        ./mvnw -ntp -B package -DskipTests -f ./server/jikkou-api-server/pom.xml \
         -Dpackaging=docker \
         -Djib.to.image=streamthoughts/jikkou-api-server:main
         docker image push --all-tags streamthoughts/jikkou-api-server
