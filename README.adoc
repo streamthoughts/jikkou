@@ -21,7 +21,6 @@ image:https://img.shields.io/badge/Wesite-Jikkou-c92760[Website,link=https://str
 --
 
 
-
 toc::[]
 
 See: https://streamthoughts.github.io/jikkou/[official documentation]
@@ -58,8 +57,8 @@ Below are the convenience links for the base downloads of Jikkou.
 [%header,format=csv]
 |===
 Platform,Link
-Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip[download (jikkou-0.31.0-linux-x86_64.zip)]
-macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-osx-x86_64.zip[download (jikkou-0.31.0-osx-x86_64.zip)]
+Linux, ⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.33.0/jikkou-0.33.0-linux-x86_64.zip[download (jikkou-0.33.0-linux-x86_64.zip)]
+macOS,⬇️ https://github.com/streamthoughts/jikkou/releases/download/v0.33.0/jikkou-0.33.0-osx-x86_64.zip[download (jikkou-0.33.0-osx-x86_64.zip)]
 |===
 
 Download the jikkou binary from the https://github.com/streamthoughts/jikkou/releases[releases page], uncompress and copy to the desired location.
@@ -67,18 +66,18 @@ Download the jikkou binary from the https://github.com/streamthoughts/jikkou/rel
 [source,bash]
 ----
 # Download the latest stable release
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.33.0/jikkou-0.33.0-linux-x86_64.zip
 
 # Uncompress
-unzip jikkou-0.31.0-linux-x86_64.zip
+unzip jikkou-0.33.0-linux-x86_64.zip
 
 # Copy to the desired location
-cp jikkou-0.31.0-linux-x86_64/bin/jikkou $HOME/.local/bin
+cp jikkou-0.33.0-linux-x86_64/bin/jikkou $HOME/.local/bin
 ----
 
 Finally, Jikkou is can also be retrieved :
 
-* As a **fatJar** from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.30.0/[Maven Central]
+* As a **fatJar** from https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.33.0/[Maven Central]
 * As a **Docker Image** from https://hub.docker.com/r/streamthoughts/jikkou[Docker Hub].
 
 Note, it is recommended to install the bash/zsh completion script `jikkou_completion`:
