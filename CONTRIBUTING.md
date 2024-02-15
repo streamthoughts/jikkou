@@ -1,4 +1,4 @@
-Contributing to Kafka Specs
+Contributing to Jikkou
 ===========================
 
 # Found a bug ?
@@ -27,7 +27,7 @@ Each commit message consists of a header, a body and a footer. The header has a 
 <footer>
 ```
 
-##Type
+## Type
 
 Must be one of the following:
 
@@ -41,7 +41,7 @@ Must be one of the following:
 * **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 * **test**: Adding missing tests or correcting existing tests
 
-##Scope
+## Scope
 
 Must be one of the following:
 
@@ -53,7 +53,7 @@ Must be one of the following:
 * **changelogs** : Changes to CHANGELOG.md
 * **contributing** : Changes to CONTRIBUTING.md
 
-##Subject
+## Subject
 The subject contains a succinct description of the change:
 
 * use the imperative, present tense: "change" not "changed" nor "changes"
@@ -64,6 +64,6 @@ The subject contains a succinct description of the change:
 Just as in the subject, use the imperative, present tense: "change" not "changed" nor "changes". The body should include the motivation for the change and contrast this with previous behavior.
 
 
-##Footer
+## Footer
 
 Should contain the reference to the GitHub issue that this commis **Resolves**.
