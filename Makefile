@@ -1,3 +1,9 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) The original authors
+#
+# Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+#
 # Makefile used to build docker images for kafka-specs
 
 VERSION := $(shell mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: Apache-2.0
+  Copyright (c) The original authors
+
+  Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -18,7 +24,7 @@
 
     <properties>
         <packaging>jar</packaging>
-        <license.header.file>${project.parent.basedir}/license-header</license.header.file>
+        <license.header.file>${project.parent.basedir}/header</license.header.file>
         <!-- Micronaut properties -->
         <micronaut.version>4.1.6</micronaut.version>
         <micronaut.core.version>4.1.6</micronaut.core.version>
@@ -351,7 +357,7 @@
                                     <assembleDirectory>
                                         ${project.build.directory}/distribution
                                     </assembleDirectory>
-                                    <licenseHeaderFile>${project.basedir}/license-header</licenseHeaderFile>
+                                    <licenseHeaderFile>${project.basedir}/header</licenseHeaderFile>
                                     <platforms>
                                         <platform>unix</platform>
                                     </platforms>
