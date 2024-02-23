@@ -474,7 +474,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(resources, context);
 
         NamedValueSet values = filter.toValues();
-        values.forEach(val -> urlBuilder.addQueryParameter(val.name, val.value.toString()));
+        values.forEach(val -> urlBuilder.addQueryParameter(val.getName(), val.getValue().toString()));
 
         RequestBody body = apiClient.serialize(request, CONTENT_TYPE_APPLICATION_JSON);
 

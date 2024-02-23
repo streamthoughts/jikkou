@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Objects;
@@ -13,10 +14,11 @@ import java.util.Objects;
 /**
  * Represents a named value.
  */
-public class NamedValue implements Nameable<NamedValue> {
+@Reflectable
+public final class NamedValue implements Nameable<NamedValue> {
 
-    public final Object value;
-    public final String name;
+    private final Object value;
+    private final String name;
 
     /**
      * Creates a new {@link NamedValue} instance.
@@ -30,13 +32,17 @@ public class NamedValue implements Nameable<NamedValue> {
         this.value = Objects.requireNonNull(value, "value should not be null");
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String getName() {
         return name;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public NamedValue withName(String name) {
         return new NamedValue(name, value);
@@ -77,11 +83,10 @@ public class NamedValue implements Nameable<NamedValue> {
      * {@inheritDoc}
      **/
     @Override
-    public String
-    toString() {
+    public String toString() {
         return "[" +
-                "name='" + name +
-                ", value=" + value +
-                ']';
+            "name='" + name +
+            ", value=" + value +
+            ']';
     }
 }
