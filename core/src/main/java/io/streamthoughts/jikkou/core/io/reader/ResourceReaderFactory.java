@@ -90,8 +90,11 @@ public class ResourceReaderFactory {
      */
     public ResourceReader create(final URI location) {
         return IOUtils.isLocalDirectory(location)?
-            new DirectoryResourceReader(Path.of(location.getPath()), this) :
-            getResourceReader(() -> newInputStream(location), location);
+                !location.isAbsolute() ?
+                        new DirectoryResourceReader(Path.of(location.getPath()), this) :
+                        new DirectoryResourceReader(Path.of(location), this)
+                :
+                getResourceReader(() -> newInputStream(location), location);
     }
 
     @NotNull

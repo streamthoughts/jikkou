@@ -56,8 +56,10 @@ public final class IOUtils {
 
     public static boolean isLocalDirectory(final URI location) {
         String scheme = location.getScheme();
-        if (scheme == null || scheme.equalsIgnoreCase("file"))
+        if (scheme == null)
             return Files.isDirectory(Paths.get(location.getPath()));
+        if (scheme.equalsIgnoreCase("file"))
+            return Files.isDirectory(Path.of(location));
         return false;
     }
 
@@ -67,7 +69,7 @@ public final class IOUtils {
             return openStream(Paths.get(location.getPath()));
 
         if (scheme.equalsIgnoreCase("file"))
-            return openStream(Paths.get(location));
+            return openStream(Path.of(location));
 
         if (scheme.equalsIgnoreCase("http") ||
                 scheme.equalsIgnoreCase("https")) {
