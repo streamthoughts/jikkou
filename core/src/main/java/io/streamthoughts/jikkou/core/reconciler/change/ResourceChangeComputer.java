@@ -21,7 +21,6 @@ public class ResourceChangeComputer<K, V extends HasMetadata, R> implements Chan
                                   final ResourceChangeFactory<K, V, R> changeFactory) {
 
         this(keyMapper, changeFactory, false);
-
     }
 
     /**

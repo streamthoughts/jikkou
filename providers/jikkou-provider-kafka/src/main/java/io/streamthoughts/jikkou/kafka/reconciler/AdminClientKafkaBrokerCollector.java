@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaBroker.class)
 public final class AdminClientKafkaBrokerCollector
-        extends AdminClientKafkaConfigs implements Collector<V1KafkaBroker> {
+        extends WithKafkaConfigFilters implements Collector<V1KafkaBroker> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaBrokerCollector.class);
 

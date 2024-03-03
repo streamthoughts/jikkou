@@ -99,6 +99,28 @@ public final class GenericResourceChange implements ResourceChange {
         return Optional.ofNullable(kind).orElse(Resource.getKind(this.getClass()));
     }
 
+    /** {@inheritDoc} **/
+    @Override
+    public GenericResourceChange withApiVersion(final String apiVersion) {
+        return new GenericResourceChange(
+            apiVersion,
+            kind,
+            metadata,
+            spec
+        );
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public GenericResourceChange withKind(final String kind) {
+        return new GenericResourceChange(
+            apiVersion,
+            kind,
+            metadata,
+            spec
+        );
+    }
+
     /**
      * {@inheritDoc}
      **/

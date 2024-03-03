@@ -51,11 +51,11 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = ApiVersions.SCHEMA_REGISTRY_KIND
 )
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = ApiVersions.SCHEMA_REGISTRY_CHANGE_KIND
 )
 public class AivenSchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject, ResourceChange> {
@@ -143,7 +143,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
                 .stream()
                 .map(change -> GenericResourceChange
                         .builder()
-                        .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
+                        .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
                         .withKind(ApiVersions.SCHEMA_REGISTRY_CHANGE_KIND)
                         .withMetadata(change.getMetadata())
                         .withSpec((GenericResourceChangeSpec) change.getSpec())

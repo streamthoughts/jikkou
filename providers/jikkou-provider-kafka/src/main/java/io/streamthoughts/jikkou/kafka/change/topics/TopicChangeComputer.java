@@ -10,7 +10,6 @@ import static io.streamthoughts.jikkou.core.reconciler.Operation.DELETE;
 import static io.streamthoughts.jikkou.kafka.change.topics.TopicChange.CONFIG_PREFIX;
 
 import io.streamthoughts.jikkou.core.models.ConfigValue;
-import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
@@ -23,7 +22,6 @@ import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -155,18 +153,6 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
                             .build()
                     )
                     .build();
-        }
-
-        /**
-         * @return the {@link Configs}.
-         */
-        private Map<String, Object> getConfigs(V1KafkaTopic resource) {
-            return Optional
-                    .ofNullable(resource)
-                    .map(V1KafkaTopic::getSpec)
-                    .flatMap(spec -> Optional.ofNullable(spec.getConfigs()))
-                    .orElse(Configs.empty())
-                    .toMap();
         }
 
         /**

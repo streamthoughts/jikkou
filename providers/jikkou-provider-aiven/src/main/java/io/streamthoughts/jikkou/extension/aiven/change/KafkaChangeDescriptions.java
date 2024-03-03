@@ -16,27 +16,27 @@ public final class KafkaChangeDescriptions {
 
     public static TextDescription of(Operation type, KafkaAclEntry entry) {
         return () -> String.format("%s Kafka ACL Entry for user '%s' (topic=%s, permission=%s)",
-                type.humanize(),
-                entry.username(),
-                entry.topic(),
-                entry.permission()
+            type.humanize(),
+            entry.username(),
+            entry.topic(),
+            entry.permission()
         );
     }
 
     public static TextDescription of(Operation type, SchemaRegistryAclEntry entry) {
         return () -> String.format("%s Schema Registry ACL Entry for user '%s' (resource=%s, permission=%s)",
-                type.humanize(),
-                entry.username(),
-                entry.resource(),
-                entry.permission()
+            type.humanize(),
+            entry.username(),
+            entry.resource(),
+            entry.permission()
         );
     }
 
     public static TextDescription of(Operation type, KafkaQuotaEntry entry) {
         return () -> String.format("%s Kafka quotas for user '%s' and client-id '%s'",
-                type.humanize(),
-                entry.user(),
-                entry.clientId()
+            type.humanize(),
+            entry.user(),
+            entry.clientId()
         );
     }
 }

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 )
 @SupportedResource(type = V1KafkaTopicAclEntry.class)
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = "KafkaTopicAclEntryChange"
 )
 public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopicAclEntry, ResourceChange> {
