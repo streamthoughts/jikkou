@@ -9,6 +9,10 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 import io.streamthoughts.jikkou.extension.aiven.api.data.CompatibilityCheckResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoCreate;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoUpdate;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicListResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
@@ -233,6 +237,53 @@ public final class AivenApiClient implements AutoCloseable {
                                                                        final @NotNull SubjectSchemaRegistration schema) {
         return this.api.checkSchemaRegistryCompatibility(project, service, subject, versionId, schema);
     }
+
+    /**
+     * Get Kafka topic list.
+     *
+     * @return the {@link KafkaTopicListResponse}.
+     */
+    public KafkaTopicListResponse listKafkaTopics() {
+        return this.api.getKafkaTopicList(project, service);
+    }
+
+    /**
+     * Get Kafka topic info.
+     *
+     * @return the {@link KafkaTopicListResponse}.
+     */
+    public KafkaTopicInfoResponse getKafkaTopicInfo(final @NotNull String topic) {
+        return this.api.getKafkaTopicInfo(project, service, topic);
+    }
+
+    /**
+     * Update Kafka topic info.
+     *
+     * @return the {@link KafkaTopicListResponse}.
+     */
+    public MessageErrorsResponse createKafkaTopicInfo(final KafkaTopicInfoCreate payload) {
+        return this.api.createKafkaTopicInfo(project, service, payload);
+    }
+
+    /**
+     * Update Kafka topic info.
+     *
+     * @return the {@link KafkaTopicListResponse}.
+     */
+    public MessageErrorsResponse updateKafkaTopicInfo(final @NotNull String topic,
+                                                      final KafkaTopicInfoUpdate payload) {
+        return this.api.updateKafkaTopicInfo(project, service, topic, payload);
+    }
+
+    /**
+     * Delete Kafka topic.
+     *
+     * @return the {@link KafkaTopicListResponse}.
+     */
+    public MessageErrorsResponse deleteKafkaTopicInfo(final @NotNull String topic) {
+        return this.api.deleteKafkaTopicInfo(project, service, topic);
+    }
+
 
     /**
      * {@inheritDoc}

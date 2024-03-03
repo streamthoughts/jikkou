@@ -23,6 +23,22 @@ public interface ResourceChange extends HasSpec<ResourceChangeSpec>, Change {
 
     String RESOURCE_CHANGE_KIND_SUFFIX = "Change";
 
+    /**
+     * Gets a new objects with the given kind.
+     *
+     * @param apiVersion the kind of the resource.
+     * @return a new {@link Resource}.
+     */
+    ResourceChange withApiVersion(final String apiVersion);
+
+    /**
+     * Gets a new objects with the given kind.
+     *
+     * @param kind the kind of the resource.
+     * @return a new {@link Resource}.
+     */
+    ResourceChange withKind(final String kind);
+
     /** {@inheritDoc} **/
     @Override
     @JsonIgnore

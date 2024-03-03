@@ -40,6 +40,7 @@ import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionInfo;
+import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
 
@@ -196,5 +197,9 @@ public final class KafkaTopicService {
     private CompletableFuture<Map<String, TopicDescription>> getDescriptionForTopics(final Collection<String> topicNames) {
         DescribeTopicsResult result = client.describeTopics(topicNames);
         return Futures.toCompletableFuture(result.allTopicNames());
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Uuid(0L, 0L));
     }
 }

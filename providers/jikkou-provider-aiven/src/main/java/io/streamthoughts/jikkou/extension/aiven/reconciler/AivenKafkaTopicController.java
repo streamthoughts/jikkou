@@ -4,12 +4,13 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.kafka.reconciler;
+package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
 import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA2;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
@@ -24,53 +25,55 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
-import io.streamthoughts.jikkou.kafka.ApiVersions;
-import io.streamthoughts.jikkou.kafka.change.topics.CreateTopicChangeHandler;
-import io.streamthoughts.jikkou.kafka.change.topics.DeleteTopicChangeHandler;
-import io.streamthoughts.jikkou.kafka.change.topics.TopicChange;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
+import io.streamthoughts.jikkou.extension.aiven.change.topic.KafkaTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.topics.TopicChangeComputer;
-import io.streamthoughts.jikkou.kafka.change.topics.UpdateTopicChangeHandler;
-import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
-import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.reconciler.WithKafkaConfigFilters;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.apache.kafka.clients.admin.AdminClient;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SupportedResource(type = V1KafkaTopic.class)
-@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaTopicChange")
+@SupportedResource(apiVersion = KAFKA_AIVEN_V1BETA2, kind = "KafkaTopicChange")
+@SupportedResource(apiVersion = KAFKA_AIVEN_V1BETA2, kind = "KafkaTopic")
 @ControllerConfiguration(
-        supportedModes = {CREATE, DELETE, UPDATE, FULL}
+    supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
-public final class AdminClientKafkaTopicController
-        extends ContextualExtension implements Controller<V1KafkaTopic, ResourceChange> {
+public final class AivenKafkaTopicController
+    extends ContextualExtension implements Controller<V1KafkaTopic, ResourceChange> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AivenKafkaTopicController.class);
 
     public static final String CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME = "config-delete-orphans";
 
-    private AdminClientContextFactory adminClientContextFactory;
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
+
+    private AivenKafkaTopicCollector collector;
+
+    private AivenApiClientConfig config;
 
     /**
-     * Creates a new {@link AdminClientKafkaTopicController} instance.
+     * Creates a new {@link AivenKafkaTopicController} instance.
      * CLI requires any empty constructor.
      */
-    public AdminClientKafkaTopicController() {
+    public AivenKafkaTopicController() {
         super();
     }
 
     /**
-     * Creates a new {@link AdminClientKafkaTopicController} instance with the specified {@link AdminClientContext}.
+     * Creates a new {@link AivenSchemaRegistryAclEntryController} instance.
      *
-     * @param adminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
+     * @param config the schema registry client configuration.
      */
-    public AdminClientKafkaTopicController(final @NotNull AdminClientContextFactory adminClientContextFactory) {
-        this.adminClientContextFactory = adminClientContextFactory;
+    public AivenKafkaTopicController(@NotNull AivenApiClientConfig config) {
+        init(config);
     }
 
     /**
@@ -79,8 +82,13 @@ public final class AdminClientKafkaTopicController
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+        init(new AivenApiClientConfig(context.appConfiguration()));
+    }
+
+    private void init(@NotNull AivenApiClientConfig config) {
+        if (this.initialized.compareAndSet(false, true)) {
+            this.config = config;
+            this.collector = new AivenKafkaTopicCollector(config);
         }
     }
 
@@ -91,56 +99,63 @@ public final class AdminClientKafkaTopicController
     public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
                                       @NotNull final ReconciliationContext context) {
 
-        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
-            final AdminClient adminClient = clientContext.getAdminClient();
+        final AivenApiClient api = AivenApiClientFactory.create(config);
+        try {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
-                    new CreateTopicChangeHandler(adminClient),
-                    new UpdateTopicChangeHandler(adminClient),
-                    new DeleteTopicChangeHandler(adminClient),
-                    new ChangeHandler.None<>(TopicChange::getDescription)
+                new KafkaTopicChangeHandler.Create(api),
+                new KafkaTopicChangeHandler.Update(api),
+                new KafkaTopicChangeHandler.Delete(api),
+                new KafkaTopicChangeHandler.None()
             );
             return executor.applyChanges(handlers);
+        } finally {
+            api.close();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public List<ResourceChange> plan(
-            @NotNull Collection<V1KafkaTopic> resources,
-            @NotNull ReconciliationContext context) {
+        @NotNull Collection<V1KafkaTopic> resources,
+        @NotNull ReconciliationContext context) {
 
         LOG.info("Computing reconciliation change for '{}' resources", resources.size());
 
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
-                .filter(context.selector()::apply)
-                .toList();
+            .filter(context.selector()::apply)
+            .toList();
 
         // Build the configuration for describing actual resources
         Configuration configuration = Configuration.from(Map.of(
-                WithKafkaConfigFilters.DEFAULT_CONFIGS_CONFIG, true,
-                WithKafkaConfigFilters.DYNAMIC_BROKER_CONFIGS_CONFIG, true,
-                WithKafkaConfigFilters.STATIC_BROKER_CONFIGS_CONFIG, true
+            WithKafkaConfigFilters.DEFAULT_CONFIGS_CONFIG, true,
+            WithKafkaConfigFilters.DYNAMIC_BROKER_CONFIGS_CONFIG, true,
+            WithKafkaConfigFilters.STATIC_BROKER_CONFIGS_CONFIG, true
         ));
 
         // Get the list of remote resources that are candidates for this reconciliation
-        AdminClientKafkaTopicCollector collector = new AdminClientKafkaTopicCollector(adminClientContextFactory);
-        collector.init(extensionContext().contextForExtension(AdminClientKafkaTopicCollector.class));
+        collector.init(extensionContext().contextForExtension(AivenKafkaTopicCollector.class));
 
         List<V1KafkaTopic> actualKafkaTopics = collector.listAll(configuration, Selectors.NO_SELECTOR)
-                .stream()
-                .filter(context.selector()::apply)
-                .toList();
+            .stream()
+            .filter(context.selector()::apply)
+            .toList();
 
         boolean isConfigDeletionEnabled = isConfigDeletionEnabled(context);
 
         TopicChangeComputer changeComputer = new TopicChangeComputer(isConfigDeletionEnabled);
-        return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics);
+        return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics)
+            .stream()
+            .map(change -> change.withApiVersion(KAFKA_AIVEN_V1BETA2))
+            .toList();
     }
 
     @VisibleForTesting
     static boolean isConfigDeletionEnabled(@NotNull ReconciliationContext context) {
         return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(true)
-                .get(context.configuration());
+            .orElse(true)
+            .get(context.configuration());
     }
 }

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
     }
 )
 public final class AdminClientKafkaTopicCollector
-    extends AdminClientKafkaConfigs implements Collector<V1KafkaTopic> {
+    extends WithKafkaConfigFilters implements Collector<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicCollector.class);
     public static final String STATUS_CONFIG_NAME = "status";

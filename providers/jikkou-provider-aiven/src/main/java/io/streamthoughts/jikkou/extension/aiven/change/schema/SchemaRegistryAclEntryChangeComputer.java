@@ -32,6 +32,9 @@ public final class SchemaRegistryAclEntryChangeComputer
     }
 
     public static class SchemaRegistryAclEntryChangeFactory extends ResourceChangeFactory<SchemaRegistryAclEntry, V1SchemaRegistryAclEntry, ResourceChange> {
+
+        public static final String ENTRY = "entry";
+
         @Override
         public ResourceChange createChangeForCreate(SchemaRegistryAclEntry key, V1SchemaRegistryAclEntry after) {
             return createChangeForUpdate(key, null, after);
@@ -45,7 +48,7 @@ public final class SchemaRegistryAclEntryChangeComputer
         @Override
         public ResourceChange createChangeForUpdate(SchemaRegistryAclEntry key, V1SchemaRegistryAclEntry before, V1SchemaRegistryAclEntry after) {
             List<StateChange> changes = new ArrayList<>();
-            changes.add(StateChange.with("entry",
+            changes.add(StateChange.with(ENTRY,
                     SchemaRegistryAclEntryAdapter.map(before),
                     SchemaRegistryAclEntryAdapter.map(after))
             );

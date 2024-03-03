@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
  * Aiven - Schema Registry Subjects Collector.
  */
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = ApiVersions.SCHEMA_REGISTRY_KIND
 )
 public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRegistrySubject> {
@@ -118,7 +118,7 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
             }
 
             List<V1SchemaRegistrySubject> items = result.join().stream()
-                    .map(subject -> subject.withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION))
+                    .map(subject -> subject.withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1))
                     .toList();
             return new V1SchemaRegistrySubjectList(items);
 
