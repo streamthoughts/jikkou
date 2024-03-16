@@ -129,7 +129,7 @@ jobs:
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts
+          name: artifacts-${{ runner.os }}-${{ runner.arch }}
           path: |
             dist/*.zip
             dist/*.tar.gz
@@ -148,6 +148,10 @@ jobs:
 
       - name: 'Download all artifacts'
         uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: artifacts-*
+          merge-multiple: true
 
       - name: 'Set up Java'
         uses: actions/setup-java@v4
