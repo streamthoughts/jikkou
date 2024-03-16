@@ -16,7 +16,7 @@ import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaPrincipalAuthorizationSupport;
-import io.streamthoughts.jikkou.kafka.collections.V1V1KafkaPrincipalAuthorizationList;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaPrincipalAuthorizationList;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
@@ -92,7 +92,7 @@ public final class AdminClientKafkaAclCollector
                             .build()
                     )
                     .toList();
-            return new V1V1KafkaPrincipalAuthorizationList(items);
+            return new V1KafkaPrincipalAuthorizationList(items);
         }
     }
 

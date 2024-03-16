@@ -11,13 +11,15 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
+
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class KafkaPrincipalAuthorizationDescription implements TextDescription {
 
     private final ResourceChange change;
 
-    public KafkaPrincipalAuthorizationDescription(ResourceChange change) {
+    public KafkaPrincipalAuthorizationDescription(final ResourceChange change) {
         this.change = change;
     }
 
@@ -26,7 +28,6 @@ public final class KafkaPrincipalAuthorizationDescription implements TextDescrip
      **/
     @Override
     public String textual() {
-
         String bindings = change
                 .getSpec()
                 .getChanges()
@@ -42,8 +43,8 @@ public final class KafkaPrincipalAuthorizationDescription implements TextDescrip
         );
     }
 
-    private String textual(SpecificStateChange<KafkaAclBinding> change) {
-        KafkaAclBinding binding = change.getAfter();
+    private String textual(final SpecificStateChange<KafkaAclBinding> change) {
+        KafkaAclBinding binding = Optional.ofNullable(change.getAfter()).orElse(change.getBefore());
         return String.format("%s access control entry to %s '%s' to execute operation(s) '%s' on resource(s) '%s:%s:%s'",
                 change.getOp().humanize(),
                 binding.type(),

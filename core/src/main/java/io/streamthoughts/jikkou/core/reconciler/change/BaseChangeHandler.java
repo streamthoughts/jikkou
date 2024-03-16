@@ -24,7 +24,7 @@ public abstract class BaseChangeHandler<T extends ResourceChange> implements Cha
      *
      * @param supportedOperation The supported change type.
      */
-    public BaseChangeHandler(Operation supportedOperation) {
+    public BaseChangeHandler(final Operation supportedOperation) {
         this(Set.of(supportedOperation));
     }
 
@@ -33,7 +33,7 @@ public abstract class BaseChangeHandler<T extends ResourceChange> implements Cha
      *
      * @param supportedOperations The supported change types.
      */
-    public BaseChangeHandler(Set<Operation> supportedOperations) {
+    public BaseChangeHandler(final Set<Operation> supportedOperations) {
         this.supportedOperations = supportedOperations;
     }
 

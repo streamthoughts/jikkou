@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaTopicAuthorizationList")
-public class V1V1KafkaPrincipalAuthorizationList extends DefaultResourceListObject<V1KafkaPrincipalAuthorization> {
+public class V1KafkaPrincipalAuthorizationList extends DefaultResourceListObject<V1KafkaPrincipalAuthorization> {
 
 
     /**
-     * Creates a new {@link V1V1KafkaPrincipalAuthorizationList} instance.
+     * Creates a new {@link V1KafkaPrincipalAuthorizationList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -35,19 +35,19 @@ public class V1V1KafkaPrincipalAuthorizationList extends DefaultResourceListObje
             "metadata",
             "items"
     })
-    public V1V1KafkaPrincipalAuthorizationList(@Nullable String kind,
-                                               @Nullable String apiVersion,
-                                               @Nullable ObjectMeta metadata,
-                                               @NotNull List<? extends V1KafkaPrincipalAuthorization> items) {
+    public V1KafkaPrincipalAuthorizationList(@Nullable String kind,
+                                             @Nullable String apiVersion,
+                                             @Nullable ObjectMeta metadata,
+                                             @NotNull List<? extends V1KafkaPrincipalAuthorization> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1V1KafkaPrincipalAuthorizationList} instance.
+     * Creates a new {@link V1KafkaPrincipalAuthorizationList} instance.
      *
      * @param items The items.
      */
-    public V1V1KafkaPrincipalAuthorizationList(List<? extends V1KafkaPrincipalAuthorization> items) {
+    public V1KafkaPrincipalAuthorizationList(List<? extends V1KafkaPrincipalAuthorization> items) {
         super(items);
     }
 }

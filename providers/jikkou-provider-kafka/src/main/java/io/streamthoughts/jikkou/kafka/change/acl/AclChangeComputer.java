@@ -46,7 +46,7 @@ public final class AclChangeComputer
 
         private final KafkaAclBindingBuilder kafkaAclBindingBuilder;
 
-        public AclChangeFactory(KafkaAclBindingBuilder kafkaAclBindingBuilder) {
+        public AclChangeFactory(final KafkaAclBindingBuilder kafkaAclBindingBuilder) {
             this.kafkaAclBindingBuilder = kafkaAclBindingBuilder;
         }
 
@@ -54,7 +54,7 @@ public final class AclChangeComputer
          * {@inheritDoc}
          **/
         @Override
-        public ResourceChange createChangeForDelete(String key, V1KafkaPrincipalAuthorization before) {
+        public ResourceChange createChangeForDelete(final String key, final V1KafkaPrincipalAuthorization before) {
             List<KafkaAclBinding> bindings = kafkaAclBindingBuilder.toKafkaAclBindings(before);
             List<StateChange> changes = bindings.stream()
                     .map(binding -> StateChange.delete(ACL, binding))
@@ -76,7 +76,7 @@ public final class AclChangeComputer
          * {@inheritDoc}
          **/
         @Override
-        public ResourceChange createChangeForCreate(String key, V1KafkaPrincipalAuthorization after) {
+        public ResourceChange createChangeForCreate(final String key, final V1KafkaPrincipalAuthorization after) {
             List<KafkaAclBinding> bindings = kafkaAclBindingBuilder.toKafkaAclBindings(after);
 
             List<StateChange> changes = bindings.stream()
@@ -99,7 +99,9 @@ public final class AclChangeComputer
          * {@inheritDoc}
          **/
         @Override
-        public ResourceChange createChangeForUpdate(String key, V1KafkaPrincipalAuthorization before, V1KafkaPrincipalAuthorization after) {
+        public ResourceChange createChangeForUpdate(final String key,
+                                                    final V1KafkaPrincipalAuthorization before,
+                                                    final V1KafkaPrincipalAuthorization after) {
             List<KafkaAclBinding> beforeBindings = kafkaAclBindingBuilder.toKafkaAclBindings(before);
             List<KafkaAclBinding> afterBindings = kafkaAclBindingBuilder.toKafkaAclBindings(after);
 

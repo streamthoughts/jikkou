@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
@@ -24,8 +25,7 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.change.acl.AclChangeComputer;
-import io.streamthoughts.jikkou.kafka.change.acl.CreateAclChangeHandler;
-import io.streamthoughts.jikkou.kafka.change.acl.DeleteAclChangeHandler;
+import io.streamthoughts.jikkou.kafka.change.acl.AclChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.acl.KafkaAclBindingBuilder;
 import io.streamthoughts.jikkou.kafka.change.acl.KafkaPrincipalAuthorizationDescription;
 import io.streamthoughts.jikkou.kafka.change.acl.builder.LiteralKafkaAclBindingBuilder;
@@ -41,11 +41,11 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaPrincipalAuthorizationChange")
 @ControllerConfiguration(
-        supportedModes = {CREATE, DELETE, FULL}
+    supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 public final class AdminClientKafkaAclController
-        extends ContextualExtension
-        implements Controller<V1KafkaPrincipalAuthorization, ResourceChange> {
+    extends ContextualExtension
+    implements Controller<V1KafkaPrincipalAuthorization, ResourceChange> {
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -81,13 +81,13 @@ public final class AdminClientKafkaAclController
      */
     @Override
     public List<ResourceChange> plan(@NotNull Collection<V1KafkaPrincipalAuthorization> resources,
-                                                   @NotNull ReconciliationContext context) {
+                                     @NotNull ReconciliationContext context) {
 
         // Get the list of remote resources that are candidates for this reconciliation
         List<V1KafkaPrincipalAuthorization> expectedStates = resources
-                .stream()
-                .filter(context.selector()::apply)
-                .toList();
+            .stream()
+            .filter(context.selector()::apply)
+            .toList();
 
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
 
@@ -98,19 +98,19 @@ public final class AdminClientKafkaAclController
             collector.init(extensionContext().contextForExtension(AdminClientKafkaAclCollector.class));
 
             List<V1KafkaPrincipalAuthorization> actualStates = collector.listAll(adminClient)
-                    .stream()
-                    .filter(context.selector()::apply)
-                    .toList();
+                .stream()
+                .filter(context.selector()::apply)
+                .toList();
 
             // Compute state changes
             final KafkaAclBindingBuilder builder = KafkaAclBindingBuilder.combines(
-                    new LiteralKafkaAclBindingBuilder(),
-                    new TopicMatchingAclRulesBuilder(adminClient)
+                new LiteralKafkaAclBindingBuilder(),
+                new TopicMatchingAclRulesBuilder(adminClient)
             );
 
             AclChangeComputer computer = new AclChangeComputer(
-                    new Config(context.configuration()).isDeleteOrphansEnabled(),
-                    builder);
+                new Config(context.configuration()).isDeleteOrphansEnabled(),
+                builder);
 
             return computer.computeChanges(actualStates, expectedStates);
         }
@@ -125,9 +125,8 @@ public final class AdminClientKafkaAclController
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             final AdminClient adminClient = clientContext.getAdminClient();
             List<ChangeHandler<ResourceChange>> handlers = List.of(
-                    new CreateAclChangeHandler(adminClient),
-                    new DeleteAclChangeHandler(adminClient),
-                    new ChangeHandler.None<>(KafkaPrincipalAuthorizationDescription::new)
+                new AclChangeHandler(adminClient),
+                new ChangeHandler.None<>(KafkaPrincipalAuthorizationDescription::new)
             );
             return executor.applyChanges(handlers);
         }
@@ -136,8 +135,8 @@ public final class AdminClientKafkaAclController
     public static class Config {
 
         public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS_CONFIG = ConfigProperty
-                .ofBoolean("delete-orphans")
-                .orElse(false);
+            .ofBoolean("delete-orphans")
+            .orElse(false);
 
         private final Configuration configuration;
 

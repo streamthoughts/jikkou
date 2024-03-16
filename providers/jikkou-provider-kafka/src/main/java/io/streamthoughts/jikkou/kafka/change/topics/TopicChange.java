@@ -20,7 +20,7 @@ public final class TopicChange {
     public static final String REPLICAS = "replicas";
     public static final String CONFIG_PREFIX = "config.";
 
-    public static TextDescription getDescription(ResourceChange change) {
+    public static TextDescription getDescription(final ResourceChange change) {
         return () -> {
 
             StateChangeList<? extends StateChange> data = change.getSpec().getChanges();
