@@ -11,10 +11,11 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
-import java.beans.ConstructorProperties;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.beans.ConstructorProperties;
+import java.util.List;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("SchemaRegistrySubjectList")
@@ -30,10 +31,10 @@ public class V1SchemaRegistrySubjectList extends DefaultResourceListObject<V1Sch
      * @param items      The items.
      */
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "items"
+        "kind",
+        "apiVersion",
+        "metadata",
+        "items"
     })
     public V1SchemaRegistrySubjectList(@Nullable String kind,
                                        @Nullable String apiVersion,

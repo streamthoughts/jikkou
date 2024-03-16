@@ -11,10 +11,11 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import java.beans.ConstructorProperties;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.beans.ConstructorProperties;
+import java.util.List;
 
 @ApiVersion("kafka.jikkou.io/v1beta1")
 @Kind("KafkaConnectorList")
@@ -30,15 +31,15 @@ public class V1KafkaConnectorList extends DefaultResourceListObject<V1KafkaConne
      * @param items      The items.
      */
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "items"
+        "kind",
+        "apiVersion",
+        "metadata",
+        "items"
     })
     public V1KafkaConnectorList(@Nullable String kind,
-                            @Nullable String apiVersion,
-                            @Nullable ObjectMeta metadata,
-                            @NotNull List<? extends V1KafkaConnector> items) {
+                                @Nullable String apiVersion,
+                                @Nullable ObjectMeta metadata,
+                                @NotNull List<? extends V1KafkaConnector> items) {
         super(kind, apiVersion, metadata, items);
     }
 

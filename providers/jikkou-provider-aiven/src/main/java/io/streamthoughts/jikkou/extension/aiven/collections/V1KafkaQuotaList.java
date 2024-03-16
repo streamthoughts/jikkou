@@ -11,10 +11,11 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
-import java.beans.ConstructorProperties;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.beans.ConstructorProperties;
+import java.util.List;
 
 @ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("KafkaQuotaList")
@@ -30,10 +31,10 @@ public class V1KafkaQuotaList extends DefaultResourceListObject<V1KafkaQuota> {
      * @param items      The items.
      */
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "items"
+        "kind",
+        "apiVersion",
+        "metadata",
+        "items"
     })
     public V1KafkaQuotaList(@Nullable String kind,
                             @Nullable String apiVersion,

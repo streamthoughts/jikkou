@@ -30,8 +30,8 @@ public class V1KafkaTopicList extends DefaultResourceListObject<V1KafkaTopic> {
      * @param items         The items.
      */
     @ConstructorProperties({
-            "apiVersion",
             "kind",
+            "apiVersion",
             "metadata",
             "items"
     })

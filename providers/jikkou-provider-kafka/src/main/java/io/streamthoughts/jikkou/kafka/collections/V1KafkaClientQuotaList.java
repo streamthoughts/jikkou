@@ -11,10 +11,11 @@ import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
-import java.beans.ConstructorProperties;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.beans.ConstructorProperties;
+import java.util.List;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaClientQuotaList")
@@ -24,16 +25,16 @@ public class V1KafkaClientQuotaList extends DefaultResourceListObject<V1KafkaCli
     /**
      * Creates a new {@link V1KafkaClientQuotaList} instance.
      *
-     * @param kind          The resource Kind.
-     * @param apiVersion    The resource API Version.
-     * @param metadata      The resource metadata.
-     * @param items         The items.
+     * @param kind       The resource Kind.
+     * @param apiVersion The resource API Version.
+     * @param metadata   The resource metadata.
+     * @param items      The items.
      */
     @ConstructorProperties({
-            "apiVersion",
-            "kind",
-            "metadata",
-            "items"
+        "kind",
+        "apiVersion",
+        "metadata",
+        "items"
     })
     public V1KafkaClientQuotaList(@Nullable String kind,
                                   @Nullable String apiVersion,

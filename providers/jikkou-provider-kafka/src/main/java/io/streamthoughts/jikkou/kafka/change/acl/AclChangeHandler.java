@@ -17,13 +17,6 @@ import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.core.reconciler.change.BaseChangeHandler;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.CreateAclsResult;
-import org.apache.kafka.clients.admin.DeleteAclsResult;
-import org.apache.kafka.common.acl.AclBinding;
-import org.apache.kafka.common.acl.AclBindingFilter;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +24,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.CreateAclsResult;
+import org.apache.kafka.clients.admin.DeleteAclsResult;
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.acl.AclBindingFilter;
+import org.jetbrains.annotations.NotNull;
 
 public final class AclChangeHandler extends BaseChangeHandler<ResourceChange> {
 

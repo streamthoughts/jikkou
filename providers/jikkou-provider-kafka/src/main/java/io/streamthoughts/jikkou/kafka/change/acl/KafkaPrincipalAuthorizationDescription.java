@@ -11,7 +11,6 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.kafka.model.KafkaAclBinding;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
 
