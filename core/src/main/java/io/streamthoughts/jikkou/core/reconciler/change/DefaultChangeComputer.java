@@ -68,7 +68,7 @@ public final class DefaultChangeComputer<K, V, R> implements ChangeComputer<V, R
     }
 
     @NotNull
-    private Map<K, V> groupById(Iterable<V> actualStates) {
+    private Map<K, V> groupById(final Iterable<V> actualStates) {
         if (actualStates == null) {
             return Collections.emptyMap();
         }
@@ -77,8 +77,8 @@ public final class DefaultChangeComputer<K, V, R> implements ChangeComputer<V, R
                 .collect(Collectors.toMap(keyMapper::apply, Function.identity(), this::duplicateKeyException, LinkedHashMap::new));
     }
 
-    public List<R> computeChanges(Map<K, V> actualStatesByID,
-                                  Map<K, V> expectStatesByID) {
+    public List<R> computeChanges(final Map<K, V> actualStatesByID,
+                                  final Map<K, V> expectStatesByID) {
 
         int maxTotalStates = actualStatesByID.size() + expectStatesByID.size();
         List<BeforeAndAfter<K, V>> joined = new ArrayList<>(maxTotalStates);
@@ -93,13 +93,13 @@ public final class DefaultChangeComputer<K, V, R> implements ChangeComputer<V, R
     }
 
     @NotNull
-    private Stream<? extends R> createChange(BeforeAndAfter<K, V> states) {
+    private Stream<? extends R> createChange(final BeforeAndAfter<K, V> states) {
         return changeFactory.createChange(states.key(), states.before(), states.after()).stream();
     }
 
     @NotNull
-    private List<BeforeAndAfter<K, V>> leftJoinWhereRightIsNull(Map<K, V> leftStatesByID,
-                                                                Map<K, V> rightStatesByID) {
+    private List<BeforeAndAfter<K, V>> leftJoinWhereRightIsNull(final Map<K, V> leftStatesByID,
+                                                                final Map<K, V> rightStatesByID) {
         return leftStatesByID.entrySet()
                 .stream()
                 .map(left -> {
@@ -112,8 +112,8 @@ public final class DefaultChangeComputer<K, V, R> implements ChangeComputer<V, R
 
 
     @NotNull
-    private List<BeforeAndAfter<K, V>> rightJoin(Map<K, V> leftStatesByID,
-                                                 Map<K, V> rightStatesByID) {
+    private List<BeforeAndAfter<K, V>> rightJoin(final Map<K, V> leftStatesByID,
+                                                 final Map<K, V> rightStatesByID) {
         return rightStatesByID.entrySet()
                 .stream()
                 .map(right -> {

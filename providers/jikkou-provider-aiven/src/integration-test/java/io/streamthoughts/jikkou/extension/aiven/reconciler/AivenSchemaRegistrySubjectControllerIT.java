@@ -123,7 +123,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
         );
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject
                 .builder()
-                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
+                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_SUBJECT)
                         .build()
@@ -148,7 +148,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
         ResourceChange actual = result.change();
         ResourceChange expected = GenericResourceChange
                 .builder(V1SchemaRegistrySubject.class)
-                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
+                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_SUBJECT)
@@ -217,7 +217,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                         """)
         );
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject.builder()
-                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
+                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
                 .withMetadata(ObjectMeta.builder()
                         .withName(TEST_SUBJECT)
                         .build()
@@ -243,7 +243,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
         ResourceChange actual = result.change();
         ResourceChange expected = GenericResourceChange
                 .builder(V1SchemaRegistrySubject.class)
-                .withApiVersion(ApiVersions.KAFKA_REGISTRY_API_VERSION)
+                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_SUBJECT)

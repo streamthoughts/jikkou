@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-provider-kafka</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
             <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
         </dependency>

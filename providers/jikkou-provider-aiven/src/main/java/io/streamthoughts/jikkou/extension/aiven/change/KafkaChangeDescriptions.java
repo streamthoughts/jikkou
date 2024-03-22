@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoUpdate;
 import io.streamthoughts.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
 
 public final class KafkaChangeDescriptions {
@@ -37,6 +38,15 @@ public final class KafkaChangeDescriptions {
                 type.humanize(),
                 entry.user(),
                 entry.clientId()
+        );
+    }
+
+    public static TextDescription of(Operation type, KafkaTopicInfoUpdate entry) {
+        return () -> String.format("%s Kafka topic '%s' (partitions=%d, replicas=%d)'",
+            type.humanize(),
+            entry.topicName(),
+            entry.partitions(),
+            entry.replication()
         );
     }
 }

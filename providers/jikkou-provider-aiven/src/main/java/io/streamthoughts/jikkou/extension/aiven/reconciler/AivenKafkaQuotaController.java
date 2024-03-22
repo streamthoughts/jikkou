@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 )
 @SupportedResource(type = V1KafkaQuota.class)
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = "KafkaQuotaChange"
 )
 public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, ResourceChange> {

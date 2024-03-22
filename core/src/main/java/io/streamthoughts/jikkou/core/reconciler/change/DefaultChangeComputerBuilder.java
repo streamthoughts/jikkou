@@ -36,7 +36,7 @@ public final class DefaultChangeComputerBuilder<I, T, R> implements ChangeComput
      * {@inheritDoc}
      **/
     @Override
-    public DefaultChangeComputerBuilder<I, T, R> withKeyMapper(KeyMapper<T, I> keyMapper) {
+    public DefaultChangeComputerBuilder<I, T, R> withKeyMapper(final KeyMapper<T, I> keyMapper) {
         this.keyMapper = keyMapper;
         return this;
     }
@@ -45,7 +45,7 @@ public final class DefaultChangeComputerBuilder<I, T, R> implements ChangeComput
      * {@inheritDoc}
      **/
     @Override
-    public DefaultChangeComputerBuilder<I, T, R> withChangeFactory(ChangeFactory<I, T, R> changeFactory) {
+    public DefaultChangeComputerBuilder<I, T, R> withChangeFactory(final ChangeFactory<I, T, R> changeFactory) {
         this.changeFactory = changeFactory;
         return this;
     }

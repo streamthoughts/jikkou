@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 )
 @SupportedResource(type = V1SchemaRegistryAclEntry.class)
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = "SchemaRegistryAclEntryChange"
 )
 public final class AivenSchemaRegistryAclEntryController implements Controller<V1SchemaRegistryAclEntry, ResourceChange> {

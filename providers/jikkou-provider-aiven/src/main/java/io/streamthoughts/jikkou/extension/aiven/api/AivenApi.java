@@ -9,6 +9,9 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 import io.streamthoughts.jikkou.extension.aiven.api.data.CompatibilityCheckResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaAclEntry;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaQuotaEntry;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoResponse;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoUpdate;
+import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicListResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
@@ -44,6 +47,7 @@ public interface AivenApi extends AutoCloseable {
      * SERVICE
      * ----------------------------------------------------------------------------------------------------------------
      */
+
     /**
      * Get service information
      *
@@ -249,6 +253,7 @@ public interface AivenApi extends AutoCloseable {
      * SCHEMA REGISTRY - COMPATIBILITY
      * ----------------------------------------------------------------------------------------------------------------
      */
+
     /**
      * Get configuration for Schema Registry subject
      *
@@ -304,6 +309,61 @@ public interface AivenApi extends AutoCloseable {
                                                                 @PathParam("subject_name") String subject,
                                                                 @PathParam("version_id") String versionId,
                                                                 @NotNull SubjectSchemaRegistration schema);
+
+    /*
+     * ----------------------------------------------------------------------------------------------------------------
+     * TOPICS
+     * ----------------------------------------------------------------------------------------------------------------
+     */
+
+    /**
+     * Get Kafka topic list
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @GET
+    @Path("/topic")
+    KafkaTopicListResponse getKafkaTopicList(@PathParam("project") String project,
+                                             @PathParam("service_name") String service);
+
+
+    /**
+     * Get Kafka topic list
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @GET
+    @Path("/topic/{topic_name}")
+    KafkaTopicInfoResponse getKafkaTopicInfo(@PathParam("project") String project,
+                                             @PathParam("service_name") String service,
+                                             @PathParam("topic_name") String topic);
+
+    /**
+     * Get Kafka topic list
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @DELETE
+    @Path("/topic/{topic_name}")
+    MessageErrorsResponse deleteKafkaTopicInfo(@PathParam("project") String project,
+                                               @PathParam("service_name") String service,
+                                               @PathParam("topic_name") String topic);
+
+    /**
+     * Update a Kafka topic×
+     *
+     * @param project Project name
+     * @param service Service name
+     */
+    @PUT
+    @Path("/topic/{topic_name}")
+    MessageErrorsResponse updateKafkaTopicInfo(@PathParam("project") String project,
+                                               @PathParam("service_name") String service,
+                                               @PathParam("topic_name") String topic,
+                                               KafkaTopicInfoUpdate payload);
 
     /**
      * Closes this client.

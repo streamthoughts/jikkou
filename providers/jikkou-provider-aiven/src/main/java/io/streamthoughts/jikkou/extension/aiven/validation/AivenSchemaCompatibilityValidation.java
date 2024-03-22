@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityVa
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_REGISTRY_API_VERSION,
+        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = ApiVersions.SCHEMA_REGISTRY_KIND
 )
 public class AivenSchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {

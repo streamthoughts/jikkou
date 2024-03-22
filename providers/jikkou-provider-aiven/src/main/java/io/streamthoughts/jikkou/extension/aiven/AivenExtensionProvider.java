@@ -6,7 +6,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven;
 
-import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_REGISTRY_API_VERSION;
+import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA1;
+import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA2;
 
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
@@ -25,14 +26,18 @@ import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenKafkaQuotaCollec
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenKafkaQuotaController;
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenKafkaTopicAclEntryCollector;
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenKafkaTopicAclEntryController;
+import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenKafkaTopicCollector;
+import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenKafkaTopicController;
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenSchemaRegistryAclEntryCollector;
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenSchemaRegistryAclEntryController;
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenSchemaRegistrySubjectCollector;
 import io.streamthoughts.jikkou.extension.aiven.reconciler.AivenSchemaRegistrySubjectController;
 import io.streamthoughts.jikkou.extension.aiven.validation.AivenSchemaCompatibilityValidation;
 import io.streamthoughts.jikkou.extension.aiven.validation.SchemaRegistryAclEntryValidation;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.spi.AbstractExtensionProvider;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,6 +60,8 @@ public final class AivenExtensionProvider extends AbstractExtensionProvider {
         registry.register(AivenKafkaQuotaCollector.class, AivenKafkaQuotaCollector::new);
         registry.register(AivenKafkaQuotaController.class, AivenKafkaQuotaController::new);
         registry.register(AivenSchemaCompatibilityValidation.class, AivenSchemaCompatibilityValidation::new);
+        registry.register(AivenKafkaTopicController.class, AivenKafkaTopicController::new);
+        registry.register(AivenKafkaTopicCollector.class, AivenKafkaTopicCollector::new);
     }
 
     /**
@@ -70,14 +77,25 @@ public final class AivenExtensionProvider extends AbstractExtensionProvider {
             V1KafkaQuotaList.class
         ).forEach(cls -> registerResource(registry, cls));
 
-        registry.register(V1SchemaRegistrySubject.class, KAFKA_REGISTRY_API_VERSION)
+        registry.register(V1SchemaRegistrySubject.class, KAFKA_AIVEN_V1BETA1)
             .setSingularName("avn-schemaregistrysubject")
             .setPluralName("avn-schemaregistrysubjects")
             .setShortNames(null);
 
         registry.register(GenericResourceChange.class, ResourceType.of(
             ResourceChange.getChangeKindFromResource(V1SchemaRegistrySubject.class),
-            KAFKA_REGISTRY_API_VERSION
+            KAFKA_AIVEN_V1BETA1
         ));
+
+        registry.register(V1KafkaTopic.class, KAFKA_AIVEN_V1BETA2)
+            .setSingularName("avn-kafkatopic")
+            .setPluralName("avn-kafkatopics")
+            .setShortNames(Set.of("avn-kt"));
+
+        registry.register(GenericResourceChange.class, ResourceType.of(
+            ResourceChange.getChangeKindFromResource(V1KafkaTopic.class),
+            KAFKA_AIVEN_V1BETA2
+        ));
+
     }
 }
