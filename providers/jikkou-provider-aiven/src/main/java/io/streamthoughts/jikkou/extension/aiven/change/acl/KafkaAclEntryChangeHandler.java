@@ -41,7 +41,7 @@ public abstract class KafkaAclEntryChangeHandler extends AbstractChangeHandler {
             return changes.stream()
                     .map(change -> executeAsync(
                             change,
-                            () -> api.deleteKafkaAclEntry(getEntry(change, KafkaAclEntry.class).id()))
+                            () -> api.addKafkaAclEntry(getEntry(change, KafkaAclEntry.class)))
                     )
                     .collect(Collectors.toList());
         }
