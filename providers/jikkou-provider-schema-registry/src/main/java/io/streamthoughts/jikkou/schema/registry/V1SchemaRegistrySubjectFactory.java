@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.schema.registry;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.SchemaRegistry;
@@ -36,7 +37,8 @@ public final class V1SchemaRegistrySubjectFactory {
 
     @NotNull
     public V1SchemaRegistrySubject createSchemaRegistrySubject(@NotNull SubjectSchemaVersion subjectSchema,
-                                                               @Nullable CompatibilityLevels compatibilityLevels) {
+                                                               @Nullable CompatibilityLevels compatibilityLevels,
+                                                               @Nullable Modes modes) {
         SchemaType schemaType = Optional.ofNullable(subjectSchema.schemaType())
                 .map(SchemaType::getForNameIgnoreCase)
                 .orElse(SchemaType.defaultType());
@@ -53,6 +55,10 @@ public final class V1SchemaRegistrySubjectFactory {
 
         if (compatibilityLevels != null) {
             specBuilder = specBuilder.withCompatibilityLevel(compatibilityLevels);
+        }
+
+        if (modes != null) {
+            specBuilder = specBuilder.withMode(modes);
         }
 
         V1SchemaRegistrySubject res = V1SchemaRegistrySubject

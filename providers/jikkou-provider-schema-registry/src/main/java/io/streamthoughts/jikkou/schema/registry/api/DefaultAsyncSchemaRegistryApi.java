@@ -6,12 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
+import io.streamthoughts.jikkou.schema.registry.api.data.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -102,6 +97,21 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
     public CompletableFuture<CompatibilityObject> deleteSubjectCompatibilityLevel(@NotNull final String subject) {
         return CompletableFuture.supplyAsync(() -> api.deleteConfigCompatibility(subject));
 
+    }
+
+    @Override
+    public CompletableFuture<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal) {
+        return CompletableFuture.supplyAsync(() -> api.getMode(subject, defaultToGlobal));
+    }
+
+    @Override
+    public CompletableFuture<ModeObject> updateSubjectMode(@NotNull String subject, @NotNull ModeObject mode) {
+        return CompletableFuture.supplyAsync(() -> api.updateMode(subject, mode));
+    }
+
+    @Override
+    public CompletableFuture<ModeObject> deleteSubjectMode(@NotNull final String subject) {
+        return CompletableFuture.supplyAsync(() -> api.deleteMode(subject));
     }
 
     /**

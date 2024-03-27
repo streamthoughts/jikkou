@@ -6,10 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_REFERENCES;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.*;
 
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -23,13 +20,11 @@ import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.data.*;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescription;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.util.List;
 import java.util.Objects;
@@ -69,6 +64,27 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                                 "Updated compatibility-level for Schema Registry subject '{}' to '{}'.",
                                 subjectName,
                                 compatibilityObject.compatibility());
+                    }
+                    return null;
+                });
+    }
+
+    protected CompletableFuture<Void> updateMode(final ResourceChange change) {
+        final Modes modes = StateChangeList
+                .of(change.getSpec().getChanges())
+                .getLast(DATA_MODE, TypeConverter.of(Modes.class))
+                .getAfter();
+
+        final String subjectName = change.getMetadata().getName();
+        LOG.info("Updating mode for Schema Registry subject '{}'.", subjectName);
+        return api
+                .updateSubjectMode(subjectName, new ModeObject(modes.name()))
+                .thenApply(modeObject -> {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info(
+                                "Updated mode for Schema Registry subject '{}' to '{}'.",
+                                subjectName,
+                                modeObject.mode());
                     }
                     return null;
                 });
@@ -146,6 +162,26 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                                 "Deleted compatibility-level for Schema Registry subject '{}' to '{}'.",
                                 change.getMetadata().getName(),
                                 compatibilityObject.compatibility());
+                    }
+                    return null;
+                });
+    }
+
+    protected CompletableFuture<Void> deleteMode(@NotNull ResourceChange change) {
+        final String subject = change.getMetadata().getName();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Deleting mode for Schema Registry subject '{}'.",
+                    subject
+            );
+        }
+        return api
+                .deleteSubjectMode(subject)
+                .thenApplyAsync(modeObject -> {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info(
+                                "Deleted mode for Schema Registry subject '{}' to '{}'.",
+                                change.getMetadata().getName(),
+                                modeObject.mode());
                     }
                     return null;
                 });

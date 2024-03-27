@@ -6,10 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change;
 
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_REFERENCES;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.*;
 
 import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
@@ -19,6 +16,7 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -130,6 +128,7 @@ class SchemaSubjectChangeComputerTest {
                                         "normalizeSchema", false
                                 ))
                                 .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
+                                .withChange(StateChange.none(DATA_MODE, null))
                                 .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
                                 .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
@@ -189,6 +188,67 @@ class SchemaSubjectChangeComputerTest {
                                         "normalizeSchema", false
                                 ))
                                 .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
+                                .withChange(StateChange.none(DATA_MODE, null))
+                                .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
+                                .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                                .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
+                                .build()
+                        )
+                        .build()
+        );
+        Assertions.assertEquals(expected, changes);
+    }
+
+    @Test
+    void shouldGetUpdateChangeForExistingSubjectGivenUpdatedMode() {
+        // Given
+        V1SchemaRegistrySubject before = V1SchemaRegistrySubject
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_SUBJECT)
+                        .build())
+                .withSpec(V1SchemaRegistrySubjectSpec
+                        .builder()
+                        .withSchemaType(SchemaType.AVRO)
+                        .withSchema(new SchemaHandle(SCHEMA_V1.toString()))
+                        .build())
+                .build();
+
+        V1SchemaRegistrySubject after = V1SchemaRegistrySubject
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_SUBJECT)
+                        .build())
+                .withSpec(V1SchemaRegistrySubjectSpec
+                        .builder()
+                        .withSchemaType(SchemaType.AVRO)
+                        .withMode(Modes.IMPORT)
+                        .withSchema(new SchemaHandle(SCHEMA_V1.toString()))
+                        .build())
+                .build();
+        // When
+        List<ResourceChange> changes = computer.computeChanges(List.of(before), List.of(after));
+
+        // Then
+        List<ResourceChange> expected = List.of(
+                GenericResourceChange
+                        .builder(V1SchemaRegistrySubject.class)
+                        .withMetadata(ObjectMeta
+                                .builder()
+                                .withName(TEST_SUBJECT)
+                                .build()
+                        )
+                        .withSpec(ResourceChangeSpec
+                                .builder()
+                                .withOperation(Operation.UPDATE)
+                                .withData(Map.of(
+                                        "permanentDelete", false,
+                                        "normalizeSchema", false
+                                ))
+                                .withChange(StateChange.create(DATA_MODE, Modes.IMPORT))
+                                .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
                                 .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
                                 .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
@@ -246,6 +306,7 @@ class SchemaSubjectChangeComputerTest {
                                         "normalizeSchema", false
                                 ))
                                 .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
+                                .withChange(StateChange.none(DATA_MODE, null))
                                 .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.update(
                                         DATA_SCHEMA,

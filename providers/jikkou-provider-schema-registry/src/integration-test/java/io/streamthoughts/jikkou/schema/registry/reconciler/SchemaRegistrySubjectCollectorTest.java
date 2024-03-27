@@ -12,6 +12,7 @@ import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.List;
@@ -38,9 +39,10 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldGetAllSchemasWithGlobalCompatibilityLevelTrue() {
+    public void shouldGetAllSchemasWithGlobalCompatibilityLevelAndGlobalModeTrue() {
         // Given
         collector.defaultToGlobalCompatibilityLevel(true);
+        collector.defaultToGlobalMode(true);
 
         // When
         List<V1SchemaRegistrySubject> resources = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
@@ -54,12 +56,14 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
         Assertions.assertEquals(TEST_SUBJECT, subject.getMetadata().getName());
         Assertions.assertEquals(SchemaType.AVRO, subject.getSpec().getSchemaType());
         Assertions.assertEquals(CompatibilityLevels.BACKWARD, subject.getSpec().getCompatibilityLevel());
+        Assertions.assertEquals(Modes.READWRITE, subject.getSpec().getMode());
     }
 
     @Test
-    public void shouldGetAllSchemasWithGlobalCompatibilityLevelFalse() {
+    public void shouldGetAllSchemasWithGlobalCompatibilityLevelAndGlobalModeFalse() {
         // Given
         collector.defaultToGlobalCompatibilityLevel(false);
+        collector.defaultToGlobalMode(false);
 
         // When
         List<V1SchemaRegistrySubject> resources = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
@@ -73,5 +77,6 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
         Assertions.assertEquals(TEST_SUBJECT, subject.getMetadata().getName());
         Assertions.assertEquals(SchemaType.AVRO, subject.getSpec().getSchemaType());
         Assertions.assertNull(subject.getSpec().getCompatibilityLevel());
+        Assertions.assertNull(subject.getSpec().getMode());
     }
 }
