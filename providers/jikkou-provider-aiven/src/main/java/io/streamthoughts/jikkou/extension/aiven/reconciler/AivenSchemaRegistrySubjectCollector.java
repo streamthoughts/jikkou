@@ -163,7 +163,7 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
                         () -> Pair.of(subjectSchemaVersion, api.getSchemaRegistrySubjectCompatibility(subject))))
                 .thenApply(pair ->
                         // Create SchemaRegistrySubject object
-                        factory.createSchemaRegistrySubject(pair._1().version(), pair._2().compatibilityLevel())
+                        factory.createSchemaRegistrySubject(pair._1().version(), pair._2().compatibilityLevel(), null)
                 );
     }
 }

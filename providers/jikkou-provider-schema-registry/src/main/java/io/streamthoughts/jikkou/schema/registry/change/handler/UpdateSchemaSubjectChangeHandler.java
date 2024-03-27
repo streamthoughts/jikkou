@@ -6,7 +6,10 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import static io.streamthoughts.jikkou.core.reconciler.Operation.*;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.CREATE;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.DELETE;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.*;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 
@@ -54,7 +57,7 @@ public final class UpdateSchemaSubjectChangeHandler
         List<ChangeResponse> results = new ArrayList<>();
         for (ResourceChange change : changes) {
             Mono<Void> mono = Mono.empty();
-
+            // COMPATIBILITY
             StateChange compatibilityLevels = StateChangeList
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_COMPATIBILITY_LEVEL);
@@ -67,6 +70,20 @@ public final class UpdateSchemaSubjectChangeHandler
                 mono = mono.then(deleteCompatibilityLevel(change));
             }
 
+            // MODE
+            StateChange modes = StateChangeList
+                .of(change.getSpec().getChanges())
+                .getLast(DATA_MODE);
+
+            if (UPDATE == modes.getOp() || CREATE == modes.getOp()) {
+                mono = mono.then(updateMode(change));
+            }
+
+            if (DELETE == modes.getOp()) {
+                mono = mono.then(deleteMode(change));
+            }
+
+            // SCHEMA
             StateChange schema = StateChangeList
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_SCHEMA);

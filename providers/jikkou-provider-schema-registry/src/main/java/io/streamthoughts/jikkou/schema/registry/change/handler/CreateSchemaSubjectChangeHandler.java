@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_MODE;
 
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
@@ -54,11 +55,19 @@ public final class CreateSchemaSubjectChangeHandler
             Mono<Void> mono = Mono.empty();
 
             StateChange compatibilityLevels = StateChangeList
-                    .of(change.getSpec().getChanges())
-                    .getLast(DATA_COMPATIBILITY_LEVEL);
+                .of(change.getSpec().getChanges())
+                .getLast(DATA_COMPATIBILITY_LEVEL);
 
             if (compatibilityLevels != null) {
                 mono = mono.then(updateCompatibilityLevel(change));
+            }
+
+            StateChange modes = StateChangeList
+                .of(change.getSpec().getChanges())
+                .getLast(DATA_MODE);
+
+            if (modes != null) {
+                mono = mono.then(updateMode(change));
             }
 
             mono = mono.then(registerSubjectVersion(change));
