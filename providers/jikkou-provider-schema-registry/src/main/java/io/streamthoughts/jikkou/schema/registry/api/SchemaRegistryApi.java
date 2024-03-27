@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.schema.registry.api;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.ModeObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.SchemaString;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
@@ -228,6 +229,44 @@ public interface SchemaRegistryApi extends AutoCloseable {
     @Path("config/{subject}")
     @Produces("application/vnd.schemaregistry.v1+json")
     CompatibilityObject deleteConfigCompatibility(@PathParam("subject") String subject);
+
+    /*
+     * ----------------------------------------------------------------------------------------------------------------
+     * MODE
+     * ----------------------------------------------------------------------------------------------------------------
+     */
+
+    /**
+     * Get the current mode for Schema Registry at a global level.
+     *
+     * @return the mode.
+     */
+    @GET
+    @Path("mode")
+    @Produces("application/vnd.schemaregistry.v1+json")
+    ModeObject getMode();
+
+    @GET
+    @Path("mode/{subject}")
+    @Produces("application/vnd.schemaregistry.v1+json")
+    ModeObject getMode(@PathParam("subject") String subject,
+                       @QueryParam("defaultToGlobal") @DefaultValue("false") boolean defaultToGlobal);
+
+    @PUT
+    @Path("mode/{subject}")
+    @Consumes({"application/vnd.schemaregistry.v1+json", "application/vnd.schemaregistry+json", "application/json"})
+    ModeObject updateMode(@PathParam("subject") String subject, ModeObject mode);
+
+    /**
+     * Deletes the specified subject-level mode and reverts to the global default.
+     *
+     * @param subject the name of the subject.
+     * @return the mode.
+     */
+    @DELETE
+    @Path("mode/{subject}")
+    @Produces("application/vnd.schemaregistry.v1+json")
+    ModeObject deleteMode(@PathParam("subject") String subject);
 
     /*
      * ----------------------------------------------------------------------------------------------------------------

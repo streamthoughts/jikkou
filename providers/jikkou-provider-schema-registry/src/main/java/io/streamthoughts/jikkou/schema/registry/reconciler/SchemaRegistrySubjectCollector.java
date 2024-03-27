@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
+import com.google.common.base.Strings;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -22,8 +23,11 @@ import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.ModeObject;
 import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubjectList;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
@@ -33,6 +37,8 @@ import reactor.core.publisher.Mono;
 
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistrySubjectCollector extends ContextualExtension implements Collector<V1SchemaRegistrySubject> {
+
+    public static final String EMPTY_STRING = "";
 
     public interface Config {
         ConfigProperty<Boolean> DEFAULT_GLOBAL_COMPATIBILITY_LEVEL = ConfigProperty
@@ -102,21 +108,33 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     private ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
                                                           @NotNull Flux<String> subjects,
                                                           @NotNull AsyncSchemaRegistryApi api) {
-        Flux<V1SchemaRegistrySubject> flux = subjects
-            // Get Schema Registry Latest Subject Version
-            .flatMap(api::getLatestSubjectSchema)
-            .onErrorResume(t -> t instanceof RestClientException rce && isNotFound(rce) ? Mono.empty() : Mono.error(t))
-            // Get Schema Registry Subject Compatibility
-            .flatMap(subjectSchemaVersion -> api
-                .getSubjectCompatibilityLevel(subjectSchemaVersion.subject(), Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration))
-                .map(compatibilityObject ->
-                    CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
-                .map(compatibilityLevels ->
-                    schemaRegistrySubjectFactory.createSchemaRegistrySubject(subjectSchemaVersion, compatibilityLevels))
-                .onErrorResume(t -> t instanceof RestClientException rce && isNotFound(rce) ?
-                    Mono.just(schemaRegistrySubjectFactory.createSchemaRegistrySubject(subjectSchemaVersion, null)) :
-                    Mono.error(t))
-            );
+        Flux<V1SchemaRegistrySubject> flux =
+            subjects
+                // Get Schema Registry Latest Subject Version
+                .flatMap(api::getLatestSubjectSchema)
+                .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404)
+                .flatMap(subjectSchemaVersion -> {
+                    // Get Schema Registry Subject Compatibility
+                    Mono<String> compatibilityMono =
+                        api.getSubjectCompatibilityLevel(
+                                subjectSchemaVersion.subject(),
+                                Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration)
+                            )
+                            .map(CompatibilityLevelObject::compatibilityLevel)
+                            .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404);
+                    // Get Schema Registry Subject Mode
+                    Mono<String> modeMono =
+                        api.getGlobalMode()
+                            .map(ModeObject::mode)
+                            .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404);
+
+                    return Mono.zip(compatibilityMono.defaultIfEmpty(EMPTY_STRING), modeMono.defaultIfEmpty(EMPTY_STRING))
+                        .map(tuple -> {
+                            CompatibilityLevels compatibilityLevel = Strings.isNullOrEmpty(tuple.getT1()) ? null : CompatibilityLevels.valueOf(tuple.getT1());
+                            Modes mode = Strings.isNullOrEmpty(tuple.getT1()) ? null : Modes.valueOf(tuple.getT2());
+                            return schemaRegistrySubjectFactory.createSchemaRegistrySubject(subjectSchemaVersion, compatibilityLevel, mode);
+                        });
+                });
         try {
             return new V1SchemaRegistrySubjectList.Builder().withItems(flux.collectList().block()).build();
         } catch (Exception e) {
@@ -134,5 +152,11 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     SchemaRegistrySubjectCollector prettyPrintSchema(final boolean prettyPrintSchema) {
         this.prettyPrintSchema = prettyPrintSchema;
         return this;
+    }
+    
+    private static <T> Mono<T> emptyOn404(Throwable t) {
+        return t instanceof RestClientException rce && isNotFound(rce)
+            ? Mono.empty()
+            : Mono.error(t);
     }
 }

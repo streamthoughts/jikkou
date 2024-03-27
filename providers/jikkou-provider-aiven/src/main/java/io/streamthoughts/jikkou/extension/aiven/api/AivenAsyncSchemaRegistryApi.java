@@ -8,7 +8,13 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 
 import io.streamthoughts.jikkou.extension.aiven.api.data.CompatibilityCheckResponse;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.data.*;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.ModeObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -47,9 +53,9 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     public Mono<List<Integer>> deleteSubjectVersions(@NotNull String subject,
                                                      boolean permanent) {
         return Mono.fromCallable(() -> {
-                    api.deleteSchemaRegistrySubject(subject);
-                    return Collections.emptyList();
-                }
+                api.deleteSchemaRegistrySubject(subject);
+                return Collections.emptyList();
+            }
         );
     }
 
@@ -62,12 +68,12 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
                                                         boolean normalize) {
         // Drop references - not supported through the Aiven's API.
         SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
-                schema.schema(),
-                schema.schemaType(),
-                null
+            schema.schema(),
+            schema.schemaType(),
+            null
         );
         return Mono.fromCallable(
-                () -> new SubjectSchemaId(api.registerSchemaRegistrySubjectVersion(subject, registration).version())
+            () -> new SubjectSchemaId(api.registerSchemaRegistrySubjectVersion(subject, registration).version())
         );
     }
 
@@ -77,7 +83,7 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     @Override
     public Mono<SubjectSchemaVersion> getLatestSubjectSchema(@NotNull String subject) {
         return Mono.fromCallable(
-                () -> api.getSchemaRegistryLatestSubjectVersion(subject).version()
+            () -> api.getSchemaRegistryLatestSubjectVersion(subject).version()
         );
     }
 
@@ -87,7 +93,7 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     @Override
     public Mono<CompatibilityLevelObject> getGlobalCompatibility() {
         return Mono.fromCallable(
-                () -> new CompatibilityLevelObject(api.getSchemaRegistryGlobalCompatibility().compatibilityLevel().name())
+            () -> new CompatibilityLevelObject(api.getSchemaRegistryGlobalCompatibility().compatibilityLevel().name())
         );
     }
 
@@ -98,7 +104,7 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     public Mono<CompatibilityLevelObject> getSubjectCompatibilityLevel(@NotNull String subject,
                                                                        boolean defaultToGlobal) {
         return Mono.fromCallable(
-                () -> new CompatibilityLevelObject(api.getSchemaRegistrySubjectCompatibility(subject).compatibilityLevel().name())
+            () -> new CompatibilityLevelObject(api.getSchemaRegistrySubjectCompatibility(subject).compatibilityLevel().name())
         );
     }
 
@@ -109,10 +115,10 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     public Mono<CompatibilityObject> updateSubjectCompatibilityLevel(@NotNull String subject,
                                                                      @NotNull CompatibilityObject compatibility) {
         return Mono.fromCallable(
-                () -> {
-                    api.updateSchemaRegistrySubjectCompatibility(subject, compatibility);
-                    return new CompatibilityObject(compatibility.compatibility());
-                }
+            () -> {
+                api.updateSchemaRegistrySubjectCompatibility(subject, compatibility);
+                return new CompatibilityObject(compatibility.compatibility());
+            }
         );
     }
 
@@ -122,8 +128,8 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     @Override
     public Mono<CompatibilityObject> deleteSubjectCompatibilityLevel(@NotNull String subject) {
         throw new AivenApiClientException(
-                "Deleting configuration for Schema Registry subject is not supported by " +
-                        "the Aiven API (for more information: https://api.aiven.io/doc/)."
+            "Deleting configuration for Schema Registry subject is not supported by " +
+                "the Aiven API (for more information: https://api.aiven.io/doc/)."
         );
     }
 
@@ -136,13 +142,13 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
                                                       boolean verbose,
                                                       @NotNull SubjectSchemaRegistration schema) {
         return Mono.fromCallable(
-                () -> {
-                    CompatibilityCheckResponse response = api.checkSchemaRegistryCompatibility(subject, version, schema);
-                    return new CompatibilityCheck(
-                            response.isCompatible(),
-                            Optional.ofNullable(response.message()).map(List::of).orElse(Collections.emptyList())
-                    );
-                }
+            () -> {
+                CompatibilityCheckResponse response = api.checkSchemaRegistryCompatibility(subject, version, schema);
+                return new CompatibilityCheck(
+                    response.isCompatible(),
+                    Optional.ofNullable(response.message()).map(List::of).orElse(Collections.emptyList())
+                );
+            }
         );
     }
 
@@ -162,5 +168,37 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     @Override
     public void close() {
         api.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public Mono<ModeObject> getGlobalMode() {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public Mono<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal) {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public Mono<ModeObject> updateSubjectMode(@NotNull String subject, @NotNull ModeObject mode) {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public Mono<ModeObject> deleteSubjectMode(@NotNull String subject) {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
     }
 }

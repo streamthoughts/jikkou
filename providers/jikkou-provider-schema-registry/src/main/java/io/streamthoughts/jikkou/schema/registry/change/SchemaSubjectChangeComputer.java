@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<String, V1SchemaRegistrySubject> {
 
     public static final String DATA_COMPATIBILITY_LEVEL = "compatibilityLevel";
+    public static final String DATA_MODE = "mode";
     public static final String DATA_SCHEMA = "schema";
     public static final String DATA_SCHEMA_TYPE = "schemaType";
     public static final String DATA_REFERENCES = "references";
@@ -76,6 +77,11 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
                     StateChange.create(DATA_COMPATIBILITY_LEVEL, after.getSpec().getCompatibilityLevel()));
             }
 
+            if (after.getSpec().getMode() != null) {
+                specBuilder = specBuilder.withChange(
+                    StateChange.create(DATA_MODE, after.getSpec().getMode()));
+            }
+
             return GenericResourceChange
                 .builder(V1SchemaRegistrySubject.class)
                 .withMetadata(after.getMetadata())
@@ -86,6 +92,7 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         @Override
         public ResourceChange createChangeForUpdate(String key, V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
             StateChangeList<StateChange> changes = StateChangeList.emptyList()
+                .with(getChangeForMode(before, after))
                 .with(getChangeForCompatibility(before, after))
                 .with(getChangeForSchema(before, after))
                 .with(getChangeForSchemaType(before, after))
@@ -148,6 +155,16 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
                 DATA_COMPATIBILITY_LEVEL,
                 Optional.ofNullable(before).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null),
                 Optional.ofNullable(after).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null)
+            );
+        }
+
+        @NotNull
+        private StateChange getChangeForMode(V1SchemaRegistrySubject before,
+                                             V1SchemaRegistrySubject after) {
+            return StateChange.with(
+                    DATA_MODE,
+                    Optional.ofNullable(before).map(o -> o.getSpec().getMode()).orElse(null),
+                    Optional.ofNullable(after).map(o -> o.getSpec().getMode()).orElse(null)
             );
         }
 

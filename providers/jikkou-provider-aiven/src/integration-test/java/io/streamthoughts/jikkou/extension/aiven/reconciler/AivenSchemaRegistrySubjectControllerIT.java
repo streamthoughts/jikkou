@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_MODE;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_REFERENCES;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
@@ -44,40 +45,40 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
     public static final String TEST_SUBJECT = "test";
 
     public static final String AVRO_SCHEMA_V1 = """
-            {
-              "namespace": "example.avro",
-              "type": "record",
-              "name": "User",
-              "fields" : [ {
-                "name" : "name",
-                "type" : "string"
-              } ]
-            }
-            """;
+        {
+          "namespace": "example.avro",
+          "type": "record",
+          "name": "User",
+          "fields" : [ {
+            "name" : "name",
+            "type" : "string"
+          } ]
+        }
+        """;
 
     public static final String AVRO_SCHEMA_V2 = """
-            {
-              "namespace": "example.avro",
-              "type": "record",
-              "name": "User",
-              "fields": [
-                 {"name": "name", "type": "string"},
-                 {"name": "favorite_color", "type": "string"}
-              ]
-            }
-            """;
+        {
+          "namespace": "example.avro",
+          "type": "record",
+          "name": "User",
+          "fields": [
+             {"name": "name", "type": "string"},
+             {"name": "favorite_color", "type": "string"}
+          ]
+        }
+        """;
 
     @Test
     void shouldCreateSchemaRegistrySubject() {
         // Given
         enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {
-                            "subjects": [ ]
-                        }
-                        """)
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                    "subjects": [ ]
+                }
+                """)
         );
         // Update Config
         enqueueResponse(new MockResponse()
@@ -98,53 +99,53 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
                         """)
         );
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject
+            .builder()
+            .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_SUBJECT)
+                .build()
+            )
+            .withSpec(V1SchemaRegistrySubjectSpec
                 .builder()
-                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_SUBJECT)
-                        .build()
-                )
-                .withSpec(V1SchemaRegistrySubjectSpec
-                        .builder()
-                        .withSchemaType(SchemaType.AVRO)
-                        .withSchema(new SchemaHandle(AVRO_SCHEMA_V1))
-                        .withCompatibilityLevel(CompatibilityLevels.BACKWARD)
-                        .build())
-                .build();
+                .withSchemaType(SchemaType.AVRO)
+                .withSchema(new SchemaHandle(AVRO_SCHEMA_V1))
+                .withCompatibilityLevel(CompatibilityLevels.BACKWARD)
+                .build())
+            .build();
 
         // When
         List<ChangeResult> results = api.reconcile(
-                        ResourceList.of(List.of(resource)),
-                        ReconciliationMode.CREATE,
-                        ReconciliationContext.builder().dryRun(false).build()
-                )
-                .results();
+                ResourceList.of(List.of(resource)),
+                ReconciliationMode.CREATE,
+                ReconciliationContext.builder().dryRun(false).build()
+            )
+            .results();
         // Then
         ChangeResult result = results.getFirst();
         ResourceChange actual = result.change();
         ResourceChange expected = GenericResourceChange
-                .builder(V1SchemaRegistrySubject.class)
-                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(TEST_SUBJECT)
-                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, 1)
-                        .build()
-                )
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(Operation.CREATE)
-                        .withData(Map.of(
-                                "permanentDelete", false,
-                                "normalizeSchema", false
-                        ))
-                        .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
-                        .withChange(StateChange.create(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO)))
-                        .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
-                        .withChange(StateChange.create(DATA_REFERENCES, Collections.emptyList()))
-                        .build()
-                )
-                .build();
+            .builder(V1SchemaRegistrySubject.class)
+            .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
+            .withMetadata(ObjectMeta
+                .builder()
+                .withName(TEST_SUBJECT)
+                .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, 1)
+                .build()
+            )
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.CREATE)
+                .withData(Map.of(
+                    "permanentDelete", false,
+                    "normalizeSchema", false
+                ))
+                .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
+                .withChange(StateChange.create(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO)))
+                .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                .withChange(StateChange.create(DATA_REFERENCES, Collections.emptyList()))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(expected, actual);
     }
 
@@ -152,96 +153,94 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
     void shouldUpdateSchemaRegistrySubject() {
         // Given
         enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {
-                            "subjects": [ "test" ]
-                        }
-                        """)
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                    "subjects": [ "test" ]
+                }
+                """)
         );
         enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {
-                        	"version": {
-                        		"subject": "test",
-                        		"id": 1,
-                        		"schemaType": "AVRO",
-                        		"schema": "{\\"namespace\\": \\"example.avro\\",\\"type\\": \\"record\\",\\"name\\": \\"User\\",\\"fields\\": [{\\"name\\": \\"name\\",\\"type\\": \\"string\\"}]}"
-                        	}
-                        }
-                        """)
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                	"version": {
+                		"subject": "test",
+                		"id": 1,
+                		"schemaType": "AVRO",
+                		"schema": "{\\"namespace\\": \\"example.avro\\",\\"type\\": \\"record\\",\\"name\\": \\"User\\",\\"fields\\": [{\\"name\\": \\"name\\",\\"type\\": \\"string\\"}]}"
+                	}
+                }
+                """)
         );
         enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {
-                          "compatibilityLevel": "BACKWARD"
-                        }
-                        """)
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                  "compatibilityLevel": "BACKWARD"
+                }
+                """)
         );
         enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {
-                            "version": 1
-                        }
-                        """)
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                    "version": 1
+                }
+                """)
         );
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject.builder()
-                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_SUBJECT)
-                        .build()
-                )
-                .withSpec(V1SchemaRegistrySubjectSpec
-                        .builder()
-                        .withSchemaType(SchemaType.AVRO)
-                        .withSchema(new SchemaHandle(AVRO_SCHEMA_V2))
-                        .withCompatibilityLevel(CompatibilityLevels.BACKWARD)
-                        .build())
-                .build();
+            .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_SUBJECT)
+                .build()
+            )
+            .withSpec(V1SchemaRegistrySubjectSpec
+                .builder()
+                .withSchemaType(SchemaType.AVRO)
+                .withSchema(new SchemaHandle(AVRO_SCHEMA_V2))
+                .withCompatibilityLevel(CompatibilityLevels.BACKWARD)
+                .build())
+            .build();
 
         // When
-        List<ChangeResult> results = api.reconcile
-                (
-                        ResourceList.of(List.of(resource)),
-                        ReconciliationMode.UPDATE,
-                        ReconciliationContext.builder().dryRun(false).build()
-                )
-                .results();
+        List<ChangeResult> results = api.reconcile(
+                ResourceList.of(List.of(resource)),
+                ReconciliationMode.UPDATE,
+                ReconciliationContext.builder().dryRun(false).build()
+            )
+            .results();
         // Then
         ChangeResult result = results.getFirst();
         ResourceChange actual = result.change();
         ResourceChange expected = GenericResourceChange
-                .builder(V1SchemaRegistrySubject.class)
-                .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(TEST_SUBJECT)
-                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, 1)
-                        .build()
-                )
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(Operation.UPDATE)
-                        .withData(Map.of(
-                                "permanentDelete", false,
-                                "normalizeSchema", false
-                        ))
-                        .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
-                        .withChange(StateChange.update(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO),  new SchemaAndType(AVRO_SCHEMA_V2, SchemaType.AVRO)))
-                        .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
-                        .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
-                        .build()
-                )
-                .build();
+            .builder(V1SchemaRegistrySubject.class)
+            .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
+            .withMetadata(ObjectMeta
+                .builder()
+                .withName(TEST_SUBJECT)
+                .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, 1)
+                .build()
+            )
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.UPDATE)
+                .withData(Map.of(
+                    "permanentDelete", false,
+                    "normalizeSchema", false
+                ))
+                .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
+                .withChange(StateChange.update(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO), new SchemaAndType(AVRO_SCHEMA_V2, SchemaType.AVRO)))
+                .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
+                .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
+                .withChange(StateChange.none(DATA_MODE, null))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(expected, actual);
-
-
     }
 }

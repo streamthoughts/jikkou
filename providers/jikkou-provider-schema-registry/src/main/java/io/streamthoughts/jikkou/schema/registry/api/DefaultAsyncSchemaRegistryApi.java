@@ -6,12 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
+import io.streamthoughts.jikkou.schema.registry.api.data.*;
 import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +99,21 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
 
     }
 
+    @Override
+    public Mono<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal) {
+        return Mono.fromCallable(() -> api.getMode(subject, defaultToGlobal));
+    }
+
+    @Override
+    public Mono<ModeObject> updateSubjectMode(@NotNull String subject, @NotNull ModeObject mode) {
+        return Mono.fromCallable(() -> api.updateMode(subject, mode));
+    }
+
+    @Override
+    public Mono<ModeObject> deleteSubjectMode(@NotNull final String subject) {
+        return Mono.fromCallable(() -> api.deleteMode(subject));
+    }
+
     /**
      * @see SchemaRegistryApi#deleteConfigCompatibility(String)
      */
@@ -115,6 +125,14 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
         return Mono.fromCallable(
                 () -> api.testCompatibility(subject, Integer.parseInt(version), verbose, schema)
         );
+    }
+
+    /**
+     * @see SchemaRegistryApi#getMode()
+     */
+    @Override
+    public Mono<ModeObject> getGlobalMode() {
+        return Mono.fromCallable(api::getMode);
     }
 
     /**

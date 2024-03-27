@@ -11,6 +11,7 @@ import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.models.SchemaRegistry;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
@@ -36,40 +37,45 @@ public final class V1SchemaRegistrySubjectFactory {
 
     @NotNull
     public V1SchemaRegistrySubject createSchemaRegistrySubject(@NotNull SubjectSchemaVersion subjectSchema,
-                                                               @Nullable CompatibilityLevels compatibilityLevels) {
+                                                               @Nullable CompatibilityLevels compatibilityLevels,
+                                                               @Nullable Modes modes) {
         SchemaType schemaType = Optional.ofNullable(subjectSchema.schemaType())
-                .map(SchemaType::getForNameIgnoreCase)
-                .orElse(SchemaType.defaultType());
+            .map(SchemaType::getForNameIgnoreCase)
+            .orElse(SchemaType.defaultType());
 
         V1SchemaRegistrySubjectSpec.V1SchemaRegistrySubjectSpecBuilder specBuilder = V1SchemaRegistrySubjectSpec
+            .builder()
+            .withSchemaRegistry(SchemaRegistry
                 .builder()
-                .withSchemaRegistry(SchemaRegistry
-                        .builder()
-                        .withVendor(schemaRegistryVendor)
-                        .build()
-                )
-                .withSchemaType(schemaType)
-                .withSchema(new SchemaHandle(subjectSchema.schema()));
+                .withVendor(schemaRegistryVendor)
+                .build()
+            )
+            .withSchemaType(schemaType)
+            .withSchema(new SchemaHandle(subjectSchema.schema()));
 
         if (compatibilityLevels != null) {
             specBuilder = specBuilder.withCompatibilityLevel(compatibilityLevels);
         }
 
+        if (modes != null) {
+            specBuilder = specBuilder.withMode(modes);
+        }
+
         V1SchemaRegistrySubject res = V1SchemaRegistrySubject
+            .builder()
+            .withMetadata(ObjectMeta
                 .builder()
-                .withMetadata(ObjectMeta
-                        .builder()
-                        .withName(subjectSchema.subject())
-                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_URL,
-                                schemaRegistryUrl)
-                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_VERSION,
-                                subjectSchema.version())
-                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID,
-                                subjectSchema.id())
-                        .build()
-                )
-                .withSpec(specBuilder.build())
-                .build();
+                .withName(subjectSchema.subject())
+                .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_URL,
+                    schemaRegistryUrl)
+                .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_VERSION,
+                    subjectSchema.version())
+                .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID,
+                    subjectSchema.id())
+                .build()
+            )
+            .withSpec(specBuilder.build())
+            .build();
 
         if (prettyPrintSchema) {
             return SchemaSubjectPrettyPrinter.prettyPrintSchema(res);
