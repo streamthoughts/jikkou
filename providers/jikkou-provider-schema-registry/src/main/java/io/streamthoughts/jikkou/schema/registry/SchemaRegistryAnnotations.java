@@ -6,7 +6,10 @@
  */
 package io.streamthoughts.jikkou.schema.registry;
 
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 
 public final class SchemaRegistryAnnotations {
@@ -35,5 +38,19 @@ public final class SchemaRegistryAnnotations {
 
     public boolean useCanonicalFingerPrint() {
         return CoreAnnotations.isAnnotatedWith(resource, SCHEMA_REGISTRY_USE_CANONICAL_FINGERPRINT);
+    }
+
+    public String schemaId() {
+        return HasMetadata.getMetadataAnnotation(resource, SCHEMA_REGISTRY_SCHEMA_ID)
+            .map(NamedValue::getValue)
+            .map(o -> TypeConverter.String().convertValue(o))
+            .orElse("");
+    }
+
+    public String version() {
+        return HasMetadata.getMetadataAnnotation(resource, SCHEMA_REGISTRY_SCHEMA_VERSION)
+            .map(NamedValue::getValue)
+            .map(o -> TypeConverter.String().convertValue(o))
+            .orElse("");
     }
 }

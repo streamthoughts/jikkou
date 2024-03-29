@@ -60,6 +60,8 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();
 
         SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
+                null,
+                null,
                 spec.getSchema().value(),
                 spec.getSchemaType(),
                 spec.getReferences()

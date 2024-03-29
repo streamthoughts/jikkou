@@ -153,7 +153,7 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
         this.prettyPrintSchema = prettyPrintSchema;
         return this;
     }
-    
+
     private static <T> Mono<T> emptyOn404(Throwable t) {
         return t instanceof RestClientException rce && isNotFound(rce)
             ? Mono.empty()

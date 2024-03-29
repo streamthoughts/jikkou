@@ -114,8 +114,12 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         SchemaSubjectChangeOptions options = getSchemaSubjectChangeOptions(change);
 
         final String subjectName = change.getMetadata().getName();
+        final String id = options.schemaId();
+        final String version = options.version();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Registering new Schema Registry subject version: subject '{}', optimization={}, schema={}.",
+            LOG.info("Registering new Schema Registry subject version: id '{}', version '{}' subject '{}', optimization={}, schema={}.",
+                    id,
+                    version,
                     subjectName,
                     options.normalizeSchema(),
                     schema
@@ -130,7 +134,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         return api
                 .registerSubjectVersion(
                         subjectName,
-                        new SubjectSchemaRegistration(schema, type, references),
+                        new SubjectSchemaRegistration(id, version, schema, type, references),
                         options.normalizeSchema()
                 )
                 .handle((subjectSchemaId, sink) -> {
