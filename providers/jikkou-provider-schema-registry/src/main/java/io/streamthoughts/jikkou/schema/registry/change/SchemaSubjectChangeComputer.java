@@ -117,7 +117,9 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         private SchemaSubjectChangeOptions getOptions(@NotNull V1SchemaRegistrySubject subject) {
             return new SchemaSubjectChangeOptions(
                     SchemaRegistryAnnotations.isAnnotatedWitPermananteDelete(subject),
-                    SchemaRegistryAnnotations.isAnnotatedWithNormalizeSchema(subject)
+                    SchemaRegistryAnnotations.isAnnotatedWithNormalizeSchema(subject),
+                    SchemaRegistryAnnotations.schemaId(subject),
+                    SchemaRegistryAnnotations.version(subject)
             );
         }
 

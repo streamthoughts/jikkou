@@ -52,7 +52,17 @@ public final class CreateSchemaSubjectChangeHandler
 
         List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
         for (ResourceChange change : changes) {
-            CompletableFuture<Void> future = registerSubjectVersion(change);
+            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+
+            StateChange modes = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_MODE);
+
+            if (modes != null) {
+                future = future.thenCompose(unused -> updateMode(change));
+            }
+
+            future.thenCompose(unused -> registerSubjectVersion(change));
 
             StateChange compatibilityLevels = StateChangeList
                     .of(change.getSpec().getChanges())
@@ -60,14 +70,6 @@ public final class CreateSchemaSubjectChangeHandler
 
             if (compatibilityLevels != null) {
                 future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
-            }
-
-            StateChange modes = StateChangeList
-                    .of(change.getSpec().getChanges())
-                    .getLast(DATA_MODE);
-
-            if (modes != null) {
-                future = future.thenComposeAsync(unused -> updateMode(change));
             }
 
             results.add(toChangeResponse(change, future));

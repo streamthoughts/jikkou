@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
@@ -16,6 +17,8 @@ import java.util.List;
 @Reflectable
 public final class SubjectSchemaRegistration {
 
+    private final String id;
+    private final String version;
     private final String schema;
     private final SchemaType schemaType;
     private final List<SubjectSchemaReference> references;
@@ -26,9 +29,11 @@ public final class SubjectSchemaRegistration {
      * @param schema     subject under which the schema will be registered.
      * @param schemaType the schema format.
      */
-    public SubjectSchemaRegistration(String schema,
+    public SubjectSchemaRegistration(String id,
+                                     String version,
+                                     String schema,
                                      SchemaType schemaType) {
-        this(schema, schemaType, Collections.emptyList());
+        this(id, version, schema, schemaType, Collections.emptyList());
     }
 
     /**
@@ -39,13 +44,25 @@ public final class SubjectSchemaRegistration {
      * @param references specifies the names of referenced schemas.
      */
     @JsonCreator
-    public SubjectSchemaRegistration(@JsonProperty("schema") String schema,
+    public SubjectSchemaRegistration(@JsonProperty("id") String id,
+                                     @JsonProperty("version") String version,
+                                     @JsonProperty("schema") String schema,
                                      @JsonProperty("schemaType") SchemaType schemaType,
                                      @JsonProperty("references") List<SubjectSchemaReference> references) {
+        this.id = id;
+        this.version = version;
         this.schema = schema;
         this.schemaType = schemaType;
         this.references = references;
     }
+
+    @JsonProperty("id")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public String id() { return id; }
+
+    @JsonProperty("version")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public String version() { return version; }
 
     @JsonProperty("schema")
     public String schema() {

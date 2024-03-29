@@ -126,7 +126,7 @@ class AsyncSchemaRegistryApiTest {
         // When
         CompletableFuture<SubjectSchemaId> future = async.registerSubjectVersion(
                 TEST_SUBJECT,
-                new SubjectSchemaRegistration(AVRO_SCHEMA, SchemaType.AVRO),
+                new SubjectSchemaRegistration(null, null, AVRO_SCHEMA, SchemaType.AVRO),
                 true
         );
 
@@ -213,7 +213,7 @@ class AsyncSchemaRegistryApiTest {
                 TEST_SUBJECT,
                 "-1",
                 true,
-                new SubjectSchemaRegistration(AVRO_SCHEMA, SchemaType.AVRO)
+                new SubjectSchemaRegistration(null, null, AVRO_SCHEMA, SchemaType.AVRO)
         );
 
         // Then
@@ -230,7 +230,7 @@ class AsyncSchemaRegistryApiTest {
                 TEST_SUBJECT,
                 "-1",
                 true,
-                new SubjectSchemaRegistration(AVRO_SCHEMA_NOT_COMPATIBLE, SchemaType.AVRO)
+                new SubjectSchemaRegistration(null, null, AVRO_SCHEMA_NOT_COMPATIBLE, SchemaType.AVRO)
         );
 
         // Then

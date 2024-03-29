@@ -23,7 +23,10 @@ package io.streamthoughts.jikkou.schema.registry;/*
  * limitations under the License.
  */
 
+import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
+import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 
 public final class SchemaRegistryAnnotations {
@@ -41,5 +44,19 @@ public final class SchemaRegistryAnnotations {
 
     public static boolean isAnnotatedWitPermananteDelete(V1SchemaRegistrySubject subject) {
         return CoreAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_PERMANANTE_DELETE);
+    }
+
+    public static String schemaId(V1SchemaRegistrySubject subject) {
+        return HasMetadata.getMetadataAnnotation(subject, JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID)
+                .map(NamedValue::getValue)
+                .map(o -> TypeConverter.String().convertValue(o))
+                .orElse("");
+    }
+
+    public static String version(V1SchemaRegistrySubject subject) {
+        return HasMetadata.getMetadataAnnotation(subject, JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_VERSION)
+                .map(NamedValue::getValue)
+                .map(o -> TypeConverter.String().convertValue(o))
+                .orElse("");
     }
 }
