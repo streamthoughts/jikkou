@@ -16,12 +16,16 @@ import java.beans.ConstructorProperties;
 @Reflectable
 public record SchemaSubjectChangeOptions(
         @JsonProperty("permanentDelete") boolean permanentDelete,
-        @JsonProperty("normalizeSchema") boolean normalizeSchema
+        @JsonProperty("normalizeSchema") boolean normalizeSchema,
+        @JsonProperty("schemaId") String schemaId,
+        @JsonProperty("version") String version
 ) {
 
     @ConstructorProperties({
             "permanentDelete",
-            "normalizeSchema"
+            "normalizeSchema",
+            "schemaId",
+            "version"
     })
     public SchemaSubjectChangeOptions {
 

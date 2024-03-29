@@ -66,8 +66,10 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     public Mono<SubjectSchemaId> registerSubjectVersion(@NotNull String subject,
                                                         @NotNull SubjectSchemaRegistration schema,
                                                         boolean normalize) {
-        // Drop references - not supported through the Aiven's API.
+        // Drop id, version, and references - not supported through the Aiven's API.
         SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
+            null,
+            null,
             schema.schema(),
             schema.schemaType(),
             null

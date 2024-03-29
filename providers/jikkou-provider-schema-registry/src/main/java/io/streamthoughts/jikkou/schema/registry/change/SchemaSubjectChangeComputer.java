@@ -116,7 +116,9 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
             SchemaRegistryAnnotations annotations = new SchemaRegistryAnnotations(subject);
             return new SchemaSubjectChangeOptions(
                 annotations.permananteDelete(),
-                annotations.normalizeSchema()
+                annotations.normalizeSchema(),
+                annotations.schemaId(),
+                annotations.version()
             );
         }
 

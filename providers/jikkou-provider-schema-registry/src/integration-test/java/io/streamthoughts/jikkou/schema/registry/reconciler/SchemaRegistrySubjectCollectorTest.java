@@ -26,7 +26,7 @@ class SchemaRegistrySubjectCollectorTest extends BaseExtensionProviderIT {
         AsyncSchemaRegistryApi api = getAsyncSchemaRegistryApi();
         api.registerSubjectVersion(
                 TEST_SUBJECT,
-                new SubjectSchemaRegistration(AVRO_SCHEMA, SchemaType.AVRO),
+                new SubjectSchemaRegistration(null, null, AVRO_SCHEMA, SchemaType.AVRO),
                 false
         ).block();
     }

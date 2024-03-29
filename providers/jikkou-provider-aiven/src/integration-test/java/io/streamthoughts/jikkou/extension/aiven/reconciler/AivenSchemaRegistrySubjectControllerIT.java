@@ -137,7 +137,9 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
                 .withOperation(Operation.CREATE)
                 .withData(Map.of(
                     "permanentDelete", false,
-                    "normalizeSchema", false
+                    "normalizeSchema", false,
+                    "schemaId", "",
+                    "version", ""
                 ))
                 .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
                 .withChange(StateChange.create(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO)))
@@ -231,7 +233,9 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
                 .withOperation(Operation.UPDATE)
                 .withData(Map.of(
                     "permanentDelete", false,
-                    "normalizeSchema", false
+                    "normalizeSchema", false,
+                    "schemaId", "",
+                    "version", ""
                 ))
                 .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
                 .withChange(StateChange.update(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO), new SchemaAndType(AVRO_SCHEMA_V2, SchemaType.AVRO)))

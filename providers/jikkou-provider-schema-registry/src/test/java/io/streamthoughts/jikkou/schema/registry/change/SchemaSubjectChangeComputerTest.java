@@ -86,7 +86,9 @@ class SchemaSubjectChangeComputerTest {
                     .withOperation(Operation.CREATE)
                     .withData(Map.of(
                         "permanentDelete", false,
-                        "normalizeSchema", false
+                        "normalizeSchema", false,
+                        "schemaId", "",
+                        "version", ""
                     ))
                     .withChange(StateChange.create(DATA_SCHEMA, new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO)))
                     .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
@@ -131,7 +133,9 @@ class SchemaSubjectChangeComputerTest {
                     .withOperation(Operation.NONE)
                     .withData(Map.of(
                         "permanentDelete", false,
-                        "normalizeSchema", false
+                        "normalizeSchema", false,
+                        "schemaId", "",
+                        "version", ""
                     ))
                     .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
                     .withChange(StateChange.none(DATA_SCHEMA, new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO)))
@@ -191,7 +195,9 @@ class SchemaSubjectChangeComputerTest {
                     .withOperation(Operation.UPDATE)
                     .withData(Map.of(
                         "permanentDelete", false,
-                        "normalizeSchema", false
+                        "normalizeSchema", false,
+                        "schemaId", "",
+                        "version", ""
                     ))
                     .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
                     .withChange(StateChange.none(DATA_SCHEMA, new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO)))
@@ -249,7 +255,9 @@ class SchemaSubjectChangeComputerTest {
                     .withOperation(Operation.UPDATE)
                     .withData(Map.of(
                         "permanentDelete", false,
-                        "normalizeSchema", false
+                        "normalizeSchema", false,
+                        "schemaId", "",
+                        "version", ""
                     ))
                     .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
                     .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))

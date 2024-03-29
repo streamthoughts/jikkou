@@ -6,7 +6,13 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import io.streamthoughts.jikkou.schema.registry.api.data.*;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.ModeObject;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +47,7 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      */
     @Override
     public Mono<List<Integer>> deleteSubjectVersions(@NotNull final String subject,
-                                                                  boolean permanent) {
+                                                     boolean permanent) {
         return Mono.fromCallable(() -> api.deleteSubjectVersions(subject, permanent));
     }
 
@@ -50,8 +56,8 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      */
     @Override
     public Mono<SubjectSchemaId> registerSubjectVersion(@NotNull final String subject,
-                                                                     @NotNull final SubjectSchemaRegistration schema,
-                                                                     boolean normalize) {
+                                                        @NotNull final SubjectSchemaRegistration schema,
+                                                        boolean normalize) {
         return Mono.fromCallable(() -> api.registerSchema(subject, schema, normalize));
     }
 
@@ -77,7 +83,7 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      */
     @Override
     public Mono<CompatibilityLevelObject> getSubjectCompatibilityLevel(@NotNull final String subject,
-                                                                                    boolean defaultToGlobal) {
+                                                                       boolean defaultToGlobal) {
         return Mono.fromCallable(() -> api.getConfigCompatibility(subject, defaultToGlobal));
     }
 
@@ -86,7 +92,7 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      */
     @Override
     public Mono<CompatibilityObject> updateSubjectCompatibilityLevel(@NotNull final String subject,
-                                                                                  @NotNull final CompatibilityObject compatibility) {
+                                                                     @NotNull final CompatibilityObject compatibility) {
         return Mono.fromCallable(() -> api.updateConfigCompatibility(subject, compatibility));
     }
 
@@ -119,11 +125,11 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      */
     @Override
     public Mono<CompatibilityCheck> testCompatibility(@NotNull final String subject,
-                                                                   String version,
-                                                                   boolean verbose,
-                                                                   @NotNull final SubjectSchemaRegistration schema) {
+                                                      String version,
+                                                      boolean verbose,
+                                                      @NotNull final SubjectSchemaRegistration schema) {
         return Mono.fromCallable(
-                () -> api.testCompatibility(subject, Integer.parseInt(version), verbose, schema)
+            () -> api.testCompatibility(subject, Integer.parseInt(version), verbose, schema)
         );
     }
 
