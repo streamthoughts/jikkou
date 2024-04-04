@@ -23,7 +23,7 @@
 
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <reactor-core.version>3.6.2</reactor-core.version>
+        <reactor-core.version>3.6.4</reactor-core.version>
     </properties>
 
     <dependencies>
