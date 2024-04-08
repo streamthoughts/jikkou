@@ -31,7 +31,7 @@
         <micronaut-maven-plugin.version>4.0.7</micronaut-maven-plugin.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <micronaut-serde-processor.version>1.5.3</micronaut-serde-processor.version>
-        <micronaut-security.version>4.1.0</micronaut-security.version>
+        <micronaut-security.version>4.7.0</micronaut-security.version>
         <micronaut.runtime>netty</micronaut.runtime>
         <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouApiServer</exec.mainClass>
         <!-- Additional -->
