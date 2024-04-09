@@ -107,7 +107,8 @@ public class SchemaRegistrySubjectController
         // Get existing resources from the environment.
         SchemaRegistrySubjectCollector collector = new SchemaRegistrySubjectCollector(configuration)
             .prettyPrintSchema(false)
-            .defaultToGlobalCompatibilityLevel(false);
+            .defaultToGlobalCompatibilityLevel(false)
+            .defaultToGlobalMode(false);
 
         List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
             .filter(context.selector()::apply)

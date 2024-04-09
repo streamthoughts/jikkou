@@ -8,6 +8,7 @@ metadata:
     schemaregistry.jikkou.io/normalize-schema: true
 spec:
   compatibilityLevel: "FULL_TRANSITIVE"
+  mode: "IMPORT"
   schemaType: "AVRO"
   schema:
     $ref: classpath://datasets/avro-schema.avsc

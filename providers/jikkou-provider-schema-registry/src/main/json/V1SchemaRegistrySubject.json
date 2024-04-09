@@ -63,6 +63,11 @@
           "description": "The schema compatibility level for this subject.",
           "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels"
         },
+        "mode": {
+          "type": "string",
+          "description": "The mode for this subject: IMPORT, READONLY, READWRITE.",
+          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.Modes"
+        },
         "schemaRegistry": {
           "type": "object",
           "additionalProperties": {

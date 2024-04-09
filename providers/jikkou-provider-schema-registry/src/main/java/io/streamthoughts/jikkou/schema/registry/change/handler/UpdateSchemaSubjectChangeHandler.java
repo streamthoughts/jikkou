@@ -9,8 +9,7 @@ package io.streamthoughts.jikkou.schema.registry.change.handler;
 import static io.streamthoughts.jikkou.core.reconciler.Operation.CREATE;
 import static io.streamthoughts.jikkou.core.reconciler.Operation.DELETE;
 import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
-import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.*;
 
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
@@ -75,6 +74,18 @@ public final class UpdateSchemaSubjectChangeHandler
 
             if (DELETE == compatibilityLevels.getOp()) {
                 future = future.thenComposeAsync(unused -> deleteCompatibilityLevel(change));
+            }
+
+            StateChange modes = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_MODE);
+
+            if (UPDATE == modes.getOp() || CREATE == modes.getOp()) {
+                future = future.thenComposeAsync(unused -> updateMode(change));
+            }
+
+            if (DELETE == modes.getOp()) {
+                future = future.thenComposeAsync(unused -> deleteMode(change));
             }
             results.add(toChangeResponse(change, future));
         }

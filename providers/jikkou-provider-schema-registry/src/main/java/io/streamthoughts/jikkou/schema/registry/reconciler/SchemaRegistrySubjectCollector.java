@@ -7,7 +7,6 @@
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
-import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -22,8 +21,10 @@ import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
+import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubjectList;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
@@ -40,6 +41,8 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     private boolean prettyPrintSchema = true;
 
     private boolean defaultToGlobalCompatibilityLevel = true;
+
+    private boolean defaultToGlobalMode = true;
 
     private V1SchemaRegistrySubjectFactory schemaRegistrySubjectFactory;
 
@@ -115,12 +118,17 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
         return this;
     }
 
+    public SchemaRegistrySubjectCollector defaultToGlobalMode(final boolean defaultToGlobalMode) {
+        this.defaultToGlobalMode = defaultToGlobalMode;
+        return this;
+    }
+
     @NotNull
     private List<CompletableFuture<V1SchemaRegistrySubject>> getAllSchemaRegistrySubjectsAsync(final List<String> subjects,
                                                                                                final AsyncSchemaRegistryApi api) {
         return subjects.stream()
                 .map(subject -> getSchemaRegistrySubjectAsync(
-                        api, subject, defaultToGlobalCompatibilityLevel, schemaRegistrySubjectFactory))
+                        api, subject, defaultToGlobalCompatibilityLevel, defaultToGlobalMode, schemaRegistrySubjectFactory))
                 .toList();
     }
 
@@ -128,42 +136,53 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     private static CompletableFuture<V1SchemaRegistrySubject> getSchemaRegistrySubjectAsync(@NotNull AsyncSchemaRegistryApi api,
                                                                                             @NotNull String subject,
                                                                                             boolean defaultToGlobalCompatibilityLevel,
+                                                                                            boolean defaultToGlobalMode,
                                                                                             @NotNull V1SchemaRegistrySubjectFactory factory) {
 
-        return api
-                // Get Schema Registry Latest Subject Version
-                .getLatestSubjectSchema(subject)
-                // Get Schema Registry Subject Compatibility
-                .thenCompose(subjectSchemaVersion -> api
-                        .getSubjectCompatibilityLevel(subject, defaultToGlobalCompatibilityLevel)
-                        .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
-                        .exceptionally(t -> {
-                                    if (t.getCause() != null) t = t.getCause();
+        CompletableFuture<SubjectSchemaVersion> schemaSubjectFuture = api.getLatestSubjectSchema(subject);
+        CompletableFuture<CompatibilityLevels> compatibilityLevelsFuture = getSubjectCompatibilityLevel(api, subject, defaultToGlobalCompatibilityLevel)
+                .exceptionally(SchemaRegistrySubjectCollector::handleNotFound);
+        CompletableFuture<Modes> modesFuture = getSubjectMode(api, subject, defaultToGlobalMode)
+                .exceptionally(SchemaRegistrySubjectCollector::handleNotFound);
 
-                                    if (t instanceof RestClientException exception) {
-                                        if (exception.response()
-                                                .map(Response::getStatus)
-                                                .filter(status -> status.equals(404))
-                                                .isPresent()) {
-                                            return null;
-                                        }
-                                    }
-                                    if (t instanceof RuntimeException re) {
-                                        throw re;
-                                    }
-                                    throw new JikkouRuntimeException(t);
-                                }
-                        )
-                        .thenApply(compatibilityLevelObject ->
-                                Pair.of(subjectSchemaVersion, compatibilityLevelObject)
-                        )
-                )
-                // Create SchemaRegistrySubject object
-                .thenApply(tuple ->
-                        factory.createSchemaRegistrySubject(
-                                tuple._1(),
-                                tuple._2()
-                        )
-                );
+        return CompletableFuture.allOf(schemaSubjectFuture, compatibilityLevelsFuture, modesFuture)
+                .thenApplyAsync(it -> {
+                    SubjectSchemaVersion subjectSchema = schemaSubjectFuture.join();
+                    CompatibilityLevels compatibilityLevels = compatibilityLevelsFuture.join();
+                    Modes modes = modesFuture.join();
+
+                    return factory.createSchemaRegistrySubject(subjectSchema, compatibilityLevels, modes);
+                });
+    }
+
+    private static CompletableFuture<CompatibilityLevels> getSubjectCompatibilityLevel(@NotNull AsyncSchemaRegistryApi api,
+                                                                                       @NotNull String subject,
+                                                                                       boolean defaultToGlobalCompatibilityLevel) {
+        return api.getSubjectCompatibilityLevel(subject, defaultToGlobalCompatibilityLevel)
+                .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()));
+    }
+
+    private static CompletableFuture<Modes> getSubjectMode(@NotNull AsyncSchemaRegistryApi api,
+                                                           @NotNull String subject,
+                                                           boolean defaultToGlobalMode) {
+        return api.getSubjectMode(subject, defaultToGlobalMode)
+                .thenApply(modeObject -> Modes.valueOf(modeObject.mode()));
+    }
+
+    private static <T> T handleNotFound(Throwable t) {
+        if (t.getCause() != null) t = t.getCause();
+
+        if (t instanceof RestClientException exception) {
+            if (exception.response()
+                    .map(Response::getStatus)
+                    .filter(status -> status.equals(404))
+                    .isPresent()) {
+                return null;
+            }
+        }
+        if (t instanceof RuntimeException re) {
+            throw re;
+        }
+        throw new JikkouRuntimeException(t);
     }
 }

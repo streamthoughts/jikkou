@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
+import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_MODE;
 
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
@@ -51,7 +52,17 @@ public final class CreateSchemaSubjectChangeHandler
 
         List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
         for (ResourceChange change : changes) {
-            CompletableFuture<Void> future = registerSubjectVersion(change);
+            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+
+            StateChange modes = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_MODE);
+
+            if (modes != null) {
+                future = future.thenCompose(unused -> updateMode(change));
+            }
+
+            future.thenCompose(unused -> registerSubjectVersion(change));
 
             StateChange compatibilityLevels = StateChangeList
                     .of(change.getSpec().getChanges())

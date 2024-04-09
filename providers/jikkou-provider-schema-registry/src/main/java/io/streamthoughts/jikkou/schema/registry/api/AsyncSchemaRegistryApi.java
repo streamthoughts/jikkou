@@ -6,12 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
+import io.streamthoughts.jikkou.schema.registry.api.data.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
@@ -93,6 +88,34 @@ public interface AsyncSchemaRegistryApi extends AutoCloseable {
      * @return the compatibility level.
      */
     CompletableFuture<CompatibilityObject> deleteSubjectCompatibilityLevel(@NotNull String subject);
+
+    /**
+     * Gets mode level for the specified subject.
+     *
+     * @param subject         the name of the subject.
+     * @param defaultToGlobal flag to default to global mode.
+     * @return                the mode.
+     */
+    CompletableFuture<ModeObject> getSubjectMode(@NotNull String subject,
+                                                 boolean defaultToGlobal);
+
+    /**
+     * Updates mode for the specified subject.
+     *
+     * @param subject       the name of the subject.
+     * @param mode          the new mode for the subject.
+     * @return              the updated mode.
+     */
+    CompletableFuture<ModeObject> updateSubjectMode(@NotNull String subject,
+                                                    @NotNull ModeObject mode);
+
+    /**
+     * Deletes the specified subject-level mode and reverts to the global default.
+     *
+     * @param subject the name of the subject.
+     * @return        the mode.
+     */
+    CompletableFuture<ModeObject> deleteSubjectMode(@NotNull String subject);
 
     CompletableFuture<CompatibilityCheck> testCompatibility(@NotNull String subject,
                                                             String version,

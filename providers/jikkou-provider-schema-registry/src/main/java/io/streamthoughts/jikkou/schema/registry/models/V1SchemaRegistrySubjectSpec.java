@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.beans.ConstructorProperties;
@@ -31,6 +32,7 @@ import lombok.extern.jackson.Jacksonized;
 @Setter
 @JsonPropertyOrder({
     "compatibilityLevel",
+    "mode",
     "schemaRegistry",
     "schemaType",
     "schema",
@@ -48,6 +50,13 @@ public class V1SchemaRegistrySubjectSpec {
     @JsonProperty("compatibilityLevel")
     @JsonPropertyDescription("The schema compatibility level for this subject.")
     private CompatibilityLevels compatibilityLevel;
+    /**
+     * The mode for this subject: IMPORT, READONLY, READWRITE.
+     * 
+     */
+    @JsonProperty("mode")
+    @JsonPropertyDescription("The mode for this subject: IMPORT, READONLY, READWRITE.")
+    private Modes mode;
     @JsonProperty("schemaRegistry")
     private SchemaRegistry schemaRegistry;
     /**
@@ -77,6 +86,7 @@ public class V1SchemaRegistrySubjectSpec {
 
     /**
      * 
+     * @param mode
      * @param schema
      * @param schemaRegistry
      * @param references
@@ -85,14 +95,16 @@ public class V1SchemaRegistrySubjectSpec {
      */
     @ConstructorProperties({
         "compatibilityLevel",
+        "mode",
         "schemaRegistry",
         "schemaType",
         "schema",
         "references"
     })
-    public V1SchemaRegistrySubjectSpec(CompatibilityLevels compatibilityLevel, SchemaRegistry schemaRegistry, SchemaType schemaType, SchemaHandle schema, List<SubjectSchemaReference> references) {
+    public V1SchemaRegistrySubjectSpec(CompatibilityLevels compatibilityLevel, Modes mode, SchemaRegistry schemaRegistry, SchemaType schemaType, SchemaHandle schema, List<SubjectSchemaReference> references) {
         super();
         this.compatibilityLevel = compatibilityLevel;
+        this.mode = mode;
         this.schemaRegistry = schemaRegistry;
         this.schemaType = schemaType;
         this.schema = schema;
@@ -106,6 +118,15 @@ public class V1SchemaRegistrySubjectSpec {
     @JsonProperty("compatibilityLevel")
     public CompatibilityLevels getCompatibilityLevel() {
         return compatibilityLevel;
+    }
+
+    /**
+     * The mode for this subject: IMPORT, READONLY, READWRITE.
+     * 
+     */
+    @JsonProperty("mode")
+    public Modes getMode() {
+        return mode;
     }
 
     @JsonProperty("schemaRegistry")
@@ -144,6 +165,10 @@ public class V1SchemaRegistrySubjectSpec {
         sb.append('=');
         sb.append(((this.compatibilityLevel == null)?"<null>":this.compatibilityLevel));
         sb.append(',');
+        sb.append("mode");
+        sb.append('=');
+        sb.append(((this.mode == null)?"<null>":this.mode));
+        sb.append(',');
         sb.append("schemaRegistry");
         sb.append('=');
         sb.append(((this.schemaRegistry == null)?"<null>":this.schemaRegistry));
@@ -171,6 +196,7 @@ public class V1SchemaRegistrySubjectSpec {
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.mode == null)? 0 :this.mode.hashCode()));
         result = ((result* 31)+((this.schemaType == null)? 0 :this.schemaType.hashCode()));
         result = ((result* 31)+((this.schema == null)? 0 :this.schema.hashCode()));
         result = ((result* 31)+((this.schemaRegistry == null)? 0 :this.schemaRegistry.hashCode()));
@@ -188,7 +214,7 @@ public class V1SchemaRegistrySubjectSpec {
             return false;
         }
         V1SchemaRegistrySubjectSpec rhs = ((V1SchemaRegistrySubjectSpec) other);
-        return ((((((this.schemaType == rhs.schemaType)||((this.schemaType!= null)&&this.schemaType.equals(rhs.schemaType)))&&((this.schema == rhs.schema)||((this.schema!= null)&&this.schema.equals(rhs.schema))))&&((this.schemaRegistry == rhs.schemaRegistry)||((this.schemaRegistry!= null)&&this.schemaRegistry.equals(rhs.schemaRegistry))))&&((this.references == rhs.references)||((this.references!= null)&&this.references.equals(rhs.references))))&&((this.compatibilityLevel == rhs.compatibilityLevel)||((this.compatibilityLevel!= null)&&this.compatibilityLevel.equals(rhs.compatibilityLevel))));
+        return (((((((this.mode == rhs.mode)||((this.mode!= null)&&this.mode.equals(rhs.mode)))&&((this.schemaType == rhs.schemaType)||((this.schemaType!= null)&&this.schemaType.equals(rhs.schemaType))))&&((this.schema == rhs.schema)||((this.schema!= null)&&this.schema.equals(rhs.schema))))&&((this.schemaRegistry == rhs.schemaRegistry)||((this.schemaRegistry!= null)&&this.schemaRegistry.equals(rhs.schemaRegistry))))&&((this.references == rhs.references)||((this.references!= null)&&this.references.equals(rhs.references))))&&((this.compatibilityLevel == rhs.compatibilityLevel)||((this.compatibilityLevel!= null)&&this.compatibilityLevel.equals(rhs.compatibilityLevel))));
     }
 
 }

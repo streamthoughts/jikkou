@@ -8,12 +8,7 @@ package io.streamthoughts.jikkou.extension.aiven.api;
 
 import io.streamthoughts.jikkou.extension.aiven.api.data.CompatibilityCheckResponse;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
-import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
+import io.streamthoughts.jikkou.schema.registry.api.data.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -68,8 +63,10 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     public CompletableFuture<SubjectSchemaId> registerSubjectVersion(@NotNull String subject,
                                                                      @NotNull SubjectSchemaRegistration schema,
                                                                      boolean normalize) {
-        // Drop references - not supported through the Aiven's API.
+        // Drop id, version, and references - not supported through the Aiven's API.
         SubjectSchemaRegistration registration = new SubjectSchemaRegistration(
+                null,
+                null,
                 schema.schema(),
                 schema.schemaType(),
                 null
@@ -170,5 +167,20 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
     @Override
     public void close() {
         api.close();
+    }
+
+    @Override
+    public CompletableFuture<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal) {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
+    }
+
+    @Override
+    public CompletableFuture<ModeObject> updateSubjectMode(@NotNull String subject, @NotNull ModeObject mode) {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
+    }
+
+    @Override
+    public CompletableFuture<ModeObject> deleteSubjectMode(@NotNull String subject) {
+        throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
     }
 }

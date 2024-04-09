@@ -131,3 +131,5 @@ docs/node_modules
 docs/resources
 docs/public
 docs/public
+
+.sdkmanrc
