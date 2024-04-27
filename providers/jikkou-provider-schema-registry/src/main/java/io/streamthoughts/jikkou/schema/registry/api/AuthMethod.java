@@ -6,19 +6,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
-import java.util.Arrays;
-import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
-
 public enum AuthMethod {
     INVALID,
     BASICAUTH,
-    NONE;
-
-    public static AuthMethod getForNameIgnoreCase(final @NotNull String str) {
-        return Arrays.stream(AuthMethod.values())
-                .filter(e -> e.name().equals(str.toUpperCase(Locale.ROOT)))
-                .findFirst()
-                .orElse(AuthMethod.INVALID);
-    }
+    NONE,
+    SSL;
 }

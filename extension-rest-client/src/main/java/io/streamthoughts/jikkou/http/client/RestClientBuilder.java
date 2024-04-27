@@ -7,17 +7,27 @@
 package io.streamthoughts.jikkou.http.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.http.client.internal.ProxyInvocationHandler;
+import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
+import io.streamthoughts.jikkou.http.client.ssl.SSLContextFactory;
+import io.streamthoughts.jikkou.http.client.ssl.SSLUtils;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.ext.ContextResolver;
 import jakarta.ws.rs.ext.Provider;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,16 +37,27 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * This class is used to abstract the way a REST API is build based on a given interface.
  */
 public class RestClientBuilder {
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(RestClientBuilder.class);
+
+    public static final AllowAllHostNameVerifier NO_HOST_NAME_VERIFIER = new AllowAllHostNameVerifier();
 
     private URI baseUri;
 
@@ -47,6 +68,8 @@ public class RestClientBuilder {
     private boolean enableClientDebugging = false;
 
     private final ClientBuilder clientBuilder;
+
+    private SSLContext sslContext;
 
     private ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
 
@@ -98,6 +121,31 @@ public class RestClientBuilder {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    /**
+     * Sets the truststore.
+     *
+     * @return {@code this}.
+     */
+    public RestClientBuilder truststore(KeyStore keyStore) {
+        clientBuilder.trustStore(keyStore);
+        return this;
+    }
+
+    /**
+     * Sets the keystore.
+     *
+     * @return {@code this}.
+     */
+    public RestClientBuilder keystore(KeyStore keyStore, String password) {
+        clientBuilder.keyStore(keyStore, password);
+        return this;
+    }
+
+    public RestClientBuilder sslIgnoreHostnameVerification() {
+        clientBuilder.hostnameVerifier(NO_HOST_NAME_VERIFIER);
+        return this;
     }
 
     /**
@@ -166,6 +214,44 @@ public class RestClientBuilder {
         return this;
     }
 
+    public RestClientBuilder sslConfig(final SSLConfig sslConfig) {
+        TrustManager[] trustManagers;
+        try {
+            trustManagers = SSLUtils.createTrustManagers(
+                sslConfig.trustStoreLocation(),
+                sslConfig.trustStorePassword().toCharArray(),
+                sslConfig.trustStoreType(),
+                KeyManagerFactory.getDefaultAlgorithm()
+            );
+        } catch (CertificateException |
+                 NoSuchAlgorithmException |
+                 KeyStoreException |
+                 IOException e) {
+            LOG.error("Could not create trust managers for Client Certificate authentication.", e);
+            throw new JikkouRuntimeException(e);
+        }
+        KeyManager[] keyManagers;
+        try {
+            keyManagers = SSLUtils.createKeyManagers(
+                sslConfig.keyStoreLocation(),
+                sslConfig.keyStorePassword().toCharArray(),
+                sslConfig.keyStoreType(),
+                KeyManagerFactory.getDefaultAlgorithm()
+            );
+        } catch (CertificateException |
+                 NoSuchAlgorithmException |
+                 UnrecoverableKeyException |
+                 KeyStoreException |
+                 IOException e) {
+            LOG.error("Could not create key managers for Client Certificate authentication.", e);
+            throw new JikkouRuntimeException(e);
+        }
+        SSLContextFactory sslContextFactory = new SSLContextFactory();
+        clientBuilder.sslContext(sslContextFactory.getSSLContext(keyManagers, trustManagers));
+
+        return sslConfig.ignoreHostnameVerification() ? sslIgnoreHostnameVerification() : this;
+    }
+
     /**
      * Builds a new client for the given resource interface.
      *
@@ -225,4 +311,19 @@ public class RestClientBuilder {
             return mapper;
         }
     }
+
+    /**
+     * A {@link HostnameVerifier} that accept all certificates.
+     */
+    public static class AllowAllHostNameVerifier implements HostnameVerifier {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean verify(final String hostname, final SSLSession sslSession) {
+            return true;
+        }
+    }
+
 }
