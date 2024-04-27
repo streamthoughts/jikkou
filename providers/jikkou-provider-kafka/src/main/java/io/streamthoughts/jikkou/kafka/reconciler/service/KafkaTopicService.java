@@ -106,13 +106,17 @@ public final class KafkaTopicService {
                                            final Predicate<ConfigEntry> configEntryPredicate,
                                            boolean status) {
         int rf = computeReplicationFactor(description);
+        ObjectMeta.ObjectMetaBuilder objectMetaBuilder = ObjectMeta
+            .builder()
+            .withName(description.name());
+
+        if (!description.topicId().equals(Uuid.ZERO_UUID)) {
+            objectMetaBuilder = objectMetaBuilder
+                .withLabel(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_TOPIC_ID, description.topicId().toString());
+        }
+        
         V1KafkaTopic.V1KafkaTopicBuilder builder = V1KafkaTopic.builder()
-            .withMetadata(ObjectMeta
-                .builder()
-                .withName(description.name())
-                .withLabel(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_TOPIC_ID, description.topicId().toString())
-                .build()
-            )
+            .withMetadata(objectMetaBuilder.build())
             .withSpec(V1KafkaTopicSpec.builder()
                 .withPartitions(description.partitions().size())
                 .withReplicas((short) rf)
