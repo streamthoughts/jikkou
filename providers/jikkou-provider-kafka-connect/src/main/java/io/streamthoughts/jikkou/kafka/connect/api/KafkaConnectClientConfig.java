@@ -6,37 +6,40 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.api;
 
+import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.http.client.SslConfigSupport;
+import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
 import java.util.Objects;
 
 public class KafkaConnectClientConfig {
 
     public static final ConfigProperty<String> KAFKA_CONNECT_NAME = ConfigProperty
-            .ofString("name")
-            .description("Name of the kafka connect cluster.");
+        .ofString("name")
+        .description("Name of the kafka connect cluster.");
 
     public static final ConfigProperty<String> KAFKA_CONNECT_URL = ConfigProperty
-            .ofString("url")
-            .description("URL to establish connection to kafka connect cluster.");
+        .ofString("url")
+        .description("URL to establish connection to kafka connect cluster.");
 
     public static final ConfigProperty<String> KAFKA_CONNECT_AUTH_METHOD = ConfigProperty
-            .ofString("authMethod")
-            .orElse(AuthMethod.NONE.name())
-            .description("Method to use for authenticating on Kafka Connect cluster. Available values are: [none, basicauth]");
+        .ofString("authMethod")
+        .orElse(AuthMethod.NONE.name())
+        .description("Method to use for authenticating on Kafka Connect cluster. Available values are: [none, basicauth, ssl]");
 
     public static final ConfigProperty<String> KAFKA_CONNECT_BASIC_AUTH_USERNAME = ConfigProperty
-            .ofString("basicAuthUser")
-            .description("Use when 'kafkaConnect.authMethod' is 'basicauth' to specify the username for Authorization Basic header");
+        .ofString("basicAuthUser")
+        .description("Use when 'kafkaConnect.authMethod' is 'basicauth' to specify the username for Authorization Basic header");
 
     public static final ConfigProperty<String> KAFKA_CONNECT_BASIC_AUTH_PASSWORD = ConfigProperty
-            .ofString("basicAuthPassword")
-            .description("Use when 'kafkaConnect.authMethod' is 'basicauth' to specify the password for Authorization Basic header");
+        .ofString("basicAuthPassword")
+        .description("Use when 'kafkaConnect.authMethod' is 'basicauth' to specify the password for Authorization Basic header");
 
     public static final ConfigProperty<Boolean> KAFKA_CONNECT_DEBUG_LOGGING_ENABLED = ConfigProperty
-            .ofBoolean("debugLoggingEnabled")
-            .description("Enable debug logging.")
-            .orElse(false);
+        .ofBoolean("debugLoggingEnabled")
+        .description("Enable debug logging.")
+        .orElse(false);
 
     private final Configuration configuration;
 
@@ -58,7 +61,7 @@ public class KafkaConnectClientConfig {
     }
 
     public AuthMethod getAuthMethod() {
-        return AuthMethod.getForNameIgnoreCase(KAFKA_CONNECT_AUTH_METHOD.get(configuration));
+        return Enums.getForNameIgnoreCase(KAFKA_CONNECT_AUTH_METHOD.get(configuration), AuthMethod.class, AuthMethod.INVALID);
     }
 
     public String getBasicAuthUsername() {
@@ -77,7 +80,13 @@ public class KafkaConnectClientConfig {
         return KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration);
     }
 
-    /** {@inheritDoc} **/
+    public SSLConfig getSslConfig() {
+        return SslConfigSupport.getSslConfig(null, configuration);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,7 +95,9 @@ public class KafkaConnectClientConfig {
         return Objects.equals(configuration, that.configuration);
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public int hashCode() {
         return Objects.hash(configuration);

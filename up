@@ -5,7 +5,9 @@ set -e
 BASEDIR=$(dirname "$(readlink -f $0)")
 DOCKERDIR="$BASEDIR"
 
+if [ -z "$DOCKER_STACK" ]; then
 DOCKER_STACK="$DOCKERDIR/docker-compose.yml"
+fi
 
 line() {
   echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------\n"
