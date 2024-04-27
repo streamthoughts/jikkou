@@ -41,6 +41,10 @@ public final class SchemaRegistryApiFactory {
                 builder.header("Authorization", buildAuthorizationHeader);
                 yield builder;
             }
+            case SSL -> {
+                builder.sslConfig(config.getSslConfig());
+                yield builder;
+            }
             case NONE -> builder;
 
             case INVALID -> throw new IllegalStateException("Unexpected value: " + config.getAuthMethod());
