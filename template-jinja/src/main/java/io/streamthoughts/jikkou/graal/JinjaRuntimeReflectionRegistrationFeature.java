@@ -11,6 +11,7 @@ import com.hubspot.jinjava.el.ext.eager.EagerExtendedSyntaxBuilder;
 import com.hubspot.jinjava.lib.Importable;
 import com.hubspot.jinjava.lib.fn.Functions;
 import com.hubspot.jinjava.lib.fn.TypeFunction;
+import com.hubspot.jinjava.objects.PyWrapper;
 import java.util.Set;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeReflection;
@@ -29,8 +30,12 @@ class JinjaRuntimeReflectionRegistrationFeature implements Feature {
     public void beforeAnalysis(Feature.BeforeAnalysisAccess access) {
         try {
             Reflections reflections = new Reflections(JINJAVA_BASE_PACKAGE, Scanners.SubTypes);
-            Set<Class<? extends Importable>> allSubTypes = reflections.getSubTypesOf(Importable.class);
-            for (Class<? extends Importable> t : allSubTypes) {
+            Set<Class<? extends Importable>> allImportableSubTypes = reflections.getSubTypesOf(Importable.class);
+            for (Class<? extends Importable> t : allImportableSubTypes) {
+                registerRuntimeReflection(t);
+            }
+            Set<Class<? extends PyWrapper>> allPyMapperSubTypes = reflections.getSubTypesOf(PyWrapper.class);
+            for (Class<? extends PyWrapper> t : allPyMapperSubTypes) {
                 registerRuntimeReflection(t);
             }
             registerRuntimeReflection(ExtendedSyntaxBuilder.class);
