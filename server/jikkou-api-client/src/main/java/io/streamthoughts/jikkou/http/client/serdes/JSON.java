@@ -33,6 +33,10 @@ public interface JSON {
         return new Jackson();
     }
 
+    static JSON of(ObjectMapper om) {
+        return new Jackson(om);
+    }
+
     class Jackson implements JSON {
 
         private final ObjectMapper objectMapper;
@@ -41,7 +45,7 @@ public interface JSON {
             this(new ObjectMapper());
         }
 
-        public Jackson(ObjectMapper objectMapper) {
+        public Jackson(final ObjectMapper objectMapper) {
             this.objectMapper = objectMapper;
         }
 

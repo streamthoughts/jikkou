@@ -117,7 +117,7 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
     }
 
     /**
-     * Finds the label value for the specified key.
+     * Get the label value for the specified key.
      *
      * @param key The label key. Must not be {@code null}.
      * @return The optional value.
@@ -146,6 +146,18 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
      */
     public boolean hasLabel(final String key) {
         return findLabelByKey(key).isPresent();
+    }
+
+    /**
+     * Get the label value for the specified key.
+     *
+     * @param key The label key. Must not be {@code null}.
+     * @return The optional value.
+     */
+    public NamedValue getAnnotationByKey(final String key) {
+        return findAnnotationByKey(key)
+            .map(val -> new NamedValue(key, val))
+            .orElseThrow(() -> new NoSuchElementException("Cannot found annotation for key '" + key + "'"));
     }
 
     /**
