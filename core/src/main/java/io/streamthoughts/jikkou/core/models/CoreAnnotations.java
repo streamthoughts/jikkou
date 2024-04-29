@@ -28,6 +28,7 @@ public final class CoreAnnotations {
     public static final String JIKKOU_BYPASS_VALIDATIONS = PREFIX + "bypass-validations";
     public static final String JIKKOU_NO_REPORT = PREFIX + "no-report";
     public static final String JIKKOU_IO_TRANSFORM_PREFIX = "transform.jikkou.io";
+    public static final String JIKKOU_IO_CONFIG_OVERRIDE = PREFIX + "config-override";
 
     private CoreAnnotations() {}
 

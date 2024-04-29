@@ -61,6 +61,9 @@ public interface Jackson {
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
             .build();
 
+    static ObjectMapper json() {
+        return JSON_OBJECT_MAPPER;
+    }
 
     abstract class ContextualJsonDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
     }

@@ -21,7 +21,7 @@ import java.util.Set;
 
 public final class ObjectTypeConverter<T> implements TypeConverter<T> {
 
-    private static final ObjectMapper DEFAULT_OBJECT_OBJECT = JsonMapper.builder()
+    private static final ObjectMapper DEFAULT_OBJECT_MAPPER = JsonMapper.builder()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
@@ -38,9 +38,9 @@ public final class ObjectTypeConverter<T> implements TypeConverter<T> {
      * @return The converter.
      */
     public static <T> ObjectTypeConverter<T> newForType(final TypeReference<T> objectType) {
-        TypeFactory typeFactory = DEFAULT_OBJECT_OBJECT.getTypeFactory();
+        TypeFactory typeFactory = DEFAULT_OBJECT_MAPPER.getTypeFactory();
         JavaType type = typeFactory.constructType(objectType);
-        return new ObjectTypeConverter<>(DEFAULT_OBJECT_OBJECT, type);
+        return new ObjectTypeConverter<>(DEFAULT_OBJECT_MAPPER, type);
     }
 
     /**
@@ -51,9 +51,9 @@ public final class ObjectTypeConverter<T> implements TypeConverter<T> {
      * @return The converter.
      */
     public static <T> ObjectTypeConverter<T> newForType(final Class<T> objectType) {
-        TypeFactory typeFactory = DEFAULT_OBJECT_OBJECT.getTypeFactory();
+        TypeFactory typeFactory = DEFAULT_OBJECT_MAPPER.getTypeFactory();
         JavaType type = typeFactory.constructType(objectType);
-        return new ObjectTypeConverter<>(DEFAULT_OBJECT_OBJECT, type);
+        return new ObjectTypeConverter<>(DEFAULT_OBJECT_MAPPER, type);
     }
 
     /**
@@ -64,9 +64,9 @@ public final class ObjectTypeConverter<T> implements TypeConverter<T> {
      * @return The converter.
      */
     public static <T> ObjectTypeConverter<List<T>> newForList(Class<T> elementClass) {
-        TypeFactory typeFactory = DEFAULT_OBJECT_OBJECT.getTypeFactory();
+        TypeFactory typeFactory = DEFAULT_OBJECT_MAPPER.getTypeFactory();
         CollectionType type = typeFactory.constructCollectionType(List.class, elementClass);
-        return new ObjectTypeConverter<>(DEFAULT_OBJECT_OBJECT, type);
+        return new ObjectTypeConverter<>(DEFAULT_OBJECT_MAPPER, type);
     }
 
     /**
@@ -77,9 +77,9 @@ public final class ObjectTypeConverter<T> implements TypeConverter<T> {
      * @return The converter.
      */
     public static <T> ObjectTypeConverter<Set<T>> newForSet(Class<T> elementClass) {
-        TypeFactory typeFactory = DEFAULT_OBJECT_OBJECT.getTypeFactory();
+        TypeFactory typeFactory = DEFAULT_OBJECT_MAPPER.getTypeFactory();
         CollectionType type = typeFactory.constructCollectionType(Set.class, elementClass);
-        return new ObjectTypeConverter<>(DEFAULT_OBJECT_OBJECT, type);
+        return new ObjectTypeConverter<>(DEFAULT_OBJECT_MAPPER, type);
     }
 
     /**

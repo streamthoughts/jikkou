@@ -39,23 +39,24 @@ import org.slf4j.LoggerFactory;
  */
 @SupportedResource(type = V1KafkaConnector.class)
 @ExtensionSpec(
-        options = {
-                @ExtensionOptionSpec(
-                        name = KafkaConnectorCollector.EXPAND_STATUS_CONFIG,
-                        description = "Retrieves additional information about the status of the connector and its tasks.",
-                        type = Boolean.class,
-                        defaultValue = "false"
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConnectorCollector.CONNECT_CLUSTER_CONFIG,
-                        description = "List of Kafka Connect cluster from which to list connectors.",
-                        type = List.class
-                )
-        }
+    options = {
+        @ExtensionOptionSpec(
+            name = KafkaConnectorCollector.EXPAND_STATUS_CONFIG,
+            description = "Retrieves additional information about the status of the connector and its tasks.",
+            type = Boolean.class,
+            defaultValue = "false"
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConnectorCollector.CONNECT_CLUSTER_CONFIG,
+            description = "List of Kafka Connect cluster from which to list connectors.",
+            type = List.class
+        )
+    }
 )
 public final class KafkaConnectorCollector extends ContextualExtension implements Collector<V1KafkaConnector> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConnectorCollector.class);
+
     public static final String EXPAND_STATUS_CONFIG = "expand-status";
     public static final String CONNECT_CLUSTER_CONFIG = "connect-cluster";
 
@@ -78,36 +79,44 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1KafkaConnector> listAll(@NotNull Configuration configuration,
-                                                        @NotNull Selector selector) {
+    public ResourceListObject<V1KafkaConnector> listAll(final @NotNull Configuration configuration,
+                                                        final @NotNull Selector selector) {
 
         Boolean expandStatus = extensionContext()
-                .<Boolean>configProperty(EXPAND_STATUS_CONFIG).get(configuration);
+            .<Boolean>configProperty(EXPAND_STATUS_CONFIG).get(configuration);
 
         Set<String> clusters = extensionContext()
-                .<List<String>>configProperty(CONNECT_CLUSTER_CONFIG)
-                .getOptional(configuration)
-                .map(list -> (Set<String>) new HashSet<>(list))
-                .orElseGet(() -> this.configuration.getClusters());
+            .<List<String>>configProperty(CONNECT_CLUSTER_CONFIG)
+            .getOptional(configuration)
+            .map(list -> (Set<String>) new HashSet<>(list))
+            .orElseGet(() -> this.configuration.getClusters());
 
         List<V1KafkaConnector> list = clusters
-                .stream()
-                .flatMap(connectCluster -> listAll(connectCluster, expandStatus).stream())
-                .collect(Collectors.toList());
+            .stream()
+            .flatMap(connectCluster -> listAll(connectCluster, expandStatus).stream())
+            .collect(Collectors.toList());
         return new V1KafkaConnectorList(list);
     }
 
-    public List<V1KafkaConnector> listAll(final String cluster, final boolean expandStatus) {
-        List<V1KafkaConnector> results = new LinkedList<>();
+    public List<V1KafkaConnector> listAll(final String connectClusterName,
+                                          final boolean expandStatus) {
         KafkaConnectClientConfig connectClientConfig = configuration
-                .getConfigForCluster(cluster)
-                .orElseThrow(() -> new KafkaConnectClusterNotFoundException("No connect cluster configured for name '" + cluster + "'"));
+            .getConfigForCluster(connectClusterName)
+            .orElseThrow(() -> new KafkaConnectClusterNotFoundException("No connect cluster configured for name '" + connectClusterName + "'"));
+
+        return listAll(connectClusterName, connectClientConfig, expandStatus);
+    }
+
+    public List<V1KafkaConnector> listAll(final String connectClusterName,
+                                          final KafkaConnectClientConfig connectClientConfig,
+                                          final boolean expandStatus) {
+        List<V1KafkaConnector> results = new LinkedList<>();
         KafkaConnectApi api = KafkaConnectApiFactory.create(connectClientConfig);
         try {
             final List<String> connectors = api.listConnectors();
             for (String connector : connectors) {
                 try {
-                    KafkaConnectClusterService service = new KafkaConnectClusterService(cluster, api);
+                    KafkaConnectClusterService service = new KafkaConnectClusterService(connectClusterName, api);
                     CompletableFuture<V1KafkaConnector> future = service.getConnectorAsync(connector, expandStatus);
                     V1KafkaConnector result = future.get();
                     results.add(result);
@@ -115,7 +124,11 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
                     if (ex instanceof InterruptedException) {
                         Thread.currentThread().interrupt();
                     }
-                    LOG.error("Failed to get connector '{}' from connect cluster {}", connector, cluster, ex);
+                    LOG.error("Failed to get connector '{}' from connect cluster: {}",
+                        connector,
+                        connectClientConfig.getConnectUrl(),
+                        ex
+                    );
                 }
             }
         } finally {
@@ -123,6 +136,4 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
         }
         return results;
     }
-
-
 }
