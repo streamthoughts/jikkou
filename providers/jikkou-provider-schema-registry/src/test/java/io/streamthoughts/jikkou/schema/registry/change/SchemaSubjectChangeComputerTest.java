@@ -11,7 +11,6 @@ import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChang
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
 
-import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -19,6 +18,7 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -85,7 +85,7 @@ class SchemaSubjectChangeComputerTest {
                                         "permanentDelete", false,
                                         "normalizeSchema", false
                                 ))
-                                .withChange(StateChange.create(DATA_SCHEMA, SCHEMA_V1.toString()))
+                                .withChange(StateChange.create(DATA_SCHEMA, new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO)))
                                 .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.create(DATA_REFERENCES, Collections.emptyList()))
                                 .build()
@@ -130,7 +130,7 @@ class SchemaSubjectChangeComputerTest {
                                         "normalizeSchema", false
                                 ))
                                 .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, null))
-                                .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
+                                .withChange(StateChange.none(DATA_SCHEMA, new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO)))
                                 .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
                                 .build()
@@ -189,7 +189,7 @@ class SchemaSubjectChangeComputerTest {
                                         "normalizeSchema", false
                                 ))
                                 .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
-                                .withChange(StateChange.none(DATA_SCHEMA, Json.normalize(SCHEMA_V1.toString())))
+                                .withChange(StateChange.none(DATA_SCHEMA, new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO)))
                                 .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
                                 .build()
@@ -249,8 +249,8 @@ class SchemaSubjectChangeComputerTest {
                                 .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                                 .withChange(StateChange.update(
                                         DATA_SCHEMA,
-                                        Json.normalize(SCHEMA_V1.toString()),
-                                        Json.normalize(SCHEMA_V2.toString()))
+                                        new SchemaAndType(SCHEMA_V1.toString(), SchemaType.AVRO),
+                                        new SchemaAndType(SCHEMA_V2.toString(), SchemaType.AVRO))
                                 )
                                 .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
                                 .build()

@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.schema.registry.change;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.data.converter.ObjectTypeConverter;
-import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
@@ -22,7 +21,6 @@ import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.Map;
 import java.util.Optional;
@@ -69,7 +67,7 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
                 .builder()
                 .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
                 .withOperation(Operation.CREATE)
-                .withChange(StateChange.create(DATA_SCHEMA, after.getSpec().getSchema().value()))
+                .withChange(StateChange.create(DATA_SCHEMA, getSchemaAndType(after)))
                 .withChange(StateChange.create(DATA_SCHEMA_TYPE, after.getSpec().getSchemaType()))
                 .withChange(StateChange.create(DATA_REFERENCES, after.getSpec().getReferences()));
 
@@ -156,24 +154,17 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         private StateChange getChangeForSchema(V1SchemaRegistrySubject before,
                                                V1SchemaRegistrySubject after) {
 
-            SchemaAndType beforeSchema = Optional.ofNullable(before)
-                    .map(V1SchemaRegistrySubject::getSpec)
-                    .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
-                    .orElse(SchemaAndType.empty());
+            SchemaAndType beforeSchema = getSchemaAndType(before);
+            SchemaAndType afterSchema = getSchemaAndType(after);
 
-            SchemaAndType afterSchema = Optional.ofNullable(after)
-                    .map(V1SchemaRegistrySubject::getSpec)
-                    .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
-                    .orElse(SchemaAndType.empty());
-
-            return StateChange.with(DATA_SCHEMA,
-                    isJsonBasedSchema(beforeSchema) ? Json.normalize(beforeSchema.schema()) : beforeSchema.schema(),
-                    isJsonBasedSchema(afterSchema) ? Json.normalize(afterSchema.schema()) : afterSchema.schema()
-            );
+            return StateChange.with(DATA_SCHEMA, beforeSchema, afterSchema);
         }
 
-        private boolean isJsonBasedSchema(SchemaAndType schemaAndType) {
-            return schemaAndType.type() == SchemaType.JSON || schemaAndType.type() == SchemaType.AVRO;
+        private SchemaAndType getSchemaAndType(V1SchemaRegistrySubject subject) {
+            return Optional.ofNullable(subject)
+                    .map(V1SchemaRegistrySubject::getSpec)
+                    .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
+                    .orElse(SchemaAndType.empty());
         }
     }
 }
