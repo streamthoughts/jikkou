@@ -505,8 +505,7 @@ release notes, check out the &lt;a href="https://github.com/streamthoughts/jikko
 &lt;ul>
 &lt;li>Enhanced Aiven provider with support for Kafka topics.&lt;/li>
 &lt;li>Added SSL support for Kafka Connect and Schema Registry&lt;/li>
-&lt;li>Introduced the new &lt;code>--status&lt;/code> option for &lt;code>KafkaTopic&lt;/code> resources.&lt;/li>
-&lt;li>Exported offset-lag to the status of &lt;code>KafkaConsumerGroup&lt;/code> resources.&lt;/li>
+&lt;li>Introduced dynamic connection for Kafka Connect clusters&lt;/li>
 &lt;/ul>
 &lt;p>Below is a summary of these new features with examples.&lt;/p>
 &lt;h2 id="topic-aiven-for-apache-kafka">Topic Aiven for Apache Kafka&lt;/h2>
