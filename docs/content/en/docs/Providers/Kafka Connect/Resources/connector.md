@@ -26,6 +26,9 @@ metadata:
   labels:
     # Name of the Kafka Connect cluster to create the connector instance in (required).
     kafka.jikkou.io/connect-cluster: <string>
+    # Override client properties to connect to Kafka Connect cluster (optional).
+    jikkou.io/config-override: | 
+      <json>
   annotations: { }
 spec:
   connectorClass: <string>            # Name or alias of the class for this connector.
