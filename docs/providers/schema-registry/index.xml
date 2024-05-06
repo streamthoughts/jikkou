@@ -12,7 +12,7 @@ schemaRegistry {
 url = &amp;#34;http://localhost:8081&amp;#34;
 # The name of the schema registry implementation vendor - can be any value
 vendor = generic
-# Method to use for authenticating on Schema Registry. Available values are: [none, basicauth]
+# Method to use for authenticating on Schema Registry. Available values are: [none, basicauth, ssl]
 authMethod = none
 # Use when &amp;#39;schemaRegistry.authMethod&amp;#39; is &amp;#39;basicauth&amp;#39; to specify the username for Authorization Basic header
 basicAuthUser = null
@@ -20,6 +20,23 @@ basicAuthUser = null
 basicAuthPassword = null
 # Enable debug logging
 debugLoggingEnabled = false
+# Ssl Config: Use when &amp;#39;authMethod&amp;#39; is &amp;#39;ssl&amp;#39;
+# The location of the key store file.
+sslKeyStoreLocation = &amp;#34;/certs/registry.keystore.jks&amp;#34;
+# The file format of the key store file.
+sslKeyStoreType = &amp;#34;JKS&amp;#34;
+# The password for the key store file.
+sslKeyStorePassword = &amp;#34;password&amp;#34;
+# The password of the private key in the key store file.
+sslKeyPassword = &amp;#34;password&amp;#34;
+# The location of the trust store file.
+sslTrustStoreLocation = &amp;#34;/certs/registry.truststore.jks&amp;#34;
+# The file format of the trust store file.
+sslTrustStoreType = &amp;#34;JKS&amp;#34;
+# The password for the trust store file.
+sslTrustStorePassword = &amp;#34;password&amp;#34;
+# Specifies whether to ignore the hostname verification.
+sslIgnoreHostnameVerification = true
 }
 }
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://www.jikkou.io/docs/providers/schema-registry/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/schema-registry/resources/</guid><description>
