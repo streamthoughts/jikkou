@@ -26,10 +26,10 @@ metadata:
   labels:
     # Name of the Kafka Connect cluster to create the connector instance in (required).
     kafka.jikkou.io/connect-cluster: <string>
+  annotations:
     # Override client properties to connect to Kafka Connect cluster (optional).
     jikkou.io/config-override: | 
       <json>
-  annotations: { }
 spec:
   connectorClass: <string>            # Name or alias of the class for this connector.
   tasksMax: <integer>                 # The maximum number of tasks for the Kafka Connector.
@@ -48,8 +48,26 @@ The name of the connector.
 
 #### `labels.kafka.jikkou.io/connect-cluster`  [required]
 
-the name of the Kafka Connect cluster to create the connector instance in.
+The name of the Kafka Connect cluster to create the connector instance in.
 The cluster name must be configured through the `kafkaConnect.clusters[]` Jikkou's configuration setting (see: [Configuration]({{% relref "../Configuration" %}})).
+
+#### `jikkou.io/config-override:` [optional]
+
+The JSON client configurations to override for connecting to the Kafka Connect cluster.
+The configuration properties passed through this annotation override any cluster properties defined in the Jikkou's configuration setting (see: [Configuration]({{% relref "../Configuration" %}})).
+
+```yaml
+apiVersion: "kafka.jikkou.io/v1beta1"
+kind: "KafkaConnector"
+metadata:
+  name: "my-connector"
+  labels:
+    kafka.jikkou.io/connect-cluster: "my-connect-cluster"
+  annotations:
+    jikkou.io/config-override: |
+      { "url": "http://localhost:8083" }
+```
+
 
 ### Specification
 
