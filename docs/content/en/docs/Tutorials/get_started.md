@@ -45,9 +45,9 @@ $ ./up              # use ./down for stopping the docker-compose stack
 Run the following commands to install the latest version:
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.31.0/jikkou-0.31.0-linux-x86_64.zip && \
-unzip jikkou-0.31.0-linux-x86_64.zip  && \
-cp jikkou-0.31.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.34.0/jikkou-0.34.0-linux-x86_64.zip && \
+unzip jikkou-0.34.0-linux-x86_64.zip  && \
+cp jikkou-0.34.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
 source <(jikkou generate-completion) && \
 jikkou --version
 ```
