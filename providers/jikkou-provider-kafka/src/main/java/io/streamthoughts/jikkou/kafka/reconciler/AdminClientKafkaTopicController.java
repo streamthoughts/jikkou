@@ -17,6 +17,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
@@ -33,6 +34,7 @@ import io.streamthoughts.jikkou.kafka.change.topics.UpdateTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +115,11 @@ public final class AdminClientKafkaTopicController
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
                 .filter(context.selector()::apply)
+                .map(resource -> {
+                    V1KafkaTopicSpec spec = resource.getSpec();
+                    Configs configs = spec.getConfigs();
+                    return configs == null ? resource : resource.withSpec(spec.withConfigs(configs.flatten()));
+                })
                 .toList();
 
         // Build the configuration for describing actual resources

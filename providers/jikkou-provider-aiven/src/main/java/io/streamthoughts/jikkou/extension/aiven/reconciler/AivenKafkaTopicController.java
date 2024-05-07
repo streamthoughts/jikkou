@@ -18,6 +18,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
@@ -31,6 +32,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.change.topic.KafkaTopicChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.topics.TopicChangeComputer;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import io.streamthoughts.jikkou.kafka.reconciler.WithKafkaConfigFilters;
 import java.util.Collection;
 import java.util.List;
@@ -126,6 +128,11 @@ public final class AivenKafkaTopicController
         // Get the list of described resource that are candidates for this reconciliation
         List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
             .filter(context.selector()::apply)
+            .map(resource -> {
+                V1KafkaTopicSpec spec = resource.getSpec();
+                Configs configs = spec.getConfigs();
+                return configs == null ? resource : resource.withSpec(spec.withConfigs(configs.flatten()));
+            })
             .toList();
 
         // Build the configuration for describing actual resources

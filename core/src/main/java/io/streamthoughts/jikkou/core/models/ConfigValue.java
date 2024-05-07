@@ -49,7 +49,7 @@ public class ConfigValue {
         this.isDeletable = isDeletable;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -71,8 +71,7 @@ public class ConfigValue {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ConfigValue)) return false;
-        ConfigValue that = (ConfigValue) o;
+        if (!(o instanceof ConfigValue that)) return false;
         return Objects.equals(name, that.name) &&
                 Objects.equals(String.valueOf(value), String.valueOf(that.value));
     }
@@ -85,6 +84,9 @@ public class ConfigValue {
         return Objects.hash(name, value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "ConfigValue{" +

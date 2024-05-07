@@ -179,7 +179,7 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
             return ChangeComputer
                     .<String, ConfigValue, StateChange>builder()
                     .withDeleteOrphans(deleteOrphans)
-                    .withKeyMapper(ConfigValue::getName)
+                    .withKeyMapper(ConfigValue::name)
                     .withChangeFactory((key, before, after) -> {
                         Object beforeValue = Optional.ofNullable(before)
                                 .map(ConfigValue::value)

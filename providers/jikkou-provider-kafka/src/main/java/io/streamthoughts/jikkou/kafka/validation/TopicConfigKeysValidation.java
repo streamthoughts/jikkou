@@ -9,13 +9,13 @@ package io.streamthoughts.jikkou.kafka.validation;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
+import io.streamthoughts.jikkou.core.models.ConfigValue;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.kafka.common.config.TopicConfig;
@@ -51,9 +51,8 @@ public class TopicConfigKeysValidation extends TopicValidation {
                 })
                 .toList();
 
-        final Map<String, Object> topicConfigs = configs.toMap();
-        final List<ValidationError> errors = topicConfigs.keySet()
-                .stream()
+        final List<ValidationError> errors = configs.flatten().values().stream()
+                .map(ConfigValue::name)
                 .filter(o -> !definedStaticConfigKeys.contains(o))
                 .map(o -> newValidationError(resource, o))
                 .toList();

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -108,7 +109,7 @@ public class Configs implements Iterable<ConfigValue> {
      * @return the previous config containing into {@code this} configs.
      */
     public ConfigValue add(final ConfigValue value) {
-        return this.configValues.put(value.getName(), value);
+        return this.configValues.put(value.name(), value);
     }
 
     /**
@@ -161,8 +162,12 @@ public class Configs implements Iterable<ConfigValue> {
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<ConfigValue> iterator() {
+    public @NotNull Iterator<ConfigValue> iterator() {
         return configValues.values().iterator();
+    }
+
+    public Configs flatten() {
+        return Configs.of(CollectionUtils.toFlattenMap(toMap()));
     }
 
     public Map<String, Object> toMap() {
@@ -170,7 +175,7 @@ public class Configs implements Iterable<ConfigValue> {
                 .stream()
                 .filter(it -> it.value() != null)
                 .collect(Collectors.toMap(
-                        ConfigValue::getName,
+                        ConfigValue::name,
                         ConfigValue::value)
                 ));
     }
@@ -179,8 +184,7 @@ public class Configs implements Iterable<ConfigValue> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Configs)) return false;
-        Configs that = (Configs) o;
+        if (!(o instanceof Configs that)) return false;
         return Objects.equals(configValues, that.configValues);
     }
 

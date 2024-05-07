@@ -124,8 +124,8 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
             Assertions.assertEquals(expected.getSpec().getReplicas(), actual.getSpec().getReplicas());
 
             // Explicitly validate each config because Redpanda returns additional config properties.
-            Map<String, ConfigValue> expectedConfigByName = CollectionUtils.keyBy(expected.getSpec().getConfigs(), ConfigValue::getName);
-            Map<String, ConfigValue> actualConfigByName = CollectionUtils.keyBy(actual.getSpec().getConfigs(), ConfigValue::getName);
+            Map<String, ConfigValue> expectedConfigByName = CollectionUtils.keyBy(expected.getSpec().getConfigs(), ConfigValue::name);
+            Map<String, ConfigValue> actualConfigByName = CollectionUtils.keyBy(actual.getSpec().getConfigs(), ConfigValue::name);
 
             expectedConfigByName.forEach((configName, expectedConfigValue) -> {
                 ConfigValue actualConfigValue = actualConfigByName.get(configName);

@@ -43,6 +43,12 @@ public final class CollectionUtils {
         return (List) list;
     }
 
+    public static Map<String, Object> toFlattenMap(final Map<String, Object> source) {
+        HashMap<String, Object> result = new HashMap<>(source.size());
+        toFlattenMap(source, result, null);
+        return result;
+    }
+
     public static void toFlattenMap(final Map<String, Object> source,
                                     final Map<String, Object> result) {
         toFlattenMap(source, result, null);
