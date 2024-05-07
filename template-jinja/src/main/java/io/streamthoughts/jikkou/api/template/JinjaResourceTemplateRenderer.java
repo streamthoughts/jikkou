@@ -12,6 +12,9 @@ import com.hubspot.jinjava.interpret.RenderResult;
 import com.hubspot.jinjava.interpret.TemplateError;
 import com.hubspot.jinjava.mode.ExecutionMode;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.core.template.TemplateBindings;
@@ -31,6 +34,13 @@ import org.slf4j.LoggerFactory;
 public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JinjaResourceTemplateRenderer.class);
+
+    private static final String CONFIG_NS = "jinja";
+
+    public static final ConfigProperty<Boolean> ENABLE_RECURSIVE_MACRO_CALLS = ConfigProperty
+        .ofBoolean(CONFIG_NS + ".enableRecursiveMacroCalls")
+        .orElse(true)
+        .description("Enable recursive macro calls.");
 
     // list of scopes for bindings
     public enum Scopes {
@@ -55,6 +65,14 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
         return this;
     }
 
+    private Configuration configuration = Configuration.empty();
+
+    /** {@inheritDoc} **/
+    @Override
+    public void configure(final @NotNull Configuration config) throws ConfigException {
+       this.configuration = config;
+    }
+
     /** {@inheritDoc} **/
     @Override
     public String render(@NotNull final String template,
@@ -64,6 +82,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
                 .withCharset(StandardCharsets.UTF_8)
                 .withFailOnUnknownTokens(failOnUnknownTokens)
                 .withExecutionMode(new PreserveRawExecutionMode(preserveRawTags))
+                .withEnableRecursiveMacroCalls(ENABLE_RECURSIVE_MACRO_CALLS.get(configuration))
                 .build();
 
         Jinjava jinjava = new Jinjava(config);

@@ -104,10 +104,11 @@ public final class BeanFactory {
     }
 
     @Singleton
-    public ResourceLoaderFacade resourceLoaderFacade() {
+    public ResourceLoaderFacade resourceLoaderFacade(Configuration configuration) {
         ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
                 .withPreserveRawTags(false)
                 .withFailOnUnknownTokens(false);
+        renderer.configure(configuration);
         return new ResourceLoaderFacade(renderer, Jackson.YAML_OBJECT_MAPPER);
     }
 }

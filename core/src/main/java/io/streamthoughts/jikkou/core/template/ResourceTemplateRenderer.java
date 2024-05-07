@@ -6,12 +6,13 @@
  */
 package io.streamthoughts.jikkou.core.template;
 
+import io.streamthoughts.jikkou.core.config.Configurable;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Responsible for rendering resource template.
  */
-public interface ResourceTemplateRenderer {
+public interface ResourceTemplateRenderer extends Configurable {
 
     /**
      * Render the given resource template.
