@@ -115,7 +115,7 @@
         <testcontainer.version>1.19.7</testcontainer.version>
         <!-- Dependencies -->
         <kafka.version>3.6.1</kafka.version>
-        <picocli.version>4.7.5</picocli.version>
+        <picocli.version>4.7.6</picocli.version>
         <jackson.version>2.17.1</jackson.version>
         <jinjava.version>2.7.2</jinjava.version>
         <lombok.version>1.18.32</lombok.version>
