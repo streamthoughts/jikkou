@@ -28,6 +28,7 @@ import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.ProducerFencedException;
 import org.apache.kafka.common.serialization.Serializer;
 import org.jetbrains.annotations.NotNull;
@@ -267,6 +268,14 @@ public final class DefaultProducerFactory<K, V> implements ProducerFactory<K, V>
         @Override
         public Map<MetricName, ? extends Metric> metrics() {
             return delegate.getResourceHandle().metrics();
+        }
+
+        /**
+         * @see KafkaProducer#clientInstanceId(Duration)
+         **/
+        @Override
+        public Uuid clientInstanceId(final Duration duration) {
+            return delegate.getResourceHandle().clientInstanceId(duration);
         }
 
         /**
