@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @Enabled
@@ -31,39 +32,40 @@ public class KafkaConnectorResourceValidation implements Validation<V1KafkaConne
     @Override
     public ValidationResult validate(@NotNull V1KafkaConnector resource) {
         List<ValidationError> errors = new ArrayList<>();
-        ObjectMeta metadata = resource.getMetadata();
-        if (metadata == null) {
-            errors.add(newError(resource, "Missing or empty field: 'metadata'"));
-            return new ValidationResult(errors);
-        }
 
-        String name = metadata.getName();
-        if (Strings.isBlank(name)) {
-            errors.add(newError(resource, "Missing or empty field: 'metadata.name'."));
-        }
+        Optional<ObjectMeta> optionalObjectMeta = resource.optionalMetadata();
 
-        if (!metadata.hasLabel(KAFKA_CONNECT_CLUSTER)) {
-            errors.add(newError(resource, "Missing or empty field: 'metadata.labels." + KAFKA_CONNECT_CLUSTER + "'."));
-        }
+        //Validate metadata
+        optionalObjectMeta.ifPresentOrElse(objectMeta -> {
+                if (!objectMeta.hasName()) {
+                    errors.add(newError(resource, "Missing or empty field: 'metadata.name'."));
+                }
+                if (!objectMeta.hasLabel(KAFKA_CONNECT_CLUSTER)) {
+                    errors.add(newError(resource, "Missing or empty field: 'metadata.labels." + KAFKA_CONNECT_CLUSTER + "'."));
+                }
+            }, () -> errors.add(newError(resource, "Missing or empty field: 'metadata'"))
+        );
 
-        V1KafkaConnectorSpec spec = resource.getSpec();
-        if (Strings.isBlank(spec.getConnectorClass())) {
-            errors.add(newError(resource, "Missing or empty field: 'spec.connectorClass'."));
-        }
-
-        if (spec.getTasksMax() == null) {
-            errors.add(newError(resource, "Missing or empty field: 'spec.tasksMax'."));
-        }
-
+        //Validate spec
+        Optional<V1KafkaConnectorSpec> optionalSpec = Optional.ofNullable(resource.getSpec());
+        optionalSpec.ifPresentOrElse(spec -> {
+                if (Strings.isBlank(spec.getConnectorClass())) {
+                    errors.add(newError(resource, "Missing or empty field: 'spec.connectorClass'."));
+                }
+                if (Strings.isBlank(spec.getConnectorClass())) {
+                    errors.add(newError(resource, "Missing or empty field: 'spec.tasksMax'."));
+                }
+            }, () -> errors.add(newError(resource, "Missing or empty field: 'spec'"))
+        );
         return new ValidationResult(errors);
     }
 
     @NotNull
     private ValidationError newError(@NotNull V1KafkaConnector resource, String message) {
         return new ValidationError(
-                getName(),
-                resource,
-                message
+            getName(),
+            resource,
+            message
         );
     }
 }

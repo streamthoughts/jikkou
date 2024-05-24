@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.core.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
@@ -136,6 +137,14 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
     public Optional<NamedValue> findLabelByKey(final String key) {
         if (key == null) throw new IllegalArgumentException("key must not be null");
         return Optional.ofNullable(labels.get(key)).map(val -> new NamedValue(key, val));
+    }
+
+    /**
+     * Checks whether a non-empty name is defined.
+     * @return {@code true} if the name is present, otherwise {@code false}.
+     */
+    public boolean hasName() {
+        return !Strings.isBlank(getName());
     }
 
     /**
