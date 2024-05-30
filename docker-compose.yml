@@ -97,7 +97,26 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins,/usr/share/filestream-connectors"
     networks:
       - kafka-platform
-
+  jikkou-server-api:
+    container_name: jikkou_server_api
+    ports:
+      - "8080:8080"
+    image: streamthoughts/jikkou-api-server:main
+    environment:
+      JIKKOU_CONFIGURATION: |
+        micronaut:
+          server:
+            port: 8080
+        jikkou:
+          # The extension providers
+          extension.providers:
+            # By default, disable all extensions
+            default.enabled: false
+            # Explicitly enabled/disable extensions
+            #<provider_name>.enabled: <boolean>
+            core.enabled: true
+            kafka.enabled: true
+            kafka-connect.enabled: true
 networks:
   kafka-platform:
     driver: bridge

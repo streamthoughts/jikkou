@@ -16,7 +16,7 @@ micronaut:
     name: jikkou-api-server
   server:
     # Use -1 to run on a random port
-    port: 28082
+    port: 8080
 
   security:
     enabled: false
@@ -33,7 +33,7 @@ micronaut:
 # Endpoints configuration
 endpoints:
   all:
-    port: 28082
+    port: 8090
     sensitive: false
     enabled: false
   health:

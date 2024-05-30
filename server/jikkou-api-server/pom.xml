@@ -311,7 +311,22 @@
                             <to>
                                 <image>${docker.image.name}:${docker.image.tag}</image>
                             </to>
+                            <extraDirectories>
+                                <paths>
+                                    <path>
+                                        <from>src/main/docker</from>
+                                        <into>/</into>
+                                    </path>
+                                </paths>
+                                <permissions>
+                                    <permission>
+                                        <file>/entrypoint.sh</file>
+                                        <mode>755</mode>
+                                    </permission>
+                                </permissions>
+                            </extraDirectories>
                             <container>
+                                <entrypoint>/entrypoint.sh</entrypoint>
                                 <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                                 <ports>
                                     <port>28082</port>
