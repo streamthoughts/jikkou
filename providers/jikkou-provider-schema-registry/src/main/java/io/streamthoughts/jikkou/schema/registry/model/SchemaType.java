@@ -8,11 +8,30 @@ package io.streamthoughts.jikkou.schema.registry.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.streamthoughts.jikkou.common.utils.Enums;
+import io.streamthoughts.jikkou.core.data.json.Json;
+import io.streamthoughts.jikkou.schema.registry.avro.AvroSchema;
 import org.jetbrains.annotations.Nullable;
 
 public enum SchemaType {
 
-    AVRO, PROTOBUF, JSON;
+    AVRO {
+        @Override
+        public Object comparableSchemaForm(final String schema, boolean useCanonicalFingerPrint) {
+            if (schema == null) return null;
+
+            return useCanonicalFingerPrint ? new AvroSchema(schema).fingerprint64() : Json.normalize(schema);
+        }
+    }, PROTOBUF {
+        @Override
+        public Object comparableSchemaForm(final String schema, boolean useCanonicalFingerPrint) {
+            return schema;
+        }
+    }, JSON {
+        @Override
+        public Object comparableSchemaForm(final String schema, boolean useCanonicalFingerPrint) {
+            return Json.normalize(schema);
+        }
+    };
 
     @JsonCreator
     public static SchemaType getForNameIgnoreCase(final @Nullable String str) {
@@ -23,5 +42,16 @@ public enum SchemaType {
     public static SchemaType defaultType() {
         return SchemaType.AVRO;
     }
+
+
+    /**
+     * Transforms the given schema to an object that will be used to check schema equality.
+     *
+     * @param schema                  The schema.
+     * @param useCanonicalFingerPrint flag whether to use a canonical-print.
+     * @return the object used to check schema equality.
+     */
+    public abstract Object comparableSchemaForm(final String schema,
+                                                final boolean useCanonicalFingerPrint);
 
 }

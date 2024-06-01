@@ -50,15 +50,15 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         @Override
         public ResourceChange createChangeForDelete(String key, V1SchemaRegistrySubject before) {
             return GenericResourceChange
-                    .builder(V1SchemaRegistrySubject.class)
-                    .withMetadata(before.getMetadata())
-                    .withSpec(ResourceChangeSpec
-                            .builder()
-                            .withData(TYPE_CONVERTER.convertValue(getOptions(before)))
-                            .withOperation(Operation.DELETE)
-                            .build()
-                    )
-                    .build();
+                .builder(V1SchemaRegistrySubject.class)
+                .withMetadata(before.getMetadata())
+                .withSpec(ResourceChangeSpec
+                    .builder()
+                    .withData(TYPE_CONVERTER.convertValue(getOptions(before)))
+                    .withOperation(Operation.DELETE)
+                    .build()
+                )
+                .build();
         }
 
         @Override
@@ -77,55 +77,56 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
             }
 
             return GenericResourceChange
-                    .builder(V1SchemaRegistrySubject.class)
-                    .withMetadata(after.getMetadata())
-                    .withSpec(specBuilder.build())
-                    .build();
+                .builder(V1SchemaRegistrySubject.class)
+                .withMetadata(after.getMetadata())
+                .withSpec(specBuilder.build())
+                .build();
         }
 
         @Override
         public ResourceChange createChangeForUpdate(String key, V1SchemaRegistrySubject before, V1SchemaRegistrySubject after) {
             StateChangeList<StateChange> changes = StateChangeList.emptyList()
-                    .with(getChangeForCompatibility(before, after))
-                    .with(getChangeForSchema(before, after))
-                    .with(getChangeForSchemaType(before, after))
-                    .with(getChangeForReferences(before, after));
+                .with(getChangeForCompatibility(before, after))
+                .with(getChangeForSchema(before, after))
+                .with(getChangeForSchemaType(before, after))
+                .with(getChangeForReferences(before, after));
 
             return GenericResourceChange
-                    .builder(V1SchemaRegistrySubject.class)
-                    .withMetadata(after.getMetadata())
-                    .withSpec(ResourceChangeSpec
-                            .builder()
-                            .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
-                            .withOperation(Change.computeOperation(changes.all()))
-                            .withChanges(changes)
-                            .build()
-                    )
-                    .build();
+                .builder(V1SchemaRegistrySubject.class)
+                .withMetadata(after.getMetadata())
+                .withSpec(ResourceChangeSpec
+                    .builder()
+                    .withData(TYPE_CONVERTER.convertValue(getOptions(after)))
+                    .withOperation(Change.computeOperation(changes.all()))
+                    .withChanges(changes)
+                    .build()
+                )
+                .build();
         }
 
         @NotNull
         private SchemaSubjectChangeOptions getOptions(@NotNull V1SchemaRegistrySubject subject) {
+            SchemaRegistryAnnotations annotations = new SchemaRegistryAnnotations(subject);
             return new SchemaSubjectChangeOptions(
-                    SchemaRegistryAnnotations.isAnnotatedWitPermananteDelete(subject),
-                    SchemaRegistryAnnotations.isAnnotatedWithNormalizeSchema(subject)
+                annotations.permananteDelete(),
+                annotations.normalizeSchema()
             );
         }
 
         @NotNull
         private StateChange getChangeForReferences(
-                @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
+            @NotNull V1SchemaRegistrySubject before, @NotNull V1SchemaRegistrySubject after) {
 
             return StateChange.with(
-                    DATA_REFERENCES,
-                    before.getSpec().getReferences()
-                            .stream()
-                            .map(TYPE_CONVERTER::convertValue)
-                            .toList(),
-                    after.getSpec().getReferences()
-                            .stream()
-                            .map(TYPE_CONVERTER::convertValue)
-                            .toList()
+                DATA_REFERENCES,
+                before.getSpec().getReferences()
+                    .stream()
+                    .map(TYPE_CONVERTER::convertValue)
+                    .toList(),
+                after.getSpec().getReferences()
+                    .stream()
+                    .map(TYPE_CONVERTER::convertValue)
+                    .toList()
             );
         }
 
@@ -133,9 +134,9 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         private StateChange getChangeForSchemaType(V1SchemaRegistrySubject before,
                                                    V1SchemaRegistrySubject after) {
             return StateChange.with(
-                    DATA_SCHEMA_TYPE,
-                    Optional.ofNullable(before).map(o -> o.getSpec().getSchemaType()).orElse(null),
-                    Optional.ofNullable(after).map(o -> o.getSpec().getSchemaType()).orElse(null)
+                DATA_SCHEMA_TYPE,
+                Optional.ofNullable(before).map(o -> o.getSpec().getSchemaType()).orElse(null),
+                Optional.ofNullable(after).map(o -> o.getSpec().getSchemaType()).orElse(null)
             );
         }
 
@@ -144,9 +145,9 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         private StateChange getChangeForCompatibility(V1SchemaRegistrySubject before,
                                                       V1SchemaRegistrySubject after) {
             return StateChange.with(
-                    DATA_COMPATIBILITY_LEVEL,
-                    Optional.ofNullable(before).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null),
-                    Optional.ofNullable(after).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null)
+                DATA_COMPATIBILITY_LEVEL,
+                Optional.ofNullable(before).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null),
+                Optional.ofNullable(after).map(o -> o.getSpec().getCompatibilityLevel()).orElse(null)
             );
         }
 
@@ -162,9 +163,13 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
 
         private SchemaAndType getSchemaAndType(V1SchemaRegistrySubject subject) {
             return Optional.ofNullable(subject)
-                    .map(V1SchemaRegistrySubject::getSpec)
-                    .map(spec -> new SchemaAndType(spec.getSchema().value(), spec.getSchemaType()))
-                    .orElse(SchemaAndType.empty());
+                .map(V1SchemaRegistrySubject::getSpec)
+                .map(spec -> new SchemaAndType(
+                    spec.getSchema().value(),
+                    spec.getSchemaType(),
+                    new SchemaRegistryAnnotations(subject).useCanonicalFingerPrint()
+                ))
+                .orElse(SchemaAndType.empty());
         }
     }
 }

@@ -60,11 +60,11 @@ public final class V1SchemaRegistrySubjectFactory {
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(subjectSchema.subject())
-                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_URL,
+                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_URL,
                                 schemaRegistryUrl)
-                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_VERSION,
+                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_VERSION,
                                 subjectSchema.version())
-                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID,
+                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID,
                                 subjectSchema.id())
                         .build()
                 )

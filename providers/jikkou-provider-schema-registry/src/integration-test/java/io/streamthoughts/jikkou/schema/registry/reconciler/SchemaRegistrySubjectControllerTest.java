@@ -79,7 +79,7 @@ class SchemaRegistrySubjectControllerTest extends AbstractIntegrationTest {
         Assertions.assertEquals(1, results.size());
         ChangeResult change = results.getFirst();
         ResourceChange data = change.change();
-        Assertions.assertEquals(Optional.of(1), data.getMetadata().findAnnotationByKey(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID));
+        Assertions.assertEquals(Optional.of(1), data.getMetadata().findAnnotationByKey(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID));
         Assertions.assertEquals(Operation.CREATE, data.getSpec().getOp());
         Assertions.assertEquals(SchemaType.AVRO, data.getSpec().getChanges().getLast("schemaType", TypeConverter.of(SchemaType.class)).getAfter());
     }

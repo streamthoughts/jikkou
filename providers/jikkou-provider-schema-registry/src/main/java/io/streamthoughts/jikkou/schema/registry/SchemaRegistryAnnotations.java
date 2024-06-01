@@ -29,17 +29,28 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 public final class SchemaRegistryAnnotations {
 
     private static final String SCHEMAREGISTRY_JIKKOU_IO = "schemaregistry.jikkou.io/";
-    public static final String JIKKOU_IO_SCHEMA_REGISTRY_NORMALIZE_SCHEMA = SCHEMAREGISTRY_JIKKOU_IO + "normalize-schema";
-    public static final String JIKKOU_IO_SCHEMA_REGISTRY_PERMANANTE_DELETE = SCHEMAREGISTRY_JIKKOU_IO + "permanent-delete";
-    public static final String JIKKOU_IO_SCHEMA_REGISTRY_URL = SCHEMAREGISTRY_JIKKOU_IO + "url";
-    public static final String JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_VERSION = SCHEMAREGISTRY_JIKKOU_IO + "schema-version";
-    public static final String JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID = SCHEMAREGISTRY_JIKKOU_IO + "schema-id";
+    public static final String SCHEMA_REGISTRY_NORMALIZE_SCHEMA = SCHEMAREGISTRY_JIKKOU_IO + "normalize-schema";
+    public static final String SCHEMA_REGISTRY_PERMANANTE_DELETE = SCHEMAREGISTRY_JIKKOU_IO + "permanent-delete";
+    public static final String SCHEMA_REGISTRY_URL = SCHEMAREGISTRY_JIKKOU_IO + "url";
+    public static final String SCHEMA_REGISTRY_SCHEMA_VERSION = SCHEMAREGISTRY_JIKKOU_IO + "schema-version";
+    public static final String SCHEMA_REGISTRY_SCHEMA_ID = SCHEMAREGISTRY_JIKKOU_IO + "schema-id";
+    public static final String SCHEMA_REGISTRY_USE_CANONICAL_FINGERPRINT = SCHEMAREGISTRY_JIKKOU_IO + "use-canonical-fingerprint";
 
-    public static boolean isAnnotatedWithNormalizeSchema(V1SchemaRegistrySubject subject) {
-        return CoreAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_NORMALIZE_SCHEMA);
+    private final V1SchemaRegistrySubject resource;
+
+    public SchemaRegistryAnnotations(final V1SchemaRegistrySubject resource) {
+        this.resource = resource;
     }
 
-    public static boolean isAnnotatedWitPermananteDelete(V1SchemaRegistrySubject subject) {
-        return CoreAnnotations.isAnnotatedWith(subject, JIKKOU_IO_SCHEMA_REGISTRY_PERMANANTE_DELETE);
+    public boolean normalizeSchema() {
+        return CoreAnnotations.isAnnotatedWith(resource, SCHEMA_REGISTRY_NORMALIZE_SCHEMA);
+    }
+
+    public boolean permananteDelete() {
+        return CoreAnnotations.isAnnotatedWith(resource, SCHEMA_REGISTRY_PERMANANTE_DELETE);
+    }
+
+    public boolean useCanonicalFingerPrint() {
+        return CoreAnnotations.isAnnotatedWith(resource, SCHEMA_REGISTRY_USE_CANONICAL_FINGERPRINT);
     }
 }

@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.schema.registry.avro;
 
 import org.apache.avro.Schema;
+import org.apache.avro.SchemaNormalization;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,6 +29,10 @@ public final class AvroSchema {
 
     public Schema schema() {
         return schema;
+    }
+
+    public long fingerprint64() {
+        return SchemaNormalization.parsingFingerprint64(schema());
     }
 
     /** {@inheritDoc} **/

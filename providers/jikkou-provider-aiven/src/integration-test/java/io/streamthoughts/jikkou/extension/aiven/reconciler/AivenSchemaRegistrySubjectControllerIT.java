@@ -16,7 +16,6 @@ import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
@@ -34,6 +33,7 @@ import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -152,7 +152,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_SUBJECT)
-                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID, 1)
+                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, 1)
                         .build()
                 )
                 .withSpec(ResourceChangeSpec
@@ -163,7 +163,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                                 "normalizeSchema", false
                         ))
                         .withChange(StateChange.create(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
-                        .withChange(StateChange.create(DATA_SCHEMA, AVRO_SCHEMA_V1))
+                        .withChange(StateChange.create(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO)))
                         .withChange(StateChange.create(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                         .withChange(StateChange.create(DATA_REFERENCES, Collections.emptyList()))
                         .build()
@@ -247,7 +247,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                 .withMetadata(ObjectMeta
                         .builder()
                         .withName(TEST_SUBJECT)
-                        .withAnnotation(SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID, 1)
+                        .withAnnotation(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, 1)
                         .build()
                 )
                 .withSpec(ResourceChangeSpec
@@ -258,12 +258,14 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
                                 "normalizeSchema", false
                         ))
                         .withChange(StateChange.none(DATA_COMPATIBILITY_LEVEL, CompatibilityLevels.BACKWARD))
-                        .withChange(StateChange.update(DATA_SCHEMA, Json.normalize(AVRO_SCHEMA_V1), Json.normalize(AVRO_SCHEMA_V2)))
+                        .withChange(StateChange.update(DATA_SCHEMA, new SchemaAndType(AVRO_SCHEMA_V1, SchemaType.AVRO),  new SchemaAndType(AVRO_SCHEMA_V2, SchemaType.AVRO)))
                         .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
                         .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
                         .build()
                 )
                 .build();
         Assertions.assertEquals(expected, actual);
+
+
     }
 }

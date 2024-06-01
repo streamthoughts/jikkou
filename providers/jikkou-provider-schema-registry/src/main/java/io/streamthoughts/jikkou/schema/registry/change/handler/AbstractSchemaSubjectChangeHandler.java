@@ -117,7 +117,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                         );
                         change.getMetadata()
                                 .addAnnotationIfAbsent(
-                                        SchemaRegistryAnnotations.JIKKOU_IO_SCHEMA_REGISTRY_SCHEMA_ID,
+                                        SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID,
                                         subjectSchemaId.id()
                                 );
                     }
