@@ -4,7 +4,7 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.core.io;
+package io.streamthoughts.jikkou.core.resource;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.generics.GenericResource;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -26,17 +27,6 @@ import org.slf4j.LoggerFactory;
 public final class ResourceDeserializer extends JsonDeserializer<Resource> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceDeserializer.class);
-
-    record TypeKey(String kind, String group, String version) {
-
-        @Override
-        public String toString() {
-            return "[apiVersion=" + group + "/" + version + ", kind=" + kind + "]";
-        }
-    }
-
-    private static final String KIND = "kind";
-    private static final String API_VERSION = "apiVersion";
 
     private static final Mapping mapping = new Mapping();
 
@@ -64,47 +54,57 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
     private static Resource fromObjectNode(JsonParser jp, JsonNode node) throws IOException {
         Class<? extends Resource> resourceType = null;
 
-        TypeKey key = getKey(node);
+        ResourceType key = ResourceType.of(node);
+
         if (key != null) {
-            LOG.debug("Looking for specialized Resource for group={} apiVersion={}, kind={}",
-                    key.group(),
-                    key.version(),
-                    key.kind()
+            LOG.debug("Looking for specialized resource for: group={} apiVersion={}, kind={}.",
+                key.group(),
+                key.apiVersion(),
+                key.kind()
             );
             resourceType = mapping.getForKey(key);
-
-        } else if (!resolvers.isEmpty()) {
-            LOG.debug("Looking for specialized resolver for untyped Resource");
-            for (ResourceTypeResolver r : resolvers) {
-                resourceType = r.resolvesType(node);
-                if (resourceType != null) {
-                    break;
-                }
+            // debug
+            if (resourceType == null) {
+                LOG.debug("Cannot found specialized resource for: group={} apiVersion={}, kind={}.",
+                    key.group(),
+                    key.apiVersion(),
+                    key.kind()
+                );
             }
         }
 
         if (resourceType == null) {
-            LOG.debug("No specific resource found for type: {}" + key);
+            if (!resolvers.isEmpty()) {
+                LOG.debug("Looking for ResourceTypeResolver for untyped resource.");
+                for (ResourceTypeResolver r : resolvers) {
+                    resourceType = r.resolvesType(node);
+                    if (resourceType != null) {
+                        break;
+                    }
+                }
+            } else {
+                LOG.debug("No resource type resolved registered.");
+            }
+        }
+
+        if (resourceType == null) {
+            if (key != null) {
+                LOG.debug("No specific resource found for group={} apiVersion={}, kind={}. Use GenericResource.",
+                    key.group(),
+                    key.apiVersion(),
+                    key.kind()
+                );
+            }
             return jp.getCodec().treeToValue(node, GenericResource.class);
         } else if (Resource.class.isAssignableFrom(resourceType)) {
-            LOG.debug("Read specific resource for apiVersion={}, kind={}",
-                    Resource.getApiVersion(resourceType),
-                    Resource.getKind(resourceType)
+            LOG.debug("Read specific resource for apiVersion={}, kind={}.",
+                Resource.getApiVersion(resourceType),
+                Resource.getKind(resourceType)
             );
             return jp.getCodec().treeToValue(node, resourceType);
         }
-
         LOG.warn("Failed get resource type from JsonNode");
         return null;
-    }
-
-    private static TypeKey getKey(JsonNode node) {
-        JsonNode apiVersion = node.get(API_VERSION);
-        JsonNode kind = node.get(KIND);
-
-        return mapping.createKey(
-                apiVersion != null ? apiVersion.textValue() : null,
-                kind != null ? kind.textValue() : null);
     }
 
     /**
@@ -113,7 +113,6 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
     public static void registerResolverType(final @NotNull ResourceTypeResolver resolver) {
         resolvers.add(resolver);
     }
-
 
     /**
      * Registers a Resource Definition Kind
@@ -133,14 +132,14 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
 
     static class Mapping {
 
-        private final Map<TypeKey, Class<? extends Resource>> mappings = new ConcurrentHashMap<>();
+        private final Map<ResourceType, Class<? extends Resource>> mappings = new ConcurrentHashMap<>();
 
-        public Class<? extends Resource> getForKey(TypeKey key) {
-            if (key == null) {
+        public Class<? extends Resource> getForKey(final ResourceType type) {
+            if (type == null) {
                 return null;
             }
 
-            return mappings.get(key);
+            return mappings.get(type);
         }
 
         public void registerKind(final Class<? extends Resource> clazz) {
@@ -152,28 +151,14 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
         public void registerKind(final String apiVersion,
                                  final String kind,
                                  final Class<? extends Resource> clazz) {
-            TypeKey key = createKey(apiVersion, kind);
+            ResourceType type = ResourceType.of(kind, apiVersion);
             LOG.info("Register class {} for group='{}' apiVersion='{}', kind='{}'",
-                    clazz.getSimpleName(),
-                    key.group(),
-                    key.version(),
-                    key.kind()
+                clazz.getSimpleName(),
+                type.group(),
+                type.apiVersion(),
+                type.kind()
             );
-            mappings.put(key, clazz);
-        }
-
-        TypeKey createKey(String apiVersion, String kind) {
-            if (kind == null) {
-                return null;
-            } else if (apiVersion == null) {
-                return new TypeKey(kind, null, null);
-            } else {
-                String[] versionParts = new String[]{null, apiVersion};
-                if (apiVersion.contains("/")) {
-                    versionParts = apiVersion.split("/", 2);
-                }
-                return new TypeKey(kind, versionParts[0], versionParts[1]);
-            }
+            mappings.put(type, clazz);
         }
     }
 }

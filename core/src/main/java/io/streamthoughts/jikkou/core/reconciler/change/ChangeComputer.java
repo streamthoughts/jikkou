@@ -58,6 +58,4 @@ public interface ChangeComputer<T, R> {
     static <I, T, R> ChangeComputerBuilder<I, T, R> builder() {
         return new DefaultChangeComputerBuilder<>();
     }
-
-
 }

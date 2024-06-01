@@ -7,10 +7,10 @@
 package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.io.ResourceLoader;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
 import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.resource.ResourceDeserializer;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

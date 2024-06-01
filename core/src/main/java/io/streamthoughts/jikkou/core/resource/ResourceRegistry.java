@@ -82,6 +82,14 @@ public interface ResourceRegistry {
     List<ResourceDescriptor> getDescriptorsByGroup(final String group);
 
     /**
+     * Gets all descriptors for the specified resource group and kind.
+     *
+     * @param group The resource api group.
+     * @return The list of descriptors.
+     */
+    List<ResourceDescriptor> getDescriptorsByGroupAndKind(final String group, final String kind);
+
+    /**
      * Gets all descriptors for the specified resource group and version.
      *
      * @param group The resource api group.

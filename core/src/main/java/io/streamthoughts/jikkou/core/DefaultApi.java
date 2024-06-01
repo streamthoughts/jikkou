@@ -528,7 +528,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiResourceChangeList getDiff(@NotNull HasItems resources,
                                          @NotNull ResourceChangeFilter filter,
                                          @NotNull ReconciliationContext context) {
-        // Exclude any resource changes that might be transmitted by inadvertance to the diff command.
+        // Exclude any resource changes that might be transmitted by inadvertence to the diff command.
         List<? extends HasMetadata> list = resources.getItems()
             .stream()
             .filter(Predicate.not(o -> o instanceof ResourceChange))

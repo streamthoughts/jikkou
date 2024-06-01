@@ -13,7 +13,7 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.annotation.Transient;
-import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
+import io.streamthoughts.jikkou.core.resource.ResourceDeserializer;
 import java.io.Serializable;
 
 @Evolving

@@ -29,7 +29,6 @@ class SupportedResourceQualifierTest {
         Assertions.assertEquals(List.of(getDescriptor(TestExtension.class)), filtered.toList());
     }
 
-
     @Test
     void shouldFilterDescriptorsForNotMatchingResourceType() {
         SupportedResourceQualifier<TestExtension> qualifier = new SupportedResourceQualifier<>(

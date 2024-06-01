@@ -80,6 +80,7 @@ public final class SupportedResourceQualifier<T> implements Qualifier<T> {
         }
 
         return equals == Objects.equals(this.type, resourceType);
+
     }
 
     /**
@@ -88,8 +89,7 @@ public final class SupportedResourceQualifier<T> implements Qualifier<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SupportedResourceQualifier)) return false;
-        SupportedResourceQualifier<?> that = (SupportedResourceQualifier<?>) o;
+        if (!(o instanceof SupportedResourceQualifier<?> that)) return false;
         return type.equals(that.type);
     }
 
