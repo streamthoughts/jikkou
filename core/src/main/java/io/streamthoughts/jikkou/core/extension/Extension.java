@@ -33,7 +33,7 @@ public interface Extension extends HasName {
 
     /**
      * Initializes this extension with the specified context.
-     * 
+     * <p>
      * This method is invoked each time the extension is used. Note that the given context is tied
      * to this extension and therefore cannot be passed on to another extension through this method.
      *

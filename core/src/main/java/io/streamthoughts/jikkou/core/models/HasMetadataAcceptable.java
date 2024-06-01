@@ -25,7 +25,7 @@ public interface HasMetadataAcceptable {
      */
     default boolean canAccept(@NotNull ResourceType type) {
         List<ResourceType> resources = getSupportedResources(this.getClass());
-        return resources.isEmpty() || resources.stream().anyMatch(resourceType -> resourceType.canAccept(type));
+        return resources.isEmpty() || resources.stream().anyMatch(resourceType -> resourceType. canAccept(type));
     }
 
     /**

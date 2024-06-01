@@ -19,9 +19,10 @@ import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.ExtensionGroupAwareRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionResolver;
 import io.streamthoughts.jikkou.core.extension.ExternalExtension;
-import io.streamthoughts.jikkou.core.io.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
+import io.streamthoughts.jikkou.core.resource.LatestApiVersionResourceTypeResolver;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
+import io.streamthoughts.jikkou.core.resource.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.nio.file.InvalidPathException;
@@ -85,6 +86,8 @@ public final class JikkouContext {
             loadExtensionProviders(provider, configuration, extensionEnabledByDefault);
         }
 
+        ResourceDeserializer.registerResolverType(new LatestApiVersionResourceTypeResolver(resourceRegistry));
+
         resourceRegistry.allDescriptors()
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)
@@ -113,13 +116,13 @@ public final class JikkouContext {
             provider.registerResources(registry);
             registry.allDescriptors().forEach(resourceRegistry::register);
         } else {
-            LOG.info(
+            LOG.warn(
                     "Extensions from provider '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
                     name,
                     EXTENSION_PROVIDER_CONFIG_PREFIX,
                     name.toLowerCase(Locale.ROOT)
             );
-            LOG.info(
+            LOG.warn(
                     "Resources from provider '{}' are ignored (config setting '{}.{}.enabled' is set to 'false').",
                     name,
                     EXTENSION_PROVIDER_CONFIG_PREFIX,
