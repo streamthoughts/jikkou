@@ -39,14 +39,33 @@ public interface ChangeComputer<T, R> {
      * @param deleteOrphans  Specifies whether orphans entries must be deleted or ignored.
      * @return The list of {@link StateChange}.
      */
-    static List<StateChange> computeChanges(Map<String, ?> actualStates,
-                                            Map<String, ?> expectedStates,
-                                            boolean deleteOrphans) {
-        return new MapEntryChangeComputer(deleteOrphans)
-                .computeChanges(
-                        new HashSet<>(actualStates.entrySet()),
-                        new HashSet<>(expectedStates.entrySet())
-                );
+    static <T> List<StateChange> computeChanges(Map<String, T> actualStates,
+                                                Map<String, T> expectedStates,
+                                                boolean deleteOrphans) {
+        return new MapEntryChangeComputer<T>(StateComparator.Equals(), deleteOrphans)
+            .computeChanges(
+                new HashSet<>(actualStates.entrySet()),
+                new HashSet<>(expectedStates.entrySet())
+            );
+    }
+
+    /**
+     * Convenient method for computing changes between the given {@link Map}.
+     *
+     * @param actualStates   The actual states.
+     * @param expectedStates The expected states.
+     * @param deleteOrphans  Specifies whether orphans entries must be deleted or ignored.
+     * @return The list of {@link StateChange}.
+     */
+    static <T> List<StateChange> computeChanges(Map<String, T> actualStates,
+                                                Map<String, T> expectedStates,
+                                                boolean deleteOrphans,
+                                                StateComparator<T> comparator) {
+        return new MapEntryChangeComputer<>(comparator, deleteOrphans)
+            .computeChanges(
+                new HashSet<>(actualStates.entrySet()),
+                new HashSet<>(expectedStates.entrySet())
+            );
     }
 
     /**

@@ -12,8 +12,8 @@ import static io.streamthoughts.jikkou.core.reconciler.Operation.NONE;
 import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
 
 import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.reconciler.change.StateComparator;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Class for building new {@link SpecificStateChange} instances.
@@ -27,9 +27,17 @@ public final class SpecificStateChangeBuilder<T> implements StateChange {
     private T before;
     private T after;
     private String description;
+    private StateComparator<T> comparator = StateComparator.Equals();
 
+    /** {@inheritDoc} **/
+    @Override
     public SpecificStateChangeBuilder<T> withName(final String name) {
         this.name = name;
+        return this;
+    }
+
+    public SpecificStateChangeBuilder<T> withComparator(final StateComparator<T> comparator) {
+        this.comparator = comparator;
         return this;
     }
 
@@ -86,7 +94,7 @@ public final class SpecificStateChangeBuilder<T> implements StateChange {
             return NONE;
         }
         if (after != null && before != null) {
-            return isEquals(before, after) ? NONE : UPDATE;
+            return comparator.equals(before, after) ? NONE : UPDATE;
         }
 
         return after == null ? DELETE : CREATE;
@@ -117,15 +125,5 @@ public final class SpecificStateChangeBuilder<T> implements StateChange {
      */
     public SpecificStateChange<T> build() {
         return new SpecificStateChange<>(getName(), getOp(), getBefore(), getAfter(), getDescription());
-    }
-
-    private static <T> boolean isEquals(@NotNull final T after,
-                                        @NotNull final T before) {
-        if (after instanceof String)
-            return after.equals(before.toString());
-
-        if (before instanceof String)
-            return before.equals(after.toString());
-        return after.equals(before);
     }
 }

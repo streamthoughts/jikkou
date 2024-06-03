@@ -10,6 +10,13 @@ import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.Optional;
 
+/**
+ * Base class for implementing a {@link ChangeComputerBuilder.ChangeFactory}.
+ *
+ * @param <K>   type of the resource key.
+ * @param <V>   type of the resource.
+ * @param <R>   type of the resource change.
+ */
 public class ResourceChangeFactory<K, V extends HasMetadata, R> implements ChangeComputerBuilder.ChangeFactory<K, V, R> {
 
     /**
@@ -30,7 +37,7 @@ public class ResourceChangeFactory<K, V extends HasMetadata, R> implements Chang
         return Optional.ofNullable(result);
     }
 
-    private <V extends HasMetadata> boolean isResourceForDeletion(V resource) {
+    private boolean isResourceForDeletion(V resource) {
         return CoreAnnotations.isAnnotatedWithDelete(resource);
     }
 

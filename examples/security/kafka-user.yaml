@@ -1,0 +1,12 @@
+apiVersion: kafka.jikkou.io/v1
+kind: KafkaUser
+metadata:
+  name: Bob
+  annotations:
+    kafka.jikkou.io/force-password-renewal: false
+spec:
+  authentications:
+    - type: scram-sha-256 # or scram-sha-256
+      password: null  # a secure password will be generated
+    - type: scram-sha-512 # or scram-sha-256
+      password: null  # a secure password will be generated        
