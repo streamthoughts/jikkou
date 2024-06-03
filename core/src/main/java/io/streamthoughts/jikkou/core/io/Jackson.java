@@ -48,6 +48,7 @@ public interface Jackson {
             .serializationInclusion(JsonInclude.Include.NON_ABSENT)
             .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+            .disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID)
             .build();
 
     ObjectMapper JSON_OBJECT_MAPPER = JsonMapper.builder()

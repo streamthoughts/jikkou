@@ -16,6 +16,7 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.change.ChangeComputer;
+import io.streamthoughts.jikkou.core.reconciler.change.ChangeComputerBuilder;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.kafka.internals.KafkaTopics;
@@ -42,7 +43,7 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
      * @param isConfigDeletionEnabled {@code true} to delete orphaned config entries.
      */
     public TopicChangeComputer(boolean isConfigDeletionEnabled) {
-        super(object -> object.getMetadata().getName(), new TopicChangeFactory(isConfigDeletionEnabled));
+        super(ChangeComputerBuilder.KeyMapper.byName(), new TopicChangeFactory(isConfigDeletionEnabled));
     }
 
     public static final class TopicChangeFactory extends ResourceChangeFactory<String, V1KafkaTopic, ResourceChange> {

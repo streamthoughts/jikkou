@@ -202,8 +202,4 @@ public final class KafkaTopicService {
         DescribeTopicsResult result = client.describeTopics(topicNames);
         return Futures.toCompletableFuture(result.allTopicNames());
     }
-
-    public static void main(String[] args) {
-        System.out.println(new Uuid(0L, 0L));
-    }
 }

@@ -14,6 +14,7 @@ import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.streamthoughts.jikkou.kafka.model.user.V1KafkaUser;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
@@ -32,6 +33,8 @@ import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTableCollector;
 import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTableController;
 import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTopicCollector;
 import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTopicController;
+import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaUserCollector;
+import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaUserController;
 import io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter;
 import io.streamthoughts.jikkou.kafka.transform.KafkaPrincipalAuthorizationTransformation;
 import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation;
@@ -70,6 +73,7 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
         registry.register(AdminClientKafkaTopicController.class, AdminClientKafkaTopicController::new);
         registry.register(AdminClientKafkaQuotaController.class, AdminClientKafkaQuotaController::new);
         registry.register(AdminClientConsumerGroupController.class, AdminClientConsumerGroupController::new);
+        registry.register(AdminClientKafkaUserController.class, AdminClientKafkaUserController::new);
 
         // collectors
         registry.register(AdminClientKafkaBrokerCollector.class, AdminClientKafkaBrokerCollector::new);
@@ -79,6 +83,7 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
         registry.register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new);
         registry.register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new);
         registry.register(AdminClientConsumerGroupCollector.class, AdminClientConsumerGroupCollector::new);
+        registry.register(AdminClientKafkaUserCollector.class, AdminClientKafkaUserCollector::new);
 
         // transformations
         registry.register(KafkaPrincipalAuthorizationTransformation.class, KafkaPrincipalAuthorizationTransformation::new);
@@ -122,7 +127,8 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
             V1KafkaPrincipalAuthorization.class,
             V1KafkaPrincipalRole.class,
             V1KafkaTableRecord.class,
-            V1KafkaConsumerGroup.class
+            V1KafkaConsumerGroup.class,
+            V1KafkaUser.class
         ).forEach(cls -> registerResource(registry, cls));
     }
 }

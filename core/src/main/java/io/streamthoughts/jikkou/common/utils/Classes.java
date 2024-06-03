@@ -94,4 +94,34 @@ public final class Classes {
         }
         return result;
     }
+
+
+    /**
+     * Converts a class simple name into kebab case.
+     *
+     * @param clazz the class simple name to be converted
+     * @return the kebab case representation of the class simple name
+     */
+    public static String toKebabCase(final Class<?> clazz) {
+        if (clazz == null) {
+            return "";
+        }
+
+        StringBuilder kebabCase = new StringBuilder();
+        char[] chars = clazz.getSimpleName().toCharArray();
+
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (Character.isUpperCase(c)) {
+                if (i != 0) {
+                    kebabCase.append('-');
+                }
+                kebabCase.append(Character.toLowerCase(c));
+            } else {
+                kebabCase.append(c);
+            }
+        }
+
+        return kebabCase.toString();
+    }
 }

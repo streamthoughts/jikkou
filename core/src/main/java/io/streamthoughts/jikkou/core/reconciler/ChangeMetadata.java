@@ -12,13 +12,13 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents the metadata attached to a change task operation result.
  */
-public final class ChangeMetadata {
+public class ChangeMetadata {
 
     public static ChangeMetadata empty() {
         return new ChangeMetadata(null);
     }
 
-    public static ChangeMetadata of(Throwable error) {
+    public static ChangeMetadata of(final Throwable error) {
         String message = String.format("%s: %s", error.getClass().getSimpleName(), error.getLocalizedMessage());
         return new ChangeMetadata(new ChangeError(message, null));
     }
