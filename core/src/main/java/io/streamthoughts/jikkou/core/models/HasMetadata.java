@@ -31,7 +31,9 @@ public interface HasMetadata extends Resource {
      * @param metadata the object meta to set.
      * @return a new object.
      */
-    HasMetadata withMetadata(ObjectMeta metadata);
+    default HasMetadata withMetadata(ObjectMeta metadata) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Gets the optional metadata.
