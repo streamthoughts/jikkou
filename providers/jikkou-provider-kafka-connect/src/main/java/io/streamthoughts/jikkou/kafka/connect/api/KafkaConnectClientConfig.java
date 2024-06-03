@@ -102,4 +102,5 @@ public class KafkaConnectClientConfig {
     public int hashCode() {
         return Objects.hash(configuration);
     }
+
 }
