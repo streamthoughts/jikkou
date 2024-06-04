@@ -43,12 +43,16 @@ public final class ImmutableStateChangeList<T extends StateChange> implements It
      */
     ImmutableStateChangeList(final List<T> values) {
         Map<String, List<T>> all = new LinkedHashMap<>();
-        values.forEach(data -> {
-            if (data != null) {
-                all.computeIfAbsent(data.getName(), unused -> new LinkedList<>()).add(data);
-            }
-        });
-        this.changes = Collections.unmodifiableList(values);
+        if (values != null) {
+            values.forEach(data -> {
+                if (data != null) {
+                    all.computeIfAbsent(data.getName(), unused -> new LinkedList<>()).add(data);
+                }
+            });
+            this.changes = Collections.unmodifiableList(values);
+        } else {
+            this.changes = Collections.emptyList();
+        }
         this.changesByName = Collections.unmodifiableMap(all);
     }
 
