@@ -1,5 +1,7 @@
 = Jikkou!
 
+**Opensource Resource as Code framework for Apache Kafka.** Developed by Kafka ❤️, for all Kafka users!
+
 [.text-center]
 image:./assets/jikkou-logo-title.png[align="center"]
 
@@ -19,11 +21,15 @@ image:https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_ji
 image:https://img.shields.io/badge/Slack-Join%20Community-c92760?logo=slack[Slack Community, link=https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA]
 image:https://img.shields.io/badge/Wesite-Jikkou-c92760[Website,link=https://streamthoughts.github.io/jikkou/]
 --
+See: https://streamthoughts.github.io/jikkou/[official documentation]
 
+== Do You Like This Project? ⭐
+
+Please consider giving us a star ⭐ on GitHub. Your stars motivate us to persistently improve and help other developers discover our project.
+
+image:https://img.shields.io/github/stars/streamthoughts/jikkou[]
 
 toc::[]
-
-See: https://streamthoughts.github.io/jikkou/[official documentation]
 
 == Introduction
 
@@ -255,11 +261,6 @@ Any feedback, bug reports and PRs are greatly appreciated!
 
 - **Source Code**: https://github.com/streamthoughts/jikkou
 - **Issue Tracker**: https://github.com/streamthoughts/jikkou/issues
-
-== 🙏 Show your support
-
-You think this project can help you or your team to manage your Apache Kafka Cluster ?
-Please ⭐ this repository to support us!
 
 == Licence
 
