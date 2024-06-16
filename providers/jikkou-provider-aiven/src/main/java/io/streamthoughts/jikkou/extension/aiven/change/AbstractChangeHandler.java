@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.extension.aiven.change;
 
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeError;
 import io.streamthoughts.jikkou.core.reconciler.ChangeMetadata;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
@@ -72,9 +73,9 @@ public abstract class AbstractChangeHandler extends BaseChangeHandler<ResourceCh
     }
 
     public static <T> T getEntry(ResourceChange change, Class<T> entryType) {
-        return change.getSpec()
-                .getChanges()
-                .getLast("entry", TypeConverter.of(entryType))
-                .getAfter();
+        SpecificStateChange<T> entry = change.getSpec()
+            .getChanges()
+            .getLast("entry", TypeConverter.of(entryType));
+        return change.getOp() == Operation.DELETE ? entry.getBefore() : entry.getAfter();
     }
 }
