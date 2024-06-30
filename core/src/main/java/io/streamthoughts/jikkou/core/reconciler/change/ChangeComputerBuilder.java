@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.reconciler.change;
 
+import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.Optional;
 
 /**
@@ -63,11 +64,17 @@ public interface ChangeComputerBuilder<K, V, R> {
          * @return The state ID.
          */
         K apply(V value);
+
+
+        static <V extends HasMetadata> KeyMapper<V, String> byName() {
+            return value -> value.getMetadata().getName();
+        }
     }
 
     /**
      * Interface for creating change object.
      *
+     * @param <K> The resource-key type.
      * @param <V> The resource type.
      */
     interface ChangeFactory<K, V, R> {
@@ -81,6 +88,5 @@ public interface ChangeComputerBuilder<K, V, R> {
          * @return The optional change.
          */
         Optional<R> createChange(K key, V before, V after);
-
     }
 }

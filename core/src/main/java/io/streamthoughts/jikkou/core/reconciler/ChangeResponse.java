@@ -59,7 +59,7 @@ public final class ChangeResponse<C extends ResourceChange> {
     /**
      * Add a result to this response.
      *
-     * @param result
+     * @param result The future change metadata.
      */
     public void addResult(CompletableFuture<ChangeMetadata> result) {
         this.results.add(result);

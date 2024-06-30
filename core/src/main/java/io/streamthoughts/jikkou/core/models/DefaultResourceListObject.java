@@ -164,7 +164,7 @@ public class DefaultResourceListObject<T extends HasMetadata> implements Resourc
         }
 
         public DefaultResourceListObject<T> build() {
-            return new DefaultResourceListObject<T>(this.kind, this.apiVersion, this.metadata, this.items);
+            return new DefaultResourceListObject<>(this.kind, this.apiVersion, this.metadata, this.items);
         }
     }
 }

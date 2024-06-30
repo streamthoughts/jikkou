@@ -6,6 +6,8 @@
  */
 package io.streamthoughts.jikkou.core.reconciler.change;
 
+import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
+import io.streamthoughts.jikkou.core.models.change.SpecificStateChangeBuilder;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import java.util.List;
 import java.util.Map;
@@ -14,29 +16,35 @@ import java.util.Optional;
 /**
  * A {@link ChangeComputer} implementation for computing map entry changes.
  */
-public final class MapEntryChangeComputer implements ChangeComputer<Map.Entry<String, ?>, StateChange> {
+public final class MapEntryChangeComputer<T> implements ChangeComputer<Map.Entry<String, T>, StateChange> {
 
-    private final ChangeComputer<Map.Entry<String, ?>, StateChange> computer;
+    private final ChangeComputer<Map.Entry<String, T>, StateChange> computer;
 
     /**
      * Creates a new {@link MapEntryChangeComputer} instance.
      *
      * @param deleteOrphans Specifies whether orphans entries must be deleted or ignored.
      */
-    public MapEntryChangeComputer(boolean deleteOrphans) {
+    public MapEntryChangeComputer(StateComparator<T> comparator, boolean deleteOrphans) {
         this.computer = ChangeComputer
-                .<String, Map.Entry<String, ?>, StateChange>builder()
+                .<String, Map.Entry<String, T>, StateChange>builder()
                 .withDeleteOrphans(deleteOrphans)
                 .withKeyMapper(Map.Entry::getKey)
                 .withChangeFactory((key, before, after) -> {
-                    Object beforeValue = Optional.ofNullable(before)
+                    T beforeValue = Optional.ofNullable(before)
                             .map(Map.Entry::getValue)
                             .orElse(null);
 
-                    Object afterValue = Optional.ofNullable(after)
+                    T afterValue = Optional.ofNullable(after)
                             .map(Map.Entry::getValue)
                             .orElse(null);
-                    return Optional.of(StateChange.with(key, beforeValue, afterValue));
+                    SpecificStateChange<T> state = new SpecificStateChangeBuilder<T>()
+                        .withName(key)
+                        .withBefore(beforeValue)
+                        .withAfter(afterValue)
+                        .withComparator(comparator)
+                        .build();
+                    return Optional.of(state);
                 })
                 .build();
     }
@@ -45,8 +53,8 @@ public final class MapEntryChangeComputer implements ChangeComputer<Map.Entry<St
      * {@inheritDoc}
      **/
     @Override
-    public List<StateChange> computeChanges(Iterable<Map.Entry<String, ?>> actualStates,
-                                            Iterable<Map.Entry<String, ?>> expectedStates) {
+    public List<StateChange> computeChanges(Iterable<Map.Entry<String, T>> actualStates,
+                                            Iterable<Map.Entry<String, T>> expectedStates) {
         return computer.computeChanges(actualStates, expectedStates);
     }
 }
