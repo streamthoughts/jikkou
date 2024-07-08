@@ -7,6 +7,38 @@ footer {
     min-height: 4rem!important;
 }
 
+#td-cover-block-0 {
+    background-color: #000e1bff
+}
+
+@media (min-width: 768px) {
+    #td-cover-block-0:before {
+        content: "";
+        width: 42vw;
+        height: 75vw;
+        display: block;
+        background: linear-gradient(90deg, rgb(0, 14, 27) 60%, rgba(109, 86, 231, 0.19) 80%);
+        position: absolute;
+        left: 12vw;
+        top: -36vw;
+        transform: rotate(45deg);
+        border-radius: 45%;
+    }
+
+    #td-cover-block-0:after {
+        content: '';
+        width: 110vw;
+        height: 85vw;
+        display: block;
+        background: linear-gradient(0deg, #000e1b00 60%, #6d56e730 80%);
+        position: absolute;
+        left: -20vw;
+        top: 20vw;
+        transform: rotate(45deg);
+        border-radius: 20%;
+    }
+}
+
 .td-home h2 {
     font-size: 2.5rem;
     font-weight: 300;
@@ -132,8 +164,6 @@ pre { border: 1px solid $light;}
 .row {
     display: flex;
     flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
 }
 
 h2.section-title {
@@ -143,14 +173,61 @@ h2.section-title {
      margin: 12px 0;
 }
 
-h2.hero-title {
-    font-weight: 700;
-
+h1.hero-title {
+    font-weight: 700 !important;
+    line-height: 1.2;
+    font-size: 2.8em;
     .hero-end {
         color: $dark-pink!important;
         border-bottom: 3px solid $light;
         padding: 0 0.8em 0 0.8em;
         line-height: 12px;
         border-radius: 2em;
+    }
+}
+@media (min-width: 768px) {
+    .logo {
+        max-width: 80% !important;
+        height: auto;
+    }
+}
+
+@media(max-width: 767px) {
+    .hero-section-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        .logo {
+            max-width: 60% !important;
+            height: auto;
+            margin: 54px;
+        }
+    }
+}
+
+.td-navbar .navbar-brand__name {
+    font-size: 1.75rem !important;
+}
+
+.td-navbar {
+    background-color: #09121e;
+    font-size: 1.10rem !important;
+    li.nav-item {
+         -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          border-top: 2px solid transparent;
+
+          &:hover {
+              border-bottom: 2px solid $dark-pink;
+          }
+    }
+    .nav-link {
+        padding-right: .5rem !important;
+        padding-left: .5rem !important;
+        font-weight: 500 !important;
     }
 }

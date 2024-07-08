@@ -16,15 +16,12 @@ $(function () {
 });
 </script>
 
-{{% blocks/cover title="Jikkou (jikkō / 実行)!" image_anchor="top" height="max" color="white" %}}
+{{% blocks/cover image_anchor="top" height="max" color="white" %}}
 <div class="mx-auto">
-	<h2 class="hero-title mb-5">The <span class="text-light">Open source</span> Resource<br /> as Code framework for <br /><span id="hero-title-end" class="hero-end">Apache Kafka</span></h2>
-	<a class="btn btn-lg btn-secondary mx-4" href="">
-        Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+    <h1 class="hero-title mb-5">Open source<br />Resource as Code<br /> Framework<br /> for Apache Kafka</h1>
+    <a class="btn btn-lg btn-github" href="docs/install">
+        <i class="fab fa-github mx-2"></i> Install Jikkou
     </a>
-	<a class="btn btn-lg btn-github mx-4" href="https://github.com/streamthoughts/jikkou">
-		Download <i class="fab fa-github ml-2 "></i>
-	</a>
 </div>
 {{% /blocks/cover %}}
 

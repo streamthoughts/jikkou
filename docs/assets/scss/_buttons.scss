@@ -9,7 +9,6 @@
     letter-spacing: 1.06px;
     text-align: center;
     text-transform: uppercase;
-    width: 186px;
     height: 52px;
     cursor: pointer;
     justify-content: center;
@@ -18,12 +17,16 @@
 
     &-github {
     	background-color: transparent;
-    	border: solid 1px #ffffff;
+    	border: solid 1px $dark-pink;
     	color: #ffffff !important ;
 
         &:hover {
-            border: solid 1px $dark-pink !important ;
+            border: solid 1px #ffffff !important ;
         }
+    }
+
+    .fab {
+        font-size: 1.5em;
     }
 }
 
