@@ -13,40 +13,42 @@ ui.breadcrumb_disable: false
 Welcome to the Jikkou documentation! Jikkou, means “execution (e.g. of a plan) or actual state (of things)” in Japanese.
 {{% /pageinfo %}}
 
-## What is Jikkou ?
+## What Is Jikkou ?
 
-Jikkou is a lightweight open-source tool designed to provide an efficient and easy way to manage, automate and provision
-resources on **Event-Driven Data Mesh platforms** (or, more simply, on any **Apache Kafka Infrastructures**).
+Jikkou is a powerful, flexible open-source framework that enables self-serve resource provisioning.
+It allows developers and DevOps teams to easily manage, automate, and provision all the resources needed for their
+**Apache Kafka&reg;** platform.
 
-## How does Jikkou work ?
+Jikkou was born with the aim to streamline day-to-day operations on Apache Kafka&reg;, ensuring that platform governance is
+no longer a tedious and boring task for both developers and administrators.
 
-Jikkou adopts a stateless approach and thus does not store any state internally. Instead, it leverages your platforms 
-or services as the source of truth. This design allows you to seamlessly integrate Jikkou with other solutions 
-(such as Ansible, Terraform, etc.) or use it on an ad hoc basis for specific needs, making it incredibly flexible and versatile.
+## What Are The Use-Cases ?
 
-{{< figure src="./jikkou-how-it-works.svg" width="80%" class="center" >}}
 
-## Why Jikkou ? The Story Behind Jikkou.
+Jikkou is primarily used as a GitOps solution for Kafka configuration management.
 
-Jikkou was originally created as a side project to help development teams quickly recreate topics on Apache Kafka
-clusters used for testing purposes (the project was called _Kafka Specs_). At the time, the aim was to ensure
-that environments were always clean and ready to run integration tests.
+Here are some of the various use cases we've observed in different projects:
 
-But over time, new features were added, and so Jikkou was born with the aim to streamline day-to-day operations
-on Apache Kafka, ensuring that platform governance is no longer a tedious and boring task for both developers and
-administrators.
+* **Topic as a Service**: Build a self-serve platform for managing Kafka topics.
+* **ACL Management**: Centrally manage all ACLs of an Apache Kafka cluster.
+* **Kafka Connectors Management**: Deploy and manage Kafka Connect connectors.
+* **Ad Hoc Changes**: Apply ad hoc changes as needed.
+* **Audit**: Easily check configurations of topics, brokers, or identify divergences between different environments.
+* **Kafka Configuration Backup**: Periodically export all critical configurations of your Kafka cluster.
+* **Configuration Replication**: Replicate the Kafka configuration from one cluster to another.
 
-Today, Jikkou is used in production on several projects, providing efficient management of Kafka resources through
-a GitOps approach. The project continues to evolve as an open-source project, as the solutions that have
-appeared over time in the Kafka ecosystem do not meet the needs of Kafka developers and administrators as well.
-In fact, existing solutions are either designed to work only with Kubernetes, or rely on dedicated services to manage
-the state of the solution.
+## How Does Jikkou Work ?
 
-Now, we sincerely believe that Jikkou can play a role in bootstrapping a _self-service platform_ for a Data Mesh 
-organization, by unifying the way to manage the various assets required to create and manage a Data Product 
-exposed through Apache Kafka.
+Jikkou offers flexibility in deployment, functioning either as a simple CLI (Command Line Interface) or as a REST
+server, based on your requirements.
 
-## Is Jikkou for me ?
+By adopting a stateless approach, Jikkou does not store any internal state. Instead, it leverages your platforms or
+services as the source of truth. This design enables seamless integration with other solutions, such as Ansible and
+Terraform, or allows for ad hoc use for specific tasks, making Jikkou incredibly flexible and versatile.
+
+{{< figure src="./jikkou-architecture-overview.svg" width="80%" class="center" >}}
+
+## Is Jikkou For Me ?
 
 Jikkou can be implemented regardless of the size of your team or data platform.
 
