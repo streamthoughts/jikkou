@@ -15,10 +15,20 @@
     padding-left: 0.8em;
     padding-right: 0.8em;
 
+    &-filled {
+        background-color: $primary!important ;
+        border: solid 1px $dark-pink!important ;
+        color: #ffffff !important ;
+
+        &:hover {
+            border: solid 1px #ffffff !important ;
+        }
+    }
+
     &-github {
-    	background-color: transparent;
-    	border: solid 1px $dark-pink;
-    	color: #ffffff !important ;
+        background-color: transparent;
+        border: solid 1px $dark-pink;
+        color: #ffffff !important ;
 
         &:hover {
             border: solid 1px #ffffff !important ;

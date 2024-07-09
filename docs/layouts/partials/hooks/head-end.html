@@ -1,2 +1,3 @@
 {{ $asciinema := resources.Get "css/asciinema-player.css" | resources.ToCSS | resources.Minify | resources.Fingerprint }}
 <link rel="stylesheet" href="{{ $asciinema.Permalink }}">
+<script src="https://buttons.github.io/buttons.js"></script>

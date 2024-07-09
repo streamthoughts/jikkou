@@ -18,7 +18,7 @@ $(function () {
 
 {{% blocks/cover image_anchor="top" height="max" color="white" %}}
 <div class="mx-auto">
-    <h1 class="hero-title mb-5">Open source<br />Resource as Code<br /> Framework<br /> for Apache Kafka</h1>
+    <h1 class="hero-title mb-5">Open source<br />Resource as Code<br /> Framework<br /> for Apache Kafka&reg;</h1>
     <a class="btn btn-lg btn-github" href="docs/install">
         <i class="fab fa-github mx-2"></i> Install Jikkou
     </a>

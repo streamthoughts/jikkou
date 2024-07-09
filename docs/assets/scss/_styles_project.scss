@@ -2,40 +2,41 @@
 
 footer {
     border-top: 1px solid #fff;
-    background-color: #192a34 !important;
+    background-color: #000e1b !important;
     padding-top: 1rem!important;
     min-height: 4rem!important;
 }
 
 #td-cover-block-0 {
-    background-color: #000e1bff
+    background-color: #000e1bff;
 }
 
 @media (min-width: 768px) {
     #td-cover-block-0:before {
         content: "";
-        width: 42vw;
-        height: 75vw;
+        width: 40vw;
+        height: 60vw;
         display: block;
-        background: linear-gradient(90deg, rgb(0, 14, 27) 60%, rgba(109, 86, 231, 0.19) 80%);
+        background: linear-gradient(90deg, #000E1B 60%, #A9369440 80%);
         position: absolute;
-        left: 12vw;
-        top: -36vw;
+        left: 8vw;
+        top: -20vw;
         transform: rotate(45deg);
-        border-radius: 45%;
+        border-radius: 50%;
     }
 
-    #td-cover-block-0:after {
-        content: '';
-        width: 110vw;
-        height: 85vw;
+    #td-cover-block-0::after {
+        content: "";
+        width: 80vw;
+        height: 60vw;
         display: block;
-        background: linear-gradient(0deg, #000e1b00 60%, #6d56e730 80%);
+        background: linear-gradient(0deg, #AA358F33 50%, #E62D4C40 100%);
         position: absolute;
-        left: -20vw;
-        top: 20vw;
+        left: -8vw;
+        top: 15vw;
         transform: rotate(45deg);
-        border-radius: 20%;
+        border-radius: 30%;
+        overflow: hidden;
     }
 }
 
@@ -187,7 +188,7 @@ h1.hero-title {
 }
 @media (min-width: 768px) {
     .logo {
-        max-width: 80% !important;
+        max-width: 70% !important;
         height: auto;
     }
 }
@@ -206,15 +207,29 @@ h1.hero-title {
             margin: 54px;
         }
     }
+
+    #top-head-promo {
+        display: none;
+    }
+
+    .td-navbar {
+        top: 0 !important;
+    }
+}
+
+.navbar-bg-onscroll {
+    background: #000e1b !important;
+    opacity: inherit;
 }
 
 .td-navbar .navbar-brand__name {
-    font-size: 1.75rem !important;
+    font-size: 1.45rem !important;
 }
 
 .td-navbar {
+    top: unset;
     background-color: #09121e;
-    font-size: 1.10rem !important;
+    font-size: 1.05rem !important;
     li.nav-item {
          -webkit-box-sizing: border-box;
           -moz-box-sizing: border-box;
@@ -230,4 +245,25 @@ h1.hero-title {
         padding-left: .5rem !important;
         font-weight: 500 !important;
     }
+}
+
+@media (min-width: 768px) {
+    #top-head-promo {
+        text-align: center;
+        background-color: #6A51F2; color: #FFFFFF;
+        padding: 5px;
+
+        a {
+           color: white;
+           text-decoration: underline;
+        }
+
+        .github-button {
+            display: block !important;
+        }
+    }
+}
+
+.align-center {
+    text-align: center;
 }
