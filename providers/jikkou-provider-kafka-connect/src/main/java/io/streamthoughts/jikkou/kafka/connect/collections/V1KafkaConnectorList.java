@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.kafka.connect.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta1")
 @Kind("KafkaConnectorList")
-public class V1KafkaConnectorList extends DefaultResourceListObject<V1KafkaConnector> {
+public class V1KafkaConnectorList extends SpecificResourceList<V1KafkaConnectorList, V1KafkaConnector> {
 
 
     /**
@@ -38,16 +38,29 @@ public class V1KafkaConnectorList extends DefaultResourceListObject<V1KafkaConne
     public V1KafkaConnectorList(@Nullable String kind,
                                 @Nullable String apiVersion,
                                 @Nullable ObjectMeta metadata,
-                                @NotNull List<? extends V1KafkaConnector> items) {
+                                @NotNull List<V1KafkaConnector> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaConnectorList} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaConnectorList(List<? extends V1KafkaConnector> items) {
-        super(items);
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaConnectorList.Builder, V1KafkaConnectorList, V1KafkaConnector> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaConnectorList build() {
+            return new V1KafkaConnectorList(apiVersion, kind, metadata, items);
+        }
     }
 }

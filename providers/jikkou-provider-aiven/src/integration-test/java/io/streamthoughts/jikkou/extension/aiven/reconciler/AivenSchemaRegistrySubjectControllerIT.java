@@ -11,26 +11,18 @@ import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChang
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
 
-import io.streamthoughts.jikkou.core.DefaultApi;
-import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
+import io.streamthoughts.jikkou.extension.aiven.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
@@ -43,12 +35,11 @@ import java.util.List;
 import java.util.Map;
 import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("integration")
-public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegrationTest {
+public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProviderIT {
 
     public static final String TEST_SUBJECT = "test";
 
@@ -75,21 +66,6 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
               ]
             }
             """;
-
-    private volatile JikkouApi api;
-
-    @BeforeEach
-    public void beforeEach() {
-        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
-                new DefaultExtensionDescriptorFactory(),
-                new ClassExtensionAliasesGenerator()
-        );
-        AivenSchemaRegistrySubjectController controller = new AivenSchemaRegistrySubjectController(getAivenApiConfig());
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry, Configuration.empty()), new DefaultResourceRegistry())
-                .register(AivenSchemaRegistrySubjectController.class, () -> controller)
-                .build();
-    }
-
 
     @Test
     void shouldCreateSchemaRegistrySubject() {
@@ -138,7 +114,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
 
         // When
         List<ChangeResult> results = api.reconcile(
-                        ResourceListObject.of(List.of(resource)),
+                        ResourceList.of(List.of(resource)),
                         ReconciliationMode.CREATE,
                         ReconciliationContext.builder().dryRun(false).build()
                 )
@@ -233,7 +209,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends AbstractAivenIntegra
         // When
         List<ChangeResult> results = api.reconcile
                 (
-                        ResourceListObject.of(List.of(resource)),
+                        ResourceList.of(List.of(resource)),
                         ReconciliationMode.UPDATE,
                         ReconciliationContext.builder().dryRun(false).build()
                 )

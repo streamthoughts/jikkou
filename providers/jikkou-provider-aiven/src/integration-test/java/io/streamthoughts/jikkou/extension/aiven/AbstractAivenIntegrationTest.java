@@ -6,7 +6,6 @@
  */
 package io.streamthoughts.jikkou.extension.aiven;
 
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import java.io.IOException;
 import okhttp3.mockwebserver.MockResponse;
@@ -26,15 +25,6 @@ public class AbstractAivenIntegrationTest {
     public void beforeAll() throws IOException {
         SERVER = new MockWebServer();
         SERVER.start();
-        Configuration configuration = new Configuration
-                .Builder()
-                .with(AivenApiClientConfig.AIVEN_API_URL.key(), SERVER.url("/"))
-                .with(AivenApiClientConfig.AIVEN_PROJECT.key(), "project")
-                .with(AivenApiClientConfig.AIVEN_SERVICE.key(), "service")
-                .with(AivenApiClientConfig.AIVEN_TOKEN_AUTH.key(), "token")
-                .with(AivenApiClientConfig.AIVEN_DEBUG_LOGGING_ENABLED.key(), true)
-                .build();
-        AIVEN_API_CONFIG = new AivenApiClientConfig(configuration);
     }
 
     @AfterEach

@@ -53,7 +53,7 @@ public class TopicMinReplicationFactorValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        minReplicationFactor = VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.getOptional(context.appConfiguration())
+        minReplicationFactor = VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.key(),

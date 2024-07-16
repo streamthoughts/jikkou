@@ -10,7 +10,7 @@ import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -25,7 +25,7 @@ public class NoDuplicateTopicsAllowedValidation implements Validation<V1KafkaTop
     /** {@inheritDoc} */
     @Override
     public ValidationResult validate(@NotNull List<V1KafkaTopic> resources) throws ValidationException {
-        DefaultResourceListObject<V1KafkaTopic> list = new DefaultResourceListObject<>(resources);
+        ResourceList<V1KafkaTopic> list = ResourceList.of(resources);
         try {
             list.verifyNoDuplicateMetadataName();
             return ValidationResult.success();

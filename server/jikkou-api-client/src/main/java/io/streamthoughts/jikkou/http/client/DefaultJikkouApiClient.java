@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
@@ -286,7 +286,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      **/
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull ResourceType type) {
+    public <T extends HasMetadata> ResourceList<T> getResources(@NotNull ResourceType type) {
         ApiResource resource = queryApiResourceForType(type);
         HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.LIST, type));
         // Build Request
@@ -295,11 +295,11 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
             .get()
             .build();
         // Execute Request
-        ApiResponse<ResourceListObject> response = apiClient.execute(
+        ApiResponse<ResourceList> response = apiClient.execute(
             httpRequest,
-            ResourceListObject.class
+            ResourceList.class
         );
-        return (ResourceListObject<T>) response.getData();
+        return (ResourceList<T>) response.getData();
     }
 
     /**
@@ -336,9 +336,9 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      * {@inheritDoc}
      **/
     @Override
-    public <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType type,
-                                                                       @NotNull Selector selector,
-                                                                       @NotNull Configuration configuration) {
+    public <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType type,
+                                                                 @NotNull Selector selector,
+                                                                 @NotNull Configuration configuration) {
         ApiResource resource = queryApiResourceForType(type);
         Link link = findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.SELECT, type);
         final URI uri = UriBuilder.of(apiClient.getBasePath())
@@ -357,11 +357,11 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
             .post(requestBody)
             .build();
         // Execute Request
-        ApiResponse<ResourceListObject> response = apiClient.execute(
+        ApiResponse<ResourceList> response = apiClient.execute(
             httpRequest,
-            ResourceListObject.class
+            ResourceList.class
         );
-        return (ResourceListObject<T>) response.getData();
+        return (ResourceList<T>) response.getData();
     }
 
     /**
@@ -437,9 +437,9 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      **/
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T extends HasMetadata> ResourceListObject<T> validate(@NotNull ResourceType type,
-                                                                  @NotNull List<T> resources,
-                                                                  @NotNull ReconciliationContext context) {
+    public <T extends HasMetadata> ResourceList<T> validate(@NotNull ResourceType type,
+                                                            @NotNull List<T> resources,
+                                                            @NotNull ReconciliationContext context) {
         ApiResource apiResource = queryApiResourceForType(type);
         HttpUrl url = toHttpUrl(findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.VALIDATE, type));
 
@@ -452,11 +452,11 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
             .url(url)
             .build();
         // Execute Request
-        ApiResponse<ResourceListObject> response = apiClient.execute(
+        ApiResponse<ResourceList> response = apiClient.execute(
             httpRequest,
-            ResourceListObject.class
+            ResourceList.class
         );
-        return (ResourceListObject<T>) response.getData();
+        return (ResourceList<T>) response.getData();
     }
 
     /**

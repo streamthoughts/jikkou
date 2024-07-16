@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.change.acl.AclChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.acl.AclChangeHandler;
 import io.streamthoughts.jikkou.kafka.change.acl.KafkaAclBindingBuilder;
@@ -72,7 +73,7 @@ public final class AdminClientKafkaAclController
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 

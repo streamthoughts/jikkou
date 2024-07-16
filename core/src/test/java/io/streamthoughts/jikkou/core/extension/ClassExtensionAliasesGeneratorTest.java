@@ -46,28 +46,31 @@ class ClassExtensionAliasesGeneratorTest {
     void shouldGetUniqueClassAliases() {
         ClassExtensionAliasesGenerator generator = new ClassExtensionAliasesGenerator();
         List<ExtensionDescriptor<?>> descriptors = List.of(
-                getDescriptor(TestValidation.class),
-                getDescriptor(TestValidation.class)
+            getDescriptor(TestValidation.class),
+            getDescriptor(TestValidation.class)
         );
         Set<String> aliases = generator.getAliasesFor(
-                descriptors.get(0),
-                descriptors);
+            descriptors.get(0),
+            descriptors);
         Assertions.assertTrue(aliases.isEmpty());
     }
 
     private static <T> ExtensionDescriptor<T> getDescriptor(Class<T> clazz) {
         return new DefaultExtensionDescriptor<>(
-                "Test",
-                "Title",
-                "Description",
-                Collections.emptyList(),
-                ExtensionCategory.EXTENSION,
-                Collections.emptyList(),
-                "Provider",
-                clazz,
-                clazz.getClassLoader(),
-                () -> null,
-                true
+            "Test",
+            "Title",
+            "Description",
+            Collections.emptyList(),
+            ExtensionCategory.EXTENSION,
+            Collections.emptyList(),
+            null,
+            () -> null,
+            clazz,
+            clazz.getClassLoader(),
+            () -> null,
+            null,
+            true,
+            null
         );
     }
 

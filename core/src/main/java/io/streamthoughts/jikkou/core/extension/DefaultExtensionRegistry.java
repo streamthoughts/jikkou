@@ -139,12 +139,12 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
 
         @SuppressWarnings("unchecked")
         List<ExtensionDescriptor<T>> descriptors = types
-                .stream()
-                .flatMap(type -> {
-                    Stream<ExtensionDescriptor<T>> candidates = findDescriptorCandidatesByType(type);
-                    return qualifier != null ? qualifier.filter(type, candidates) : candidates;
-                })
-                .toList();
+            .stream()
+            .flatMap(type -> {
+                Stream<ExtensionDescriptor<T>> candidates = findDescriptorCandidatesByType(type);
+                return qualifier != null ? qualifier.filter(type, candidates) : candidates;
+            })
+            .toList();
         return descriptors;
     }
 
@@ -205,7 +205,7 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         final int numMatchingComponents = descriptors.size();
 
         throw new NoUniqueExtensionException("Expected single matching extension for " +
-                "type '" + type + "' but found " + numMatchingComponents);
+            "type '" + type + "' but found " + numMatchingComponents);
     }
 
     /**
@@ -216,8 +216,8 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         Objects.requireNonNull(type, "type must not be null");
         Objects.requireNonNull(supplier, "supplier must not be null");
         ExtensionDescriptor<T> descriptor = descriptorFactory.make(
-                type,
-                supplier
+            type,
+            supplier
         );
         registerDescriptor(descriptor);
     }
@@ -232,8 +232,8 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         Objects.requireNonNull(type, "type must not be null");
         Objects.requireNonNull(supplier, "supplier must not be null");
         ExtensionDescriptor<T> descriptor = descriptorFactory.make(
-                type,
-                supplier
+            type,
+            supplier
         );
         for (ExtensionDescriptorModifier modifier : modifiers) {
             descriptor = modifier.apply(descriptor);
@@ -248,8 +248,8 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
     public <T> void registerDescriptor(@NotNull ExtensionDescriptor<T> descriptor) {
         Objects.requireNonNull(descriptor, "descriptor must not be null");
         LOG.info("Registering extension descriptor for name='{}', type='{}'",
-                descriptor.name(),
-                descriptor.type()
+            descriptor.name(),
+            descriptor.type()
         );
 
         if (descriptor.name() == null)
@@ -260,9 +260,9 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
 
         final ExtensionKey<T> key = ExtensionKey.create(descriptor);
 
-        if (extensionsByKey.put(key, new DefaultExtensionSupplier<>(this, descriptor)) != null) {
+        if (extensionsByKey.put(key, new DefaultExtensionSupplier<>(descriptor)) != null) {
             throw new ConflictingExtensionDefinitionException(
-                    "Failed to resister ExtensionDescriptor, extension already exists for key: " + key);
+                "Failed to resister ExtensionDescriptor, extension already exists for key: " + key);
         }
         registerAliasesFor(descriptor);
 
@@ -275,6 +275,9 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
         descriptors.add(descriptor);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ExtensionDescriptorRegistry duplicate() {
         return new DefaultExtensionRegistry(this);
@@ -302,14 +305,14 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
     @SuppressWarnings("unchecked")
     private <T> Stream<ExtensionDescriptor<T>> findDescriptorCandidatesByType(final Class<T> type) {
         return descriptorsByType.getOrDefault(type, Collections.emptyList())
-                .stream()
-                .map(d -> (ExtensionDescriptor<T>) d);
+            .stream()
+            .map(d -> (ExtensionDescriptor<T>) d);
     }
 
     private List<ExtensionDescriptor<?>> descriptors() {
         return descriptorsByType.values().stream()
-                .flatMap(Collection::stream)
-                .toList();
+            .flatMap(Collection::stream)
+            .toList();
     }
 
 

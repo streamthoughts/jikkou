@@ -52,7 +52,7 @@ public class TopicMinNumPartitionsValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        minNumPartitions = VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.getOptional(context.appConfiguration())
+        minNumPartitions = VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.key(),

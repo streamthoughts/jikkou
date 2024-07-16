@@ -8,9 +8,8 @@ package io.streamthoughts.jikkou.extension.aiven.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -19,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("SchemaRegistryAclEntryList")
-public class V1SchemaRegistryAclEntryList extends DefaultResourceListObject<V1SchemaRegistryAclEntry> {
+public class V1SchemaRegistryAclEntryList extends SpecificResourceList<V1SchemaRegistryAclEntryList, V1SchemaRegistryAclEntry> {
 
 
     /**
-     * Creates a new {@link V1SchemaRegistryAclEntryList} instance.
+     * Creates a new {@link V1KafkaQuotaList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -39,16 +38,29 @@ public class V1SchemaRegistryAclEntryList extends DefaultResourceListObject<V1Sc
     public V1SchemaRegistryAclEntryList(@Nullable String kind,
                                         @Nullable String apiVersion,
                                         @Nullable ObjectMeta metadata,
-                                        @NotNull List<? extends V1SchemaRegistryAclEntry> items) {
+                                        @NotNull List<V1SchemaRegistryAclEntry> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaQuota} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1SchemaRegistryAclEntryList(List<? extends V1SchemaRegistryAclEntry> items) {
-        super(items);
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1SchemaRegistryAclEntryList.Builder, V1SchemaRegistryAclEntryList, V1SchemaRegistryAclEntry> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1SchemaRegistryAclEntryList build() {
+            return new V1SchemaRegistryAclEntryList(apiVersion, kind, metadata, items);
+        }
     }
 }

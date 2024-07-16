@@ -6,7 +6,10 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,16 +18,49 @@ import org.jetbrains.annotations.NotNull;
 public final class ExtensionDescriptorModifiers {
 
     /**
-     * Gets a modifier implementation that will set the provider of the extension.
+     * Gets a modifier implementation that will set the priority of the extension.
      *
      * @return a new {@link ExtensionDescriptorModifier} instance.
      */
-    public static ExtensionDescriptorModifier withProvider(@NotNull final String name) {
+    public static ExtensionDescriptorModifier withPriority(@NotNull final Integer priority) {
         return new ExtensionDescriptorModifier() {
             @Override
             public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
                 return ExtensionDescriptorBuilder.<T>builder(descriptor)
-                        .provider(name)
+                    .priority(priority)
+                    .build();
+            }
+        };
+    }
+
+    /**
+     * Gets a modifier implementation that will set the configuration of the extension.
+     *
+     * @return a new {@link ExtensionDescriptorModifier} instance.
+     */
+    public static ExtensionDescriptorModifier withConfiguration(@NotNull final Configuration configuration) {
+        return new ExtensionDescriptorModifier() {
+            @Override
+            public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
+                return ExtensionDescriptorBuilder.<T>builder(descriptor)
+                    .configuration(configuration)
+                    .build();
+            }
+        };
+    }
+
+    /**
+     * Gets a modifier implementation that will set the provider of the extension.
+     *
+     * @return a new {@link ExtensionDescriptorModifier} instance.
+     */
+    public static ExtensionDescriptorModifier withProvider(@NotNull final Class<? extends ExtensionProvider> provider,
+                                                           @NotNull final Supplier<? extends ExtensionProvider> supplier) {
+        return new ExtensionDescriptorModifier() {
+            @Override
+            public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {
+                return ExtensionDescriptorBuilder.<T>builder(descriptor)
+                        .provider(provider, supplier)
                         .build();
             }
         };

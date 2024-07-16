@@ -7,9 +7,13 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.models.HasPriority;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
@@ -27,13 +31,16 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     private final List<Example> examples;
     private final ExtensionCategory category;
     private final List<ConfigPropertySpec> properties;
-    private final String provider;
+    private final Class<? extends ExtensionProvider> provider;
+    private final Supplier<? extends ExtensionProvider> providerSupplier;
     private final Class<T> type;
     private final Supplier<T> supplier;
     private final boolean isEnabled;
     private final Set<String> aliases;
     private final ClassLoader classLoader;
     private ExtensionMetadata metadata;
+    private final Configuration configuration;
+    private final Integer priority;
 
     /**
      * Creates a new {@link DefaultExtensionDescriptor} instance.
@@ -52,11 +59,14 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
                                       final List<Example> examples,
                                       final ExtensionCategory category,
                                       final List<ConfigPropertySpec> properties,
-                                      final String provider,
+                                      final Class<? extends ExtensionProvider> provider,
+                                      final Supplier<? extends ExtensionProvider> providerSupplier,
                                       final Class<T> type,
                                       final ClassLoader classLoader,
                                       final Supplier<T> supplier,
-                                      final boolean isEnabled) {
+                                      final Configuration configuration,
+                                      final boolean isEnabled,
+                                      final Integer priority) {
         Objects.requireNonNull(type, "type can't be null");
         Objects.requireNonNull(supplier, "supplier can't be null");
         this.name = name;
@@ -66,12 +76,15 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
         this.properties = properties == null ? null : new ArrayList<>(properties);
         this.category = category;
         this.provider = provider;
+        this.providerSupplier = providerSupplier;
         this.supplier = supplier;
         this.type = type;
         this.classLoader = classLoader == null ? type.getClassLoader() : classLoader;
         this.aliases = new TreeSet<>();
         this.metadata = new ExtensionMetadata();
         this.isEnabled = isEnabled;
+        this.configuration = Optional.ofNullable(configuration).orElse(Configuration.empty());
+        this.priority = priority;
     }
 
     /**
@@ -114,6 +127,13 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     /**
      * {@inheritDoc}
      */
+    public Integer priority() {
+        return Optional.ofNullable(priority).orElse(HasPriority.NO_ORDER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ExtensionMetadata metadata() {
         return metadata;
@@ -151,8 +171,16 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
      * {@inheritDoc}
      */
     @Override
-    public String provider() {
+    public Class<? extends ExtensionProvider> provider() {
         return provider;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Supplier<? extends ExtensionProvider> providerSupplier() {
+        return providerSupplier;
     }
 
     /**
@@ -185,6 +213,14 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     @Override
     public Supplier<T> supplier() {
         return supplier;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration configuration() {
+        return Optional.ofNullable(configuration).orElse(Configuration.empty());
     }
 
     /**

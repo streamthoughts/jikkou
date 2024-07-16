@@ -18,9 +18,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByKindClass() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         List<? extends HasMetadata> result = list.getAllByKind(TestResource.class);
 
@@ -32,9 +30,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByKindString() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         List<? extends HasMetadata> result = list.getAllByKind("Test");
 
@@ -46,9 +42,7 @@ class HasItemsTest {
     @Test
     void shouldGetNoResourceByKindString() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         List<? extends HasMetadata> result = list.getAllByKind("Foo");
 
@@ -60,9 +54,7 @@ class HasItemsTest {
     @Test
     void shouldGetAllResourcesByApiVersionString() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         List<? extends HasMetadata> result = list.getAllByApiVersion("core/v1");
 
@@ -74,9 +66,7 @@ class HasItemsTest {
     @Test
     void shouldGetResourceByName() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         TestResource resource = list.getByName("test", TestResource.class);
 
@@ -88,9 +78,7 @@ class HasItemsTest {
     @Test
     void shouldThrowExceptionForNoResourceMatchingResourceName() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When / Then
         Assertions.assertThrowsExactly(JikkouRuntimeException.class, () -> list.getByName("???", TestResource.class));
     }
@@ -98,9 +86,7 @@ class HasItemsTest {
     @Test
     void shouldReturnNonEmptyOptionalForMatchingResourceName() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         Optional<? extends HasMetadata> result = list.findByName("test");
 
@@ -112,9 +98,7 @@ class HasItemsTest {
     @Test
     void shouldReturnEmptyOptionalForNonMatchingResourceName() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
-                getTestResourceForName("test")
-        ));
+        ResourceList<HasMetadata> list = ResourceList.of(getTestResourceForName("test"));
         // When
         Optional<? extends HasMetadata> result = list.findByName("???");
 
@@ -126,10 +110,10 @@ class HasItemsTest {
     @Test
     void shouldThrowExceptionGivenDuplicateResourceName() {
         // Given
-        DefaultResourceListObject<HasMetadata> list = new DefaultResourceListObject<>(List.of(
+        ResourceList<HasMetadata> list = ResourceList.of(
                 getTestResourceForName("test"),
                 getTestResourceForName("test")
-        ));
+        );
         // When - Then
         Assertions.assertThrowsExactly(JikkouRuntimeException.class, () -> list.getByName("???", TestResource.class));
     }

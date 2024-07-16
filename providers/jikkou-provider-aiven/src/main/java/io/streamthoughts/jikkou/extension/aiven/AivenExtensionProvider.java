@@ -10,11 +10,16 @@ import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V
 import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA2;
 
 import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Provider;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.health.AivenServiceHealthIndicator;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuotaList;
@@ -36,13 +41,58 @@ import io.streamthoughts.jikkou.extension.aiven.validation.AivenSchemaCompatibil
 import io.streamthoughts.jikkou.extension.aiven.validation.SchemaRegistryAclEntryValidation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
-import io.streamthoughts.jikkou.spi.AbstractExtensionProvider;
+import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
 import java.util.Set;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 @Named("aiven")
-public final class AivenExtensionProvider extends AbstractExtensionProvider {
+@Provider(
+    name = "aiven",
+    description = "Extension provider for Aiven",
+    tags = {"Aiven", "Apache Kafka", "Cloud"}
+)
+public final class AivenExtensionProvider extends BaseExtensionProvider {
+
+    final ConfigProperty<String> project = ConfigProperty
+        .ofString("project")
+        .description("Aiven project name.");
+
+    final ConfigProperty<String> service = ConfigProperty
+        .ofString("service")
+        .description("Aiven Service name.");
+
+    final ConfigProperty<String> apiUrl = ConfigProperty
+        .ofString("apiUrl")
+        .orElse("https://api.aiven.io/v1/")
+        .description("URL to the Aiven REST API.");
+
+    final ConfigProperty<String> tokenAuth = ConfigProperty
+        .ofString("tokenAuth")
+        .description("Aiven Bearer Token. Tokens can be obtained from your Aiven profile page");
+
+    final ConfigProperty<Boolean> debugLoggingEnabled = ConfigProperty
+        .ofBoolean("debugLoggingEnabled")
+        .description("Enable debug logging.")
+        .orElse(false);
+
+    private AivenApiClientConfig apiClientConfig;
+
+    /** {@inheritDoc} **/
+    @Override
+    public void configure(@NotNull Configuration configuration) throws ConfigException {
+        super.configure(configuration);
+        apiClientConfig = new AivenApiClientConfig(
+            apiUrl.get(configuration),
+            tokenAuth.get(configuration),
+            project.get(configuration),
+            service.get(configuration),
+            debugLoggingEnabled.get(configuration)
+        );
+    }
+
+    public AivenApiClientConfig apiClientConfig() {
+        return apiClientConfig;
+    }
 
     /**
      * {@inheritDoc}
@@ -69,13 +119,12 @@ public final class AivenExtensionProvider extends AbstractExtensionProvider {
      **/
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
-        Stream.of(V1KafkaTopicAclEntry.class,
-            V1KafkaTopicAclEntryList.class,
-            V1SchemaRegistryAclEntry.class,
-            V1SchemaRegistryAclEntryList.class,
-            V1KafkaQuota.class,
-            V1KafkaQuotaList.class
-        ).forEach(cls -> registerResource(registry, cls));
+        registry.register(V1KafkaTopicAclEntry.class);
+        registry.register(V1KafkaTopicAclEntryList.class);
+        registry.register(V1SchemaRegistryAclEntry.class);
+        registry.register(V1SchemaRegistryAclEntryList.class);
+        registry.register(V1KafkaQuota.class);
+        registry.register(V1KafkaQuotaList.class);
 
         registry.register(V1SchemaRegistrySubject.class, KAFKA_AIVEN_V1BETA1)
             .setSingularName("avn-schemaregistrysubject")

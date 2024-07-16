@@ -14,13 +14,11 @@ import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -69,7 +67,7 @@ public class GetResourceCommand extends AbstractApiCommand {
      **/
     @Override
     public Integer call() throws Exception {
-        ResourceListObject<HasMetadata> resources;
+        ResourceList<HasMetadata> resources;
         if (Strings.isBlank(name)) {
             resources = api.listResources(
                     type,
@@ -82,7 +80,7 @@ public class GetResourceCommand extends AbstractApiCommand {
                     name,
                     Configuration.from(options())
             );
-            resources = new DefaultResourceListObject<>(List.of(resource));
+            resources = ResourceList.of(resource);
         }
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             if (list) {

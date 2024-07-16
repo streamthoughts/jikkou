@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -62,7 +63,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenSchemaRegistrySubjectController.class);
 
-    private AivenApiClientConfig configuration;
+    private AivenApiClientConfig apiClientConfig;
     private CompatibilityLevels globalCompatibilityLevel = null;
 
     /**
@@ -76,8 +77,8 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
      *
      * @param config the configuration.
      */
-    public AivenSchemaRegistrySubjectController(AivenApiClientConfig config) {
-        init(config);
+    public AivenSchemaRegistrySubjectController(final AivenApiClientConfig config) {
+        this.apiClientConfig = config;
     }
 
     /**
@@ -85,13 +86,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
-    }
-
-    private void init(@NotNull AivenApiClientConfig configuration) {
-        if (this.configuration == null) {
-            this.configuration = configuration;
-        }
+        this.apiClientConfig = context.<AivenExtensionProvider>provider().apiClientConfig();
     }
 
     /**
@@ -100,13 +95,13 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
     @Override
     public List<ChangeResult> execute(@NotNull ChangeExecutor<ResourceChange> executor,
                                       @NotNull ReconciliationContext context) {
-        AsyncSchemaRegistryApi api = new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(configuration));
+        AsyncSchemaRegistryApi api = new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(apiClientConfig));
         try {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
-                    new CreateSchemaSubjectChangeHandler(api),
-                    new UpdateSchemaSubjectChangeHandler(api),
-                    new DeleteSchemaSubjectChangeHandler(api),
-                    new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
+                new CreateSchemaSubjectChangeHandler(api),
+                new UpdateSchemaSubjectChangeHandler(api),
+                new DeleteSchemaSubjectChangeHandler(api),
+                new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         } finally {
@@ -129,7 +124,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
                 .toList();
 
         // Get existing resources from the environment.
-        AivenSchemaRegistrySubjectCollector collector = new AivenSchemaRegistrySubjectCollector(configuration)
+        AivenSchemaRegistrySubjectCollector collector = new AivenSchemaRegistrySubjectCollector(apiClientConfig)
                 .prettyPrintSchema(false);
 
         List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
@@ -167,7 +162,7 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
     @Nullable
     private CompatibilityLevels getGlobalCompatibilityLevel() {
         if (globalCompatibilityLevel == null) {
-            try (AivenApiClient api = AivenApiClientFactory.create(configuration);) {
+            try (AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);) {
                 globalCompatibilityLevel = api.getSchemaRegistryGlobalCompatibility().compatibilityLevel();
             } catch (Exception e) {
                 LOG.error("Failed to get to Schema Registry global compatibility level.", e);

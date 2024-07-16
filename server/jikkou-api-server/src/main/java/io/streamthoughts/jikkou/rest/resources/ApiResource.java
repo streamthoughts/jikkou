@@ -31,7 +31,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.SimpleResourceChangeFilter;
 import io.streamthoughts.jikkou.rest.adapters.ReconciliationContextAdapter;
@@ -114,11 +114,11 @@ public class ApiResource extends AbstractController {
                                             String plural,
                                             ResourceListRequest requestBody) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
-        ResourceListObject<HasMetadata> result = service.search(
+        ResourceList<HasMetadata> result = service.search(
             identifier,
             adapter.getReconciliationContext(requestBody)
         );
-        return HttpResponse.<ResourceListObject<?>>ok()
+        return HttpResponse.<ResourceList<?>>ok()
             .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
@@ -132,13 +132,13 @@ public class ApiResource extends AbstractController {
                                     @Body ResourceReconcileRequest requestBody
     ) {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
-        ResourceListObject<HasMetadata> result = service.validate(
+        ResourceList<HasMetadata> result = service.validate(
             identifier,
             new ArrayList<>(requestBody.resources()),
             adapter.getReconciliationContext(requestBody, true)
         );
 
-        return HttpResponse.<ResourceListObject<?>>ok()
+        return HttpResponse.<ResourceList<?>>ok()
             .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));
     }
 
@@ -186,7 +186,7 @@ public class ApiResource extends AbstractController {
             new ArrayList<>(request.resources()),
             context
         );
-        return HttpResponse.<ResourceListObject<?>>ok().body(result);
+        return HttpResponse.<ResourceList<?>>ok().body(result);
     }
 
     @Post(value = "/api/v1/resources/patch/mode/{mode}{?dry-run}",
@@ -202,6 +202,6 @@ public class ApiResource extends AbstractController {
             new ArrayList<>(request.resources()),
             context
         );
-        return HttpResponse.<ResourceListObject<?>>ok().body(result);
+        return HttpResponse.<ResourceList<?>>ok().body(result);
     }
 }

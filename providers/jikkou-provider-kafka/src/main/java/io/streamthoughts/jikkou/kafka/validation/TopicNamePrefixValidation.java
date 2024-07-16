@@ -52,7 +52,7 @@ public final class TopicNamePrefixValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        prefixes = VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.getOptional(context.appConfiguration())
+        prefixes = VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.key(),
