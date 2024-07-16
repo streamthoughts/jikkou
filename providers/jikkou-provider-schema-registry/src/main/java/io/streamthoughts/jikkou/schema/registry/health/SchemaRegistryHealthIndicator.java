@@ -6,6 +6,8 @@
  */
 package io.streamthoughts.jikkou.schema.registry.health;
 
+import static io.streamthoughts.jikkou.schema.registry.health.SchemaRegistryHealthIndicator.HEALTH_INDICATOR_NAME;
+
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
@@ -13,6 +15,7 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
@@ -23,12 +26,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Health indicator for Schema Registry component.
  */
-@Named("schemaregistry")
+@Named(HEALTH_INDICATOR_NAME)
 @Title("SchemaRegistryHealthIndicator allows checking whether the Schema Registry is healthy.")
 @Description("Get the health of Schema Registry")
 public final class SchemaRegistryHealthIndicator implements HealthIndicator {
 
-    private static final String HEALTH_INDICATOR_NAME = "schemaregistry";
+    public static final String HEALTH_INDICATOR_NAME = "schemaregistry";
     private SchemaRegistryClientConfig config;
 
     /**
@@ -42,8 +45,8 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator {
      *
      * @param config    the configuration.
      */
-    public SchemaRegistryHealthIndicator(SchemaRegistryClientConfig config) {
-        this.config = config;
+    public SchemaRegistryHealthIndicator(final SchemaRegistryClientConfig config) {
+        init(config);
     }
 
     /**
@@ -51,7 +54,11 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator {
      */
     @Override
     public void init(@NotNull final ExtensionContext context) throws ConfigException {
-        this.config = new SchemaRegistryClientConfig(context.appConfiguration());
+        init(context.<SchemaRegistryExtensionProvider>provider().clientConfig());
+    }
+
+    private void init(SchemaRegistryClientConfig config) {
+        this.config = config;
     }
 
     /**
@@ -78,7 +85,7 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator {
                 builder = builder.details("http.response.status", response.getStatus());
             }
             return builder
-                    .details("schema.registry.url", config.getSchemaRegistryUrl())
+                    .details("schema.registry.url", config.url())
                     .build();
         } finally {
             api.close();

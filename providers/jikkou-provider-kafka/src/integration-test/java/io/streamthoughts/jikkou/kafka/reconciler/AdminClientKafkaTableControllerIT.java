@@ -8,27 +8,19 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.streamthoughts.jikkou.core.DefaultApi;
-import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.io.ResourceLoader;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.core.resource.ResourceDeserializer;
-import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
+import io.streamthoughts.jikkou.kafka.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.kafka.internals.KafkaRecord;
 import io.streamthoughts.jikkou.kafka.model.DataHandle;
 import io.streamthoughts.jikkou.kafka.model.DataType;
@@ -43,46 +35,29 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
+class AdminClientKafkaTableControllerIT extends BaseExtensionProviderIT {
 
     static final String CLASSPATH_RESOURCE_TOPICS = "datasets/resource-kafka-record-string-value.yaml";
     static final String TEST_TOPIC_COMPACTED = "topic-compacted";
     static final String BEFORE_RECORD_VALUE = """
-            {
-               "favorite_color": "blue"
-            }
-             """;
+        {
+           "favorite_color": "blue"
+        }
+        """;
     static final String BEFORE_AFTER_VALUE = """
-            {
-               "favorite_color": "red"
-            }
-             """;
+        {
+           "favorite_color": "red"
+        }
+        """;
     public static final KafkaRecordHeader KAFKA_RECORD_HEADER = new KafkaRecordHeader("content-type", "application/json");
 
     private final ResourceLoader loader = new ResourceLoader(new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER));
-    private volatile JikkouApi api;
-
-    @BeforeAll
-    public static void beforeAll() {
-        ResourceDeserializer.registerKind(V1KafkaTableRecord.class);
-    }
 
     @BeforeEach
-    public void setUp() {
-        Configuration configuration = KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.asConfiguration(clientConfig());
-
-        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
-                new DefaultExtensionDescriptorFactory(),
-                new ClassExtensionAliasesGenerator()
-        );
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry, configuration), new DefaultResourceRegistry())
-                .register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new)
-                .register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new)
-                .build();
+    public void setup() {
         createTopic(TEST_TOPIC_COMPACTED, Map.of(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
     }
 
@@ -90,39 +65,40 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
     public void shouldApplyReconciliationForCreateMode() throws JsonProcessingException {
         // GIVEN
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
         List<ResourceChange> actual = api.reconcile(resources, ReconciliationMode.FULL, context)
-                .results()
-                .stream()
-                .map(ChangeResult::change)
-                .toList();
+            .results()
+            .stream()
+            .map(ChangeResult::change)
+            .toList();
 
         // THEN
 
         JsonNode value = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_AFTER_VALUE);
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTableRecord.class)
-                .withSpec(ResourceChangeSpec
+            .builder(V1KafkaTableRecord.class)
+            .withMetadata(new ObjectMeta())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.CREATE)
+                .withChange(StateChange.create("record",
+                    V1KafkaTableRecordSpec
                         .builder()
-                        .withOperation(Operation.CREATE)
-                        .withChange(StateChange.create("record",
-                                V1KafkaTableRecordSpec
-                                        .builder()
-                                        .withTopic(TEST_TOPIC_COMPACTED)
-                                        .withHeader(KAFKA_RECORD_HEADER)
-                                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
-                                        .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
-                                        .build()
-                        ))
+                        .withTopic(TEST_TOPIC_COMPACTED)
+                        .withHeader(KAFKA_RECORD_HEADER)
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                        .withValue(new DataValue(DataType.JSON, new DataHandle(value)))
                         .build()
-                )
-                .build();
+                ))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), actual);
     }
 
@@ -131,57 +107,57 @@ class AdminClientKafkaTableControllerIT extends AbstractKafkaIntegrationTest {
         // GIVEN
         try (var producer = new KafkaProducer<>(clientConfig(), new StringSerializer(), new StringSerializer())) {
             var record = KafkaRecord.<String, String>builder()
-                    .topic(TEST_TOPIC_COMPACTED)
-                    .key("test")
-                    .value(BEFORE_RECORD_VALUE)
-                    .header("content-type", "application/json")
-                    .build();
+                .topic(TEST_TOPIC_COMPACTED)
+                .key("test")
+                .value(BEFORE_RECORD_VALUE)
+                .header("content-type", "application/json")
+                .build();
             producer.send(record.toProducerRecord()).get();
         }
 
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
         List<ResourceChange> actual = api.reconcile(resources, ReconciliationMode.FULL, context)
-                .results()
-                .stream()
-                .map(ChangeResult::change)
-                .toList();
+            .results()
+            .stream()
+            .map(ChangeResult::change)
+            .toList();
 
         // THEN
 
         JsonNode beforeValue = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_RECORD_VALUE);
         JsonNode afterValue = Jackson.JSON_OBJECT_MAPPER.readTree(BEFORE_AFTER_VALUE);
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTableRecord.class)
-                .withMetadata(actual.getFirst().getMetadata())  // IT'S OK - Metadata contains some dynamic data.
-                .withSpec(ResourceChangeSpec
+            .builder(V1KafkaTableRecord.class)
+            .withMetadata(actual.getFirst().getMetadata())  // IT'S OK - Metadata contains some dynamic data.
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.UPDATE)
+                .withChange(StateChange.update("record",
+                    V1KafkaTableRecordSpec
                         .builder()
-                        .withOperation(Operation.UPDATE)
-                        .withChange(StateChange.update("record",
-                                V1KafkaTableRecordSpec
-                                        .builder()
-                                        .withTopic(TEST_TOPIC_COMPACTED)
-                                        .withHeader(KAFKA_RECORD_HEADER)
-                                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
-                                        .withValue(new DataValue(DataType.JSON, new DataHandle(beforeValue)))
-                                        .build(),
-                                V1KafkaTableRecordSpec
-                                        .builder()
-                                        .withTopic(TEST_TOPIC_COMPACTED)
-                                        .withHeader(KAFKA_RECORD_HEADER)
-                                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
-                                        .withValue(new DataValue(DataType.JSON, new DataHandle(afterValue)))
-                                        .build()
-                        ))
+                        .withTopic(TEST_TOPIC_COMPACTED)
+                        .withHeader(KAFKA_RECORD_HEADER)
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                        .withValue(new DataValue(DataType.JSON, new DataHandle(beforeValue)))
+                        .build(),
+                    V1KafkaTableRecordSpec
+                        .builder()
+                        .withTopic(TEST_TOPIC_COMPACTED)
+                        .withHeader(KAFKA_RECORD_HEADER)
+                        .withKey(new DataValue(DataType.STRING, DataHandle.ofString("test")))
+                        .withValue(new DataValue(DataType.JSON, new DataHandle(afterValue)))
                         .build()
-                )
-                .build();
+                ))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), actual);
     }
 }

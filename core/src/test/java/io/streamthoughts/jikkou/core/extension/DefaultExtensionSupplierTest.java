@@ -7,7 +7,6 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
 import java.util.Collections;
 import java.util.List;
@@ -23,23 +22,26 @@ class DefaultExtensionSupplierTest {
     @Test
     void shouldThrowExceptionForSupplierReturningNull() {
         var descriptor = new DefaultExtensionDescriptor<>(
-                ExtensionDescriptorModifiersTest.class.getName(),
-                "",
-                "",
-                NO_EXAMPLES,
-                ExtensionCategory.EXTENSION,
-                NO_PROPERTIES,
-                "",
-                ExtensionDescriptorModifiersTest.class,
-                ExtensionDescriptorModifiersTest.class.getClassLoader(),
-                () -> null,
-                false
+            ExtensionDescriptorModifiersTest.class.getName(),
+            "",
+            "",
+            NO_EXAMPLES,
+            ExtensionCategory.EXTENSION,
+            NO_PROPERTIES,
+            null,
+            () -> null,
+            ExtensionDescriptorModifiersTest.class,
+            ExtensionDescriptorModifiersTest.class.getClassLoader(),
+            () -> null,
+            null,
+            false,
+            null
         );
-        var supplier = new DefaultExtensionSupplier<>(Mockito.mock(ExtensionDescriptorRegistry.class), descriptor);
+        var supplier = new DefaultExtensionSupplier<>(descriptor);
 
         Assertions.assertThrows(
-                ExtensionCreationException.class,
-                () -> supplier.get(Configuration.empty())
+            ExtensionCreationException.class,
+            () -> supplier.get(Mockito.mock(ExtensionFactory.class))
         );
     }
 
@@ -47,20 +49,23 @@ class DefaultExtensionSupplierTest {
     void shouldInvokeInitMethodForExtension() {
         Extension mock = Mockito.mock(Extension.class);
         var descriptor = new DefaultExtensionDescriptor<>(
-                Extension.class.getName(),
-                "",
-                "",
-                NO_EXAMPLES,
-                ExtensionCategory.EXTENSION,
-                NO_PROPERTIES,
-                "",
-                Extension.class,
-                Extension.class.getClassLoader(),
-                () -> mock,
-                false
+            Extension.class.getName(),
+            "",
+            "",
+            NO_EXAMPLES,
+            ExtensionCategory.EXTENSION,
+            NO_PROPERTIES,
+            null,
+            () -> null,
+            Extension.class,
+            Extension.class.getClassLoader(),
+            () -> mock,
+            null,
+            false,
+            null
         );
-        var supplier = new DefaultExtensionSupplier<>(Mockito.mock(ExtensionDescriptorRegistry.class), descriptor);
-        Extension extension = supplier.get(Configuration.empty());
+        var supplier = new DefaultExtensionSupplier<>(descriptor);
+        Extension extension = supplier.get(Mockito.mock(ExtensionFactory.class));
         Assertions.assertEquals(mock, extension);
         Mockito.verify(mock, Mockito.atLeastOnce()).init(Mockito.any(ExtensionContext.class));
     }

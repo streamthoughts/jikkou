@@ -11,15 +11,14 @@ import static io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator.H
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
-import io.streamthoughts.jikkou.kafka.reconciler.KafkaClientConfiguration;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -40,8 +39,6 @@ public final class KafkaBrokerHealthIndicator extends ContextualExtension implem
     public static final String HEALTH_NAME = "kafka";
 
     private AdminClientContextFactory adminClientContextFactory;
-
-    private KafkaClientConfiguration configuration;
 
     /**
      * Creates a new {@link KafkaBrokerHealthIndicator} instance.
@@ -64,11 +61,9 @@ public final class KafkaBrokerHealthIndicator extends ContextualExtension implem
      */
     @Override
     public void init(@NotNull ExtensionContext context) throws ConfigException {
-        Configuration appConfiguration = context.appConfiguration();
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(appConfiguration);
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
-        this.configuration = new KafkaClientConfiguration(appConfiguration);
     }
 
     /**

@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.core.models;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
+import io.streamthoughts.jikkou.core.annotation.ApiGroup;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
@@ -76,4 +77,23 @@ public interface Resource extends Serializable {
         return clazz.getSimpleName();
     }
 
+    /**
+     * Gets the Group of the given resource class.
+     *
+     * @param clazz the resource class for which to extract the Version.
+     * @return the Version or {@code null}.
+     */
+    static String getApiGroup(final Class<?> clazz) {
+        ApiGroup group = clazz.getAnnotation(ApiGroup.class);
+        if (group != null) {
+            return group.value();
+        } else {
+            String apiVersion = getApiVersion(clazz);
+            if (apiVersion != null && apiVersion.contains("/")) {
+                String[] versionParts = apiVersion.split("/", 2);
+                return versionParts[0];
+            }
+        }
+        return null;
+    }
 }

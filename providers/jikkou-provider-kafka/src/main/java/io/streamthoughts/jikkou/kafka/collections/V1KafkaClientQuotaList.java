@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.kafka.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaClientQuotaList")
-public class V1KafkaClientQuotaList extends DefaultResourceListObject<V1KafkaClientQuota> {
+public class V1KafkaClientQuotaList extends SpecificResourceList<V1KafkaClientQuotaList, V1KafkaClientQuota> {
 
 
     /**
-     * Creates a new {@link V1KafkaClientQuotaList} instance.
+     * Creates a new {@link V1KafkaBrokerList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -38,16 +38,29 @@ public class V1KafkaClientQuotaList extends DefaultResourceListObject<V1KafkaCli
     public V1KafkaClientQuotaList(@Nullable String kind,
                                   @Nullable String apiVersion,
                                   @Nullable ObjectMeta metadata,
-                                  @NotNull List<? extends V1KafkaClientQuota> items) {
+                                  @NotNull List<V1KafkaClientQuota> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaClientQuotaList} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaClientQuotaList(List<? extends V1KafkaClientQuota> items) {
-        super(items);
+    @Override
+    public V1KafkaClientQuotaList.Builder toBuilder() {
+        return new V1KafkaClientQuotaList.Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaClientQuotaList.Builder, V1KafkaClientQuotaList, V1KafkaClientQuota> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaClientQuotaList build() {
+            return new V1KafkaClientQuotaList(apiVersion, kind, metadata, items);
+        }
     }
 }

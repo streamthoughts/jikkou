@@ -7,7 +7,6 @@
 package io.streamthoughts.jikkou.core.extension;
 
 
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -19,7 +18,6 @@ public final class DefaultExtensionSupplier<T> implements ExtensionSupplier<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExtensionSupplier.class);
 
-    private final ExtensionDescriptorRegistry registry;
     private final ExtensionDescriptor<T> descriptor;
 
     /**
@@ -27,38 +25,37 @@ public final class DefaultExtensionSupplier<T> implements ExtensionSupplier<T> {
      *
      * @param descriptor the descriptor of the extension. Cannot be {@code null}.
      */
-    public DefaultExtensionSupplier(final @NotNull ExtensionDescriptorRegistry registry,
-                                    final @NotNull ExtensionDescriptor<T> descriptor) {
+    public DefaultExtensionSupplier(final @NotNull ExtensionDescriptor<T> descriptor) {
         this.descriptor = Objects.requireNonNull(descriptor, "descriptor cannot be null");
-        this.registry = Objects.requireNonNull(registry, "registry cannot be null");
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public T get(Configuration configuration) {
+    public T get(ExtensionFactory factory) {
         Supplier<T> supplier = descriptor.supplier();
         try {
             T t = supplier.get();
             if (t == null) {
                 throw new ExtensionCreationException(String.format(
-                        "Supplier for extension type '%s' returned null object"
-                        , descriptor.className()));
+                    "Supplier for extension type '%s' returned null object"
+                    , descriptor.className()));
             }
             if (t instanceof Extension extension) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Initializing extension '{}'", extension.getName());
                 }
-                extension.init(new DefaultExtensionContext(registry, descriptor, configuration));
+
+                extension.init(new DefaultExtensionContext(factory, descriptor));
             }
             return t;
         } catch (Exception e) {
             LOG.error("Failed to get extension instance for type: {} (name: {}, provider: {}).",
-                    descriptor.className(),
-                    descriptor.name(),
-                    descriptor.provider(),
-                    e
+                descriptor.className(),
+                descriptor.name(),
+                descriptor.provider(),
+                e
             );
             throw new ExtensionCreationException(e);
         }

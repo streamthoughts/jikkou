@@ -10,11 +10,12 @@ import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.SpecificResource;
+import io.streamthoughts.jikkou.core.models.generics.GenericResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
@@ -56,7 +57,7 @@ public final class AdminClientKafkaUserCollector extends ContextualExtension imp
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            this.adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
@@ -78,8 +79,8 @@ public final class AdminClientKafkaUserCollector extends ContextualExtension imp
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<V1KafkaUser> listAll(@NotNull final Configuration configuration,
-                                                   @NotNull final Selector selector) {
+    public ResourceList<V1KafkaUser> listAll(@NotNull final Configuration configuration,
+                                             @NotNull final Selector selector) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Listing all kafka users with configuration: {}", configuration.asMap());
@@ -105,10 +106,7 @@ public final class AdminClientKafkaUserCollector extends ContextualExtension imp
                 .map(resource -> addClusterIdToMetadataAnnotations(resource, clusterId))
                 .toList();
 
-            return DefaultResourceListObject
-                .<V1KafkaUser>builder()
-                .withItems(items)
-                .build();
+            return new GenericResourceList.Builder<V1KafkaUser>().withItems(items).build();
         }
     }
 

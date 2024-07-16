@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.change.user.UserChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.user.UserChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.user.UserChangeHandler;
@@ -73,7 +74,7 @@ public final class AdminClientKafkaUserController
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            this.adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 

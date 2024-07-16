@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.extension.aiven.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("KafkaQuotaList")
-public class V1KafkaQuotaList extends DefaultResourceListObject<V1KafkaQuota> {
+public class V1KafkaQuotaList extends SpecificResourceList<V1KafkaQuotaList, V1KafkaQuota> {
 
 
     /**
@@ -38,16 +38,29 @@ public class V1KafkaQuotaList extends DefaultResourceListObject<V1KafkaQuota> {
     public V1KafkaQuotaList(@Nullable String kind,
                             @Nullable String apiVersion,
                             @Nullable ObjectMeta metadata,
-                            @NotNull List<? extends V1KafkaQuota> items) {
+                            @NotNull List<V1KafkaQuota> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaQuota} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaQuotaList(List<? extends V1KafkaQuota> items) {
-        super(items);
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaQuotaList.Builder, V1KafkaQuotaList, V1KafkaQuota> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaQuotaList build() {
+            return new V1KafkaQuotaList(apiVersion, kind, metadata, items);
+        }
     }
 }

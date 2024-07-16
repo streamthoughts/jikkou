@@ -13,11 +13,11 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.generics.GenericResourceList;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
@@ -71,7 +71,7 @@ public final class DefaultApiResourceService implements ApiResourceService {
     public ApiChangeResultList patch(ReconciliationMode mode,
                                      List<HasMetadata> resources,
                                      ReconciliationContext context) {
-        List<ResourceChange> changes = ResourceListObject.of(resources).getAllByClass(ResourceChange.class);
+        List<ResourceChange> changes = ResourceList.of(resources).getAllByClass(ResourceChange.class);
         return api.patch(changes, mode, context);
     }
 
@@ -91,9 +91,9 @@ public final class DefaultApiResourceService implements ApiResourceService {
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<HasMetadata> validate(ApiResourceIdentifier identifier,
-                                                    List<HasMetadata> resources,
-                                                    ReconciliationContext context) {
+    public ResourceList<HasMetadata> validate(ApiResourceIdentifier identifier,
+                                              List<HasMetadata> resources,
+                                              ReconciliationContext context) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
         ApiValidationResult result = api.validate(filterResources(resources, descriptor), context);
         return toResourceListObject(descriptor, result.get().getItems());
@@ -103,8 +103,8 @@ public final class DefaultApiResourceService implements ApiResourceService {
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<HasMetadata> search(ApiResourceIdentifier identifier,
-                                                  ReconciliationContext context) {
+    public ResourceList<HasMetadata> search(ApiResourceIdentifier identifier,
+                                            ReconciliationContext context) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
         return api.listResources(
             descriptor.resourceType(),
@@ -128,9 +128,9 @@ public final class DefaultApiResourceService implements ApiResourceService {
         );
     }
 
-    private ResourceListObject<HasMetadata> toResourceListObject(ResourceDescriptor descriptor,
-                                                                 List<HasMetadata> items) {
-        return DefaultResourceListObject.builder()
+    private ResourceList<HasMetadata> toResourceListObject(ResourceDescriptor descriptor,
+                                                           List<HasMetadata> items) {
+        return new GenericResourceList.Builder<>()
             .withApiVersion(descriptor.group() + "/" + descriptor.apiVersion())
             .withKind(descriptor.kind() + LIST_KIND_SUFFIX)
             .withMetadata(new ObjectMeta())
@@ -165,10 +165,13 @@ public final class DefaultApiResourceService implements ApiResourceService {
     }
 
     @NotNull
-    private ResourceListObject<HasMetadata> filterResources(List<HasMetadata> resources,
-                                                            ResourceDescriptor descriptor) {
+    private ResourceList<HasMetadata> filterResources(List<HasMetadata> resources,
+                                                      ResourceDescriptor descriptor) {
 
-        DefaultResourceListObject<HasMetadata> items = new DefaultResourceListObject<>(resources);
-        return new DefaultResourceListObject<>(items.getAllByType(descriptor.resourceType()));
+        @SuppressWarnings("unchecked")
+        List<HasMetadata> allByType = (List<HasMetadata>) ResourceList
+            .of(resources)
+            .getAllByType(descriptor.resourceType());
+        return ResourceList.of(allByType);
     }
 }

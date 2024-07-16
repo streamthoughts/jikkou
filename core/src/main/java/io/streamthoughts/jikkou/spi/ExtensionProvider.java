@@ -6,10 +6,12 @@
  */
 package io.streamthoughts.jikkou.spi;
 
+import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,4 +38,13 @@ public interface ExtensionProvider extends HasName, Configurable {
      * @param registry The ResourceRegistry.
      */
     void registerResources(@NotNull ResourceRegistry registry);
+
+    /** {@inheritDoc} **/
+    @Override
+    default String getName() {
+        Class<? extends ExtensionProvider> thatClass = this.getClass();
+        return Optional.ofNullable(thatClass.getAnnotation(Provider.class))
+            .map(Provider::name)
+            .orElseGet(HasName.super::getName);
+    }
 }

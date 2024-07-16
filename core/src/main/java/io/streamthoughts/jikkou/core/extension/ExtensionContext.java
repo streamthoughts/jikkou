@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -26,11 +27,11 @@ public interface ExtensionContext {
     String name();
 
     /**
-     * Returns the application configuration.
+     * Returns the provider configuration.
      *
      * @return The configuration.
      */
-    Configuration appConfiguration();
+    Configuration configuration();
 
     /**
      * Gets the configuration properties by name as defined by the extension specification.
@@ -54,7 +55,15 @@ public interface ExtensionContext {
      * Gets a new extension context from the specified extension type.
      *
      * @param extension The extension type.
-     * @return  The ExtensionContext.
+     * @return The ExtensionContext.
      */
     ExtensionContext contextForExtension(Class<? extends Extension> extension);
+
+    /**
+     * Gets the {@link ExtensionProvider} attached to this context.
+     *
+     * @param <T> Type of extension provider.
+     * @throws NoSuchElementException if no provider is attached to this context.
+     */
+    <T extends ExtensionProvider> T provider();
 }

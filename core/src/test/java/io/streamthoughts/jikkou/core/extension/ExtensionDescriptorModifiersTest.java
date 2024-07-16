@@ -18,17 +18,20 @@ class ExtensionDescriptorModifiersTest {
     static final List<ConfigPropertySpec> NO_PROPERTIES = Collections.emptyList();
 
     static final ExtensionDescriptor<ExtensionDescriptorModifiersTest> DESCRIPTOR = new DefaultExtensionDescriptor<>(
-            ExtensionDescriptorModifiersTest.class.getName(),
-            "",
-            "",
-            NO_EXAMPLES,
-            ExtensionCategory.EXTENSION,
-            NO_PROPERTIES,
-            "",
-            ExtensionDescriptorModifiersTest.class,
-            ExtensionDescriptorModifiersTest.class.getClassLoader(),
-            () -> null,
-            false
+        ExtensionDescriptorModifiersTest.class.getName(),
+        "",
+        "",
+        NO_EXAMPLES,
+        ExtensionCategory.EXTENSION,
+        NO_PROPERTIES,
+        null,
+        () -> null,
+        ExtensionDescriptorModifiersTest.class,
+        ExtensionDescriptorModifiersTest.class.getClassLoader(),
+        () -> null,
+        null,
+        false,
+        null
     );
 
     @Test

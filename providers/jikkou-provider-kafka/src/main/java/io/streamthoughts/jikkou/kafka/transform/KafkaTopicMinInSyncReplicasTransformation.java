@@ -46,7 +46,7 @@ public class KafkaTopicMinInSyncReplicasTransformation implements Transformation
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        minInSyncReplicas = MIN_INSYNC_REPLICAS_CONFIG.getOptional(context.appConfiguration())
+        minInSyncReplicas = MIN_INSYNC_REPLICAS_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MIN_INSYNC_REPLICAS_CONFIG.key(),

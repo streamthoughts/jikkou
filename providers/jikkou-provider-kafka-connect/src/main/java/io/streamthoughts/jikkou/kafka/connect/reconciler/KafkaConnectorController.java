@@ -24,7 +24,8 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.DefaultChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.kafka.connect.ApiVersions;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
@@ -48,7 +49,7 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class KafkaConnectorController extends ContextualExtension implements Controller<V1KafkaConnector, ResourceChange> {
 
-    private KafkaConnectExtensionConfig configuration;
+    private KafkaConnectClusterConfigs configuration;
 
     private KafkaConnectorCollector collector;
 
@@ -58,7 +59,7 @@ public final class KafkaConnectorController extends ContextualExtension implemen
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        this.configuration = new KafkaConnectExtensionConfig(context.appConfiguration());
+        this.configuration = context.<KafkaConnectExtensionProvider>provider().clusterConfigs();
         this.collector = new KafkaConnectorCollector();
         this.collector.init(context);
     }

@@ -10,7 +10,7 @@ import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -27,7 +27,7 @@ public class NoDuplicatePrincipalAllowedValidation implements Validation<V1Kafka
      */
     @Override
     public ValidationResult validate(@NotNull List<V1KafkaPrincipalAuthorization> resources) throws ValidationException {
-        DefaultResourceListObject<V1KafkaPrincipalAuthorization> list = new DefaultResourceListObject<>(resources);
+        ResourceList<V1KafkaPrincipalAuthorization> list = ResourceList.of(resources);
         try {
             list.verifyNoDuplicateMetadataName();
             return ValidationResult.success();

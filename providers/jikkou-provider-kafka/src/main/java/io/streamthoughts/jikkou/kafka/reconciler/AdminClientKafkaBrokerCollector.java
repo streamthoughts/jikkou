@@ -11,9 +11,10 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
@@ -72,7 +73,7 @@ public final class AdminClientKafkaBrokerCollector
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
@@ -80,8 +81,8 @@ public final class AdminClientKafkaBrokerCollector
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
-                                                     @NotNull final Selector selector) {
+    public ResourceList<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
+                                               @NotNull final Selector selector) {
 
         LOG.info("Listing all kafka brokers");
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
@@ -90,9 +91,9 @@ public final class AdminClientKafkaBrokerCollector
     }
 
     @NotNull
-    ResourceListObject<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
-                                              @NotNull final Selector selector,
-                                              @NotNull final AdminClientContext context) {
+    ResourceList<V1KafkaBroker> listAll(@NotNull final Configuration configuration,
+                                        @NotNull final Selector selector,
+                                        @NotNull final AdminClientContext context) {
 
         List<V1KafkaBroker> resources = new KafkaBrokerClient(context.getAdminClient())
                 .listAll(kafkaConfigPredicate(configuration));
@@ -110,7 +111,7 @@ public final class AdminClientKafkaBrokerCollector
                         .build()
                 )
                 .toList();
-        return new V1KafkaBrokerList(items);
+        return new V1KafkaBrokerList.Builder().withItems(items).build();
     }
 
     private Collection<String> loadClusterBrokerIds(final AdminClient client) {

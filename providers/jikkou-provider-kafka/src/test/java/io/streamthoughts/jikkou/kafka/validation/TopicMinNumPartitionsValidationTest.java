@@ -26,7 +26,7 @@ class TopicMinNumPartitionsValidationTest {
     @BeforeEach
     void before() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.asConfiguration(1));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG.asConfiguration(1));
 
         validation = new TopicMinNumPartitionsValidation();
         validation.init(context);

@@ -9,11 +9,18 @@ package io.streamthoughts.jikkou.kafka.connect.api;
 import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.http.client.SslConfigSupport;
 import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
-import java.util.Objects;
+import java.util.function.Supplier;
 
-public class KafkaConnectClientConfig {
+public record KafkaConnectClientConfig(
+    String name,
+    String url,
+    AuthMethod authMethod,
+    Supplier<String> basicAuthUser,
+    Supplier<String> basicAuthPassword,
+    Supplier<SSLConfig> sslConfig,
+    Boolean debugLoggingEnabled
+) {
 
     public static final ConfigProperty<String> KAFKA_CONNECT_NAME = ConfigProperty
         .ofString("name")
@@ -41,66 +48,15 @@ public class KafkaConnectClientConfig {
         .description("Enable debug logging.")
         .orElse(false);
 
-    private final Configuration configuration;
-
-    /**
-     * Creates a new {@link KafkaConnectClientConfig} instance.
-     *
-     * @param configuration the configuration.
-     */
-    public KafkaConnectClientConfig(Configuration configuration) {
-        this.configuration = configuration;
+    public static KafkaConnectClientConfig from(final Configuration configuration) {
+        return new KafkaConnectClientConfig(
+            KAFKA_CONNECT_NAME.get(configuration),
+            KAFKA_CONNECT_URL.get(configuration),
+            Enums.getForNameIgnoreCase(KAFKA_CONNECT_AUTH_METHOD.get(configuration), AuthMethod.class, AuthMethod.INVALID),
+            () -> KAFKA_CONNECT_BASIC_AUTH_USERNAME.get(configuration),
+            () -> KAFKA_CONNECT_BASIC_AUTH_PASSWORD.get(configuration),
+            () -> SSLConfig.from(configuration),
+            KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration)
+        );
     }
-
-    public String getConnectClusterName() {
-        return KAFKA_CONNECT_NAME.get(configuration);
-    }
-
-    public String getConnectUrl() {
-        return KAFKA_CONNECT_URL.get(configuration);
-    }
-
-    public AuthMethod getAuthMethod() {
-        return Enums.getForNameIgnoreCase(KAFKA_CONNECT_AUTH_METHOD.get(configuration), AuthMethod.class, AuthMethod.INVALID);
-    }
-
-    public String getBasicAuthUsername() {
-        return KAFKA_CONNECT_BASIC_AUTH_USERNAME.get(configuration);
-    }
-
-    public String getBasicAuthPassword() {
-        return KAFKA_CONNECT_BASIC_AUTH_PASSWORD.get(configuration);
-    }
-
-    public String getBasicAuthInfo() {
-        return getBasicAuthUsername() + ":" + getBasicAuthPassword();
-    }
-
-    public boolean getDebugLoggingEnabled() {
-        return KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration);
-    }
-
-    public SSLConfig getSslConfig() {
-        return SslConfigSupport.getSslConfig(null, configuration);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KafkaConnectClientConfig that = (KafkaConnectClientConfig) o;
-        return Objects.equals(configuration, that.configuration);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public int hashCode() {
-        return Objects.hash(configuration);
-    }
-
 }

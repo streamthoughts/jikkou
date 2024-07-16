@@ -9,13 +9,12 @@ package io.streamthoughts.jikkou.core.validation;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.HasPriority;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -37,10 +36,7 @@ public final class ValidationChain implements Validation<HasMetadata> {
      * @param validations the list of validations.
      */
     public ValidationChain(final List<Validation> validations) {
-        this.validations = validations
-                .stream()
-                .sorted(Comparator.comparing(HasPriority::getPriority))
-                .toList();
+        this.validations = Objects.requireNonNull(validations, "validations can't be null");
     }
 
     /**
@@ -49,18 +45,21 @@ public final class ValidationChain implements Validation<HasMetadata> {
     @Override
     public ValidationResult validate(@NotNull final List<HasMetadata> resources) {
         LOG.info("Starting validation-chain execution on {} resources", resources.size());
-        return validate(ResourceListObject.of(resources).groupByType());
+        return validate(ResourceList.of(resources).groupByType());
     }
 
+    @SuppressWarnings("unchecked")
     public ValidationResult validate(@NotNull final Map<ResourceType, List<HasMetadata>> resources) {
         List<ValidationError> errors = new LinkedList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resources.entrySet()) {
             ResourceType type = entry.getKey();
             List<HasMetadata> resourcesHavingSameType = entry.getValue();
-            for (Validation validation : validations) {
+
+            for (Validation<HasMetadata> validation : validations) {
                 try {
                     if (validation.canAccept(type)) {
-                        ValidationResult rs = validation.validate(filterCandidateToValidation(resourcesHavingSameType));
+                        List<HasMetadata> hasMetadata = filterCandidateToValidation(resourcesHavingSameType);
+                        ValidationResult rs = validation.validate(hasMetadata);
                         errors.addAll(rs.errors());
                         LOG.info("Completed validation {} on resources of type: group={}, version={} and kind={}",
                                 validation.getName(),

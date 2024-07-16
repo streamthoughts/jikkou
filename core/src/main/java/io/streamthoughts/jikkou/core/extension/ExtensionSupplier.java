@@ -6,10 +6,10 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
 
 /**
+ * Class for supplying extension instance.
  *
  * @param <T> the type of the extension returned from this supplier.
  */
@@ -18,17 +18,15 @@ public interface ExtensionSupplier<T> {
     /**
      * Create a new extension instance.
      *
-     * @param configuration the {@link Configuration} that can be used to configure the extension.
      * @return a new instance of {@link T}.
-     *
      * @throws ExtensionCreationException if the extension cannot be created or configured.
      */
-    T get(Configuration configuration);
+    T get(ExtensionFactory factor);
 
     /**
      * Gets the descriptor for the extension supplied by this class.
      *
-     * @return  the {@link ExtensionDescriptor}.
+     * @return the {@link ExtensionDescriptor}.
      */
     ExtensionDescriptor<T> descriptor();
 }

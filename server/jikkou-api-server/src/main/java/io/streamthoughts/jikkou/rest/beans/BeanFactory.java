@@ -66,9 +66,8 @@ public final class BeanFactory {
     }
 
     @Singleton
-    public ExtensionFactory extensionFactory(Configuration configuration,
-                                             ExtensionDescriptorRegistry registry) {
-        return new DefaultExtensionFactory(registry, configuration);
+    public ExtensionFactory extensionFactory(ExtensionDescriptorRegistry registry) {
+        return new DefaultExtensionFactory(registry);
     }
 
     @Singleton

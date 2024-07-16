@@ -8,7 +8,7 @@ micronaut:
     name: jikkou-api-server
   server:
     # Use -1 to run on a random port
-    port: 8080
+    port: 8088
 
   security:
     enabled: false
@@ -49,21 +49,32 @@ jikkou:
   # The paths from which to load extensions
   extension.paths: []
 
-  # The extension providers
-  extension.providers:
-    # By default, disable all extensions
-    default.enabled: false
-    # Explicitly enabled/disable extensions
-    #<provider_name>.enabled: <boolean>
-    core.enabled: true
-    kafka.enabled: true
-
-  kafka:
-    client:
-      bootstrap.servers: localhost:9092
-
-  schemaRegistry:
-    url: http://localhost:8081
+  # The providers
+  providers:
+    - name: core
+      enabled: true
+      type: io.streamthoughts.jikkou.core.CoreExtensionProvider
+    # Default configuration for Apache Kafka
+    - name: kafka
+      enabled: true
+      type: io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+      config:
+        client:
+          bootstrap.servers: localhost:9092
+    # Default configuration for Schema Registry
+    - name: schemaregistry
+      enabled: true
+      type: io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+      config:
+        url: http://localhost:8081
+    # Default configuration for Kafka Connect
+    - name: kafkaconnect
+      enabled: true
+      type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
+      config:
+        clusters:
+          - name: localhost
+            url: http://localhost:8083
 
   # The default custom transformations to apply on any resources.
   transformations: [ ]

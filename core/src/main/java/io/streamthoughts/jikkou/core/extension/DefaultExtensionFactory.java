@@ -6,9 +6,9 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -20,27 +20,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class DefaultExtensionFactory implements ExtensionFactory {
 
-    private final Configuration configuration;
     private final ExtensionDescriptorRegistry registry;
 
     /**
      * Creates a new {@link DefaultExtensionFactory} instance.
      *
-     * @param registry the {@link ExtensionDescriptorRegistry}.
-     */
-    public DefaultExtensionFactory(@NotNull final ExtensionDescriptorRegistry registry) {
-        this(registry, Configuration.empty());
-    }
-
-    /**
-     * Creates a new {@link DefaultExtensionFactory} instance.
-     *
-     * @param configuration the {@link Configuration} that will be passed to extension.
      * @param registry      the {@link ExtensionDescriptorRegistry}.
      */
-    public DefaultExtensionFactory(@NotNull final ExtensionDescriptorRegistry registry,
-                                   @NotNull final Configuration configuration) {
-        this.configuration = configuration;
+    public DefaultExtensionFactory(@NotNull final ExtensionDescriptorRegistry registry) {
         this.registry = registry;
     }
 
@@ -98,7 +85,7 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
             throw new NoSuchExtensionException(error);
         }
         ExtensionDescriptor<T> descriptor = optional.get();
-        return registry.getExtensionSupplier(descriptor).get(configuration);
+        return registry.getExtensionSupplier(descriptor).get(this);
     }
 
     /**
@@ -108,7 +95,7 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
     public <T> Optional<T> findExtension(@NotNull Class<T> type, @Nullable Qualifier<T> qualifier) {
         return registry.findDescriptorByClass(type, qualifier)
                 .map(registry::getExtensionSupplier)
-                .map(supplier -> supplier.get(configuration));
+                .map(supplier -> supplier.get(this));
     }
 
     /**
@@ -128,7 +115,7 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
         if (optional.isEmpty())
             throw new NoSuchExtensionException("No extension registered for type '" + type + "'");
         ExtensionDescriptor<T> descriptor = optional.get();
-        return registry.getExtensionSupplier(descriptor).get(configuration);
+        return registry.getExtensionSupplier(descriptor).get(this);
     }
 
     /**
@@ -147,8 +134,9 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
                                               @Nullable Qualifier<T> qualifier) {
         return this.registry.findAllDescriptorsByAlias(type, qualifier)
                 .stream()
+                .sorted(Comparator.comparing(ExtensionDescriptor::priority))
                 .map(this.registry::getExtensionSupplier)
-                .map(supplier -> supplier.get(configuration))
+                .map(supplier -> supplier.get(this))
                 .toList();
     }
 
@@ -169,7 +157,7 @@ public final class DefaultExtensionFactory implements ExtensionFactory {
         return this.registry.findAllDescriptorsByClass(type, qualifier)
                 .stream()
                 .map(this.registry::getExtensionSupplier)
-                .map(supplier -> supplier.get(configuration))
+                .map(supplier -> supplier.get(this))
                 .toList();
     }
 

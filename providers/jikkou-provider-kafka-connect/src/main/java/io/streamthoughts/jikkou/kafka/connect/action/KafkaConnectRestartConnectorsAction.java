@@ -23,7 +23,8 @@ import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
@@ -57,36 +58,36 @@ import org.slf4j.LoggerFactory;
 @Title("Restart Kafka Connect connector instances and task instances")
 @Description("The KafkaConnectRestartConnectors action a user to restart all or just the failed Connector and Task instances for one or multiple named connectors.")
 @ExtensionSpec(
-        options = {
-                @ExtensionOptionSpec(
-                        name = KafkaConnectRestartConnectorsAction.CONNECTOR_NAME_CONFIG,
-                        description = "The connector's name.",
-                        type = List.class,
-                        required = false
+    options = {
+        @ExtensionOptionSpec(
+            name = KafkaConnectRestartConnectorsAction.CONNECTOR_NAME_CONFIG,
+            description = "The connector's name.",
+            type = List.class,
+            required = false
 
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConnectRestartConnectorsAction.CONNECT_CLUSTER_CONFIG,
-                        description = "The name of the connect cluster.",
-                        type = String.class,
-                        required = false
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConnectRestartConnectorsAction.CONNECT_CLUSTER_CONFIG,
+            description = "The name of the connect cluster.",
+            type = String.class,
+            required = false
 
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConnectRestartConnectorsAction.INCLUDE_TASKS_CONFIG,
-                        description = "Specifies whether to restart the connector instance and task instances (includeTasks=true) or just the connector instance (includeTasks=false)",
-                        type = Boolean.class,
-                        required = false
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConnectRestartConnectorsAction.INCLUDE_TASKS_CONFIG,
+            description = "Specifies whether to restart the connector instance and task instances (includeTasks=true) or just the connector instance (includeTasks=false)",
+            type = Boolean.class,
+            required = false
 
-                ),
-                @ExtensionOptionSpec(
-                        name = KafkaConnectRestartConnectorsAction.ONLY_FAILED_CONFIG,
-                        description = "Specifies whether to restart just the instances with a FAILED status (onlyFailed=true) or all instances (onlyFailed=false)",
-                        type = Boolean.class,
-                        required = false
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConnectRestartConnectorsAction.ONLY_FAILED_CONFIG,
+            description = "Specifies whether to restart just the instances with a FAILED status (onlyFailed=true) or all instances (onlyFailed=false)",
+            type = Boolean.class,
+            required = false
 
-                )
-        })
+        )
+    })
 @SupportedResource(type = V1KafkaConnector.class)
 public class KafkaConnectRestartConnectorsAction extends ContextualExtension implements Action<V1KafkaConnector> {
 
@@ -100,7 +101,7 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
     public static final String INCLUDE_TASKS_CONFIG = "include-tasks";
     public static final String ONLY_FAILED_CONFIG = "only-failed";
 
-    private KafkaConnectExtensionConfig kafkaConnectExtensionConfig;
+    private KafkaConnectClusterConfigs configuration;
 
     /**
      * {@inheritDoc}
@@ -108,9 +109,7 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        kafkaConnectExtensionConfig = new KafkaConnectExtensionConfig(
-                extensionContext().appConfiguration()
-        );
+        this.configuration = context.<KafkaConnectExtensionProvider>provider().clusterConfigs();
     }
 
     /**
@@ -120,50 +119,50 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
     public @NotNull ExecutionResultSet<V1KafkaConnector> execute(@NotNull Configuration configuration) {
 
         final boolean includeTasks = extensionContext()
-                .<Boolean>configProperty(INCLUDE_TASKS_CONFIG)
-                .getOptional(configuration)
-                .orElse(false);
+            .<Boolean>configProperty(INCLUDE_TASKS_CONFIG)
+            .getOptional(configuration)
+            .orElse(false);
 
         final boolean onlyFailed = extensionContext()
-                .<Boolean>configProperty(ONLY_FAILED_CONFIG)
-                .getOptional(configuration)
-                .orElse(false);
+            .<Boolean>configProperty(ONLY_FAILED_CONFIG)
+            .getOptional(configuration)
+            .orElse(false);
 
         // Get the list of Kafka Connect clusters
         Set<String> clusters = getConnectClusters(configuration);
         try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
             List<CompletableFuture<List<ExecutionResult<V1KafkaConnector>>>> futures = clusters.stream()
-                    .map(clusterName ->
-                            CompletableFuture.supplyAsync(() ->
-                                            restartConnectors(
-                                                    configuration,
-                                                    clusterName,
-                                                    includeTasks,
-                                                    onlyFailed),
-                                    executorService)
-                    )
-                    .toList();
+                .map(clusterName ->
+                    CompletableFuture.supplyAsync(() ->
+                            restartConnectors(
+                                configuration,
+                                clusterName,
+                                includeTasks,
+                                onlyFailed),
+                        executorService)
+                )
+                .toList();
             executorService.shutdown();
             CompletableFuture<List<ExecutionResult<V1KafkaConnector>>> allFuture = AsyncUtils.waitForAll(futures)
-                    .thenApply(clusterResults ->
-                            clusterResults.stream()
-                                    .flatMap(Collection::stream)
-                                    .toList()
-                    );
+                .thenApply(clusterResults ->
+                    clusterResults.stream()
+                        .flatMap(Collection::stream)
+                        .toList()
+                );
             return switch (AsyncUtils.get(allFuture)) {
                 case Either.Left<List<ExecutionResult<V1KafkaConnector>>, Throwable> success ->
-                        ExecutionResultSet.<V1KafkaConnector>newBuilder()
-                                .results(success.left().get())
-                                .build();
+                    ExecutionResultSet.<V1KafkaConnector>newBuilder()
+                        .results(success.left().get())
+                        .build();
 
                 case Either.Right<List<ExecutionResult<V1KafkaConnector>>, Throwable> error ->
-                        ExecutionResultSet.<V1KafkaConnector>newBuilder()
-                                .result(ExecutionResult.<V1KafkaConnector>newBuilder()
-                                        .status(ExecutionStatus.FAILED)
-                                        .errors(List.of(new ExecutionError(error.right().get().getLocalizedMessage())))
-                                        .build()
-                                )
-                                .build();
+                    ExecutionResultSet.<V1KafkaConnector>newBuilder()
+                        .result(ExecutionResult.<V1KafkaConnector>newBuilder()
+                            .status(ExecutionStatus.FAILED)
+                            .errors(List.of(new ExecutionError(error.right().get().getLocalizedMessage())))
+                            .build()
+                        )
+                        .build();
             };
         }
     }
@@ -178,12 +177,12 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
             KafkaConnectClusterService service = new KafkaConnectClusterService(clusterName, api);
             // Get the list of connectors from the clusterName of from the configuration.
             return getConnectorsFromClusterOrConfig(configuration, api)
-                    .stream()
-                    .map(connectorName -> {
-                        // Restart the connector.
-                        return restartConnector(clusterName, connectorName, includeTasks, onlyFailed, api, service);
-                    })
-                    .collect(Collectors.toList());
+                .stream()
+                .map(connectorName -> {
+                    // Restart the connector.
+                    return restartConnector(clusterName, connectorName, includeTasks, onlyFailed, api, service);
+                })
+                .collect(Collectors.toList());
         } finally {
             api.close();
         }
@@ -203,68 +202,68 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
             if (statusCode == 202 || statusCode == 204) {
                 Optional<V1KafkaConnector> resource = AsyncUtils.getValue(service.getConnectorAsync(connectorName, true));
                 result = ExecutionResult
-                        .<V1KafkaConnector>newBuilder()
-                        .status(ExecutionStatus.SUCCEEDED)
-                        .data(resource.orElse(V1KafkaConnector
-                                .builder()
-                                .withMetadata(ObjectMeta
-                                        .builder()
-                                        .withName(connectorName)
-                                        .withLabel(KafkaConnectLabels.KAFKA_CONNECT_CLUSTER, clusterName)
-                                        .build()
-                                )
-                                .build())
+                    .<V1KafkaConnector>newBuilder()
+                    .status(ExecutionStatus.SUCCEEDED)
+                    .data(resource.orElse(V1KafkaConnector
+                        .builder()
+                        .withMetadata(ObjectMeta
+                            .builder()
+                            .withName(connectorName)
+                            .withLabel(KafkaConnectLabels.KAFKA_CONNECT_CLUSTER, clusterName)
+                            .build()
                         )
-                        .build();
+                        .build())
+                    )
+                    .build();
             } else {
                 ErrorResponse error = response.readEntity(ErrorResponse.class);
                 result = ExecutionResult
-                        .<V1KafkaConnector>newBuilder()
-                        .status(ExecutionStatus.FAILED)
-                        .errors(List.of(new ExecutionError(error.message(), error.errorCode())))
-                        .build();
+                    .<V1KafkaConnector>newBuilder()
+                    .status(ExecutionStatus.FAILED)
+                    .errors(List.of(new ExecutionError(error.message(), error.errorCode())))
+                    .build();
             }
         } catch (Exception ex) {
             if (ex instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
             LOG.error("Failed to restart connectorName '{}' on connect clusterName {} (includeTasks={}, onlyFailed={}).",
-                    connectorName,
-                    clusterName,
-                    includeTasks,
-                    onlyFailed,
-                    ex);
+                connectorName,
+                clusterName,
+                includeTasks,
+                onlyFailed,
+                ex);
             result = ExecutionResult
-                    .<V1KafkaConnector>newBuilder()
-                    .status(ExecutionStatus.FAILED)
-                    .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
-                    .build();
+                .<V1KafkaConnector>newBuilder()
+                .status(ExecutionStatus.FAILED)
+                .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
+                .build();
         }
         return result;
     }
 
     private KafkaConnectClientConfig getKafkaConnectClientConfig(@NotNull String clusterName) {
-        return kafkaConnectExtensionConfig
-                .getConfigForCluster(clusterName)
-                .orElseThrow(() -> new KafkaConnectClusterNotFoundException(
-                        "No connect cluster configured for name '" + clusterName + "'"));
+        return configuration
+            .getConfigForCluster(clusterName)
+            .orElseThrow(() -> new KafkaConnectClusterNotFoundException(
+                "No connect cluster configured for name '" + clusterName + "'"));
     }
 
     @NotNull
     private List<String> getConnectorsFromClusterOrConfig(@NotNull Configuration configuration,
                                                           @NotNull KafkaConnectApi api) {
         return extensionContext()
-                .<List<String>>configProperty(CONNECTOR_NAME_CONFIG)
-                .getOptional(configuration)
-                .orElseGet(api::listConnectors);
+            .<List<String>>configProperty(CONNECTOR_NAME_CONFIG)
+            .getOptional(configuration)
+            .orElseGet(api::listConnectors);
     }
 
     @NotNull
     private Set<String> getConnectClusters(@NotNull Configuration configuration) {
         return extensionContext()
-                .<List<String>>configProperty(CONNECT_CLUSTER_CONFIG)
-                .getOptional(configuration)
-                .map(list -> (Set<String>) new HashSet<>(list))
-                .orElseGet(() -> this.kafkaConnectExtensionConfig.getClusters());
+            .<List<String>>configProperty(CONNECT_CLUSTER_CONFIG)
+            .getOptional(configuration)
+            .map(list -> (Set<String>) new HashSet<>(list))
+            .orElseGet(() -> this.configuration.getClusters());
     }
 }

@@ -24,7 +24,7 @@ public class InterfaceStability {
     /**
      * Stable, can evolve while retaining compatibility for minor
      * release boundaries; but compatibility may be broken.
-     *
+     * <p>
      * This is the default stability level for public APIs that are not annotated.
      */
     @Documented

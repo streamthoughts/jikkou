@@ -11,9 +11,10 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaClientQuotaConfigsAdapter;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
@@ -66,7 +67,7 @@ public final class AdminClientKafkaQuotaCollector
     @Override
     public void init(@NotNull ExtensionContext context) {
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
@@ -74,8 +75,8 @@ public final class AdminClientKafkaQuotaCollector
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<V1KafkaClientQuota> listAll(@NotNull final Configuration configuration,
-                                                          @NotNull final Selector selector) {
+    public ResourceList<V1KafkaClientQuota> listAll(@NotNull final Configuration configuration,
+                                                    @NotNull final Selector selector) {
         try (AdminClientContext context = adminClientContextFactory.createAdminClientContext()) {
             final List<V1KafkaClientQuota> resources = new DescribeQuotas(context.getAdminClient()).describe();
             String clusterId = context.getClusterId();
@@ -92,7 +93,7 @@ public final class AdminClientKafkaQuotaCollector
                             .build()
                     )
                     .toList();
-            return new V1KafkaClientQuotaList(items);
+            return new V1KafkaClientQuotaList.Builder().withItems(items).build();
         }
     }
 

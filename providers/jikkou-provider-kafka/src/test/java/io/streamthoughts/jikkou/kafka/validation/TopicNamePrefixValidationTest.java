@@ -26,7 +26,7 @@ class TopicNamePrefixValidationTest {
     @Test
     void shouldThrowExceptionForMissingConfig() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(Configuration.empty());
+        Mockito.when(context.configuration()).thenReturn(Configuration.empty());
 
         Assertions.assertThrows(ConfigException.class, () -> new TopicNamePrefixValidation().init(context));
     }
@@ -35,7 +35,7 @@ class TopicNamePrefixValidationTest {
     void shouldThrowExceptionForTopicNotStartingWithPrefix() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(List.of("test-")));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(List.of("test-")));
 
         var validation = new TopicNamePrefixValidation();
         validation.init(context);
@@ -63,7 +63,7 @@ class TopicNamePrefixValidationTest {
     void shouldNotThrowForTopicStartingWithPrefix() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(List.of("test-")));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_NAME_PREFIXES_CONFIG.asConfiguration(List.of("test-")));
 
         var validation = new TopicNamePrefixValidation();
         validation.init(context);

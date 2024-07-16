@@ -39,7 +39,7 @@ import javax.validation.constraints.NotNull;
 public record ApiResourceChangeList(@JsonProperty("kind") @NotNull String kind,
                                     @JsonProperty("apiVersion") @NotNull String apiVersion,
                                     @JsonProperty("metadata") @NotNull ObjectMeta metadata,
-                                    @JsonProperty("items") @NotNull List<ResourceChange> items) implements ResourceListObject<ResourceChange> {
+                                    @JsonProperty("items") @NotNull List<ResourceChange> items) implements ResourceList<ResourceChange> {
 
     /**
      * Creates a new {@link ApiResourceChangeList} instance.

@@ -9,12 +9,11 @@ package io.streamthoughts.jikkou.core.transform;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.Configs;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasConfigRefs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import java.util.List;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +44,7 @@ class ConfigMapsTransformationTest {
 
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new DefaultResourceListObject<>(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
+                .transform(resource, ResourceList.of(TEST_CONFIG_MAP), ReconciliationContext.Default.EMPTY)
                 .get();
 
         // Then
@@ -63,7 +62,7 @@ class ConfigMapsTransformationTest {
 
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new DefaultResourceListObject<>(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
+                .transform(resource, ResourceList.of(TEST_CONFIG_MAP), ReconciliationContext.Default.EMPTY)
                 .get();
 
         // Then
@@ -82,7 +81,7 @@ class ConfigMapsTransformationTest {
         ));
         // When
         var result = (TestResource) new ConfigMapsTransformation()
-                .transform(resource, new DefaultResourceListObject<>(List.of(TEST_CONFIG_MAP)), ReconciliationContext.Default.EMPTY)
+                .transform(resource, ResourceList.of(TEST_CONFIG_MAP), ReconciliationContext.Default.EMPTY)
                 .get();
 
         // Then

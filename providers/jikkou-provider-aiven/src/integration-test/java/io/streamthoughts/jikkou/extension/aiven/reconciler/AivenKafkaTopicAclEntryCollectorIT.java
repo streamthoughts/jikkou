@@ -7,26 +7,19 @@
 package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.selector.Selectors;
-import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
+import io.streamthoughts.jikkou.extension.aiven.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("integration")
-class AivenKafkaTopicAclEntryCollectorIT extends AbstractAivenIntegrationTest {
-
-    private static AivenKafkaTopicAclEntryCollector collector;
-
-    @BeforeEach
-    public void beforeEach() {
-        collector = new AivenKafkaTopicAclEntryCollector(getAivenApiConfig());
-    }
+class AivenKafkaTopicAclEntryCollectorIT extends BaseExtensionProviderIT {
 
     @Test
     void shouldListKafkaAclEntries() {
@@ -39,7 +32,8 @@ class AivenKafkaTopicAclEntryCollectorIT extends AbstractAivenIntegrationTest {
                         """
                 ));
         // When
-        List<V1KafkaTopicAclEntry> results = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR).getItems();
+        ResourceList<V1KafkaTopicAclEntry> resources = api.listResources(V1KafkaTopicAclEntry.class, Selectors.NO_SELECTOR, Configuration.empty());
+        List<V1KafkaTopicAclEntry> results = resources.getItems();
 
         // Then
         Assertions.assertNotNull(results);

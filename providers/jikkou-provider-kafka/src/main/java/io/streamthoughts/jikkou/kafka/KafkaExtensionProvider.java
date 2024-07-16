@@ -6,8 +6,11 @@
  */
 package io.streamthoughts.jikkou.kafka;
 
-import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Provider;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
+import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.kafka.action.KafkaConsumerGroupsResetOffsets;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
@@ -15,6 +18,14 @@ import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaPrincipalAuthorizationList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.streamthoughts.jikkou.kafka.internals.KafkaUtils;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
+import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientFactory;
+import io.streamthoughts.jikkou.kafka.internals.admin.DefaultAdminClientFactory;
+import io.streamthoughts.jikkou.kafka.internals.consumer.ConsumerFactory;
+import io.streamthoughts.jikkou.kafka.internals.consumer.DefaultConsumerFactory;
+import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
+import io.streamthoughts.jikkou.kafka.internals.producer.ProducerFactory;
 import io.streamthoughts.jikkou.kafka.model.user.V1KafkaUser;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
@@ -56,12 +67,61 @@ import io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValida
 import io.streamthoughts.jikkou.kafka.validation.TopicNamePrefixValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation;
-import io.streamthoughts.jikkou.spi.AbstractExtensionProvider;
+import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serializer;
 import org.jetbrains.annotations.NotNull;
 
-@Named("Kafka")
-public final class KafkaExtensionProvider extends AbstractExtensionProvider {
+/**
+ * Extension provider for Apache Kafka.
+ */
+@Provider(
+    name = "kafka",
+    description = "Extension provider for Apache Kafka",
+    tags = {"Apache Kafka"}
+)
+public final class KafkaExtensionProvider extends BaseExtensionProvider {
+
+    private final ConfigProperty<Map<String, Object>> clientConfig = ConfigProperty
+        .ofMap("client")
+        .description("The kafka client configuration properties.")
+        .orElse(HashMap::new);
+
+    public AdminClientContextFactory newAdminClientContextFactory() {
+        return new AdminClientContextFactory(configuration, newAdminClientFactory());
+    }
+
+    public AdminClientFactory newAdminClientFactory() {
+        return new DefaultAdminClientFactory(
+            clientConfig.map(KafkaUtils::getAdminClientConfigs).get(configuration)
+        );
+    }
+
+    public ConsumerFactory<byte[], byte[]> newConsumerFactory() {
+        return newConsumerFactory(new ByteArrayDeserializer(), new ByteArrayDeserializer());
+    }
+
+    public <K, V> ConsumerFactory<K, V> newConsumerFactory(final Deserializer<K> keyDeserializer,
+                                                           final Deserializer<V> valueDeserializer) {
+        return new DefaultConsumerFactory<>(
+            clientConfig.map(KafkaUtils::getConsumerClientConfigs).get(configuration),
+            keyDeserializer,
+            valueDeserializer
+        );
+    }
+
+    public <K, V> ProducerFactory<K, V> newProducerFactory(final Serializer<K> keySerializer,
+                                                           final Serializer<V> valueSerializer) {
+        return new DefaultProducerFactory<>(
+            clientConfig.map(KafkaUtils::getProducerClientConfigs).get(configuration),
+            keySerializer,
+            valueSerializer
+        );
+    }
 
     /**
      * {@inheritDoc}
@@ -112,6 +172,8 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
 
         // reporters
         registry.register(KafkaChangeReporter.class, KafkaChangeReporter::new);
+
+        // actions
         registry.register(KafkaConsumerGroupsResetOffsets.class, KafkaConsumerGroupsResetOffsets::new);
     }
 
@@ -121,11 +183,8 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
         Stream.of(
-            V1KafkaBrokerList.class,
             V1KafkaBroker.class,
             V1KafkaClientQuota.class,
-            V1KafkaClientQuotaList.class,
-            V1KafkaTopicList.class,
             V1KafkaTopic.class,
             V1KafkaPrincipalAuthorization.class,
             V1KafkaPrincipalAuthorizationList.class,
@@ -133,6 +192,16 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
             V1KafkaTableRecord.class,
             V1KafkaConsumerGroup.class,
             V1KafkaUser.class
-        ).forEach(cls -> registerResource(registry, cls));
+        ).forEach(resource -> {
+            registry.register(resource);
+            registry.register(GenericResourceChange.class, ResourceChange.fromResource(resource));
+        });
+
+        // register collections
+        Stream.of(
+            V1KafkaBrokerList.class,
+            V1KafkaClientQuotaList.class,
+            V1KafkaTopicList.class
+        ).forEach(registry::register);
     }
 }

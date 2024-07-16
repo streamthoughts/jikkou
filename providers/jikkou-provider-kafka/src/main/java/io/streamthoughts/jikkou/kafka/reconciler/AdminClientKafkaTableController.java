@@ -15,7 +15,7 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
@@ -23,12 +23,12 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.change.record.KafkaTableRecordChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.record.KafkaTableRecordChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.record.KafkaTableRecordChangeHandler;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientFactory;
 import io.streamthoughts.jikkou.kafka.internals.consumer.ConsumerFactory;
-import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
 import io.streamthoughts.jikkou.kafka.internals.producer.ProducerFactory;
 import io.streamthoughts.jikkou.kafka.model.DataValue;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,11 +83,13 @@ public final class AdminClientKafkaTableController implements Controller<V1Kafka
     @Override
     public void init(@NotNull ExtensionContext context) {
         if (producerFactory == null) {
-            producerFactory = new DefaultProducerFactory<>(
-                    () -> KafkaClientConfiguration.PRODUCER_CLIENT_CONFIG.get(context.appConfiguration()),
-                    new ByteArraySerializer(),
-                    new ByteArraySerializer()
-            );
+            producerFactory = context.<KafkaExtensionProvider>provider()
+                .newProducerFactory(new ByteArraySerializer(),  new ByteArraySerializer());
+        }
+
+        if (consumerFactory == null) {
+            consumerFactory = context.<KafkaExtensionProvider>provider()
+                .newConsumerFactory(new ByteArrayDeserializer(),  new ByteArrayDeserializer());
         }
 
         collector = new AdminClientKafkaTableCollector(consumerFactory, adminClientFactory);
@@ -133,7 +136,7 @@ public final class AdminClientKafkaTableController implements Controller<V1Kafka
                     AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG, first.getSpec().getValue().type().name(),
                     AdminClientKafkaTableCollector.SKIP_MESSAGE_ON_ERROR_CONFIG, true
             ));
-            ResourceListObject<V1KafkaTableRecord> list = collector.listAll(configuration, context.selector());
+            ResourceList<V1KafkaTableRecord> list = collector.listAll(configuration, context.selector());
 
             KafkaTableRecordChangeComputer changeComputer = new KafkaTableRecordChangeComputer();
             changes.addAll(changeComputer.computeChanges(list.getItems(), entry.getValue()));

@@ -3,7 +3,7 @@
   "description": "",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.ResourceListObject<ConfigMap>"
+    "io.streamthoughts.jikkou.core.models.ResourceList<ConfigMap>"
   ],
   "additionalProperties": {
     "lombok-builder": true,

@@ -11,7 +11,7 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
@@ -53,7 +53,7 @@ class ResourceDescriptorTest {
 
     @ApiVersion("test.jikkou.io/v1beta2")
     @Kind("TestList")
-    static abstract class TestListResource implements ResourceListObject<HasMetadata> {
+    static abstract class TestListResource implements ResourceList<HasMetadata> {
     }
 
     @ApiVersion("test.jikkou.io/v1beta2")

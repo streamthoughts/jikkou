@@ -18,7 +18,7 @@ import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
@@ -66,7 +66,7 @@ public class ValidateCommand extends CLIBaseCommand implements Callable<Integer>
     public Integer call() throws IOException {
         ApiValidationResult result = api.validate(getResources(), getReconciliationContext());
         if (result.isValid()) {
-            ResourceListObject<HasMetadata> resources = result.get();
+            ResourceList<HasMetadata> resources = result.get();
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 writer.write(formatOptions.format(), resources.getItems(), baos);
                 System.out.println(baos);

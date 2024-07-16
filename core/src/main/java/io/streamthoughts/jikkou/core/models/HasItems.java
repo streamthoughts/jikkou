@@ -35,7 +35,7 @@ public interface HasItems {
      * Gets all the resources matching the given kind.
      *
      * @param resourceClass the class of the resource.
-     * @return the filtered {@link DefaultResourceListObject}.
+     * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByKind(Class<? extends HasMetadata> resourceClass) {
         return getAllByKind(Resource.getKind(resourceClass));
@@ -45,7 +45,7 @@ public interface HasItems {
      * Gets all the resources matching the given kind.
      *
      * @param kind the Kind of the resource.
-     * @return the filtered {@link DefaultResourceListObject}.
+     * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByKind(@NotNull final String kind) {
         return getAllByKinds(kind);
@@ -55,7 +55,7 @@ public interface HasItems {
      * Gets all the resources matching the given kinds.
      *
      * @param kinds the list of Kinds of the resources.
-     * @return the filtered {@link DefaultResourceListObject}.
+     * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByKinds(@NotNull final String... kinds) {
         return getAllByKinds(Arrays.asList(kinds));
@@ -65,7 +65,7 @@ public interface HasItems {
      * Gets all the resources matching the given kinds.
      *
      * @param kinds the list of Kinds of the resources.
-     * @return the filtered {@link DefaultResourceListObject}.
+     * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByKinds(@NotNull final List<String> kinds) {
         if (kinds.isEmpty()) {
@@ -81,7 +81,7 @@ public interface HasItems {
      * Gets all the resources matching the given type.
      *
      * @param type the resource type.
-     * @return the filtered {@link DefaultResourceListObject}.
+     * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByType(@NotNull final ResourceType type) {
         return getItems().stream()
@@ -93,7 +93,7 @@ public interface HasItems {
      * Gets all the resources matching the given version.
      *
      * @param version the Version of the resource.
-     * @return the filtered {@link DefaultResourceListObject}.
+     * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByApiVersion(@NotNull final String version) {
         return getItems().stream()

@@ -28,6 +28,7 @@
         <module>server/jikkou-api-client</module>
         <module>server/jikkou-api-server</module>
         <module>server/jikkou-api-data</module>
+        <module>processor</module>
     </modules>
 
     <name>Jikkou Project</name>

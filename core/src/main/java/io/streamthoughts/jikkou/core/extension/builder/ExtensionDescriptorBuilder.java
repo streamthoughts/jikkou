@@ -7,15 +7,18 @@
 package io.streamthoughts.jikkou.core.extension.builder;
 
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.Example;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionMetadata;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Builder for creating new {@link ExtensionDescriptor} instances.
@@ -30,13 +33,16 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
     private List<Example> examples;
     private List<ConfigPropertySpec> properties;
     private ExtensionCategory category;
-    private String provider;
+    private Class<? extends ExtensionProvider> provider;
+    private Supplier<? extends ExtensionProvider> providerSupplier;
     private ExtensionMetadata metadata;
     private Class<T> type;
     private boolean isEnabled;
     private ClassLoader classLoader;
     private Supplier<T> supplier;
     private final Set<String> aliases = new HashSet<>();
+    private Configuration configuration;
+    private Integer priority;
 
     /**
      * Static helper method for creating a new {@link ExtensionDescriptorBuilder} instance.
@@ -57,18 +63,19 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      */
     public static <T> ExtensionDescriptorBuilder<T> builder(final ExtensionDescriptor<T> descriptor) {
         return new ExtensionDescriptorBuilder<T>()
-                .name(descriptor.name())
-                .title(descriptor.title())
-                .description(descriptor.description())
-                .examples(descriptor.examples())
-                .type(descriptor.type())
-                .category(descriptor.category())
-                .properties(descriptor.properties())
-                .provider(descriptor.provider())
-                .metadata(descriptor.metadata())
-                .classLoader(descriptor.classLoader())
-                .supplier(descriptor.supplier())
-                .isEnabled(descriptor.isEnabled());
+            .name(descriptor.name())
+            .title(descriptor.title())
+            .description(descriptor.description())
+            .examples(descriptor.examples())
+            .type(descriptor.type())
+            .category(descriptor.category())
+            .properties(descriptor.properties())
+            .provider(descriptor.provider(), descriptor.providerSupplier())
+            .metadata(descriptor.metadata())
+            .classLoader(descriptor.classLoader())
+            .supplier(descriptor.supplier())
+            .configuration(descriptor.configuration())
+            .isEnabled(descriptor.isEnabled());
     }
 
     /**
@@ -116,7 +123,6 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
         return examples;
     }
 
-
     public ExtensionDescriptorBuilder<T> properties(List<ConfigPropertySpec> properties) {
         this.properties = properties;
         return this;
@@ -131,6 +137,18 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
         return properties;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer priority() {
+        return priority;
+    }
+
+    public ExtensionDescriptorBuilder<T> priority(Integer priority) {
+        this.priority = priority;
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -197,7 +215,6 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
         return this;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -215,12 +232,22 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * {@inheritDoc}
      */
     @Override
-    public String provider() {
+    public @NotNull Class<? extends ExtensionProvider> provider() {
         return provider;
     }
 
-    public ExtensionDescriptorBuilder<T> provider(String provider) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Supplier<? extends ExtensionProvider> providerSupplier() {
+        return providerSupplier;
+    }
+
+    public ExtensionDescriptorBuilder<T> provider(Class<? extends ExtensionProvider> provider,
+                                                  Supplier<? extends ExtensionProvider> supplier) {
         this.provider = provider;
+        this.providerSupplier = supplier;
         return this;
     }
 
@@ -260,6 +287,25 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Configuration configuration() {
+        return configuration;
+    }
+
+    /**
+     * Sets the configuration of the Extension.
+     *
+     * @param configuration the configuration of the Extension.
+     * @return {@code this}
+     */
+    public ExtensionDescriptorBuilder<T> configuration(final Configuration configuration) {
+        this.configuration = configuration;
+        return this;
+    }
+
+    /**
      * Sets the supplier of the Extension.
      *
      * @param supplier the supplier of the Extension.
@@ -274,7 +320,7 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * {@inheritDoc}
      */
     @Override
-    public Class<T> type() {
+    public @NotNull Class<T> type() {
         return type;
     }
 
@@ -291,17 +337,20 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
 
     public ExtensionDescriptor<T> build() {
         DefaultExtensionDescriptor<T> descriptor = new DefaultExtensionDescriptor<>(
-                name,
-                title,
-                description,
-                examples,
-                category,
-                properties,
-                provider,
-                type,
-                classLoader,
-                supplier,
-                isEnabled
+            name,
+            title,
+            description,
+            examples,
+            category,
+            properties,
+            provider,
+            providerSupplier,
+            type,
+            classLoader,
+            supplier,
+            configuration,
+            isEnabled,
+            priority
         );
         descriptor.metadata(metadata);
         descriptor.addAliases(aliases);
