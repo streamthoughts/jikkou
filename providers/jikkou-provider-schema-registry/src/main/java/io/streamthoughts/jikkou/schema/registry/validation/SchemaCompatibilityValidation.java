@@ -14,6 +14,7 @@ import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import io.streamthoughts.jikkou.http.client.RestClientException;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
@@ -38,7 +39,7 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
      */
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        this.config = new SchemaRegistryClientConfig(context.appConfiguration());
+        this.config = context.<SchemaRegistryExtensionProvider>provider().clientConfig();
     }
 
     /**

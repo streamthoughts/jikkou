@@ -21,29 +21,32 @@ class CompositeQualifierTest {
     @Test
     void shouldFilterDescriptorsForCompositeQualifier() {
         Qualifier<CompositeQualifierTest> qualifier = Qualifiers.byQualifiers(
-                new EnabledQualifier<>(),
-                new NamedQualifier<>("Test")
+            new EnabledQualifier<>(),
+            new NamedQualifier<>("Test")
         );
 
         ExtensionDescriptor<CompositeQualifierTest> descriptor = getDescriptor(CompositeQualifierTest.class, true);
         List<ExtensionDescriptor<CompositeQualifierTest>> result = qualifier
-                .filter(CompositeQualifierTest.class, Stream.of(descriptor)).toList();
+            .filter(CompositeQualifierTest.class, Stream.of(descriptor)).toList();
         Assertions.assertEquals(List.of(descriptor), result);
     }
 
     private static <T> ExtensionDescriptor<T> getDescriptor(Class<T> clazz, boolean isEnabled) {
         return new DefaultExtensionDescriptor<>(
-                "Test",
-                "Title",
-                "Description",
-                Collections.emptyList(),
-                ExtensionCategory.EXTENSION,
-                Collections.emptyList(),
-                "Provider",
-                clazz,
-                clazz.getClassLoader(),
-                () -> null,
-                isEnabled
+            "Test",
+            "Title",
+            "Description",
+            Collections.emptyList(),
+            ExtensionCategory.EXTENSION,
+            Collections.emptyList(),
+            null,
+            () -> null,
+            clazz,
+            clazz.getClassLoader(),
+            () -> null,
+            null,
+            isEnabled,
+            null
         );
     }
 }

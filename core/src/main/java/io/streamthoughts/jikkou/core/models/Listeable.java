@@ -51,7 +51,7 @@ public interface Listeable<T> extends Iterable<T> {
         if (isEmpty()) {
             throw new NoSuchElementException("Items list is empty");
         }
-        return getItems().get(0);
+        return getItems().getFirst();
     }
 
     /**

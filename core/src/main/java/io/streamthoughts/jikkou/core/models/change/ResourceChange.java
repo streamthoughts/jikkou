@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.Resource;
+import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconciler.Change;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 
@@ -50,4 +51,10 @@ public interface ResourceChange extends HasSpec<ResourceChangeSpec>, Change {
         return Resource.getKind(resourceClass) + RESOURCE_CHANGE_KIND_SUFFIX;
     }
 
+    static ResourceType fromResource(final Class<? extends Resource> resourceClass) {
+        return ResourceType.of(
+            ResourceChange.getChangeKindFromResource(resourceClass),
+            Resource.getApiVersion(resourceClass)
+        );
+    }
 }

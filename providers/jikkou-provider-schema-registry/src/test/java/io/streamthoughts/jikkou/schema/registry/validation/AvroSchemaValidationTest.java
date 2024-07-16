@@ -62,7 +62,7 @@ class AvroSchemaValidationTest {
     void shouldReturnErrorForMissingDocField() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(AvroSchemaValidation.RECORD_FIELD_MUST_HAVE_DOC.asConfiguration(true));
+        Mockito.when(context.configuration()).thenReturn(AvroSchemaValidation.RECORD_FIELD_MUST_HAVE_DOC.asConfiguration(true));
         AvroSchemaValidation validation = new AvroSchemaValidation();
         validation.init(context);
 
@@ -97,7 +97,7 @@ class AvroSchemaValidationTest {
     void shouldReturnErrorForNonNullableFields() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_NULLABLE.asConfiguration(true));
+        Mockito.when(context.configuration()).thenReturn(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_NULLABLE.asConfiguration(true));
         AvroSchemaValidation validation = new AvroSchemaValidation();
         validation.init(context);
 
@@ -131,7 +131,7 @@ class AvroSchemaValidationTest {
     void shouldReturnErrorForNonOptionalFields() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_OPTIONAL.asConfiguration(true));
+        Mockito.when(context.configuration()).thenReturn(AvroSchemaValidation.RECORD_FIELDS_MUST_BE_OPTIONAL.asConfiguration(true));
         AvroSchemaValidation validation = new AvroSchemaValidation();
         validation.init(context);
 

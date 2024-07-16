@@ -51,7 +51,7 @@ public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject>
      */
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        final Configuration config = context.appConfiguration();
+        final Configuration config = context.configuration();
 
         recordFieldsMustHaveDoc = RECORD_FIELD_MUST_HAVE_DOC.getOptional(config)
                 .orElseThrow(getConfigExceptionSupplier(RECORD_FIELD_MUST_HAVE_DOC));

@@ -13,7 +13,7 @@ import java.util.List;
 
 public final class ApiValidationResult {
 
-    private final ResourceListObject<HasMetadata> resources;
+    private final ResourceList<HasMetadata> resources;
 
     private final List<ValidationError> errors;
 
@@ -22,7 +22,7 @@ public final class ApiValidationResult {
      *
      * @param resources the list of resources that was validated.
      */
-    public ApiValidationResult(ResourceListObject<HasMetadata> resources) {
+    public ApiValidationResult(ResourceList<HasMetadata> resources) {
         this(resources, null);
     }
 
@@ -35,7 +35,7 @@ public final class ApiValidationResult {
         this(null, errors);
     }
 
-    private ApiValidationResult(ResourceListObject<HasMetadata> resources, List<ValidationError> errors) {
+    private ApiValidationResult(ResourceList<HasMetadata> resources, List<ValidationError> errors) {
         this.resources = resources;
         this.errors = errors;
     }
@@ -43,10 +43,10 @@ public final class ApiValidationResult {
     /**
      * Gets the results of the resource validation execution.
      *
-     * @return  the {@link ResourceListObject}.
+     * @return  the {@link ResourceList}.
      * @throws ValidationException if validation constraint errors was returned during validation process.
      */
-    public ResourceListObject<HasMetadata> get() {
+    public ResourceList<HasMetadata> get() {
         if (errors != null) {
             throw new ValidationException(errors);
         }

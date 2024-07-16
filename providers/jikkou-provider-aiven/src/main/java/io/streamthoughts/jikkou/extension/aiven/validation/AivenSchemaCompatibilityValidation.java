@@ -11,6 +11,7 @@ import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -21,19 +22,19 @@ import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityVa
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(
-        apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
-        kind = ApiVersions.SCHEMA_REGISTRY_KIND
+    apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
+    kind = ApiVersions.SCHEMA_REGISTRY_KIND
 )
 public class AivenSchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {
 
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        this.config = new AivenApiClientConfig(context.appConfiguration());
+        this.apiClientConfig = context.<AivenExtensionProvider>provider().apiClientConfig();
     }
 
     /**
@@ -46,7 +47,7 @@ public class AivenSchemaCompatibilityValidation implements Validation<V1SchemaRe
 
         return SchemaCompatibilityValidation.validate(
                 resource,
-                new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(config)),
+                new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(apiClientConfig)),
                 this
         );
     }

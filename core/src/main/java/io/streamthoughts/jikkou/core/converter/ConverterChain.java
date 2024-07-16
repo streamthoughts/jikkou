@@ -10,7 +10,6 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -49,7 +48,6 @@ public final class ConverterChain implements Converter<HasMetadata, HasMetadata>
         }
 
         if (accepting.size() > 1) {
-            accepting = accepting.stream().sorted(Comparator.comparing(Converter::getPriority)).toList();
             if (LOG.isDebugEnabled()) {
                 ResourceType type = ResourceType.of(resource);
                 LOG.debug("Found multiple converters matching resource of type: group={}, version={} and kind={}. Only first one will be applied: {}",
@@ -78,7 +76,6 @@ public final class ConverterChain implements Converter<HasMetadata, HasMetadata>
 
     private List<Converter> findMatchingConverters(@NotNull HasMetadata resource) {
         return converters.stream()
-                .sorted(Comparator.comparing(Converter::getPriority))
                 .filter(converter -> canAccept(ResourceType.of(resource)))
                 .filter(converter -> canAccept(resource))
                 .toList();

@@ -15,7 +15,7 @@ import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public interface Collector<R extends HasMetadata>
      * @param selector      the selector to be used for filtering the resource to describe.
      * @return the list of resources.
      */
-    ResourceListObject<R> listAll(@NotNull Configuration configuration,
-                                  @NotNull Selector selector);
+    ResourceList<R> listAll(@NotNull Configuration configuration,
+                            @NotNull Selector selector);
 
 }

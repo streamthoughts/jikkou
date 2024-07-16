@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.schema.registry.ApiVersions;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
@@ -70,7 +71,7 @@ public class SchemaRegistrySubjectController
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (configuration == null) {
-            configuration = new SchemaRegistryClientConfig(context.appConfiguration());
+            configuration = context.<SchemaRegistryExtensionProvider>provider().clientConfig();
         }
     }
 

@@ -19,6 +19,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.change.consumer.ConsumerGroupChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.consumer.ConsumerGroupChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.consumer.DeleteConsumerGroupHandler;
@@ -66,7 +67,7 @@ public final class AdminClientConsumerGroupController
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 

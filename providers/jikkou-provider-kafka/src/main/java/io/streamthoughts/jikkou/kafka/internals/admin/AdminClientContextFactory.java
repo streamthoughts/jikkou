@@ -6,8 +6,6 @@
  */
 package io.streamthoughts.jikkou.kafka.internals.admin;
 
-import static io.streamthoughts.jikkou.kafka.reconciler.KafkaClientConfiguration.ADMIN_CLIENT_CONFIG;
-
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.kafka.internals.KafkaBrokersReady;
@@ -20,29 +18,23 @@ import org.jetbrains.annotations.NotNull;
 public final class AdminClientContextFactory {
 
     public static final ConfigProperty<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigProperty
-            .ofBoolean("kafka.brokers.waitForEnabled")
+            .ofBoolean("brokers.waitForEnabled")
             .orElse(true);
+
     public static final ConfigProperty<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigProperty
-            .ofInt("kafka.brokers.waitForMinAvailable")
+            .ofInt("brokers.waitForMinAvailable")
             .orElse(KafkaBrokersReady.DEFAULT_MIN_AVAILABLE_BROKERS);
+
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigProperty
-            .ofLong("kafka.brokers.waitForRetryBackoffMs")
+            .ofLong("brokers.waitForRetryBackoffMs")
             .orElse(KafkaBrokersReady.DEFAULT_RETRY_BACKOFF_MS);
+
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigProperty
-            .ofLong("kafka.brokers.waitForTimeoutMs")
+            .ofLong("brokers.waitForTimeoutMs")
             .orElse(KafkaBrokersReady.DEFAULT_TIMEOUT_MS);
 
     private final AdminClientFactory factory;
     private final Configuration configuration;
-
-    /**
-     * Creates a new {@link AdminClientContextFactory} instance.
-     *
-     * @param configuration the configuration.
-     */
-    public AdminClientContextFactory(@NotNull final Configuration configuration) {
-        this(configuration, newDefaultAdminClientFactory(configuration));
-    }
 
     /**
      * Creates a new {@link AdminClientContextFactory} instance.
@@ -66,15 +58,10 @@ public final class AdminClientContextFactory {
         AdminClientContext context = new AdminClientContext(factory);
         context.enabledWaitForKafkaBrokers(KAFKA_BROKERS_WAIT_FOR_ENABLED.get(configuration));
         context.setOptions(KafkaBrokersReady.Options.withDefaults()
-                .withRetryBackoffMs(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.get(configuration))
-                .withMinAvailableBrokers(KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.get(configuration))
-                .withTimeoutMs(KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.get(configuration))
+            .withRetryBackoffMs(KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS.get(configuration))
+            .withMinAvailableBrokers(KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE.get(configuration))
+            .withTimeoutMs(KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS.get(configuration))
         );
         return context;
-    }
-
-    @NotNull
-    private static DefaultAdminClientFactory newDefaultAdminClientFactory(Configuration configuration) {
-        return new DefaultAdminClientFactory(ADMIN_CLIENT_CONFIG.get(configuration));
     }
 }

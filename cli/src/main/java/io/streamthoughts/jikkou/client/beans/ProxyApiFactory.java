@@ -34,35 +34,35 @@ public final class ProxyApiFactory {
     public JikkouApiClient apiClient() {
         ApiClientBuilder builder = ApiClientBuilder.builder();
         builder
-                .withBasePath(configuration.url())
-                .withDebugging(configuration.debugging())
-                .withWriteTimeout(getWriteTimeout())
-                .withReadTimeout(getReadTimeout())
-                .withConnectTimeout(getConnectionTimeout());
+            .withBasePath(configuration.url())
+            .withDebugging(configuration.debugging())
+            .withWriteTimeout(getWriteTimeout())
+            .withReadTimeout(getReadTimeout())
+            .withConnectTimeout(getConnectionTimeout());
 
         ProxyConfiguration.Security security = configuration.security();
 
         // Bearer Token based authentication.
         security.accessToken()
-                .ifPresent(accessToken ->
-                        builder.withAuthenticator(
-                                new BearerTokenAuthenticator(() -> new BearerToken(accessToken))
-                        )
-                );
+            .ifPresent(accessToken ->
+                builder.withAuthenticator(
+                    new BearerTokenAuthenticator(() -> new BearerToken(accessToken))
+                )
+            );
         // UsernamePassword based authentication.
         Optional.ofNullable(security.basicAuth())
-                .ifPresent(basicAuth -> {
-                    Optional<String> username = basicAuth.username();
-                    Optional<String> password = basicAuth.password();
-                    if (username.isPresent() && password.isPresent()) {
-                        builder.withAuthenticator(new UsernamePasswordAuthenticator(() -> {
-                            return new UsernamePasswordCredential(
-                                    username.get(),
-                                    password.get()
-                            );
-                        }));
-                    }
-                });
+            .ifPresent(basicAuth -> {
+                Optional<String> username = basicAuth.username();
+                Optional<String> password = basicAuth.password();
+                if (username.isPresent() && password.isPresent()) {
+                    builder.withAuthenticator(new UsernamePasswordAuthenticator(() -> {
+                        return new UsernamePasswordCredential(
+                            username.get(),
+                            password.get()
+                        );
+                    }));
+                }
+            });
 
         return new DefaultJikkouApiClient(builder.build());
     }
@@ -70,24 +70,24 @@ public final class ProxyApiFactory {
     @Singleton
     @SuppressWarnings("rawtypes")
     public JikkouApi.ApiBuilder proxyApiBuilder(JikkouContext context, JikkouApiClient apiClient) {
-        return new JikkouApiProxy.Builder(context.getExtensionFactory(), apiClient);
+        return new JikkouApiProxy.Builder(context.getExtensionFactory(), context.getResourceRegistry(), apiClient);
     }
 
     @NotNull
     private Integer getConnectionTimeout() {
         return configuration.connectTimeout()
-                .orElse(configuration.defaultTimeout());
+            .orElse(configuration.defaultTimeout());
     }
 
     @NotNull
     private Integer getReadTimeout() {
         return configuration.readTimeout()
-                .orElse(configuration.defaultTimeout());
+            .orElse(configuration.defaultTimeout());
     }
 
     @NotNull
     private Integer getWriteTimeout() {
         return configuration.writeTimeout()
-                .orElse(configuration.defaultTimeout());
+            .orElse(configuration.defaultTimeout());
     }
 }

@@ -10,7 +10,7 @@ import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -27,7 +27,7 @@ public class NoDuplicatePrincipalRoleValidation implements Validation<V1KafkaPri
      */
     @Override
     public ValidationResult validate(@NotNull List<V1KafkaPrincipalRole> resources) throws ValidationException {
-        DefaultResourceListObject<V1KafkaPrincipalRole> list = new DefaultResourceListObject<>(resources);
+        ResourceList<V1KafkaPrincipalRole> list = ResourceList.of(resources);
         try {
             list.verifyNoDuplicateMetadataName();
             return ValidationResult.success();

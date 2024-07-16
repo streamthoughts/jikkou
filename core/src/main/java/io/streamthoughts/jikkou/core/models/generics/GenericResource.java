@@ -11,12 +11,14 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ObjectTemplate;
+import jakarta.validation.constraints.NotNull;
 import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,14 +38,31 @@ import java.util.Objects;
 @Reflectable
 public class GenericResource implements HasMetadata {
 
+    /**
+     * ApiVersion attached to the resource.
+     */
     @JsonProperty("apiVersion")
+    @JsonPropertyDescription("ApiVersion attached to the resource.")
     private final String apiVersion;
+
+    /**
+     * Kind attached to the resource.
+     */
     @JsonProperty("kind")
+    @JsonPropertyDescription("Kind attached to the resource.")
+    @NotNull
     private final String kind;
+
+    /**
+     * Metadata attached to the resource.
+     */
     @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resource.")
     private final ObjectMeta metadata;
+
     @JsonProperty("template")
     private final ObjectTemplate template;
+
     @JsonIgnore
     private final Map<String, Object> additionalProperties;
 

@@ -20,9 +20,8 @@ import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
@@ -147,12 +146,12 @@ public interface JikkouApiClient {
      * List all resources matching the specified type and selectors.
      *
      * @param <T> type of the resource-list items.
-     * @return a {@link ResourceListObject}.
+     * @return a {@link ResourceList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    <T extends HasMetadata> ResourceListObject<T> getResources(@NotNull ResourceType resourceType);
+    <T extends HasMetadata> ResourceList<T> getResources(@NotNull ResourceType resourceType);
 
     /**
      * Get the resource associated for the specified type.
@@ -172,14 +171,14 @@ public interface JikkouApiClient {
      * List all resources matching the specified type and selectors.
      *
      * @param <T> type of the resource-list items.
-     * @return a {@link ResourceListObject}.
+     * @return a {@link ResourceList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
-                                                                @NotNull Selector selector,
-                                                                @NotNull Configuration configuration);
+    <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
+                                                          @NotNull Selector selector,
+                                                          @NotNull Configuration configuration);
 
     /**
      * Applies the creation changes required to reconcile the specified resources.
@@ -188,7 +187,7 @@ public interface JikkouApiClient {
      * @param resources the resources to validate.
      * @param mode      the reconciliation mode.
      * @param context   the reconciliation context.
-     * @return the validated {@link DefaultResourceListObject}.
+     * @return the {@link ApiChangeResultList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
@@ -204,7 +203,7 @@ public interface JikkouApiClient {
      * @param changes The resource changes.
      * @param mode    the reconciliation mode.
      * @param context the context to be used for conciliation.
-     * @return the validated {@link DefaultResourceListObject}.
+     * @return the {@link ApiChangeResultList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
@@ -219,14 +218,14 @@ public interface JikkouApiClient {
      * @param type      the type of the resources.
      * @param resources the resources to validate.
      * @param context   the reconciliation context.
-     * @return the validated {@link DefaultResourceListObject}.
+     * @return the {@link ApiChangeResultList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    <T extends HasMetadata> ResourceListObject<T> validate(@NotNull ResourceType type,
-                                                           @NotNull List<T> resources,
-                                                           @NotNull ReconciliationContext context);
+    <T extends HasMetadata> ResourceList<T> validate(@NotNull ResourceType type,
+                                                     @NotNull List<T> resources,
+                                                     @NotNull ReconciliationContext context);
 
     /**
      * Gets the differences from the specified resources and the existing ones.
@@ -234,7 +233,7 @@ public interface JikkouApiClient {
      * @param type      the type of the resources.
      * @param resources the resources to validate.
      * @param context   the reconciliation context.
-     * @return the validated {@link DefaultResourceListObject}.
+     * @return the {@link ApiChangeResultList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.

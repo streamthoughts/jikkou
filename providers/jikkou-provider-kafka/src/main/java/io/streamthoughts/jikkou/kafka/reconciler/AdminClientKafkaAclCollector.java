@@ -10,9 +10,10 @@ import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.adapters.KafkaAclBindingAdapter;
 import io.streamthoughts.jikkou.kafka.adapters.V1KafkaPrincipalAuthorizationSupport;
@@ -62,7 +63,7 @@ public final class AdminClientKafkaAclCollector
     @Override
     public void init(@NotNull ExtensionContext context) {
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
@@ -70,8 +71,8 @@ public final class AdminClientKafkaAclCollector
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<V1KafkaPrincipalAuthorization> listAll(@NotNull final Configuration configuration,
-                                                                     @NotNull final Selector selector) {
+    public ResourceList<V1KafkaPrincipalAuthorization> listAll(@NotNull final Configuration configuration,
+                                                               @NotNull final Selector selector) {
 
 
         try (AdminClientContext adminClientContext = adminClientContextFactory.createAdminClientContext()) {
@@ -92,7 +93,7 @@ public final class AdminClientKafkaAclCollector
                             .build()
                     )
                     .toList();
-            return new V1KafkaPrincipalAuthorizationList(items);
+            return new V1KafkaPrincipalAuthorizationList.Builder().withItems(items).build();
         }
     }
 

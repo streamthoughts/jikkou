@@ -10,7 +10,7 @@ import static io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTran
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Optional;
@@ -26,7 +26,7 @@ class KafkaTopicMinReplicasTransformationTest {
     @BeforeEach
     void beforeEach() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
+        Mockito.when(context.configuration()).thenReturn(MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(3));
         transformation = new KafkaTopicMinReplicasTransformation();
         transformation.init(context);
     }
@@ -42,7 +42,7 @@ class KafkaTopicMinReplicasTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceList.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);
@@ -63,7 +63,7 @@ class KafkaTopicMinReplicasTransformationTest {
                 .build();
         // When
         Optional<V1KafkaTopic> result = transformation
-                .transform(resource, ResourceListObject.empty(), ReconciliationContext.Default.EMPTY);
+                .transform(resource, ResourceList.empty(), ReconciliationContext.Default.EMPTY);
 
         // Then
         Assertions.assertNotNull(result);

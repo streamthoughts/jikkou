@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.kafka.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta1")
 @Kind("KafkaConsumerGroupList")
-public class V1KafkaConsumerGroupList extends DefaultResourceListObject<V1KafkaConsumerGroup> {
+public class V1KafkaConsumerGroupList extends SpecificResourceList<V1KafkaConsumerGroupList, V1KafkaConsumerGroup> {
 
 
     /**
-     * Creates a new {@link V1KafkaConsumerGroupList} instance.
+     * Creates a new {@link V1KafkaBrokerList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -38,16 +38,29 @@ public class V1KafkaConsumerGroupList extends DefaultResourceListObject<V1KafkaC
     public V1KafkaConsumerGroupList(@Nullable String kind,
                                     @Nullable String apiVersion,
                                     @Nullable ObjectMeta metadata,
-                                    @NotNull List<? extends V1KafkaConsumerGroup> items) {
+                                    @NotNull List<V1KafkaConsumerGroup> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaConsumerGroupList} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaConsumerGroupList(List<? extends V1KafkaConsumerGroup> items) {
-        super(items);
+    @Override
+    public V1KafkaConsumerGroupList.Builder toBuilder() {
+        return new V1KafkaConsumerGroupList.Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaConsumerGroupList.Builder, V1KafkaConsumerGroupList, V1KafkaConsumerGroup> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaConsumerGroupList build() {
+            return new V1KafkaConsumerGroupList(apiVersion, kind, metadata, items);
+        }
     }
 }

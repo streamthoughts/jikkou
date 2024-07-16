@@ -52,7 +52,7 @@ public final class TopicMaxReplicationFactorValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        maxReplicationFactor = VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.getOptional(context.appConfiguration())
+        maxReplicationFactor = VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.key(),

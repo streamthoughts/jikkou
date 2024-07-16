@@ -19,9 +19,10 @@ import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
@@ -82,7 +83,7 @@ public final class AdminClientConsumerGroupCollector extends ContextualExtension
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
@@ -90,8 +91,8 @@ public final class AdminClientConsumerGroupCollector extends ContextualExtension
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1KafkaConsumerGroup> listAll(@NotNull Configuration configuration,
-                                                            @NotNull Selector selector) {
+    public ResourceList<V1KafkaConsumerGroup> listAll(@NotNull Configuration configuration,
+                                                      @NotNull Selector selector) {
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             KafkaConsumerGroupService service = new KafkaConsumerGroupService(clientContext.getAdminClient());
 

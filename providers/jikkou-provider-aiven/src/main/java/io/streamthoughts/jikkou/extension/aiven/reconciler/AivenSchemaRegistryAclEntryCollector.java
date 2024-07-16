@@ -14,9 +14,10 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(type = V1SchemaRegistryAclEntry.class)
 public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1SchemaRegistryAclEntry> {
 
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
 
     /**
      * Creates a new {@link AivenSchemaRegistryAclEntryCollector} instance.
@@ -44,10 +45,10 @@ public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1S
     /**
      * Creates a new {@link AivenSchemaRegistryAclEntryCollector} instance.
      *
-     * @param config the configuration.
+     * @param apiClientConfig the configuration.
      */
-    public AivenSchemaRegistryAclEntryCollector(AivenApiClientConfig config) {
-        init(config);
+    public AivenSchemaRegistryAclEntryCollector(AivenApiClientConfig apiClientConfig) {
+        init(apiClientConfig);
     }
 
     /**
@@ -55,20 +56,20 @@ public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1S
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
-    private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.config = config;
+    private void init(@NotNull AivenApiClientConfig apiClientConfig) throws ConfigException {
+        this.apiClientConfig = apiClientConfig;
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1SchemaRegistryAclEntry> listAll(@NotNull Configuration configuration,
-                                                                @NotNull Selector selector) {
-        AivenApiClient api = AivenApiClientFactory.create(config);
+    public ResourceList<V1SchemaRegistryAclEntry> listAll(@NotNull Configuration configuration,
+                                                          @NotNull Selector selector) {
+        AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             ListSchemaRegistryAclResponse response = api.listSchemaRegistryAclEntries();
 
@@ -85,7 +86,7 @@ public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1S
                     .stream()
                     .filter(selector::apply)
                     .collect(Collectors.toList());
-            return new V1SchemaRegistryAclEntryList(items);
+            return new V1SchemaRegistryAclEntryList.Builder().withItems(items).build();
 
         } catch (RestClientException e) {
             String response;

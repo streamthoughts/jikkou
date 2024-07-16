@@ -8,7 +8,7 @@ package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.Resource;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
 import java.util.Collections;
@@ -258,11 +258,11 @@ public final class ResourceDescriptor {
     /**
      * Verify the resource described represents a resource list object.
      *
-     * @return {@code true} if the resource class implement the {@link ResourceListObject} interface,
+     * @return {@code true} if the resource class implement the {@link ResourceList} interface,
      * otherwise {@code false}.
      */
     public boolean isResourceListObject() {
-        return ResourceListObject.class.isAssignableFrom(clazz);
+        return ResourceList.class.isAssignableFrom(clazz);
     }
 
     /**

@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.schema.registry.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("schemaregistry.jikkou.io/v1beta2")
 @Kind("SchemaRegistrySubjectList")
-public class V1SchemaRegistrySubjectList extends DefaultResourceListObject<V1SchemaRegistrySubject> {
+public class V1SchemaRegistrySubjectList extends SpecificResourceList<V1SchemaRegistrySubjectList, V1SchemaRegistrySubject> {
 
 
     /**
-     * Creates a new {@link V1SchemaRegistrySubjectList} instance.
+     * Creates a new {@link public class V1SchemaRegistrySubjectList extends SpecificResourceList<V1SchemaRegistrySubjectList, V1KafkaTopicAclEntry> {} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -38,16 +38,29 @@ public class V1SchemaRegistrySubjectList extends DefaultResourceListObject<V1Sch
     public V1SchemaRegistrySubjectList(@Nullable String kind,
                                        @Nullable String apiVersion,
                                        @Nullable ObjectMeta metadata,
-                                       @NotNull List<? extends V1SchemaRegistrySubject> items) {
+                                       @NotNull List<V1SchemaRegistrySubject> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1SchemaRegistrySubjectList} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1SchemaRegistrySubjectList(List<? extends V1SchemaRegistrySubject> items) {
-        super(items);
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1SchemaRegistrySubjectList.Builder, V1SchemaRegistrySubjectList, V1SchemaRegistrySubject> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1SchemaRegistrySubjectList build() {
+            return new V1SchemaRegistrySubjectList(apiVersion, kind, metadata, items);
+        }
     }
 }

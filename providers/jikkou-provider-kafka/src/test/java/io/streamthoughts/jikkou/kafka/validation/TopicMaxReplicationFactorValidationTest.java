@@ -25,7 +25,7 @@ class TopicMaxReplicationFactorValidationTest {
     @BeforeEach
     void before() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.asConfiguration(1));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG.asConfiguration(1));
 
         validation = new TopicMaxReplicationFactorValidation();
         validation.init(context);

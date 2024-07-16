@@ -22,22 +22,22 @@ public class AivenApiClientFactory {
      * @return a new {@link AivenApiClientConfig} instance.
      */
     public static AivenApiClient create(AivenApiClientConfig config) {
-        URI baseUri = URI.create(config.getApiUrl());
+        URI baseUri = URI.create(config.apiUrl());
         LOG.info(
                 "Create new REST client for Aiven API: {} (debugLoggingEnabled: {})",
                 baseUri,
-                config.getDebugLoggingEnabled()
+                config.debugLoggingEnabled()
         );
         RestClientBuilder builder = RestClientBuilder
                 .newBuilder()
-                .enableClientDebugging(config.getDebugLoggingEnabled())
+                .enableClientDebugging(config.debugLoggingEnabled())
                 .baseUri(baseUri);
 
-        builder.header("Authorization", "Bearer " + config.getTokenAuth());
+        builder.header("Authorization", "Bearer " + config.tokenAuth());
         return new AivenApiClient(
                 builder.build(AivenApi.class),
-                config.getProject(),
-                config.getService()
+                config.project(),
+                config.service()
         );
     }
 }

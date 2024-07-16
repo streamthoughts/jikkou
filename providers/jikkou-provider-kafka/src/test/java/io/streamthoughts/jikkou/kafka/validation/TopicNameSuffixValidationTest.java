@@ -35,7 +35,7 @@ class TopicNameSuffixValidationTest {
     void shouldThrowExceptionForConfigMissing() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(Configuration.empty());
+        Mockito.when(context.configuration()).thenReturn(Configuration.empty());
         // When
         Assertions.assertThrows(ConfigException.class, () -> validation.init(context));
     }
@@ -44,7 +44,7 @@ class TopicNameSuffixValidationTest {
     void shouldThrowExceptionForTopicNotEndingWithSuffix() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
         validation.init(context);
 
         var topic = V1KafkaTopic.builder()
@@ -70,7 +70,7 @@ class TopicNameSuffixValidationTest {
     void shouldNotThrowForValidTopic() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.asConfiguration(List.of("-test")));
         validation.init(context);
 
         var topic = V1KafkaTopic.builder()

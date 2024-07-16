@@ -12,7 +12,7 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.rest.models.ApiResourceIdentifier;
 import java.util.List;
@@ -63,9 +63,9 @@ public interface ApiResourceService {
      * @param context    The reconciliation context.
      * @return an optional
      */
-    ResourceListObject<HasMetadata> validate(ApiResourceIdentifier identifier,
-                                             List<HasMetadata> resources,
-                                             ReconciliationContext context);
+    ResourceList<HasMetadata> validate(ApiResourceIdentifier identifier,
+                                       List<HasMetadata> resources,
+                                       ReconciliationContext context);
 
     /**
      * Search resources for the specified identifier and context.
@@ -74,8 +74,8 @@ public interface ApiResourceService {
      * @param context    The reconciliation context.
      * @return an optional
      */
-    ResourceListObject<HasMetadata> search(ApiResourceIdentifier identifier,
-                                           ReconciliationContext context);
+    ResourceList<HasMetadata> search(ApiResourceIdentifier identifier,
+                                     ReconciliationContext context);
 
     /**
      * Gets the resource for the specified identifier and name.

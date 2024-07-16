@@ -16,6 +16,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.io.Jackson;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -36,7 +37,7 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_NAME = "avnservice";
 
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
 
     /**
      * Creates a new {@link AivenServiceHealthIndicator} instance.
@@ -50,11 +51,11 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
      */
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        this.apiClientConfig = context.<AivenExtensionProvider>provider().apiClientConfig();
     }
 
-    public void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.config = config;
+    public void init(@NotNull AivenApiClientConfig apiClientConfig) throws ConfigException {
+        this.apiClientConfig = apiClientConfig;
     }
 
     /**
@@ -62,10 +63,10 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
      */
     @Override
     public Health getHealth(final Duration timeout) {
-        if (config == null) {
+        if (apiClientConfig == null) {
             throw new IllegalStateException("must be configured!");
         }
-        final AivenApiClient api = AivenApiClientFactory.create(config);
+        final AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             ServiceInformationResponse response = api.getServiceInformation();
             if (!response.errors().isEmpty()) {
@@ -122,6 +123,6 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
     }
 
     private String getUrn() {
-        return String.format("urn:aiven:project:%s:service:%s", config.getProject(), config.getService());
+        return String.format("urn:aiven:project:%s:service:%s", apiClientConfig.project(), apiClientConfig.service());
     }
 }

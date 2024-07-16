@@ -12,7 +12,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.resource.Interceptor;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public interface Transformation<T extends HasMetadata> extends Interceptor {
      * Executes the transformation on the specified {@link HasMetadata} object.
      *
      * @param resource  The {@link HasMetadata} to be transformed.
-     * @param resources The {@link ResourceListObject} involved in the current operation.
+     * @param resources The {@link ResourceList} involved in the current operation.
      * @param context   The {@link ReconciliationContext}.
      * @return The list of resources resulting from the transformation.
      */

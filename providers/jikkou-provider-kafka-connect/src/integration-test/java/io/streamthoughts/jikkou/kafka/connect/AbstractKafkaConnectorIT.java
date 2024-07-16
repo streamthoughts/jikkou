@@ -77,33 +77,34 @@ public class AbstractKafkaConnectorIT {
 
 
     protected void deployFilestreamSinkConnectorAndWait() throws URISyntaxException, IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest createOrUpdateConnectorConfig = HttpRequest.newBuilder()
+        try(HttpClient httpClient = HttpClient.newHttpClient();) {
+            HttpRequest createOrUpdateConnectorConfig = HttpRequest.newBuilder()
                 .uri(new URI(getConnectUrl() + "/connectors/test/config"))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString("""
-                         {
-                         "tasks.max":1,
-                         "connector.class":"FileStreamSink",
-                         "file": "/tmp/test.sink.txt",
-                         "topics": "connect-test"
-                        }
-                         """))
+                     {
+                     "tasks.max":1,
+                     "connector.class":"FileStreamSink",
+                     "file": "/tmp/test.sink.txt",
+                     "topics": "connect-test"
+                    }
+                    """))
                 .build();
-        HttpResponse<String> response = httpClient.send(createOrUpdateConnectorConfig, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() == 201) {
-            HttpRequest getConnectors = HttpRequest.newBuilder()
+            HttpResponse<String> response = httpClient.send(createOrUpdateConnectorConfig, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 201) {
+                HttpRequest getConnectors = HttpRequest.newBuilder()
                     .uri(new URI(getConnectUrl() + "/connectors"))
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
 
-            HttpResponse<String> connectors;
-            do {
-                connectors = httpClient.send(getConnectors, HttpResponse.BodyHandlers.ofString());
-                Thread.sleep(100);
-            } while (connectors.statusCode() == 200 && connectors.body().equals("[]"));
+                HttpResponse<String> connectors;
+                do {
+                    connectors = httpClient.send(getConnectors, HttpResponse.BodyHandlers.ofString());
+                    Thread.sleep(100);
+                } while (connectors.statusCode() == 200 && connectors.body().equals("[]"));
+            }
+            Thread.sleep(1000); // make sure tasks are running
         }
-        Thread.sleep(1000); // make sure tasks are running
     }
 }

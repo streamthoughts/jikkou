@@ -67,32 +67,32 @@ import picocli.CommandLine.Mixin;
  * The main-class
  */
 @Command(name = "jikkou",
-        descriptionHeading = "%n%n",
-        parameterListHeading = "%nParameters:%n%n",
-        optionListHeading = "%nOPTIONS:%n%n",
-        commandListHeading = "%nCommands:%n%n",
-        headerHeading = "Usage: ",
-        synopsisHeading = "%n",
-        description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources. %n%nFind more information at: https://www.jikkou.io/.",
-        mixinStandardHelpOptions = true,
-        versionProvider = Jikkou.ResourcePropertiesVersionProvider.class,
-        subcommands = {
-                CreateResourceCommand.class,
-                DeleteResourceCommand.class,
-                UpdateResourceCommand.class,
-                ApplyResourceCommand.class,
-                PatchResourceCommand.class,
-                ApiExtensionCommand.class,
-                ListApiResourcesCommand.class,
-                ConfigCommand.class,
-                DiffCommand.class,
-                PrepareCommand.class,
-                ValidateCommand.class,
-                HealthCommand.class,
-                CommandLine.HelpCommand.class,
-                AutoComplete.GenerateCompletion.class,
-                ContextNamesCompletionCandidateCommand.class
-        }
+    descriptionHeading = "%n%n",
+    parameterListHeading = "%nParameters:%n%n",
+    optionListHeading = "%nOPTIONS:%n%n",
+    commandListHeading = "%nCommands:%n%n",
+    headerHeading = "Usage: ",
+    synopsisHeading = "%n",
+    description = "Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources. %n%nFind more information at: https://www.jikkou.io/.",
+    mixinStandardHelpOptions = true,
+    versionProvider = Jikkou.ResourcePropertiesVersionProvider.class,
+    subcommands = {
+        CreateResourceCommand.class,
+        DeleteResourceCommand.class,
+        UpdateResourceCommand.class,
+        ApplyResourceCommand.class,
+        PatchResourceCommand.class,
+        ApiExtensionCommand.class,
+        ListApiResourcesCommand.class,
+        ConfigCommand.class,
+        DiffCommand.class,
+        PrepareCommand.class,
+        ValidateCommand.class,
+        HealthCommand.class,
+        CommandLine.HelpCommand.class,
+        AutoComplete.GenerateCompletion.class,
+        ContextNamesCompletionCandidateCommand.class
+    }
 )
 @Singleton
 public final class Jikkou {
@@ -109,20 +109,20 @@ public final class Jikkou {
         ConfigurationContext configurationContext = GlobalConfigurationContext.getConfigurationContext();
         if (!configurationContext.isExists()) {
             System.err.printf(
-                    "No configuration context has been defined (file:%s)." +
-                            " Run 'jikkou config set-context <context_name> --config-props=kafka.client.bootstrap.servers=localhost:9092" +
-                            " [--config-props=<config_string>] [--config-file=<config_file>].' to create a context.%n",
-                    configurationContext.getConfigFile());
+                "No configuration context has been defined (file:%s)." +
+                    " Run 'jikkou config set-context <context_name>" +
+                    " [--config-props=<config_string>] [--config-file=<config_file>].' to create a context.%n",
+                configurationContext.getConfigFile());
         }
     }
 
     public static void main(final String... args) {
         Logging.configureRootLoggerLevel();
         var printer = BannerPrinterBuilder.newBuilder()
-                .setLogger(LOG)
-                .setLoggerLevel(Level.INFO)
-                .setMode(Banner.Mode.LOG)
-                .build();
+            .setLogger(LOG)
+            .setLoggerLevel(Level.INFO)
+            .setMode(Banner.Mode.LOG)
+            .build();
         printer.print(new JikkouBanner());
 
         System.exit(execute(args));
@@ -154,24 +154,24 @@ public final class Jikkou {
     private static CommandLine createCommandLine(ApplicationContext context) {
         Jikkou app = context.getBean(Jikkou.class);
         final CommandLine commandLine = new CommandLine(app, new MicronautFactory(context))
-                .setCaseInsensitiveEnumValuesAllowed(true)
-                .setUsageHelpWidth(160)
-                .setExecutionStrategy(app::executionStrategy)
-                .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
-                    final PrintWriter err = cmd.getErr();
-                    if (!(ex instanceof JikkouRuntimeException)) {
-                        err.println(cmd.getColorScheme().stackTraceText(ex));
-                    }
-                    err.println(cmd.getColorScheme().errorText(String.format("Error: %s: %s",
-                            ex.getClass().getSimpleName(),
-                            ex.getLocalizedMessage()
-                    )));
-                    if (ex instanceof InvalidResourceFileException) {
-                        return CommandLine.ExitCode.USAGE;
-                    }
-                    return cmd.getCommandSpec().exitCodeOnExecutionException();
-                })
-                .setParameterExceptionHandler(new ShortErrorMessageHandler());
+            .setCaseInsensitiveEnumValuesAllowed(true)
+            .setUsageHelpWidth(160)
+            .setExecutionStrategy(app::executionStrategy)
+            .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
+                final PrintWriter err = cmd.getErr();
+                if (!(ex instanceof JikkouRuntimeException)) {
+                    err.println(cmd.getColorScheme().stackTraceText(ex));
+                }
+                err.println(cmd.getColorScheme().errorText(String.format("Error: %s: %s",
+                    ex.getClass().getSimpleName(),
+                    ex.getLocalizedMessage()
+                )));
+                if (ex instanceof InvalidResourceFileException) {
+                    return CommandLine.ExitCode.USAGE;
+                }
+                return cmd.getCommandSpec().exitCodeOnExecutionException();
+            })
+            .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
         Optional<JikkouApiClient> optionalApiClient = context.findBean(JikkouApiClient.class);
         // NOT IN PROXY-MODE
@@ -184,15 +184,15 @@ public final class Jikkou {
             try {
                 Info info = client.getServerInfo();
                 LOG.info("Connected to Jikkou API server (version: %{}, buildTimestamp: {}, commitId: {}).",
-                        info.version(),
-                        info.buildTimestamp(),
-                        info.commitId()
+                    info.version(),
+                    info.buildTimestamp(),
+                    info.commitId()
                 );
             } catch (Exception e) {
                 final PrintWriter err = commandLine.getErr();
                 err.println(commandLine.getColorScheme().errorText(String.format("Error: %s. Cause: %s",
-                        "Failed to connect to Jikkou API server",
-                        e.getLocalizedMessage()
+                    "Failed to connect to Jikkou API server",
+                    e.getLocalizedMessage()
                 )));
                 isApiEnabled = false; // DISABLE API
             }
@@ -256,11 +256,11 @@ public final class Jikkou {
         additional.add("help");
 
         sections.put("%nCORE COMMANDS:%n",
-                core.stream().sorted(Comparator.comparing(Function.identity())).toList());
+            core.stream().sorted(Comparator.comparing(Function.identity())).toList());
         sections.put("%nSYSTEM MANAGEMENT COMMANDS:%n",
-                system.stream().sorted(Comparator.comparing(Function.identity())).toList());
+            system.stream().sorted(Comparator.comparing(Function.identity())).toList());
         sections.put("%nADDITIONAL COMMANDS:%n",
-                additional.stream().sorted(Comparator.comparing(Function.identity())).toList());
+            additional.stream().sorted(Comparator.comparing(Function.identity())).toList());
 
         return new CommandGroupRenderer(sections);
     }
@@ -277,7 +277,7 @@ public final class Jikkou {
             PrintWriter err = cmd.getErr();
 
             // if tracing at DEBUG level, show the location of the issue
-            if ("DEBUG".equalsIgnoreCase(System.getProperty("picocli.trace"))) {
+            if ("DEBUG" .equalsIgnoreCase(System.getProperty("picocli.trace"))) {
                 err.println(cmd.getColorScheme().stackTraceText(ex));
             }
 
@@ -287,8 +287,8 @@ public final class Jikkou {
             cmd.usage(err);
             err.printf("%nSee '%s --help' for more information about a command.%n", spec.qualifiedName());
             return cmd.getExitCodeExceptionMapper() != null
-                    ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
-                    : spec.exitCodeOnInvalidInput();
+                ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
+                : spec.exitCodeOnInvalidInput();
         }
     }
 
@@ -303,8 +303,8 @@ public final class Jikkou {
 
         public String[] getVersion() {
             return new String[]{
-                    "Jikkou version \"" + JikkouInfo.getVersion() + "\" " + JikkouInfo.getBuildTimestamp(),
-                    "JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})"
+                "Jikkou version \"" + JikkouInfo.getVersion() + "\" " + JikkouInfo.getBuildTimestamp(),
+                "JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})"
             };
         }
     }

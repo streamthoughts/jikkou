@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -50,7 +51,7 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
             .orElse(false);
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
     private AivenKafkaQuotaCollector collector;
 
     /**
@@ -62,10 +63,10 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
     /**
      * Creates a new {@link AivenKafkaQuotaController} instance.
      *
-     * @param config the schema registry client configuration.
+     * @param apiClientConfig the schema registry client configuration.
      */
-    public AivenKafkaQuotaController(@NotNull AivenApiClientConfig config) {
-        init(config);
+    public AivenKafkaQuotaController(@NotNull AivenApiClientConfig apiClientConfig) {
+        init(apiClientConfig);
     }
 
     /**
@@ -73,12 +74,12 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
     private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
         if (initialized.compareAndSet(false, true)) {
-            this.config = config;
+            this.apiClientConfig = config;
             this.collector = new AivenKafkaQuotaCollector(config);
         }
     }
@@ -89,7 +90,7 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
     @Override
     public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor, @NotNull ReconciliationContext context) {
 
-        AivenApiClient api = AivenApiClientFactory.create(config);
+        AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
                     new KafkaQuotaChangeHandler.Create(api),
