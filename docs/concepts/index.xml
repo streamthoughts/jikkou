@@ -355,14 +355,14 @@ and &lt;code>labels&lt;/code> as defined into the YAML resource file.
 &lt;/li>
 &lt;/ol>
 &lt;figure class="center">
-&lt;img src="./jikkou-template-how-it-work.svg" width="70%"/>
+&lt;img src="./jikkou-template-how-it-work.svg" width="80%"/>
 &lt;/figure>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Important&lt;/h4>
 You should use &lt;code>{% raw %}...{% endraw %}&lt;/code> tags to ensure the variables defined into the &lt;code>template&lt;/code> are not be
 interpreted during the first rendering.
 &lt;/div>
-&lt;h2 id="variablescli-configurationmd2fjikkou20cli2fcli-configurationmd">Variables&lt;a href="..%2FJikkou%20CLI%2FCLI-Configuration.md">CLI-Configuration.md&lt;/a>&lt;/h2>
+&lt;h2 id="variables">Variables&lt;/h2>
 &lt;p>Jikkou defines a number of top-level variables that are passed to the template engine.&lt;/p>
 &lt;ul>
 &lt;li>
@@ -514,7 +514,12 @@ fields:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">min.insync.replicas&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;2&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">max.message.bytes&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">20971520&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">retention.ms&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#0000cf;font-weight:bold">3600000&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Collectors</title><link>https://www.jikkou.io/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/collector/</guid><description>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jinja {
+# Enable/Disable recursive macro calls for rendering
+enableRecursiveMacroCalls = false
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Collectors</title><link>https://www.jikkou.io/docs/concepts/collector/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/collector/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;em>&lt;strong>Collectors&lt;/strong>&lt;/em> are used to collect and describe all entities that exist into your system for a
 specific resource type.&lt;/p>

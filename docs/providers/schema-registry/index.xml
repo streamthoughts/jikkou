@@ -110,4 +110,6 @@ to normalize AVRO and JSON schema.&lt;/p>
 &lt;p>The annotation can be used to specify a hard delete of the subject, which removes all associated metadata including
 the schema ID. The default is false. If the flag is not included, a soft delete is performed. You must perform a soft
 delete first, then the hard delete.&lt;/p>
-&lt;p>See: &lt;a href="https://docs.confluent.io/platform/current/schema-registry/develop/api.html#delete--subjects-(string-%20subject)">Confluent SchemaRegistry API Reference&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>See: &lt;a href="https://docs.confluent.io/platform/current/schema-registry/develop/api.html#delete--subjects-(string-%20subject)">Confluent SchemaRegistry API Reference&lt;/a>&lt;/p>
+&lt;h5 id="schemaregistryjikkouiouse-canonical-fingerprint">&lt;code>schemaregistry.jikkou.io/use-canonical-fingerprint&lt;/code>&lt;/h5>
+&lt;p>This annotation can be used to use a canonical fingerprint to compare schemas (only supported for Avro schema).&lt;/p></description></item></channel></rss>
