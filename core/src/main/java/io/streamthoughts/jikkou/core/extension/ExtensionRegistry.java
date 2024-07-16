@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.common.utils.Classes;
 import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,20 @@ import org.jetbrains.annotations.NotNull;
  * Interface used to register extensions.
  */
 public interface ExtensionRegistry {
+
+
+    /**
+     * Register an extension supplier for the specified extension type.
+     *
+     * @param type     the class of the extension.
+     * @param <T>      type of the extension.
+     * @throws NullPointerException                    if the given type of supplier is {@code null}.
+     * @throws ConflictingExtensionDefinitionException if an extension is already register for that type.
+     */
+    default <T> void register(@NotNull Class<T> type) {
+        register(type, () -> Classes.newInstance(type));
+    }
+
 
     /**
      * Register an extension supplier for the specified extension type.

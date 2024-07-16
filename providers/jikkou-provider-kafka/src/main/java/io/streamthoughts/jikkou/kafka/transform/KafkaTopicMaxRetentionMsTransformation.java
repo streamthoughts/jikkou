@@ -46,7 +46,7 @@ public class KafkaTopicMaxRetentionMsTransformation implements Transformation<V1
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        maxRetentionMs = MAX_RETENTIONS_MS_CONFIG.getOptional(context.appConfiguration())
+        maxRetentionMs = MAX_RETENTIONS_MS_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MAX_RETENTIONS_MS_CONFIG.key(),

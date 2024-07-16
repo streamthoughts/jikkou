@@ -21,29 +21,32 @@ class AnyQualifierTest {
     @Test
     void shouldFilterDescriptorsForAnyQualifiers() {
         Qualifier<AnyQualifierTest> qualifier = Qualifiers.byAnyQualifiers(
-                new EnabledQualifier<>(),
-                new NamedQualifier<>("???")
+            new EnabledQualifier<>(),
+            new NamedQualifier<>("???")
         );
 
         ExtensionDescriptor<AnyQualifierTest> descriptor = getDescriptor(AnyQualifierTest.class, true);
         List<ExtensionDescriptor<AnyQualifierTest>> result = qualifier
-                .filter(AnyQualifierTest.class, Stream.of(descriptor)).toList();
+            .filter(AnyQualifierTest.class, Stream.of(descriptor)).toList();
         Assertions.assertEquals(List.of(descriptor), result);
     }
 
     private static <T> ExtensionDescriptor<T> getDescriptor(Class<T> clazz, boolean isEnabled) {
         return new DefaultExtensionDescriptor<>(
-                "Test",
-                "Title",
-                "Description",
-                Collections.emptyList(),
-                ExtensionCategory.EXTENSION,
-                Collections.emptyList(),
-                "Provider",
-                clazz,
-                clazz.getClassLoader(),
-                () -> null,
-                isEnabled
+            "Test",
+            "Title",
+            "Description",
+            Collections.emptyList(),
+            ExtensionCategory.EXTENSION,
+            Collections.emptyList(),
+            null,
+            () -> null,
+            clazz,
+            clazz.getClassLoader(),
+            () -> null,
+            null,
+            isEnabled,
+            null
         );
     }
 }

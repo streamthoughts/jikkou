@@ -25,7 +25,7 @@ class TopicMinReplicationFactorValidationTest {
     @BeforeEach
     void before() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(1));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG.asConfiguration(1));
         validation = new TopicMinReplicationFactorValidation();
         validation.init(context);
     }

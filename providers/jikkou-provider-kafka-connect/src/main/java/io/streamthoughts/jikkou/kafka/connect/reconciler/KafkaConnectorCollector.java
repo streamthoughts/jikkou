@@ -13,10 +13,11 @@ import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
@@ -24,16 +25,15 @@ import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
 import io.streamthoughts.jikkou.kafka.connect.exception.KafkaConnectClusterNotFoundException;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.service.KafkaConnectClusterService;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A ResourceCollector to get {@link V1KafkaConnector} resources.
@@ -61,7 +61,7 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
     public static final String EXPAND_STATUS_CONFIG = "expand-status";
     public static final String CONNECT_CLUSTER_CONFIG = "connect-cluster";
 
-    private KafkaConnectExtensionConfig configuration;
+    private KafkaConnectClusterConfigs configuration;
 
     /**
      * {@inheritDoc}
@@ -69,19 +69,15 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
     @Override
     public void init(@NotNull ExtensionContext context) throws ConfigException {
         super.init(context);
-        init(new KafkaConnectExtensionConfig(context.appConfiguration()));
-    }
-
-    public void init(@NotNull KafkaConnectExtensionConfig configuration) {
-        this.configuration = configuration;
+        this.configuration = context.<KafkaConnectExtensionProvider>provider().clusterConfigs();
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1KafkaConnector> listAll(final @NotNull Configuration configuration,
-                                                        final @NotNull Selector selector) {
+    public ResourceList<V1KafkaConnector> listAll(final @NotNull Configuration configuration,
+                                                  final @NotNull Selector selector) {
 
         Boolean expandStatus = extensionContext()
             .<Boolean>configProperty(EXPAND_STATUS_CONFIG).get(configuration);
@@ -96,7 +92,7 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
             .stream()
             .flatMap(connectCluster -> listAll(connectCluster, expandStatus).stream())
             .collect(Collectors.toList());
-        return new V1KafkaConnectorList(list);
+        return new V1KafkaConnectorList.Builder().withItems(list).build();
     }
 
     public List<V1KafkaConnector> listAll(final String connectClusterName,
@@ -129,7 +125,7 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
                     }
                     LOG.error("Failed to get connector '{}' from connect cluster: {}",
                         connector,
-                        connectClientConfig.getConnectUrl(),
+                        connectClientConfig.url(),
                         ex
                     );
                 }

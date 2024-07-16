@@ -24,6 +24,7 @@ import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
+import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.http.client.exception.UnsupportedApiResourceException;
 import java.io.IOException;
 import java.util.Collections;
@@ -58,7 +59,8 @@ class JikkouApiProxyTest {
                         new ClassExtensionAliasesGenerator()
                 )
         );
-        API = new JikkouApiProxy(factory, new DefaultJikkouApiClient(client));
+        DefaultResourceRegistry resourceRegistry = new DefaultResourceRegistry();
+        API = new JikkouApiProxy(factory, resourceRegistry, new DefaultJikkouApiClient(client));
     }
 
     @Test

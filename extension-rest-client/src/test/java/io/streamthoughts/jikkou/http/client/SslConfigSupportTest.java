@@ -7,21 +7,25 @@
 package io.streamthoughts.jikkou.http.client;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class SslConfigSupportTest {
 
     @Test
     void shouldCreateSslConfigWithoutNamespace() {
-        SslConfigSupport.getSslConfig(null, Configuration
-            .builder()
-                .with(SslConfigSupport.SSL_KEY_STORE_PASSWORD, "password")
-                .with(SslConfigSupport.SSL_KEY_STORE_LOCATION, "/tmp/keystore.jks")
-                .with(SslConfigSupport.SSL_KEY_STORE_TYPE, "jks")
-                .with(SslConfigSupport.SSL_TRUST_STORE_LOCATION, "/tmp/truststore.jks")
-                .with(SslConfigSupport.SSL_TRUST_STORE_PASSWORD, "password")
-                .with(SslConfigSupport.SSL_TRUST_STORE_TYPE, "jks")
-            .build()
-        );
+        Assertions.assertDoesNotThrow(() -> {
+            SSLConfig.from(Configuration
+                .builder()
+                .with(SSLConfig.SSL_KEY_STORE_PASSWORD.key(), "password")
+                .with(SSLConfig.SSL_KEY_STORE_LOCATION.key(), "/tmp/keystore.jks")
+                .with(SSLConfig.SSL_KEY_STORE_TYPE.key(), "jks")
+                .with(SSLConfig.SSL_TRUST_STORE_LOCATION.key(), "/tmp/truststore.jks")
+                .with(SSLConfig.SSL_TRUST_STORE_PASSWORD.key(), "password")
+                .with(SSLConfig.SSL_TRUST_STORE_TYPE.key(), "jks")
+                .build()
+            );
+        });
     }
 }

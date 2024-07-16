@@ -8,12 +8,12 @@ package io.streamthoughts.jikkou.kafka.connect.health;
 
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
-import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthAggregator;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
@@ -33,17 +33,17 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_INDICATOR_NAME = "KafkaConnect";
 
-    private KafkaConnectExtensionConfig configuration;
+    private KafkaConnectClusterConfigs configuration;
 
     /**
      * {@inheritDoc}
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        configure(new KafkaConnectExtensionConfig(context.appConfiguration()));
+       init(context.<KafkaConnectExtensionProvider>provider().clusterConfigs());
     }
 
-    public void configure(@NotNull KafkaConnectExtensionConfig configuration) throws ConfigException {
+    public void init(KafkaConnectClusterConfigs configuration) {
         this.configuration = configuration;
     }
 
@@ -72,7 +72,7 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
         KafkaConnectApi api = KafkaConnectApiFactory.create(connectClientConfig, timeout);
         Health.Builder builder = Health
                 .builder()
-                .name(connectClientConfig.getConnectClusterName());
+                .name(connectClientConfig.name());
         try {
             try {
                 ConnectCluster cluster = api.getConnectCluster();
@@ -94,7 +94,7 @@ public class KafkaConnectHealthIndicator implements HealthIndicator {
         }
 
         builder = builder
-                .details("url", connectClientConfig.getConnectUrl());
+                .details("url", connectClientConfig.url());
         return builder.build();
     }
 }

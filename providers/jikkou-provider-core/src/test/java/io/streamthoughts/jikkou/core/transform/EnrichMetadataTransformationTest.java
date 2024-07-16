@@ -10,7 +10,7 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.generics.GenericResource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class EnrichMetadataTransformationTest {
         // When
         HasMetadata transformed = transformation.transform(
                 resource,
-                ResourceListObject.empty(),
+                ResourceList.empty(),
                 ReconciliationContext.builder()
                         .label(new NamedValue("label", "value"))
                         .build()
@@ -63,7 +63,7 @@ class EnrichMetadataTransformationTest {
         // When
         HasMetadata transformed = transformation.transform(
                 resource,
-                ResourceListObject.empty(),
+                ResourceList.empty(),
                 ReconciliationContext.builder()
                         .annotation(new NamedValue("annotation", "value"))
                         .build()

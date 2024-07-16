@@ -6,14 +6,10 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.health;
 
-import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.health.HealthStatus;
-import io.streamthoughts.jikkou.kafka.connect.AbstractKafkaConnectorIT;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
-import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
+import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.kafka.connect.BaseExtensionProviderIT;
 import java.time.Duration;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
@@ -21,23 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-
 @Testcontainers
 @Tag("integration")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class KafkaConnectHealthIndicatorIT extends AbstractKafkaConnectorIT {
+class KafkaConnectHealthIndicatorIT extends BaseExtensionProviderIT {
 
     @Test
     void shouldGetHealthIndicator() {
-        KafkaConnectClientConfig configuration = new KafkaConnectClientConfig(Configuration.builder()
-                .with("name", KAFKA_CONNECTOR_NAME)
-                .with(KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl())
-                .build());
-        KafkaConnectHealthIndicator indicator = new KafkaConnectHealthIndicator();
-        indicator.configure(new KafkaConnectExtensionConfig(List.of(configuration)));
+        ApiHealthResult result = api.getApiHealth("kafkaconnect", Duration.ZERO);
 
-        Health health = indicator.getHealth(Duration.ZERO);
-        Assertions.assertNotNull(health);
-        Assertions.assertEquals(HealthStatus.UP, health.getStatus());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(HealthStatus.UP, result.status());
     }
 }

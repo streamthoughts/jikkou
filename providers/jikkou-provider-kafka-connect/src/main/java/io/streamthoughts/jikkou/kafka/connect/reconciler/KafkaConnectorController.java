@@ -6,6 +6,11 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.reconciler;
 
+import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -19,7 +24,8 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.DefaultChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.kafka.connect.ApiVersions;
-import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionConfig;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
+import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApiFactory;
@@ -28,19 +34,13 @@ import io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeCompute
 import io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeDescription;
 import io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeHandler;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaConnector.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA, kind = "KafkaConnectorChange")
@@ -49,7 +49,7 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 )
 public final class KafkaConnectorController extends ContextualExtension implements Controller<V1KafkaConnector, ResourceChange> {
 
-    private KafkaConnectExtensionConfig configuration;
+    private KafkaConnectClusterConfigs configuration;
 
     private KafkaConnectorCollector collector;
 
@@ -59,7 +59,7 @@ public final class KafkaConnectorController extends ContextualExtension implemen
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        this.configuration = new KafkaConnectExtensionConfig(context.appConfiguration());
+        this.configuration = context.<KafkaConnectExtensionProvider>provider().clusterConfigs();
         this.collector = new KafkaConnectorCollector();
         this.collector.init(context);
     }

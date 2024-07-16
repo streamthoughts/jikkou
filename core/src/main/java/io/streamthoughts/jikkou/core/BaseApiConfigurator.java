@@ -11,7 +11,6 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
-import java.util.Objects;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,11 +25,8 @@ public abstract class BaseApiConfigurator implements ApiConfigurator {
      *
      * @param registry  the ExtensionDescriptorRegistry.
      */
-    public BaseApiConfigurator(final @NotNull ExtensionDescriptorRegistry registry) {
-        this.registry = Objects.requireNonNull(
-                registry,
-                "registry must not be null"
-        );
+    public BaseApiConfigurator(final ExtensionDescriptorRegistry registry) {
+        this.registry = registry;
     }
 
     protected Configuration configuration() {
@@ -53,6 +49,6 @@ public abstract class BaseApiConfigurator implements ApiConfigurator {
     protected abstract <A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> B configure(B builder);
 
     public <T extends Extension> Optional<ExtensionDescriptor<T>> findExtensionDescriptor(final String alias) {
-        return registry.findDescriptorByAlias(alias);
+        return Optional.ofNullable(this.registry).flatMap(registry -> registry.findDescriptorByAlias(alias));
     }
 }

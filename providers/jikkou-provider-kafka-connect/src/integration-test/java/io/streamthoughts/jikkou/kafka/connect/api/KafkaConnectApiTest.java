@@ -37,7 +37,7 @@ class KafkaConnectApiTest extends AbstractKafkaConnectorIT {
 
     @BeforeEach
     void beforeEach() {
-        KafkaConnectClientConfig configuration = new KafkaConnectClientConfig(Configuration.builder()
+        KafkaConnectClientConfig configuration = KafkaConnectClientConfig.from(Configuration.builder()
                 .with("name", KAFKA_CONNECTOR_NAME)
                 .with(KafkaConnectClientConfig.KAFKA_CONNECT_URL.key(), getConnectUrl())
                 .build());

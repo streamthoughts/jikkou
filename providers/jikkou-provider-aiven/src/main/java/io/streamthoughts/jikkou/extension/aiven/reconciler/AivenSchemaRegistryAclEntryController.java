@@ -21,6 +21,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -48,7 +49,7 @@ public final class AivenSchemaRegistryAclEntryController implements Controller<V
             .orElse(false);
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
     private AivenSchemaRegistryAclEntryCollector collector;
 
     /**
@@ -60,10 +61,10 @@ public final class AivenSchemaRegistryAclEntryController implements Controller<V
     /**
      * Creates a new {@link AivenSchemaRegistryAclEntryController} instance.
      *
-     * @param config the schema registry client configuration.
+     * @param apiClientConfig the schema registry client configuration.
      */
-    public AivenSchemaRegistryAclEntryController(@NotNull AivenApiClientConfig config) {
-        init(config);
+    public AivenSchemaRegistryAclEntryController(@NotNull AivenApiClientConfig apiClientConfig) {
+        init(apiClientConfig);
     }
 
     /**
@@ -71,13 +72,13 @@ public final class AivenSchemaRegistryAclEntryController implements Controller<V
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
-    private void init(@NotNull AivenApiClientConfig config) {
+    private void init(@NotNull AivenApiClientConfig apiClientConfig) {
         if (this.initialized.compareAndSet(false, true)) {
-            this.config = config;
-            this.collector = new AivenSchemaRegistryAclEntryCollector(config);
+            this.apiClientConfig = apiClientConfig;
+            this.collector = new AivenSchemaRegistryAclEntryCollector(apiClientConfig);
         }
     }
 
@@ -88,7 +89,7 @@ public final class AivenSchemaRegistryAclEntryController implements Controller<V
     public List<ChangeResult> execute(@NotNull ChangeExecutor<ResourceChange> executor,
                                       @NotNull ReconciliationContext context) {
 
-        AivenApiClient api = AivenApiClientFactory.create(config);
+        AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
                     new SchemaRegistryAclEntryChangeHandler.Create(api),

@@ -16,7 +16,6 @@ import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifiers;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +55,13 @@ public abstract class ExtensionApiConfigurator<E extends Extension> extends Base
             }
             ExtensionDescriptor<E> descriptor = optional.get();
             builder = builder.register(
-                    descriptor.type(),
-                    getExtensionSupplier(extension, descriptor),
-                    ExtensionDescriptorModifiers.enabled(true),
-                    ExtensionDescriptorModifiers.withName(extension.name())
+                descriptor.type(),
+                descriptor.supplier(),
+                ExtensionDescriptorModifiers.enabled(true),
+                ExtensionDescriptorModifiers.withName(extension.name()),
+                ExtensionDescriptorModifiers.withConfiguration(extension.config()),
+                ExtensionDescriptorModifiers.withProvider(descriptor.provider(), descriptor.providerSupplier()),
+                ExtensionDescriptorModifiers.withPriority(descriptor.priority())
             );
             LOG.info(
                     "Registered extension for type {} (name={}, priority={}):\n\t{}",
@@ -68,10 +70,6 @@ public abstract class ExtensionApiConfigurator<E extends Extension> extends Base
                     extension.priority(),
                     extension.config().toPrettyString("\n\t"));
         }
-
         return builder;
     }
-
-    protected abstract Supplier<E> getExtensionSupplier(final @NotNull ExtensionConfigEntry extension,
-                                                        final @NotNull ExtensionDescriptor<E> descriptor);
 }

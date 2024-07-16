@@ -33,7 +33,7 @@ class TopicNameRegexValidationTest {
     @Test
     void shouldThrowExceptionForMissingConfig() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(Configuration.empty());
+        Mockito.when(context.configuration()).thenReturn(Configuration.empty());
         Assertions.assertThrows(ConfigException.class, () -> validation.init(context));
     }
 
@@ -41,7 +41,7 @@ class TopicNameRegexValidationTest {
     void shouldThrowExceptionForInvalidRegex() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration(""));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration(""));
 
         // When
         Assertions.assertThrows(ConfigException.class, () -> new TopicNameRegexValidation().init(context));
@@ -51,7 +51,7 @@ class TopicNameRegexValidationTest {
     void shouldThrowExceptionForTopicNameNotMatching() {
         // Given
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration("test-"));
+        Mockito.when(context.configuration()).thenReturn(VALIDATION_TOPIC_NAME_REGEX_CONFIG.asConfiguration("test-"));
 
         var validation =  new TopicNameRegexValidation();
         validation.init(context);

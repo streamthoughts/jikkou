@@ -34,7 +34,7 @@ public class CompatibilityLevelValidation implements Validation<V1SchemaRegistry
      * {@inheritDoc}
      */
     public void init(@NotNull final ExtensionContext context) {
-        final Configuration config = context.appConfiguration();
+        final Configuration config = context.configuration();
 
         accepted = VALIDATION_COMPATIBILITY_CONFIG.getOptional(config)
                 .orElseThrow(() -> new ConfigException(

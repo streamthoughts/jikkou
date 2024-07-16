@@ -25,6 +25,7 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.change.quota.KafkaClientQuotaChangeComputer;
 import io.streamthoughts.jikkou.kafka.change.quota.KafkaClientQuotaChangeDescription;
 import io.streamthoughts.jikkou.kafka.change.quota.KafkaClientQuotaChangeHandler;
@@ -73,7 +74,7 @@ public final class AdminClientKafkaQuotaController
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
