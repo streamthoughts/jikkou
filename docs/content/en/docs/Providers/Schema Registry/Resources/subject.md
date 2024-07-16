@@ -14,11 +14,9 @@ SchemaRegistrySubject resource defines the schema, the compatibility level, and 
 subject version.
 {{% /pageinfo %}}
 
-## `SchemaRegistrySubject`
+## Definition Format of `SchemaRegistrySubject`
 
-### Specification
-
-Here is the _resource definition file_ for defining a `SchemaRegistrySubject`.
+Below is the overall structure of the `SchemaRegistrySubject` resource.
 
 ```yaml
 apiVersion: "schemaregistry.jikkou.io/v1beta2"  # The api version (required)
@@ -35,13 +33,17 @@ spec:
   schema:
     $ref: <url or path>  # 
   references: # Specifies the names of referenced schemas (optional array).
-    - name: <>                                  # The name for the reference.
-      subject: <>                               # The subject under which the referenced schema is registered.
-      version: <>                               # The exact version of the schema under the registered subject.
+    - name: <string>                             # The name for the reference.
+      subject: <string>                          # The subject under which the referenced schema is registered.
+      version: <string>                          # The exact version of the schema under the registered subject.
 ]
 ```
 
+### Metadata
+
 The `metadata.name` property is mandatory and specifies the name of the _Subject_.
+
+### Specification
 
 To use the SchemaRegistry default values for the `compatibilityLevel` you can omit the property.
 

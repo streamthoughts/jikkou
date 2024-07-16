@@ -28,15 +28,14 @@ Jikkou performs the rendering of your template in two phases:
    and `labels` as defined into the YAML resource file.
     * Therefore, it's important that your resource file is converted into a valid YAML file after the first rendering.
 
-
-{{< figure src="./jikkou-template-how-it-work.svg" width="70%" class="center" >}}
+{{< figure src="./jikkou-template-how-it-work.svg" width="80%" class="center" >}}
 
 {{% alert title="Important" color="warning" %}}
 You should use `{% raw %}...{% endraw %}` tags to ensure the variables defined into the `template` are not be
 interpreted during the first rendering.
 {{% /alert %}}
 
-## Variables[CLI-Configuration.md](..%2FJikkou%20CLI%2FCLI-Configuration.md)
+## Variables
 
 Jikkou defines a number of top-level variables that are passed to the template engine.
 
@@ -202,3 +201,13 @@ spec:
           max.message.bytes: 20971520
           retention.ms: 3600000
 ```
+
+## Configuration
+
+````hocon
+jinja {
+  # Enable/Disable recursive macro calls for rendering
+  enableRecursiveMacroCalls = false
+}
+
+````

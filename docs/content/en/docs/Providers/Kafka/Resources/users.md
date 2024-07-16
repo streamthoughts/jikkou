@@ -1,8 +1,8 @@
 ---
 categories: [ ]
 tags: [ "feature", "resources" ]
-title: "SCRAM Users"
-linkTitle: "SCRAM User"
+title: "Kafka Users"
+linkTitle: "Users"
 weight: 10
 description: >
   Learn how to manage Kafka Users.

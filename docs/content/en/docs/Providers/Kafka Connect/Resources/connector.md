@@ -68,7 +68,6 @@ metadata:
       { "url": "http://localhost:8083" }
 ```
 
-
 ### Specification
 
 #### `spec.connectorClass` [required]

@@ -50,3 +50,7 @@ the schema ID. The default is false. If the flag is not included, a soft delete 
 delete first, then the hard delete.
 
 See: [Confluent SchemaRegistry API Reference](https://docs.confluent.io/platform/current/schema-registry/develop/api.html#delete--subjects-(string-%20subject))
+
+##### `schemaregistry.jikkou.io/use-canonical-fingerprint`
+
+This annotation can be used to use a canonical fingerprint to compare schemas (only supported for Avro schema).

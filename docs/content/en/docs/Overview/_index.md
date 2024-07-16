@@ -24,7 +24,6 @@ no longer a tedious and boring task for both developers and administrators.
 
 ## What Are The Use-Cases ?
 
-
 Jikkou is primarily used as a GitOps solution for Kafka configuration management.
 
 Here are some of the various use cases we've observed in different projects:
