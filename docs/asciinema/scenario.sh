@@ -39,5 +39,5 @@ echo '# You can run Jikkou command manually, or execute it ' | pv -qL 12
 echo '# part of your CI/CD pipeline.' | pv -qL 12
 echo '# Jikkou has a Github Action and Server API as well' | pv -qL 12
 echo '# Learn more about Jikkou at ' | pv -qL 12
-echo '# https://streamthoughts.github.io/jikkou/docs' | cat | pv -qL 12 | lolcat
+echo '# https://jikkou.io' | cat | pv -qL 12 | lolcat
 rm topic.yaml && mv topic.bk.yaml topic.yaml
