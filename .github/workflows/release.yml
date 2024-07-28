@@ -192,4 +192,4 @@ jobs:
           ./mvnw -ntp -B versions:set versions:commit -DnewVersion=${{ env.NEXT_VERSION }}
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
-          git push origin HEAD:${{ needs.set-release-version.outputs.HEAD }}
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
