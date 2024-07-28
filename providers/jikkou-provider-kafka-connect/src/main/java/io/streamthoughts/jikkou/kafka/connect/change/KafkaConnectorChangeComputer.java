@@ -16,6 +16,7 @@ import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,20 +62,20 @@ public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<S
             changes.add(StateChange.with(DATA_STATE, getState(before), getState(after)));
             // Compute change for 'config'
             changes.addAll(ChangeComputer.computeChanges(getConfig(before), getConfig(after), true)
-                    .stream()
-                    .map(change -> change.withName(DATA_CONFIG_PREFIX + change.getName()))
-                    .toList()
+                .stream()
+                .map(change -> change.withName(DATA_CONFIG_PREFIX + change.getName()))
+                .toList()
             );
             return GenericResourceChange
-                    .builder(V1KafkaConnector.class)
-                    .withMetadata(after.getMetadata())
-                    .withSpec(ResourceChangeSpec
-                            .builder()
-                            .withOperation(Change.computeOperation(changes))
-                            .withChanges(changes)
-                            .build()
-                    )
-                    .build();
+                .builder(V1KafkaConnector.class)
+                .withMetadata(Optional.ofNullable(after).orElse(before).getMetadata())
+                .withSpec(ResourceChangeSpec
+                    .builder()
+                    .withOperation(Change.computeOperation(changes))
+                    .withChanges(changes)
+                    .build()
+                )
+                .build();
         }
     }
 
