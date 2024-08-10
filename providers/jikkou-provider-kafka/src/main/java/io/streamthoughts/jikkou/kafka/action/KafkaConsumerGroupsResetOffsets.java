@@ -9,11 +9,7 @@ package io.streamthoughts.jikkou.kafka.action;
 import static io.streamthoughts.jikkou.core.config.ConfigPropertySpec.NULL_VALUE;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
-import io.streamthoughts.jikkou.core.action.Action;
-import io.streamthoughts.jikkou.core.action.ExecutionError;
-import io.streamthoughts.jikkou.core.action.ExecutionResult;
-import io.streamthoughts.jikkou.core.action.ExecutionResultSet;
-import io.streamthoughts.jikkou.core.action.ExecutionStatus;
+import io.streamthoughts.jikkou.core.action.*;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
@@ -29,34 +25,60 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
 import io.streamthoughts.jikkou.kafka.reconciler.KafkaClientConfiguration;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaConsumerGroupService;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.common.ConsumerGroupState;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 @Named("KafkaConsumerGroupsResetOffsets")
-@Title("Reset offsets of consumer group.")
+@Title("Reset offsets of consumer groups.")
 @Description("""
-    Reset offsets of consumer group. Supports one consumer group at the time, and group should be in EMPTY state.
+    Reset offsets of consumer group. Supports multiple consumer groups, and groups should be in EMPTY state.
     You must choose one of the following reset specifications: to-datetime, by-duration, to-earliest, to-latest, to-offset.
     """
 )
 @ExtensionSpec(
     options = {
         @ExtensionOptionSpec(
-            name = KafkaConsumerGroupsResetOffsets.GROUP,
-            description = "The consumer group to act on.",
-            type = String.class,
-            required = true
-        ),
-        @ExtensionOptionSpec(
             name = KafkaConsumerGroupsResetOffsets.TOPIC,
             description = "The topic whose partitions must be included in the reset-offset action.",
             type = List.class,
             required = true
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.GROUP,
+            description = "The consumer group to act on.",
+            type = String.class
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.GROUPS,
+            description = "The consumer groups to act on.",
+            type = List.class
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.ALL,
+            description = "Specifies to act on all consumer groups.",
+            type = Boolean.class,
+            defaultValue = "false"
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.INCLUDES,
+            description = "List of patterns to match the consumer groups that must be included in the reset-offset action.",
+            type = List.class
+        ),
+        @ExtensionOptionSpec(
+            name = KafkaConsumerGroupsResetOffsets.EXCLUDES,
+            description = "List of patterns to match the consumer groups that must be excluded from the reset-offset action.",
+            type = List.class
         ),
         @ExtensionOptionSpec(
             name = KafkaConsumerGroupsResetOffsets.TO_DATETIME,
@@ -100,6 +122,10 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
     public static final String TO_DATETIME = "to-datetime";
     public static final String TOPIC = "topic";
     public static final String GROUP = "group";
+    public static final String GROUPS = "groups";
+    public static final String ALL = "all";
+    public static final String INCLUDES = "includes";
+    public static final String EXCLUDES = "excludes";
     public static final String TO_OFFSET = "to-offset";
     public static final String DRY_RUN = "dry-run";
 
@@ -133,7 +159,6 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
             KafkaConsumerGroupService service = new KafkaConsumerGroupService(client);
 
             KafkaOffsetSpec offsetSpec = null;
-
 
             offsetSpec = extensionContext().<Boolean>configProperty(TO_EARLIEST)
                 .getOptional(configuration)
@@ -169,46 +194,79 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
                     .build();
             }
 
-            try {
-                final String groupId = extensionContext().<String>configProperty(GROUP)
-                    .get(configuration);
+            // get all groups
+            final Stream<String> group = extensionContext().<String>configProperty(GROUP)
+                .getOptional(configuration).stream();
 
-                final List<String> topics = extensionContext().<List<String>>configProperty(TOPIC)
-                    .get(configuration);
+            final Stream<String> groups = extensionContext().<List<String>>configProperty(GROUPS)
+                .getOptional(configuration).stream().flatMap(Collection::stream);
 
-                final Boolean dryRun = extensionContext().<Boolean>configProperty(DRY_RUN)
-                    .get(configuration);
+            final Stream<String> all = extensionContext().<Boolean>configProperty(ALL).get(configuration) ?
+                service.listConsumerGroups(Set.of(ConsumerGroupState.EMPTY), false)
+                    .stream()
+                    .map(it -> it.getMetadata().getName()) : Stream.empty();
 
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Alter consumer group '{}' for topics '{}', and offsets: {} (DRY_RUN: {}).",
-                        groupId,
-                        topics,
-                        offsetSpec,
-                        dryRun
-                    );
-                }
-                V1KafkaConsumerGroup group = service.resetConsumerGroupOffsets(
-                    groupId,
-                    topics,
-                    offsetSpec,
-                    dryRun
-                );
-                return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder()
-                    .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
-                        .status(ExecutionStatus.SUCCEEDED)
-                        .data(group)
-                        .build()
-                    )
-                    .build();
-            } catch (Exception ex) {
-                return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder()
-                    .result(ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
-                        .status(ExecutionStatus.FAILED)
-                        .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
-                        .build()
-                    )
-                    .build();
-            }
+            // get includes patterns
+            final List<Pattern> includes = extensionContext().<List<String>>configProperty(INCLUDES)
+                .getOptional(configuration).stream().flatMap(Collection::stream)
+                .map(Pattern::compile)
+                .toList();
+
+            // get excludes patterns
+            final List<Pattern> excludes = extensionContext().<List<String>>configProperty(EXCLUDES)
+                .getOptional(configuration).stream().flatMap(Collection::stream)
+                .map(Pattern::compile)
+                .toList();
+
+            // merge and filter all consumer groups.
+            final List<String> groupIds = Stream.of(group, groups, all).flatMap(Function.identity())
+                .filter(id -> isGroupIncluded(id, excludes, includes))
+                .toList();
+
+            final KafkaOffsetSpec offset = offsetSpec;
+            final List<ExecutionResult<V1KafkaConsumerGroup>> results = groupIds.stream()
+                .map(groupId -> {
+                    try {
+                        final List<String> topics = extensionContext().<List<String>>configProperty(TOPIC)
+                            .get(configuration);
+
+                        final Boolean dryRun = extensionContext().<Boolean>configProperty(DRY_RUN)
+                            .get(configuration);
+
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("Alter consumer group '{}' for topics '{}', and offsets: {} (DRY_RUN: {}).",
+                                groupId,
+                                topics,
+                                offset,
+                                dryRun
+                            );
+                        }
+                        V1KafkaConsumerGroup consumerGroupOffsets = service.resetConsumerGroupOffsets(
+                            groupId,
+                            topics,
+                            offset,
+                            dryRun
+                        );
+
+                        return ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
+                            .status(ExecutionStatus.SUCCEEDED)
+                            .data(consumerGroupOffsets)
+                            .build();
+                    } catch (Exception ex) {
+                        return ExecutionResult.<V1KafkaConsumerGroup>newBuilder()
+                            .status(ExecutionStatus.FAILED)
+                            .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
+                            .build();
+                    }
+                })
+                .toList();
+            return ExecutionResultSet.<V1KafkaConsumerGroup>newBuilder().results(results).build();
         }
+    }
+
+    private static boolean isGroupIncluded(final String id, final List<Pattern> excludes, final List<Pattern> includes) {
+        boolean isExcluded = excludes.stream().anyMatch(p -> p.matcher(id).matches());
+        boolean isIncluded = includes.isEmpty() || includes.stream().anyMatch(p -> p.matcher(id).matches());
+        return isIncluded && !isExcluded;
     }
 }

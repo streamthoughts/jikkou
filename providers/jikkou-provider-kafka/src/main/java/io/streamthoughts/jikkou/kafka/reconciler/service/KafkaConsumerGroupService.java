@@ -14,11 +14,7 @@ import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaConsumerGroupList;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupMember;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroupStatus;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerOffset;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaNode;
+import io.streamthoughts.jikkou.kafka.models.*;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToEarliest;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToLatest;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToOffset;
@@ -152,9 +148,11 @@ public final class KafkaConsumerGroupService {
             AsyncUtils.getValueOrThrowException(future.toCompletionStage().toCompletableFuture(), JikkouRuntimeException::new);
         }
 
+        LOG.info("FOO");
         V1KafkaConsumerGroupList groups = listConsumerGroups(List.of(groupId), true);
         V1KafkaConsumerGroup group = groups.first();
 
+        LOG.info("BAR");
         // DRY-RUN = TRUE
         if (dryRun) {
             V1KafkaConsumerGroupStatus status = group.getStatus();
@@ -189,8 +187,7 @@ public final class KafkaConsumerGroupService {
 
         // Gets EARLIEST offsets for each topic partitions.
         return future.thenCompose(partitions -> {
-            var partitionOffsets = partitions.
-                stream()
+            var partitionOffsets = partitions.stream()
                 .collect(Collectors.toMap(Function.identity(), it -> offsetSpec));
             return client.listOffsets(partitionOffsets).all().toCompletionStage();
         });
@@ -262,16 +259,15 @@ public final class KafkaConsumerGroupService {
                 )
                 .publishOn(Schedulers.boundedElastic())
                 .flatMap(Mono::fromFuture)
-                .map(group -> {
+                .flatMap(group -> {
                     String groupName = group.getMetadata().getName();
                     if (groupOffsetsResult != null) {
-                        Map<TopicPartition, OffsetAndMetadata> partitions = AsyncUtils.getValueOrThrowException(
-                            Futures.toCompletableFuture(groupOffsetsResult.partitionsToOffsetAndMetadata(groupName)),
-                            JikkouRuntimeException::new
-                        );
-                        return group.withStatus(group.getStatus().withOffsets(mapToResources(partitions)));
+                        return Mono
+                            .fromFuture(Futures.toCompletableFuture(groupOffsetsResult.partitionsToOffsetAndMetadata(groupName)))
+                            .flatMap(partitions -> mapToResources(partitions).collectList()
+                                .map(offsets -> group.withStatus(group.getStatus().withOffsets(offsets))));
                     }
-                    return group;
+                    return Mono.just(group);
                 })
                 .collectList()
                 .block();
@@ -350,25 +346,24 @@ public final class KafkaConsumerGroupService {
             .build();
     }
 
-    private List<V1KafkaConsumerOffset> mapToResources(final Map<TopicPartition, OffsetAndMetadata> offsetsByTopicPartition) {
-        Map<TopicPartition, Long> logEndOffsetForTopicPartition = new KafkaTopicService(client)
-            .getLogEndOffsetForTopicPartition(offsetsByTopicPartition.keySet());
-
-        return offsetsByTopicPartition.entrySet()
-            .stream()
-            .map(entry -> {
-                    TopicPartition tp = entry.getKey();
-                    long offset = entry.getValue().offset();
-                    long offsetLag = Optional
-                        .ofNullable(logEndOffsetForTopicPartition.get(tp))
-                        .map(endOffset -> endOffset - offset).orElse(-1L);
-                    return new V1KafkaConsumerOffset(
-                        tp.topic(),
-                        tp.partition(),
-                        offset,
-                        offsetLag
-                    );
-                }
-            ).toList();
+    private Flux<V1KafkaConsumerOffset> mapToResources(final Map<TopicPartition, OffsetAndMetadata> offsetsByTopicPartition) {
+        return new KafkaTopicService(client).getLogEndOffsetForTopicPartition(offsetsByTopicPartition.keySet())
+            .map(logEndOffsetForTopicPartition -> offsetsByTopicPartition.entrySet()
+                .stream()
+                .map(entry -> {
+                        TopicPartition tp = entry.getKey();
+                        long offset = entry.getValue().offset();
+                        long offsetLag = Optional
+                            .ofNullable(logEndOffsetForTopicPartition.get(tp))
+                            .map(endOffset -> endOffset - offset).orElse(-1L);
+                        return new V1KafkaConsumerOffset(
+                            tp.topic(),
+                            tp.partition(),
+                            offset,
+                            offsetLag
+                        );
+                    }
+                ).toList())
+            .flatMapMany(Flux::fromIterable);
     }
 }

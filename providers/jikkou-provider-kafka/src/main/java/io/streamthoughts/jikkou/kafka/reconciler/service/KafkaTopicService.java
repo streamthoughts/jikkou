@@ -18,31 +18,16 @@ import io.streamthoughts.jikkou.kafka.models.KafkaTopicPartitionInfo;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicStatus;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.DescribeConfigsResult;
-import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.OffsetSpec;
-import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.Node;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.TopicPartitionInfo;
-import org.apache.kafka.common.Uuid;
+import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.common.*;
 import org.apache.kafka.common.config.ConfigResource;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.publisher.Mono;
 
 /**
  * Service for manipulating Kafka topics.
@@ -114,7 +99,7 @@ public final class KafkaTopicService {
             objectMetaBuilder = objectMetaBuilder
                 .withLabel(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_TOPIC_ID, description.topicId().toString());
         }
-        
+
         V1KafkaTopic.V1KafkaTopicBuilder builder = V1KafkaTopic.builder()
             .withMetadata(objectMetaBuilder.build())
             .withSpec(V1KafkaTopicSpec.builder()
@@ -144,24 +129,15 @@ public final class KafkaTopicService {
         return builder.build();
     }
 
-    public Map<TopicPartition, Long> getLogEndOffsetForTopicPartition(final Set<TopicPartition> topicPartitions) {
-        try {
-            Map<TopicPartition, OffsetSpec> offsetSpecByPartition = topicPartitions
+    public Mono<Map<TopicPartition, Long>> getLogEndOffsetForTopicPartition(final Set<TopicPartition> topicPartitions) {
+        Map<TopicPartition, OffsetSpec> offsetSpecByPartition = topicPartitions
+            .stream()
+            .collect(Collectors.toMap(Function.identity(), it -> OffsetSpec.latest()));
+        KafkaFuture<Map<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo>> all = client.listOffsets(offsetSpecByPartition).all();
+        return Mono.fromFuture(Futures.toCompletableFuture(all))
+            .map(entry -> entry.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Function.identity(), it -> OffsetSpec.latest()));
-            return client.listOffsets(offsetSpecByPartition)
-                .all()
-                .get()
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, it -> it.getValue().offset()));
-        } catch (InterruptedException | ExecutionException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            throw new JikkouRuntimeException(
-                "Failed to get log end-offset for topic partitions: " + topicPartitions, e);
-        }
+                .collect(Collectors.toMap(Map.Entry::getKey, it -> it.getValue().offset())));
     }
 
     /**
