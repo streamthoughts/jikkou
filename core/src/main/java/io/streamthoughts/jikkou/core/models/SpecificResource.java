@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Optional;
 
 /**
@@ -28,7 +29,6 @@ import java.util.Optional;
     "apiVersion",
     "kind",
     "metadata",
-    "template",
     "spec"
 })
 @Reflectable
@@ -37,7 +37,7 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
     /**
      * Kind attached to the resource.
      */
-    @JsonProperty("metadata")
+    @JsonProperty("kind")
     @JsonPropertyDescription("Kind attached to the resource.")
     @NotNull
     protected final String kind;
@@ -45,7 +45,7 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
     /**
      * ApiVersion attached to the resource.
      */
-    @JsonProperty("metadata")
+    @JsonProperty("apiVersion")
     @JsonPropertyDescription("ApiVersion attached to the resource.")
     protected final String apiVersion;
 
@@ -59,8 +59,8 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
     /**
      * Specification object attached to the resource.
      */
-    @JsonProperty("template")
-    @JsonPropertyDescription("Data values to be passed to the template engine.")
+    @JsonProperty("spec")
+    @JsonPropertyDescription("Specification object attached to the resource.")
     @NotNull
     protected final S spec;
 
