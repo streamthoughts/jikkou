@@ -19,25 +19,31 @@ Usage:
 
 Execute the action.
 
-jikkou action KafkaConsumerGroupsResetOffsets execute [-hV] [--dry-run]
-[--to-earliest] [--to-latest] --group=PARAM [--logger-level=<level>]
-[-o=<format>] [--to-datetime=PARAM] [--to-offset=PARAM] --topic=PARAM
-[--topic=PARAM]...
+jikkou action KafkaConsumerGroupsResetOffsets execute [-hV] [--all] [--dry-run]
+[--to-earliest] [--to-latest] [--group=PARAM] [--logger-level=<level>]
+[-o=<format>] [--to-datetime=PARAM] [--to-offset=PARAM] [--excludes=PARAM]...
+[--groups=PARAM]... [--includes=PARAM]... --topic=PARAM [--topic=PARAM]...
 
 DESCRIPTION:
 
-Reset offsets of consumer group. Supports one consumer group at the time, and
-group should be in EMPTY state.
+Reset offsets of consumer group. Supports multiple consumer groups, and groups
+should be in EMPTY state.
 You must choose one of the following reset specifications: to-datetime,
 by-duration, to-earliest, to-latest, to-offset.
 
 
 OPTIONS:
 
+      --all                 Specifies to act on all consumer groups.
       --dry-run             Only show results without executing changes on
                               Consumer Groups.
+      --excludes=PARAM      List of patterns to match the consumer groups that
+                              must be excluded from the reset-offset action.
       --group=PARAM         The consumer group to act on.
+      --groups=PARAM        The consumer groups to act on.
   -h, --help                Show this help message and exit.
+      --includes=PARAM      List of patterns to match the consumer groups that
+                              must be included in the reset-offset action.
       --logger-level=<level>
                             Specify the log level verbosity to be used while
                               running a command.
@@ -58,7 +64,7 @@ OPTIONS:
 
 ### Examples
 
-### Reset Consumer Group to the earliest offsets
+### Reset Single Consumer Group to the earliest offsets
 
 ```bash
 jikkou action kafkaconsumergroupresetoffsets execute \
@@ -114,4 +120,12 @@ results:
         port: 9092
 ```
 
+### Reset All Consumer Groups to the earliest offsets
+
+```bash
+jikkou action kafkaconsumergroupresetoffsets execute \
+--all \
+--topic test \
+--to-earliest
+```
 
