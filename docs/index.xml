@@ -2546,25 +2546,31 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Execute the action.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action KafkaConsumerGroupsResetOffsets execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--dry-run&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-earliest&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-latest&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> --group&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-o&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;format&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-datetime&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-offset&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> --topic&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--topic&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action KafkaConsumerGroupsResetOffsets execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--all&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--dry-run&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-earliest&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-latest&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--group&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-o&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;format&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-datetime&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--to-offset&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--excludes&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--groups&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>... &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--includes&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>... --topic&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--topic&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>...
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DESCRIPTION:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Reset offsets of consumer group. Supports one consumer group at the time, and
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>group should be in EMPTY state.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Reset offsets of consumer group. Supports multiple consumer groups, and groups
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>should be in EMPTY state.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>You must choose one of the following reset specifications: to-datetime,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>by-duration, to-earliest, to-latest, to-offset.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OPTIONS:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --all Specifies to act on all consumer groups.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --dry-run Only show results without executing changes on
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Consumer Groups.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --excludes&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM List of patterns to match the consumer groups that
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> must be excluded from the reset-offset action.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --group&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM The consumer group to act on.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --groups&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM The consumer groups to act on.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -h, --help Show this &lt;span style="color:#204a87">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --includes&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>PARAM List of patterns to match the consumer groups that
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> must be included in the reset-offset action.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> --logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Specify the log level verbosity to be used &lt;span style="color:#204a87;font-weight:bold">while&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> running a command.
@@ -2582,7 +2588,7 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> reset-offset action.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -V, --version Print version information and exit.
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="examples">Examples&lt;/h3>
-&lt;h3 id="reset-consumer-group-to-the-earliest-offsets">Reset Consumer Group to the earliest offsets&lt;/h3>
+&lt;h3 id="reset-single-consumer-group-to-the-earliest-offsets">Reset Single Consumer Group to the earliest offsets&lt;/h3>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action kafkaconsumergroupresetoffsets execute &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--group my-group &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--topic &lt;span style="color:#204a87">test&lt;/span> &lt;span style="color:#4e9a06">\
@@ -2630,6 +2636,11 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> id: &amp;#34;101&amp;#34;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> host: &amp;#34;localhost&amp;#34;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> port: 9092
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="reset-all-consumer-groups-to-the-earliest-offsets">Reset All Consumer Groups to the earliest offsets&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action kafkaconsumergroupresetoffsets execute &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--all &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--topic &lt;span style="color:#204a87">test&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--to-earliest
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Quotas for Aiven Apache Kafka®</title><link>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaQuota&lt;/code> resources are used to manage the Quotas in Aiven for Apache Kafka® service.
