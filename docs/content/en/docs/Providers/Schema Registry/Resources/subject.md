@@ -138,3 +138,20 @@ spec:
       ]
     }
 ```
+
+## `SchemaRegistrySubjectList`
+
+If you need to manage multiple Schemas at once (e.g. using a template), it may be more suitable to use the resource collection `SchemaRegistrySubjectList`.
+
+### Specification
+
+Here the _resource definition file_ for defining a `SchemaRegistrySubjectList`.
+
+```yaml
+apiVersion: "schemaregistry.jikkou.io/v1beta2"  # The api version (required)
+kind: "SchemaRegistrySubjectList"      # The resource kind (required)
+metadata: # (optional)
+  labels: { }
+  annotations: { }
+items: [ ]                             # The array of SchemaRegistrySubject
+```
