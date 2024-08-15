@@ -6,10 +6,6 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
-import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
-import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
-import static io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS;
-
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
@@ -26,6 +22,9 @@ import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +34,10 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
+
+import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
+import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
+import static io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS;
 
 public final class KafkaConnectorChangeHandler extends BaseChangeHandler<ResourceChange> {
 
@@ -107,8 +108,9 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
 
     @NotNull
     private Stream<ChangeResponse<ResourceChange>> createOrUpdateConnectorConfig(ResourceChange change) {
+        final Map<String, Object> configAsMap = buildConnectorConfig(change);
         CompletableFuture<ConnectorInfoResponse> future = CompletableFuture.supplyAsync(() ->
-                api.createOrUpdateConnector(change.getMetadata().getName(), buildConnectorConfig(change))
+                api.createOrUpdateConnector(change.getMetadata().getName(), configAsMap)
         );
 
         ChangeResponse<ResourceChange> response = toChangeResponse(change, future);
@@ -140,10 +142,11 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
         return getState(change).getOp() != Operation.NONE;
     }
 
-    private Map<String, Object> buildConnectorConfig(ResourceChange change) {
+    private Map<String, Object> buildConnectorConfig(final ResourceChange change) {
         Map<String, Object> configs = getConfig(change)
-                .stream()
-                .collect(Collectors.toMap(StateChange::getName, StateChange::getAfter));
+            .stream()
+            .filter(state -> state.getOp() != Operation.DELETE && state.getAfter() != null)
+            .collect(Collectors.toMap(StateChange::getName, StateChange::getAfter));
         Map<String, Object> config = new HashMap<>();
         config.put(CONNECTOR_TASKS_MAX_CONFIG, getTasksMax(change).getAfter());
         config.put(CONNECTOR_CLASS_CONFIG, getConnectorClass(change).getAfter());
