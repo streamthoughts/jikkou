@@ -53,9 +53,9 @@ public record ConnectorStatusResponse(@JsonProperty("name") @NotNull String name
      * @param workerId the worker id.
      */
     @Reflectable
-    public record TaskStatus(int id, @NotNull String state, @NotNull String workerId) {
+    public record TaskStatus(int id, @NotNull String state, @NotNull String workerId, String trace) {
 
-        @ConstructorProperties({"id", "state", "worker_id"})
+        @ConstructorProperties({"id", "state", "worker_id", "trace"})
         public TaskStatus {
         }
     }
