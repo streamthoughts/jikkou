@@ -149,7 +149,7 @@ class KafkaConnectorCollectorIT extends AbstractKafkaConnectorIT {
                         .withConnectorStatus(new ConnectorStatusResponse(
                                 KAFKA_CONNECTOR_NAME,
                                 new ConnectorStatusResponse.ConnectorStatus("RUNNING", "kafka-connect:8083"),
-                                List.of(new ConnectorStatusResponse.TaskStatus(0, "RUNNING", "kafka-connect:8083"))
+                                List.of(new ConnectorStatusResponse.TaskStatus(0, "RUNNING", "kafka-connect:8083", null))
                         ))
                         .build()
                 )
