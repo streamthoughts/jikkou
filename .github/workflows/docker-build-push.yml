@@ -17,90 +17,185 @@ env:
   GRAAL_VERSION: '21.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
 jobs:
-  build:
+  build-cli:
     if: github.repository == 'streamthoughts/jikkou'
-    name: 'Build Docker Image'
+    name: 'Build Docker Image (CLI Native)'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
 
-    - name: 'Set up GraalVM'
-      uses: graalvm/setup-graalvm@v1
-      with:
-      #  version: ${{ env.GRAAL_VERSION }}
-        java-version: ${{ env.JAVA_VERSION }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        components: 'native-image'
-        native-image-job-reports: 'true'
-        native-image-musl: 'true'
+      - name: 'Set up GraalVM'
+        uses: graalvm/setup-graalvm@v1
+        with:
+          #  version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.JAVA_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          components: 'native-image'
+          native-image-job-reports: 'true'
+          native-image-musl: 'true'
 
-    - name: 'Login to DockerHub'
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: 'Login to DockerHub'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: 'Set Docker Image Build-Args'
-      run: |
-        echo "VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-        echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
-        echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+      - name: 'Set Docker Image Build-Args'
+        run: |
+          echo "VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
 
-    - name: 'Build Native Executable (Jikkou CLI)'
-      run: |
-        chmod +x ./mvnw  && \
-        ./mvnw -ntp -B clean package -Pnative -Dgraalvm.build.arg="--static --libc=musl" -DskipTests && \
-        cp ./cli/target/jikkou-cli-${{ env.VERSION }}-runner ./docker/jikkou-cli-${{ env.VERSION }}-runner
+      - name: 'Build Native Executable'
+        run: |
+          chmod +x ./mvnw  && \
+          ./mvnw -ntp -B clean package -Pnative -Dgraalvm.build.arg="--static --libc=musl --verbose -march=compatibility" -DskipTests && \
+          cp ./cli/target/jikkou-cli-${{ env.VERSION }}-runner ./docker/jikkou-cli-${{ env.VERSION }}-runner
 
-    - name: 'Build & Push to Docker Hub (Jikkou CLI)'
-      if: github.ref_name == 'main'
-      uses: docker/build-push-action@v6
-      with:
-        context: docker
-        platforms: linux/amd64,linux/arm64
-        file: docker/Dockerfile
-        no-cache: true
-        push: true
-        tags: streamthoughts/jikkou:main
-        build-args: |
-          VERSION=${{ env.VERSION }}
-          COMMIT=${{ env.GIT_COMMIT }}
-          BRANCH=${{ env.GIT_BRANCH }}
-          CREATED=${{ env.CREATED }}
+      - name: 'Build & Push to Docker Hub'
+        if: github.ref_name == 'main'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker
+          platforms: linux/amd64,linux/arm64
+          file: docker/Dockerfile
+          no-cache: true
+          push: true
+          tags: streamthoughts/jikkou:main
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            COMMIT=${{ env.GIT_COMMIT }}
+            BRANCH=${{ env.GIT_BRANCH }}
+            CREATED=${{ env.CREATED }}
 
-    - name: 'Build & Push to Docker Hub (Jikkou CLI)'
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: docker/build-push-action@v6
-      with:
-        context: docker
-        platforms: linux/amd64,linux/arm64
-        file: docker/Dockerfile
-        no-cache: true
-        push: true
-        tags: streamthoughts/jikkou:${{ env.VERSION }},streamthoughts/jikkou:latest
-        build-args: |
-          VERSION=${{ env.VERSION }}
-          COMMIT=${{ env.GIT_COMMIT }}
-          BRANCH=${{ env.GIT_BRANCH }}
-          CREATED=${{ env.CREATED }}
+      - name: 'Build & Push to Docker Hub'
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/build-push-action@v6
+        with:
+          context: docker
+          platforms: linux/amd64,linux/arm64
+          file: docker/Dockerfile
+          no-cache: true
+          push: true
+          tags: streamthoughts/jikkou:${{ env.VERSION }},streamthoughts/jikkou:latest
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            COMMIT=${{ env.GIT_COMMIT }}
+            BRANCH=${{ env.GIT_BRANCH }}
+            CREATED=${{ env.CREATED }}
 
-    - name: 'Build & Push to Docker Hub (Jikkou API Server)'
-      if: github.ref_name == 'main'
-      run: |
-        ./mvnw -ntp -B install -DskipTests && \
-        ./mvnw -ntp -B package -DskipTests -f ./server/jikkou-api-server/pom.xml \
-        -Dpackaging=docker \
-        -Djib.to.image=streamthoughts/jikkou-api-server:main
-        docker image push --all-tags streamthoughts/jikkou-api-server
+  build-cli-java:
+    if: github.repository == 'streamthoughts/jikkou'
+    name: 'Build Docker Image (CLI Java Binary)'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
 
-    - name: 'Build & Push to Docker Hub (Jikkou API Server)'
-      if: startsWith(github.ref, 'refs/tags/v')
-      run: |
-        ./mvnw -ntp -B install -DskipTests && \
-        ./mvnw -ntp -B package -DskipTests -f ./server/jikkou-api-server/pom.xml \
-        -Dpackaging=docker \
-        -Djib.to.image=streamthoughts/jikkou-api-server:${{ env.VERSION }} \
-        -Djib.to.tags=latest
-        docker image push --all-tags streamthoughts/jikkou-api-server
+      - name: 'Set up Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: 'Login to DockerHub'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 'Set Docker Image Build-Args'
+        run: |
+          echo "VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+
+      - name: 'Build Java Binary Executable'
+        run: |
+          chmod +x ./mvnw  && \
+          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests && \
+          cp -r ./dist/jikkou-${{ env.VERSION }}-java-binary ./docker
+
+      - name: 'Build & Push to Docker Hub'
+        if: github.ref_name == 'main'
+        uses: docker/build-push-action@v6
+        with:
+          context: docker
+          platforms: linux/amd64,linux/arm64
+          file: docker/Dockerfile_java
+          no-cache: true
+          push: true
+          tags: streamthoughts/jikkou:main-java
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            COMMIT=${{ env.GIT_COMMIT }}
+            BRANCH=${{ env.GIT_BRANCH }}
+            CREATED=${{ env.CREATED }}
+
+      - name: 'Build & Push to Docker Hub'
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/build-push-action@v6
+        with:
+          context: docker
+          platforms: linux/amd64,linux/arm64
+          file: docker/Dockerfile_java
+          no-cache: true
+          push: true
+          tags: streamthoughts/jikkou:${{ env.VERSION }}-java,streamthoughts/jikkou:latest-java
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            COMMIT=${{ env.GIT_COMMIT }}
+            BRANCH=${{ env.GIT_BRANCH }}
+            CREATED=${{ env.CREATED }}
+
+  build-server:
+    if: github.repository == 'streamthoughts/jikkou'
+    name: 'Build Docker Image (Server)'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: 'Set up Java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: 'Login to DockerHub'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 'Set Docker Image Build-Args'
+        run: |
+          
+          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+          
+          GIT_BRANCH=${GITHUB_REF#refs/*/}
+          if [[ $GIT_BRANCH == v* ]]; then
+            IMAGE="streamthoughts/jikkou-api-server:latest"
+            TAGS="$VERSION"
+          else
+            IMAGE="streamthoughts/jikkou-api-server:main"
+            TAGS="main"
+          fi
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          echo "TAGS=$TAGS" >> $GITHUB_ENV
+
+      - name: 'Build & Push to Docker Hub (Jikkou API Server)'
+        run: |
+          ./mvnw -ntp -B install -DskipTests && \
+          ./mvnw -ntp -B package -DskipTests -f ./server/jikkou-api-server/pom.xml \
+          -Dpackaging=docker \
+          -Djib.to.image="${{ env.IMAGE }}" \
+          -Djib.to.tags="${{ env.TAGS }}"
+          docker image push --all-tags streamthoughts/jikkou-api-server
