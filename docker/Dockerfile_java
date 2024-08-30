@@ -1,0 +1,43 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) The original authors
+#
+# Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+#
+FROM eclipse-temurin:21.0.4_7-jdk-ubi9-minimal
+
+LABEL org.opencontainers.image.title=jikkou \
+      org.opencontainers.image.licenses=Apache-2.0 \
+      org.opencontainers.image.url=https://streamthoughts.github.io/jikkou/ \
+      org.opencontainers.image.documentation=https://streamthoughts.github.io/jikkou/ \
+      org.opencontainers.image.source=https://github.com/streamthoughts/jikkou
+
+ARG VERSION
+ARG CREATED
+ARG COMMIT
+
+ENV USER_ID=10000 \
+    GROUP_ID=10001 \
+    USER_NAME="appuser" \
+    GROUP_NAME="appuser" \
+    JIKKOUCONFIG="/etc/jikkou/config"
+
+RUN mkdir -p /etc/jikkou/
+
+WORKDIR /app
+
+RUN groupadd -g $GROUP_ID $GROUP_NAME && \
+    useradd -r -s /bin/false -u $USER_ID -g $USER_NAME $GROUP_NAME && \
+    chown $USER_NAME:$GROUP_NAME /app
+
+USER $USER_NAME
+
+COPY --chmod=0755 ./jikkou-${VERSION}-java-binary/* .
+
+LABEL org.opencontainers.image.created=$CREATED \
+      org.opencontainers.image.version=$VERSION \
+      org.opencontainers.image.revision=$COMMIT
+
+ENTRYPOINT ["./bin/jikkou"]
+
+
