@@ -11,17 +11,19 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.NoSuchElementException;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default ClassLoader for loading components using a 'child-first strategy'. In other words, this ClassLoader
- * attempts to find the class in its own context before delegating to the parent ClassLoader.
+ * A custom {@link ClassLoader} dedicated for loading Jikkou extension classes using a 'child-first strategy'.
+ * <p>
+ * This {@link ClassLoader} attempts to find the class in its own context before delegating to the parent ClassLoader.
  */
 public class ExtensionClassLoader extends URLClassLoader {
 
@@ -32,41 +34,53 @@ public class ExtensionClassLoader extends URLClassLoader {
     }
 
     // The default list of packages to delegate loading to parent classloader.
-    private static final Pattern DEFAULT_PACKAGES_TO_IGNORE = Pattern.compile("(?:"
-            + "|io.streamthoughts.azkarra"
-            + "|org\\.apache\\.kafka"
-            + "|org.slf4j"
-            + ")\\..*$");
-
-    private final ClassLoader parent;
+    private static final Pattern PACKAGES_TO_EXCLUDE = Pattern.compile("(?:"
+        + "java"
+        + "|javax"
+        + "|io\\.streamthoughts\\.jikkou\\.core"
+        + "|io\\.streamthoughts\\.jikkou\\.common"
+        + "|io\\.streamthoughts\\.jikkou\\.runtime"
+        + "|io\\.streamthoughts\\.jikkou\\.spi"
+        + "|org\\.apache\\.kafka"
+        + "|org\\.slf4j"
+        + ")\\..*$");
 
     private final URL extensionLocation;
 
-    private final ClassLoader systemClassLoader;
-
+    /**
+     * Static helper method to create a new {@link ExtensionClassLoader} instance.
+     *
+     * @param extensionLocation The top-level location of the extension to be loaded.
+     * @param urls              The list of {@link URL urls} from which to load classes and resources.
+     * @param parent            The parent {@link ClassLoader}.
+     * @return a new {@link ExtensionClassLoader}.
+     */
     public static ExtensionClassLoader newClassLoader(final URL extensionLocation,
                                                       final URL[] urls,
                                                       final ClassLoader parent) {
         return AccessController.doPrivileged(
-                (PrivilegedAction<ExtensionClassLoader>) () -> new ExtensionClassLoader(extensionLocation, urls, parent)
+            (PrivilegedAction<ExtensionClassLoader>) () -> new ExtensionClassLoader(extensionLocation, urls, parent)
         );
     }
 
     /**
      * Creates a new {@link ExtensionClassLoader} instance.
      *
-     * @param extensionLocation the top-level component location.
-     * @param urls              the URLs from which to load classes and resources.
-     * @param parent            the parent {@link ClassLoader}.
+     * @param extensionLocation The top-level location of the extension to be loaded.
+     * @param urls              The URLs from which to load classes and resources.
+     * @param parent            The parent {@link ClassLoader}.
      */
     private ExtensionClassLoader(final URL extensionLocation,
                                  final URL[] urls, final ClassLoader parent) {
         super(urls, parent);
-        this.parent = parent;
         this.extensionLocation = extensionLocation;
-        this.systemClassLoader = getSystemClassLoader();
     }
 
+    /**
+     * Gets the top-level location of the extension to be loaded.
+     *
+     * @return the string location.
+     */
     public String location() {
         return extensionLocation.toString();
     }
@@ -76,72 +90,53 @@ public class ExtensionClassLoader extends URLClassLoader {
      */
     @Override
     protected Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-
         synchronized (getClassLoadingLock(name)) {
-            // First, check if the class has already been loaded
-            Class<?> loadedClass = findLoadedClass(name);
-
-            if (loadedClass == null) {
-                // protect from impersonation of system classes (e.g: java.*)
-                loadedClass = mayLoadFromSystemClassLoader(name);
-            }
-
-            if (loadedClass == null && shouldLoadFromUrls(name)) {
+            Class<?> klass = findLoadedClass(name);
+            if (klass == null) {
                 try {
-                    // find the class from given jar urls
-                    loadedClass = findClass(name);
-                } catch (final ClassNotFoundException e) {
-                    LOG.trace(
-                            "Class '{}' not found in extensionLocation {}. Delegating to parent",
-                            name,
-                            extensionLocation
-                    );
+                    if (shouldLoadInIsolation(name)) {
+                        klass = findClass(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    // Not found in loader's path. Search in parents.
+                    LOG.trace("Class '{}' not found in extension location '{}'. Delegating to parent", name, extensionLocation);
                 }
             }
-
-            if (loadedClass == null) {
-                // If still not found, then delegate to parent classloader.
-                loadedClass = super.loadClass(name, resolve);
+            if (klass == null) {
+                klass = super.loadClass(name, false);
             }
-
-            if (resolve) {      // marked to resolve
-                resolveClass(loadedClass);
+            if (resolve) {
+                resolveClass(klass);
             }
-            return loadedClass;
+            return klass;
         }
     }
 
-    private static boolean shouldLoadFromUrls(final String name) {
-        return !DEFAULT_PACKAGES_TO_IGNORE.matcher(name).matches();
+    private static boolean shouldLoadInIsolation(final String name) {
+        return !PACKAGES_TO_EXCLUDE.matcher(name).matches();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Enumeration<URL> getResources(String name) throws IOException {
         Objects.requireNonNull(name);
-
-        final Enumeration<URL>[] e = (Enumeration<URL>[]) new Enumeration<?>[3];
-
-        // First, load resources from system class loader
-        e[0] = getResourcesFromSystem(name);
-
-        // load resource from this classloader
-        e[1] =  findResources(name);
-
-        // then try finding resources from parent class-loaders
-        e[2] = getParent().getResources(name);
-
-        return new CompoundEnumeration(e);
-    }
-
-    private Enumeration<URL> getResourcesFromSystem(final String name) throws IOException {
-        if (systemClassLoader != null) {
-            return systemClassLoader.getResources(name);
+        List<URL> resources = new ArrayList<>();
+        // First, attempt to find the resource locally
+        for (Enumeration<URL> foundLocally = findResources(name); foundLocally.hasMoreElements(); ) {
+            URL url = foundLocally.nextElement();
+            if (url != null) {
+                resources.add(url);
+            }
         }
-        return Collections.emptyEnumeration();
+        // Explicitly call the parent implementation instead of super to avoid double-listing the local resources
+        for (Enumeration<URL> foundByParent = getParent().getResources(name); foundByParent.hasMoreElements(); ) {
+            URL url = foundByParent.nextElement();
+            if (url != null)
+                resources.add(url);
+        }
+        return Collections.enumeration(resources);
     }
 
     /**
@@ -150,29 +145,12 @@ public class ExtensionClassLoader extends URLClassLoader {
     @Override
     public URL getResource(final String name) {
         Objects.requireNonNull(name);
-        URL res = null;
-        if (systemClassLoader != null)
-            res = systemClassLoader.getResource(name);
 
-        if (res == null)
-            res = findResource(name);
-
-        if (res == null)
-            res = getParent().getResource(name);
-
-        return res;
-    }
-
-    private Class<?> mayLoadFromSystemClassLoader(final String name) {
-        Class<?> loadedClass = null;
-        try {
-            if (systemClassLoader != null) {
-                loadedClass = systemClassLoader.loadClass(name);
-            }
-        } catch (final ClassNotFoundException ex) {
-            // silently ignored
+        URL url = findResource(name);
+        if (url == null) {
+            url = super.getResource(name);
         }
-        return loadedClass;
+        return url;
     }
 
     /**
@@ -181,39 +159,5 @@ public class ExtensionClassLoader extends URLClassLoader {
     @Override
     public String toString() {
         return "ExtensionClassLoader[location=" + extensionLocation + "] ";
-    }
-
-    public URL extensionLocation() {
-        return extensionLocation;
-    }
-
-    static final class CompoundEnumeration<E> implements Enumeration<E> {
-        private final Enumeration<E>[] enums;
-        private int index;
-
-        CompoundEnumeration(Enumeration<E>[] enums) {
-            this.enums = enums;
-        }
-
-        private boolean next() {
-            while (index < enums.length) {
-                if (enums[index] != null && enums[index].hasMoreElements()) {
-                    return true;
-                }
-                index++;
-            }
-            return false;
-        }
-
-        public boolean hasMoreElements() {
-            return next();
-        }
-
-        public E nextElement() {
-            if (!next()) {
-                throw new NoSuchElementException();
-            }
-            return enums[index].nextElement();
-        }
     }
 }
