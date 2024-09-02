@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.kafka.internals;
 
 import java.util.Set;
+import org.apache.kafka.common.internals.Topic;
 import org.jetbrains.annotations.NotNull;
 
 public final class KafkaTopics {
@@ -14,14 +15,15 @@ public final class KafkaTopics {
     public static final Integer NO_NUM_PARTITIONS = -1;
     public static final Short NO_REPLICATION_FACTOR = -1;
 
+    // List of known internal topics for Apache Kafka, Kafka Connect, Kafka Streams, and
     public static final Set<String> INTERNAL_TOPICS = Set.of(
             "_schemas",
-            "__consumer_offsets",
-            "__transaction_state",
             "connect-offsets",
             "connect-status",
             "connect-configs"
     );
+    
+    private static final String INTERNAL_TOPIC_PREFIX = "__";
 
     /** Check topic is kafka internal topic. */
     public static boolean isInternalTopic(@NotNull final String topic) {
@@ -30,7 +32,7 @@ public final class KafkaTopics {
 
     /** Check topic is default kafka internal topic. */
     private static boolean isDefaultKafkaInternalTopic(String topic) {
-        return topic.startsWith("__") || topic.startsWith(".") || INTERNAL_TOPICS.contains(topic);
+        return Topic.isInternal(topic) || topic.startsWith(INTERNAL_TOPIC_PREFIX) || topic.startsWith(".") || INTERNAL_TOPICS.contains(topic);
     }
 
     /** Check topic is default connect internal topic. */

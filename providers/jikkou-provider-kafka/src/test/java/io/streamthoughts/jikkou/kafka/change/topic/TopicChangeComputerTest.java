@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.junit.jupiter.api.Assertions;
@@ -44,27 +45,27 @@ class TopicChangeComputerTest {
     void shouldNotReturnDeleteChangesForTopicDeleteFalse() {
         // GIVEN
         var topic = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, false)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(Configs.empty())
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, false)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(Configs.empty())
+                .build())
+            .build();
 
         List<V1KafkaTopic> actualState = List.of(topic);
         List<V1KafkaTopic> expectedState = Collections.emptyList();
 
         // WHEN
         var changes = new TopicChangeComputer()
-                .computeChanges(actualState, expectedState)
-                .stream()
-                .collect(Collectors.toMap(change -> change.getMetadata().getName(), it -> it));
+            .computeChanges(actualState, expectedState)
+            .stream()
+            .collect(Collectors.toMap(change -> change.getMetadata().getName(), it -> it));
 
         // THEN
         Assertions.assertTrue(changes.isEmpty());
@@ -75,34 +76,34 @@ class TopicChangeComputerTest {
 
         // GIVEN
         V1KafkaTopic resource = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(Configs.empty())
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(Configs.empty())
+                .build())
+            .build();
 
         // WHEN
         List<ResourceChange> changes = new TopicChangeComputer().computeChanges(List.of(resource), List.of(resource));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(resource.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(DELETE)
-                        .withChange(StateChange.delete(TopicChange.PARTITIONS, 1))
-                        .withChange(StateChange.delete(TopicChange.REPLICAS, (short)1))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(resource.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(DELETE)
+                .withChange(StateChange.delete(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.delete(TopicChange.REPLICAS, (short) 1))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
     }
 
@@ -110,27 +111,27 @@ class TopicChangeComputerTest {
     void shouldReturnNoChangesForNotExistingTopicDeleteTrue() {
         // GIVEN
         var topic = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(Configs.empty())
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(Configs.empty())
+                .build())
+            .build();
 
         List<V1KafkaTopic> actualState = List.of();
         List<V1KafkaTopic> expectedState = List.of(topic);
 
         // WHEN
         var changes = new TopicChangeComputer()
-                .computeChanges(actualState, expectedState)
-                .stream()
-                .collect(Collectors.toMap(change -> change.getMetadata().getName(), it -> it));
+            .computeChanges(actualState, expectedState)
+            .stream()
+            .collect(Collectors.toMap(change -> change.getMetadata().getName(), it -> it));
 
         // THEN
         ResourceChange change = changes.get(TEST_TOPIC);
@@ -141,17 +142,17 @@ class TopicChangeComputerTest {
     void shouldReturnChangesWhenTopicDoesNotExist() {
         // GIVEN
         V1KafkaTopic resource = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(Configs.empty())
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(Configs.empty())
+                .build())
+            .build();
         List<V1KafkaTopic> actualState = Collections.emptyList();
         List<V1KafkaTopic> expectedState = List.of(resource);
 
@@ -160,18 +161,18 @@ class TopicChangeComputerTest {
 
         // THEN
         Assertions.assertEquals(List.of(GenericResourceChange
-                        .builder(V1KafkaTopic.class)
-                        .withMetadata(resource.getMetadata())
-                        .withSpec(ResourceChangeSpec
-                                .builder()
-                                .withOperation(CREATE)
-                                .withChange(StateChange.create("partitions", 1))
-                                .withChange(StateChange.create("replicas", (short) 1))
-                                .build()
-                        )
-                        .build()
-                ),
-                changes
+                .builder(V1KafkaTopic.class)
+                .withMetadata(resource.getMetadata())
+                .withSpec(ResourceChangeSpec
+                    .builder()
+                    .withOperation(CREATE)
+                    .withChange(StateChange.create("partitions", 1))
+                    .withChange(StateChange.create("replicas", (short) 1))
+                    .build()
+                )
+                .build()
+            ),
+            changes
         );
     }
 
@@ -183,39 +184,39 @@ class TopicChangeComputerTest {
         actualConfig.add(new ConfigValue(CONFIG_PROP, "actual-value"));
 
         V1KafkaTopic before = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(actualConfig)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(actualConfig)
+                .build())
+            .build();
         List<V1KafkaTopic> actualState = List.of(before);
 
         Configs expectedConfig = Configs.empty();
         expectedConfig.add(new ConfigValue(CONFIG_PROP, "expected-value"));
 
         var topicAfter = V1KafkaTopic.builder()
-                .withMetadata(before.getMetadata())
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(expectedConfig)
-                        .build())
-                .build();
+            .withMetadata(before.getMetadata())
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(expectedConfig)
+                .build())
+            .build();
 
         List<V1KafkaTopic> expectedState = List.of(topicAfter);
 
         // WHEN
         var changes = new TopicChangeComputer()
-                .computeChanges(actualState, expectedState)
-                .stream()
-                .collect(Collectors.toMap(change -> change.getMetadata().getName(), it -> it));
+            .computeChanges(actualState, expectedState)
+            .stream()
+            .collect(Collectors.toMap(change -> change.getMetadata().getName(), it -> it));
 
         // THEN
         ResourceChange change = changes.get(TEST_TOPIC);
@@ -227,49 +228,49 @@ class TopicChangeComputerTest {
 
         // GIVEN
         V1KafkaTopic before = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(Configs.empty())
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(Configs.empty())
+                .build())
+            .build();
 
         Configs expectedConfig = Configs.empty();
         expectedConfig.add(new ConfigValue(CONFIG_PROP, ANY_VALUE));
         V1KafkaTopic after = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(expectedConfig)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(expectedConfig)
+                .build())
+            .build();
 
         // WHEN
         List<ResourceChange> changes = new TopicChangeComputer().computeChanges(List.of(before), List.of(after));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(after.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(UPDATE)
-                        .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
-                        .withChange(StateChange.none(TopicChange.REPLICAS, (short)1))
-                        .withChange(StateChange.create(TopicChange.CONFIG_PREFIX + CONFIG_PROP, ANY_VALUE))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(after.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(UPDATE)
+                .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.none(TopicChange.REPLICAS, (short) 1))
+                .withChange(StateChange.create(TopicChange.CONFIG_PREFIX + CONFIG_PROP, ANY_VALUE))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
     }
 
@@ -281,34 +282,34 @@ class TopicChangeComputerTest {
         configs.add(new ConfigValue(CONFIG_PROP, ANY_VALUE));
 
         V1KafkaTopic resource = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(configs)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(configs)
+                .build())
+            .build();
 
         // WHEN
         List<ResourceChange> changes = new TopicChangeComputer().computeChanges(List.of(resource), List.of(resource));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(resource.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(Operation.NONE)
-                        .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
-                        .withChange(StateChange.none(TopicChange.REPLICAS, (short)1))
-                        .withChange(StateChange.none(TopicChange.CONFIG_PREFIX + CONFIG_PROP, ANY_VALUE))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(resource.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.NONE)
+                .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.none(TopicChange.REPLICAS, (short) 1))
+                .withChange(StateChange.none(TopicChange.CONFIG_PREFIX + CONFIG_PROP, ANY_VALUE))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
     }
 
@@ -318,49 +319,49 @@ class TopicChangeComputerTest {
         Configs configsBefore = Configs.empty();
         configsBefore.add(new ConfigValue(CONFIG_PROP, ANY_VALUE, true, true));
         V1KafkaTopic before = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(configsBefore)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(configsBefore)
+                .build())
+            .build();
 
         V1KafkaTopic after = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(Configs.empty())
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(Configs.empty())
+                .build())
+            .build();
 
-        TopicChangeComputer changeComputer = new TopicChangeComputer(true);
+        TopicChangeComputer changeComputer = new TopicChangeComputer(List.of(), false, true);
 
         // WHEN
         List<ResourceChange> changes = changeComputer.computeChanges(List.of(before), List.of(after));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(after.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(UPDATE)
-                        .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
-                        .withChange(StateChange.none(TopicChange.REPLICAS, (short)1))
-                        .withChange(StateChange.delete(TopicChange.CONFIG_PREFIX + CONFIG_PROP, ANY_VALUE))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(after.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(UPDATE)
+                .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.none(TopicChange.REPLICAS, (short) 1))
+                .withChange(StateChange.delete(TopicChange.CONFIG_PREFIX + CONFIG_PROP, ANY_VALUE))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
     }
 
@@ -376,49 +377,49 @@ class TopicChangeComputerTest {
 
         configsBefore.add(KafkaConfigsAdapter.of(mkConfigEntry));
         V1KafkaTopic before = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(configsBefore)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(configsBefore)
+                .build())
+            .build();
 
         Configs configsAfter = Configs.empty();
         V1KafkaTopic after = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .withConfigs(configsAfter)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .withConfigs(configsAfter)
+                .build())
+            .build();
 
-        TopicChangeComputer changeComputer = new TopicChangeComputer(false);
+        TopicChangeComputer changeComputer = new TopicChangeComputer(List.of(), false, false);
 
         // WHEN
         List<ResourceChange> changes = changeComputer.computeChanges(List.of(before), List.of(after));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(after.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(NONE)
-                        .withChange(StateChange.none(TopicChange.PARTITIONS,1))
-                        .withChange(StateChange.none(TopicChange.REPLICAS, (short)1))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(after.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(NONE)
+                .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.none(TopicChange.REPLICAS, (short) 1))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
     }
 
@@ -426,46 +427,46 @@ class TopicChangeComputerTest {
     void shouldReturnNoneChangesForTopicWithDefaultPartitions() {
         // GIVEN
         V1KafkaTopic before = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .build())
+            .build();
 
         V1KafkaTopic after = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
-                        .withReplicas((short) 1)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(KafkaTopics.NO_NUM_PARTITIONS)
+                .withReplicas((short) 1)
+                .build())
+            .build();
 
-        TopicChangeComputer changeComputer = new TopicChangeComputer(false);
+        TopicChangeComputer changeComputer = new TopicChangeComputer(List.of(), false, false);
 
         // WHEN
         List<ResourceChange> changes = changeComputer.computeChanges(List.of(before), List.of(after));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(after.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(NONE)
-                        .withChange(StateChange.none(TopicChange.PARTITIONS, KafkaTopics.NO_NUM_PARTITIONS))
-                        .withChange(StateChange.none(TopicChange.REPLICAS, (short)1))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(after.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(NONE)
+                .withChange(StateChange.none(TopicChange.PARTITIONS, KafkaTopics.NO_NUM_PARTITIONS))
+                .withChange(StateChange.none(TopicChange.REPLICAS, (short) 1))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
     }
 
@@ -473,46 +474,109 @@ class TopicChangeComputerTest {
     void shouldReturnNoneChangesForTopicWithDefaultReplication() {
         // GIVEN
         V1KafkaTopic before = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas((short) 1)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .build())
+            .build();
 
         V1KafkaTopic after = V1KafkaTopic.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_TOPIC)
-                        .build()
-                )
-                .withSpec(V1KafkaTopicSpec
-                        .builder()
-                        .withPartitions(1)
-                        .withReplicas(KafkaTopics.NO_REPLICATION_FACTOR)
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas(KafkaTopics.NO_REPLICATION_FACTOR)
+                .build())
+            .build();
 
-        TopicChangeComputer changeComputer = new TopicChangeComputer(false);
+        TopicChangeComputer changeComputer = new TopicChangeComputer(List.of(), false, false);
 
         // WHEN
         List<ResourceChange> changes = changeComputer.computeChanges(List.of(before), List.of(after));
 
         // THEN
         ResourceChange expected = GenericResourceChange
-                .builder(V1KafkaTopic.class)
-                .withMetadata(after.getMetadata())
-                .withSpec(ResourceChangeSpec
-                        .builder()
-                        .withOperation(NONE)
-                        .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
-                        .withChange(StateChange.none(TopicChange.REPLICAS, KafkaTopics.NO_REPLICATION_FACTOR))
-                        .build()
-                )
-                .build();
+            .builder(V1KafkaTopic.class)
+            .withMetadata(after.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(NONE)
+                .withChange(StateChange.none(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.none(TopicChange.REPLICAS, KafkaTopics.NO_REPLICATION_FACTOR))
+                .build()
+            )
+            .build();
         Assertions.assertEquals(List.of(expected), changes);
+    }
+
+    @Test
+    void shouldReturnDeleteChangesForDeleteOrphansTrue() {
+        // GIVEN
+        V1KafkaTopic before = V1KafkaTopic.builder()
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .build())
+            .build();
+
+        TopicChangeComputer changeComputer = new TopicChangeComputer(List.of(), true, false);
+
+        // WHEN
+        List<ResourceChange> changes = changeComputer.computeChanges(List.of(before), List.of());
+
+        // THEN
+        ResourceChange expected = GenericResourceChange
+            .builder(V1KafkaTopic.class)
+            .withMetadata(before.getMetadata())
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(DELETE)
+                .withChange(StateChange.delete(TopicChange.PARTITIONS, 1))
+                .withChange(StateChange.delete(TopicChange.REPLICAS, (short) 1))
+                .build()
+            )
+            .build();
+        Assertions.assertEquals(List.of(expected), changes);
+    }
+
+    @Test
+    void shouldReturnNoneChangesForDeleteOrphansTrueAndExclude() {
+        // GIVEN
+        V1KafkaTopic before = V1KafkaTopic.builder()
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_TOPIC)
+                .build()
+            )
+            .withSpec(V1KafkaTopicSpec
+                .builder()
+                .withPartitions(1)
+                .withReplicas((short) 1)
+                .build())
+            .build();
+
+        TopicChangeComputer changeComputer = new TopicChangeComputer(
+            List.of(Pattern.compile(TEST_TOPIC)),
+            true,
+            false
+        );
+
+        // WHEN
+        List<ResourceChange> changes = changeComputer.computeChanges(List.of(before), List.of());
+
+        // THEN
+        Assertions.assertEquals(List.of(), changes);
     }
 }

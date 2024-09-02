@@ -38,6 +38,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -54,7 +55,21 @@ public final class AdminClientKafkaTopicController
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 
-    public static final String CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME = "config-delete-orphans";
+    // reconciliation property
+    private final ConfigProperty<Boolean> isConfigDeleteOrphansEnabled = ConfigProperty
+        .ofBoolean("config-delete-orphans")
+        .orElse(true);
+
+    // reconciliation property
+    private final ConfigProperty<Boolean> isDeleteOrphansEnabled = ConfigProperty
+        .ofBoolean("delete-orphans")
+        .orElse(false);
+
+    // extension property
+    private final ConfigProperty<List<Pattern>> topicDeleteExcludePatterns = ConfigProperty
+        .ofList("kafka.topics.deletion.exclude")
+        .map(l -> l.stream().map(Pattern::compile).toList())
+        .orElse(() -> List.of(Pattern.compile("^_schemas$"), Pattern.compile("^__.*$")));
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -137,17 +152,22 @@ public final class AdminClientKafkaTopicController
                 .stream()
                 .filter(context.selector()::apply)
                 .toList();
-
-        boolean isConfigDeletionEnabled = isConfigDeletionEnabled(context);
-
-        TopicChangeComputer changeComputer = new TopicChangeComputer(isConfigDeletionEnabled);
+        
+        TopicChangeComputer changeComputer = new TopicChangeComputer(
+            topicDeleteExcludePatterns.get(context.configuration()),
+            isDeleteOrphansEnabled(context),
+            isConfigDeleteOrphansEnabled(context)
+        );
         return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics);
     }
 
     @VisibleForTesting
-    static boolean isConfigDeletionEnabled(@NotNull ReconciliationContext context) {
-        return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(true)
-                .get(context.configuration());
+    boolean isDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
+        return isDeleteOrphansEnabled.get(context.configuration());
+    }
+
+    @VisibleForTesting
+    boolean isConfigDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
+        return isConfigDeleteOrphansEnabled.get(context.configuration());
     }
 }

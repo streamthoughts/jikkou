@@ -24,7 +24,9 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.internals.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +36,7 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
      * Creates a new {@link TopicChangeComputer} instance.
      */
     public TopicChangeComputer() {
-        this(true);
+        this(List.of(), false, true);
     }
 
     /**
@@ -42,16 +44,25 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
      *
      * @param isConfigDeletionEnabled {@code true} to delete orphaned config entries.
      */
-    public TopicChangeComputer(boolean isConfigDeletionEnabled) {
-        super(ChangeComputerBuilder.KeyMapper.byName(), new TopicChangeFactory(isConfigDeletionEnabled));
+    public TopicChangeComputer(@NotNull final List<Pattern> topicPatternsToExcludeFromDeletion,
+                               boolean isDeleteOrphansEnabled,
+                               boolean isConfigDeletionEnabled) {
+        super(
+            ChangeComputerBuilder.KeyMapper.byName(),
+            new TopicChangeFactory(isConfigDeletionEnabled, topicPatternsToExcludeFromDeletion),
+            isDeleteOrphansEnabled
+        );
     }
 
     public static final class TopicChangeFactory extends ResourceChangeFactory<String, V1KafkaTopic, ResourceChange> {
 
         private final ChangeComputer<ConfigValue, StateChange> configEntryChangeComputer;
+        private final List<Pattern> topicPatternsToExcludeFromDeletion;
 
-        public TopicChangeFactory(boolean isConfigDeletionEnabled) {
+        public TopicChangeFactory(boolean isConfigDeletionEnabled,
+                                  final List<Pattern> topicPatternsToExcludeFromDeletion) {
             this.configEntryChangeComputer = getChangeComputerForConfig(isConfigDeletionEnabled);
+            this.topicPatternsToExcludeFromDeletion = topicPatternsToExcludeFromDeletion;
         }
 
         @Override
@@ -65,6 +76,21 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
 
         @Override
         public ResourceChange createChangeForDelete(String key, V1KafkaTopic before) {
+            final String topicName = before.getMetadata().getName();
+            // check if topic is internal
+            if (Topic.isInternal(topicName)) {
+                return null;
+            }
+
+            // check if topic is explicitly excluded from deletion
+            if (!topicPatternsToExcludeFromDeletion.isEmpty()) {
+                boolean isExcluded = topicPatternsToExcludeFromDeletion.stream().anyMatch(p -> p.matcher(topicName).matches());
+                if (isExcluded) {
+                    return null;
+                }
+            }
+
+            // otherwise, build the change
             List<StateChange> changes = new ArrayList<>();
             changes.add(StateChange.delete(TopicChange.PARTITIONS, getPartitionsOrDefault(before)));
             changes.add(StateChange.delete(TopicChange.REPLICAS, getReplicationFactorOrDefault(before)));
@@ -78,13 +104,13 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
             // Do not compute change when partition is equals to default.
             if (getPartitionsOrDefault(after) == KafkaTopics.NO_NUM_PARTITIONS) {
                 partitions = StateChange.none(
-                        TopicChange.PARTITIONS,
-                        KafkaTopics.NO_NUM_PARTITIONS);
+                    TopicChange.PARTITIONS,
+                    KafkaTopics.NO_NUM_PARTITIONS);
             } else {
                 partitions = StateChange.with(
-                        TopicChange.PARTITIONS,
-                        getPartitionsOrDefault(before),
-                        getPartitionsOrDefault(after)
+                    TopicChange.PARTITIONS,
+                    getPartitionsOrDefault(before),
+                    getPartitionsOrDefault(after)
                 );
             }
 
@@ -92,27 +118,27 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
             // Do not compute change when replication-factor is equals to default.
             if (getReplicationFactorOrDefault(after) == KafkaTopics.NO_REPLICATION_FACTOR) {
                 replicas = StateChange.none(
-                        TopicChange.REPLICAS,
-                        KafkaTopics.NO_REPLICATION_FACTOR);
+                    TopicChange.REPLICAS,
+                    KafkaTopics.NO_REPLICATION_FACTOR);
             } else {
                 replicas = StateChange.with(
-                        TopicChange.REPLICAS,
-                        getReplicationFactorOrDefault(before),
-                        getReplicationFactorOrDefault(after)
+                    TopicChange.REPLICAS,
+                    getReplicationFactorOrDefault(before),
+                    getReplicationFactorOrDefault(after)
                 );
             }
 
             List<StateChange> configChanges = getConfigChanges(before, after);
 
             boolean hasChanged = configChanges.stream()
-                    .anyMatch(change -> change.getOp() != Operation.NONE);
+                .anyMatch(change -> change.getOp() != Operation.NONE);
 
             var configOpType = hasChanged ? Operation.UPDATE : Operation.NONE;
             var partitionOpType = partitions.getOp();
 
             Operation op = List.of(partitionOpType, configOpType).contains(Operation.UPDATE) ?
-                    Operation.UPDATE :
-                    Operation.NONE;
+                Operation.UPDATE :
+                Operation.NONE;
 
             List<StateChange> valueChanges = new ArrayList<>();
             valueChanges.add(partitions);
@@ -126,34 +152,33 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
         private List<StateChange> getConfigChanges(@Nullable V1KafkaTopic before,
                                                    @Nullable V1KafkaTopic after) {
             List<StateChange> changes = configEntryChangeComputer.computeChanges(
-                    Optional.ofNullable(before).map(o -> o.getSpec().getConfigs()).orElse(null),
-                    Optional.ofNullable(after).map(o -> o.getSpec().getConfigs()).orElse(null)
+                Optional.ofNullable(before).map(o -> o.getSpec().getConfigs()).orElse(null),
+                Optional.ofNullable(after).map(o -> o.getSpec().getConfigs()).orElse(null)
             );
             return changes
-                    .stream()
-                    .map(change -> StateChange.builder()
-                            .withName(CONFIG_PREFIX + change.getName())
-                            .withOp(change.getOp())
-                            .withBefore(change.getBefore())
-                            .withAfter(change.getAfter())
-                            .build()
-
-                    )
-                    .collect(Collectors.toList());
+                .stream()
+                .map(change -> StateChange.builder()
+                    .withName(CONFIG_PREFIX + change.getName())
+                    .withOp(change.getOp())
+                    .withBefore(change.getBefore())
+                    .withAfter(change.getAfter())
+                    .build()
+                )
+                .collect(Collectors.toList());
         }
 
         private static ResourceChange buildResourceChange(V1KafkaTopic resource,
                                                           Operation type,
                                                           List<StateChange> changes) {
             return GenericResourceChange.builder(V1KafkaTopic.class)
-                    .withMetadata(resource.getMetadata())
-                    .withSpec(ResourceChangeSpec
-                            .builder()
-                            .withOperation(type)
-                            .withChanges(changes)
-                            .build()
-                    )
-                    .build();
+                .withMetadata(resource.getMetadata())
+                .withSpec(ResourceChangeSpec
+                    .builder()
+                    .withOperation(type)
+                    .withChanges(changes)
+                    .build()
+                )
+                .build();
         }
 
         /**
@@ -161,9 +186,9 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
          */
         private int getPartitionsOrDefault(V1KafkaTopic resource) {
             return Optional
-                    .ofNullable(resource.getSpec())
-                    .flatMap(spec -> Optional.ofNullable(spec.getPartitions()))
-                    .orElse(KafkaTopics.NO_NUM_PARTITIONS);
+                .ofNullable(resource.getSpec())
+                .flatMap(spec -> Optional.ofNullable(spec.getPartitions()))
+                .orElse(KafkaTopics.NO_NUM_PARTITIONS);
         }
 
         /**
@@ -171,28 +196,28 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
          */
         private short getReplicationFactorOrDefault(V1KafkaTopic resource) {
             return Optional
-                    .ofNullable(resource.getSpec())
-                    .flatMap(spec -> Optional.ofNullable(spec.getReplicas()))
-                    .orElse(KafkaTopics.NO_REPLICATION_FACTOR);
+                .ofNullable(resource.getSpec())
+                .flatMap(spec -> Optional.ofNullable(spec.getReplicas()))
+                .orElse(KafkaTopics.NO_REPLICATION_FACTOR);
         }
 
         private static ChangeComputer<ConfigValue, StateChange> getChangeComputerForConfig(boolean deleteOrphans) {
             return ChangeComputer
-                    .<String, ConfigValue, StateChange>builder()
-                    .withDeleteOrphans(deleteOrphans)
-                    .withKeyMapper(ConfigValue::name)
-                    .withChangeFactory((key, before, after) -> {
-                        Object beforeValue = Optional.ofNullable(before)
-                                .map(ConfigValue::value)
-                                .orElse(null);
+                .<String, ConfigValue, StateChange>builder()
+                .withDeleteOrphans(deleteOrphans)
+                .withKeyMapper(ConfigValue::name)
+                .withChangeFactory((key, before, after) -> {
+                    Object beforeValue = Optional.ofNullable(before)
+                        .map(ConfigValue::value)
+                        .orElse(null);
 
-                        Object afterValue = Optional.ofNullable(after)
-                                .map(ConfigValue::value)
-                                .orElse(null);
-                        StateChange change = StateChange.with(key, beforeValue, afterValue);
-                        return change.getOp() == DELETE && !before.isDeletable() ? Optional.empty() : Optional.of(change);
-                    })
-                    .build();
+                    Object afterValue = Optional.ofNullable(after)
+                        .map(ConfigValue::value)
+                        .orElse(null);
+                    StateChange change = StateChange.with(key, beforeValue, afterValue);
+                    return change.getOp() == DELETE && !before.isDeletable() ? Optional.empty() : Optional.of(change);
+                })
+                .build();
         }
     }
 }

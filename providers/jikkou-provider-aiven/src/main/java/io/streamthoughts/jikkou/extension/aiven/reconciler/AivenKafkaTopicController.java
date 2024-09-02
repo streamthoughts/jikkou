@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
@@ -53,7 +54,25 @@ public final class AivenKafkaTopicController
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenKafkaTopicController.class);
 
-    public static final String CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME = "config-delete-orphans";
+    // reconciliation property
+    private final ConfigProperty<Boolean> isConfigDeleteOrphansEnabled = ConfigProperty
+        .ofBoolean("config-delete-orphans")
+        .orElse(true);
+
+    // reconciliation property
+    private final ConfigProperty<Boolean> isDeleteOrphansEnabled = ConfigProperty
+        .ofBoolean("delete-orphans")
+        .orElse(false);
+
+    // extension property
+    private final ConfigProperty<List<Pattern>> topicDeleteExcludePatterns = ConfigProperty
+        .ofList("kafka.topics.deletion.exclude")
+        .map(l -> l.stream().map(Pattern::compile).toList())
+        .orElse(() -> List.of(
+            Pattern.compile("^_schemas$"),
+            Pattern.compile("^__.*$"),
+            Pattern.compile(".*-changelog$")
+        ));
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -150,9 +169,12 @@ public final class AivenKafkaTopicController
             .filter(context.selector()::apply)
             .toList();
 
-        boolean isConfigDeletionEnabled = isConfigDeletionEnabled(context);
+        TopicChangeComputer changeComputer = new TopicChangeComputer(
+            topicDeleteExcludePatterns.get(context.configuration()),
+            isDeleteOrphansEnabled(context),
+            isConfigDeleteOrphansEnabled(context)
+        );
 
-        TopicChangeComputer changeComputer = new TopicChangeComputer(isConfigDeletionEnabled);
         return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics)
             .stream()
             .map(change -> change.withApiVersion(KAFKA_AIVEN_V1BETA2))
@@ -160,9 +182,12 @@ public final class AivenKafkaTopicController
     }
 
     @VisibleForTesting
-    static boolean isConfigDeletionEnabled(@NotNull ReconciliationContext context) {
-        return ConfigProperty.ofBoolean(CONFIG_ENTRY_DELETE_ORPHANS_CONFIG_NAME)
-            .orElse(true)
-            .get(context.configuration());
+    boolean isDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
+        return isDeleteOrphansEnabled.get(context.configuration());
+    }
+
+    @VisibleForTesting
+    boolean isConfigDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
+        return isConfigDeleteOrphansEnabled.get(context.configuration());
     }
 }

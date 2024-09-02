@@ -40,7 +40,7 @@ public final class DefaultChangeComputer<K, V, R> implements ChangeComputer<V, R
     /**
      * Creates a new {@link DefaultChangeComputer} instance.
      *
-     * @param isDeleteOrphans
+     * @param isDeleteOrphans Specifies whether orphans must be deleted.
      * @param keyMapper       The {@link KeyMapper}.
      * @param changeFactory   The {@link ChangeFactory}.
      */
