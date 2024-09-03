@@ -22,6 +22,10 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-latest, macOS-latest, macOS-12, windows-latest ]
+        setup: [ graalvm ]
+        include:
+          - os: ubuntu-latest
+            setup: java
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout GitHub repository'
@@ -35,6 +39,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: 'Set up GraalVM'
+        if: ${{ matrix.setup == 'graalvm' }}
         uses: graalvm/setup-graalvm@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
@@ -42,34 +47,42 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
 
+      - name: 'Set up Java'
+        if: ${{ matrix.setup == 'java' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ env.JAVA_VERSION }}
+
       - name: 'Build Native Image (Linux)'
-        if: ${{ runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' && matrix.setup == 'graalvm' }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pnative package
 
       - name: 'Build Native Image (macOS)'
-        if: ${{ runner.os == 'macOS' }}
+        if: ${{ runner.os == 'macOS' && matrix.setup == 'graalvm' }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
       - name: 'Build Native Image (Windows)'
-        if: ${{ runner.os == 'windows' }}
+        if: ${{ runner.os == 'windows' && matrix.setup == 'graalvm'  }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
 
-      - name: 'Build Distribution'
-        run: |
-          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
-
       - name: 'Build Debian Package (Linux)'
-        if: ${{ runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' && matrix.setup == 'graalvm' }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pdeb package -DskipTests
+
+      - name: 'Build Distribution'
+        if: ${{ runner.os == 'Linux' && matrix.setup == 'java'  }}
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts-${{ runner.os }}-${{ runner.arch }}
+          name: artifacts-${{ runner.os }}-${{ runner.arch }}-${{ matrix.setup }}
           path: |
             dist/*.zip
             dist/*.tar.gz
