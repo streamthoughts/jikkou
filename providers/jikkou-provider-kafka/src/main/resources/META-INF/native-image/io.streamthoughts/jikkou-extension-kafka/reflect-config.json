@@ -295,6 +295,33 @@
     ]
   },
   {
+    "name": "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.kafka.common.security.oauthbearer.internals.OAuthBearerSaslClient$OAuthBearerSaslClientFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "org.apache.kafka.common.security.authenticator.DefaultLogin",
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
