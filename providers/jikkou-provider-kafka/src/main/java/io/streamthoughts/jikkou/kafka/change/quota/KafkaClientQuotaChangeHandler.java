@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.change.quota;
 
+import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
@@ -15,6 +16,7 @@ import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.core.reconciler.change.BaseChangeHandler;
 import io.streamthoughts.jikkou.kafka.internals.Futures;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,7 +99,13 @@ public final class KafkaClientQuotaChangeHandler extends BaseChangeHandler<Resou
 
     @NotNull
     private static ClientQuotaEntity getClientQuotaEntity(ResourceChange resource) {
-        return new ClientQuotaEntity(TypeConverter.<String, String>ofMap().convertValue(resource.getSpec().getData()));
+        Map<String, String> entries = TypeConverter.<String, String>ofMap()
+            .convertValue(resource.getSpec().getData())
+            .entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry).mapRight(v -> v.isEmpty() ? null : v))
+            .collect(HashMap::new, (m, v) -> m.put(v._1(), v._2()), HashMap::putAll);
+        return new ClientQuotaEntity(entries);
     }
 
     /**

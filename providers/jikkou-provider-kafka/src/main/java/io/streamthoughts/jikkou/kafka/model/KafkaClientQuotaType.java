@@ -54,7 +54,7 @@ public enum KafkaClientQuotaType {
         @Override
         public Map<String, String> toEntities(@NotNull final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
-            entities.put(ClientQuotaEntity.USER, DEFAULT);
+            entities.put(ClientQuotaEntity.USER, DEFAULT_ENTITY);
             return entities;
         }
 
@@ -180,7 +180,7 @@ public enum KafkaClientQuotaType {
         public Map<String, String> toEntities(@NotNull final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
             entities.put(ClientQuotaEntity.USER, entity.getUser());
-            entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
+            entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT_ENTITY);
             return entities;
         }
 
@@ -222,7 +222,7 @@ public enum KafkaClientQuotaType {
         @Override
         public Map<String, String> toEntities(final KafkaClientQuotaEntity entity) {
             Map<String, String> entities = new HashMap<>();
-            entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT);
+            entities.put(ClientQuotaEntity.CLIENT_ID, DEFAULT_ENTITY);
             return entities;
         }
 
@@ -268,7 +268,7 @@ public enum KafkaClientQuotaType {
         }
     };
 
-    public static final String DEFAULT = null;
+    public static final String DEFAULT_ENTITY = "";
 
     /**
      * Validates the given map of quota entities for this type.
