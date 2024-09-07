@@ -45,7 +45,7 @@ build-dist: print-info
 	./mvnw clean -ntp -B --file ./pom.xml package -Pnative
 
 build-image:
-	cp ./jikkou-cli/target/jikkou-cli-${VERSION}-runner ./docker/jikkou-cli-${VERSION}-runner
+	cp ./cli/target/jikkou-cli-${VERSION}-runner ./docker/jikkou-cli-${VERSION}-runner
 	docker build \
 	--compress \
 	--build-arg VERSION="${VERSION}" \
@@ -53,7 +53,7 @@ build-image:
 	--build-arg BRANCH="${GIT_BRANCH}" \
 	--build-arg CREATED="${DATE}" \
 	--rm \
-	-f ./docker/Dockerfile.ubuntu \
+	-f ./docker/Dockerfile_ubuntu \
 	-t ${REPOSITORY}/${IMAGE}:${VERSION} ${DOCKER_PATH} || exit 1 ;
 
 	docker tag ${REPOSITORY}/${IMAGE}:${VERSION} ${REPOSITORY}/${IMAGE}:dev || exit 1 ;

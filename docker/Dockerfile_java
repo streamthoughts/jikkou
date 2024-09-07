@@ -38,6 +38,8 @@ LABEL org.opencontainers.image.created=$CREATED \
       org.opencontainers.image.version=$VERSION \
       org.opencontainers.image.revision=$COMMIT
 
+ENV PATH="$PATH:/app"
+
 ENTRYPOINT ["./bin/jikkou"]
 
 
