@@ -37,7 +37,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.")
-@Names(singular = "avn-schema-registry-acl", shortNames = {
+@Names(singular = "avn-schemaregistryacl", plural = "avn-schemaregistryacls", shortNames = {
     "avnsra"
 })
 @Verbs({

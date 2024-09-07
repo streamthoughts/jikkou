@@ -37,7 +37,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The KafkaTopicAclEntry resource allows managing topic ACLs on Aiven for Apache Kafka.")
-@Names(singular = "avn-kafka-topic-acl", shortNames = {
+@Names(singular = "avn-kafkatopicacl", plural = "avn-kafkatopicacls", shortNames = {
     "avnkta"
 })
 @Verbs({

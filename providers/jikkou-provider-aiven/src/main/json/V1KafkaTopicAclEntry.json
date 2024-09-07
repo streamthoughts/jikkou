@@ -13,7 +13,8 @@
     "all-args-constructor": false,
     "spec": {
       "names": {
-        "singular": "avn-kafka-topic-acl",
+        "plural": "avn-kafkatopicacls",
+        "singular": "avn-kafkatopicacl",
         "shortNames": [
           "avnkta"
         ]

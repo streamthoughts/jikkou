@@ -13,7 +13,8 @@
     "all-args-constructor": false,
     "spec": {
       "names": {
-        "singular": "avn-kafka-quota",
+        "plural": "avn-kafkaquotas",
+        "singular": "avn-kafkaquota",
         "shortNames": [
           "avnkq"
         ]

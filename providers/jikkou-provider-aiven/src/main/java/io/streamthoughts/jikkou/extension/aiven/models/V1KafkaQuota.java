@@ -37,7 +37,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The KafkaQuota resource allows managing quotas and schema on Aiven for Apache Kafka.")
-@Names(singular = "avn-kafka-quota", shortNames = {
+@Names(singular = "avn-kafkaquota", plural = "avn-kafkaquotas", shortNames = {
     "avnkq"
 })
 @Verbs({

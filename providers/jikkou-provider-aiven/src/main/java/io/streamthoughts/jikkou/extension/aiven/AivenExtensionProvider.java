@@ -80,7 +80,7 @@ public final class AivenExtensionProvider extends AbstractExtensionProvider {
         registry.register(V1SchemaRegistrySubject.class, KAFKA_AIVEN_V1BETA1)
             .setSingularName("avn-schemaregistrysubject")
             .setPluralName("avn-schemaregistrysubjects")
-            .setShortNames(null);
+            .setShortNames(Set.of("avnsr"));
 
         registry.register(GenericResourceChange.class, ResourceType.of(
             ResourceChange.getChangeKindFromResource(V1SchemaRegistrySubject.class),
@@ -90,7 +90,7 @@ public final class AivenExtensionProvider extends AbstractExtensionProvider {
         registry.register(V1KafkaTopic.class, KAFKA_AIVEN_V1BETA2)
             .setSingularName("avn-kafkatopic")
             .setPluralName("avn-kafkatopics")
-            .setShortNames(Set.of("avn-kt"));
+            .setShortNames(Set.of("avnkt"));
 
         registry.register(GenericResourceChange.class, ResourceType.of(
             ResourceChange.getChangeKindFromResource(V1KafkaTopic.class),
