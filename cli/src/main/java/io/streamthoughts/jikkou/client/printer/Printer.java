@@ -16,9 +16,10 @@ public interface Printer {
      *
      * @param result the reconciliation changes to print.
      * @param executionTimeMs the execution time in milliseconds.
+     * @param pretty Use a pretty-printer.
      * @return the exit name.
      */
-    int print(ApiChangeResultList result, long executionTimeMs);
+    int print(ApiChangeResultList result, long executionTimeMs, boolean pretty);
 
     static int getNumberOfFailedChange(final List<ChangeResult> results) {
         return (int) results.stream()

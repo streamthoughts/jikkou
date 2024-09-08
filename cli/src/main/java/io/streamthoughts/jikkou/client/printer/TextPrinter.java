@@ -43,8 +43,7 @@ public class TextPrinter implements Printer {
      * {@inheritDoc}
      **/
     @Override
-    public int print(ApiChangeResultList result,
-                     long executionTimeMs) {
+    public int print(ApiChangeResultList result, long executionTimeMs, boolean pretty) {
         int ok = 0;
         int created = 0;
         int changed = 0;

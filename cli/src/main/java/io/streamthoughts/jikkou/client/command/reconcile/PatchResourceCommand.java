@@ -75,7 +75,7 @@ public final class PatchResourceCommand extends CLIBaseCommand implements Callab
                     mode,
                     getReconciliationContext()
             );
-            return execOptions.format.print(results, Jikkou.getExecutionTime());
+            return execOptions.format.print(results, Jikkou.getExecutionTime(), execOptions.pretty);
         } catch (ValidationException exception) {
             System.out.println(ValidationErrorsWriter.write(exception.errors()));
             return CommandLine.ExitCode.SOFTWARE;
