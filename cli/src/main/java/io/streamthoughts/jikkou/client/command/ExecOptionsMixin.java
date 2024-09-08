@@ -11,14 +11,19 @@ import picocli.CommandLine.Option;
 
 public class ExecOptionsMixin {
 
-    @Option(names = { "--output", "-o" },
-            defaultValue = "TEXT",
-            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
+    @Option(names = {"--output", "-o"},
+        defaultValue = "TEXT",
+        description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
     )
     public Printers format;
 
+    @Option(names = {"--pretty"},
+        description = "Pretty print the output (only supported for JSON)."
+    )
+    public boolean pretty;
+
     @Option(names = "--dry-run",
-            description = "Execute command in Dry-Run mode."
+        description = "Execute command in Dry-Run mode."
     )
     public boolean dryRun;
 

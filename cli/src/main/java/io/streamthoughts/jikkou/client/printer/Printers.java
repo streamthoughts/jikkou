@@ -25,7 +25,7 @@ public enum Printers implements Printer {
 
     /** {@inheritDoc} **/
     @Override
-    public int print(ApiChangeResultList result, long executionTimeInMillis) {
-        return printer.print(result, executionTimeInMillis);
+    public int print(ApiChangeResultList result, long executionTimeInMillis, boolean pretty) {
+        return printer.print(result, executionTimeInMillis, pretty);
     }
 }

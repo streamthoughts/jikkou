@@ -23,12 +23,14 @@ public class SerializePrinter implements Printer {
      * {@inheritDoc}
      **/
     @Override
-    public int print(ApiChangeResultList result, long executionTimeMs) {
+    public int print(ApiChangeResultList result, long executionTimeMs, boolean pretty) {
         final String json;
         try {
-            json = mapper
-                    .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(result);
+            if (pretty) {
+                json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
+            } else {
+                json = mapper.writeValueAsString(result);
+            }
             System.out.print(json);
         } catch (JsonProcessingException e) {
             throw new JikkouRuntimeException(e);

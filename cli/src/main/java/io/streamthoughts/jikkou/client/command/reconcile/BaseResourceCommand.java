@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.client.command.ExecOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
+import io.streamthoughts.jikkou.client.printer.Printers;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
@@ -56,7 +57,8 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
                     getReconciliationMode(),
                     getReconciliationContext()
             );
-            return execOptions.format.print(results, Jikkou.getExecutionTime());
+            Printers printers = execOptions.format;
+            return printers.print(results, Jikkou.getExecutionTime(), execOptions.pretty);
         } catch (ValidationException exception) {
             System.out.println(ValidationErrorsWriter.write(exception.errors()));
             return CommandLine.ExitCode.SOFTWARE;
