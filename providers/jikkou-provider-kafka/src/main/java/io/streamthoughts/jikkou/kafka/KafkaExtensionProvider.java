@@ -48,6 +48,7 @@ import io.streamthoughts.jikkou.kafka.validation.NoDuplicatePrincipalAllowedVali
 import io.streamthoughts.jikkou.kafka.validation.NoDuplicatePrincipalRoleValidation;
 import io.streamthoughts.jikkou.kafka.validation.NoDuplicateTopicsAllowedValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicConfigKeysValidation;
+import io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitionsValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactorValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation;
 import io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation;
@@ -103,6 +104,7 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
         registry.register(TopicMinReplicationFactorValidation.class, TopicMinReplicationFactorValidation::new);
         registry.register(TopicMaxReplicationFactorValidation.class, TopicMaxReplicationFactorValidation::new);
         registry.register(TopicMinNumPartitionsValidation.class, TopicMinNumPartitionsValidation::new);
+        registry.register(TopicMaxNumPartitionsValidation.class, TopicMaxNumPartitionsValidation::new);
         registry.register(TopicNameRegexValidation.class, TopicNameRegexValidation::new);
         registry.register(TopicNamePrefixValidation.class, TopicNamePrefixValidation::new);
         registry.register(TopicNameSuffixValidation.class, TopicNameSuffixValidation::new);
