@@ -13,9 +13,10 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(type = V1KafkaQuota.class)
 public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
 
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
 
     /**
      * Creates a new {@link AivenKafkaQuotaCollector} instance.
@@ -43,10 +44,10 @@ public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
     /**
      * Creates a new {@link AivenKafkaQuotaCollector} instance.
      *
-     * @param config the configuration.
+     * @param apiClientConfig the configuration.
      */
-    public AivenKafkaQuotaCollector(AivenApiClientConfig config) {
-        init(config);
+    public AivenKafkaQuotaCollector(AivenApiClientConfig apiClientConfig) {
+        init(apiClientConfig);
     }
 
     /**
@@ -54,20 +55,20 @@ public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
     private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.config = config;
+        this.apiClientConfig = config;
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1KafkaQuota> listAll(@NotNull Configuration configuration,
-                                                    @NotNull Selector selector) {
-        final AivenApiClient api = AivenApiClientFactory.create(config);
+    public ResourceList<V1KafkaQuota> listAll(@NotNull Configuration configuration,
+                                              @NotNull Selector selector) {
+        final AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             ListKafkaQuotaResponse response = api.listKafkaQuotas();
 
@@ -85,7 +86,7 @@ public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
                     .map(KafkaQuotaAdapter::map)
                     .filter(selector::apply)
                     .collect(Collectors.toList());
-            return new V1KafkaQuotaList(items);
+            return new V1KafkaQuotaList.Builder().withItems(items).build();
 
         } catch (RestClientException e) {
             String response;

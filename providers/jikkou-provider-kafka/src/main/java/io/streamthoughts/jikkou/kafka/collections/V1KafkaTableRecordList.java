@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.kafka.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaTableRecordList")
-public class V1KafkaTableRecordList extends DefaultResourceListObject<V1KafkaTableRecord> {
+public class V1KafkaTableRecordList extends SpecificResourceList<V1KafkaTableRecordList, V1KafkaTableRecord> {
 
 
     /**
-     * Creates a new {@link V1KafkaTableRecordList} instance.
+     * Creates a new {@link V1KafkaBrokerList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -38,16 +38,29 @@ public class V1KafkaTableRecordList extends DefaultResourceListObject<V1KafkaTab
     public V1KafkaTableRecordList(@Nullable String kind,
                                   @Nullable String apiVersion,
                                   @Nullable ObjectMeta metadata,
-                                  @NotNull List<? extends V1KafkaTableRecord> items) {
+                                  @NotNull List<V1KafkaTableRecord> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaTableRecordList} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaTableRecordList(List<? extends V1KafkaTableRecord> items) {
-        super(items);
+    @Override
+    public V1KafkaTableRecordList.Builder toBuilder() {
+        return new V1KafkaTableRecordList.Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaTableRecordList.Builder, V1KafkaTableRecordList, V1KafkaTableRecord> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaTableRecordList build() {
+            return new V1KafkaTableRecordList(apiVersion, kind, metadata, items);
+        }
     }
 }

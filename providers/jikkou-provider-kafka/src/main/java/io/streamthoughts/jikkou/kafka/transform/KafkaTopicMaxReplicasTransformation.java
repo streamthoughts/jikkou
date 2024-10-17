@@ -42,7 +42,7 @@ public class KafkaTopicMaxReplicasTransformation implements Transformation<V1Kaf
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        maxReplicationFactor = MAX_REPLICATION_FACTOR_CONFIG.getOptional(context.appConfiguration())
+        maxReplicationFactor = MAX_REPLICATION_FACTOR_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MAX_REPLICATION_FACTOR_CONFIG.key(),

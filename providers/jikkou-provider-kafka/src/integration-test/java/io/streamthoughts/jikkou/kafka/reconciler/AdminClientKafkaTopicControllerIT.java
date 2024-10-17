@@ -7,44 +7,31 @@
 package io.streamthoughts.jikkou.kafka.reconciler;
 
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
-import io.streamthoughts.jikkou.core.DefaultApi;
-import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.converter.ResourceListConverter;
-import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.io.ResourceLoader;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
 import io.streamthoughts.jikkou.core.models.ConfigValue;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.DefaultChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.core.resource.ResourceDeserializer;
 import io.streamthoughts.jikkou.core.selector.Selectors;
-import io.streamthoughts.jikkou.kafka.AbstractKafkaIntegrationTest;
+import io.streamthoughts.jikkou.kafka.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
-import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationTest {
+public class AdminClientKafkaTopicControllerIT extends BaseExtensionProviderIT {
 
     public static final String CLASSPATH_RESOURCE_TOPICS = "test-kafka-topics.yaml";
     public static final String CLASSPATH_RESOURCE_TOPIC_ALL_DELETE = "test-kafka-topics-with-all-delete.yaml";
@@ -55,64 +42,38 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
 
     private final ResourceLoader loader = new ResourceLoader(new ResourceReaderFactory(Jackson.YAML_OBJECT_MAPPER));
 
-    private volatile JikkouApi api;
-
-    @BeforeAll
-    public static void beforeAll() {
-        ResourceDeserializer.registerKind(V1KafkaTopicList.class);
-    }
-
-    @BeforeEach
-    public void setUp() {
-        AdminClientContextFactory factory = new AdminClientContextFactory(
-                Configuration.empty(),
-                () -> AdminClient.create(clientConfig())
-        );
-
-        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
-                new DefaultExtensionDescriptorFactory(),
-                new ClassExtensionAliasesGenerator()
-        );
-
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry), new DefaultResourceRegistry())
-                .register(AdminClientKafkaTopicController.class, () -> new AdminClientKafkaTopicController(factory))
-                .register(AdminClientKafkaTopicCollector.class, () -> new AdminClientKafkaTopicCollector(factory))
-                .register(ResourceListConverter.class, ResourceListConverter::new)
-                .build();
-    }
-
     @Test
     public void shouldReconcileKafkaTopicsGivenModeCreate() {
         // GIVEN
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
+        ResourceList<V1KafkaTopic> initialTopicList = listResources();
         List<? extends ChangeResult> results = api.reconcile(resources, ReconciliationMode.CREATE, context).results();
-        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
+        ResourceList<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
-                0,
-                initialTopicList.size(),
-                "Invalid number of topics [before reconciliation]");
+            0,
+            initialTopicList.size(),
+            "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                2, actualTopicList.size(),
-                "Invalid number of topics [after reconciliation]");
+            2, actualTopicList.size(),
+            "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
-                2,
-                results.size(),
-                "Invalid number of changes");
+            2,
+            results.size(),
+            "Invalid number of changes");
 
         V1KafkaTopicList expectedTopicList = resources.getAllByClass(V1KafkaTopicList.class).get(0);
         Assertions.assertEquals(
-                expectedTopicList.getItems().size(),
-                actualTopicList.size()
+            expectedTopicList.getItems().size(),
+            actualTopicList.size()
         );
 
         Map<String, V1KafkaTopic> actualByTopicName = actualTopicList.keyByName();
@@ -142,29 +103,29 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         createTopic(TOPIC_TEST_B);
 
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_ALL_DELETE);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_ALL_DELETE);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
+        ResourceList<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult> results = api.reconcile(resources, ReconciliationMode.DELETE, context).results();
-        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
+        ResourceList<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
-                2,
-                initialTopicList.size(),
-                "Invalid number of topics [before reconciliation]");
+            2,
+            initialTopicList.size(),
+            "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                0, actualTopicList.size(),
-                "Invalid number of topics [after reconciliation]");
+            0, actualTopicList.size(),
+            "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
-                2,
-                results.size(),
-                "Invalid number of changes");
+            2,
+            results.size(),
+            "Invalid number of changes");
 
         ChangeResult change = results.iterator().next();
         Assertions.assertEquals(DefaultChangeResult.Status.CHANGED, change.status());
@@ -178,33 +139,33 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         createTopic(TOPIC_TEST_A);
 
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
+        ResourceList<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult> results = api.reconcile(resources, ReconciliationMode.UPDATE, context).results();
-        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
+        ResourceList<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
-                1,
-                initialTopicList.size(),
-                "Invalid number of topics [before reconciliation]");
+            1,
+            initialTopicList.size(),
+            "Invalid number of topics [before reconciliation]");
         Assertions.assertEquals(
-                2, actualTopicList.size(),
-                "Invalid number of topics [after reconciliation]");
+            2, actualTopicList.size(),
+            "Invalid number of topics [after reconciliation]");
         Assertions.assertEquals(
-                2,
-                results.size(),
-                "Invalid number of changes");
+            2,
+            results.size(),
+            "Invalid number of changes");
 
         Map<String, ResourceChange> changeKeyedByTopicName = results.stream()
-                .map(ChangeResult::change)
-                .collect(Collectors.toMap(o -> o.getMetadata().getName(), o -> o));
+            .map(ChangeResult::change)
+            .collect(Collectors.toMap(o -> o.getMetadata().getName(), o -> o));
 
         Assertions.assertNotNull(changeKeyedByTopicName.get(TOPIC_TEST_A));
         Assertions.assertEquals(Operation.UPDATE, changeKeyedByTopicName.get(TOPIC_TEST_A).getSpec().getOp());
@@ -219,37 +180,37 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         createTopic(TOPIC_TEST_C);
 
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPICS);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
+        ResourceList<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult> results = api.reconcile(resources, ReconciliationMode.FULL, context).results();
-        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
+        ResourceList<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
-                1,
-                initialTopicList.size(),
-                "Invalid number of topics [before reconciliation]: " +
-                        topicNames(initialTopicList)
+            1,
+            initialTopicList.size(),
+            "Invalid number of topics [before reconciliation]: " +
+                topicNames(initialTopicList)
         );
         Assertions.assertEquals(
-                3, actualTopicList.size(),
-                "Invalid number of topics [after reconciliation]:" +
-                        topicNames(actualTopicList)
+            3, actualTopicList.size(),
+            "Invalid number of topics [after reconciliation]:" +
+                topicNames(actualTopicList)
         );
         Assertions.assertEquals(
-                2,
-                results.size(),
-                "Invalid number of changes");
+            2,
+            results.size(),
+            "Invalid number of changes");
 
         boolean delete = results.stream()
-                .map(it -> it.change().getSpec().getOp())
-                .anyMatch(it -> it.equals(Operation.DELETE));
+            .map(it -> it.change().getSpec().getOp())
+            .anyMatch(it -> it.equals(Operation.DELETE));
 
         Assertions.assertFalse(delete);
     }
@@ -261,50 +222,50 @@ public class AdminClientKafkaTopicControllerIT extends AbstractKafkaIntegrationT
         createTopic(TOPIC_TEST_C);
 
         var resources = loader
-                .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE);
+            .loadFromClasspath(CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE);
 
         var context = ReconciliationContext.builder()
-                .dryRun(false)
-                .build();
+            .dryRun(false)
+            .build();
 
         // WHEN
-        ResourceListObject<V1KafkaTopic> initialTopicList = listResources();
+        ResourceList<V1KafkaTopic> initialTopicList = listResources();
         List<ChangeResult> results = api.reconcile(resources, ReconciliationMode.FULL, context).results();
 
         Thread.sleep(500); // Let's wait for KRaft to remove topic
-        ResourceListObject<V1KafkaTopic> actualTopicList = listResources();
+        ResourceList<V1KafkaTopic> actualTopicList = listResources();
 
         // THEN
         Assertions.assertEquals(
-                1,
-                initialTopicList.size(),
-                "Invalid number of topics [before reconciliation]: " +
-                        topicNames(initialTopicList)
+            1,
+            initialTopicList.size(),
+            "Invalid number of topics [before reconciliation]: " +
+                topicNames(initialTopicList)
         );
         Assertions.assertEquals(
-                2, actualTopicList.size(),
-                "Invalid number of topics [after reconciliation]: " +
-                        topicNames(actualTopicList)
+            2, actualTopicList.size(),
+            "Invalid number of topics [after reconciliation]: " +
+                topicNames(actualTopicList)
         );
         Assertions.assertEquals(
-                3,
-                results.size(),
-                "Invalid number of changes");
+            3,
+            results.size(),
+            "Invalid number of changes");
 
         Assertions.assertEquals(1, initialTopicList.size());
         boolean delete = results.stream()
-                .map(it -> it.change().getSpec().getOp())
-                .anyMatch(it -> it.equals(Operation.DELETE));
+            .map(it -> it.change().getSpec().getOp())
+            .anyMatch(it -> it.equals(Operation.DELETE));
 
         Assertions.assertTrue(delete);
     }
 
     @NotNull
-    private static List<String> topicNames(ResourceListObject<V1KafkaTopic> items) {
+    private static List<String> topicNames(ResourceList<V1KafkaTopic> items) {
         return items.stream().map(V1KafkaTopic::getMetadata).map(ObjectMeta::getName).toList();
     }
 
-    private ResourceListObject<V1KafkaTopic> listResources() {
+    private ResourceList<V1KafkaTopic> listResources() {
         return api.listResources(V1KafkaTopic.class, Selectors.NO_SELECTOR, Configuration.empty());
     }
 }

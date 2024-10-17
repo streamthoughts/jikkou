@@ -7,7 +7,7 @@
 package io.streamthoughts.jikkou.kafka.connect.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.Map;
@@ -36,7 +36,7 @@ class KafkaConnectorResourceTransformationTest {
         KafkaConnectorResourceTransformation transformation = new KafkaConnectorResourceTransformation();
         Optional<V1KafkaConnector> result = transformation.transform(
                 resource,
-                ResourceListObject.empty(),
+                ResourceList.empty(),
                 ReconciliationContext.Default.EMPTY
         );
 

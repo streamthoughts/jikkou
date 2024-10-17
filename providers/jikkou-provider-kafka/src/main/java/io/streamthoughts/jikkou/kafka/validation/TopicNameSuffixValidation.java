@@ -46,7 +46,7 @@ public class TopicNameSuffixValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        suffixes = VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.getOptional(context.appConfiguration())
+        suffixes = VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG.key(),

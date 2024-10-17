@@ -7,7 +7,7 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.core.action.SystemTimeAction;
-import io.streamthoughts.jikkou.core.annotation.Named;
+import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.converter.ResourceListConverter;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
@@ -19,7 +19,11 @@ import io.streamthoughts.jikkou.core.transform.ExcludeIgnoreResourceTransformati
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
-@Named("core")
+@Provider(
+    name = "core",
+    description = "Core Extension provider",
+    tags = {"Jikkou"}
+)
 public final class CoreExtensionProvider implements ExtensionProvider {
 
     /**

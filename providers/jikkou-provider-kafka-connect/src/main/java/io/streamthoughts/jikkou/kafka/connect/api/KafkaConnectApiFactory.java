@@ -42,38 +42,38 @@ public final class KafkaConnectApiFactory {
      */
     public static KafkaConnectApi create(@NotNull KafkaConnectClientConfig config,
                                          @Nullable Duration timeout) {
-        URI baseUri = URI.create(config.getConnectUrl());
+        URI baseUri = URI.create(config.url());
         LOG.info("Create new Kafka Connect client for: {}", baseUri);
         RestClientBuilder builder = RestClientBuilder
                 .newBuilder()
                 .baseUri(baseUri)
-                .enableClientDebugging(config.getDebugLoggingEnabled());
+                .enableClientDebugging(config.debugLoggingEnabled());
 
         if (timeout != null) {
             builder.writeTimeout(timeout)
                     .readTimeout(timeout);
         }
 
-        builder = switch (config.getAuthMethod()) {
+        builder = switch (config.authMethod()) {
             case BASICAUTH -> {
                 String buildAuthorizationHeader = getAuthorizationHeader(config);
                 builder.header("Authorization", buildAuthorizationHeader);
                 yield builder;
             }
             case SSL -> {
-                builder.sslConfig(config.getSslConfig());
+                builder.sslConfig(config.sslConfig().get());
                 yield builder;
             }
             case NONE -> builder;
 
-            case INVALID -> throw new IllegalStateException("Unexpected value: " + config.getAuthMethod());
+            case INVALID -> throw new IllegalStateException("Unexpected value: " + config.authMethod());
         };
         return builder.build(KafkaConnectApi.class);
     }
 
     @NotNull
     private static String getAuthorizationHeader(KafkaConnectClientConfig config) {
-        String basicAuthInfo = config.getBasicAuthInfo();
+        String basicAuthInfo = config.basicAuthUser() + ":" + config.basicAuthPassword();
         return "Basic " + Encoding.BASE64.encode(basicAuthInfo.getBytes(StandardCharsets.UTF_8));
     }
 }

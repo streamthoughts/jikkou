@@ -272,7 +272,7 @@ public final class KafkaConsumerGroupService {
                 .collectList()
                 .block();
 
-            return new V1KafkaConsumerGroupList(items);
+            return new V1KafkaConsumerGroupList.Builder().withItems(items).build();
         } catch (Exception e) {
             LOG.error("Failed to describe consumer groups.", e);
             throw new JikkouRuntimeException(String.format(

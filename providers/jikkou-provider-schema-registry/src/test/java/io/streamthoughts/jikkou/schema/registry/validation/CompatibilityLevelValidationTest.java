@@ -30,7 +30,7 @@ class CompatibilityLevelValidationTest {
     @BeforeEach
     public void beforeEach() {
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
-        Mockito.when(context.appConfiguration()).thenReturn(CONFIGURATION);
+        Mockito.when(context.configuration()).thenReturn(CONFIGURATION);
         validation = new CompatibilityLevelValidation();
         validation.init(context);
 

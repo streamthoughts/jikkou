@@ -76,7 +76,7 @@ public class KafkaChangeReporter implements ChangeReporter {
      */
     @Override
     public void init(@NotNull ExtensionContext context) throws ConfigException {
-        configuration = new KafkaChangeReporterConfig(context.appConfiguration());
+        configuration = new KafkaChangeReporterConfig(context.configuration());
         if (producerFactory == null) {
             producerFactory = new DefaultProducerFactory<>(
                     configuration.producerConfig(),

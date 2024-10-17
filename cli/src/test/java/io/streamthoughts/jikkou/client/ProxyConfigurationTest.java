@@ -19,13 +19,13 @@ public class ProxyConfigurationTest {
     void shouldGetProxyConfiguration() {
         // GIVEN
         Map<String, Object> configMap = Map.of("proxy", Map.of(
-                "url", "http://localhost:8080",
-                "enabled", "true",
-                "debugging", "true"
+            "url", "http://localhost:8080",
+            "enabled", "true",
+            "debugging", "true"
         ));
 
         ApplicationContext context = ApplicationContext
-                .run(new JikkouPropertySource(Configuration.from(configMap)));
+            .run(new JikkouPropertySource(Configuration.from(configMap)));
 
         // WHEN
         ProxyConfiguration configuration = context.getBean(ProxyConfiguration.class);
@@ -44,17 +44,17 @@ public class ProxyConfigurationTest {
     void shouldGetProxyConfigurationGivenBasicAuthProperties() {
         // GIVEN
         Map<String, Object> configMap = Map.of("proxy", Map.of(
-                "url", "http://localhost:8080",
-                "enabled", "true",
-                "debugging", "true",
-                "security", Map.of("basic-auth", Map.of(
-                        "username", "user",
-                        "password", "pass"
-                ))
+            "url", "http://localhost:8080",
+            "enabled", "true",
+            "debugging", "true",
+            "security", Map.of("basic-auth", Map.of(
+                "username", "user",
+                "password", "pass"
+            ))
         ));
 
         ApplicationContext context = ApplicationContext
-                .run(new JikkouPropertySource(Configuration.from(configMap)));
+            .run(new JikkouPropertySource(Configuration.from(configMap)));
 
         // WHEN
         ProxyConfiguration configuration = context.getBean(ProxyConfiguration.class);

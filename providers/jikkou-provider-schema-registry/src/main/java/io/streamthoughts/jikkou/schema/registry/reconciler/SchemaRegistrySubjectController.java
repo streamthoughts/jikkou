@@ -13,6 +13,7 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -23,6 +24,7 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.schema.registry.ApiVersions;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
@@ -70,7 +72,7 @@ public class SchemaRegistrySubjectController
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (configuration == null) {
-            configuration = new SchemaRegistryClientConfig(context.appConfiguration());
+            configuration = context.<SchemaRegistryExtensionProvider>provider().clientConfig();
         }
     }
 
@@ -106,10 +108,12 @@ public class SchemaRegistrySubjectController
 
         // Get existing resources from the environment.
         SchemaRegistrySubjectCollector collector = new SchemaRegistrySubjectCollector(configuration)
-            .prettyPrintSchema(false)
-            .defaultToGlobalCompatibilityLevel(false);
+            .prettyPrintSchema(false);
 
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
+        collector.init(extensionContext().contextForExtension(SchemaRegistrySubjectCollector.class));
+        Configuration collectorConfiguration = Configuration.of(SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL, false);
+
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(collectorConfiguration, Selectors.NO_SELECTOR).stream()
             .filter(context.selector()::apply)
             .toList();
 

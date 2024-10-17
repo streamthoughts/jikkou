@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.kafka.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
 @Kind("KafkaTopicAuthorizationList")
-public class V1KafkaPrincipalAuthorizationList extends DefaultResourceListObject<V1KafkaPrincipalAuthorization> {
+public class V1KafkaPrincipalAuthorizationList extends SpecificResourceList<V1KafkaPrincipalAuthorizationList, V1KafkaPrincipalAuthorization> {
 
 
     /**
-     * Creates a new {@link V1KafkaPrincipalAuthorizationList} instance.
+     * Creates a new {@link V1KafkaBrokerList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -38,16 +38,29 @@ public class V1KafkaPrincipalAuthorizationList extends DefaultResourceListObject
     public V1KafkaPrincipalAuthorizationList(@Nullable String kind,
                                              @Nullable String apiVersion,
                                              @Nullable ObjectMeta metadata,
-                                             @NotNull List<? extends V1KafkaPrincipalAuthorization> items) {
+                                             @NotNull List<V1KafkaPrincipalAuthorization> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaPrincipalAuthorizationList} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaPrincipalAuthorizationList(List<? extends V1KafkaPrincipalAuthorization> items) {
-        super(items);
+    @Override
+    public V1KafkaPrincipalAuthorizationList.Builder toBuilder() {
+        return new V1KafkaPrincipalAuthorizationList.Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaPrincipalAuthorizationList.Builder, V1KafkaPrincipalAuthorizationList, V1KafkaPrincipalAuthorization> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaPrincipalAuthorizationList build() {
+            return new V1KafkaPrincipalAuthorizationList(apiVersion, kind, metadata, items);
+        }
     }
 }

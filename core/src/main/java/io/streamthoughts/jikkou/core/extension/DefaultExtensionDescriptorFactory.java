@@ -9,12 +9,14 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.common.annotation.AnnotationResolver;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
+import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
 import io.streamthoughts.jikkou.core.models.HasName;
+import io.streamthoughts.jikkou.core.models.HasPriority;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -67,6 +69,7 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
                 .supplier(extensionSupplier)
                 .classLoader(classLoader)
                 .metadata(metadata)
+                .priority(getPriority(extensionType))
                 .build();
     }
 
@@ -135,46 +138,60 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
         }
 
         return annotations
-                .stream()
-                .flatMap(annotation ->
-                        Arrays.stream(annotation.options())
-                                .map(spec -> {
-                                    String defaultValue = null;
-                                    String defaultValueSpec = spec.defaultValue();
-                                    if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(defaultValueSpec) &&
-                                            !ConfigPropertySpec.NULL_VALUE.equals(defaultValueSpec)) {
-                                        defaultValue = defaultValueSpec;
-                                    }
-                                    String description = null;
-                                    String descriptionSpec = spec.description();
-                                    if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(descriptionSpec) &&
-                                            !ConfigPropertySpec.NULL_VALUE.equals(descriptionSpec)) {
-                                        description = descriptionSpec;
+            .stream()
+            .flatMap(annotation ->
+                Arrays.stream(annotation.options())
+                    .map(spec -> {
+                        String defaultValue = null;
+                        String defaultValueSpec = spec.defaultValue();
+                        if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(defaultValueSpec) &&
+                            !ConfigPropertySpec.NULL_VALUE.equals(defaultValueSpec)) {
+                            defaultValue = defaultValueSpec;
+                        }
+                        String description = null;
+                        String descriptionSpec = spec.description();
+                        if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(descriptionSpec) &&
+                            !ConfigPropertySpec.NULL_VALUE.equals(descriptionSpec)) {
+                            description = descriptionSpec;
 
-                                        if (description.contains(PLACEHOLDER_COMPLETION_CANDIDATES)) {
-                                            if (Enum.class.isAssignableFrom(spec.type())) {
-                                                String candidatesString = Arrays.stream(((Class<Enum>) spec.type()).getEnumConstants())
-                                                        .map(Enum::name)
-                                                        .collect(Collectors.joining(", "));
-                                                description = description.replace(
-                                                        PLACEHOLDER_COMPLETION_CANDIDATES, candidatesString);
-                                            }
-                                        }
-                                        if (description.contains(PLACEHOLDER_DEFAULT_VALUE)) {
-                                            description = description.replace(
-                                                    PLACEHOLDER_DEFAULT_VALUE, spec.defaultValue());
-                                        }
-                                    }
+                            if (description.contains(PLACEHOLDER_COMPLETION_CANDIDATES)) {
+                                if (Enum.class.isAssignableFrom(spec.type())) {
+                                    String candidatesString = Arrays.stream(((Class<Enum>) spec.type()).getEnumConstants())
+                                        .map(Enum::name)
+                                        .collect(Collectors.joining(", "));
+                                    description = description.replace(
+                                        PLACEHOLDER_COMPLETION_CANDIDATES, candidatesString);
+                                }
+                            }
+                            if (description.contains(PLACEHOLDER_DEFAULT_VALUE)) {
+                                description = description.replace(
+                                    PLACEHOLDER_DEFAULT_VALUE, spec.defaultValue());
+                            }
+                        }
 
-                                    return new ConfigPropertySpec(
-                                            spec.name(),
-                                            spec.type(),
-                                            description,
-                                            defaultValue,
-                                            spec.required()
-                                    );
-                                })).collect(Collectors.toList());
+                        return new ConfigPropertySpec(
+                            spec.name(),
+                            spec.type(),
+                            description,
+                            defaultValue,
+                            spec.required()
+                        );
+                    })).collect(Collectors.toList());
     }
+
+    /**
+     * Gets the priority of the specified extension class.
+     *
+     * @param extensionType The extension class.
+     * @return The priority
+     */
+    @NotNull
+    static <T> Integer getPriority(@NotNull final Class<T> extensionType) {
+        return Optional
+            .ofNullable(extensionType.getAnnotation(Priority.class))
+            .map(Priority::value).orElse(HasPriority.NO_ORDER);
+    }
+
 
     /**
      * Gets the examples of the specified extension class.

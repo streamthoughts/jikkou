@@ -8,9 +8,8 @@ package io.streamthoughts.jikkou.extension.aiven.collections;
 
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
+import io.streamthoughts.jikkou.core.models.SpecificResourceList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -19,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.aiven.io/v1beta1")
 @Kind("KafkaTopicAclEntryList")
-public class V1KafkaTopicAclEntryList extends DefaultResourceListObject<V1KafkaTopicAclEntry> {
+public class V1KafkaTopicAclEntryList extends SpecificResourceList<V1KafkaTopicAclEntryList, V1KafkaTopicAclEntry> {
 
 
     /**
-     * Creates a new {@link V1KafkaTopicAclEntryList} instance.
+     * Creates a new {@link V1KafkaQuotaList} instance.
      *
      * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
@@ -39,16 +38,29 @@ public class V1KafkaTopicAclEntryList extends DefaultResourceListObject<V1KafkaT
     public V1KafkaTopicAclEntryList(@Nullable String kind,
                                     @Nullable String apiVersion,
                                     @Nullable ObjectMeta metadata,
-                                    @NotNull List<? extends V1KafkaTopicAclEntry> items) {
+                                    @NotNull List<V1KafkaTopicAclEntry> items) {
         super(kind, apiVersion, metadata, items);
     }
 
     /**
-     * Creates a new {@link V1KafkaQuota} instance.
-     *
-     * @param items The items.
+     * {@inheritDoc}
      */
-    public V1KafkaTopicAclEntryList(List<? extends V1KafkaTopicAclEntry> items) {
-        super(items);
+    @Override
+    public Builder toBuilder() {
+        return new Builder()
+            .withApiVersion(apiVersion)
+            .withKind(kind)
+            .withMetadata(metadata)
+            .withItems(items);
+    }
+
+    public static final class Builder extends SpecificResourceList.Builder<V1KafkaTopicAclEntryList.Builder, V1KafkaTopicAclEntryList, V1KafkaTopicAclEntry> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public V1KafkaTopicAclEntryList build() {
+            return new V1KafkaTopicAclEntryList(apiVersion, kind, metadata, items);
+        }
     }
 }
