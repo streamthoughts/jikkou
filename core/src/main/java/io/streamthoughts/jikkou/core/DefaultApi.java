@@ -423,7 +423,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 context.isDryRun()
             );
             Reconciler<HasMetadata, ResourceChange> reconciler = new Reconciler<>(controller);
-            List<ChangeResult> results = reconciler.apply(changes, mode, context);
+            List<ChangeResult> results = reconciler.apply(items, mode, context);
             changeResults.addAll(results);
             LOG.info("Executed {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
                 results.size(),

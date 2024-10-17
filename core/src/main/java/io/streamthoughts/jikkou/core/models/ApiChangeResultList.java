@@ -13,8 +13,6 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
-import java.beans.ConstructorProperties;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,19 +39,6 @@ public record ApiChangeResultList(@JsonProperty("kind") String kind,
     public static final String KIND = "ApiChangeResultList";
     public static final String API_VERSION = "core.jikkou.io/v1";
 
-    /**
-     * Creates a new {@link ApiChangeResultList} instance.
-     */
-    @ConstructorProperties({
-            "kind",
-            "apiVersion",
-            "metadata",
-            "dryRun",
-            "results"
-    })
-    public ApiChangeResultList {
-        results = Collections.unmodifiableList(results);
-    }
 
     /**
      * Creates a new {@link ApiChangeResultList} instance.
