@@ -52,7 +52,7 @@ public final class TopicMaxNumPartitionsValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        maxNumPartitions = VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.getOptional(context.appConfiguration())
+        maxNumPartitions = VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for %s",
                                 VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG.key(),

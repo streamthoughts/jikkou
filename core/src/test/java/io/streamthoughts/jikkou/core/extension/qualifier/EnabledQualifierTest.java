@@ -6,8 +6,6 @@
  */
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
@@ -25,7 +23,7 @@ class EnabledQualifierTest {
 
         ExtensionDescriptor<EnabledQualifierTest> descriptor = getDescriptor(EnabledQualifierTest.class, true);
         List<ExtensionDescriptor<EnabledQualifierTest>> result = qualifier
-                .filter(EnabledQualifierTest.class, Stream.of(descriptor)).toList();
+            .filter(EnabledQualifierTest.class, Stream.of(descriptor)).toList();
         Assertions.assertEquals(List.of(descriptor), result);
     }
 
@@ -35,23 +33,26 @@ class EnabledQualifierTest {
 
         ExtensionDescriptor<EnabledQualifierTest> descriptor = getDescriptor(EnabledQualifierTest.class, false);
         List<ExtensionDescriptor<EnabledQualifierTest>> result = qualifier
-                .filter(EnabledQualifierTest.class, Stream.of(descriptor)).toList();
+            .filter(EnabledQualifierTest.class, Stream.of(descriptor)).toList();
         Assertions.assertEquals(List.of(descriptor), result);
     }
 
     private static <T> ExtensionDescriptor<T> getDescriptor(Class<T> clazz, boolean isEnabled) {
         return new DefaultExtensionDescriptor<>(
-                "Test",
-                "Title",
-                "Description",
-                Collections.emptyList(),
-                ExtensionCategory.EXTENSION,
-                Collections.emptyList(),
-                "Provider",
-                clazz,
-                clazz.getClassLoader(),
-                () -> null,
-                isEnabled
+            "Test",
+            "Title",
+            "Description",
+            Collections.emptyList(),
+            ExtensionCategory.EXTENSION,
+            Collections.emptyList(),
+            null,
+            () -> null,
+            clazz,
+            clazz.getClassLoader(),
+            () -> null,
+            null,
+            isEnabled,
+            null
         );
     }
 }

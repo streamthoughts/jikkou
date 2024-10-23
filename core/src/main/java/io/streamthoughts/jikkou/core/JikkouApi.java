@@ -26,16 +26,16 @@ import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
@@ -56,11 +56,39 @@ public interface JikkouApi extends AutoCloseable {
     interface ApiBuilder<A extends JikkouApi, B extends JikkouApi.ApiBuilder<A, B>> {
 
         /**
-         * Register an extension supplier for the specified extension type.
+         * Registers an extension provider with the given configuration.
+         * <p>
+         * This method is responsible for registering all extensions and resources provided by the
+         * given provider.
+         *
+         * @param provider the provider.
+         * @return the builder.
+         */
+        default B register(@NotNull ExtensionProvider provider) {
+            return register(provider, Configuration.empty());
+        }
+
+
+        /**
+         * Registers an extension provider with the given configuration.
+         * <p>
+         * This method is responsible for registering all extensions and resources provided by the
+         * given provider.
+         *
+         * @param provider      the provider.
+         * @param configuration the configuration.
+         * @return the builder.
+         */
+        B register(@NotNull ExtensionProvider provider,
+                   @NotNull Configuration configuration);
+
+        /**
+         * Registers an extension supplier for the specified extension type.
          *
          * @param type     the class of the extension.
          * @param supplier the supplier used to create a new instance of {@code T}.
          * @param <T>      type of the extension.
+         * @return the builder.
          * @throws NullPointerException                    if the given type of supplier is {@code null}.
          * @throws ConflictingExtensionDefinitionException if an extension is already register for that type.
          */
@@ -74,6 +102,7 @@ public interface JikkouApi extends AutoCloseable {
          * @param supplier  the supplier used to create a new instance of {@code T}.
          * @param modifiers the component descriptor modifiers.
          * @param <T>       the component-type.
+         * @return the builder.
          * @throws NullPointerException                    if the given type of supplier is {@code null}.
          * @throws ConflictingExtensionDefinitionException if an extension is already register for that type.
          */
@@ -238,13 +267,13 @@ public interface JikkouApi extends AutoCloseable {
      * @param configuration The configuration.
      * @return The ApiExecutionResult.
      */
-    ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration);
+    <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action, @NotNull Configuration configuration);
 
     /**
      * Execute validations on the given resources.
      *
      * @param resources the list of resource to create.
-     * @return the validated {@link DefaultResourceListObject}.
+     * @return the validated {@link ApiValidationResult}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
@@ -257,7 +286,7 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param resources the list of resource to create.
      * @param context   the reconciliation context.
-     * @return the validated {@link DefaultResourceListObject}.
+     * @return the validated {@link ApiValidationResult}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
@@ -332,7 +361,7 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default ResourceListObject<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass) {
+    default ResourceList<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass) {
         return listResources(resourceClass, Selectors.NO_SELECTOR, Configuration.empty());
     }
 
@@ -344,8 +373,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default ResourceListObject<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass,
-                                                          @NotNull Selector selector) {
+    default ResourceList<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass,
+                                                    @NotNull Selector selector) {
         return listResources(resourceClass, selector, Configuration.empty());
     }
 
@@ -358,9 +387,9 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull Class<? extends HasMetadata> type,
-                                                                        @NotNull Selector selector,
-                                                                        @NotNull Configuration configuration) {
+    default <T extends HasMetadata> ResourceList<T> listResources(@NotNull Class<? extends HasMetadata> type,
+                                                                  @NotNull Selector selector,
+                                                                  @NotNull Configuration configuration) {
         return listResources(ResourceType.of(type), selector, configuration);
     }
 
@@ -370,7 +399,7 @@ public interface JikkouApi extends AutoCloseable {
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType) {
+    default <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType) {
         return listResources(resourceType, Selectors.NO_SELECTOR, Configuration.empty());
     }
 
@@ -380,8 +409,8 @@ public interface JikkouApi extends AutoCloseable {
      * @param resourceType the type of the resource to be described.
      * @return the {@link HasMetadata}.
      */
-    default <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
-                                                                        @NotNull Selector selector) {
+    default <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
+                                                                  @NotNull Selector selector) {
         return listResources(resourceType, selector, Configuration.empty());
     }
 
@@ -392,12 +421,16 @@ public interface JikkouApi extends AutoCloseable {
      * @param configuration the option to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
      */
-    <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
-                                                                @NotNull Selector selector,
-                                                                @NotNull Configuration configuration);
+    <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
+                                                          @NotNull Selector selector,
+                                                          @NotNull Configuration configuration);
 
     @SuppressWarnings("rawtypes")
     ApiBuilder toBuilder();
+
+    default JikkouApi enableBuiltInAnnotations(final boolean enableBuiltInAnnotations) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * {@inheritDoc}

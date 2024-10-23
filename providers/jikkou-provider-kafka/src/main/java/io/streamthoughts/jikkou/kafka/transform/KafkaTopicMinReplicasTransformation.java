@@ -44,7 +44,7 @@ public class KafkaTopicMinReplicasTransformation implements Transformation<V1Kaf
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        minReplicationFactor = MIN_REPLICATION_FACTOR_CONFIG.getOptional(context.appConfiguration())
+        minReplicationFactor = MIN_REPLICATION_FACTOR_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MIN_REPLICATION_FACTOR_CONFIG.key(),

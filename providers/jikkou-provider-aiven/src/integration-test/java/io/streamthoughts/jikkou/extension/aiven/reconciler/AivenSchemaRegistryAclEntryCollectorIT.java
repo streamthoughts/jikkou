@@ -7,58 +7,50 @@
 package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.selector.Selectors;
-import io.streamthoughts.jikkou.extension.aiven.AbstractAivenIntegrationTest;
+import io.streamthoughts.jikkou.extension.aiven.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.extension.aiven.api.data.Permission;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("integration")
-public class AivenSchemaRegistryAclEntryCollectorIT extends AbstractAivenIntegrationTest {
+public class AivenSchemaRegistryAclEntryCollectorIT extends BaseExtensionProviderIT {
 
     public static final String DEFAULT_AIVEN_ACL_ENTRIES = """
+         {
+           "acl": [
              {
-               "acl": [
-                 {
-                   "id": "default-sr-admin-config",
-                   "permission": "schema_registry_write",
-                   "resource": "Config:",
-                   "username": "avnadmin"
-                 },
-                 {
-                   "id": "default-sr-admin-subject",
-                   "permission": "schema_registry_write",
-                   "resource": "Subject:*",
-                   "username": "avnadmin"
-                 }
-               ]
+               "id": "default-sr-admin-config",
+               "permission": "schema_registry_write",
+               "resource": "Config:",
+               "username": "avnadmin"
+             },
+             {
+               "id": "default-sr-admin-subject",
+               "permission": "schema_registry_write",
+               "resource": "Subject:*",
+               "username": "avnadmin"
              }
-            """;
-
-    private AivenSchemaRegistryAclEntryCollector collector;
-
-
-    @BeforeEach
-    public void beforeEach() {
-        collector = new AivenSchemaRegistryAclEntryCollector(getAivenApiConfig());
-    }
+           ]
+         }
+        """;
 
     @Test
     void shouldListSchemaRegistryAclEntries() {
         // Given
         enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody(DEFAULT_AIVEN_ACL_ENTRIES)
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody(DEFAULT_AIVEN_ACL_ENTRIES)
         );
         // When
-        List<V1SchemaRegistryAclEntry> results = collector.listAll(Configuration.empty(), Selectors.NO_SELECTOR)
-                .getItems();
+        ResourceList<V1SchemaRegistryAclEntry> resources = api.listResources(V1SchemaRegistryAclEntry.class, Selectors.NO_SELECTOR, Configuration.empty());
+        List<V1SchemaRegistryAclEntry> results = resources.getItems();
 
         // Then
         Assertions.assertNotNull(results);

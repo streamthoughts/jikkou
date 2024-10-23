@@ -9,13 +9,11 @@ package io.streamthoughts.jikkou.core.transform;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +33,7 @@ public final class TransformationChain implements Transformation<HasMetadata> {
      * @param transformations   the chain of transformations.
      */
     public TransformationChain(final List<Transformation> transformations) {
-        this.transformations = transformations
-                .stream()
-                .sorted(Comparator.comparing(HasPriority::getPriority))
-                .collect(Collectors.toList());
+        this.transformations = Objects.requireNonNull(transformations, "transformations can't be null");
     }
 
     public @NotNull List<HasMetadata> transformAll(final @NotNull List<HasMetadata> toTransform,

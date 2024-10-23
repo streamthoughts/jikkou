@@ -10,7 +10,6 @@ import io.streamthoughts.jikkou.http.client.RestClientBuilder;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryContainer;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
@@ -73,9 +72,7 @@ public class AbstractIntegrationTest {
         return new DefaultAsyncSchemaRegistryApi(api);
     }
 
-    public SchemaRegistryClientConfig getSchemaRegistryClientConfiguration() {
-        return new SchemaRegistryClientConfig(
-                SchemaRegistryClientConfig.SCHEMA_REGISTRY_URL.asConfiguration(schemaRegistry.getSchemaRegistryUrl())
-        );
+    public String schemaRegistryUrl() {
+        return schemaRegistry.getSchemaRegistryUrl();
     }
 }

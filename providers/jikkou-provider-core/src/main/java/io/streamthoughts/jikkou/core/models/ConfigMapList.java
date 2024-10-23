@@ -51,7 +51,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class ConfigMapList implements ResourceListObject<ConfigMap>
+public class ConfigMapList implements ResourceList<ConfigMap>
 {
 
     /**

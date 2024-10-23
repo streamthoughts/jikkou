@@ -6,8 +6,6 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
-import io.streamthoughts.jikkou.core.annotation.Priority;
-
 /**
  * Interface for objects that have a priority.
  */
@@ -24,17 +22,4 @@ public interface HasPriority {
     int	LOWEST_PRECEDENCE = Integer.MAX_VALUE;
 
     int NO_ORDER = 0;
-
-    /**
-     * Gets the order value. Defaults to zero (no order).
-     *
-     * @return the order value
-     */
-    default int getPriority() {
-        Priority priority = this.getClass().getAnnotation(Priority.class);
-        if (priority != null) {
-            return priority.value();
-        }
-        return NO_ORDER;
-    }
 }

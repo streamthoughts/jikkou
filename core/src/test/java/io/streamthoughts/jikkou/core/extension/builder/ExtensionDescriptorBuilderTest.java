@@ -25,22 +25,25 @@ class ExtensionDescriptorBuilderTest {
     void shouldCreateBuilderFromDescriptor() {
         // GIVEN
         var descriptor = new DefaultExtensionDescriptor<>(
-                "Name",
-                "Title",
-                "Description",
-                NO_EXAMPLES,
-                ExtensionCategory.EXTENSION,
-                NO_PROPERTIES,
-                "Provider",
-                ExtensionDescriptorBuilderTest.class,
-                ExtensionDescriptorBuilderTest.class.getClassLoader(),
-                () -> null,
-                true
+            "Name",
+            "Title",
+            "Description",
+            NO_EXAMPLES,
+            ExtensionCategory.EXTENSION,
+            NO_PROPERTIES,
+            null,
+            () -> null,
+            ExtensionDescriptorBuilderTest.class,
+            ExtensionDescriptorBuilderTest.class.getClassLoader(),
+            () -> null,
+            null,
+            true,
+            null
         );
         // WHEN
         ExtensionDescriptor<ExtensionDescriptorBuilderTest> result = ExtensionDescriptorBuilder
-                .builder(descriptor)
-                .build();
+            .builder(descriptor)
+            .build();
         // THEN
         Assertions.assertNotSame(result, descriptor);
         Assertions.assertEquals(result, descriptor);

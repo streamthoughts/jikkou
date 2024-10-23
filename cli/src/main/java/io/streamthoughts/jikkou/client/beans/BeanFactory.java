@@ -43,18 +43,14 @@ public final class BeanFactory {
     @Singleton
     public ExtensionDescriptorRegistry extensionDescriptorRegistry() {
         return new DefaultExtensionRegistry(
-                new DefaultExtensionDescriptorFactory(),
-                new ClassExtensionAliasesGenerator()
+            new DefaultExtensionDescriptorFactory(),
+            new ClassExtensionAliasesGenerator()
         );
     }
 
     @Singleton
-    public ExtensionFactory extensionFactory(Configuration configuration,
-                                             ExtensionDescriptorRegistry registry) {
-        return new DefaultExtensionFactory(
-                registry,
-                configuration
-        );
+    public ExtensionFactory extensionFactory(ExtensionDescriptorRegistry registry) {
+        return new DefaultExtensionFactory(registry);
     }
 
     @Singleton
@@ -68,15 +64,16 @@ public final class BeanFactory {
     public ResourceRegistry resourceRegistry() {
         return new DefaultResourceRegistry();
     }
+
     @Singleton
     @SuppressWarnings({"rawtypes", "unchecked"})
     public JikkouApi jikkouApi(JikkouContext context,
                                ExtensionDescriptorRegistry registry,
                                JikkouApi.ApiBuilder apiBuilder) {
         ApiConfigurator[] configurators = {
-                new ValidationApiConfigurator(registry),
-                new TransformationApiConfigurator(registry),
-                new ChangeReporterApiConfigurator(registry)
+            new ValidationApiConfigurator(registry),
+            new TransformationApiConfigurator(registry),
+            new ChangeReporterApiConfigurator(registry)
         };
         return context.createApi(apiBuilder, configurators);
     }
@@ -106,8 +103,8 @@ public final class BeanFactory {
     @Singleton
     public ResourceLoaderFacade resourceLoaderFacade(Configuration configuration) {
         ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
-                .withPreserveRawTags(false)
-                .withFailOnUnknownTokens(false);
+            .withPreserveRawTags(false)
+            .withFailOnUnknownTokens(false);
         renderer.configure(configuration);
         return new ResourceLoaderFacade(renderer, Jackson.YAML_OBJECT_MAPPER);
     }

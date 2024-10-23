@@ -7,6 +7,8 @@
 package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
+import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -53,6 +55,13 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
     List<ConfigPropertySpec> properties();
 
     /**
+     * Gets the priority of the extension.
+     *
+     * @return  The priority
+     */
+    Integer priority();
+
+    /**
      * Gets the extension metadata.
      *
      * @return the {@link ExtensionMetadata}.
@@ -85,7 +94,15 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
      *
      * @return The provider.
      */
-    String provider();
+    Class<? extends ExtensionProvider> provider();
+
+
+    /**
+     * Gets the supplier for the provider to which this extension belongs to.
+     *
+     * @return The provider.
+     */
+    Supplier<? extends ExtensionProvider> providerSupplier();
 
     /**
      * Adds new aliases to reference the described extension.
@@ -123,6 +140,13 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
      * @return the {@link Supplier}.
      */
     Supplier<T> supplier();
+
+    /**
+     * Gets the configuration to use for initializing the extension.
+     *
+     * @return the {@link Configuration}.
+     */
+    Configuration configuration();
 
     /**
      * {@inheritDoc}

@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
@@ -78,7 +79,7 @@ public final class AivenKafkaTopicController
 
     private AivenKafkaTopicCollector collector;
 
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
 
     /**
      * Creates a new {@link AivenKafkaTopicController} instance.
@@ -91,10 +92,10 @@ public final class AivenKafkaTopicController
     /**
      * Creates a new {@link AivenSchemaRegistryAclEntryController} instance.
      *
-     * @param config the schema registry client configuration.
+     * @param apiClientConfig the schema registry client configuration.
      */
-    public AivenKafkaTopicController(@NotNull AivenApiClientConfig config) {
-        init(config);
+    public AivenKafkaTopicController(@NotNull AivenApiClientConfig apiClientConfig) {
+        init(apiClientConfig);
     }
 
     /**
@@ -103,13 +104,13 @@ public final class AivenKafkaTopicController
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
-    private void init(@NotNull AivenApiClientConfig config) {
+    private void init(@NotNull AivenApiClientConfig apiClientConfig) {
         if (this.initialized.compareAndSet(false, true)) {
-            this.config = config;
-            this.collector = new AivenKafkaTopicCollector(config);
+            this.apiClientConfig = apiClientConfig;
+            this.collector = new AivenKafkaTopicCollector(apiClientConfig);
         }
     }
 
@@ -120,7 +121,7 @@ public final class AivenKafkaTopicController
     public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
                                       @NotNull final ReconciliationContext context) {
 
-        final AivenApiClient api = AivenApiClientFactory.create(config);
+        final AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
                 new KafkaTopicChangeHandler.Create(api),

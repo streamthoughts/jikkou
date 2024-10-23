@@ -13,9 +13,10 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaAclEntryAdapter;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(type = V1KafkaTopicAclEntry.class)
 public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicAclEntry> {
 
-    private AivenApiClientConfig config;
+    private AivenApiClientConfig apiClientConfig;
 
     /**
      * Creates a new {@link AivenKafkaTopicAclEntryCollector} instance.
@@ -43,10 +44,10 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
     /**
      * Creates a new {@link AivenKafkaTopicAclEntryCollector} instance.
      *
-     * @param config the configuration.
+     * @param apiClientConfig the configuration.
      */
-    public AivenKafkaTopicAclEntryCollector(AivenApiClientConfig config) {
-        init(config);
+    public AivenKafkaTopicAclEntryCollector(AivenApiClientConfig apiClientConfig) {
+        init(apiClientConfig);
     }
 
     /**
@@ -54,20 +55,20 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
     private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.config = config;
+        this.apiClientConfig = config;
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1KafkaTopicAclEntry> listAll(@NotNull Configuration configuration,
-                                                            @NotNull Selector selector) {
-        AivenApiClient api = AivenApiClientFactory.create(config);
+    public ResourceList<V1KafkaTopicAclEntry> listAll(@NotNull Configuration configuration,
+                                                      @NotNull Selector selector) {
+        AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             ListKafkaAclResponse response = api.listKafkaAclEntries();
 
@@ -85,7 +86,7 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
                     .filter(selector::apply)
                     .collect(Collectors.toList());
 
-            return new V1KafkaTopicAclEntryList(items);
+            return new V1KafkaTopicAclEntryList.Builder().withItems(items).build();
 
         } catch (RestClientException e) {
             String response;

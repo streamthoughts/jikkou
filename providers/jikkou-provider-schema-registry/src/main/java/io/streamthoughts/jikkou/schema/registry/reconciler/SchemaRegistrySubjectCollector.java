@@ -13,10 +13,13 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
+import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.RestClientException;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
@@ -32,14 +35,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+@ExtensionSpec(
+    options = {
+        @ExtensionOptionSpec(
+            name = SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL,
+            description = SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL,
+            type = Boolean.class,
+            defaultValue = "true"
+        )
+    }
+)
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistrySubjectCollector extends ContextualExtension implements Collector<V1SchemaRegistrySubject> {
+
+    public static final String DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL = "default-to-global-compatibility-level";
 
     private SchemaRegistryClientConfig config;
 
     private boolean prettyPrintSchema = true;
-
-    private boolean defaultToGlobalCompatibilityLevel = true;
 
     private V1SchemaRegistrySubjectFactory schemaRegistrySubjectFactory;
 
@@ -64,15 +77,15 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        init(new SchemaRegistryClientConfig(context.appConfiguration()));
+        init(context.<SchemaRegistryExtensionProvider>provider().clientConfig());
     }
 
     private void init(@NotNull SchemaRegistryClientConfig config) {
         this.config = config;
         this.schemaRegistrySubjectFactory = new V1SchemaRegistrySubjectFactory(
-                config.getSchemaRegistryVendor(),
-                config.getSchemaRegistryUrl(),
-                prettyPrintSchema
+            config.vendor(),
+            config.url(),
+            prettyPrintSchema
         );
     }
 
@@ -80,48 +93,48 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
-                                                               @NotNull Selector selector) {
+    public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
+                                                         @NotNull Selector selector) {
+
+        Boolean defaultToGlobalCompatibilityLevel = extensionContext()
+            .<Boolean>configProperty(DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL)
+            .get(configuration);
 
         AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config));
         try {
             CompletableFuture<List<V1SchemaRegistrySubject>> result = api
-                    .listSubjects()
-                    .thenComposeAsync(subjects -> AsyncUtils.waitForAll(getAllSchemaRegistrySubjectsAsync(subjects, api)));
+                .listSubjects()
+                .thenComposeAsync(subjects -> AsyncUtils.waitForAll(getAllSchemaRegistrySubjectsAsync(subjects, api, defaultToGlobalCompatibilityLevel)));
             Optional<Throwable> exception = AsyncUtils.getException(result);
             if (exception.isPresent()) {
                 throw new JikkouRuntimeException(
-                        "Failed to list all schema registry subject versions",
-                        exception.get()
+                    "Failed to list all schema registry subject versions",
+                    exception.get()
                 );
             }
             List<V1SchemaRegistrySubject> resources = result.join()
-                    .stream()
-                    .filter(selector::apply)
-                    .collect(Collectors.toList());
-            return new V1SchemaRegistrySubjectList(resources);
+                .stream()
+                .filter(selector::apply)
+                .collect(Collectors.toList());
+            return new V1SchemaRegistrySubjectList.Builder().withItems(resources).build();
         } finally {
             api.close();
         }
     }
 
-    public SchemaRegistrySubjectCollector prettyPrintSchema(final boolean prettyPrintSchema) {
+    SchemaRegistrySubjectCollector prettyPrintSchema(final boolean prettyPrintSchema) {
         this.prettyPrintSchema = prettyPrintSchema;
-        return this;
-    }
-
-    public SchemaRegistrySubjectCollector defaultToGlobalCompatibilityLevel(final boolean defaultToGlobalCompatibilityLevel) {
-        this.defaultToGlobalCompatibilityLevel = defaultToGlobalCompatibilityLevel;
         return this;
     }
 
     @NotNull
     private List<CompletableFuture<V1SchemaRegistrySubject>> getAllSchemaRegistrySubjectsAsync(final List<String> subjects,
-                                                                                               final AsyncSchemaRegistryApi api) {
+                                                                                               final AsyncSchemaRegistryApi api,
+                                                                                               boolean defaultToGlobalCompatibilityLevel) {
         return subjects.stream()
-                .map(subject -> getSchemaRegistrySubjectAsync(
-                        api, subject, defaultToGlobalCompatibilityLevel, schemaRegistrySubjectFactory))
-                .toList();
+            .map(subject -> getSchemaRegistrySubjectAsync(
+                api, subject, defaultToGlobalCompatibilityLevel, schemaRegistrySubjectFactory))
+            .toList();
     }
 
     @NotNull
@@ -131,39 +144,39 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
                                                                                             @NotNull V1SchemaRegistrySubjectFactory factory) {
 
         return api
-                // Get Schema Registry Latest Subject Version
-                .getLatestSubjectSchema(subject)
-                // Get Schema Registry Subject Compatibility
-                .thenCompose(subjectSchemaVersion -> api
-                        .getSubjectCompatibilityLevel(subject, defaultToGlobalCompatibilityLevel)
-                        .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
-                        .exceptionally(t -> {
-                                    if (t.getCause() != null) t = t.getCause();
+            // Get Schema Registry Latest Subject Version
+            .getLatestSubjectSchema(subject)
+            // Get Schema Registry Subject Compatibility
+            .thenCompose(subjectSchemaVersion -> api
+                .getSubjectCompatibilityLevel(subject, defaultToGlobalCompatibilityLevel)
+                .thenApply(compatibilityObject -> CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
+                .exceptionally(t -> {
+                        if (t.getCause() != null) t = t.getCause();
 
-                                    if (t instanceof RestClientException exception) {
-                                        if (exception.response()
-                                                .map(Response::getStatus)
-                                                .filter(status -> status.equals(404))
-                                                .isPresent()) {
-                                            return null;
-                                        }
-                                    }
-                                    if (t instanceof RuntimeException re) {
-                                        throw re;
-                                    }
-                                    throw new JikkouRuntimeException(t);
-                                }
-                        )
-                        .thenApply(compatibilityLevelObject ->
-                                Pair.of(subjectSchemaVersion, compatibilityLevelObject)
-                        )
+                        if (t instanceof RestClientException exception) {
+                            if (exception.response()
+                                .map(Response::getStatus)
+                                .filter(status -> status.equals(404))
+                                .isPresent()) {
+                                return null;
+                            }
+                        }
+                        if (t instanceof RuntimeException re) {
+                            throw re;
+                        }
+                        throw new JikkouRuntimeException(t);
+                    }
                 )
-                // Create SchemaRegistrySubject object
-                .thenApply(tuple ->
-                        factory.createSchemaRegistrySubject(
-                                tuple._1(),
-                                tuple._2()
-                        )
-                );
+                .thenApply(compatibilityLevelObject ->
+                    Pair.of(subjectSchemaVersion, compatibilityLevelObject)
+                )
+            )
+            // Create SchemaRegistrySubject object
+            .thenApply(tuple ->
+                factory.createSchemaRegistrySubject(
+                    tuple._1(),
+                    tuple._2()
+                )
+            );
     }
 }

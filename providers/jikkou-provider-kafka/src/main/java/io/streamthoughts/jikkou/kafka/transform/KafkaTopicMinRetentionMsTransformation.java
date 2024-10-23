@@ -46,7 +46,7 @@ public class KafkaTopicMinRetentionMsTransformation implements Transformation<V1
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        minRetentionMs = MIN_RETENTIONS_MS_CONFIG.getOptional(context.appConfiguration())
+        minRetentionMs = MIN_RETENTIONS_MS_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MIN_RETENTIONS_MS_CONFIG.key(),

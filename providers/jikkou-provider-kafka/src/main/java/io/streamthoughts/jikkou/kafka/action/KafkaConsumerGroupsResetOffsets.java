@@ -19,10 +19,9 @@ import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientFactory;
-import io.streamthoughts.jikkou.kafka.internals.admin.DefaultAdminClientFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.streamthoughts.jikkou.kafka.reconciler.KafkaClientConfiguration;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaConsumerGroupService;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec;
 import java.util.Collection;
@@ -37,7 +36,6 @@ import org.apache.kafka.common.ConsumerGroupState;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @Named("KafkaConsumerGroupsResetOffsets")
 @Title("Reset offsets of consumer groups.")
@@ -144,9 +142,7 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        this.adminClientFactory = new DefaultAdminClientFactory(() ->
-            KafkaClientConfiguration.ADMIN_CLIENT_CONFIG.get(context.appConfiguration())
-        );
+        this.adminClientFactory = context.<KafkaExtensionProvider>provider().newAdminClientFactory();
     }
 
     /**

@@ -10,7 +10,7 @@ import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +27,7 @@ public final class ResourceListConverter implements Converter<HasMetadata, HasMe
     @Override
     public @NotNull List<HasMetadata> apply(@NotNull HasMetadata resource) {
 
-        if (resource instanceof ResourceListObject<?> list) {
+        if (resource instanceof ResourceList<?> list) {
             if (list.getItems() == null) {
                 return Collections.emptyList();
             }

@@ -53,7 +53,7 @@ public class TopicNameRegexValidation extends TopicValidation {
     @Override
     public void init(@NotNull final ExtensionContext context) {
         super.init(context);
-        final Optional<String> regex = VALIDATION_TOPIC_NAME_REGEX_CONFIG.getOptional(context.appConfiguration());
+        final Optional<String> regex = VALIDATION_TOPIC_NAME_REGEX_CONFIG.getOptional(context.configuration());
         pattern = regex
                 .map(pattern -> {
                     if (pattern.isEmpty()) {

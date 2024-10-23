@@ -52,37 +52,37 @@ public final class KafkaConnectClusterService {
             throw new IllegalArgumentException("connectorName is null or empty.");
         }
         return CompletableFuture
-                .supplyAsync(() -> api.getConnectorConfig(connectorName))
-                .thenCombine(
-                        CompletableFuture.supplyAsync(() -> api.getConnectorStatus(connectorName)),
-                        (config, status) -> {
-                            String connectorClass = Optional.ofNullable(config.get(CONNECTOR_CLASS_CONFIG))
-                                    .map(Object::toString)
-                                    .orElse(null);
+            .supplyAsync(() -> api.getConnectorConfig(connectorName))
+            .thenCombine(
+                CompletableFuture.supplyAsync(() -> api.getConnectorStatus(connectorName)),
+                (config, status) -> {
+                    String connectorClass = Optional.ofNullable(config.get(CONNECTOR_CLASS_CONFIG))
+                        .map(Object::toString)
+                        .orElse(null);
 
-                            String connectorTasksMax = Optional.ofNullable(config.get(CONNECTOR_TASKS_MAX_CONFIG))
-                                    .map(Object::toString)
-                                    .orElse(DEFAULT_CONNECTOR_TASKS_MAX);
+                    String connectorTasksMax = Optional.ofNullable(config.get(CONNECTOR_TASKS_MAX_CONFIG))
+                        .map(Object::toString)
+                        .orElse(DEFAULT_CONNECTOR_TASKS_MAX);
 
-                            return V1KafkaConnector.
-                                    builder()
-                                    .withMetadata(ObjectMeta
-                                            .builder()
-                                            .withName(connectorName)
-                                            .withLabel(KafkaConnectLabels.KAFKA_CONNECT_CLUSTER, clusterName)
-                                            .build()
-                                    )
-                                    .withSpec(V1KafkaConnectorSpec
-                                            .builder()
-                                            .withConnectorClass(connectorClass)
-                                            .withTasksMax(Integer.parseInt(connectorTasksMax))
-                                            .withConfig(KafkaConnectUtils.removeCommonConnectorConfig(config))
-                                            .withState(KafkaConnectorState.fromValue(status.connector().state()))
-                                            .build()
-                                    )
-                                    .withStatus(expandStatus ? new V1KafkaConnectorStatus(status) : null)
-                                    .build();
-                        }
-                );
+                    return V1KafkaConnector.
+                        builder()
+                        .withMetadata(ObjectMeta
+                            .builder()
+                            .withName(connectorName)
+                            .withLabel(KafkaConnectLabels.KAFKA_CONNECT_CLUSTER, clusterName)
+                            .build()
+                        )
+                        .withSpec(V1KafkaConnectorSpec
+                            .builder()
+                            .withConnectorClass(connectorClass)
+                            .withTasksMax(Integer.parseInt(connectorTasksMax))
+                            .withConfig(KafkaConnectUtils.removeCommonConnectorConfig(config))
+                            .withState(KafkaConnectorState.fromValue(status.connector().state()))
+                            .build()
+                        )
+                        .withStatus(expandStatus ? new V1KafkaConnectorStatus(status) : null)
+                        .build();
+                }
+            );
     }
 }

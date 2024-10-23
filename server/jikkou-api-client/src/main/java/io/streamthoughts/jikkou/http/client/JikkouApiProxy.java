@@ -15,7 +15,6 @@ import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
@@ -27,14 +26,14 @@ import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
+import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
@@ -47,7 +46,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -58,10 +56,9 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     /**
      * Builder class for creating a new {@link DefaultApi} object instance.
      */
-    public static final class Builder implements JikkouApi.ApiBuilder<JikkouApiProxy, JikkouApiProxy.Builder> {
+    public static final class Builder extends BaseBuilder<JikkouApiProxy, JikkouApiProxy.Builder> {
 
         private final JikkouApiClient apiClient;
-        private final ExtensionFactory extensionFactory;
 
         /**
          * Creates a new {@link ExtensionFactory} instance.
@@ -69,8 +66,9 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
          * @param apiClient the apiClient.
          */
         public Builder(@NotNull ExtensionFactory extensionFactory,
+                       @NotNull ResourceRegistry resourceRegistry,
                        @NotNull JikkouApiClient apiClient) {
-            this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
+            super(extensionFactory, resourceRegistry);
             this.apiClient = Objects.requireNonNull(apiClient, "apiClient must not be null");
         }
 
@@ -78,32 +76,12 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
          * {@inheritDoc}
          **/
         @Override
-        public <T extends Extension> Builder register(@NotNull Class<T> type,
-                                                      @NotNull Supplier<T> supplier) {
-            extensionFactory.register(type, supplier);
-            return this;
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public <T extends Extension> Builder register(@NotNull Class<T> type,
-                                                      @NotNull Supplier<T> supplier,
-                                                      @NotNull ExtensionDescriptorModifier... modifiers) {
-            extensionFactory.register(type, supplier, modifiers);
-            return this;
-        }
-
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
         public JikkouApiProxy build() {
-            return new JikkouApiProxy(extensionFactory, apiClient);
+            return new JikkouApiProxy(extensionFactory, resourceRegistry, apiClient);
         }
     }
+
+    private final ResourceRegistry resourceRegistry;
 
     private final JikkouApiClient apiClient;
 
@@ -113,9 +91,11 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * @param apiClient the {@link JikkouApiClient}.
      */
     public JikkouApiProxy(final @NotNull ExtensionFactory extensionFactory,
+                          final @NotNull ResourceRegistry resourceRegistry,
                           final @NotNull JikkouApiClient apiClient) {
         super(extensionFactory);
         this.apiClient = Objects.requireNonNull(apiClient, "apiClient must not be null");
+        this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
     }
 
     /**
@@ -239,9 +219,10 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ApiActionResultSet<?> execute(@NotNull String action,
+    @SuppressWarnings("unchecked")
+    public <T extends HasMetadata> ApiActionResultSet<T>  execute(@NotNull String action,
                                          @NotNull Configuration configuration) {
-        return apiClient.execute(action, configuration);
+        return (ApiActionResultSet<T>) apiClient.execute(action, configuration);
     }
 
     /**
@@ -257,17 +238,17 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
         List<ValidationError> errors = new ArrayList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {
             try {
-                ResourceListObject<HasMetadata> result = apiClient.validate(entry.getKey(), entry.getValue(), context);
+                ResourceList<HasMetadata> result = apiClient.validate(entry.getKey(), entry.getValue(), context);
                 validated.addAll(result.getItems());
             } catch (JikkouApiResponseException exception) {
                 ErrorResponse errorResponse = exception.getErrorResponse();
                 for (ErrorEntity error : errorResponse.errors()) {
                     if (error.errorCode().equalsIgnoreCase(Errors.API_RESOURCE_VALIDATION_FAILED_ERROR_CODE)) {
                         errors.add(new ValidationError(
-                                (String) error.details().get("name"),
-                                null,
-                                error.message(),
-                                (Map) error.details().get("details")
+                            (String) error.details().get("name"),
+                            null,
+                            error.message(),
+                            (Map) error.details().get("details")
                         ));
                     }
                 }
@@ -275,7 +256,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
         }
 
         if (errors.isEmpty()) {
-            return new ApiValidationResult(new DefaultResourceListObject<>(validated));
+            return new ApiValidationResult(ResourceList.of(validated));
         } else {
             return new ApiValidationResult(errors);
         }
@@ -313,9 +294,9 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public <T extends HasMetadata> ResourceListObject<T> listResources(@NotNull ResourceType resourceType,
-                                                                       @NotNull Selector selector,
-                                                                       @NotNull Configuration configuration) {
+    public <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
+                                                                 @NotNull Selector selector,
+                                                                 @NotNull Configuration configuration) {
         return apiClient.listResources(resourceType, selector, configuration);
     }
 
@@ -324,7 +305,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      **/
     @Override
     public JikkouApiProxy.Builder toBuilder() {
-        return new JikkouApiProxy.Builder(extensionFactory.duplicate(), apiClient);
+        return new JikkouApiProxy.Builder(extensionFactory.duplicate(), resourceRegistry, apiClient);
     }
 
     /**

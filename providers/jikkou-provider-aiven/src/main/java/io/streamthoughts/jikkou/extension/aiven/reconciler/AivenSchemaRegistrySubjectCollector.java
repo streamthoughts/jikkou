@@ -16,9 +16,10 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider;
 import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
@@ -45,7 +46,7 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
 
     private static final String SCHEMA_REGISTRY_VENDOR = "Karapace";
 
-    private AivenApiClientConfig configuration;
+    private AivenApiClientConfig apiClientConfig;
     private boolean prettyPrintSchema = true;
     private V1SchemaRegistrySubjectFactory schemaRegistrySubjectFactory;
 
@@ -69,14 +70,14 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
      **/
     @Override
     public void init(@NotNull final ExtensionContext context) {
-        init(new AivenApiClientConfig(context.appConfiguration()));
+        init(context.<AivenExtensionProvider>provider().apiClientConfig());
     }
 
     private void init(@NotNull AivenApiClientConfig config) throws ConfigException {
-        this.configuration = config;
+        this.apiClientConfig = config;
         this.schemaRegistrySubjectFactory = new V1SchemaRegistrySubjectFactory(
                 SCHEMA_REGISTRY_VENDOR,
-                config.getApiUrl(),
+                config.apiUrl(),
                 prettyPrintSchema
         );
     }
@@ -90,9 +91,9 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
      * {@inheritDoc}
      **/
     @Override
-    public ResourceListObject<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
-                                                               @NotNull Selector selector) {
-        AivenApiClient api = AivenApiClientFactory.create(this.configuration);
+    public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
+                                                         @NotNull Selector selector) {
+        AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             ListSchemaSubjectsResponse response = api.listSchemaRegistrySubjects();
 
@@ -120,7 +121,7 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
             List<V1SchemaRegistrySubject> items = result.join().stream()
                     .map(subject -> subject.withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1))
                     .toList();
-            return new V1SchemaRegistrySubjectList(items);
+            return new V1SchemaRegistrySubjectList.Builder().withItems(items).build();
 
         } catch (RestClientException e) {
             String response;

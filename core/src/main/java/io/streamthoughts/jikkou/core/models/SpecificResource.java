@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import jakarta.validation.constraints.NotNull;
-
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -78,7 +78,6 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
             metadata,
             spec
         );
-
     }
 
     /**
@@ -137,6 +136,28 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
     @Override
     public T withMetadata(final ObjectMeta metadata) {
         return toBuilder().withMetadata(metadata).build();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpecificResource<?, ?> that = (SpecificResource<?, ?>) o;
+        return Objects.equals(kind, that.kind) &&
+            Objects.equals(apiVersion, that.apiVersion) &&
+            Objects.equals(metadata, that.metadata) &&
+            Objects.equals(spec, that.spec);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public int hashCode() {
+        return Objects.hash(kind, apiVersion, metadata, spec);
     }
 
     public abstract Builder<?, T, S> toBuilder();
@@ -208,6 +229,5 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
          * @return a new {@link Object}.
          */
         public abstract T build();
-
     }
 }

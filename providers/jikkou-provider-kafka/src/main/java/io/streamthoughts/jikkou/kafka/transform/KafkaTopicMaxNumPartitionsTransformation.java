@@ -42,7 +42,7 @@ public class KafkaTopicMaxNumPartitionsTransformation implements Transformation<
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
-        maxNumPartitions = MAX_NUM_PARTITIONS_CONFIG.getOptional(context.appConfiguration())
+        maxNumPartitions = MAX_NUM_PARTITIONS_CONFIG.getOptional(context.configuration())
                 .orElseThrow(() -> new ConfigException(
                         String.format("The '%s' configuration property is required for transformation class: %s",
                                 MAX_NUM_PARTITIONS_CONFIG.key(),

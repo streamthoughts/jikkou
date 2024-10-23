@@ -6,26 +6,17 @@
  */
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
-import io.streamthoughts.jikkou.core.DefaultApi;
-import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
-import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
-import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
-import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
-import io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest;
+import io.streamthoughts.jikkou.schema.registry.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
-import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -33,46 +24,29 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSp
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SchemaRegistrySubjectControllerTest extends AbstractIntegrationTest {
-
-    private SchemaRegistrySubjectController controller;
-    private volatile JikkouApi api;
-
-    @BeforeEach
-    void beforeEach() {
-        SchemaRegistryClientConfig configuration = getSchemaRegistryClientConfiguration();
-        controller = new SchemaRegistrySubjectController(configuration);
-        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
-                new DefaultExtensionDescriptorFactory(),
-                new ClassExtensionAliasesGenerator()
-        );
-        api = DefaultApi.builder(new DefaultExtensionFactory(registry, Configuration.empty()), new DefaultResourceRegistry())
-                .register(SchemaRegistrySubjectController.class, () -> controller)
-                .build();
-    }
+class SchemaRegistrySubjectControllerTest extends BaseExtensionProviderIT {
 
     @Test
     void shouldRegisterSchemaForNewResource() {
         // Given
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject.builder()
-                .withMetadata(ObjectMeta.builder()
-                        .withName(TEST_SUBJECT)
-                        .build()
-                )
-                .withSpec(V1SchemaRegistrySubjectSpec
-                        .builder()
-                        .withSchemaType(SchemaType.AVRO)
-                        .withSchema(new SchemaHandle(AVRO_SCHEMA))
-                        .build())
-                .build();
+            .withMetadata(ObjectMeta.builder()
+                .withName(TEST_SUBJECT)
+                .build()
+            )
+            .withSpec(V1SchemaRegistrySubjectSpec
+                .builder()
+                .withSchemaType(SchemaType.AVRO)
+                .withSchema(new SchemaHandle(AVRO_SCHEMA))
+                .build())
+            .build();
         // When
         ApiChangeResultList result = api.reconcile(
-                ResourceListObject.of(List.of(resource)),
-                ReconciliationMode.CREATE,
-                ReconciliationContext.builder().dryRun(false).build()
+            ResourceList.of(List.of(resource)),
+            ReconciliationMode.CREATE,
+            ReconciliationContext.builder().dryRun(false).build()
         );
         // Then
         List<ChangeResult> results = result.results();

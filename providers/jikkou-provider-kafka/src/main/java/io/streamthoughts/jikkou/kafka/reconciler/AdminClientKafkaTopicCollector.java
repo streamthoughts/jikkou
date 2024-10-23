@@ -11,9 +11,10 @@ import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
 import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.KafkaLabelAndAnnotations;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.internals.KafkaConfigPredicate;
@@ -71,7 +72,7 @@ public final class AdminClientKafkaTopicCollector
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = new AdminClientContextFactory(context.appConfiguration());
+            this.adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
         }
     }
 
@@ -110,8 +111,8 @@ public final class AdminClientKafkaTopicCollector
      * {@inheritDoc}
      */
     @Override
-    public ResourceListObject<V1KafkaTopic> listAll(@NotNull final Configuration configuration,
-                                                    @NotNull final Selector selector) {
+    public ResourceList<V1KafkaTopic> listAll(@NotNull final Configuration configuration,
+                                              @NotNull final Selector selector) {
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Listing all kafka topics with configuration: {}", configuration.asMap());
@@ -139,7 +140,7 @@ public final class AdminClientKafkaTopicCollector
                 .filter(selector::apply)
                 .map(resource -> addClusterIdToMetadataAnnotations(resource, clusterId))
                 .toList();
-            return new V1KafkaTopicList(items);
+            return new V1KafkaTopicList.Builder().withItems(items).build();
         }
     }
 

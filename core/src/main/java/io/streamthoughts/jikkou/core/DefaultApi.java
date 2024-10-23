@@ -13,7 +13,6 @@ import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
-import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
@@ -39,15 +38,15 @@ import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
-import io.streamthoughts.jikkou.core.models.DefaultResourceListObject;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.ResourceListObject;
+import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
+import io.streamthoughts.jikkou.core.models.generics.GenericResourceList;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
@@ -74,7 +73,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -105,11 +103,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     /**
      * Builder class for creating a new {@link DefaultApi} object instance.
      */
-    public static final class Builder implements JikkouApi.ApiBuilder<DefaultApi, Builder> {
-
-        private final ExtensionFactory extensionFactory;
-
-        private final ResourceRegistry resourceRegistry;
+    public static final class Builder extends BaseBuilder<DefaultApi, Builder> {
 
         /**
          * Creates a new {@link ExtensionFactory} instance.
@@ -119,28 +113,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
          */
         public Builder(@NotNull ExtensionFactory extensionFactory,
                        @NotNull ResourceRegistry resourceRegistry) {
-            this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
-            this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public <T extends Extension> Builder register(@NotNull Class<T> type, @NotNull Supplier<T> supplier) {
-            extensionFactory.register(type, supplier);
-            return this;
-        }
-
-        /**
-         * {@inheritDoc}
-         **/
-        @Override
-        public <T extends Extension> Builder register(@NotNull Class<T> type,
-                                                      @NotNull Supplier<T> supplier,
-                                                      ExtensionDescriptorModifier... modifiers) {
-            extensionFactory.register(type, supplier, modifiers);
-            return this;
+            super(extensionFactory, resourceRegistry);
         }
 
         /**
@@ -154,6 +127,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
 
     private final List<ChangeReporter> reporters = new LinkedList<>();
     private final ResourceRegistry resourceRegistry;
+    private boolean enableBuiltInAnnotations = false;
 
     /**
      * Creates a new {@link DefaultApi} instance.
@@ -366,7 +340,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             descriptor.description(),
             descriptor.examples(),
             descriptor.category().name(),
-            descriptor.provider(),
+            descriptor.provider().getName(),
             optionListFactory.make(descriptor),
             HasMetadataAcceptable.getSupportedResources(descriptor.type())
         );
@@ -380,7 +354,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .map(descriptor -> new ApiExtensionSummary(
                     descriptor.name(),
                     descriptor.category().name(),
-                    descriptor.provider()
+                    descriptor.provider().getName()
                 )
             ).toList();
         return new ApiExtensionList(extensions);
@@ -403,7 +377,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
-        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceListObject
+        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList
             .of(changes)
             .groupBy(ResourceType::of);
 
@@ -450,8 +424,9 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
-    public ApiActionResultSet execute(@NotNull String name,
-                                      @NotNull Configuration configuration) {
+    @SuppressWarnings("unchecked")
+    public <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String name,
+                                                                 @NotNull Configuration configuration) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(configuration, "configuration cannot be null");
         Action<HasMetadata> action = getMatchingAction(name);
@@ -468,7 +443,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             builder.withAnnotation(String.format("configs.jikkou.io/%s", key), configuration.getAny(key));
         }
         ObjectMeta objectMeta = builder.build();
-        return new ApiActionResultSet<>(objectMeta, resultSet.results());
+        return (ApiActionResultSet<T>) new ApiActionResultSet<>(objectMeta, resultSet.results());
     }
 
     @SuppressWarnings("unchecked")
@@ -495,7 +470,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ValidationResult result = validationChain.validate(items);
 
         return result.isValid() ?
-            new ApiValidationResult(ResourceListObject.of(items)) :
+            new ApiValidationResult(ResourceList.of(items)) :
             new ApiValidationResult(result.errors());
     }
 
@@ -533,7 +508,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .stream()
             .filter(Predicate.not(o -> o instanceof ResourceChange))
             .toList();
-        DefaultResourceListObject filtered = new DefaultResourceListObject<>(list);
+        ResourceList filtered = ResourceList.of(list);
 
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(filtered, context).get().groupByType();
         List<ResourceChange> results = resourcesByType.entrySet()
@@ -561,12 +536,12 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
-    public <T extends HasMetadata> ResourceListObject<T> listResources(final @NotNull ResourceType type,
-                                                                       final @NotNull Selector selector,
-                                                                       final @NotNull Configuration configuration) {
+    public <T extends HasMetadata> ResourceList<T> listResources(final @NotNull ResourceType type,
+                                                                 final @NotNull Selector selector,
+                                                                 final @NotNull Configuration configuration) {
         final Collector<T> collector = getMatchingCollector(type);
 
-        ResourceListObject<T> result = collector.listAll(configuration, selector);
+        ResourceList<T> result = collector.listAll(configuration, selector);
 
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -578,7 +553,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .map(item -> addBuiltInAnnotations(item, timestamp))
             .collect(Collectors.toList());
 
-        result = new DefaultResourceListObject<>(
+        result = new GenericResourceList<>(
             result.getKind(),
             result.getApiVersion(),
             result.getMetadata(),
@@ -587,16 +562,29 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         return addBuiltInAnnotations(result, timestamp);
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends HasMetadata> T addBuiltInAnnotations(T resource, OffsetDateTime timestamp) {
-        ObjectMeta meta = resource
-            .optionalMetadata()
-            .orElse(new ObjectMeta()).toBuilder()
-            .withAnnotation(
-                CoreAnnotations.JKKOU_IO_RESOURCE_GENERATED,
-                timestamp.toString()
-            )
-            .build();
-        return (T) resource.withMetadata(meta);
+        if (enableBuiltInAnnotations) {
+            ObjectMeta meta = resource
+                .optionalMetadata()
+                .orElse(new ObjectMeta()).toBuilder()
+                .withAnnotation(
+                    CoreAnnotations.JKKOU_IO_RESOURCE_GENERATED,
+                    timestamp.toString()
+                )
+                .build();
+            return (T) resource.withMetadata(meta);
+        }
+        return resource;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public DefaultApi enableBuiltInAnnotations(final boolean enableBuiltInAnnotations) {
+        this.enableBuiltInAnnotations = enableBuiltInAnnotations;
+        return this;
     }
 
     /**
