@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -51,7 +50,7 @@ public class AdminClientKafkaTableCollectorIT extends BaseExtensionProviderIT {
     @Test
     void shouldListRecordForCompactTopic() throws ExecutionException, InterruptedException {
         // Given
-        createTopic(TEST_TOPIC_NAME, Map.of(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT));
+        createTopic(TEST_TOPIC_NAME, Map.of(org.apache.kafka.common.config.TopicConfig.CLEANUP_POLICY_CONFIG, org.apache.kafka.common.config.TopicConfig.CLEANUP_POLICY_COMPACT));
 
         RecordMetadata metadata;
         try (var producer = new KafkaProducer<>(clientConfig(), new StringSerializer(), new StringSerializer())) {
@@ -61,9 +60,9 @@ public class AdminClientKafkaTableCollectorIT extends BaseExtensionProviderIT {
 
         // When
         Configuration configuration = Configuration.of(
-            AdminClientKafkaTableCollector.TOPIC_NAME_CONFIG, TEST_TOPIC_NAME,
-            AdminClientKafkaTableCollector.KEY_TYPE_CONFIG, DataType.STRING.name(),
-            AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG, DataType.STRING.name());
+            TopicConfig.TOPIC_NAME.key(), TEST_TOPIC_NAME,
+            TopicConfig.KEY_TYPE.key(), DataType.STRING.name(),
+            TopicConfig.VALUE_TYPE.key(), DataType.STRING.name());
 
         ResourceList<V1KafkaTableRecord> list = api.listResources(
             V1KafkaTableRecord.class,
@@ -96,14 +95,14 @@ public class AdminClientKafkaTableCollectorIT extends BaseExtensionProviderIT {
     @Test
     void shouldThrowExceptionWhenListingRecordsForNonCompactTopic() {
         // Given
-        createTopic(TEST_TOPIC_NAME, Map.of(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE));
+        createTopic(TEST_TOPIC_NAME, Map.of(org.apache.kafka.common.config.TopicConfig.CLEANUP_POLICY_CONFIG, org.apache.kafka.common.config.TopicConfig.CLEANUP_POLICY_DELETE));
 
         // When
         Assertions.assertThrows(JikkouRuntimeException.class, () -> {
             Configuration configuration = Configuration.of(
-                AdminClientKafkaTableCollector.TOPIC_NAME_CONFIG, TEST_TOPIC_NAME,
-                AdminClientKafkaTableCollector.KEY_TYPE_CONFIG, DataType.STRING.name(),
-                AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG, DataType.STRING.name());
+                TopicConfig.TOPIC_NAME.key(), TEST_TOPIC_NAME,
+                TopicConfig.KEY_TYPE.key(), DataType.STRING.name(),
+                TopicConfig.VALUE_TYPE.key(), DataType.STRING.name());
 
             api.listResources(
                 V1KafkaTableRecord.class,

@@ -76,23 +76,22 @@ public final class AdminClientKafkaAclCollector
 
 
         try (AdminClientContext adminClientContext = adminClientContextFactory.createAdminClientContext()) {
-
             List<V1KafkaPrincipalAuthorization> resources = listAll(adminClientContext.getAdminClient())
-                    .stream()
-                    .filter(selector::apply)
-                    .toList();
+                .stream()
+                .filter(selector::apply)
+                .toList();
 
             String clusterId = adminClientContext.getClusterId();
             List<V1KafkaPrincipalAuthorization> items = resources.stream().map(resource -> resource
-                            .toBuilder()
-                            .withMetadata(resource.getMetadata()
-                                    .toBuilder()
-                                    .withAnnotation(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
-                                    .build()
-                            )
-                            .build()
+                    .toBuilder()
+                    .withMetadata(resource.getMetadata()
+                        .toBuilder()
+                        .withAnnotation(KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_CLUSTER_ID, clusterId)
+                        .build()
                     )
-                    .toList();
+                    .build()
+                )
+                .toList();
             return new V1KafkaPrincipalAuthorizationList.Builder().withItems(items).build();
         }
     }

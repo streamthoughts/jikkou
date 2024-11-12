@@ -83,26 +83,26 @@ public final class KafkaBrokerHealthIndicator extends ContextualExtension implem
                              @NotNull final Duration timeout) {
         try {
             DescribeClusterResult result = client.describeCluster(
-                    new DescribeClusterOptions().timeoutMs((int) timeout.toMillis()));
+                new DescribeClusterOptions().timeoutMs((int) timeout.toMillis()));
 
             Collection<Node> nodes = result.nodes().get();
             var clusterId = result.clusterId().get();
             Health.Builder builder = new Health.Builder()
-                    .up()
-                    .name(HEALTH_NAME);
+                .up()
+                .name(HEALTH_NAME);
 
             List<Map<String, Object>> brokers = nodes
-                    .stream()
-                    .map(node -> {
-                        Map<String, Object> details = new LinkedHashMap<>();
-                        details.put("id", node.idString());
-                        details.put("host", node.host());
-                        details.put("port", node.port());
-                        return details;
-                    }).toList();
+                .stream()
+                .map(node -> {
+                    Map<String, Object> details = new LinkedHashMap<>();
+                    details.put("id", node.idString());
+                    details.put("host", node.host());
+                    details.put("port", node.port());
+                    return details;
+                }).toList();
             builder
-                    .details("resource", "urn:kafka:cluster:id:" + clusterId)
-                    .details("brokers", brokers);
+                .details("resource", "urn:kafka:cluster:id:" + clusterId)
+                .details("brokers", brokers);
 
             return builder.build();
         } catch (InterruptedException | ExecutionException e) {
@@ -110,10 +110,10 @@ public final class KafkaBrokerHealthIndicator extends ContextualExtension implem
                 Thread.currentThread().interrupt();
             }
             return new Health.Builder()
-                    .unknown()
-                    .name(HEALTH_NAME)
-                    .exception(e)
-                    .build();
+                .unknown()
+                .name(HEALTH_NAME)
+                .exception(e)
+                .build();
         }
     }
 }

@@ -13,20 +13,10 @@ import io.micronaut.context.ApplicationContext;
 import io.streamthoughts.jikkou.client.command.AbstractCommandLineFactory;
 import io.streamthoughts.jikkou.client.renderer.CommandGroupRenderer;
 import io.streamthoughts.jikkou.core.JikkouApi;
-import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
-import io.streamthoughts.jikkou.core.models.ApiResource;
-import io.streamthoughts.jikkou.core.models.ApiResourceList;
-import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
-import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.models.Verb;
+import io.streamthoughts.jikkou.core.models.*;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
@@ -82,21 +72,22 @@ public final class GetCommandLineFactory extends AbstractCommandLineFactory {
                 }
                 if (resource.isVerbSupported(Verb.GET)) {
                     spec.addOption(CommandLine.Model.OptionSpec
-                            .builder("--name")
-                            .hasInitialValue(false)
-                            .paramLabel("<name>")
-                            .type(String.class)
-                            .description("The name of the resource.")
-                            .required(false)
-                            .setter(new CommandLine.Model.ISetter() {
-                                @Override
-                                public <T> T set(T value) {
-                                    String str = Optional.ofNullable(value).map(Objects::toString).orElse(null);
-                                    command.setName(str);
-                                    return null;
-                                }
-                            })
-                            .build());
+                        .builder("--name")
+                        .hasInitialValue(false)
+                        .paramLabel("<name>")
+                        .type(String.class)
+                        .description("The name of the resource.")
+                        .required(false)
+                        .setter(new CommandLine.Model.ISetter() {
+                            @Override
+                            public <T> T set(T value) {
+                                String str = Optional.ofNullable(value).map(Objects::toString).orElse(null);
+                                command.setName(str);
+                                return null;
+                            }
+                        })
+                        .build()
+                    );
                 }
                 cmd.addSubcommand(subcommand);
                 sections.computeIfAbsent("%nCOMMANDS FOR API GROUP '" + type.group() + "': %n%n", k -> new ArrayList<>())

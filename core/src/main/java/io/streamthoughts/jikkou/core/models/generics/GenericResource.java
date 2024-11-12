@@ -148,7 +148,7 @@ public class GenericResource implements HasMetadata {
     }
 
     @JsonAnySetter
-    public void setProperty(String name, Object value) {
+    public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 

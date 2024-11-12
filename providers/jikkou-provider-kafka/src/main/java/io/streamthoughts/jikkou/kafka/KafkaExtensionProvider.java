@@ -27,49 +27,16 @@ import io.streamthoughts.jikkou.kafka.internals.consumer.DefaultConsumerFactory;
 import io.streamthoughts.jikkou.kafka.internals.producer.DefaultProducerFactory;
 import io.streamthoughts.jikkou.kafka.internals.producer.ProducerFactory;
 import io.streamthoughts.jikkou.kafka.model.user.V1KafkaUser;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaBroker;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuota;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientConsumerGroupCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientConsumerGroupController;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaAclCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaAclController;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaBrokerCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaQuotaCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaQuotaController;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTableCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTableController;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTopicCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaTopicController;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaUserCollector;
-import io.streamthoughts.jikkou.kafka.reconciler.AdminClientKafkaUserController;
+import io.streamthoughts.jikkou.kafka.models.*;
+import io.streamthoughts.jikkou.kafka.reconciler.*;
 import io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter;
-import io.streamthoughts.jikkou.kafka.transform.KafkaPrincipalAuthorizationTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitionsTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxReplicasTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxRetentionMsTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation;
-import io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation;
-import io.streamthoughts.jikkou.kafka.validation.ClientQuotaValidation;
-import io.streamthoughts.jikkou.kafka.validation.NoDuplicatePrincipalAllowedValidation;
-import io.streamthoughts.jikkou.kafka.validation.NoDuplicatePrincipalRoleValidation;
-import io.streamthoughts.jikkou.kafka.validation.NoDuplicateTopicsAllowedValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicConfigKeysValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitionsValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactorValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicNamePrefixValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation;
-import io.streamthoughts.jikkou.kafka.validation.TopicNameSuffixValidation;
+import io.streamthoughts.jikkou.kafka.transform.*;
+import io.streamthoughts.jikkou.kafka.validation.*;
 import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -86,10 +53,39 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class KafkaExtensionProvider extends BaseExtensionProvider {
 
-    private final ConfigProperty<Map<String, Object>> clientConfig = ConfigProperty
-        .ofMap("client")
-        .description("The kafka client configuration properties.")
-        .orElse(HashMap::new);
+    /**
+     * The provider config.
+     */
+    interface Config {
+        ConfigProperty<Map<String, Object>> CLIENT = ConfigProperty
+            .ofMap("client")
+            .description("The kafka client configuration properties.")
+            .defaultValue(HashMap::new);
+
+        ConfigProperty<List<Pattern>> TOPIC_DELETE_EXCLUDE_PATTERNS = ConfigProperty
+            .ofList("topics.deletion.exclude")
+            .map(l -> l.stream().map(Pattern::compile).toList())
+            .defaultValue(() -> List.of(
+                Pattern.compile("^_schemas$"),
+                Pattern.compile("^_connect-offsets$"),
+                Pattern.compile("^_connect-configs$"),
+                Pattern.compile("^_connect-status$"),
+                Pattern.compile("^__.*$"),
+                Pattern.compile(".*-changelog$")
+            ));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(Config.CLIENT, Config.TOPIC_DELETE_EXCLUDE_PATTERNS);
+    }
+
+    public List<Pattern> topicDeleteExcludePatterns() {
+        return Config.TOPIC_DELETE_EXCLUDE_PATTERNS.get(configuration);
+    }
 
     public AdminClientContextFactory newAdminClientContextFactory() {
         return new AdminClientContextFactory(configuration, newAdminClientFactory());
@@ -97,7 +93,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
 
     public AdminClientFactory newAdminClientFactory() {
         return new DefaultAdminClientFactory(
-            clientConfig.map(KafkaUtils::getAdminClientConfigs).get(configuration)
+            Config.CLIENT.map(KafkaUtils::getAdminClientConfigs).get(configuration)
         );
     }
 
@@ -108,7 +104,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
     public <K, V> ConsumerFactory<K, V> newConsumerFactory(final Deserializer<K> keyDeserializer,
                                                            final Deserializer<V> valueDeserializer) {
         return new DefaultConsumerFactory<>(
-            clientConfig.map(KafkaUtils::getConsumerClientConfigs).get(configuration),
+            Config.CLIENT.map(KafkaUtils::getConsumerClientConfigs).get(configuration),
             keyDeserializer,
             valueDeserializer
         );
@@ -117,7 +113,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
     public <K, V> ProducerFactory<K, V> newProducerFactory(final Serializer<K> keySerializer,
                                                            final Serializer<V> valueSerializer) {
         return new DefaultProducerFactory<>(
-            clientConfig.map(KafkaUtils::getProducerClientConfigs).get(configuration),
+            Config.CLIENT.map(KafkaUtils::getProducerClientConfigs).get(configuration),
             keySerializer,
             valueSerializer
         );

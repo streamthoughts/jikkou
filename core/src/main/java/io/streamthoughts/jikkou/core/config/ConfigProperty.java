@@ -10,11 +10,7 @@ import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.config.internals.Type;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.NamedValue;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -61,7 +57,7 @@ public final class ConfigProperty<T> {
      */
     public static <T> ConfigProperty<T> of(final @NotNull String path,
                                            final @NotNull TypeConverter<T> converter) {
-        return new ConfigProperty<>(path, (p, configuration) -> configuration.findAny(p).map(converter::convertValue));
+        return new ConfigProperty<>(path, null, (p, configuration) -> configuration.findAny(p).map(converter::convertValue));
     }
 
     /**
@@ -71,8 +67,9 @@ public final class ConfigProperty<T> {
      * @param enumType the enum type.
      * @return a new {@link ConfigProperty}.
      */
-    public static <T extends Enum<T>> ConfigProperty<T> ofEnum(final @NotNull String path, final @NotNull Class<T> enumType) {
-        return new ConfigProperty<>(path, (p, config) -> config.findString(p).map(val -> Enums.getForNameIgnoreCase(val, enumType)));
+    public static <T extends Enum<T>> ConfigProperty<T> ofEnum(final @NotNull String path,
+                                                               final @NotNull Class<T> enumType) {
+        return new ConfigProperty<>(path, enumType, (p, config) -> config.findString(p).map(val -> Enums.getForNameIgnoreCase(val, enumType)));
     }
 
     /**
@@ -82,7 +79,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Short> ofShort(final @NotNull String path) {
-        return new ConfigProperty<>(path, (p, config) -> config.findShort(p));
+        return new ConfigProperty<>(path, Short.class, (p, config) -> config.findShort(p));
     }
 
     /**
@@ -92,7 +89,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Integer> ofInt(final @NotNull String path) {
-        return new ConfigProperty<>(path, (p, config) -> config.findInteger(p));
+        return new ConfigProperty<>(path, Integer.class, (p, config) -> config.findInteger(p));
     }
 
     /**
@@ -102,7 +99,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Float> ofFloat(final @NotNull String path) {
-        return new ConfigProperty<>(path, (p, config) -> config.findFloat(p));
+        return new ConfigProperty<>(path, Float.class, (p, config) -> config.findFloat(p));
     }
 
     /**
@@ -112,7 +109,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Long> ofLong(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findLong(p));
+        return new ConfigProperty<>(key, Long.class, (p, config) -> config.findLong(p));
     }
 
     /**
@@ -122,7 +119,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Double> ofDouble(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findDouble(p));
+        return new ConfigProperty<>(key, Double.class, (p, config) -> config.findDouble(p));
     }
 
     /**
@@ -132,7 +129,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<String> ofString(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findString(p));
+        return new ConfigProperty<>(key, String.class, (p, config) -> config.findString(p));
     }
 
     /**
@@ -142,7 +139,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Boolean> ofBoolean(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findBoolean(p));
+        return new ConfigProperty<>(key, Boolean.class, (p, config) -> config.findBoolean(p));
     }
 
     /**
@@ -152,7 +149,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Map<String, Object>> ofMap(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findConfig(p).map(Configuration::asMap));
+        return new ConfigProperty<>(key, Map.class, (p, config) -> config.findConfig(p).map(Configuration::asMap));
     }
 
     /**
@@ -162,7 +159,17 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<List<String>> ofList(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findStringList(p));
+        return new ConfigProperty<>(key, List.class, (p, config) -> config.findStringList(p));
+    }
+
+    /**
+     * Static helper method to create a new {@link ConfigProperty} with an expected {@link Set} value.
+     *
+     * @param key the option string key.
+     * @return a new {@link ConfigProperty}.
+     */
+    public static ConfigProperty<Object> ofAny(final @NotNull String key) {
+        return new ConfigProperty<>(key, Object.class, (p, config) -> config.findAny(p));
     }
 
     /**
@@ -172,7 +179,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static <T> ConfigProperty<List<Class<T>>> ofClasses(final @NotNull String key) {
-        return new ConfigProperty<>(key, (p, config) -> config.findClassList(p));
+        return new ConfigProperty<>(key, List.class, (p, config) -> config.findClassList(p));
     }
 
     /**
@@ -182,7 +189,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<Configuration> ofConfig(final @NotNull String path) {
-        return new ConfigProperty<>(path, (p, config) -> config.findConfig(p));
+        return new ConfigProperty<>(path, Configuration.class, (p, config) -> config.findConfig(p));
     }
 
     /**
@@ -192,8 +199,7 @@ public final class ConfigProperty<T> {
      * @return a new {@link ConfigProperty}.
      */
     public static ConfigProperty<List<Configuration>> ofConfigList(final @NotNull String path) {
-        BiFunction<String, Configuration, Optional<List<Configuration>>> supplier = (p, config) -> config.findConfigList(p);
-        return new ConfigProperty<>(path, supplier);
+        return new ConfigProperty<>(path, List.class, (p, config) -> config.findConfigList(p));
     }
 
     private final String key;
@@ -201,6 +207,10 @@ public final class ConfigProperty<T> {
     private final String description;
 
     private final Supplier<? extends T> defaultValueSupplier;
+
+    private final boolean isRequired;
+
+    private final Class<?> rawType;
 
     public final BiFunction<String, Configuration, Optional<T>> accessor;
 
@@ -210,8 +220,9 @@ public final class ConfigProperty<T> {
      * @param key the key of the configuration property.
      */
     public ConfigProperty(final @NotNull String key,
+                          final Class<?> rawType,
                           final @NotNull BiFunction<String, Configuration, Optional<T>> valueSupplier) {
-        this(key, valueSupplier, null, null);
+        this(key, rawType, valueSupplier, null, null, false);
     }
 
     public Configuration asConfiguration(final Object value) {
@@ -231,25 +242,33 @@ public final class ConfigProperty<T> {
      * @param description          the option default value.
      */
     public ConfigProperty(final @NotNull String key,
+                          final Class<?> rawType,
                           final @NotNull BiFunction<String, Configuration, Optional<T>> accessor,
                           final @Nullable Supplier<? extends T> defaultValueSupplier,
-                          final @Nullable String description) {
+                          final @Nullable String description,
+                          final boolean isRequired) {
         this.key = Objects.requireNonNull(key, "key cannot be null");
+        this.rawType = Objects.requireNonNull(rawType, "rawType cannot be null");
         this.accessor = accessor;
         this.defaultValueSupplier = defaultValueSupplier;
         this.description = description;
+        this.isRequired = isRequired;
     }
 
     public ConfigProperty<T> description(final String description) {
-        return new ConfigProperty<>(key, accessor, defaultValueSupplier, description);
+        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, description, isRequired);
     }
 
-    public ConfigProperty<T> orElse(final T other) {
-        return orElse(() -> other);
+    public ConfigProperty<T> required(boolean isRequired) {
+        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, description, isRequired);
     }
 
-    public ConfigProperty<T> orElse(final @NotNull Supplier<? extends T> other) {
-        return new ConfigProperty<>(key, accessor, other, description);
+    public ConfigProperty<T> defaultValue(final T other) {
+        return defaultValue(() -> other);
+    }
+
+    public ConfigProperty<T> defaultValue(final @NotNull Supplier<? extends T> other) {
+        return new ConfigProperty<>(key, rawType, accessor, other, description, isRequired);
     }
 
     /**
@@ -267,16 +286,22 @@ public final class ConfigProperty<T> {
             .orElse(null);
 
         return new ConfigProperty<>(
-            key,
-            (p, config) -> accessor.apply(p, config).map(mapper),
-            defaultValueSupplierWithMapper,
-            description
+                key,
+                rawType,
+                (p, config) -> accessor.apply(p, config).map(mapper),
+                defaultValueSupplierWithMapper,
+                description,
+                isRequired
         );
+    }
+
+    public <U> ConfigProperty<U> convert(final TypeConverter<U> converter) {
+        return map(converter::convertValue);
     }
 
     public T orElseGet(final @NotNull Configuration config,
                        final @NotNull Supplier<? extends T> other) {
-        return orElse(other).get(config);
+        return defaultValue(other).get(config);
     }
 
     /**
@@ -295,8 +320,8 @@ public final class ConfigProperty<T> {
      */
     public Optional<T> getOptional(final @NotNull Configuration config) {
         return accessor
-            .apply(key, config)
-            .or(() -> Optional.ofNullable(defaultValueSupplier).map(Supplier::get));
+                .apply(key, config)
+                .or(() -> Optional.ofNullable(defaultValueSupplier).map(Supplier::get));
     }
 
     /**
@@ -317,8 +342,22 @@ public final class ConfigProperty<T> {
         return description;
     }
 
-    public Supplier<? extends T> defaultValueSupplier() {
-        return Optional.ofNullable(defaultValueSupplier).orElse(() -> null);
+    /**
+     * Gets the description of this property.
+     *
+     * @return the description string, or {@code null} if no description was set.
+     */
+    public boolean required() {
+        return isRequired;
+    }
+
+    /**
+     * Gets the raw-type of this property.
+     *
+     * @return the raw-type class.
+     */
+    public Class<?> rawType() {
+        return rawType;
     }
 
     /**
@@ -355,8 +394,8 @@ public final class ConfigProperty<T> {
     @Override
     public String toString() {
         return "ConfigProperty[" +
-            "key=" + key +
-            ", description=" + description +
-            ']';
+                "key=" + key +
+                ", description=" + description +
+                ']';
     }
 }

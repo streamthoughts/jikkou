@@ -151,5 +151,4 @@ public interface TypeConverter<T> {
         return ObjectTypeConverter.newForType(new TypeReference<>() {
         });
     }
-
 }

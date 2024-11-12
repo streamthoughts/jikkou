@@ -8,7 +8,9 @@ package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.action.Action;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.health.HealthIndicator;
+import io.streamthoughts.jikkou.core.models.HasConfig;
 import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
@@ -29,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
  * @see HealthIndicator
  */
 @Evolving
-public interface Extension extends HasName {
+@Reflectable
+public interface Extension extends HasName, HasConfig {
 
     /**
      * Initializes this extension with the specified context.
@@ -42,4 +45,6 @@ public interface Extension extends HasName {
     default void init(@NotNull ExtensionContext context) {
         // intentionally left blank
     }
+
+
 }

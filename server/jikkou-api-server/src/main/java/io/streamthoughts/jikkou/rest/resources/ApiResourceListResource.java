@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 @Controller("/apis/{groupName}/{version}")
@@ -127,12 +126,10 @@ public class ApiResourceListResource extends AbstractController {
     }
 
     private static Link addLinkOptions(Link link, ApiResource resource, Verb verb, boolean includeOptionals) {
-        List<String> options = resource.getVerbOptionList(verb)
-                .map(optionList -> optionList.options()
-                        .stream()
-                        .filter(spec -> includeOptionals || spec.required())
-                        .map(ApiOptionSpec::name)
-                ).orElse(Stream.empty()).toList();
+        List<String> options = resource.getVerbOptionList(verb).stream().flatMap(optionList -> optionList.options()
+            .stream()
+            .filter(spec -> includeOptionals || spec.required())
+            .map(ApiOptionSpec::name)).toList();
         if (options.isEmpty()) {
             return link;
         }

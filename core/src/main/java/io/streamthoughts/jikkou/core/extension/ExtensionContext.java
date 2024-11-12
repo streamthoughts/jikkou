@@ -6,10 +6,8 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -37,9 +35,9 @@ public interface ExtensionContext {
      * Gets the configuration properties by name as defined by the extension specification.
      *
      * @return The list of properties.
-     */
-    Map<String, ConfigProperty> configProperties();
 
+    Map<String, ConfigProperty> configProperties();
+     */
     /**
      * Gets the configuration property for the specified name as defined by the extension specification.
      *
@@ -48,9 +46,9 @@ public interface ExtensionContext {
      * @return The config property.
      * @throws IllegalArgumentException if the given key is null or empty.
      * @throws NoSuchElementException   if no configuration property is defined for the given key.
-     */
-    <T> ConfigProperty<T> configProperty(String key);
 
+    <T> ConfigProperty<T> configProperty(String key);
+     */
     /**
      * Gets a new extension context from the specified extension type.
      *

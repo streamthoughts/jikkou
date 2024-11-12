@@ -6,15 +6,11 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
-import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.*;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.Configs;
@@ -24,25 +20,18 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
-import io.streamthoughts.jikkou.kafka.change.topics.CreateTopicChangeHandler;
-import io.streamthoughts.jikkou.kafka.change.topics.DeleteTopicChangeHandler;
-import io.streamthoughts.jikkou.kafka.change.topics.TopicChange;
-import io.streamthoughts.jikkou.kafka.change.topics.TopicChangeComputer;
-import io.streamthoughts.jikkou.kafka.change.topics.UpdateTopicChangeHandler;
+import io.streamthoughts.jikkou.kafka.change.topics.*;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,23 +45,23 @@ public final class AdminClientKafkaTopicController
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 
-    // reconciliation property
-    private final ConfigProperty<Boolean> isConfigDeleteOrphansEnabled = ConfigProperty
-        .ofBoolean("config-delete-orphans")
-        .orElse(true);
+    /**
+     * The Extension config
+     */
+    public interface Config {
+        ConfigProperty<Boolean> IS_CONFIG_DELETE_ORPHANS_ENABLED = ConfigProperty
+            .ofBoolean("config-delete-orphans")
+            .defaultValue(true);
 
-    // reconciliation property
-    private final ConfigProperty<Boolean> isDeleteOrphansEnabled = ConfigProperty
-        .ofBoolean("delete-orphans")
-        .orElse(false);
+        ConfigProperty<Boolean> IS_DELETE_ORPHANS_ENABLED = ConfigProperty
+            .ofBoolean("delete-orphans")
+            .defaultValue(false);
+    }
 
-    // extension property
-    private final ConfigProperty<List<Pattern>> topicDeleteExcludePatterns = ConfigProperty
-        .ofList("kafka.topics.deletion.exclude")
-        .map(l -> l.stream().map(Pattern::compile).toList())
-        .orElse(() -> List.of(Pattern.compile("^_schemas$"), Pattern.compile("^__.*$")));
 
     private AdminClientContextFactory adminClientContextFactory;
+
+    private List<Pattern> topicDeleteExcludePatterns;
 
     /**
      * Creates a new {@link AdminClientKafkaTopicController} instance.
@@ -97,9 +86,13 @@ public final class AdminClientKafkaTopicController
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
+
+        KafkaExtensionProvider provider = context.provider();
+
         if (adminClientContextFactory == null) {
-            this.adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
+            this.adminClientContextFactory = provider.newAdminClientContextFactory();
         }
+        this.topicDeleteExcludePatterns = provider.topicDeleteExcludePatterns();
     }
 
     /**
@@ -112,15 +105,18 @@ public final class AdminClientKafkaTopicController
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             final AdminClient adminClient = clientContext.getAdminClient();
             List<ChangeHandler<ResourceChange>> handlers = List.of(
-                    new CreateTopicChangeHandler(adminClient),
-                    new UpdateTopicChangeHandler(adminClient),
-                    new DeleteTopicChangeHandler(adminClient),
-                    new ChangeHandler.None<>(TopicChange::getDescription)
+                new CreateTopicChangeHandler(adminClient),
+                new UpdateTopicChangeHandler(adminClient),
+                new DeleteTopicChangeHandler(adminClient),
+                new ChangeHandler.None<>(TopicChange::getDescription)
             );
             return executor.applyChanges(handlers);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public List<ResourceChange> plan(
             @NotNull Collection<V1KafkaTopic> resources,
@@ -138,37 +134,31 @@ public final class AdminClientKafkaTopicController
                 })
                 .toList();
 
-        // Build the configuration for describing actual resources
-        Configuration configuration = Configuration.from(Map.of(
-                WithKafkaConfigFilters.DEFAULT_CONFIGS_CONFIG, true,
-                WithKafkaConfigFilters.DYNAMIC_BROKER_CONFIGS_CONFIG, true,
-                WithKafkaConfigFilters.STATIC_BROKER_CONFIGS_CONFIG, true
-        ));
-
         // Get the list of remote resources that are candidates for this reconciliation
         AdminClientKafkaTopicCollector collector = new AdminClientKafkaTopicCollector(adminClientContextFactory);
         collector.init(extensionContext().contextForExtension(AdminClientKafkaTopicCollector.class));
 
-        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(configuration, Selectors.NO_SELECTOR)
-                .stream()
-                .filter(context.selector()::apply)
-                .toList();
-        
+        List<V1KafkaTopic> actualKafkaTopics = collector.listAll()
+            .stream()
+            .filter(context.selector()::apply)
+            .toList();
+
         TopicChangeComputer changeComputer = new TopicChangeComputer(
-            topicDeleteExcludePatterns.get(context.configuration()),
-            isDeleteOrphansEnabled(context),
-            isConfigDeleteOrphansEnabled(context)
+            topicDeleteExcludePatterns,
+            Config.IS_DELETE_ORPHANS_ENABLED.get(context.configuration()),
+            Config.IS_CONFIG_DELETE_ORPHANS_ENABLED.get(context.configuration())
         );
         return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics);
     }
 
-    @VisibleForTesting
-    boolean isDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
-        return isDeleteOrphansEnabled.get(context.configuration());
-    }
-
-    @VisibleForTesting
-    boolean isConfigDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
-        return isConfigDeleteOrphansEnabled.get(context.configuration());
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.IS_DELETE_ORPHANS_ENABLED,
+            Config.IS_CONFIG_DELETE_ORPHANS_ENABLED
+        );
     }
 }

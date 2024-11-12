@@ -17,11 +17,10 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.annotation.Title;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
@@ -56,38 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @Named(KafkaConnectRestartConnectorsAction.NAME)
 @Title("Restart Kafka Connect connector instances and task instances")
-@Description("The KafkaConnectRestartConnectors action a user to restart all or just the failed Connector and Task instances for one or multiple named connectors.")
-@ExtensionSpec(
-    options = {
-        @ExtensionOptionSpec(
-            name = KafkaConnectRestartConnectorsAction.CONNECTOR_NAME_CONFIG,
-            description = "The connector's name.",
-            type = List.class,
-            required = false
-
-        ),
-        @ExtensionOptionSpec(
-            name = KafkaConnectRestartConnectorsAction.CONNECT_CLUSTER_CONFIG,
-            description = "The name of the connect cluster.",
-            type = String.class,
-            required = false
-
-        ),
-        @ExtensionOptionSpec(
-            name = KafkaConnectRestartConnectorsAction.INCLUDE_TASKS_CONFIG,
-            description = "Specifies whether to restart the connector instance and task instances (includeTasks=true) or just the connector instance (includeTasks=false)",
-            type = Boolean.class,
-            required = false
-
-        ),
-        @ExtensionOptionSpec(
-            name = KafkaConnectRestartConnectorsAction.ONLY_FAILED_CONFIG,
-            description = "Specifies whether to restart just the instances with a FAILED status (onlyFailed=true) or all instances (onlyFailed=false)",
-            type = Boolean.class,
-            required = false
-
-        )
-    })
+@Description("The KafkaConnectRestartConnectors action allows restarting all or just the failed Connector and Task instances for one or multiple named connectors.")
 @SupportedResource(type = V1KafkaConnector.class)
 public class KafkaConnectRestartConnectorsAction extends ContextualExtension implements Action<V1KafkaConnector> {
 
@@ -95,11 +63,28 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
 
     public static final String NAME = "KafkaConnectRestartConnectors";
 
-    // OPTIONS
-    public static final String CONNECTOR_NAME_CONFIG = "connector-name";
-    public static final String CONNECT_CLUSTER_CONFIG = "connect-cluster";
-    public static final String INCLUDE_TASKS_CONFIG = "include-tasks";
-    public static final String ONLY_FAILED_CONFIG = "only-failed";
+    interface Config {
+        ConfigProperty<List<String>> CONNECTOR_NAME = ConfigProperty
+            .ofList("connector-name")
+            .description("The connector's name.")
+            .required(false);
+
+        ConfigProperty<List<String>> CONNECT_CLUSTER = ConfigProperty
+            .ofList("connect-cluster")
+            .description("The name of the connect cluster.")
+            .required(false);
+
+        ConfigProperty<Boolean> INCLUDE_TASKS = ConfigProperty
+            .ofBoolean("include-tasks")
+            .description("Specifies whether to restart the connector instance and task instances (includeTasks=true) or just the connector instance (includeTasks=false)")
+            .required(false);
+
+        ConfigProperty<Boolean> ONLY_FAILED = ConfigProperty
+            .ofBoolean("only-failed")
+            .description("Specifies whether to restart just the instances with a FAILED status (onlyFailed=true) or all instances (onlyFailed=false)")
+            .required(false);
+    }
+
 
     private KafkaConnectClusterConfigs configuration;
 
@@ -116,17 +101,23 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
      * {@inheritDoc}
      **/
     @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.CONNECTOR_NAME,
+            Config.CONNECT_CLUSTER,
+            Config.INCLUDE_TASKS,
+            Config.ONLY_FAILED
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     public @NotNull ExecutionResultSet<V1KafkaConnector> execute(@NotNull Configuration configuration) {
 
-        final boolean includeTasks = extensionContext()
-            .<Boolean>configProperty(INCLUDE_TASKS_CONFIG)
-            .getOptional(configuration)
-            .orElse(false);
-
-        final boolean onlyFailed = extensionContext()
-            .<Boolean>configProperty(ONLY_FAILED_CONFIG)
-            .getOptional(configuration)
-            .orElse(false);
+        final boolean includeTasks = Config.INCLUDE_TASKS.getOptional(configuration).orElse(false);
+        final boolean onlyFailed = Config.ONLY_FAILED.getOptional(configuration).orElse(false);
 
         // Get the list of Kafka Connect clusters
         Set<String> clusters = getConnectClusters(configuration);
@@ -252,16 +243,12 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
     @NotNull
     private List<String> getConnectorsFromClusterOrConfig(@NotNull Configuration configuration,
                                                           @NotNull KafkaConnectApi api) {
-        return extensionContext()
-            .<List<String>>configProperty(CONNECTOR_NAME_CONFIG)
-            .getOptional(configuration)
-            .orElseGet(api::listConnectors);
+        return Config.CONNECTOR_NAME.getOptional(configuration).orElseGet(api::listConnectors);
     }
 
     @NotNull
     private Set<String> getConnectClusters(@NotNull Configuration configuration) {
-        return extensionContext()
-            .<List<String>>configProperty(CONNECT_CLUSTER_CONFIG)
+        return Config.CONNECT_CLUSTER
             .getOptional(configuration)
             .map(list -> (Set<String>) new HashSet<>(list))
             .orElseGet(() -> this.configuration.getClusters());

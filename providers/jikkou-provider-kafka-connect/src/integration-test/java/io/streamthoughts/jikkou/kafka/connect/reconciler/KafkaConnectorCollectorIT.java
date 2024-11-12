@@ -38,8 +38,8 @@ class KafkaConnectorCollectorIT extends BaseExtensionProviderIT {
         // When / Then
         Assertions.assertThrows(KafkaConnectClusterNotFoundException.class, () -> {
             api.listResources(V1KafkaConnector.class, Selectors.NO_SELECTOR, Configuration.from(Map.of(
-                KafkaConnectorCollector.EXPAND_STATUS_CONFIG, false,
-                KafkaConnectorCollector.CONNECT_CLUSTER_CONFIG, "dummy"
+                KafkaConnectorCollector.Config.EXPAND_STATUS.key(), false,
+                KafkaConnectorCollector.Config.CONNECT_CLUSTER.key(), "dummy"
             )));
         });
     }
@@ -53,7 +53,7 @@ class KafkaConnectorCollectorIT extends BaseExtensionProviderIT {
         ResourceList<V1KafkaConnector> resources = api.listResources(
             V1KafkaConnector.class,
             Selectors.NO_SELECTOR,
-            Configuration.of(KafkaConnectorCollector.EXPAND_STATUS_CONFIG, false)
+            Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS.key(), false)
         );
 
         // Then
@@ -89,7 +89,7 @@ class KafkaConnectorCollectorIT extends BaseExtensionProviderIT {
         ResourceList<V1KafkaConnector> resources = api.listResources(
             V1KafkaConnector.class,
             Selectors.NO_SELECTOR,
-            Configuration.of(KafkaConnectorCollector.EXPAND_STATUS_CONFIG, true)
+            Configuration.of(KafkaConnectorCollector.Config.EXPAND_STATUS.key(), true)
         );
 
         // Then

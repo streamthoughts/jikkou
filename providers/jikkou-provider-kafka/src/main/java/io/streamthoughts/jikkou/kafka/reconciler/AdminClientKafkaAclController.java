@@ -14,7 +14,6 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
-import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -47,6 +46,12 @@ import org.jetbrains.annotations.NotNull;
 public final class AdminClientKafkaAclController
     extends ContextualExtension
     implements Controller<V1KafkaPrincipalAuthorization, ResourceChange> {
+
+    interface Config {
+        ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
+            .ofBoolean("delete-orphans")
+            .defaultValue(false);
+    }
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -110,7 +115,7 @@ public final class AdminClientKafkaAclController
             );
 
             AclChangeComputer computer = new AclChangeComputer(
-                new Config(context.configuration()).isDeleteOrphansEnabled(),
+                Config.DELETE_ORPHANS_OPTIONS.get(context.configuration()),
                 builder);
 
             return computer.computeChanges(actualStates, expectedStates);
@@ -130,23 +135,6 @@ public final class AdminClientKafkaAclController
                 new ChangeHandler.None<>(KafkaPrincipalAuthorizationDescription::new)
             );
             return executor.applyChanges(handlers);
-        }
-    }
-
-    public static class Config {
-
-        public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS_CONFIG = ConfigProperty
-            .ofBoolean("delete-orphans")
-            .orElse(false);
-
-        private final Configuration configuration;
-
-        public Config(Configuration configuration) {
-            this.configuration = configuration;
-        }
-
-        public boolean isDeleteOrphansEnabled() {
-            return DELETE_ORPHANS_OPTIONS_CONFIG.get(configuration);
         }
     }
 }

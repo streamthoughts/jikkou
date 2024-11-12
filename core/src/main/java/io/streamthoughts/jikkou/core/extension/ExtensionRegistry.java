@@ -29,7 +29,6 @@ public interface ExtensionRegistry {
         register(type, () -> Classes.newInstance(type));
     }
 
-
     /**
      * Register an extension supplier for the specified extension type.
      *

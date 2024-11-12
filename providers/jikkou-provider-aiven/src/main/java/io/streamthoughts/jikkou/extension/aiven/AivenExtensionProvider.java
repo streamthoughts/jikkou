@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven;
 
+import static io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider.Config.TOPIC_DELETE_EXCLUDE_PATTERNS;
 import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA1;
 import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA2;
 
@@ -42,7 +43,9 @@ import io.streamthoughts.jikkou.extension.aiven.validation.SchemaRegistryAclEntr
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 
 @Named("aiven")
@@ -53,27 +56,42 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class AivenExtensionProvider extends BaseExtensionProvider {
 
-    final ConfigProperty<String> project = ConfigProperty
-        .ofString("project")
-        .description("Aiven project name.");
 
-    final ConfigProperty<String> service = ConfigProperty
-        .ofString("service")
-        .description("Aiven Service name.");
+    interface Config {
+        ConfigProperty<String> PROJECT = ConfigProperty
+            .ofString("project")
+            .description("Aiven project name.");
 
-    final ConfigProperty<String> apiUrl = ConfigProperty
-        .ofString("apiUrl")
-        .orElse("https://api.aiven.io/v1/")
-        .description("URL to the Aiven REST API.");
+        ConfigProperty<String> SERVICE = ConfigProperty
+            .ofString("service")
+            .description("Aiven Service name.");
 
-    final ConfigProperty<String> tokenAuth = ConfigProperty
-        .ofString("tokenAuth")
-        .description("Aiven Bearer Token. Tokens can be obtained from your Aiven profile page");
+        ConfigProperty<String> API_URL = ConfigProperty
+            .ofString("apiUrl")
+            .defaultValue("https://api.aiven.io/v1/")
+            .description("URL to the Aiven REST API.");
 
-    final ConfigProperty<Boolean> debugLoggingEnabled = ConfigProperty
-        .ofBoolean("debugLoggingEnabled")
-        .description("Enable debug logging.")
-        .orElse(false);
+        ConfigProperty<String> TOKEN_AUTH = ConfigProperty
+            .ofString("tokenAuth")
+            .description("Aiven Bearer Token. Tokens can be obtained from your Aiven profile page");
+
+        ConfigProperty<Boolean> DEBUG_LOGGING_ENABLED = ConfigProperty
+            .ofBoolean("debugLoggingEnabled")
+            .description("Enable debug logging.")
+            .defaultValue(false);
+
+        ConfigProperty<List<Pattern>> TOPIC_DELETE_EXCLUDE_PATTERNS = ConfigProperty
+            .ofList("topics.deletion.exclude")
+            .map(l -> l.stream().map(Pattern::compile).toList())
+            .defaultValue(() -> List.of(
+                Pattern.compile("^_schemas$"),
+                Pattern.compile("^_connect-offsets$"),
+                Pattern.compile("^_connect-configs$"),
+                Pattern.compile("^_connect-status$"),
+                Pattern.compile("^__.*$"),
+                Pattern.compile(".*-changelog$")
+            ));
+    }
 
     private AivenApiClientConfig apiClientConfig;
 
@@ -82,11 +100,30 @@ public final class AivenExtensionProvider extends BaseExtensionProvider {
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         super.configure(configuration);
         apiClientConfig = new AivenApiClientConfig(
-            apiUrl.get(configuration),
-            tokenAuth.get(configuration),
-            project.get(configuration),
-            service.get(configuration),
-            debugLoggingEnabled.get(configuration)
+            Config.API_URL.get(configuration),
+            Config.TOKEN_AUTH.get(configuration),
+            Config.PROJECT.get(configuration),
+            Config.SERVICE.get(configuration),
+            Config.DEBUG_LOGGING_ENABLED.get(configuration)
+        );
+    }
+
+    public List<Pattern> topicDeleteExcludePatterns() {
+        return TOPIC_DELETE_EXCLUDE_PATTERNS.get(configuration);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.API_URL,
+            Config.TOKEN_AUTH,
+            Config.PROJECT,
+            Config.SERVICE,
+            Config.DEBUG_LOGGING_ENABLED,
+            Config.TOPIC_DELETE_EXCLUDE_PATTERNS
         );
     }
 

@@ -129,12 +129,12 @@ public final class AdminClientKafkaTableController implements Controller<V1Kafka
         for (var entry : resourcesByTopic.entrySet()) {
             String topicName = entry.getKey();
             // assuming that all the records in a theme have the same key/value format.
-            V1KafkaTableRecord first = entry.getValue().get(0);
+            V1KafkaTableRecord first = entry.getValue().getFirst();
             Configuration configuration = Configuration.from(Map.of(
-                    AdminClientKafkaTableCollector.TOPIC_NAME_CONFIG, topicName,
-                    AdminClientKafkaTableCollector.KEY_TYPE_CONFIG, first.getSpec().getKey().type().name(),
-                    AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG, first.getSpec().getValue().type().name(),
-                    AdminClientKafkaTableCollector.SKIP_MESSAGE_ON_ERROR_CONFIG, true
+                TopicConfig.TOPIC_NAME.key(), topicName,
+                TopicConfig.KEY_TYPE.key(), first.getSpec().getKey().type().name(),
+                TopicConfig.VALUE_TYPE.key(), first.getSpec().getValue().type().name(),
+                TopicConfig.SKIP_MESSAGE_ON_ERROR.key(), true
             ));
             ResourceList<V1KafkaTableRecord> list = collector.listAll(configuration, context.selector());
 

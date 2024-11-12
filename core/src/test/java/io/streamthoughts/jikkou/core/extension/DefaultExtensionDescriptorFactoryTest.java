@@ -10,9 +10,8 @@ import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,6 @@ class DefaultExtensionDescriptorFactoryTest {
     /**
      * @see io.streamthoughts.jikkou.common.annotation.InterfaceStability
      */
-    public static final ExtensionAttribute EVOLVING_EXTENSION = new ExtensionAttribute("evolving");
     public static final String DESCRIPTION = "This is a description";
     public static final String TITLE = "This is a title";
     public static final String NAME = "TestExtension";
@@ -30,32 +28,32 @@ class DefaultExtensionDescriptorFactoryTest {
     @Test
     void shouldGetCategory() {
         Assertions.assertEquals(ExtensionCategory.EXTENSION,
-                DefaultExtensionDescriptorFactory.getCategory(TestAnnotatedExtension.class));
+            DefaultExtensionDescriptorFactory.getCategory(TestAnnotatedExtension.class));
     }
 
     @Test
     void shouldGetTitle() {
         Assertions.assertEquals(TITLE,
-                DefaultExtensionDescriptorFactory.getTitle(TestAnnotatedExtension.class));
+            DefaultExtensionDescriptorFactory.getTitle(TestAnnotatedExtension.class));
     }
 
     @Test
     void shouldGetDescription() {
         Assertions.assertEquals(DESCRIPTION,
-                DefaultExtensionDescriptorFactory.getDescription(TestAnnotatedExtension.class));
+            DefaultExtensionDescriptorFactory.getDescription(TestAnnotatedExtension.class));
     }
 
     @Test
-    void shouldGetConfigProperties() {
+    void shouldGetConfigPropertiesFromExtension() {
         Assertions.assertEquals(
-                List.of(new ConfigPropertySpec(
-                        "Test",
-                        String.class,
-                        "Description",
-                        "default",
-                        false
-                )),
-                DefaultExtensionDescriptorFactory.getConfigProperties(TestAnnotatedExtension.class)
+            List.of(new ConfigPropertySpec(
+                "One",
+                String.class,
+                "Description",
+                "default",
+                false
+            )),
+            DefaultExtensionDescriptorFactory.getConfigProperties(TestAnnotatedExtension.class, TestAnnotatedExtension::new)
         );
     }
 
@@ -67,7 +65,7 @@ class DefaultExtensionDescriptorFactoryTest {
     @Test
     void shouldGetExtensionMetadata() {
         ExtensionMetadata metadata = DefaultExtensionDescriptorFactory
-                .getExtensionMetadata(TestAnnotatedExtension.class);
+            .getExtensionMetadata(TestAnnotatedExtension.class);
 
         Assertions.assertNotNull(metadata.attributesForName("named"));
         Assertions.assertNotNull(metadata.attributesForName("title"));
@@ -99,17 +97,17 @@ class DefaultExtensionDescriptorFactoryTest {
     @Title(TITLE)
     @Description(DESCRIPTION)
     @Enabled
-    @ExtensionSpec(
-            options = {
-                    @ExtensionOptionSpec(
-                            name = "Test",
-                            description = "Description",
-                            type = String.class,
-                            defaultValue = "default"
-                    )
-            }
-    )
     public static class TestAnnotatedExtension implements Extension {
-    }
 
+        @Override
+        public List<ConfigProperty<?>> configProperties() {
+            return List.of(
+                ConfigProperty
+                    .ofString("One")
+                    .description("Description")
+                    .defaultValue("default")
+                    .required(false)
+            );
+        }
+    }
 }

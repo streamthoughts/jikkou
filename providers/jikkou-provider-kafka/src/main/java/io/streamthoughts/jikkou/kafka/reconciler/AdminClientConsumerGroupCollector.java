@@ -6,19 +6,12 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
-import static io.streamthoughts.jikkou.kafka.reconciler.AdminClientConsumerGroupCollector.IN_STATE_CONFIG_DESCRIPTION;
-import static io.streamthoughts.jikkou.kafka.reconciler.AdminClientConsumerGroupCollector.IN_STATE_CONFIG_NAME;
-import static io.streamthoughts.jikkou.kafka.reconciler.AdminClientConsumerGroupCollector.OFFSETS_CONFIG_DESCRIPTION;
-import static io.streamthoughts.jikkou.kafka.reconciler.AdminClientConsumerGroupCollector.OFFSETS_CONFIG_NAME;
-
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -27,35 +20,32 @@ import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaConsumerGroupService;
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import org.apache.kafka.common.ConsumerGroupState;
 import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaConsumerGroup.class)
-@ExtensionSpec(
-    options = {
-        @ExtensionOptionSpec(
-            name = OFFSETS_CONFIG_NAME,
-            description = OFFSETS_CONFIG_DESCRIPTION,
-            type = Boolean.class,
-            defaultValue = "false"
-        ),
-        @ExtensionOptionSpec(
-            name = IN_STATE_CONFIG_NAME,
-            description = IN_STATE_CONFIG_DESCRIPTION,
-            type = Set.class
-        )
-    }
-)
 public final class AdminClientConsumerGroupCollector extends ContextualExtension implements Collector<V1KafkaConsumerGroup> {
 
-    public static final String OFFSETS_CONFIG_NAME = "offsets";
-    public static final String OFFSETS_CONFIG_DESCRIPTION = "Specify whether consumer group offsets should be described.";
-    public static final String IN_STATE_CONFIG_NAME = "in-states";
-    public static final String IN_STATE_CONFIG_DESCRIPTION = "If states is set, only groups in these states" +
-        " will be returned. Otherwise, all groups are returned." +
-        " This operation is supported by brokers with version 2.6.0 or later";
+    /**
+     * The extension config.
+     */
+    public interface Config {
+        ConfigProperty<Boolean> OFFSETS = ConfigProperty
+            .ofBoolean("offsets")
+            .description("Specify whether consumer group offsets should be described.")
+            .defaultValue(false);
+
+        ConfigProperty<Set<ConsumerGroupState>> IN_STATES = ConfigProperty
+            .ofAny("in-states")
+            .convert(TypeConverter.ofSet(ConsumerGroupState.class))
+            .description(
+                "If states is set, only groups in these states will be returned. Otherwise, all groups are returned." +
+                    " This operation is supported by brokers with version 2.6.0 or later")
+            .defaultValue(Set.of());
+    }
+
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -95,20 +85,18 @@ public final class AdminClientConsumerGroupCollector extends ContextualExtension
                                                       @NotNull Selector selector) {
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             KafkaConsumerGroupService service = new KafkaConsumerGroupService(clientContext.getAdminClient());
-
-            boolean describeOffsets = extensionContext()
-                .<Boolean>configProperty(OFFSETS_CONFIG_NAME)
-                .get(configuration);
-
-            Set<ConsumerGroupState> inStates = ConfigProperty
-                .of(IN_STATE_CONFIG_NAME, TypeConverter.ofSet(ConsumerGroupState.class))
-                .getOptional(configuration)
-                .orElse(Collections.emptySet());
-
-            return service.listConsumerGroups(
-                inStates,
-                describeOffsets
-            );
+            return service.listConsumerGroups(Config.IN_STATES.get(configuration), Config.OFFSETS.get(configuration));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.IN_STATES,
+            Config.OFFSETS
+        );
     }
 }

@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.client.command;
 import io.micronaut.context.ApplicationContext;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -31,18 +32,18 @@ public abstract class AbstractCommandLineFactory {
     protected CommandLine.Model.OptionSpec createOptionSpec(ApiOptionSpec option,
                                                             AbstractApiCommand command) {
         CommandLine.Model.OptionSpec.Builder builder = CommandLine.Model.OptionSpec
-                .builder(buildOptionName(option))
-                .type(option.typeClass())
-                .description(option.description())
-                .required(option.required())
-                .defaultValue(option.defaultValue())
-                .required(option.required())
-                .setter(new CommandLine.Model.ISetter() {
-                    @Override
-                    public <T> T set(T value) {
-                        return command.option(option, value);
-                    }
-                });
+            .builder(buildOptionName(option))
+            .type(option.typeClass())
+            .description(Optional.ofNullable(option.description()).orElse(""))
+            .required(option.required())
+            .initialValue(option.defaultValue())
+            .required(option.required())
+            .setter(new CommandLine.Model.ISetter() {
+                @Override
+                public <T> T set(T value) {
+                    return command.option(option, value);
+                }
+            });
         return builder.build();
     }
 

@@ -22,16 +22,15 @@ public class BaseExtensionProviderIT extends AbstractAivenIntegrationTest {
 
         Configuration configuration = new Configuration
             .Builder()
-            .with(provider.apiUrl.key(), SERVER.url("/"))
-            .with(provider.service.key(), "service")
-            .with(provider.tokenAuth.key(), "token")
-            .with(provider.debugLoggingEnabled.key(), true)
-            .with(provider.project.key(), "project")
+            .with(AivenExtensionProvider.Config.API_URL.key(), SERVER.url("/"))
+            .with(AivenExtensionProvider.Config.SERVICE.key(), "service")
+            .with(AivenExtensionProvider.Config.TOKEN_AUTH.key(), "token")
+            .with(AivenExtensionProvider.Config.DEBUG_LOGGING_ENABLED.key(), true)
+            .with(AivenExtensionProvider.Config.PROJECT.key(), "project")
             .build();
 
         api = JikkouContext.defaultContext()
-            .createApi()
-            .toBuilder()
+            .newApiBuilder()
             .register(new CoreExtensionProvider())
             .register(provider, configuration)
             .build()

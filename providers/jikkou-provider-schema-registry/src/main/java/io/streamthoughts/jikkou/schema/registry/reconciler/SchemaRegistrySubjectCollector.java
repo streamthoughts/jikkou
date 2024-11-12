@@ -7,12 +7,11 @@
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -27,32 +26,25 @@ import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubj
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import jakarta.ws.rs.core.Response;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
-@ExtensionSpec(
-    options = {
-        @ExtensionOptionSpec(
-            name = SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL,
-            description = SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL,
-            type = Boolean.class,
-            defaultValue = "true"
-        )
-    }
-)
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistrySubjectCollector extends ContextualExtension implements Collector<V1SchemaRegistrySubject> {
 
-    public static final String DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL = "default-to-global-compatibility-level";
+    public interface Config {
+        ConfigProperty<Boolean> DEFAULT_GLOBAL_COMPATIBILITY_LEVEL = ConfigProperty
+            .ofBoolean("default-to-global-compatibility-level")
+            .description("Specifies whether to default to global compatibility.")
+            .required(false)
+            .defaultValue(true);
+    }
 
     private SchemaRegistryClientConfig config;
 
     private boolean prettyPrintSchema = true;
-
-    private boolean defaultToGlobalCompatibilityLevel = true;
 
     private V1SchemaRegistrySubjectFactory schemaRegistrySubjectFactory;
 
@@ -97,25 +89,26 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
                                                          @NotNull Selector selector) {
 
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config))) {
-            return listAll(api.listSubjects().flatMapMany(Flux::fromIterable), api);
+            return listAll(configuration, api.listSubjects().flatMapMany(Flux::fromIterable), api);
         }
     }
 
-    public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull List<String> subjects) {
+    public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration, @NotNull List<String> subjects) {
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config))) {
-            return listAll(Flux.fromIterable(subjects), api);
+            return listAll(configuration, Flux.fromIterable(subjects), api);
         }
     }
 
-    private ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Flux<String> subjects,
-                                                                @NotNull AsyncSchemaRegistryApi api) {
+    private ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
+                                                          @NotNull Flux<String> subjects,
+                                                          @NotNull AsyncSchemaRegistryApi api) {
         Flux<V1SchemaRegistrySubject> flux = subjects
             // Get Schema Registry Latest Subject Version
             .flatMap(api::getLatestSubjectSchema)
             .onErrorResume(t -> t instanceof RestClientException rce && isNotFound(rce) ? Mono.empty() : Mono.error(t))
             // Get Schema Registry Subject Compatibility
             .flatMap(subjectSchemaVersion -> api
-                .getSubjectCompatibilityLevel(subjectSchemaVersion.subject(), defaultToGlobalCompatibilityLevel)
+                .getSubjectCompatibilityLevel(subjectSchemaVersion.subject(), Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration))
                 .map(compatibilityObject ->
                     CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
                 .map(compatibilityLevels ->
@@ -140,11 +133,6 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
 
     SchemaRegistrySubjectCollector prettyPrintSchema(final boolean prettyPrintSchema) {
         this.prettyPrintSchema = prettyPrintSchema;
-        return this;
-    }
-
-    public SchemaRegistrySubjectCollector defaultToGlobalCompatibilityLevel(final boolean defaultToGlobalCompatibilityLevel) {
-        this.defaultToGlobalCompatibilityLevel = defaultToGlobalCompatibilityLevel;
         return this;
     }
 }

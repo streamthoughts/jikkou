@@ -30,7 +30,7 @@ class ConfigPropertyTest {
     @Test
     void shouldCreateConfigGivenLongDefault() {
         // Given
-        ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).orElse(42L);
+        ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).defaultValue(42L);
         // When
         Long value = config.get(Configuration.empty());
         // Then
@@ -50,7 +50,7 @@ class ConfigPropertyTest {
     @Test
     void shouldCreateConfigGivenBooleanDefault() {
         // Given
-        ConfigProperty<Boolean> config = ConfigProperty.ofBoolean(KEY).orElse(true);
+        ConfigProperty<Boolean> config = ConfigProperty.ofBoolean(KEY).defaultValue(true);
         // When
         Boolean value = config.get(Configuration.empty());
         // Then
@@ -70,7 +70,7 @@ class ConfigPropertyTest {
     @Test
     void shouldCreateConfigGivenIntDefault() {
         // Given
-        ConfigProperty<Integer> config = ConfigProperty.ofInt(KEY).orElse(42);
+        ConfigProperty<Integer> config = ConfigProperty.ofInt(KEY).defaultValue(42);
         // When
         Integer value = config.get(Configuration.empty());
         // Then
@@ -90,7 +90,7 @@ class ConfigPropertyTest {
     @Test
     void shouldCreateConfigGivenStringDefault() {
         // Given
-        ConfigProperty<String> config = ConfigProperty.ofString(KEY).orElse("test");
+        ConfigProperty<String> config = ConfigProperty.ofString(KEY).defaultValue("test");
 
         // When
         String value = config.get(Configuration.empty());
@@ -112,7 +112,7 @@ class ConfigPropertyTest {
     @Test
     void shouldCreateConfigGivenListDefault() {
         // Given
-        ConfigProperty<List<String>> config = ConfigProperty.ofList(KEY).orElse(List.of("test"));
+        ConfigProperty<List<String>> config = ConfigProperty.ofList(KEY).defaultValue(List.of("test"));
         // When
         List<String> value = config.get(Configuration.empty());
         // Then
@@ -178,7 +178,7 @@ class ConfigPropertyTest {
     @Test
     void shouldCreateConfigGivenClassDefault() {
         // Given
-        ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).orElse(42L);
+        ConfigProperty<Long> config = ConfigProperty.ofLong(KEY).defaultValue(42L);
         // When
         Long value = config.get(Configuration.empty());
         // Then
@@ -190,7 +190,7 @@ class ConfigPropertyTest {
         // Given
         ConfigProperty<List<Configuration>> config = ConfigProperty
                 .ofConfigList(KEY)
-                .orElse(List.of(Configuration.of("k1", "v1")));
+                .defaultValue(List.of(Configuration.of("k1", "v1")));
         // When
         List<Configuration> value = config.get(Configuration.empty());
         // Then

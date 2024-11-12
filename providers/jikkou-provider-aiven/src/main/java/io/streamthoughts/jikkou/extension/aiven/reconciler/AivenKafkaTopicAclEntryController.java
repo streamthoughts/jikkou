@@ -45,9 +45,11 @@ import org.jetbrains.annotations.NotNull;
 )
 public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopicAclEntry, ResourceChange> {
 
-    public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
+    interface Config {
+        ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
-            .orElse(false);
+            .defaultValue(false);
+    }
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private AivenApiClientConfig apiClientConfig;
@@ -121,7 +123,7 @@ public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopi
                 .filter(context.selector()::apply)
                 .toList();
 
-        Boolean deleteOrphans = DELETE_ORPHANS_OPTIONS.get(context.configuration());
+        Boolean deleteOrphans = Config.DELETE_ORPHANS_OPTIONS.get(context.configuration());
         KafkaAclEntryChangeComputer computer = new KafkaAclEntryChangeComputer(deleteOrphans);
 
         return computer.computeChanges(actualResources, expectedResources);

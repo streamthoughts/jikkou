@@ -29,22 +29,22 @@ public class KafkaChangeReporterConfig {
 
     public static final ConfigProperty<Boolean> KAFKA_TOPIC_CREATION_ENABLED_CONFIG = ConfigProperty
             .ofBoolean("kafka.topic.creation.enabled")
-            .orElse(true)
+            .defaultValue(true)
             .description("");
 
     public static final ConfigProperty<Integer> KAFKA_TOPIC_CREATION_DEFAULT_REPLICAS_CONFIG = ConfigProperty
             .ofInt("kafka.topic.creation.defaultReplicationFactor")
-            .orElse(1)
+            .defaultValue(1)
             .description("The default replication factor used for creating topic");
 
     public static final ConfigProperty<Map<String, Object>> PRODUCER_CLIENT_CONFIG = ConfigProperty
             .ofMap("kafka.client")
-            .orElse(HashMap::new)
+            .defaultValue(HashMap::new)
             .map(KafkaUtils::getProducerClientConfigs);
 
     public static final ConfigProperty<Map<String, Object>> ADMIN_CLIENT_CONFIG = ConfigProperty
             .ofMap("kafka.client")
-            .orElse(HashMap::new)
+            .defaultValue(HashMap::new)
             .map(KafkaUtils::getAdminClientConfigs);
 
     private final Configuration configuration;
