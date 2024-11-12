@@ -6,13 +6,11 @@
  */
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
-import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.*;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
@@ -44,8 +42,8 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 @SupportedResource(apiVersion = ApiVersions.SCHEMA_REGISTRY_V1BETA2, kind = "SchemaRegistrySubjectChange")
 public class SchemaRegistrySubjectController
-    extends ContextualExtension
-    implements Controller<V1SchemaRegistrySubject, ResourceChange> {
+        extends ContextualExtension
+        implements Controller<V1SchemaRegistrySubject, ResourceChange> {
 
     private SchemaRegistryClientConfig configuration;
 
@@ -83,10 +81,10 @@ public class SchemaRegistrySubjectController
                                       @NotNull final ReconciliationContext context) {
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration))) {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
-                new CreateSchemaSubjectChangeHandler(api),
-                new UpdateSchemaSubjectChangeHandler(api),
-                new DeleteSchemaSubjectChangeHandler(api),
-                new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
+                    new CreateSchemaSubjectChangeHandler(api),
+                    new UpdateSchemaSubjectChangeHandler(api),
+                    new DeleteSchemaSubjectChangeHandler(api),
+                    new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }
@@ -97,8 +95,8 @@ public class SchemaRegistrySubjectController
      **/
     @Override
     public List<ResourceChange> plan(
-        @NotNull Collection<V1SchemaRegistrySubject> resources,
-        @NotNull ReconciliationContext context) {
+            @NotNull Collection<V1SchemaRegistrySubject> resources,
+            @NotNull ReconciliationContext context) {
 
         // Get described resources that are candidates for this reconciliation.
         List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
@@ -107,15 +105,15 @@ public class SchemaRegistrySubjectController
 
         // Get existing resources from the environment.
         SchemaRegistrySubjectCollector collector = new SchemaRegistrySubjectCollector(configuration)
-            .prettyPrintSchema(false)
-            .defaultToGlobalCompatibilityLevel(false);
+            .prettyPrintSchema(false);
 
         List<String> subjects = expectedSubjects.stream()
-                .map(V1SchemaRegistrySubject::getMetadata)
-                .map(ObjectMeta::getName)
-                .toList();
+            .map(V1SchemaRegistrySubject::getMetadata)
+            .map(ObjectMeta::getName)
+            .toList();
 
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(subjects).stream()
+        Configuration collectorConfig = SchemaRegistrySubjectCollector.Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.asConfiguration(false);
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(collectorConfig, subjects).stream()
             .filter(context.selector()::apply)
             .toList();
 

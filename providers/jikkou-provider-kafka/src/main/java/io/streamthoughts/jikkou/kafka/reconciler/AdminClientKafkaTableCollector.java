@@ -7,12 +7,11 @@
 package io.streamthoughts.jikkou.kafka.reconciler;
 
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionOptionSpec;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
@@ -33,59 +32,18 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecord;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.apache.kafka.common.config.TopicConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaTableRecord.class)
-@ExtensionSpec(
-    options = {
-        @ExtensionOptionSpec(
-            name = AdminClientKafkaTableCollector.TOPIC_NAME_CONFIG,
-            description = "The topic name to consume on.",
-            type = String.class,
-            required = true
-        ),
-        @ExtensionOptionSpec(
-            name = AdminClientKafkaTableCollector.KEY_TYPE_CONFIG,
-            description = "The record key type. Valid values: ${COMPLETION-CANDIDATES}.",
-            type = DataType.class,
-            required = true
-        ),
-        @ExtensionOptionSpec(
-            name = AdminClientKafkaTableCollector.VALUE_TYPE_CONFIG,
-            description = "The record value type. Valid values: ${COMPLETION-CANDIDATES}.",
-            type = DataType.class,
-            required = true
-        ),
-        @ExtensionOptionSpec(
-            name = AdminClientKafkaTableCollector.SKIP_MESSAGE_ON_ERROR_CONFIG,
-            description = "If there is an error when processing a message, skip it instead of halt.",
-            type = Boolean.class,
-            defaultValue = "false",
-            required = false
-        )
-    }
-)
-
 public final class AdminClientKafkaTableCollector extends ContextualExtension implements Collector<V1KafkaTableRecord> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTableCollector.class);
-    public static final Map<String, Object> EMPTY_CONFIG = Collections.emptyMap();
-    public static final String TOPIC_NAME_CONFIG = "topic-name";
-    public static final String KEY_TYPE_CONFIG = "key-type";
-    public static final String VALUE_TYPE_CONFIG = "value-type";
-    public static final String SKIP_MESSAGE_ON_ERROR_CONFIG = "skip-message-on-error";
 
     private ConsumerFactory<byte[], byte[]> consumerFactory;
 
@@ -132,7 +90,7 @@ public final class AdminClientKafkaTableCollector extends ContextualExtension im
     public ResourceList<V1KafkaTableRecord> listAll(@NotNull final Configuration configuration,
                                                     @NotNull final Selector selector) {
 
-        final String topicName = extensionContext().<String>configProperty(TOPIC_NAME_CONFIG).get(configuration);
+        final String topicName = TopicConfig.TOPIC_NAME.get(configuration);
         LOG.debug("Checking if kafka topic {} is compacted", topicName);
         try (AdminClientContext client = new AdminClientContext(adminClientFactory)) {
             boolean isCompacted = client.isTopicCleanupPolicyCompact(topicName, false);
@@ -141,8 +99,8 @@ public final class AdminClientKafkaTableCollector extends ContextualExtension im
                     String.format(
                         "Cannot list records from non compacted topic '%s'. Topic must be configured with: %s=%s",
                         topicName,
-                        TopicConfig.CLEANUP_POLICY_CONFIG,
-                        TopicConfig.CLEANUP_POLICY_COMPACT
+                        org.apache.kafka.common.config.TopicConfig.CLEANUP_POLICY_CONFIG,
+                        org.apache.kafka.common.config.TopicConfig.CLEANUP_POLICY_COMPACT
                     )
                 );
             }
@@ -152,9 +110,9 @@ public final class AdminClientKafkaTableCollector extends ContextualExtension im
         KafkaLogToEndConsumer<byte[], byte[]> consumer = new KafkaLogToEndConsumer<>(consumerFactory);
 
         InternalConsumerRecordCallback callback = new InternalConsumerRecordCallback(
-            extensionContext().<DataType>configProperty(KEY_TYPE_CONFIG).get(configuration),
-            extensionContext().<DataType>configProperty(VALUE_TYPE_CONFIG).get(configuration),
-            extensionContext().<Boolean>configProperty(SKIP_MESSAGE_ON_ERROR_CONFIG).get(configuration)
+            TopicConfig.KEY_TYPE.get(configuration),
+            TopicConfig.VALUE_TYPE.get(configuration),
+            TopicConfig.SKIP_MESSAGE_ON_ERROR.get(configuration)
         );
 
         consumer.readTopicToEnd(topicName, callback);
@@ -169,6 +127,19 @@ public final class AdminClientKafkaTableCollector extends ContextualExtension im
             .filter(selector::apply)
             .collect(Collectors.toList());
         return new V1KafkaTableRecordList.Builder().withItems(items).build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            TopicConfig.TOPIC_NAME,
+            TopicConfig.KEY_TYPE,
+            TopicConfig.VALUE_TYPE,
+            TopicConfig.SKIP_MESSAGE_ON_ERROR
+        );
     }
 
     public static class InternalConsumerRecordCallback implements ConsumerRecordCallback<byte[], byte[]> {
@@ -267,7 +238,7 @@ public final class AdminClientKafkaTableCollector extends ContextualExtension im
                     .map(ByteBuffer::wrap).orElse(null);
 
                 return format.getDataSerde()
-                    .deserialize(record.topic(), keyByteBuffer, EMPTY_CONFIG, isKey)
+                    .deserialize(record.topic(), keyByteBuffer, Map.of(), isKey)
                     .or(() -> Optional.of(DataHandle.NULL));
 
             } catch (Exception e) {

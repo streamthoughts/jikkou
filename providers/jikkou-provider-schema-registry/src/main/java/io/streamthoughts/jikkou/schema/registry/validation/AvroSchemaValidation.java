@@ -32,15 +32,15 @@ public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject>
 
     public static final ConfigProperty<Boolean> RECORD_FIELD_MUST_HAVE_DOC = ConfigProperty
             .ofBoolean("fieldsMustHaveDoc")
-            .orElse(false);
+            .defaultValue(false);
 
     public static final ConfigProperty<Boolean> RECORD_FIELDS_MUST_BE_NULLABLE = ConfigProperty
             .ofBoolean("fieldsMustBeNullable")
-            .orElse(false);
+            .defaultValue(false);
 
     public static final ConfigProperty<Boolean> RECORD_FIELDS_MUST_BE_OPTIONAL = ConfigProperty
             .ofBoolean("fieldsMustBeOptional")
-            .orElse(false);
+            .defaultValue(false);
 
     private boolean recordFieldsMustHaveDoc;
     private boolean recordFieldsMustBeNullable;

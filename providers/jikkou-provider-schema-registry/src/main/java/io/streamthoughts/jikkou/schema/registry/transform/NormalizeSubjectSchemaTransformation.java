@@ -46,7 +46,7 @@ public class NormalizeSubjectSchemaTransformation implements Transformation<V1Sc
                 case PROTOBUF -> value;
             };
         } catch (Exception e) {
-            LOG.error("Failed to normalize AVRO/JSON schema. Cause: " + e.getLocalizedMessage());
+            LOG.error("Failed to normalize AVRO/JSON schema.", e);
             normalized = value;
         }
 

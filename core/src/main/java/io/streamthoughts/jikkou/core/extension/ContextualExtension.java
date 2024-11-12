@@ -6,12 +6,14 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract implementation of an {@link Extension} that manages the {@link ExtensionContext} instance.
  */
+@Reflectable
 public abstract class ContextualExtension implements Extension {
 
     private ExtensionContext context;
@@ -30,8 +32,6 @@ public abstract class ContextualExtension implements Extension {
      * @return The ExtensionContext.
      */
     public ExtensionContext extensionContext() {
-        return Optional
-                .ofNullable(context)
-                .orElseThrow(() -> new IllegalStateException("Not initialized"));
+        return Optional.ofNullable(context).orElseThrow(() -> new IllegalStateException("Not initialized"));
     }
 }

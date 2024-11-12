@@ -34,14 +34,13 @@ import io.streamthoughts.jikkou.extension.aiven.change.topic.KafkaTopicChangeHan
 import io.streamthoughts.jikkou.kafka.change.topics.TopicChangeComputer;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
-import io.streamthoughts.jikkou.kafka.reconciler.WithKafkaConfigFilters;
+import io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,31 +54,23 @@ public final class AivenKafkaTopicController
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenKafkaTopicController.class);
 
-    // reconciliation property
-    private final ConfigProperty<Boolean> isConfigDeleteOrphansEnabled = ConfigProperty
-        .ofBoolean("config-delete-orphans")
-        .orElse(true);
+    interface Config {
+        ConfigProperty<Boolean> IS_CONFIG_DELETE_ORPHANS_ENABLED = ConfigProperty
+            .ofBoolean("config-delete-orphans")
+            .defaultValue(true);
 
-    // reconciliation property
-    private final ConfigProperty<Boolean> isDeleteOrphansEnabled = ConfigProperty
-        .ofBoolean("delete-orphans")
-        .orElse(false);
-
-    // extension property
-    private final ConfigProperty<List<Pattern>> topicDeleteExcludePatterns = ConfigProperty
-        .ofList("kafka.topics.deletion.exclude")
-        .map(l -> l.stream().map(Pattern::compile).toList())
-        .orElse(() -> List.of(
-            Pattern.compile("^_schemas$"),
-            Pattern.compile("^__.*$"),
-            Pattern.compile(".*-changelog$")
-        ));
+        ConfigProperty<Boolean> IS_DELETE_ORPHANS_ENABLED = ConfigProperty
+            .ofBoolean("delete-orphans")
+            .defaultValue(false);
+    }
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     private AivenKafkaTopicCollector collector;
 
     private AivenApiClientConfig apiClientConfig;
+
+    private List<Pattern> topicDeleteExcludePatterns;
 
     /**
      * Creates a new {@link AivenKafkaTopicController} instance.
@@ -104,7 +95,10 @@ public final class AivenKafkaTopicController
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        init(context.<AivenExtensionProvider>provider().apiClientConfig());
+        AivenExtensionProvider provider = context.provider();
+
+        init(provider.apiClientConfig());
+        this.topicDeleteExcludePatterns = provider.topicDeleteExcludePatterns();
     }
 
     private void init(@NotNull AivenApiClientConfig apiClientConfig) {
@@ -121,8 +115,7 @@ public final class AivenKafkaTopicController
     public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
                                       @NotNull final ReconciliationContext context) {
 
-        final AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
-        try {
+        try (AivenApiClient api = AivenApiClientFactory.create(apiClientConfig)) {
             List<ChangeHandler<ResourceChange>> handlers = List.of(
                 new KafkaTopicChangeHandler.Create(api),
                 new KafkaTopicChangeHandler.Update(api),
@@ -130,8 +123,6 @@ public final class AivenKafkaTopicController
                 new KafkaTopicChangeHandler.None()
             );
             return executor.applyChanges(handlers);
-        } finally {
-            api.close();
         }
     }
 
@@ -157,9 +148,9 @@ public final class AivenKafkaTopicController
 
         // Build the configuration for describing actual resources
         Configuration configuration = Configuration.from(Map.of(
-            WithKafkaConfigFilters.DEFAULT_CONFIGS_CONFIG, true,
-            WithKafkaConfigFilters.DYNAMIC_BROKER_CONFIGS_CONFIG, true,
-            WithKafkaConfigFilters.STATIC_BROKER_CONFIGS_CONFIG, true
+            KafkaConfigsConfig.DEFAULT_CONFIGS.key(), true,
+            KafkaConfigsConfig.DYNAMIC_BROKER_CONFIGS.key(), true,
+            KafkaConfigsConfig.STATIC_BROKER_CONFIGS.key(), true
         ));
 
         // Get the list of remote resources that are candidates for this reconciliation
@@ -171,24 +162,14 @@ public final class AivenKafkaTopicController
             .toList();
 
         TopicChangeComputer changeComputer = new TopicChangeComputer(
-            topicDeleteExcludePatterns.get(context.configuration()),
-            isDeleteOrphansEnabled(context),
-            isConfigDeleteOrphansEnabled(context)
+            topicDeleteExcludePatterns,
+            Config.IS_DELETE_ORPHANS_ENABLED.get(context.configuration()),
+            Config.IS_CONFIG_DELETE_ORPHANS_ENABLED.get(context.configuration())
         );
 
         return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics)
             .stream()
             .map(change -> change.withApiVersion(KAFKA_AIVEN_V1BETA2))
             .toList();
-    }
-
-    @VisibleForTesting
-    boolean isDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
-        return isDeleteOrphansEnabled.get(context.configuration());
-    }
-
-    @VisibleForTesting
-    boolean isConfigDeleteOrphansEnabled(@NotNull ReconciliationContext context) {
-        return isConfigDeleteOrphansEnabled.get(context.configuration());
     }
 }

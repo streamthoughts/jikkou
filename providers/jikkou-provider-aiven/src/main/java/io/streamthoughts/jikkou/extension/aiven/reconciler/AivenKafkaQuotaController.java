@@ -48,7 +48,7 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
-            .orElse(false);
+            .defaultValue(false);
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private AivenApiClientConfig apiClientConfig;

@@ -49,14 +49,14 @@ public final class ResourceDescriptor {
                               @NotNull String description,
                               @NotNull Class<? extends HasMetadata> resourceClass) {
         this(
-                type,
-                description,
-                resourceClass,
-                null,
-                null,
-                Collections.emptySet(),
-                Collections.emptySet(),
-                false
+            type,
+            description,
+            resourceClass,
+            null,
+            null,
+            Collections.emptySet(),
+            Collections.emptySet(),
+            false
         );
     }
 
@@ -105,8 +105,8 @@ public final class ResourceDescriptor {
      */
     public String singularName() {
         return Optional
-                .ofNullable(this.singularName)
-                .orElse(type.kind().toLowerCase(Locale.ROOT));
+            .ofNullable(this.singularName)
+            .orElse(type.kind().toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -250,9 +250,9 @@ public final class ResourceDescriptor {
      */
     public Set<String> orderedVerbs() {
         return verbs.stream()
-                .map(Verb::value)
-                .sorted(Comparator.comparing(Function.identity()))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(Verb::value)
+            .sorted(Comparator.comparing(Function.identity()))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

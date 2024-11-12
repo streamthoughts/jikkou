@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class SchemaRegistryAclEntryValidation implements Validation<V1SchemaRegistryAclEntry> {
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile(
-            "^(Config|Subject):([A-Za-z|0-9|\\.\\-_*?]*)$"
+        "^(Config|Subject):([A-Za-z|0-9|\\.\\-_*?]*)$"
     );
 
     /**
@@ -34,11 +34,11 @@ public class SchemaRegistryAclEntryValidation implements Validation<V1SchemaRegi
             Matcher matcher = RESOURCE_PATTERN.matcher(schemaRegistryResource);
             if (!matcher.matches()) {
                 return ValidationResult.failure(new ValidationError(
-                        getName(),
-                        resource,
-                        "Invalid input for resource (" + schemaRegistryResource + "): Config: or " +
-                                "Subject:<subject_name> where subject_name must " +
-                                "consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'"
+                    getName(),
+                    resource,
+                    "Invalid input for resource (" + schemaRegistryResource + "): Config: or " +
+                        "Subject:<subject_name> where subject_name must " +
+                        "consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'"
                 ));
             }
         }

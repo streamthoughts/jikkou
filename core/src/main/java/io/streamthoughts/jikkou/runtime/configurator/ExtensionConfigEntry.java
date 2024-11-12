@@ -30,7 +30,7 @@ public record ExtensionConfigEntry(String name,
     public static final ConfigProperty<String> NAME_CONFIG = ConfigProperty
         .ofString("name")
         .description("The name of the configured extension")
-        .orElse((String) null);
+        .defaultValue((String) null);
 
     public static final ConfigProperty<String> TYPE_CONFIG = ConfigProperty
         .ofString("type")
@@ -39,17 +39,17 @@ public record ExtensionConfigEntry(String name,
     public static final ConfigProperty<Integer> PRIORITY_CONFIG = ConfigProperty
         .ofInt("priority")
         .description("The priority order of the extension")
-        .orElse(HasPriority.NO_ORDER);
+        .defaultValue(HasPriority.NO_ORDER);
 
     public static final ConfigProperty<Boolean> ENABLED_CONFIG = ConfigProperty
         .ofBoolean("enabled")
         .description("Specifies whether the extension is enabled or disabled")
-        .orElse(true);
+        .defaultValue(true);
 
     public static final ConfigProperty<Configuration> CONFIGURATION_CONFIG = ConfigProperty
         .ofConfig("config")
         .description("The configuration of the extension")
-        .orElse(Configuration.empty());
+        .defaultValue(Configuration.empty());
 
     public static ExtensionConfigEntry of(final @NotNull Configuration config) {
         Objects.requireNonNull(config, "config must not be null");

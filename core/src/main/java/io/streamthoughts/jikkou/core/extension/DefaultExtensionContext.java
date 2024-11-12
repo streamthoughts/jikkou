@@ -6,7 +6,6 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.config.internals.Type;
@@ -16,7 +15,6 @@ import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -62,15 +60,15 @@ public final class DefaultExtensionContext implements ExtensionContext {
 
     /**
      * {@inheritDoc}
-     **/
+
     @Override
     public Map<String, ConfigProperty> configProperties() {
         return Collections.unmodifiableMap(propertiesByName);
     }
-
+     **/
     /**
      * {@inheritDoc}
-     **/
+
     @Override
     public <T> ConfigProperty<T> configProperty(final String key) {
         if (Strings.isBlank(key)) throw new IllegalArgumentException("key cannot be null or empty");
@@ -80,7 +78,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
         }
         return property;
     }
-
+     **/
     /**
      * {@inheritDoc}
      **/
@@ -129,7 +127,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
                 }
                 property = property.description(spec.description());
                 if (!spec.required()) {
-                    property = property.orElse(() -> type.converter().convertValue(spec.defaultValue()));
+                    property = property.defaultValue(() -> type.converter().convertValue(spec.defaultValue()));
                 }
                 return property;
             })

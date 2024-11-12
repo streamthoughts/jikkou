@@ -19,19 +19,19 @@ public final class AdminClientContextFactory {
 
     public static final ConfigProperty<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigProperty
             .ofBoolean("brokers.waitForEnabled")
-            .orElse(true);
+            .defaultValue(true);
 
     public static final ConfigProperty<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigProperty
             .ofInt("brokers.waitForMinAvailable")
-            .orElse(KafkaBrokersReady.DEFAULT_MIN_AVAILABLE_BROKERS);
+            .defaultValue(KafkaBrokersReady.DEFAULT_MIN_AVAILABLE_BROKERS);
 
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigProperty
             .ofLong("brokers.waitForRetryBackoffMs")
-            .orElse(KafkaBrokersReady.DEFAULT_RETRY_BACKOFF_MS);
+            .defaultValue(KafkaBrokersReady.DEFAULT_RETRY_BACKOFF_MS);
 
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigProperty
             .ofLong("brokers.waitForTimeoutMs")
-            .orElse(KafkaBrokersReady.DEFAULT_TIMEOUT_MS);
+            .defaultValue(KafkaBrokersReady.DEFAULT_TIMEOUT_MS);
 
     private final AdminClientFactory factory;
     private final Configuration configuration;

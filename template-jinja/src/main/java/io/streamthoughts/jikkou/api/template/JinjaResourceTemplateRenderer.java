@@ -38,9 +38,9 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
     private static final String CONFIG_NS = "jinja";
 
     public static final ConfigProperty<Boolean> ENABLE_RECURSIVE_MACRO_CALLS = ConfigProperty
-            .ofBoolean(CONFIG_NS + ".enableRecursiveMacroCalls")
-            .orElse(true)
-            .description("Enable recursive macro calls.");
+        .ofBoolean(CONFIG_NS + ".enableRecursiveMacroCalls")
+        .defaultValue(true)
+        .description("Enable recursive macro calls.");
 
     // list of scopes for bindings
     public enum Scopes {

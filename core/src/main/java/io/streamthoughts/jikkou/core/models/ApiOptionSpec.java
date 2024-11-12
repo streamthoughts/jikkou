@@ -42,7 +42,7 @@ public record ApiOptionSpec(
         @JsonProperty("description") String description,
         @JsonProperty("type") String type,
         @JsonProperty("enum") EnumSpec enumSpec,
-        @JsonProperty("defaultValue") String defaultValue,
+        @JsonProperty("defaultValue") Object defaultValue,
         @JsonProperty("required") boolean required) {
 
     @SuppressWarnings("rawtypes")
@@ -74,7 +74,7 @@ public record ApiOptionSpec(
     public ApiOptionSpec(String name,
                          String description,
                          Class<?> type,
-                         String defaultValue,
+                         Object defaultValue,
                          boolean required) {
         this(name, description, getTypeString(type), getEnumSpec(type), defaultValue, required);
     }

@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.spi;
 import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.Configurable;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.models.HasConfig;
 import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import java.util.Optional;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * interface must be added to a {@code META-INF/services/io.streamthoughts.jikkou.spi.ExtensionProvider} file.
  * </pre>
  */
-public interface ExtensionProvider extends HasName, Configurable {
+public interface ExtensionProvider extends HasName, HasConfig, Configurable {
 
     /**
      * Registers the extensions for this provider.

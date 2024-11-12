@@ -39,7 +39,7 @@ class SchemaRegistrySubjectCollectorTest extends BaseExtensionProviderIT {
         ResourceList<V1SchemaRegistrySubject> resources = api.listResources(
             V1SchemaRegistrySubject.class,
             Selectors.NO_SELECTOR,
-            Configuration.of(SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL, true)
+            Configuration.of(SchemaRegistrySubjectCollector.Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.key(), true)
         );
 
         // Then
@@ -59,7 +59,7 @@ class SchemaRegistrySubjectCollectorTest extends BaseExtensionProviderIT {
         ResourceList<V1SchemaRegistrySubject> resources = api.listResources(
             V1SchemaRegistrySubject.class,
             Selectors.NO_SELECTOR,
-            Configuration.of(SchemaRegistrySubjectCollector.DEFAULT_TO_GLOBAL_COMPATIBILITY_LEVEL, false)
+            Configuration.of(SchemaRegistrySubjectCollector.Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.key(), false)
         );
 
         // Then

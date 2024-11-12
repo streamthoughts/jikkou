@@ -46,13 +46,13 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
 
     final ConfigProperty<String> schemaRegistryVendor = ConfigProperty
         .ofString("vendor")
-        .orElse("generic")
+        .defaultValue("generic")
         .description("The name of the schema registry implementation vendor.");
 
     final ConfigProperty<AuthMethod> schemaRegistryAuthMethod = ConfigProperty
         .ofString("authMethod")
         .map(val -> Enums.getForNameIgnoreCase(val, AuthMethod.class, AuthMethod.INVALID))
-        .orElse(AuthMethod.NONE)
+        .defaultValue(AuthMethod.NONE)
         .description("Method to use for authenticating on Schema Registry. Available values are: [none, basicauth, ssl]");
 
     final ConfigProperty<String> schemaRegistryBasicAuthUser = ConfigProperty
@@ -66,7 +66,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
     final ConfigProperty<Boolean> schemaRegistryDebugLoggingEnabled = ConfigProperty
         .ofBoolean("debugLoggingEnabled")
         .description("Enable debug logging.")
-        .orElse(false);
+        .defaultValue(false);
 
     private SchemaRegistryClientConfig clientConfig;
 
@@ -119,7 +119,6 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
     public void registerResources(@NotNull ResourceRegistry registry) {
         registry.register(V1SchemaRegistrySubject.class);
         registry.register(GenericResourceChange.class, ResourceChange.fromResource(V1SchemaRegistrySubject.class));
-
         registry.register(V1SchemaRegistrySubjectList.class);
     }
 }

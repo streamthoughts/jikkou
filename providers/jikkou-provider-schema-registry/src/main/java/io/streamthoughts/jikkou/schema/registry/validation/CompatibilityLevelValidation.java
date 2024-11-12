@@ -33,16 +33,17 @@ public class CompatibilityLevelValidation implements Validation<V1SchemaRegistry
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(@NotNull final ExtensionContext context) {
         final Configuration config = context.configuration();
 
         accepted = VALIDATION_COMPATIBILITY_CONFIG.getOptional(config)
-                .orElseThrow(() -> new ConfigException(
-                        String.format("The '%s' configuration property is required for %s",
-                                VALIDATION_COMPATIBILITY_CONFIG.key(),
-                                CompatibilityLevelValidation.class.getSimpleName()
-                        )
-                ));
+            .orElseThrow(() -> new ConfigException(
+                String.format("The '%s' configuration property is required for %s",
+                    VALIDATION_COMPATIBILITY_CONFIG.key(),
+                    CompatibilityLevelValidation.class.getSimpleName()
+                )
+            ));
     }
 
     /**

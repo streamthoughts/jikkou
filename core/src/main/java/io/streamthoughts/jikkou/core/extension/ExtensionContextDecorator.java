@@ -6,10 +6,8 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
-import java.util.Map;
 
 public class ExtensionContextDecorator implements ExtensionContext {
 
@@ -35,17 +33,18 @@ public class ExtensionContextDecorator implements ExtensionContext {
         return delegate.configuration();
     }
 
-    /** {@inheritDoc} **/
+    /** {@inheritDoc}
     @Override
     public Map<String, ConfigProperty> configProperties() {
         return delegate.configProperties();
-    }
+    }**/
 
-    /** {@inheritDoc} **/
+    /** {@inheritDoc}
     @Override
     public <T> ConfigProperty<T> configProperty(String key) {
         return delegate.configProperty(key);
     }
+     **/
 
     /** {@inheritDoc} **/
     @Override

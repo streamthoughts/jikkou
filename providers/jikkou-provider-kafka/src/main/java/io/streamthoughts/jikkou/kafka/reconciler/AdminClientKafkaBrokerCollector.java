@@ -6,9 +6,13 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
+import static io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig.*;
+
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -44,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 @SupportedResource(type = V1KafkaBroker.class)
 public final class AdminClientKafkaBrokerCollector
-        extends WithKafkaConfigFilters implements Collector<V1KafkaBroker> {
+        extends ContextualExtension implements Collector<V1KafkaBroker> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaBrokerCollector.class);
 
@@ -96,7 +100,7 @@ public final class AdminClientKafkaBrokerCollector
                                         @NotNull final AdminClientContext context) {
 
         List<V1KafkaBroker> resources = new KafkaBrokerClient(context.getAdminClient())
-                .listAll(kafkaConfigPredicate(configuration));
+                .listAll(newConfigPredicate(configuration));
         final String clusterId = context.getClusterId();
         List<V1KafkaBroker> items = resources
                 .stream()
@@ -112,6 +116,18 @@ public final class AdminClientKafkaBrokerCollector
                 )
                 .toList();
         return new V1KafkaBrokerList.Builder().withItems(items).build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            DEFAULT_CONFIGS,
+            DYNAMIC_BROKER_CONFIGS,
+            STATIC_BROKER_CONFIGS
+        );
     }
 
     private Collection<String> loadClusterBrokerIds(final AdminClient client) {

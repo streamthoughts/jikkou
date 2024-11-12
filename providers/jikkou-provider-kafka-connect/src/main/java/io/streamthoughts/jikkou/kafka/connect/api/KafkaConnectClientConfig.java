@@ -32,7 +32,7 @@ public record KafkaConnectClientConfig(
 
     public static final ConfigProperty<String> KAFKA_CONNECT_AUTH_METHOD = ConfigProperty
         .ofString("authMethod")
-        .orElse(AuthMethod.NONE.name())
+        .defaultValue(AuthMethod.NONE.name())
         .description("Method to use for authenticating on Kafka Connect cluster. Available values are: [none, basicauth, ssl]");
 
     public static final ConfigProperty<String> KAFKA_CONNECT_BASIC_AUTH_USERNAME = ConfigProperty
@@ -46,7 +46,7 @@ public record KafkaConnectClientConfig(
     public static final ConfigProperty<Boolean> KAFKA_CONNECT_DEBUG_LOGGING_ENABLED = ConfigProperty
         .ofBoolean("debugLoggingEnabled")
         .description("Enable debug logging.")
-        .orElse(false);
+        .defaultValue(false);
 
     public static KafkaConnectClientConfig from(final Configuration configuration) {
         return new KafkaConnectClientConfig(

@@ -54,7 +54,7 @@ class JikkouTest {
         int execute = Jikkou.execute(new String[]{"get"});
         Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);
     }
-
+    
     @Test
     void testCommandHealthGetIndicators() {
         int execute = Jikkou.execute(new String[]{"health", "get-indicators"});

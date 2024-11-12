@@ -36,7 +36,6 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
 
 @SupportedResource(type = V1KafkaClientQuota.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaClientQuotaChange")
@@ -47,7 +46,14 @@ public final class AdminClientKafkaQuotaController
         extends ContextualExtension
         implements Controller<V1KafkaClientQuota, ResourceChange> {
 
-    public static final String LIMITS_DELETE_ORPHANS_CONFIG_NAME = "limits-delete-orphans";
+    /**
+     * The extension config
+     */
+    public interface Config {
+        ConfigProperty<Boolean> LIMITS_DELETE_ORPHANS = ConfigProperty
+            .ofBoolean("limits-delete-orphans")
+            .defaultValue(true);
+    }
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -99,7 +105,7 @@ public final class AdminClientKafkaQuotaController
                 .filter(context.selector()::apply)
                 .toList();
 
-        boolean isLimitDeletionEnabled = isLimitDeletionEnabled(context);
+        boolean isLimitDeletionEnabled = Config.LIMITS_DELETE_ORPHANS.get(context.configuration());
 
         // Compute state changes
         KafkaClientQuotaChangeComputer changeComputer = new KafkaClientQuotaChangeComputer(isLimitDeletionEnabled);
@@ -122,10 +128,11 @@ public final class AdminClientKafkaQuotaController
         }
     }
 
-    @VisibleForTesting
-    static boolean isLimitDeletionEnabled(@NotNull ReconciliationContext context) {
-        return ConfigProperty.ofBoolean(LIMITS_DELETE_ORPHANS_CONFIG_NAME)
-                .orElse(true)
-                .get(context.configuration());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(Config.LIMITS_DELETE_ORPHANS);
     }
 }

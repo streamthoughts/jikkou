@@ -92,9 +92,9 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
                             final String kind,
                             final ObjectMeta metadata,
                             final S spec) {
-        this.apiVersion = apiVersion;
-        this.kind = kind;
-        this.metadata = metadata;
+        this.apiVersion = Optional.ofNullable(apiVersion).orElseGet(() -> Resource.getApiVersion(this.getClass()));
+        this.kind = Optional.ofNullable(kind).orElseGet(() -> Resource.getKind(this.getClass()));
+        this.metadata = Optional.ofNullable(metadata).orElse(new ObjectMeta());
         this.spec = spec;
     }
 
@@ -103,7 +103,7 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
      **/
     @Override
     public String getKind() {
-        return Optional.ofNullable(kind).orElseGet(() -> Resource.getKind(this.getClass()));
+        return kind;
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
      **/
     @Override
     public String getApiVersion() {
-        return Optional.ofNullable(apiVersion).orElseGet(() -> Resource.getApiVersion(this.getClass()));
+        return apiVersion;
     }
 
     /**

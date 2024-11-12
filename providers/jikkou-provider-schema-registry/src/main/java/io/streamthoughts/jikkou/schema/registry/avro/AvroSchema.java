@@ -36,6 +36,7 @@ public final class AvroSchema {
     }
 
     /** {@inheritDoc} **/
+    @Override
     public String toString() {
         return schema.toString(false);
     }

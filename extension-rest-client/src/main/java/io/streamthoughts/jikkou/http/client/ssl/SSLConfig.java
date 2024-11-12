@@ -38,7 +38,7 @@ public record SSLConfig(
     public static ConfigProperty<String> SSL_KEY_STORE_TYPE = ConfigProperty
         .ofString("sslKeyStoreType")
         .description("The file format of the key store file.")
-        .orElse("PKCS12");
+        .defaultValue("PKCS12");
 
     public static ConfigProperty<String> SSL_KEY_STORE_PASSWORD = ConfigProperty
         .ofString("sslKeyStorePassword")
@@ -58,7 +58,7 @@ public record SSLConfig(
     public static ConfigProperty<String> SSL_TRUST_STORE_TYPE = ConfigProperty
         .ofString("sslTrustStoreType")
         .description("The file format of the trust store file.")
-        .orElse("PKCS12");
+        .defaultValue("PKCS12");
 
 
     public static ConfigProperty<String> SSL_TRUST_STORE_PASSWORD = ConfigProperty
@@ -69,7 +69,7 @@ public record SSLConfig(
     public static ConfigProperty<Boolean> SSL_IGNORE_HOSTNAME_VERIFICATION = ConfigProperty
         .ofBoolean("sslIgnoreHostnameVerification")
         .description("Specifies whether to ignore the hostname verification.")
-        .orElse(false);
+        .defaultValue(false);
 
 
     public static SSLConfig from(final Configuration configuration) {

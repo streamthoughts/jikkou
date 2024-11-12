@@ -54,8 +54,8 @@ class KafkaConnectRestartConnectorsActionIT extends BaseExtensionProviderIT {
         ApiActionResultSet<V1KafkaConnector> resultSet = api.execute(
             KafkaConnectRestartConnectorsAction.NAME,
             Configuration.of(
-                KafkaConnectRestartConnectorsAction.CONNECTOR_NAME_CONFIG, "test",
-                KafkaConnectRestartConnectorsAction.INCLUDE_TASKS_CONFIG, true
+                KafkaConnectRestartConnectorsAction.Config.CONNECTOR_NAME.key(), "test",
+                KafkaConnectRestartConnectorsAction.Config.INCLUDE_TASKS.key(), true
             ));
 
         // THEN
@@ -72,8 +72,8 @@ class KafkaConnectRestartConnectorsActionIT extends BaseExtensionProviderIT {
         ApiActionResultSet<V1KafkaConnector> resultSet = api.execute(
             KafkaConnectRestartConnectorsAction.NAME,
             Configuration.of(
-                KafkaConnectRestartConnectorsAction.CONNECTOR_NAME_CONFIG, "dummy",
-                KafkaConnectRestartConnectorsAction.INCLUDE_TASKS_CONFIG, true
+                KafkaConnectRestartConnectorsAction.Config.CONNECTOR_NAME.key(), "dummy",
+                KafkaConnectRestartConnectorsAction.Config.INCLUDE_TASKS.key(), true
             ));
 
         // THEN

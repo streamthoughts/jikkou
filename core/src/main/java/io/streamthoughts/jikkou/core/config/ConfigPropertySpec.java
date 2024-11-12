@@ -22,12 +22,8 @@ import org.jetbrains.annotations.Nullable;
 public record ConfigPropertySpec(@NotNull String name,
                                  @NotNull Class<?> type,
                                  @Nullable String description,
-                                 @Nullable String defaultValue,
+                                 @Nullable Object defaultValue,
                                  boolean required) {
-
-    public static final String NULL_VALUE = "_NULL_";
-    public static final String NO_DEFAULT_VALUE = "__no_default_value__";
-
 
     public ConfigPropertySpec {
         Objects.requireNonNull(name, "name cannot be null");

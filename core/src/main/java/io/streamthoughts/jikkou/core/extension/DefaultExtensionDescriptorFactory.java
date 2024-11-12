@@ -13,19 +13,17 @@ import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigPropertySpec;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
-import io.streamthoughts.jikkou.core.extension.annotations.ExtensionSpec;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
+import io.streamthoughts.jikkou.core.models.HasConfig;
 import io.streamthoughts.jikkou.core.models.HasName;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -37,8 +35,6 @@ import org.slf4j.LoggerFactory;
 public final class DefaultExtensionDescriptorFactory implements ExtensionDescriptorFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExtensionDescriptorFactory.class);
-    private static final String PLACEHOLDER_COMPLETION_CANDIDATES = "${COMPLETION-CANDIDATES}";
-    private static final String PLACEHOLDER_DEFAULT_VALUE = "${DEFAULT-VALUE}";
 
     /**
      * Creates a new {@link DefaultExtensionDescriptorFactory} instance.
@@ -58,19 +54,19 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
         final ExtensionMetadata metadata = getExtensionMetadata(extensionType);
 
         return new ExtensionDescriptorBuilder<T>()
-                .type(extensionType)
-                .name(HasName.getName(extensionType))
-                .title(getTitle(extensionType))
-                .description(getDescription(extensionType))
-                .examples(getExamples(extensionType))
-                .category(getCategory(extensionType))
-                .properties(getConfigProperties(extensionType))
-                .isEnabled(isEnabled(extensionType))
-                .supplier(extensionSupplier)
-                .classLoader(classLoader)
-                .metadata(metadata)
-                .priority(getPriority(extensionType))
-                .build();
+            .type(extensionType)
+            .name(HasName.getName(extensionType))
+            .title(getTitle(extensionType))
+            .description(getDescription(extensionType))
+            .examples(getExamples(extensionType))
+            .category(getCategory(extensionType))
+            .properties(getConfigProperties(extensionType, extensionSupplier))
+            .isEnabled(isEnabled(extensionType))
+            .supplier(extensionSupplier)
+            .classLoader(classLoader)
+            .metadata(metadata)
+            .priority(getPriority(extensionType))
+            .build();
     }
 
     /**
@@ -82,8 +78,8 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
     @Nullable
     static <T> String getTitle(@NotNull final Class<T> extensionType) {
         return Optional.ofNullable(extensionType.getAnnotation(Title.class))
-                .map(Title::value)
-                .orElse(null);
+            .map(Title::value)
+            .orElse(null);
     }
 
     /**
@@ -94,8 +90,8 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
      */
     static String getDescription(@NotNull final Class<?> extensionType) {
         return Optional
-                .ofNullable(extensionType.getAnnotation(Description.class))
-                .map(Description::value).orElse(null);
+            .ofNullable(extensionType.getAnnotation(Description.class))
+            .map(Description::value).orElse(null);
     }
 
     /**
@@ -117,11 +113,11 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
     @NotNull
     static ExtensionCategory getCategory(@NotNull final Class<?> extensionType) {
         return AnnotationResolver.findAllAnnotationsByType(extensionType, Category.class)
-                .stream()
-                .map(Category::value)
-                .filter(Predicate.not(Predicate.isEqual(ExtensionCategory.EXTENSION)))
-                .findFirst()
-                .orElse(ExtensionCategory.EXTENSION);
+            .stream()
+            .map(Category::value)
+            .filter(Predicate.not(Predicate.isEqual(ExtensionCategory.EXTENSION)))
+            .findFirst()
+            .orElse(ExtensionCategory.EXTENSION);
     }
 
     /**
@@ -131,52 +127,26 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
      * @return The list of {@link ConfigPropertySpec}.
      */
     @NotNull
-    static List<ConfigPropertySpec> getConfigProperties(@NotNull final Class<?> extensionType) {
-        List<ExtensionSpec> annotations = AnnotationResolver.findAllAnnotationsByType(extensionType, ExtensionSpec.class);
-        if (annotations == null || annotations.isEmpty()) {
-            return Collections.emptyList();
+    static List<ConfigPropertySpec> getConfigProperties(@NotNull final Class<?> extensionType,
+                                                        @NotNull final Supplier<?> extensionSupplier) {
+
+        if (!HasConfig.class.isAssignableFrom(extensionType)) {
+            return List.of();
         }
 
-        return annotations
+        HasConfig hasConfig = (HasConfig) extensionSupplier.get();
+        return hasConfig.configProperties()
             .stream()
-            .flatMap(annotation ->
-                Arrays.stream(annotation.options())
-                    .map(spec -> {
-                        String defaultValue = null;
-                        String defaultValueSpec = spec.defaultValue();
-                        if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(defaultValueSpec) &&
-                            !ConfigPropertySpec.NULL_VALUE.equals(defaultValueSpec)) {
-                            defaultValue = defaultValueSpec;
-                        }
-                        String description = null;
-                        String descriptionSpec = spec.description();
-                        if (!ConfigPropertySpec.NO_DEFAULT_VALUE.equals(descriptionSpec) &&
-                            !ConfigPropertySpec.NULL_VALUE.equals(descriptionSpec)) {
-                            description = descriptionSpec;
-
-                            if (description.contains(PLACEHOLDER_COMPLETION_CANDIDATES)) {
-                                if (Enum.class.isAssignableFrom(spec.type())) {
-                                    String candidatesString = Arrays.stream(((Class<Enum>) spec.type()).getEnumConstants())
-                                        .map(Enum::name)
-                                        .collect(Collectors.joining(", "));
-                                    description = description.replace(
-                                        PLACEHOLDER_COMPLETION_CANDIDATES, candidatesString);
-                                }
-                            }
-                            if (description.contains(PLACEHOLDER_DEFAULT_VALUE)) {
-                                description = description.replace(
-                                    PLACEHOLDER_DEFAULT_VALUE, spec.defaultValue());
-                            }
-                        }
-
-                        return new ConfigPropertySpec(
-                            spec.name(),
-                            spec.type(),
-                            description,
-                            defaultValue,
-                            spec.required()
-                        );
-                    })).collect(Collectors.toList());
+            .map(prop ->
+                new ConfigPropertySpec(
+                    prop.key(),
+                    prop.rawType(),
+                    prop.description(),
+                    prop.defaultValue(),
+                    prop.required()
+                )
+            )
+            .toList();
     }
 
     /**
@@ -192,7 +162,6 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
             .map(Priority::value).orElse(HasPriority.NO_ORDER);
     }
 
-
     /**
      * Gets the examples of the specified extension class.
      *
@@ -202,8 +171,8 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
     @NotNull
     static <T> List<Example> getExamples(@NotNull final Class<T> extensionType) {
         return Arrays.stream(extensionType.getAnnotationsByType(io.streamthoughts.jikkou.core.annotation.Example.class))
-                .map(ex -> new Example(ex.title(), ex.code()))
-                .toList();
+            .map(ex -> new Example(ex.title(), ex.code()))
+            .toList();
     }
 
     /**

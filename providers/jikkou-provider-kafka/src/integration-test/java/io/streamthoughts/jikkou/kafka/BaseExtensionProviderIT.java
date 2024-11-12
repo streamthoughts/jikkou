@@ -19,8 +19,7 @@ public class BaseExtensionProviderIT extends AbstractKafkaIntegrationTest {
     @BeforeEach
     public void initApi() {
         api = JikkouContext.defaultContext()
-            .createApi()
-            .toBuilder()
+            .newApiBuilder()
             .register(new CoreExtensionProvider())
             .register(new KafkaExtensionProvider(), Configuration.of("client", clientConfig()))
             .build()

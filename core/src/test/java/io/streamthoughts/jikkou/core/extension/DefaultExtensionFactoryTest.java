@@ -61,6 +61,4 @@ class DefaultExtensionFactoryTest {
     void shouldReturnContainsFalseForNotRegisteredExtension() {
         Assertions.assertFalse(factory.containsExtension(DefaultExtensionFactoryTest.class));
     }
-
-
 }
