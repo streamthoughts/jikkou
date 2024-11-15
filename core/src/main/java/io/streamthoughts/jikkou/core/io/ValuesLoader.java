@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +53,7 @@ public final class ValuesLoader {
             Path path = Path.of(location);
             if (Files.size(path) > 0) {
                 try (InputStream stream = Files.newInputStream(path)) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> values = objectMapper.readValue(stream, Map.class);
-                    return Stream.of(new ValuesFile(location, NamedValueSet.setOf(values)));
+                    return load(location, stream);
                 }
             } else {
                 LOG.debug("Ignore values from '{}'. File is empty.", location);
@@ -73,5 +72,12 @@ public final class ValuesLoader {
         }
     }
 
-    private record ValuesFile(String file, NamedValueSet values) { }
+    @VisibleForTesting
+    @NotNull Stream<ValuesFile> load(String location, InputStream stream) throws IOException {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> values = objectMapper.readValue(stream, Map.class);
+        return Stream.of(new ValuesFile(location, NamedValueSet.setOf(values)));
+    }
+
+    record ValuesFile(String file, NamedValueSet values) { }
 }
