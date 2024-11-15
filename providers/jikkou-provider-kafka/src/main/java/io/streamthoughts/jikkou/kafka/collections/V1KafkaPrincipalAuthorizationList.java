@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @ApiVersion("kafka.jikkou.io/v1beta2")
-@Kind("KafkaTopicAuthorizationList")
+@Kind("KafkaPrincipalAuthorizationList")
 public class V1KafkaPrincipalAuthorizationList extends DefaultResourceListObject<V1KafkaPrincipalAuthorization> {
 
 

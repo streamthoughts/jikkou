@@ -38,9 +38,9 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
     private static final String CONFIG_NS = "jinja";
 
     public static final ConfigProperty<Boolean> ENABLE_RECURSIVE_MACRO_CALLS = ConfigProperty
-        .ofBoolean(CONFIG_NS + ".enableRecursiveMacroCalls")
-        .orElse(true)
-        .description("Enable recursive macro calls.");
+            .ofBoolean(CONFIG_NS + ".enableRecursiveMacroCalls")
+            .orElse(true)
+            .description("Enable recursive macro calls.");
 
     // list of scopes for bindings
     public enum Scopes {
@@ -67,13 +67,17 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
 
     private Configuration configuration = Configuration.empty();
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public void configure(final @NotNull Configuration config) throws ConfigException {
-       this.configuration = config;
+        this.configuration = config;
     }
 
-    /** {@inheritDoc} **/
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     public String render(@NotNull final String template,
                          @NotNull final TemplateBindings bindings) {
@@ -91,7 +95,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
 
         List<TemplateError> errors = result.getErrors();
         if (!errors.isEmpty()) {
-            TemplateError error = errors.get(0);
+            TemplateError error = errors.getFirst();
             throw new JikkouRuntimeException(
                     String.format(
                             "Cannot render resource template. '%s': line %d, start_pos: %d, %s",
@@ -111,10 +115,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
     static Map<String, Object> buildBindingsMapFrom(final TemplateBindings bindings) {
         HashMap<String, Object> bindingsMap = new HashMap<>();
 
-        Map<String, Object> values = new HashMap<>();
-        CollectionUtils.toNestedMap(bindings.getValues(), values, null);
-        CollectionUtils.toFlattenMap(bindings.getValues(), values, null);
-        bindingsMap.put(Scopes.VALUES.key(), values);
+        bindingsMap.put(Scopes.VALUES.key(), bindings.getValues());
 
         Map<String, Object> labels = new HashMap<>();
         CollectionUtils.toNestedMap(bindings.getLabels(), labels, null);

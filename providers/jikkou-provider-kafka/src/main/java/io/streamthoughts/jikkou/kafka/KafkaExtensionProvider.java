@@ -12,6 +12,7 @@ import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.kafka.action.KafkaConsumerGroupsResetOffsets;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
+import io.streamthoughts.jikkou.kafka.collections.V1KafkaPrincipalAuthorizationList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
 import io.streamthoughts.jikkou.kafka.health.KafkaBrokerHealthIndicator;
 import io.streamthoughts.jikkou.kafka.model.user.V1KafkaUser;
@@ -127,6 +128,7 @@ public final class KafkaExtensionProvider extends AbstractExtensionProvider {
             V1KafkaTopicList.class,
             V1KafkaTopic.class,
             V1KafkaPrincipalAuthorization.class,
+            V1KafkaPrincipalAuthorizationList.class,
             V1KafkaPrincipalRole.class,
             V1KafkaTableRecord.class,
             V1KafkaConsumerGroup.class,
