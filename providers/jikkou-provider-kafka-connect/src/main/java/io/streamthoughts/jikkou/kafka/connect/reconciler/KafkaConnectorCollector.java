@@ -24,16 +24,15 @@ import io.streamthoughts.jikkou.kafka.connect.collections.V1KafkaConnectorList;
 import io.streamthoughts.jikkou.kafka.connect.exception.KafkaConnectClusterNotFoundException;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import io.streamthoughts.jikkou.kafka.connect.service.KafkaConnectClusterService;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A ResourceCollector to get {@link V1KafkaConnector} resources.

@@ -15,13 +15,13 @@ import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
-import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.schema.registry.ApiVersions;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
@@ -109,7 +109,12 @@ public class SchemaRegistrySubjectController
             .prettyPrintSchema(false)
             .defaultToGlobalCompatibilityLevel(false);
 
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
+        List<String> subjects = expectedSubjects.stream()
+                .map(V1SchemaRegistrySubject::getMetadata)
+                .map(ObjectMeta::getName)
+                .toList();
+
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(subjects).stream()
             .filter(context.selector()::apply)
             .toList();
 

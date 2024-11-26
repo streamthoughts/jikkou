@@ -122,6 +122,7 @@
         <config.version>1.4.3</config.version>
         <annotations.version>24.1.0</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
+        <reactor-core.version>3.6.6</reactor-core.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.9</slf4j-api.version>
         <logback.version>1.5.6</logback.version>
@@ -235,6 +236,11 @@
                 <groupId>software.amazon.msk</groupId>
                 <artifactId>aws-msk-iam-auth</artifactId>
                 <version>2.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>${reactor-core.version}</version>
             </dependency>
             <!-- START dependencies for Tests -->
             <dependency>

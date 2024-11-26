@@ -32,7 +32,7 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
     public static final String DATA_SCHEMA = "schema";
     public static final String DATA_SCHEMA_TYPE = "schemaType";
     public static final String DATA_REFERENCES = "references";
-    public static final TypeConverter<Map<String, Object>> TYPE_CONVERTER = ObjectTypeConverter.newForType(new TypeReference<>() {
+    private static final TypeConverter<Map<String, Object>> TYPE_CONVERTER = ObjectTypeConverter.newForType(new TypeReference<>() {
     });
 
     /**

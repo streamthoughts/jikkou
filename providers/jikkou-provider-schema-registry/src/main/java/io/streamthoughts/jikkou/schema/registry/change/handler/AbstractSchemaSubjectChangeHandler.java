@@ -37,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandler<ResourceChange> {
 
@@ -53,7 +54,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         this.api = Objects.requireNonNull(api, "api must not be null");
     }
 
-    protected CompletableFuture<Void> updateCompatibilityLevel(final ResourceChange change) {
+    protected Mono<Void> updateCompatibilityLevel(final ResourceChange change) {
         final CompatibilityLevels compatibilityLevels = StateChangeList
                 .of(change.getSpec().getChanges())
                 .getLast(DATA_COMPATIBILITY_LEVEL, TypeConverter.of(CompatibilityLevels.class))
@@ -63,18 +64,18 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         LOG.info("Updating compatibility-level for Schema Registry subject '{}'.", subjectName);
         return api
                 .updateSubjectCompatibilityLevel(subjectName, new CompatibilityObject(compatibilityLevels.name()))
-                .thenApply(compatibilityObject -> {
+                .handle((compatibilityObject, sink) -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
-                                "Updated compatibility-level for Schema Registry subject '{}' to '{}'.",
-                                subjectName,
-                                compatibilityObject.compatibility());
+                            "Updated compatibility-level for Schema Registry subject '{}' to '{}'.",
+                            subjectName,
+                            compatibilityObject.compatibility()
+                        );
                     }
-                    return null;
                 });
     }
 
-    protected CompletableFuture<Void> registerSubjectVersion(@NotNull final ResourceChange change) {
+    protected Mono<Void> registerSubjectVersion(@NotNull final ResourceChange change) {
         String schema = change.getSpec()
                 .getChanges()
                 .getLast(DATA_SCHEMA, TypeConverter.String())
@@ -108,7 +109,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                         new SubjectSchemaRegistration(schema, type, references),
                         options.normalizeSchema()
                 )
-                .thenApply(subjectSchemaId -> {
+                .handle((subjectSchemaId, sink) -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
                                 "Registered Schema Registry subject version: subject '{}', id '{}'.",
@@ -121,7 +122,6 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                                         subjectSchemaId.id()
                                 );
                     }
-                    return null;
                 });
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 .convertValue(change.getSpec().getData());
     }
 
-    protected CompletableFuture<Void> deleteCompatibilityLevel(@NotNull ResourceChange change) {
+    protected Mono<Void> deleteCompatibilityLevel(@NotNull ResourceChange change) {
         final String subject = change.getMetadata().getName();
         if (LOG.isInfoEnabled()) {
             LOG.info("Deleting compatibility-level for Schema Registry subject '{}'.",
@@ -140,14 +140,13 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         }
         return api
                 .deleteSubjectCompatibilityLevel(subject)
-                .thenApplyAsync(compatibilityObject -> {
+                .handle((compatibilityObject, sink) -> {
                     if (LOG.isInfoEnabled()) {
                         LOG.info(
                                 "Deleted compatibility-level for Schema Registry subject '{}' to '{}'.",
                                 change.getMetadata().getName(),
                                 compatibilityObject.compatibility());
                     }
-                    return null;
                 });
     }
 

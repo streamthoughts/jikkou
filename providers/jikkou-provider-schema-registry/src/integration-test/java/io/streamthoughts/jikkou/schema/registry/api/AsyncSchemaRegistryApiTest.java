@@ -19,7 +19,6 @@ import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistrati
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +35,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import reactor.core.publisher.Mono;
 
 @Testcontainers
 @Tag("integration")
@@ -102,10 +102,10 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetGlobalCompatibilityLevel() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getGlobalCompatibility();
+        Mono<CompatibilityLevelObject> future = async.getGlobalCompatibility();
 
         // Then
-        CompatibilityLevelObject result = future.get();
+        CompatibilityLevelObject result = future.block();
         Assertions.assertEquals("BACKWARD", result.compatibilityLevel());
     }
 
@@ -113,10 +113,10 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldListSchemaForEmptySubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<List<String>> future = async.listSubjects();
+        Mono<List<String>> future = async.listSubjects();
 
         // Then
-        List<String> results = future.get();
+        List<String> results = future.block();
         Assertions.assertTrue(results.isEmpty());
     }
 
@@ -124,14 +124,14 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldRegisterSchemaVersionForNewSubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<SubjectSchemaId> future = async.registerSubjectVersion(
+        Mono<SubjectSchemaId> future = async.registerSubjectVersion(
                 TEST_SUBJECT,
                 new SubjectSchemaRegistration(AVRO_SCHEMA, SchemaType.AVRO),
                 true
         );
 
         // Then
-        SubjectSchemaId result = future.get();
+        SubjectSchemaId result = future.block();
         Assertions.assertEquals(1, result.id());
     }
 
@@ -139,26 +139,26 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldListSchemaForExistingSubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<List<String>> future = async.listSubjects();
+        Mono<List<String>> future = async.listSubjects();
 
         // Then
-        List<String> results = future.get();
+        List<String> results = future.block();
         Assertions.assertFalse(results.isEmpty());
         Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(TEST_SUBJECT, results.get(0));
+        Assertions.assertEquals(TEST_SUBJECT, results.getFirst());
     }
 
     @Order(5)
     @Test
     void shouldUpdateCompatibilityForExistingSubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityObject> future = async.updateSubjectCompatibilityLevel(
+        Mono<CompatibilityObject> future = async.updateSubjectCompatibilityLevel(
                 TEST_SUBJECT,
                 new CompatibilityObject(CompatibilityLevels.FULL_TRANSITIVE.name())
         );
 
         // Then
-        CompatibilityObject result = future.get();
+        CompatibilityObject result = future.block();
         Assertions.assertEquals(CompatibilityLevels.FULL_TRANSITIVE.name(), result.compatibility());
     }
 
@@ -166,10 +166,10 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetCompatibilityForExistingSubject() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel(TEST_SUBJECT, false);
+        Mono<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel(TEST_SUBJECT, false);
 
         // Then
-        CompatibilityLevelObject result = future.get();
+        CompatibilityLevelObject result = future.block();
         Assertions.assertEquals(CompatibilityLevels.FULL_TRANSITIVE.name(), result.compatibilityLevel());
     }
 
@@ -177,17 +177,10 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetErrorCompatibilityForNotExistingSubjectAndDefaultToGlobalFalse() {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", false);
+        Mono<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", false);
 
         // Then
-        RestClientException exception = Assertions
-                .assertThrowsExactly(RestClientException.class, () -> {
-                    try {
-                        future.get();
-                    } catch (ExecutionException e) {
-                        throw e.getCause();
-                    }
-                });
+        RestClientException exception = Assertions.assertThrowsExactly(RestClientException.class, future::block);
 
         ErrorResponse response = exception.getResponseEntity(ErrorResponse.class);
         Assertions.assertEquals(40408, response.errorCode());
@@ -198,10 +191,10 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetGlobalCompatibilityForNotExistingSubjectAndDefaultToGlobalTrue() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", true);
+        Mono<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", true);
 
         // Then
-        CompatibilityLevelObject result = future.get();
+        CompatibilityLevelObject result = future.block();
         Assertions.assertEquals(CompatibilityLevels.BACKWARD.name(), result.compatibilityLevel());
     }
 
@@ -209,7 +202,7 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetTrueForTestingCompatibleSchema() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityCheck> future = async.testCompatibility(
+        Mono<CompatibilityCheck> future = async.testCompatibility(
                 TEST_SUBJECT,
                 "-1",
                 true,
@@ -217,7 +210,7 @@ class AsyncSchemaRegistryApiTest {
         );
 
         // Then
-        CompatibilityCheck result = future.get();
+        CompatibilityCheck result = future.block();
         Assertions.assertTrue(result.isCompatible());
         Assertions.assertTrue(result.getMessages().isEmpty());
     }
@@ -226,7 +219,7 @@ class AsyncSchemaRegistryApiTest {
     @Test
     void shouldGetFalseForTestingCompatibleSchema() throws ExecutionException, InterruptedException {
         // When
-        CompletableFuture<CompatibilityCheck> future = async.testCompatibility(
+        Mono<CompatibilityCheck> future = async.testCompatibility(
                 TEST_SUBJECT,
                 "-1",
                 true,
@@ -234,7 +227,7 @@ class AsyncSchemaRegistryApiTest {
         );
 
         // Then
-        CompatibilityCheck result = future.get();
+        CompatibilityCheck result = future.block();
         Assertions.assertFalse(result.isCompatible());
         Assertions.assertFalse(result.getMessages().isEmpty());
     }

@@ -34,7 +34,7 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
                 TEST_SUBJECT,
                 new SubjectSchemaRegistration(AVRO_SCHEMA, SchemaType.AVRO),
                 false
-        ).get();
+        ).block();
     }
 
     @Test
@@ -50,7 +50,7 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
         Assertions.assertNotNull(resources);
         Assertions.assertEquals(1, resources.size());
 
-        V1SchemaRegistrySubject subject = resources.get(0);
+        V1SchemaRegistrySubject subject = resources.getFirst();
         Assertions.assertEquals(TEST_SUBJECT, subject.getMetadata().getName());
         Assertions.assertEquals(SchemaType.AVRO, subject.getSpec().getSchemaType());
         Assertions.assertEquals(CompatibilityLevels.BACKWARD, subject.getSpec().getCompatibilityLevel());
@@ -69,7 +69,7 @@ class SchemaRegistrySubjectCollectorTest extends AbstractIntegrationTest {
         Assertions.assertNotNull(resources);
         Assertions.assertEquals(1, resources.size());
 
-        V1SchemaRegistrySubject subject = resources.get(0);
+        V1SchemaRegistrySubject subject = resources.getFirst();
         Assertions.assertEquals(TEST_SUBJECT, subject.getMetadata().getName());
         Assertions.assertEquals(SchemaType.AVRO, subject.getSpec().getSchemaType());
         Assertions.assertNull(subject.getSpec().getCompatibilityLevel());
