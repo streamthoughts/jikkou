@@ -23,7 +23,6 @@
 
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <reactor-core.version>3.6.6</reactor-core.version>
     </properties>
 
     <dependencies>
@@ -81,7 +80,6 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>${reactor-core.version}</version>
         </dependency>
         <!-- START dependencies for test -->
         <dependency>
