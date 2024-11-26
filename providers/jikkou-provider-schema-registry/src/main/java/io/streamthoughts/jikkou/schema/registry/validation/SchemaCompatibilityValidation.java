@@ -25,9 +25,8 @@ import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistrati
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.publisher.Mono;
 
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {
@@ -65,8 +64,8 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
                 spec.getReferences()
         );
         try {
-            CompletableFuture<CompatibilityCheck> future = api.testCompatibilityLatest(subjectName, true, registration);
-            CompatibilityCheck check = future.get();
+            Mono<CompatibilityCheck> future = api.testCompatibilityLatest(subjectName, true, registration);
+            CompatibilityCheck check = future.block();
             if (!check.isCompatible()) {
                 return ValidationResult.failure(new ValidationError(
                         validation.getName(),
@@ -78,7 +77,7 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
                         )
                 ));
             }
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof RestClientException clientException) {
                 ErrorResponse response = clientException.getResponseEntity(ErrorResponse.class);
@@ -87,10 +86,6 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
                     fail(response.message());
                 }
             }
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            fail("Thread was interrupted");
         } finally {
             api.close();
         }

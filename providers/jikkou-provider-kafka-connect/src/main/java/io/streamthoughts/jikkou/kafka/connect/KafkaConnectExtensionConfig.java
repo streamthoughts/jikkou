@@ -15,8 +15,6 @@ import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectClientConfig;
 import io.streamthoughts.jikkou.kafka.connect.exception.KafkaConnectClusterNotFoundException;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 public final class KafkaConnectExtensionConfig {
 

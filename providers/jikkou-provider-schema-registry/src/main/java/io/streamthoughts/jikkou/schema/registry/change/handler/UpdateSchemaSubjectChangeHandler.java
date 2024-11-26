@@ -6,9 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.change.handler;
 
-import static io.streamthoughts.jikkou.core.reconciler.Operation.CREATE;
-import static io.streamthoughts.jikkou.core.reconciler.Operation.DELETE;
-import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
+import static io.streamthoughts.jikkou.core.reconciler.Operation.*;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 
@@ -23,8 +21,8 @@ import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.publisher.Mono;
 
 public final class UpdateSchemaSubjectChangeHandler
         extends AbstractSchemaSubjectChangeHandler
@@ -55,14 +53,14 @@ public final class UpdateSchemaSubjectChangeHandler
 
         List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
         for (ResourceChange change : changes) {
-            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+            Mono<Void> mono = Mono.empty();
 
             StateChange schema = StateChangeList
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_SCHEMA);
 
             if (UPDATE == schema.getOp()) {
-                future = future.thenComposeAsync(unused -> registerSubjectVersion(change));
+                mono = mono.then(registerSubjectVersion(change));
             }
 
             StateChange compatibilityLevels = StateChangeList
@@ -70,13 +68,13 @@ public final class UpdateSchemaSubjectChangeHandler
                     .getLast(DATA_COMPATIBILITY_LEVEL);
 
             if (UPDATE == compatibilityLevels.getOp() || CREATE == compatibilityLevels.getOp()) {
-                future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
+                mono = mono.then(updateCompatibilityLevel(change));
             }
 
             if (DELETE == compatibilityLevels.getOp()) {
-                future = future.thenComposeAsync(unused -> deleteCompatibilityLevel(change));
+                mono = mono.then(deleteCompatibilityLevel(change));
             }
-            results.add(toChangeResponse(change, future));
+            results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;
     }

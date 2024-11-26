@@ -6,6 +6,11 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.reconciler;
 
+import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
+import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -28,19 +33,13 @@ import io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeCompute
 import io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeDescription;
 import io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeHandler;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.jikkou.core.ReconciliationMode.CREATE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
-import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
+import org.jetbrains.annotations.NotNull;
 
 @SupportedResource(type = V1KafkaConnector.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA, kind = "KafkaConnectorChange")

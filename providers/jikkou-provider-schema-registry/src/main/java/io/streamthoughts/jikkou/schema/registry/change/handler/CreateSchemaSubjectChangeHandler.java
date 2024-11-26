@@ -19,8 +19,8 @@ import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.publisher.Mono;
 
 public final class CreateSchemaSubjectChangeHandler
         extends AbstractSchemaSubjectChangeHandler
@@ -51,17 +51,17 @@ public final class CreateSchemaSubjectChangeHandler
 
         List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
         for (ResourceChange change : changes) {
-            CompletableFuture<Void> future = registerSubjectVersion(change);
+            Mono<Void> mono = registerSubjectVersion(change);
 
             StateChange compatibilityLevels = StateChangeList
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_COMPATIBILITY_LEVEL);
 
             if (compatibilityLevels != null) {
-                future = future.thenComposeAsync(unused -> updateCompatibilityLevel(change));
+                mono = mono.then(updateCompatibilityLevel(change));
             }
 
-            results.add(toChangeResponse(change, future));
+            results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;
     }

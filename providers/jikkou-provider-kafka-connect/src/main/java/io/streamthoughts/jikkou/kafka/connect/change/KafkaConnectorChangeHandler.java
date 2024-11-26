@@ -6,6 +6,10 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.change;
 
+import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
+import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
+import static io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS;
+
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
@@ -22,9 +26,6 @@ import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +35,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_CLASS_CONFIG;
-import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG;
-import static io.streamthoughts.jikkou.kafka.connect.change.KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 public final class KafkaConnectorChangeHandler extends BaseChangeHandler<ResourceChange> {
 

@@ -16,10 +16,10 @@ import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOption
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<ResourceChange> {
 
@@ -51,8 +51,9 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
         for (ResourceChange change : changes) {
             final String subject = change.getMetadata().getName();
             SchemaSubjectChangeOptions options = getSchemaSubjectChangeOptions(change);
-            CompletableFuture<Void> future = api.deleteSubjectVersions(subject, options.permanentDelete())
-                    .thenApplyAsync(versions -> {
+            Mono<Void> mono = api
+                    .deleteSubjectVersions(subject, options.permanentDelete())
+                    .handle((versions, sink) -> {
                         if (LOG.isInfoEnabled()) {
                             LOG.info(
                                     "Deleted all versions for Schema Registry subject '{}': {}",
@@ -60,9 +61,8 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
                                     versions
                             );
                         }
-                        return null;
                     });
-            results.add(toChangeResponse(change, future));
+            results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;
     }

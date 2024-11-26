@@ -14,8 +14,8 @@ import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistrati
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
+import reactor.core.publisher.Mono;
 
 /**
  * A wrapper around the REST API {@link SchemaRegistryApi} to provide asynchronous methods.
@@ -37,27 +37,27 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      * @see SchemaRegistryApi#listSubjects()
      */
     @Override
-    public CompletableFuture<List<String>> listSubjects() {
-        return CompletableFuture.supplyAsync(api::listSubjects);
+    public Mono<List<String>> listSubjects() {
+        return Mono.fromCallable(api::listSubjects);
     }
 
     /**
      * @see SchemaRegistryApi#deleteSubjectVersions(String, boolean)
      */
     @Override
-    public CompletableFuture<List<Integer>> deleteSubjectVersions(@NotNull final String subject,
+    public Mono<List<Integer>> deleteSubjectVersions(@NotNull final String subject,
                                                                   boolean permanent) {
-        return CompletableFuture.supplyAsync(() -> api.deleteSubjectVersions(subject, permanent));
+        return Mono.fromCallable(() -> api.deleteSubjectVersions(subject, permanent));
     }
 
     /**
      * @see SchemaRegistryApi#registerSchema(String, SubjectSchemaRegistration, boolean)
      */
     @Override
-    public CompletableFuture<SubjectSchemaId> registerSubjectVersion(@NotNull final String subject,
+    public Mono<SubjectSchemaId> registerSubjectVersion(@NotNull final String subject,
                                                                      @NotNull final SubjectSchemaRegistration schema,
                                                                      boolean normalize) {
-        return CompletableFuture.supplyAsync(() -> api.registerSchema(subject, schema, normalize));
+        return Mono.fromCallable(() -> api.registerSchema(subject, schema, normalize));
     }
 
 
@@ -65,42 +65,42 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      * @see SchemaRegistryApi#getLatestSubjectSchema(String)
      */
     @Override
-    public CompletableFuture<SubjectSchemaVersion> getLatestSubjectSchema(@NotNull final String subject) {
-        return CompletableFuture.supplyAsync(() -> api.getLatestSubjectSchema(subject));
+    public Mono<SubjectSchemaVersion> getLatestSubjectSchema(@NotNull final String subject) {
+        return Mono.fromCallable(() -> api.getLatestSubjectSchema(subject));
     }
 
     /**
      * @see SchemaRegistryApi#getGlobalCompatibility()
      */
     @Override
-    public CompletableFuture<CompatibilityLevelObject> getGlobalCompatibility() {
-        return CompletableFuture.supplyAsync(api::getGlobalCompatibility);
+    public Mono<CompatibilityLevelObject> getGlobalCompatibility() {
+        return Mono.fromCallable(api::getGlobalCompatibility);
     }
 
     /**
      * @see SchemaRegistryApi#getConfigCompatibility(String, boolean)
      */
     @Override
-    public CompletableFuture<CompatibilityLevelObject> getSubjectCompatibilityLevel(@NotNull final String subject,
+    public Mono<CompatibilityLevelObject> getSubjectCompatibilityLevel(@NotNull final String subject,
                                                                                     boolean defaultToGlobal) {
-        return CompletableFuture.supplyAsync(() -> api.getConfigCompatibility(subject, defaultToGlobal));
+        return Mono.fromCallable(() -> api.getConfigCompatibility(subject, defaultToGlobal));
     }
 
     /**
      * @see SchemaRegistryApi#updateConfigCompatibility(String, CompatibilityObject)
      */
     @Override
-    public CompletableFuture<CompatibilityObject> updateSubjectCompatibilityLevel(@NotNull final String subject,
+    public Mono<CompatibilityObject> updateSubjectCompatibilityLevel(@NotNull final String subject,
                                                                                   @NotNull final CompatibilityObject compatibility) {
-        return CompletableFuture.supplyAsync(() -> api.updateConfigCompatibility(subject, compatibility));
+        return Mono.fromCallable(() -> api.updateConfigCompatibility(subject, compatibility));
     }
 
     /**
      * @see SchemaRegistryApi#deleteConfigCompatibility(String)
      */
     @Override
-    public CompletableFuture<CompatibilityObject> deleteSubjectCompatibilityLevel(@NotNull final String subject) {
-        return CompletableFuture.supplyAsync(() -> api.deleteConfigCompatibility(subject));
+    public Mono<CompatibilityObject> deleteSubjectCompatibilityLevel(@NotNull final String subject) {
+        return Mono.fromCallable(() -> api.deleteConfigCompatibility(subject));
 
     }
 
@@ -108,11 +108,11 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      * @see SchemaRegistryApi#deleteConfigCompatibility(String)
      */
     @Override
-    public CompletableFuture<CompatibilityCheck> testCompatibility(@NotNull final String subject,
+    public Mono<CompatibilityCheck> testCompatibility(@NotNull final String subject,
                                                                    String version,
                                                                    boolean verbose,
                                                                    @NotNull final SubjectSchemaRegistration schema) {
-        return CompletableFuture.supplyAsync(
+        return Mono.fromCallable(
                 () -> api.testCompatibility(subject, Integer.parseInt(version), verbose, schema)
         );
     }
@@ -121,12 +121,10 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
      * @see SchemaRegistryApi#testCompatibilityLatest(String, boolean, SubjectSchemaRegistration)
      */
     @Override
-    public CompletableFuture<CompatibilityCheck> testCompatibilityLatest(@NotNull String subject,
-                                                                         boolean verbose,
-                                                                         @NotNull SubjectSchemaRegistration schema) {
-        return CompletableFuture.supplyAsync(
-                () -> api.testCompatibilityLatest(subject, verbose, schema)
-        );
+    public Mono<CompatibilityCheck> testCompatibilityLatest(@NotNull String subject,
+                                                            boolean verbose,
+                                                            @NotNull SubjectSchemaRegistration schema) {
+        return Mono.fromCallable(() -> api.testCompatibilityLatest(subject, verbose, schema));
     }
 
     @Override
