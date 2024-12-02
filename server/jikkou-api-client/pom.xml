@@ -12,7 +12,7 @@
     <parent>
         <groupId>io.streamthoughts</groupId>
         <artifactId>jikkou-parent</artifactId>
-        <version>0.35.5</version>
+        <version>0.35.6-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
