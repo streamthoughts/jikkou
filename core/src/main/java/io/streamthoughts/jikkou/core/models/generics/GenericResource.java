@@ -11,14 +11,13 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import io.streamthoughts.jikkou.core.models.BaseHasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ObjectTemplate;
-import jakarta.validation.constraints.NotNull;
 import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,29 +35,7 @@ import java.util.Objects;
 })
 @JsonDeserialize
 @Reflectable
-public class GenericResource implements HasMetadata {
-
-    /**
-     * ApiVersion attached to the resource.
-     */
-    @JsonProperty("apiVersion")
-    @JsonPropertyDescription("ApiVersion attached to the resource.")
-    private final String apiVersion;
-
-    /**
-     * Kind attached to the resource.
-     */
-    @JsonProperty("kind")
-    @JsonPropertyDescription("Kind attached to the resource.")
-    @NotNull
-    private final String kind;
-
-    /**
-     * Metadata attached to the resource.
-     */
-    @JsonProperty("metadata")
-    @JsonPropertyDescription("Metadata attached to the resource.")
-    private final ObjectMeta metadata;
+public class GenericResource extends BaseHasMetadata implements HasMetadata {
 
     @JsonProperty("template")
     private final ObjectTemplate template;
@@ -101,32 +78,9 @@ public class GenericResource implements HasMetadata {
                            final ObjectMeta metadata,
                            final ObjectTemplate template,
                            final Map<String, Object> additionalProperties) {
-        this.apiVersion = apiVersion;
-        this.kind = kind;
-        this.metadata = metadata;
+        super(apiVersion, kind, metadata);
         this.template = template;
         this.additionalProperties = additionalProperties;
-    }
-
-    /**
-     * (Required)
-     */
-    @JsonProperty("apiVersion")
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    /**
-     * (Required)
-     */
-    @JsonProperty("kind")
-    public String getKind() {
-        return kind;
-    }
-
-    @JsonProperty("metadata")
-    public ObjectMeta getMetadata() {
-        return metadata;
     }
 
     /**
@@ -152,26 +106,18 @@ public class GenericResource implements HasMetadata {
         this.additionalProperties.put(name, value);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenericResource resource = (GenericResource) o;
-        return Objects.equals(apiVersion, resource.apiVersion) &&
-                Objects.equals(kind, resource.kind) &&
-                Objects.equals(metadata, resource.metadata) &&
-                Objects.equals(template, resource.template) &&
-                Objects.equals(additionalProperties, resource.additionalProperties);
+        if (!super.equals(o)) return false;
+        GenericResource that = (GenericResource) o;
+        return Objects.equals(template, that.template) && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
     public int hashCode() {
-        return Objects.hash(apiVersion, kind, metadata, template, additionalProperties);
+        return Objects.hash(super.hashCode(), template, additionalProperties);
     }
 }

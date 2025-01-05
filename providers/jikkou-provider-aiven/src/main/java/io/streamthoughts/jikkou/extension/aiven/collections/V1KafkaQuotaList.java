@@ -30,16 +30,16 @@ public class V1KafkaQuotaList extends SpecificResourceList<V1KafkaQuotaList, V1K
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public V1KafkaQuotaList(@Nullable String kind,
-                            @Nullable String apiVersion,
+    public V1KafkaQuotaList(@Nullable String apiVersion,
+                            @Nullable String kind,
                             @Nullable ObjectMeta metadata,
                             @NotNull List<V1KafkaQuota> items) {
-        super(kind, apiVersion, metadata, items);
+        super(apiVersion, kind, metadata, items);
     }
 
     /**

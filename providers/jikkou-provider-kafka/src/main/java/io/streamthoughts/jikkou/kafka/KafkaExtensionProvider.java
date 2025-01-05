@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.kafka.action.KafkaConsumerGroupsResetOffsets;
+import io.streamthoughts.jikkou.kafka.action.TruncateKafkaTopicRecords;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaBrokerList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaClientQuotaList;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaPrincipalAuthorizationList;
@@ -171,6 +172,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
 
         // actions
         registry.register(KafkaConsumerGroupsResetOffsets.class, KafkaConsumerGroupsResetOffsets::new);
+        registry.register(TruncateKafkaTopicRecords.class, TruncateKafkaTopicRecords::new);
     }
 
     /**

@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.kafka.change.consumer.DeleteConsumerGroupHandler
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaConsumerGroupService;
+import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaAdminService;
 import java.util.Collection;
 import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -109,7 +109,7 @@ public final class AdminClientConsumerGroupController
                 .toList();
 
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
-            KafkaConsumerGroupService service = new KafkaConsumerGroupService(clientContext.getAdminClient());
+            KafkaAdminService service = new KafkaAdminService(clientContext.getAdminClient());
 
             // Get the actual Consumer Groups.
             List<V1KafkaConsumerGroup> actualStates = service.listConsumerGroups(consumerGroupsIds, false)
