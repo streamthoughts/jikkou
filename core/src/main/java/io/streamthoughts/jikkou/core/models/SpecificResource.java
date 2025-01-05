@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Base class for defining a specific resource.
@@ -32,29 +31,7 @@ import java.util.Optional;
     "spec"
 })
 @Reflectable
-public abstract class SpecificResource<T extends SpecificResource<T, S>, S> implements HasMetadata, HasSpec<S> {
-
-    /**
-     * Kind attached to the resource.
-     */
-    @JsonProperty("kind")
-    @JsonPropertyDescription("Kind attached to the resource.")
-    @NotNull
-    protected final String kind;
-
-    /**
-     * ApiVersion attached to the resource.
-     */
-    @JsonProperty("apiVersion")
-    @JsonPropertyDescription("ApiVersion attached to the resource.")
-    protected final String apiVersion;
-
-    /**
-     * Metadata attached to the resource.
-     */
-    @JsonProperty("metadata")
-    @JsonPropertyDescription("Metadata attached to the resource.")
-    protected final ObjectMeta metadata;
+public abstract class SpecificResource<T extends SpecificResource<T, S>, S> extends BaseHasMetadata implements HasMetadata, HasSpec<S> {
 
     /**
      * Specification object attached to the resource.
@@ -92,34 +69,8 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> impl
                             final String kind,
                             final ObjectMeta metadata,
                             final S spec) {
-        this.apiVersion = Optional.ofNullable(apiVersion).orElseGet(() -> Resource.getApiVersion(this.getClass()));
-        this.kind = Optional.ofNullable(kind).orElseGet(() -> Resource.getKind(this.getClass()));
-        this.metadata = Optional.ofNullable(metadata).orElse(new ObjectMeta());
+        super(apiVersion, kind, metadata);
         this.spec = spec;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String getKind() {
-        return kind;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public ObjectMeta getMetadata() {
-        return metadata;
     }
 
     /**

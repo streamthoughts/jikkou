@@ -19,26 +19,11 @@ import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToEarli
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToLatest;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToOffset;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToTimestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsResult;
-import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsSpec;
-import org.apache.kafka.clients.admin.ListConsumerGroupsOptions;
-import org.apache.kafka.clients.admin.ListConsumerGroupsResult;
-import org.apache.kafka.clients.admin.ListOffsetsResult;
-import org.apache.kafka.clients.admin.OffsetSpec;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.KafkaFuture;
@@ -51,20 +36,20 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 /**
- * Service to manage Kafka Consumer Groups.
+ * Service to manage Kafka resources
  */
-public final class KafkaConsumerGroupService {
+public final class KafkaAdminService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerGroupService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaAdminService.class);
 
     private final AdminClient client;
 
     /**
-     * Creates a new {@link KafkaConsumerGroupService} instance.
+     * Creates a new {@link KafkaAdminService} instance.
      *
      * @param client The AdminClient.
      */
-    public KafkaConsumerGroupService(final @NotNull AdminClient client) {
+    public KafkaAdminService(final @NotNull AdminClient client) {
         this.client = Objects.requireNonNull(client, "client cannot be null");
     }
 
@@ -83,9 +68,11 @@ public final class KafkaConsumerGroupService {
                                                           boolean dryRun) {
         return switch (offsetSpec) {
             // TO_EARLIEST
-            case ToEarliest ignored -> resetConsumerGroupOffsets(groupId, topics, OffsetSpec.earliest(), dryRun);
+            case ToEarliest ignored ->
+                resetConsumerGroupOffsets(groupId, topics, OffsetSpec.earliest(), dryRun);
             // TO_LATEST
-            case ToLatest ignored -> resetConsumerGroupOffsets(groupId, topics, OffsetSpec.latest(), dryRun);
+            case ToLatest ignored ->
+                resetConsumerGroupOffsets(groupId, topics, OffsetSpec.latest(), dryRun);
             // TO_TIMESTAMP
             case ToTimestamp spec ->
                 resetConsumerGroupOffsets(groupId, topics, OffsetSpec.forTimestamp(spec.timestamp()), dryRun);
@@ -148,11 +135,9 @@ public final class KafkaConsumerGroupService {
             AsyncUtils.getValueOrThrowException(future.toCompletionStage().toCompletableFuture(), JikkouRuntimeException::new);
         }
 
-        LOG.info("FOO");
         V1KafkaConsumerGroupList groups = listConsumerGroups(List.of(groupId), true);
         V1KafkaConsumerGroup group = groups.first();
 
-        LOG.info("BAR");
         // DRY-RUN = TRUE
         if (dryRun) {
             V1KafkaConsumerGroupStatus status = group.getStatus();
@@ -180,8 +165,8 @@ public final class KafkaConsumerGroupService {
         return group;
     }
 
-    CompletableFuture<Map<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo>> listOffsets(@NotNull final List<String> topics,
-                                                                                                @NotNull final OffsetSpec offsetSpec) {
+    public CompletableFuture<Map<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo>> listOffsets(@NotNull final List<String> topics,
+                                                                                                       @NotNull final OffsetSpec offsetSpec) {
         // Get the partitions for the given topics.
         CompletableFuture<List<TopicPartition>> future = listTopicPartitions(topics);
 
@@ -194,7 +179,7 @@ public final class KafkaConsumerGroupService {
 
     }
 
-    CompletableFuture<List<TopicPartition>> listTopicPartitions(@NotNull final List<String> topics) {
+    public CompletableFuture<List<TopicPartition>> listTopicPartitions(@NotNull final List<String> topics) {
         return client.describeTopics(topics)
             .allTopicNames()
             .toCompletionStage()

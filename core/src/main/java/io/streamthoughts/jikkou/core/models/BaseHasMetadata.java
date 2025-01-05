@@ -6,43 +6,69 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
+import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
 
-public class BaseHasMetadata implements HasMetadata {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    "apiVersion",
+    "kind",
+    "metadata"
+})
+@Reflectable
+public abstract class BaseHasMetadata implements HasMetadata {
 
-    private String kind;
-    private String apiVersion;
-    private ObjectMeta metadata;
+    /**
+     * Kind attached to the resource.
+     */
+    @JsonProperty("kind")
+    @JsonPropertyDescription("Kind attached to the resource.")
+    @NotNull
+    protected final String kind;
+
+    /**
+     * ApiVersion attached to the resource.
+     */
+    @JsonProperty("apiVersion")
+    @JsonPropertyDescription("ApiVersion attached to the resource.")
+    protected final String apiVersion;
+
+    /**
+     * Metadata attached to the resource.
+     */
+    @JsonProperty("metadata")
+    @JsonPropertyDescription("Metadata attached to the resource.")
+    protected final ObjectMeta metadata;
 
     /**
      * Creates a new {@link BaseHasMetadata} instance.
+     *
+     * @param metadata The metadata object.
      */
-    public BaseHasMetadata() {
-        this(new ObjectMeta());
+    public BaseHasMetadata(final ObjectMeta metadata) {
+        this(null, null, metadata);
     }
 
     /**
      * Creates a new {@link BaseHasMetadata} instance.
      *
-     * @param metadata The object metadata.
-     */
-    public BaseHasMetadata(ObjectMeta metadata) {
-        this.metadata = metadata;
-    }
-
-    /**
-     * Creates a new {@link BaseHasMetadata} instance.
-     *
-     * @param kind       The resource kind.
      * @param apiVersion The resource API Version.
-     * @param metadata   The object metadata..
+     * @param kind       The resource Kind.
+     * @param metadata   The resource metadata.
      */
-    public BaseHasMetadata(String kind,
-                           String apiVersion,
-                           ObjectMeta metadata) {
-        this.kind = kind;
-        this.apiVersion = apiVersion;
-        this.metadata = metadata;
+    public BaseHasMetadata(@Nullable final String apiVersion,
+                           @Nullable final String kind,
+                           @Nullable final ObjectMeta metadata) {
+        this.apiVersion = Optional.ofNullable(apiVersion).orElseGet(() -> Resource.getApiVersion(this.getClass()));
+        this.kind = Optional.ofNullable(kind).orElseGet(() -> Resource.getKind(this.getClass()));
+        this.metadata = Optional.ofNullable(metadata).orElse(new ObjectMeta());
     }
 
     /**
@@ -50,7 +76,7 @@ public class BaseHasMetadata implements HasMetadata {
      **/
     @Override
     public String getKind() {
-        return Optional.of(kind).orElse(Resource.getKind(this.getClass()));
+        return kind;
     }
 
     /**
@@ -58,7 +84,7 @@ public class BaseHasMetadata implements HasMetadata {
      **/
     @Override
     public String getApiVersion() {
-        return Optional.of(apiVersion).orElse(Resource.getApiVersion(this.getClass()));
+        return apiVersion;
     }
 
     /**
@@ -73,8 +99,20 @@ public class BaseHasMetadata implements HasMetadata {
      * {@inheritDoc}
      **/
     @Override
-    public HasMetadata withMetadata(ObjectMeta metadata) {
-        this.metadata = metadata;
-        return this;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseHasMetadata that = (BaseHasMetadata) o;
+        return Objects.equals(kind, that.kind) &&
+            Objects.equals(apiVersion, that.apiVersion) &&
+            Objects.equals(metadata, that.metadata);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public int hashCode() {
+        return Objects.hash(kind, apiVersion, metadata);
     }
 }

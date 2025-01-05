@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaConsumerGroupService;
+import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaAdminService;
 import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaOffsetSpec;
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 @SupportedResource(type = V1KafkaConsumerGroup.class)
 public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension implements Action<V1KafkaConsumerGroup> {
 
-    // OPTIONS
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerGroupsResetOffsets.class);
 
     interface Config {
@@ -117,7 +116,7 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
     public @NotNull ExecutionResultSet<V1KafkaConsumerGroup> execute(@NotNull final Configuration configuration) {
 
         try (AdminClient client = adminClientFactory.createAdminClient()) {
-            KafkaConsumerGroupService service = new KafkaConsumerGroupService(client);
+            KafkaAdminService service = new KafkaAdminService(client);
 
             KafkaOffsetSpec offsetSpec = null;
 

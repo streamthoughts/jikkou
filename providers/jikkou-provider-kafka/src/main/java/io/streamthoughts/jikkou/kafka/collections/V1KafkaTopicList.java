@@ -24,22 +24,22 @@ public class V1KafkaTopicList extends SpecificResourceList<V1KafkaTopicList, V1K
     /**
      * Creates a new {@link V1KafkaBrokerList} instance.
      *
-     * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
      * @param metadata   The resource metadata.
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public V1KafkaTopicList(@Nullable String kind,
-        @Nullable String apiVersion,
-        @Nullable ObjectMeta metadata,
-        @NotNull List< V1KafkaTopic > items) {
-        super(kind, apiVersion, metadata, items);
+    public V1KafkaTopicList(@Nullable String apiVersion,
+                            @Nullable String kind,
+                            @Nullable ObjectMeta metadata,
+                            @NotNull List<V1KafkaTopic> items) {
+        super(apiVersion, kind, metadata, items);
     }
 
     /**

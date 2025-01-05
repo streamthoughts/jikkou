@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContext;
 import io.streamthoughts.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaConsumerGroupService;
+import io.streamthoughts.jikkou.kafka.reconciler.service.KafkaAdminService;
 import java.util.List;
 import java.util.Set;
 import org.apache.kafka.common.ConsumerGroupState;
@@ -84,7 +84,7 @@ public final class AdminClientConsumerGroupCollector extends ContextualExtension
     public ResourceList<V1KafkaConsumerGroup> listAll(@NotNull Configuration configuration,
                                                       @NotNull Selector selector) {
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
-            KafkaConsumerGroupService service = new KafkaConsumerGroupService(clientContext.getAdminClient());
+            KafkaAdminService service = new KafkaAdminService(clientContext.getAdminClient());
             return service.listConsumerGroups(Config.IN_STATES.get(configuration), Config.OFFSETS.get(configuration));
         }
     }

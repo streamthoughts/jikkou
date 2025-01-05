@@ -24,22 +24,22 @@ public class V1KafkaTopicAclEntryList extends SpecificResourceList<V1KafkaTopicA
     /**
      * Creates a new {@link V1KafkaQuotaList} instance.
      *
-     * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
      * @param metadata   The resource metadata.
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public V1KafkaTopicAclEntryList(@Nullable String kind,
-                                    @Nullable String apiVersion,
+    public V1KafkaTopicAclEntryList(@Nullable String apiVersion,
+                                    @Nullable String kind,
                                     @Nullable ObjectMeta metadata,
                                     @NotNull List<V1KafkaTopicAclEntry> items) {
-        super(kind, apiVersion, metadata, items);
+        super(apiVersion, kind, metadata, items);
     }
 
     /**

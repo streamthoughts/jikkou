@@ -20,26 +20,25 @@ import org.jetbrains.annotations.Nullable;
 @Kind("SchemaRegistrySubjectList")
 public class V1SchemaRegistrySubjectList extends SpecificResourceList<V1SchemaRegistrySubjectList, V1SchemaRegistrySubject> {
 
-
     /**
-     * Creates a new {@link public class V1SchemaRegistrySubjectList extends SpecificResourceList<V1SchemaRegistrySubjectList, V1KafkaTopicAclEntry> {} instance.
+     * Creates a new {@link V1SchemaRegistrySubjectList} instance.
      *
-     * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
      * @param metadata   The resource metadata.
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public V1SchemaRegistrySubjectList(@Nullable String kind,
-                                       @Nullable String apiVersion,
+    public V1SchemaRegistrySubjectList(@Nullable String apiVersion,
+                                       @Nullable String kind,
                                        @Nullable ObjectMeta metadata,
                                        @NotNull List<V1SchemaRegistrySubject> items) {
-        super(kind, apiVersion, metadata, items);
+        super(apiVersion, kind, metadata, items);
     }
 
     /**

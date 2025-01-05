@@ -24,19 +24,19 @@ public class V1SchemaRegistrySubjectList extends SpecificResourceList<V1SchemaRe
     /**
      * Creates a new {@link V1KafkaQuotaList} instance.
      *
-     * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
      * @param metadata   The resource metadata.
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public V1SchemaRegistrySubjectList(@Nullable String kind,
-                                       @Nullable String apiVersion,
+    public V1SchemaRegistrySubjectList(@Nullable String apiVersion,
+                                       @Nullable String kind,
                                        @Nullable ObjectMeta metadata,
                                        @NotNull List<V1SchemaRegistrySubject> items) {
         super(kind, apiVersion, metadata, items);

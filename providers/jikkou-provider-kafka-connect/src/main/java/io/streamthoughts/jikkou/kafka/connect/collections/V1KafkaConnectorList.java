@@ -24,22 +24,22 @@ public class V1KafkaConnectorList extends SpecificResourceList<V1KafkaConnectorL
     /**
      * Creates a new {@link V1KafkaConnectorList} instance.
      *
-     * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
      * @param metadata   The resource metadata.
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public V1KafkaConnectorList(@Nullable String kind,
-                                @Nullable String apiVersion,
+    public V1KafkaConnectorList(@Nullable String apiVersion,
+                                @Nullable String kind,
                                 @Nullable ObjectMeta metadata,
                                 @NotNull List<V1KafkaConnector> items) {
-        super(kind, apiVersion, metadata, items);
+        super(apiVersion, kind, metadata, items);
     }
 
     /**

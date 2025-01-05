@@ -28,22 +28,22 @@ public class ConfigMapList extends SpecificResourceList<ConfigMapList, ConfigMap
     /**
      * Creates a new {@link ConfigMapList} instance.
      *
-     * @param kind       The resource Kind.
      * @param apiVersion The resource API Version.
+     * @param kind       The resource Kind.
      * @param metadata   The resource metadata.
      * @param items      The items.
      */
     @ConstructorProperties({
-        "kind",
         "apiVersion",
+        "kind",
         "metadata",
         "items"
     })
-    public ConfigMapList(@Nullable String kind,
-                         @Nullable String apiVersion,
+    public ConfigMapList(@Nullable String apiVersion,
+                         @Nullable String kind,
                          @Nullable ObjectMeta metadata,
                          @NotNull List<ConfigMap> items) {
-        super(kind, apiVersion, metadata, items);
+        super(apiVersion, kind, metadata, items);
     }
 
     public ConfigMapList(final ObjectMeta metadata,

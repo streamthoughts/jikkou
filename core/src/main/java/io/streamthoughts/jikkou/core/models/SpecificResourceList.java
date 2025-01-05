@@ -34,29 +34,7 @@ import java.util.Optional;
 })
 @JsonDeserialize
 @Reflectable
-public abstract class SpecificResourceList<T extends SpecificResourceList<T, E>, E extends HasMetadata> implements ResourceList<E> {
-
-    /**
-     * Kind attached to the resource.
-     */
-    @JsonProperty("kind")
-    @JsonPropertyDescription("Kind attached to the resource.")
-    @NotNull
-    protected final String kind;
-
-    /**
-     * ApiVersion attached to the resource.
-     */
-    @JsonProperty("apiVersion")
-    @JsonPropertyDescription("ApiVersion attached to the resource.")
-    protected final String apiVersion;
-
-    /**
-     * Metadata attached to the resource.
-     */
-    @JsonProperty("metadata")
-    @JsonPropertyDescription("Metadata attached to the resource.")
-    protected final ObjectMeta metadata;
+public abstract class SpecificResourceList<T extends SpecificResourceList<T, E>, E extends HasMetadata> extends BaseHasMetadata implements ResourceList<E> {
 
     /**
      * List of specification objects
@@ -94,26 +72,8 @@ public abstract class SpecificResourceList<T extends SpecificResourceList<T, E>,
                                 final String kind,
                                 final ObjectMeta metadata,
                                 final List<E> items) {
-        this.apiVersion = apiVersion;
-        this.kind = kind;
-        this.metadata = metadata;
+        super(apiVersion, kind, metadata);
         this.items = items;
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String getKind() {
-        return Optional.ofNullable(kind).orElseGet(() -> Resource.getKind(this.getClass()));
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String getApiVersion() {
-        return Optional.ofNullable(apiVersion).orElseGet(() -> Resource.getApiVersion(this.getClass()));
     }
 
     /**
