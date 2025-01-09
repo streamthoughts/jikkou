@@ -42,7 +42,6 @@
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <!-- Native -->
         <imageName>jikkou</imageName>
-        <graalvm.build.arg>--verbose -march=compatibility</graalvm.build.arg>
         <native.maven.plugin.version>0.10.4</native.maven.plugin.version>
         <exec.mainClass>io.streamthoughts.jikkou.client.Jikkou</exec.mainClass>
     </properties>
@@ -368,12 +367,14 @@
                         <configuration>
                             <mainClass>${exec.mainClass}</mainClass>
                             <buildArgs combine.children="append">
-                                <buildArg>${graalvm.build.arg}</buildArg>
+                                <buildArg>--verbose</buildArg>
+                                <buildArg>-march=compatibility</buildArg>
                                 <!--
                                 FIX: Error: Classes that should be initialized at run time got initialized during image building:
                                 see: io.micronaut.core.util.KotlinUtils.<clinit>(KotlinUtils.java:45)
                                 -->
                                 <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
+
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
