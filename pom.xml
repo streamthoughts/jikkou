@@ -123,7 +123,7 @@
         <config.version>1.4.3</config.version>
         <annotations.version>24.1.0</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
-        <reactor-core.version>3.6.6</reactor-core.version>
+        <reactor-core.version>3.7.1</reactor-core.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.9</slf4j-api.version>
         <logback.version>1.5.6</logback.version>
