@@ -44,10 +44,10 @@ public record DefaultChangeResult(@JsonProperty("end") Instant end,
 
     @ConstructorProperties({
             "end",
-            "errors",
             "status",
-            "data",
-            "description"
+            "change",
+            "description",
+            "errors"
     })
     public DefaultChangeResult {
     }

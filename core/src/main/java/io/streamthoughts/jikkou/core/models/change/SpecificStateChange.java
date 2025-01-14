@@ -33,8 +33,7 @@ public class SpecificStateChange<T> extends GenericStateChange {
             "name",
             "op",
             "before",
-            "after",
-            "description"
+            "after"
     })
     public SpecificStateChange(final String name,
                                final Operation op,
