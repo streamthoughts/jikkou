@@ -126,7 +126,7 @@
         <reactor-core.version>3.7.1</reactor-core.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.9</slf4j-api.version>
-        <logback.version>1.5.6</logback.version>
+        <logback.version>1.5.16</logback.version>
         <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
         <!-- Build -->
         <graal-sdk.version>24.0.1</graal-sdk.version>
