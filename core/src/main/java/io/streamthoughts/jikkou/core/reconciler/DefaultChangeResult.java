@@ -41,14 +41,4 @@ public record DefaultChangeResult(@JsonProperty("end") Instant end,
                                   @JsonProperty("change") ResourceChange change,
                                   @JsonProperty("description") TextDescription description,
                                   @JsonProperty("errors") List<ChangeError> errors) implements ChangeResult {
-
-    @ConstructorProperties({
-            "end",
-            "errors",
-            "status",
-            "data",
-            "description"
-    })
-    public DefaultChangeResult {
-    }
 }
