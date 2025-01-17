@@ -28,27 +28,7 @@ public class SpecificStateChange<T> extends GenericStateChange {
      * @param op     The type of the change.
      * @param before The old data value.
      * @param after  The new data value.
-     */
-    @ConstructorProperties({
-            "name",
-            "op",
-            "before",
-            "after"
-    })
-    public SpecificStateChange(final String name,
-                               final Operation op,
-                               final T before,
-                               final T after) {
-        super(name, op, before, after, null);
-    }
-
-    /**
-     * Creates a new {@link SpecificStateChange} instance.
-     *
-     * @param name   The name of the data value.
-     * @param op     The type of the change.
-     * @param before The old data value.
-     * @param after  The new data value.
+     * @param description
      */
     @ConstructorProperties({
             "name",
@@ -63,6 +43,21 @@ public class SpecificStateChange<T> extends GenericStateChange {
                                final T after,
                                final String description) {
         super(name, op, before, after, description);
+    }
+
+    /**
+     * Creates a new {@link SpecificStateChange} instance.
+     *
+     * @param name   The name of the data value.
+     * @param op     The type of the change.
+     * @param before The old data value.
+     * @param after  The new data value.
+     */
+    public SpecificStateChange(final String name,
+                               final Operation op,
+                               final T before,
+                               final T after) {
+        super(name, op, before, after, null);
     }
 
     /**

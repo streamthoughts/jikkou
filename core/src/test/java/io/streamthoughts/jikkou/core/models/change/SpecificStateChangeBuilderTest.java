@@ -6,6 +6,12 @@
  */
 package io.streamthoughts.jikkou.core.models.change;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,5 +54,20 @@ class SpecificStateChangeBuilderTest {
             .withComparator((before, after) -> false)
             .build();
         Assertions.assertEquals(Operation.UPDATE, change.getOp());
+    }
+
+    @Test
+    void shouldProperlySerializeChangeState() {
+        SpecificStateChange<String> change = new SpecificStateChangeBuilder<String>()
+                .withBefore("foo")
+                .withAfter("bar")
+                .build();
+
+        ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
+
+        assertDoesNotThrow(() -> {
+            String changeAsString = objectMapper.writeValueAsString(change);
+            assertNotNull(changeAsString);
+        });
     }
 }
