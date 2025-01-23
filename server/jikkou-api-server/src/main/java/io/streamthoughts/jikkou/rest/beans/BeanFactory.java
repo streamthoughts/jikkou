@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selector.SelectorFactory;
 import io.streamthoughts.jikkou.rest.configs.security.SecurityConfiguration;
 import io.streamthoughts.jikkou.rest.health.indicator.JikkouHealthIndicator;
 import io.streamthoughts.jikkou.rest.health.indicator.JikkouHealthIndicatorConfiguration;
@@ -93,8 +93,8 @@ public final class BeanFactory {
     }
 
     @Singleton
-    public ExpressionSelectorFactory expressionResourceSelectorFactory() {
-        return new ExpressionSelectorFactory();
+    public SelectorFactory expressionResourceSelectorFactory() {
+        return new SelectorFactory();
     }
 
     @Singleton

@@ -7,7 +7,7 @@
 package io.streamthoughts.jikkou.rest.adapters;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
+import io.streamthoughts.jikkou.core.selector.SelectorFactory;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import java.util.Collections;
@@ -18,7 +18,7 @@ class ReconciliationContextAdapterTest {
 
     @Test
     void shouldGetCtxForResourceReconcileRequest() {
-        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new ExpressionSelectorFactory());
+        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
         ReconciliationContext context = adapter.getReconciliationContext(new ResourceReconcileRequest(
                 new ResourceReconcileRequest.Params(),
                 Collections.emptyList()
@@ -28,7 +28,7 @@ class ReconciliationContextAdapterTest {
 
     @Test
     void shouldGetCtxForResourceListRequest() {
-        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new ExpressionSelectorFactory());
+        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
         ReconciliationContext context = adapter.getReconciliationContext(new ResourceListRequest());
         Assertions.assertNotNull(context);
 

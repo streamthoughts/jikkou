@@ -1,0 +1,16 @@
+---
+# ValidatingResourcePolicy for filtering DELETE
+# change operations on KafkaTopic resources
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: KafkaTopicPolicy
+spec:
+  failurePolicy: FILTER
+  selector:
+    matchResources:
+      - kinds: KafkaTopicChange
+  rules:
+    - name: FilterDeleteOperation
+      expression: "size(resource.spec.changes) > 0 && resource.spec.op == 'DELETE'"
+      messageExpression: "'Operation ' + resource.spec.op + '  on topics is not authorized'"

@@ -47,10 +47,10 @@ public final class ResourceLoaderFacade {
 
     @NotNull
     private ResourceReaderOptions createResourceReaderOptions(@NotNull ResourceLoaderInputs inputs) {
-        return new ResourceReaderOptions()
-                .withLabels(getLabels(inputs))
-                .withValues(getValues(inputs))
-                .withPattern(inputs.getResourceFilePattern());
+        return ResourceReaderOptions.DEFAULTS
+            .withLabels(getLabels(inputs))
+            .withValues(getValues(inputs))
+            .withPattern(inputs.getResourceFilePattern());
     }
 
     @NotNull

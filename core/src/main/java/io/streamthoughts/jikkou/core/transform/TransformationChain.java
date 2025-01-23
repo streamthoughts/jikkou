@@ -25,14 +25,14 @@ public final class TransformationChain implements Transformation<HasMetadata> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransformationChain.class);
 
-    private final List<Transformation> transformations;
+    private final List<Transformation<HasMetadata>> transformations;
 
     /**
      * Creates a new {@link TransformationChain} instance.
      *
      * @param transformations   the chain of transformations.
      */
-    public TransformationChain(final List<Transformation> transformations) {
+    public TransformationChain(final List<Transformation<HasMetadata>> transformations) {
         this.transformations = Objects.requireNonNull(transformations, "transformations can't be null");
     }
 
@@ -54,9 +54,9 @@ public final class TransformationChain implements Transformation<HasMetadata> {
                                                     final @NotNull HasItems otherResources,
                                                     final @NotNull ReconciliationContext context) {
         Optional<HasMetadata> result = Optional.of(resource);
-        Iterator<Transformation> iterator = transformations.iterator();
+        Iterator<Transformation<HasMetadata>> iterator = transformations.iterator();
         while (iterator.hasNext() && result.isPresent()) {
-            Transformation transformation = iterator.next();
+            Transformation<HasMetadata> transformation = iterator.next();
             ResourceType type = ResourceType.of(resource);
             if (transformation.canAccept(type)) {
                 result = transformation.transform(result.get(), otherResources, context);

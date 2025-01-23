@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.selector;
 
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.Resource;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Operator used for simple selector expression.
+ *
+ * @see LabelSelector
+ * @see FieldSelector
+ */
+@Reflectable
 public enum ExpressionOperator {
 
     /**

@@ -37,7 +37,7 @@ class JinjaResourceTemplateRendererTest {
             InputStream values = classLoader.getResourceAsStream("datasets/resource-values.yaml");
         ) {
             Map<String, Object> mapValues = OBJECT_MAPPER.readValue(values, Map.class);
-            ResourceReaderOptions options = new ResourceReaderOptions()
+            ResourceReaderOptions options = ResourceReaderOptions.DEFAULTS
                 .withValues(NamedValueSet.setOf(mapValues));
 
             try (var reader = new TemplateResourceReader(

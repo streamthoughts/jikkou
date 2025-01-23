@@ -8,28 +8,33 @@ package io.streamthoughts.jikkou.core.selector;
 
 import io.streamthoughts.jikkou.core.exceptions.InvalidSelectorException;
 import java.util.List;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * SelectorExpression.
+ * PreparedExpression.
  *
  * @param expression the expression string.
- * @param selector   the name of the selector.
  * @param key        the expression key.
  * @param operator   the expression operator.
  * @param values     the expression values.
  */
-public record SelectorExpression(@NotNull String expression,
-                                 @Nullable String selector,
+public record PreparedExpression(@Nullable String expression,
                                  @NotNull String key,
                                  @NotNull ExpressionOperator operator,
                                  @NotNull List<String> values) {
 
+    public PreparedExpression(@NotNull String key,
+                              @NotNull ExpressionOperator operator,
+                              @NotNull List<String> values) {
+        this(null, key, operator, values);
+    }
+
     /**
-     * Creates a new {@link SelectorExpression} instance.
+     * Creates a new {@link PreparedExpression} instance.
      */
-    public SelectorExpression {
+    public PreparedExpression {
         if (operator == ExpressionOperator.INVALID) {
             throw new InvalidSelectorException(
                     "Unknown operator: '"
@@ -40,20 +45,30 @@ public record SelectorExpression(@NotNull String expression,
     }
 
     /**
-     * Creates a new {@link SelectorExpression} instance.
+     * Creates a new {@link PreparedExpression} instance.
      *
      * @param expression the expression string.
-     * @param selector   the name of the selector.
      * @param key        the expression key.
      * @param operator   the expression operator.
      * @param values     the expression values.
      */
-    public SelectorExpression(@NotNull String expression,
-                              @Nullable String selector,
+    public PreparedExpression(@NotNull String expression,
                               @NotNull String key,
                               @NotNull String operator,
                               @NotNull List<String> values) {
-        this(expression, selector, key, ExpressionOperator.findByName(operator), values);
+        this(expression, key, ExpressionOperator.findByName(operator), values);
+    }
+
+    /** {@inheritDoc} **/
+    @Override
+    public String expression() {
+        return Optional.ofNullable(expression).orElseGet(() -> {
+            if (!values.isEmpty()) {
+                return key + " " + operator.name() + values;
+            } else {
+                return key + " " + operator.name();
+            }
+        });
     }
 
     public MatchExpression create(ExpressionKeyValueExtractor extractor) {

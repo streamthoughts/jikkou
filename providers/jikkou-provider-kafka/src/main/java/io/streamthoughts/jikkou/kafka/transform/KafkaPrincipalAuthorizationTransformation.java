@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.ResourceList;
+import io.streamthoughts.jikkou.core.models.Resources;
 import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAcl;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
@@ -44,7 +45,7 @@ public class KafkaPrincipalAuthorizationTransformation implements Transformation
         }
 
         HasItems definedRoleResources = ResourceList.of(items.getAllByKind(V1KafkaPrincipalRole.class));
-        definedRoleResources.verifyNoDuplicateMetadataName();
+        Resources.verifyNoDuplicateMetadataName(definedRoleResources.getItems());
 
         List<V1KafkaPrincipalAcl> aclBindingsFromRoles = roles
                 .stream()

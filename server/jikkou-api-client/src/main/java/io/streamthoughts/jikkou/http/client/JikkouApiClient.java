@@ -20,10 +20,10 @@ import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
@@ -198,9 +198,9 @@ public interface JikkouApiClient {
                                                           @NotNull ReconciliationContext context);
 
     /**
-     * Applies the given list of resource changes.
+     * Applies all the changes provided through the given list of resources.
      *
-     * @param changes The resource changes.
+     * @param resources The resource changes.
      * @param mode    the reconciliation mode.
      * @param context the context to be used for conciliation.
      * @return the {@link ApiChangeResultList}.
@@ -208,9 +208,9 @@ public interface JikkouApiClient {
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    <T extends HasMetadata> ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
-                                                      @NotNull ReconciliationMode mode,
-                                                      @NotNull ReconciliationContext context);
+    ApiChangeResultList patch(@NotNull HasItems resources,
+                              @NotNull ReconciliationMode mode,
+                              @NotNull ReconciliationContext context);
 
     /**
      * Validates the specified resources.

@@ -100,7 +100,7 @@ public class ResourceReaderFactory {
     @NotNull
     private ResourceReader getResourceReader(@NotNull Supplier<InputStream> inputStreamSupplier,
                                              @Nullable URI location) {
-        return isTemplateEnable ?
+        return isTemplateEnable && templateRenderer != null ?
             new TemplateResourceReader(templateRenderer, inputStreamSupplier, objectMapper, location) :
             new InputStreamResourceReader(inputStreamSupplier, objectMapper, location);
     }

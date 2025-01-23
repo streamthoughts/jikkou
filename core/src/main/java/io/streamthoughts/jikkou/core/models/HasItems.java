@@ -6,17 +6,12 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
-import static java.util.stream.Collectors.groupingBy;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -68,13 +63,7 @@ public interface HasItems {
      * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByKinds(@NotNull final List<String> kinds) {
-        if (kinds.isEmpty()) {
-            return getItems();
-        }
-
-        return getItems().stream()
-                .filter(it -> kinds.contains(it.getKind()))
-                .toList();
+        return Resources.allByKinds(getItems(), kinds);
     }
 
     /**
@@ -84,9 +73,7 @@ public interface HasItems {
      * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByType(@NotNull final ResourceType type) {
-        return getItems().stream()
-                .filter(resource -> type.canAccept(ResourceType.of(resource)))
-                .toList();
+        return Resources.allByType(getItems(), type);
     }
 
     /**
@@ -96,9 +83,7 @@ public interface HasItems {
      * @return the filtered resources.
      */
     default List<? extends HasMetadata> getAllByApiVersion(@NotNull final String version) {
-        return getItems().stream()
-                .filter(resource -> resource.getApiVersion().equals(version))
-                .toList();
+        return Resources.allByApiVersion(getItems(), version);
     }
 
     /**
@@ -108,17 +93,7 @@ public interface HasItems {
      */
     @JsonIgnore
     default Map<ResourceType, List<HasMetadata>> groupByType() {
-        return getItems().stream().collect(groupingBy(ResourceType::of));
-    }
-
-    /**
-     * Gets the types of all included resources.
-     *
-     * @return the types.
-     */
-    @JsonIgnore
-    default Set<ResourceType> getAllResourceTypes() {
-        return getItems().stream().map(ResourceType::of).collect(Collectors.toSet());
+        return Resources.groupByType(getItems());
     }
 
     /**
@@ -128,12 +103,7 @@ public interface HasItems {
      * @return an optional of the resource.
      */
     default Optional<? extends HasMetadata> findByName(@NotNull final String name) {
-        return getItems().stream()
-                .filter(it -> it.optionalMetadata()
-                        .map(ObjectMeta::getName)
-                        .filter(n -> n.equals(name))
-                        .isPresent())
-                .findFirst();
+        return Resources.findByName(getItems(), name);
     }
 
     /**
@@ -146,36 +116,10 @@ public interface HasItems {
      * @throws JikkouRuntimeException if no resource exists for the given name and type.
      */
     default <T extends HasMetadata> T getByName(@NotNull final String name, final Class<T> type) {
-        @SuppressWarnings("unchecked")
-        List<T> all = (List<T>) getAllByKind(type);
-        return all.stream()
-                .filter(it -> it.optionalMetadata()
-                        .map(ObjectMeta::getName)
-                        .filter(n -> n.equals(name))
-                        .isPresent())
-                .findFirst()
-                .orElseThrow(() -> new JikkouRuntimeException(
-                        String.format("Cannot found resource of kind %s for name %s", Resource.getKind(type), name)
-                ));
+        return Resources.getByName(getItems(), name, type);
     }
 
-    @SuppressWarnings("unchecked")
     default <T extends HasMetadata> List<T> getAllByClass(final Class<T> clazz) {
-        return (List<T>) getItems().stream()
-                .filter(resource -> clazz.isAssignableFrom(resource.getClass()))
-                .toList();
-    }
-
-
-    default void verifyNoDuplicateMetadataName() {
-        Map<String, List<? extends HasMetadata>> duplicates = getItems().stream()
-                .collect(groupingBy(it -> it.getMetadata().getName()))
-                .entrySet()
-                .stream()
-                .filter(it -> it.getValue().size() > 1)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        if (!duplicates.isEmpty()) {
-            throw new DuplicateMetadataNameException(duplicates.keySet());
-        }
+        return Resources.getAllByClass(getItems(), clazz);
     }
 }

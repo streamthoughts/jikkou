@@ -28,14 +28,14 @@ public final class ValidationChain implements Validation<HasMetadata> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationChain.class);
 
-    private final List<Validation> validations;
+    private final List<Validation<HasMetadata>> validations;
 
     /**
      * Creates a new {@link ValidationChain} instance.
      *
      * @param validations the list of validations.
      */
-    public ValidationChain(final List<Validation> validations) {
+    public ValidationChain(final List<Validation<HasMetadata>> validations) {
         this.validations = Objects.requireNonNull(validations, "validations can't be null");
     }
 
@@ -48,7 +48,6 @@ public final class ValidationChain implements Validation<HasMetadata> {
         return validate(ResourceList.of(resources).groupByType());
     }
 
-    @SuppressWarnings("unchecked")
     public ValidationResult validate(@NotNull final Map<ResourceType, List<HasMetadata>> resources) {
         List<ValidationError> errors = new LinkedList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resources.entrySet()) {

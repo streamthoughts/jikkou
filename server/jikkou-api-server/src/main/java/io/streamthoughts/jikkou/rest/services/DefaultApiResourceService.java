@@ -16,7 +16,6 @@ import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceList;
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.generics.GenericResourceList;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
@@ -71,8 +70,7 @@ public final class DefaultApiResourceService implements ApiResourceService {
     public ApiChangeResultList patch(ReconciliationMode mode,
                                      List<HasMetadata> resources,
                                      ReconciliationContext context) {
-        List<ResourceChange> changes = ResourceList.of(resources).getAllByClass(ResourceChange.class);
-        return api.patch(changes, mode, context);
+        return api.patch(ResourceList.of(resources), mode, context);
     }
 
     /**

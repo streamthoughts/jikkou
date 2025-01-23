@@ -43,6 +43,7 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
     // SERVICES
     @Inject
     JikkouApi api;
+
     @Inject
     ResourceLoaderFacade loader;
     
