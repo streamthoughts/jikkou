@@ -6,9 +6,9 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
-import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,18 +22,10 @@ import org.jetbrains.annotations.Nullable;
  * @param message            Printable result of the request
  */
 @Reflectable
-public record SubjectSchemaConfigurationResponse(CompatibilityLevels compatibilityLevel,
-                                                 @Nullable List<Error> errors,
-                                                 @Nullable String message
+public record SubjectSchemaConfigurationResponse(@JsonProperty("compatibilityLevel") CompatibilityLevels compatibilityLevel,
+                                                 @JsonProperty("errors") @Nullable List<Error> errors,
+                                                 @JsonProperty("message") @Nullable String message
 ) {
-
-    @ConstructorProperties({
-            "compatibilityLevel",
-            "errors",
-            "message",
-    })
-    public SubjectSchemaConfigurationResponse {
-    }
 
     /**
      * {@inheritDoc}

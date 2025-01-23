@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import jakarta.validation.constraints.NotNull;
-import java.beans.ConstructorProperties;
 import java.io.Serializable;
 
 /**
@@ -26,19 +25,4 @@ public record ConnectCluster(@JsonProperty("version") @NotNull String version,
                              @JsonProperty("commit") @NotNull String commit,
                              @JsonProperty("kafka_cluster_id") @NotNull String kafkaClusterId) implements Serializable {
 
-    /**
-     * Creates a new {@link ConnectCluster} instance.
-     *
-     * @param version        Connect worker version
-     * @param commit         Git commit ID
-     * @param kafkaClusterId Kafka cluster ID
-     */
-    @ConstructorProperties({
-            "version",
-            "commit",
-            "kafka_cluster_id"
-    })
-    public ConnectCluster {
-
-    }
 }

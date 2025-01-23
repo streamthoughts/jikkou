@@ -8,27 +8,17 @@ package io.streamthoughts.jikkou.schema.registry.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import java.util.List;
-import lombok.Getter;
 
 /**
  * Represents a response for a compatibility check.
  *
  * @param isCompatible {@code true}, if compatible. {@code false} otherwise.
- * @param messages      the error messages if not compatible.
+ * @param messages     the error messages if not compatible.
  */
 @Reflectable
-public record CompatibilityCheck(boolean isCompatible, @Getter List<String> messages) {
-
-    /**
-     * Creates a new {@link CompatibilityObject} instance.
-     */
-    @ConstructorProperties({
-            "is_compatible",
-            "messages"
-    })
-    public CompatibilityCheck {}
+public record CompatibilityCheck(@JsonProperty("is_compatible") boolean isCompatible,
+                                 @JsonProperty("messages") List<String> messages) {
 
     /**
      * Gets the compatibility check test.

@@ -8,7 +8,6 @@ package io.streamthoughts.jikkou.kafka.connect.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import java.io.Serializable;
 
 /**
@@ -20,14 +19,5 @@ import java.io.Serializable;
 @Reflectable
 public record ErrorResponse(@JsonProperty("error_code") int errorCode,
                             @JsonProperty("message") String message) implements Serializable {
-
-    /**
-     * Creates a new {@link ErrorResponse} instance.
-     */
-    @ConstructorProperties({
-            "error_code",
-            "message"
-    })
-    public ErrorResponse { }
 
 }

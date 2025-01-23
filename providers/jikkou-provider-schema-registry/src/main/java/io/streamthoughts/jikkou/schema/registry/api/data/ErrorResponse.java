@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 
 /**
  * Schema Registry - Error Response
@@ -16,15 +16,9 @@ import java.beans.ConstructorProperties;
  * @param message   the error message.
  */
 @Reflectable
-public record ErrorResponse(int errorCode, String message) {
-
-    /**
-     * Creates a new {@link ErrorResponse} instance.
-     */
-    @ConstructorProperties({
-            "error_code",
-            "message"
-    })
-    public ErrorResponse { }
-
+public record ErrorResponse(
+    @JsonProperty("error_code")
+    int errorCode,
+    @JsonProperty("message")
+    String message) {
 }

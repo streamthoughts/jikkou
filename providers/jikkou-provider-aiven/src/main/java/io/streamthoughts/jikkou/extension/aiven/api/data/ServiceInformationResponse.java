@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +21,10 @@ import java.util.Optional;
  * @param message Printable result of the request
  */
 @Reflectable
-public record ServiceInformationResponse(Map<String, Object> service, List<Error> errors, String message) {
-
-    @ConstructorProperties({
-            "service",
-            "errors",
-            "message",
-    })
-    public ServiceInformationResponse {
-    }
+public record ServiceInformationResponse(
+    @JsonProperty("service") Map<String, Object> service,
+    @JsonProperty("errors") List<Error> errors,
+    @JsonProperty("message") String message) {
 
     @Override
     public List<Error> errors() {

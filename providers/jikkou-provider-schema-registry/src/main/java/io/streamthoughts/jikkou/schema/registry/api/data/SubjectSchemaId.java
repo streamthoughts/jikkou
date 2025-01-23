@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 
 /**
  * A globally unique identifier of the schema
@@ -15,11 +15,6 @@ import java.beans.ConstructorProperties;
  * @param id a schema's id
  */
 @Reflectable
-public record SubjectSchemaId(int id) {
-
-    @ConstructorProperties({
-            "id",
-    })
-    public SubjectSchemaId {}
+public record SubjectSchemaId(@JsonProperty("id") int id) {
 
 }

@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,15 +22,10 @@ import java.util.Optional;
  * @param message Printable result of the request.
  */
 @Reflectable
-public record ListKafkaQuotaResponse(List<KafkaQuotaEntry> quotas, List<Error> errors, String message) {
-
-    @ConstructorProperties({
-            "quotas",
-            "errors",
-            "message"
-    })
-    public ListKafkaQuotaResponse {
-    }
+public record ListKafkaQuotaResponse(
+    @JsonProperty("quotas") List<KafkaQuotaEntry> quotas,
+    @JsonProperty("errors") List<Error> errors,
+    @JsonProperty("message") String message) {
 
     @Override
     public List<Error> errors() {

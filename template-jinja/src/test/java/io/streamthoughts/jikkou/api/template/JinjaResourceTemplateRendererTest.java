@@ -32,30 +32,32 @@ class JinjaResourceTemplateRendererTest {
 
         // Given
         ClassLoader classLoader = Classes.getClassLoader();
-        InputStream template = classLoader.getResourceAsStream("datasets/resource-template.yaml");
-        InputStream values = classLoader.getResourceAsStream("datasets/resource-values.yaml");
-
-        Map<String, Object> mapValues = OBJECT_MAPPER.readValue(values, Map.class);
-        ResourceReaderOptions options = new ResourceReaderOptions()
+        try(
+            InputStream template = classLoader.getResourceAsStream("datasets/resource-template.yaml");
+            InputStream values = classLoader.getResourceAsStream("datasets/resource-values.yaml");
+        ) {
+            Map<String, Object> mapValues = OBJECT_MAPPER.readValue(values, Map.class);
+            ResourceReaderOptions options = new ResourceReaderOptions()
                 .withValues(NamedValueSet.setOf(mapValues));
 
-        try (var reader = new TemplateResourceReader(
+            try (var reader = new TemplateResourceReader(
                 new JinjaResourceTemplateRenderer(),
                 () -> template,
                 OBJECT_MAPPER
-        )) {
+            )) {
 
-            // When
-            List<HasMetadata> results = reader.readAllResources(options);
+                // When
+                List<HasMetadata> results = reader.readAllResources(options);
 
-            // Then
-            Assertions.assertNotNull(results);
-            Assertions.assertEquals(1, results.size());
-            GenericResource resource = (GenericResource) results.get(0);
-            Map<String, Object> spec = (LinkedHashMap) resource.getAdditionalProperties().get("spec");
-            Object topics = spec.get("topics");
-            Assertions.assertNotNull(topics);
-            Assertions.assertEquals(5, ((List) topics).size());
+                // Then
+                Assertions.assertNotNull(results);
+                Assertions.assertEquals(1, results.size());
+                GenericResource resource = (GenericResource) results.getFirst();
+                Map<String, Object> spec = (LinkedHashMap) resource.getAdditionalProperties().get("spec");
+                Object topics = spec.get("topics");
+                Assertions.assertNotNull(topics);
+                Assertions.assertEquals(5, ((List) topics).size());
+            }
         }
     }
 }

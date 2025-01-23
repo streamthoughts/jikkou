@@ -8,7 +8,6 @@ package io.streamthoughts.jikkou.schema.registry.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,17 +16,8 @@ import org.jetbrains.annotations.NotNull;
  * @param compatibilityLevel a compatibility level string.
  */
 @Reflectable
-public record CompatibilityLevelObject(@NotNull String compatibilityLevel) {
-
-    /**
-     * Creates a new {@link CompatibilityLevelObject} instance.
-     *
-     * @param compatibilityLevel a compatibility level string.
-     */
-    @ConstructorProperties({
-            "compatibilityLevel",
-    })
-    public CompatibilityLevelObject {}
+public record CompatibilityLevelObject(
+    @JsonProperty("compatibilityLevel") @NotNull String compatibilityLevel) {
 
     /**
      * Gets the compatibility level.
