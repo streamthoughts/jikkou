@@ -124,16 +124,18 @@
         <annotations.version>24.1.0</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
         <reactor-core.version>3.7.1</reactor-core.version>
+        <cel.version>0.9.1</cel.version>
         <!-- Logging -->
-        <slf4j-api.version>2.0.16</slf4j-api.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.16</logback.version>
-        <jul-to-slf4j.version>2.0.7</jul-to-slf4j.version>
+        <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <!-- Build -->
         <graal-sdk.version>24.0.1</graal-sdk.version>
         <reflections.version>0.10.2</reflections.version>
         <spotless.version>2.43.0</spotless.version>
         <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
+        <protobuf-java.version>4.28.3</protobuf-java.version>
     </properties>
 
     <dependencyManagement>
@@ -157,6 +159,16 @@
                 <groupId>com.typesafe</groupId>
                 <artifactId>config</artifactId>
                 <version>${config.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>${protobuf-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>

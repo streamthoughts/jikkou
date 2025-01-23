@@ -24,11 +24,11 @@ import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.adapter.ResourceReconcileRequestFactory;
@@ -404,9 +404,9 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      * {@inheritDoc}
      **/
     @Override
-    public <T extends HasMetadata> ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
-                                                             @NotNull ReconciliationMode mode,
-                                                             @NotNull ReconciliationContext context) {
+    public ApiChangeResultList patch(@NotNull HasItems resources,
+                                     @NotNull ReconciliationMode mode,
+                                     @NotNull ReconciliationContext context) {
         HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
             .addPathSegments(API_RESOURCES)
             .addPathSegments("patch")
@@ -416,7 +416,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
             .build();
         
         // Build Request
-        ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(changes, context);
+        ResourceReconcileRequest request = new ResourceReconcileRequestFactory().create(resources.getItems(), context);
         RequestBody body = apiClient.serialize(request, CONTENT_TYPE_APPLICATION_JSON);
 
         Request.Builder builder = new Request.Builder();

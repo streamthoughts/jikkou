@@ -12,6 +12,7 @@ import io.streamthoughts.jikkou.core.converter.ResourceListConverter;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.ConfigMapList;
+import io.streamthoughts.jikkou.core.policy.model.ValidatingResourcePolicy;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.transform.ConfigMapsTransformation;
 import io.streamthoughts.jikkou.core.transform.EnrichMetadataTransformation;
@@ -45,5 +46,6 @@ public final class CoreExtensionProvider implements ExtensionProvider {
     public void registerResources(@NotNull ResourceRegistry registry) {
         registry.register(ConfigMap.class);
         registry.register(ConfigMapList.class);
+        registry.register(ValidatingResourcePolicy.class);
     }
 }

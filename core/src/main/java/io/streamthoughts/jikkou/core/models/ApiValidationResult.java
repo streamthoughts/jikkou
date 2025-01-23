@@ -11,9 +11,9 @@ import io.streamthoughts.jikkou.core.validation.ValidationError;
 import java.util.Collections;
 import java.util.List;
 
-public final class ApiValidationResult {
+public final class ApiValidationResult<T extends HasMetadata> {
 
-    private final ResourceList<HasMetadata> resources;
+    private final ResourceList<T> resources;
 
     private final List<ValidationError> errors;
 
@@ -22,7 +22,7 @@ public final class ApiValidationResult {
      *
      * @param resources the list of resources that was validated.
      */
-    public ApiValidationResult(ResourceList<HasMetadata> resources) {
+    public ApiValidationResult(ResourceList<T> resources) {
         this(resources, null);
     }
 
@@ -35,7 +35,7 @@ public final class ApiValidationResult {
         this(null, errors);
     }
 
-    private ApiValidationResult(ResourceList<HasMetadata> resources, List<ValidationError> errors) {
+    private ApiValidationResult(ResourceList<T> resources, List<ValidationError> errors) {
         this.resources = resources;
         this.errors = errors;
     }
@@ -46,7 +46,7 @@ public final class ApiValidationResult {
      * @return  the {@link ResourceList}.
      * @throws ValidationException if validation constraint errors was returned during validation process.
      */
-    public ResourceList<HasMetadata> get() {
+    public ResourceList<T> get() {
         if (errors != null) {
             throw new ValidationException(errors);
         }
