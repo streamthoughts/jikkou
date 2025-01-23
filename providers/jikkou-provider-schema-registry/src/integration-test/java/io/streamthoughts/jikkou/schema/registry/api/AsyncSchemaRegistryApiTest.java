@@ -212,7 +212,7 @@ class AsyncSchemaRegistryApiTest {
         // Then
         CompatibilityCheck result = future.block();
         Assertions.assertTrue(result.isCompatible());
-        Assertions.assertTrue(result.getMessages().isEmpty());
+        Assertions.assertTrue(result.messages().isEmpty());
     }
 
     @Order(9)
@@ -229,6 +229,6 @@ class AsyncSchemaRegistryApiTest {
         // Then
         CompatibilityCheck result = future.block();
         Assertions.assertFalse(result.isCompatible());
-        Assertions.assertFalse(result.getMessages().isEmpty());
+        Assertions.assertFalse(result.messages().isEmpty());
     }
 }

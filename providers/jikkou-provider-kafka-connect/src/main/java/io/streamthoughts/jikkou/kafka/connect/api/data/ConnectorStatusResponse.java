@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.kafka.connect.api.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import jakarta.validation.constraints.NotNull;
-import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,11 +25,6 @@ public record ConnectorStatusResponse(@JsonProperty("name") @NotNull String name
                                       @JsonProperty("connector") @NotNull ConnectorStatus connector,
                                       @JsonProperty("tasks") @NotNull List<TaskStatus> tasks) implements Serializable {
 
-    @ConstructorProperties({"name", "connector", "tasks"})
-    public ConnectorStatusResponse {
-    }
-
-
     /**
      * Status of a connector.
      *
@@ -38,11 +32,9 @@ public record ConnectorStatusResponse(@JsonProperty("name") @NotNull String name
      * @param workerId the worker id.
      */
     @Reflectable
-    public record ConnectorStatus(@NotNull String state, @NotNull String workerId) {
-
-        @ConstructorProperties({"state", "worker_id"})
-        public ConnectorStatus {
-        }
+    public record ConnectorStatus(
+        @JsonProperty("state") @NotNull String state,
+        @JsonProperty("worker_id") @NotNull String workerId) {
     }
 
     /**
@@ -53,10 +45,10 @@ public record ConnectorStatusResponse(@JsonProperty("name") @NotNull String name
      * @param workerId the worker id.
      */
     @Reflectable
-    public record TaskStatus(int id, @NotNull String state, @NotNull String workerId, String trace) {
-
-        @ConstructorProperties({"id", "state", "worker_id", "trace"})
-        public TaskStatus {
-        }
+    public record TaskStatus(
+        @JsonProperty("id") int id,
+        @JsonProperty("state") @NotNull String state,
+        @JsonProperty("worker_id") @NotNull String workerId,
+        @JsonProperty("trace") String trace) {
     }
 }
