@@ -6,9 +6,9 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaVersion;
-import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,17 +22,10 @@ import org.jetbrains.annotations.Nullable;
  * @param message  Printable result of the request
  */
 @Reflectable
-public record SubjectSchemaVersionResponse(@NotNull SubjectSchemaVersion version,
-                                           @Nullable List<Error> errors,
-                                           @Nullable String message
-                                                   ) {
-
-    @ConstructorProperties({
-            "version",
-            "errors",
-            "message",
-    })
-    public SubjectSchemaVersionResponse {}
+public record SubjectSchemaVersionResponse(@JsonProperty("version") @NotNull SubjectSchemaVersion version,
+                                           @JsonProperty("errors") @Nullable List<Error> errors,
+                                           @JsonProperty("message") @Nullable String message
+) {
 
     /**
      * {@inheritDoc}

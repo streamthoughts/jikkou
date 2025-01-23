@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 
 /**
  * Represents an error occurred during request processing.
@@ -18,13 +18,9 @@ import java.beans.ConstructorProperties;
  * @param errorCode Machine-readable error_code
  */
 @Reflectable
-public record Error(String message, String moreInfo, int status, String errorCode) {
-
-    @ConstructorProperties({
-            "message",
-            "more_info",
-            "status",
-            "error_code"
-    })
-    public Error {}
+public record Error(
+    @JsonProperty("message") String message,
+    @JsonProperty("more_info") String moreInfo,
+    @JsonProperty("status")  int status,
+    @JsonProperty("error_code") String errorCode) {
 }

@@ -1,3 +1,9 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.streamthoughts.jikkou.kafka.action;
 
 import io.streamthoughts.jikkou.core.action.ExecutionResult;
@@ -8,19 +14,18 @@ import io.streamthoughts.jikkou.kafka.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.kafka.action.TruncateKafkaTopicRecords.TopicPartitionLowWatermark;
 import io.streamthoughts.jikkou.kafka.action.TruncateKafkaTopicRecords.TruncatedKafkaTopicRecordsResult;
 import io.streamthoughts.jikkou.kafka.action.TruncateKafkaTopicRecords.V1TruncatedKafkaTopicRecords;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class TruncateKafkaTopicRecordsTest extends BaseExtensionProviderIT {
 

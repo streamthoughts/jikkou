@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.extension.aiven.api.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 /**
@@ -32,17 +31,6 @@ public record KafkaAclEntry(@JsonProperty("permission") String permission,
                             @JsonProperty("username") String username,
                             @JsonProperty("id") String id) {
 
-    /**
-     * Creates a new {@link KafkaAclEntry} instance.
-     */
-    @ConstructorProperties({
-            "permission",
-            "topic",
-            "username",
-            "id"
-    })
-    public KafkaAclEntry {
-    }
 
     /**
      * Creates a new {@link KafkaAclEntry} instance.

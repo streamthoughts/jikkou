@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.kafka.connect.api.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import jakarta.validation.constraints.NotNull;
-import java.beans.ConstructorProperties;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -29,24 +28,10 @@ public record ConnectorInfoResponse(@JsonProperty("name") @NotNull String name,
                                     @JsonProperty("tasks") @NotNull List<ConnectorTask> tasks
 ) implements Serializable {
 
-    @ConstructorProperties({
-            "name",
-            "config",
-            "tasks"
-    })
-    public ConnectorInfoResponse {
-    }
 
     @Reflectable
     public record ConnectorTask(@JsonProperty("connector") @NotNull String connector,
                                 @JsonProperty("task") int task) implements Serializable {
 
-        @ConstructorProperties({
-                "connector",
-                "task"
-        })
-        public ConnectorTask {
-        }
     }
-
 }

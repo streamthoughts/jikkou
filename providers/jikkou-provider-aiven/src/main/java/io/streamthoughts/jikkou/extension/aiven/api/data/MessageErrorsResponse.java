@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.api.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
-import java.beans.ConstructorProperties;
 import java.util.List;
 
 /**
@@ -18,14 +18,9 @@ import java.util.List;
  * @param errors  the errors.
  */
 @Reflectable
-public record MessageErrorsResponse(String message, List<Error> errors) {
-
-    @ConstructorProperties({
-            "message",
-            "errors"
-    })
-    public MessageErrorsResponse {
-    }
+public record MessageErrorsResponse(
+    @JsonProperty("message") String message,
+    @JsonProperty("errors") List<Error> errors) {
 
     /**
      * Represents a single error.
@@ -34,15 +29,10 @@ public record MessageErrorsResponse(String message, List<Error> errors) {
      * @param status    HTTP error status name
      * @param errorCode Machine-readable error_code
      */
-    public record Error(String message, int status, String errorCode) {
-
-        @ConstructorProperties({
-                "message",
-                "status",
-                "error_code"
-        })
-        public Error {
-        }
+    public record Error(
+        @JsonProperty("message") String message,
+        @JsonProperty("status") int status,
+        @JsonProperty("error_code") String errorCode) {
 
     }
 }
