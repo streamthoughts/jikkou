@@ -1,0 +1,22 @@
+---
+# ValidatingResourcePolicy to validate the min and max
+# number of partitions of KafkaTopic resource
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: KafkaTopicPolicy
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopic
+  rules:
+    - name: MaxTopicPartitions
+      expression: "resource.spec.partitions >= 50"
+      messageExpression: "'Topic partition MUST be inferior to 50, but was: ' +  string(resource.spec.partitions)"
+
+    - name: MinTopicPartitions
+      expression: "resource.spec.partitions >= 3"
+      message: "Topic must have at-least 3 partitions"
+
+

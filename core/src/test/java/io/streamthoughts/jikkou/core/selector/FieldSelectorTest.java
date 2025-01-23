@@ -27,8 +27,7 @@ class FieldSelectorTest {
     @Test
     public void shouldSelectResourceForSelectorIn() {
         // GIVEN
-        var expression =  new SelectorExpression(
-                "",
+        var expression =  new PreparedExpression(
                 "",
                 "metadata.name",
                 ExpressionOperator.IN, (List.of("test-resource"))
@@ -45,8 +44,7 @@ class FieldSelectorTest {
     @Test
     public void shouldNotSelectResourceForSelectorNotIn() {
         // GIVEN
-        var expression =  new SelectorExpression(
-                "",
+        var expression =  new PreparedExpression(
                 "",
                 "metadata.name",
                 ExpressionOperator.NOTIN, (List.of("test-resource"))

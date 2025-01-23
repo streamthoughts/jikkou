@@ -111,6 +111,11 @@ public abstract class SpecificResource<T extends SpecificResource<T, S>, S> exte
         return Objects.hash(kind, apiVersion, metadata, spec);
     }
 
+    /**
+     * Creates a new builder from this object.
+     *
+     * @return a new {@link Builder}.
+     */
     public abstract Builder<?, T, S> toBuilder();
 
     /**

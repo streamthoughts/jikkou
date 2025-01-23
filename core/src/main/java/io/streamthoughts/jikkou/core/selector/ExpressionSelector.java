@@ -7,50 +7,31 @@
 package io.streamthoughts.jikkou.core.selector;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import java.util.List;
+import io.streamthoughts.jikkou.core.policy.CelExpression;
+import io.streamthoughts.jikkou.core.policy.CelExpressionFactory;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A selector implementation based on Common Expression Language (Cel).
+ */
 public class ExpressionSelector implements Selector {
 
-    private final ExpressionKeyValueExtractor keyExtractor;
-    private final SelectorExpression expression;
+    private final CelExpression<Boolean> expression;
 
     /**
      * Creates a new {@link ExpressionSelector} instance.
      *
-     * @param expression The SelectorExpression.
-     * @param keyExtractor The ExpressionKeyValueExtractor.
+     * @param expression    The string expression.
      */
-    public ExpressionSelector(final @NotNull SelectorExpression expression,
-                              final @NotNull ExpressionKeyValueExtractor keyExtractor) {
-        this.expression = Objects.requireNonNull(
-                expression, "'expression' must not be null");
-        this.keyExtractor = Objects.requireNonNull(
-                keyExtractor, "'keyResourceExtractor' must not be null");
+    public ExpressionSelector(final String expression) {
+        Objects.requireNonNull(expression, "expression cannot be null");
+        this.expression = CelExpressionFactory.bool().compile(expression);
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
     public boolean apply(@NotNull HasMetadata resource) {
-        return expression.create(keyExtractor).apply(resource);
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public List<String> getSelectorExpressions() {
-        return List.of(expression.expression());
-    }
-
-    /**
-     * {@inheritDoc}
-     **/
-    @Override
-    public String toString() {
-        return expression.toString();
+        return expression.eval(resource);
     }
 }

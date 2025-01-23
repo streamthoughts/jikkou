@@ -6,21 +6,52 @@
  */
 package io.streamthoughts.jikkou.core.selector;
 
-import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.selector.internal.PropertyAccessors;
+import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Named("field")
-public final class FieldSelector extends ExpressionSelector {
+public final class FieldSelector implements Selector {
+
+    private final ExpressionKeyValueExtractor keyExtractor;
+    private final PreparedExpression preparedExpression;
 
     /**
      * Creates a new {@link FieldSelector} instance.
      */
-    public FieldSelector(SelectorExpression expression) {
-        super(expression, new PathExpressionKeyValueExtractor());
+    public FieldSelector(final PreparedExpression preparedExpression) {
+        this.preparedExpression = preparedExpression;
+        this.keyExtractor = new PathExpressionKeyValueExtractor();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public boolean apply(@NotNull HasMetadata resource) {
+        return preparedExpression.create(keyExtractor).apply(resource);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<String> getSelectorExpressions() {
+        return List.of(preparedExpression.expression());
+    }
+
+    public PreparedExpression preparedExpression() {
+        return preparedExpression;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public String toString() {
+        return preparedExpression.toString();
     }
 
     static class PathExpressionKeyValueExtractor implements ExpressionKeyValueExtractor {

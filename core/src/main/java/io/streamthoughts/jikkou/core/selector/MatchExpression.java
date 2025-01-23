@@ -11,5 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MatchExpression {
 
+    /**
+     * Apply this matching selector expression on the given resource.
+     *
+     * @param resource the resource to be matched.
+     * @return         {@code true} if the resource match, otherwise {@code false}.
+     */
     boolean apply(@NotNull HasMetadata resource);
 }

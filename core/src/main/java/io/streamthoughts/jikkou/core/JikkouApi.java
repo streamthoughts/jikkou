@@ -30,7 +30,6 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -247,16 +246,16 @@ public interface JikkouApi extends AutoCloseable {
                                   @NotNull ReconciliationContext context);
 
     /**
-     * Applies the given list of resource changes.
+     * Applies all the changes provided through the given list of resources.
      *
-     * @param changes The resource changes.
-     * @param mode    the reconciliation mode.
-     * @param context the context to be used for conciliation.
+     * @param resources the resources.
+     * @param mode      the reconciliation mode.
+     * @param context   the context to be used for conciliation.
      * @return the results of the changes applied on resources.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+    ApiChangeResultList patch(@NotNull HasItems resources,
                               @NotNull ReconciliationMode mode,
                               @NotNull ReconciliationContext context);
 
@@ -290,8 +289,8 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    ApiValidationResult validate(@NotNull HasItems resources,
-                                 @NotNull ReconciliationContext context);
+    ApiValidationResult<HasMetadata> validate(@NotNull HasItems resources,
+                                              @NotNull ReconciliationContext context);
 
     /**
      * Execute transformations of the specified resources.

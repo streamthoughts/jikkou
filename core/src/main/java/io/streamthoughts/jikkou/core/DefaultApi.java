@@ -47,6 +47,9 @@ import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.generics.GenericResourceList;
+import io.streamthoughts.jikkou.core.policy.ResourcePolicy;
+import io.streamthoughts.jikkou.core.policy.ResourcePolicyResult;
+import io.streamthoughts.jikkou.core.policy.model.ValidatingResourcePolicy;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
@@ -58,11 +61,12 @@ import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.core.validation.ValidationChain;
+import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -367,19 +371,43 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList reconcile(@NotNull final HasItems resources,
                                          @NotNull final ReconciliationMode mode,
                                          @NotNull final ReconciliationContext context) {
-        return patch(getDiff(resources, NOOP_RESOURCE_CHANGE_FILTER, context).getItems(), mode, context);
+        // Get all changes
+        List<ResourceChange> changes = getDiff(resources, NOOP_RESOURCE_CHANGE_FILTER, context).getItems();
+
+        // Get and apply all policies
+        List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
+
+        // Patch
+        return doPatch(policies, changes, mode, context);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+    public ApiChangeResultList patch(@NotNull HasItems resources,
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
-        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList
-            .of(changes)
-            .groupBy(ResourceType::of);
+
+        // Get all changes
+        List<ResourceChange> changes = resources.getAllByClass(ResourceChange.class);
+
+        // Get and apply all policies
+        List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
+
+        // Patch
+        return doPatch(policies, changes, mode, context);
+    }
+
+    @NotNull
+    private ApiChangeResultList doPatch(List<ResourcePolicy> policies,
+                                        List<ResourceChange> changes,
+                                        @NotNull ReconciliationMode mode,
+                                        @NotNull ReconciliationContext context) {
+
+        ResourceList<ResourceChange> validated = applyValidatingResourcePolicy(policies, changes).get();
+
+        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = validated.groupBy(ResourceType::of);
 
         final List<ChangeResult> changeResults = new LinkedList<>();
 
@@ -462,16 +490,34 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
-    public ApiValidationResult validate(final @NotNull HasItems resources,
-                                        final @NotNull ReconciliationContext context) {
-        HasItems prepared = prepare(resources, context);
-        ValidationChain validationChain = getResourceValidationChain();
-        List<HasMetadata> items = (List<HasMetadata>) prepared.getItems();
-        ValidationResult result = validationChain.validate(items);
+    public ApiValidationResult<HasMetadata> validate(final @NotNull HasItems resources,
+                                                     final @NotNull ReconciliationContext context) {
+        @SuppressWarnings("unchecked")
+        List<HasMetadata> items = (List<HasMetadata>) prepare(resources, context).getItems();
+        ValidationResult validationChainResult = this.newResourceValidationChain().validate(items);
 
-        return result.isValid() ?
-            new ApiValidationResult(ResourceList.of(items)) :
-            new ApiValidationResult(result.errors());
+        // Get and apply all policies
+        List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
+
+        ApiValidationResult<HasMetadata> validatingResourcePolicyResult = this.applyValidatingResourcePolicy(policies, items);
+
+        if (validationChainResult.isValid() && validatingResourcePolicyResult.isValid()) {
+            return validatingResourcePolicyResult;
+        } else {
+            List<ValidationError> errors = new ArrayList<>(validationChainResult.errors());
+            errors.addAll(validatingResourcePolicyResult.errors());
+
+            return new ApiValidationResult<>(errors);
+        }
+    }
+
+    @NotNull
+    private List<ResourcePolicy> getResourcePoliciesFrom(@NotNull HasItems resources) {
+        return resources
+            .getAllByClass(ValidatingResourcePolicy.class)
+            .stream()
+            .map(ResourcePolicy::new)
+            .toList();
     }
 
     /**
@@ -510,7 +556,10 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .toList();
         ResourceList filtered = ResourceList.of(list);
 
+        // Validate resources.
         Map<ResourceType, List<HasMetadata>> resourcesByType = validate(filtered, context).get().groupByType();
+
+        // Diff
         List<ResourceChange> results = resourcesByType.entrySet()
             .stream()
             .map(e -> {
@@ -560,6 +609,66 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             items
         );
         return addBuiltInAnnotations(result, timestamp);
+    }
+
+    public <T extends HasMetadata> ApiValidationResult<T> applyValidatingResourcePolicy(final List<ResourcePolicy> policies, final List<T> resources) {
+
+        if (policies.isEmpty()) {
+            LOG.debug("No ValidatingResourcePolicy found. Continue");
+            return new ApiValidationResult<>(ResourceList.of(resources));
+        }
+
+        final List<ValidationError> errors = new LinkedList<>();
+        final List<T> filtered = new ArrayList<>(resources.size());
+        for (T resource : resources) {
+            boolean isResourceValidated = true;
+            for (ResourcePolicy policy : policies) {
+                if (!policy.canAccept(resource)) {
+                    continue;
+                }
+
+                ResourcePolicyResult result = policy.evaluate(resource);
+                if (!result.hasErrors()) {
+                    continue;
+                }
+
+                LOG.warn("ValidatingResourcePolicy '{}' failed on resource named '{}' with: {}. {}.",
+                    result.policyName(),
+                    resource.optionalMetadata().map(ObjectMeta::getName).orElse("<unknown>"),
+                    result.rules().getFirst().errorMessage(),
+                    result.failurePolicy().name()
+                );
+                switch (result.failurePolicy()) {
+                    case FAIL -> {
+                        errors.add(new ValidationError(
+                            result.policyName(),
+                            resource,
+                            String.format("ValidatingResourcePolicy '%s' failed on resource named '%s' with: %s",
+                                result.policyName(),
+                                resource.optionalMetadata().map(ObjectMeta::getName).orElse("<unknown>"),
+                                result.rules().getFirst().errorMessage()
+                            ),
+                            Map.of("rules", result.rules())
+                        ));
+                        isResourceValidated = false;
+                    }
+                    case CONTINUE -> {
+                        continue;
+                    }
+                    case FILTER -> {
+                        isResourceValidated = false;
+                        /* no nothing */
+                    }
+                }
+            }
+
+            if (isResourceValidated) {
+                filtered.add(resource);
+            }
+        }
+        return errors.isEmpty() ?
+            new ApiValidationResult<>(ResourceList.of(filtered)) :
+            new ApiValidationResult<>(errors);
     }
 
     @SuppressWarnings("unchecked")

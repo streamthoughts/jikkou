@@ -14,56 +14,36 @@ import io.streamthoughts.jikkou.core.models.NamedValueSet;
  *
  * @see ResourceReader
  */
-public class ResourceReaderOptions {
-
+public record ResourceReaderOptions(
+    String pattern,
+    NamedValueSet values,
+    NamedValueSet labels
+) {
     public static final String DEFAULT_PATTERN = "**/*.{yaml,yml,tpl}";
 
-    private final String pattern;
-    private final NamedValueSet values;
-    private final NamedValueSet labels;
-
-    public ResourceReaderOptions() {
-        this(NamedValueSet.emptySet(), NamedValueSet.emptySet(), DEFAULT_PATTERN);
-    }
-
-    private ResourceReaderOptions(final NamedValueSet values,
-                                  final NamedValueSet labels,
-                                  final String pattern) {
-        this.values = values;
-        this.labels = labels;
-        this.pattern = pattern;
-    }
+    public static final ResourceReaderOptions DEFAULTS = new ResourceReaderOptions(
+        DEFAULT_PATTERN,
+        NamedValueSet.emptySet(),
+        NamedValueSet.emptySet()
+    );
 
     public ResourceReaderOptions withValue(final NamedValue value) {
-        return new ResourceReaderOptions(values.with(value), labels, pattern);
+        return new ResourceReaderOptions(pattern, values.with(value), labels);
     }
 
     public ResourceReaderOptions withLabel(final NamedValue label) {
-        return new ResourceReaderOptions(values, labels.with(label), pattern);
+        return new ResourceReaderOptions(pattern, values, labels.with(label));
     }
 
     public ResourceReaderOptions withValues(final Iterable<NamedValue> values) {
-        return new ResourceReaderOptions(this.values.with(values), labels, pattern);
+        return new ResourceReaderOptions(pattern, this.values.with(values), labels);
     }
 
     public ResourceReaderOptions withLabels(final Iterable<NamedValue> labels) {
-        return new ResourceReaderOptions(values, this.labels.with(labels), pattern);
+        return new ResourceReaderOptions(pattern, values, this.labels.with(labels));
     }
 
     public ResourceReaderOptions withPattern(final String pattern) {
-        return new ResourceReaderOptions(values, labels, pattern);
+        return new ResourceReaderOptions(pattern, values, labels);
     }
-
-    public String pattern() {
-        return pattern;
-    }
-
-    public NamedValueSet values() {
-        return values;
-    }
-
-    public NamedValueSet labels() {
-        return labels;
-    }
-
 }

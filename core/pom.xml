@@ -83,6 +83,11 @@
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dev.cel</groupId>
+            <artifactId>cel</artifactId>
+            <version>${cel.version}</version>
+        </dependency>
         <!-- START dependencies for test -->
         <dependency>
             <groupId>org.mockito</groupId>

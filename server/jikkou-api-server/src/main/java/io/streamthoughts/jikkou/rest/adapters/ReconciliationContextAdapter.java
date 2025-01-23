@@ -9,8 +9,8 @@ package io.streamthoughts.jikkou.rest.adapters;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
-import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.SelectorFactory;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import jakarta.inject.Inject;
@@ -22,10 +22,10 @@ import jakarta.inject.Singleton;
 @Singleton
 public final class ReconciliationContextAdapter {
 
-    private final ExpressionSelectorFactory selectorFactory;
+    private final SelectorFactory selectorFactory;
 
     @Inject
-    public ReconciliationContextAdapter(ExpressionSelectorFactory selectorFactory) {
+    public ReconciliationContextAdapter(SelectorFactory selectorFactory) {
         this.selectorFactory = selectorFactory;
     }
 

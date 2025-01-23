@@ -11,13 +11,13 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ExpressionSelectorFactoryTest {
+class SelectorFactoryTest {
 
 
     @Test
     void shouldReturnFieldSelectorGivenExpressionWithNoSelectorName() {
         // Given
-        ExpressionSelectorFactory factory = new ExpressionSelectorFactory();
+        SelectorFactory factory = new SelectorFactory();
         String expression = "metadata.labels.env IN (production, staging)";
 
         // When
@@ -32,7 +32,7 @@ class ExpressionSelectorFactoryTest {
     @Test
     void shouldThrowExceptionGivenExpressionWithInvalidSelectorName() {
         // Given
-        ExpressionSelectorFactory factory = new ExpressionSelectorFactory();
+        SelectorFactory factory = new SelectorFactory();
         String expression = "INVALID: metadata.labels.env IN (production, staging)";
 
         // Then

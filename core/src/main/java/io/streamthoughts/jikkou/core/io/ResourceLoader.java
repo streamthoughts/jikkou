@@ -28,7 +28,7 @@ public final class ResourceLoader {
      * @param factory   the ResourceReader factory.
      */
     public ResourceLoader(final @NotNull ResourceReaderFactory factory) {
-        this(factory, new ResourceReaderOptions());
+        this(factory, ResourceReaderOptions.DEFAULTS);
     }
 
     /**

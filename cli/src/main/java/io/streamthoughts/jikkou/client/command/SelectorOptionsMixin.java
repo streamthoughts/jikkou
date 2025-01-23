@@ -6,8 +6,8 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.core.selector.ExpressionSelectorFactory;
 import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.SelectorFactory;
 import io.streamthoughts.jikkou.core.selector.SelectorMatchingStrategy;
 import picocli.CommandLine.Option;
 
@@ -23,6 +23,6 @@ public final class SelectorOptionsMixin {
     public SelectorMatchingStrategy selectorMatchingStrategy;
 
     public Selector getResourceSelector() {
-        return selectorMatchingStrategy.combines(new ExpressionSelectorFactory().make(expressions));
+        return selectorMatchingStrategy.combines(new SelectorFactory().make(expressions));
     }
 }

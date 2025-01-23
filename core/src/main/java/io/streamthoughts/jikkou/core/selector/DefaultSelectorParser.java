@@ -11,11 +11,19 @@ import io.streamthoughts.jikkou.core.exceptions.InvalidSelectorException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 
-public final class SelectorExpressionParser {
+/**
+ * Class for parsing operator based selector.
+ *
+ * @see FieldSelector
+ * @see LabelSelector
+ */
+public final class DefaultSelectorParser implements SelectorParser {
 
     private static final Pattern CONDITION_PATTERN = Pattern.compile(
             "(?<key>[a-zA-Z0-9\\._-]+)\\s+(?<operator>\\w+)\\s*(?<values>\\(.*?\\)|\\S+)?");
@@ -23,24 +31,24 @@ public final class SelectorExpressionParser {
 
     private static final Pattern VALUES_PARENTHESIS_PATTERN = Pattern.compile("[\\(\\)]");
 
-    public List<SelectorExpression> parseExpressionString(@NotNull String expressionString) {
+    private final Function<PreparedExpression, Selector> function;
 
-        if (Strings.isBlank(expressionString)) {
+    public DefaultSelectorParser(final Function<PreparedExpression, Selector> function) {
+        this.function = Objects.requireNonNull(function, "function can't be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Selector> parseExpression(@NotNull String expression) {
+
+        if (Strings.isBlank(expression)) {
             throw new InvalidSelectorException("Cannot parse empty or blank expression string");
         }
 
-        // Parse the selector
-        String[] parts = expressionString.split(":");
-
-        String selector = null;
-        String conditionsString = expressionString;
-        if (parts.length == 2) {
-            selector = parts[0].trim();
-            conditionsString = parts[1].trim();
-        }
-
-        Matcher conditionMatcher = CONDITION_PATTERN.matcher(conditionsString);
-        List<SelectorExpression> expressions = new ArrayList<>();
+        Matcher conditionMatcher = CONDITION_PATTERN.matcher(expression);
+        List<PreparedExpression> expressions = new ArrayList<>();
         while (conditionMatcher.find()) {
             String key = conditionMatcher.group("key");
             String operator = conditionMatcher.group("operator");
@@ -52,9 +60,8 @@ public final class SelectorExpressionParser {
             if (valuesString != null && !valuesString.isEmpty()) {
                 values.addAll(Arrays.stream(VALUES_SPLIT_PATTERN.split(valuesString)).map(String::trim).toList());
             }
-            var expr = new SelectorExpression(
-                    expressionString,
-                    selector,
+            var expr = new PreparedExpression(
+                expression,
                     key,
                     operator,
                     values
@@ -63,8 +70,9 @@ public final class SelectorExpressionParser {
         }
 
         if (expressions.isEmpty()) {
-            throw new InvalidSelectorException("Failed to parse selectors from expression string: " + expressionString);
+            throw new InvalidSelectorException("Failed to parse selectors from expression string: " + expression);
         }
-        return expressions;
+
+        return expressions.stream().map(function).toList();
     }
 }

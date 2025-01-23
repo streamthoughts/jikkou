@@ -214,7 +214,7 @@ public abstract class BaseApi implements JikkouApi {
     private ResourceList<HasMetadata> transform(final @NotNull HasItems items,
                                                 final @NotNull ReconciliationContext context) {
 
-        TransformationChain transformationChain = getResourceTransformationChain();
+        TransformationChain transformationChain = newResourceTransformationChain();
 
         List<HasMetadata> transformed = new LinkedList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : items.groupByType().entrySet()) {
@@ -246,16 +246,14 @@ public abstract class BaseApi implements JikkouApi {
         return ResourceList.of((List<HasMetadata>)filtered);
     }
 
-    protected ValidationChain getResourceValidationChain() {
-        @SuppressWarnings("rawtypes")
-        List<Validation> validations = extensionFactory.getAllExtensions(Validation.class, Qualifiers.enabled());
-        return new ValidationChain(validations);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected ValidationChain newResourceValidationChain() {
+        return new ValidationChain((List)extensionFactory.getAllExtensions(Validation.class, Qualifiers.enabled()));
     }
 
-    protected TransformationChain getResourceTransformationChain() {
-        @SuppressWarnings("rawtypes")
-        List<Transformation> transformations = extensionFactory.getAllExtensions(Transformation.class, Qualifiers.enabled());
-        return new TransformationChain(transformations);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected TransformationChain newResourceTransformationChain() {
+        return new TransformationChain((List)extensionFactory.getAllExtensions(Transformation.class, Qualifiers.enabled()));
     }
 
     protected ConverterChain getConverterChain() {
