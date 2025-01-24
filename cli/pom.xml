@@ -335,6 +335,32 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.graalvm.buildtools</groupId>
+                    <artifactId>native-maven-plugin</artifactId>
+                    <version>${native.maven.plugin.version}</version>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>build-native</id>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <id>test-native</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <phase>test</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <profiles>
         <profile>
@@ -364,34 +390,70 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>${native.maven.plugin.version}</version>
                         <configuration>
                             <mainClass>${exec.mainClass}</mainClass>
                             <buildArgs combine.children="append">
-                                <buildArg>${graalvm.build.arg}</buildArg>
+                                <buildArg>--verbose</buildArg>
+                                <buildArg>-march=compatibility</buildArg>
+                                <!--
+                                FIX: Error: Classes that should be initialized at run time got initialized during image building:
+                                see: io.micronaut.core.util.KotlinUtils.<clinit>(KotlinUtils.java:45)
+                                -->
+                                <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
-                                <version>0.3.5</version>
+                                <version>0.3.15</version>
                             </metadataRepository>
                         </configuration>
-                        <extensions>true</extensions>
-                        <executions>
-                            <execution>
-                                <id>build-native</id>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                                <phase>package</phase>
-                            </execution>
-                            <execution>
-                                <id>test-native</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <phase>test</phase>
-                            </execution>
-                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration combine.self="append">
+                            <skipAssembly>false</skipAssembly>
+                            <descriptors>
+                                <descriptor>src/main/assembly/assembly-native.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>native-musl</id>
+            <activation>
+                <property>
+                    <name>native-musl</name>
+                </property>
+            </activation>
+            <properties>
+                <packaging>native-image</packaging>
+                <imageName>${project.build.finalName}-runner</imageName>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>${exec.mainClass}</mainClass>
+                            <buildArgs combine.children="append">
+                                <buildArg>--verbose</buildArg>
+                                <buildArg>-march=compatibility</buildArg>
+                                <buildArg>--libc=musl</buildArg>
+                                <buildArg>--static</buildArg>
+                                <!--
+                                FIX: Error: Classes that should be initialized at run time got initialized during image building:
+                                see: io.micronaut.core.util.KotlinUtils.<clinit>(KotlinUtils.java:45)
+                                -->
+                                <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
+                            </buildArgs>
+                            <metadataRepository>
+                                <enabled>true</enabled>
+                                <version>0.3.15</version>
+                            </metadataRepository>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
