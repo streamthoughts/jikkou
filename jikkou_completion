@@ -265,7 +265,7 @@ function _picocli_jikkou_create() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--dry-run -h --help -V --version"
+  local flag_opts="--pretty --dry-run -h --help -V --version"
   local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
@@ -328,7 +328,7 @@ function _picocli_jikkou_delete() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--dry-run -h --help -V --version"
+  local flag_opts="--pretty --dry-run -h --help -V --version"
   local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
@@ -391,7 +391,7 @@ function _picocli_jikkou_update() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--dry-run -h --help -V --version"
+  local flag_opts="--pretty --dry-run -h --help -V --version"
   local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
@@ -454,7 +454,7 @@ function _picocli_jikkou_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--dry-run -h --help -V --version"
+  local flag_opts="--pretty --dry-run -h --help -V --version"
   local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
@@ -517,7 +517,7 @@ function _picocli_jikkou_patch() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="--dry-run -h --help -V --version"
+  local flag_opts="--pretty --dry-run -h --help -V --version"
   local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options --mode"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
