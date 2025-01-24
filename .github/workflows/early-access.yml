@@ -21,7 +21,11 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest, macOS-12, windows-latest ]
+        os: [ ubuntu-latest, macOS-latest, macOS-13, windows-latest ]
+        setup: [ graalvm ]
+        include:
+          - os: ubuntu-latest
+            setup: java
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout GitHub repository'
