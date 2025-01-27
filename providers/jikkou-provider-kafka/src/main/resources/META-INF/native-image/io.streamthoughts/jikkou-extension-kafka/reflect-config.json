@@ -429,6 +429,11 @@
     ]
   },
   {
+    "name": "sun.security.krb5.KrbException",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "sun.security.ssl.SSLContextImpl$TLSContext",
     "methods": [
       {
