@@ -154,24 +154,22 @@ public final class Jikkou {
     private static CommandLine createCommandLine(ApplicationContext context) {
         Jikkou app = context.getBean(Jikkou.class);
         final CommandLine commandLine = new CommandLine(app, new MicronautFactory(context))
-                .setCaseInsensitiveEnumValuesAllowed(true)
-                .setUsageHelpWidth(160)
-                .setExecutionStrategy(app::executionStrategy)
-                .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
-                    final PrintWriter err = cmd.getErr();
-                    if (!(ex instanceof JikkouRuntimeException)) {
-                        err.println(cmd.getColorScheme().stackTraceText(ex));
-                    }
-                    err.println(cmd.getColorScheme().errorText(String.format("Error: %s: %s",
-                            ex.getClass().getSimpleName(),
-                            ex.getLocalizedMessage()
-                    )));
-                    if (ex instanceof InvalidResourceFileException) {
-                        return CommandLine.ExitCode.USAGE;
-                    }
-                    return cmd.getCommandSpec().exitCodeOnExecutionException();
-                })
-                .setParameterExceptionHandler(new ShortErrorMessageHandler());
+            .setCaseInsensitiveEnumValuesAllowed(true)
+            .setUsageHelpWidth(160)
+            .setExecutionStrategy(app::executionStrategy)
+            .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
+                final PrintWriter err = cmd.getErr();
+                err.println(cmd.getColorScheme().stackTraceText(ex));
+                err.println(cmd.getColorScheme().errorText(String.format("Error: %s: %s",
+                        ex.getClass().getSimpleName(),
+                        ex.getLocalizedMessage()
+                )));
+                if (ex instanceof InvalidResourceFileException) {
+                    return CommandLine.ExitCode.USAGE;
+                }
+                return cmd.getCommandSpec().exitCodeOnExecutionException();
+            })
+            .setParameterExceptionHandler(new ShortErrorMessageHandler());
 
         Optional<JikkouApiClient> optionalApiClient = context.findBean(JikkouApiClient.class);
         // NOT IN PROXY-MODE
