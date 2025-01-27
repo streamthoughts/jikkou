@@ -40,7 +40,6 @@ import io.streamthoughts.jikkou.client.renderer.CommandGroupRenderer;
 import io.streamthoughts.jikkou.core.JikkouInfo;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
-import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.http.client.JikkouApiClient;
 import io.streamthoughts.jikkou.rest.data.Info;
 import jakarta.inject.Singleton;
@@ -159,9 +158,7 @@ public final class Jikkou {
             .setExecutionStrategy(app::executionStrategy)
             .setExecutionExceptionHandler((ex, cmd, parseResult) -> {
                 final PrintWriter err = cmd.getErr();
-                if (!(ex instanceof JikkouRuntimeException)) {
-                    err.println(cmd.getColorScheme().stackTraceText(ex));
-                }
+                err.println(cmd.getColorScheme().stackTraceText(ex));
                 err.println(cmd.getColorScheme().errorText(String.format("Error: %s: %s",
                     ex.getClass().getSimpleName(),
                     ex.getLocalizedMessage()
