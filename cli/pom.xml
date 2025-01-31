@@ -36,7 +36,7 @@
         <!-- Micronaut -->
         <micronaut.version>4.7.3</micronaut.version>
         <micronaut.core.version>4.7.10</micronaut.core.version>
-        <micronaut-maven-plugin.version>4.0.7</micronaut-maven-plugin.version>
+        <micronaut-maven-plugin.version>4.7.2</micronaut-maven-plugin.version>
         <micronaut-picocli-bom.version>5.6.0</micronaut-picocli-bom.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
