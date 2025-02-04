@@ -34,7 +34,7 @@
         <executable-suffix/>
         <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
         <!-- Micronaut -->
-        <micronaut.version>4.7.3</micronaut.version>
+        <micronaut.version>4.7.4</micronaut.version>
         <micronaut.core.version>4.7.10</micronaut.core.version>
         <micronaut-maven-plugin.version>4.0.7</micronaut-maven-plugin.version>
         <micronaut-picocli-bom.version>5.6.0</micronaut-picocli-bom.version>
