@@ -399,6 +399,7 @@
                                 see: io.micronaut.core.util.KotlinUtils.<clinit>(KotlinUtils.java:45)
                                 -->
                                 <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.Reporter</buildArg>
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
@@ -447,6 +448,7 @@
                                 see: io.micronaut.core.util.KotlinUtils.<clinit>(KotlinUtils.java:45)
                                 -->
                                 <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.Reporter</buildArg>
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
