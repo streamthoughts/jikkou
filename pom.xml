@@ -113,7 +113,7 @@
         <!-- Tests -->
         <junit.version>5.10.0</junit.version>
         <junit-bom.version>5.11.4</junit-bom.version>
-        <testcontainer.version>1.20.4</testcontainer.version>
+        <testcontainer.version>1.20.5</testcontainer.version>
         <!-- Dependencies -->
         <kafka.version>3.7.0</kafka.version>
         <picocli.version>4.7.6</picocli.version>
