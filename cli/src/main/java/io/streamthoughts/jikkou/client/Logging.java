@@ -10,7 +10,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import java.util.Locale;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +20,13 @@ public final class Logging {
 
     private static final String ENV_VAR_JIKKOU_CLI_LOG_LEVEL = "JIKKOU_CLI_LOG_LEVEL";
 
-    public static void configureRootLoggerLevel() {
-        Optional.ofNullable(System.getenv(ENV_VAR_JIKKOU_CLI_LOG_LEVEL))
-                .map(level -> level.toUpperCase(Locale.ROOT))
+    public static void configureRootLoggerLevel(@Nullable ch.qos.logback.classic.Level level) {
+        Optional.ofNullable(level)
+                .or(() -> Optional.ofNullable(System.getenv(ENV_VAR_JIKKOU_CLI_LOG_LEVEL))
+                    .map(l -> l.toUpperCase(Locale.ROOT))
+                    .map(Level::toLevel)
+                )
                 .ifPresent(Logging::setRootLoggerLevel);
-    }
-
-    public static void setRootLoggerLevel(@NotNull String rootLoggerLevel) {
-        setRootLoggerLevel(Level.toLevel(rootLoggerLevel));
     }
 
     public static void setRootLoggerLevel(@Nullable Level rootLoggerLevel) {

@@ -19,6 +19,7 @@ import io.micronaut.runtime.event.annotation.EventListener;
 import io.streamthoughts.jikkou.client.banner.Banner;
 import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
 import io.streamthoughts.jikkou.client.banner.JikkouBanner;
+import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.DiffCommand;
 import io.streamthoughts.jikkou.client.command.PrepareCommand;
 import io.streamthoughts.jikkou.client.command.action.ActionCommandLineFactory;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -116,7 +118,7 @@ public final class Jikkou {
     }
 
     public static void main(final String... args) {
-        Logging.configureRootLoggerLevel();
+        Logging.configureRootLoggerLevel(getLoggerLevelOrNull(args));
         var printer = BannerPrinterBuilder.newBuilder()
             .setLogger(LOG)
             .setLoggerLevel(Level.INFO)
@@ -125,6 +127,27 @@ public final class Jikkou {
         printer.print(new JikkouBanner());
 
         System.exit(execute(args));
+    }
+
+    private static ch.qos.logback.classic.Level getLoggerLevelOrNull(String[] args) {
+        if (args.length == 0) {
+            return null;
+        }
+
+        CommandLine commandLine = new CommandLine(new CLIBaseCommand());
+        CommandLine.ParseResult parseResult = commandLine.parseArgs(args);
+        try {
+            if (parseResult.hasMatchedOption(LoggingMixin.LOGGER_LEVEL)) {
+                return Optional.ofNullable(parseResult.matchedOptionValue(LoggingMixin.LOGGER_LEVEL, null))
+                    .map(Object::toString)
+                    .map(level -> level.toUpperCase(Locale.ROOT))
+                    .map(ch.qos.logback.classic.Level::toLevel)
+                    .orElse(null);
+            }
+        } catch (Exception ignore) {
+            /* silently ignore */
+        }
+        return null;
     }
 
     public static int execute(String[] args) {
@@ -145,7 +168,6 @@ public final class Jikkou {
     }
 
     private int executionStrategy(CommandLine.ParseResult parseResult) {
-        loggingMixin.configureRootLoggerLevel();
         return new CommandLine.RunLast().execute(parseResult); // default execution strategy
     }
 
