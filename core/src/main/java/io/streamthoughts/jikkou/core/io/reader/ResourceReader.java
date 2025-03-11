@@ -6,16 +6,16 @@
  */
 package io.streamthoughts.jikkou.core.io.reader;
 
-import io.streamthoughts.jikkou.common.annotation.InterfaceStability;
+import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Default interface to read a cluster specification.
+ * Service interface for reading resources.
  */
-@InterfaceStability.Evolving
+@Evolving
 public interface ResourceReader extends AutoCloseable {
 
     /**

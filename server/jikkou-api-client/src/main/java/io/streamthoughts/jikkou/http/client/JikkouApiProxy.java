@@ -209,10 +209,10 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ApiChangeResultList patch(@NotNull List<ResourceChange> changes,
+    public ApiChangeResultList patch(@NotNull HasItems resources,
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
-        return apiClient.patch(changes, mode, context);
+        return apiClient.patch(resources, mode, context);
     }
 
     /**
@@ -220,8 +220,8 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      **/
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends HasMetadata> ApiActionResultSet<T>  execute(@NotNull String action,
-                                         @NotNull Configuration configuration) {
+    public <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action,
+                                                                 @NotNull Configuration configuration) {
         return (ApiActionResultSet<T>) apiClient.execute(action, configuration);
     }
 
@@ -230,8 +230,8 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      **/
     @Override
     @SuppressWarnings("unchecked")
-    public ApiValidationResult validate(@NotNull HasItems resources,
-                                        @NotNull ReconciliationContext context) {
+    public ApiValidationResult<HasMetadata> validate(@NotNull HasItems resources,
+                                                     @NotNull ReconciliationContext context) {
         Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
 
         List<HasMetadata> validated = new LinkedList<>();
@@ -256,9 +256,9 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
         }
 
         if (errors.isEmpty()) {
-            return new ApiValidationResult(ResourceList.of(validated));
+            return new ApiValidationResult<>(ResourceList.of(validated));
         } else {
-            return new ApiValidationResult(errors);
+            return new ApiValidationResult<>(errors);
         }
     }
 
