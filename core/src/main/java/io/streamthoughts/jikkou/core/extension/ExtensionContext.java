@@ -32,24 +32,6 @@ public interface ExtensionContext {
     Configuration configuration();
 
     /**
-     * Gets the configuration properties by name as defined by the extension specification.
-     *
-     * @return The list of properties.
-
-    Map<String, ConfigProperty> configProperties();
-     */
-    /**
-     * Gets the configuration property for the specified name as defined by the extension specification.
-     *
-     * @param key The property key.
-     * @param <T> The type of the config property.
-     * @return The config property.
-     * @throws IllegalArgumentException if the given key is null or empty.
-     * @throws NoSuchElementException   if no configuration property is defined for the given key.
-
-    <T> ConfigProperty<T> configProperty(String key);
-     */
-    /**
      * Gets a new extension context from the specified extension type.
      *
      * @param extension The extension type.
