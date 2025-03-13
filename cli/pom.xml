@@ -42,7 +42,7 @@
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <!-- Native -->
         <imageName>jikkou</imageName>
-        <native.maven.plugin.version>0.10.4</native.maven.plugin.version>
+        <native.maven.plugin.version>0.10.6</native.maven.plugin.version>
         <exec.mainClass>io.streamthoughts.jikkou.client.Jikkou</exec.mainClass>
     </properties>
 
