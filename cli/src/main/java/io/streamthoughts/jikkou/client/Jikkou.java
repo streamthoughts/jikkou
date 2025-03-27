@@ -134,9 +134,10 @@ public final class Jikkou {
             return null;
         }
 
-        CommandLine commandLine = new CommandLine(new CLIBaseCommand());
-        CommandLine.ParseResult parseResult = commandLine.parseArgs(args);
         try {
+            CommandLine commandLine = new CommandLine(new CLIBaseCommand());
+            CommandLine.ParseResult parseResult = commandLine.parseArgs(args);
+            
             if (parseResult.hasMatchedOption(LoggingMixin.LOGGER_LEVEL)) {
                 return Optional.ofNullable(parseResult.matchedOptionValue(LoggingMixin.LOGGER_LEVEL, null))
                     .map(Object::toString)
