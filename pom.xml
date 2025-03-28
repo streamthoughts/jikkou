@@ -132,7 +132,7 @@
         <!-- Build -->
         <graal-sdk.version>24.0.1</graal-sdk.version>
         <reflections.version>0.10.2</reflections.version>
-        <spotless.version>2.43.0</spotless.version>
+        <spotless.version>2.44.3</spotless.version>
         <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
         <protobuf-java.version>4.30.1</protobuf-java.version>
