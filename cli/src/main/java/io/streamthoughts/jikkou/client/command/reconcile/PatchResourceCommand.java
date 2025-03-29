@@ -17,9 +17,9 @@ import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public final class PatchResourceCommand extends CLIBaseCommand implements Callab
     @Inject
     JikkouApi api;
     @Inject
-    ResourceLoaderFacade loader;
+    LocalResourceRepository localResourceRepository;
 
     /**
      * {@inheritDoc}
@@ -65,7 +65,7 @@ public final class PatchResourceCommand extends CLIBaseCommand implements Callab
     @Override
     public Integer call() throws IOException {
         try {
-            HasItems resources = loader.load(fileOptions);
+            HasItems resources = localResourceRepository.all(fileOptions);
 
             ApiChangeResultList results = api.patch(
                     resources,

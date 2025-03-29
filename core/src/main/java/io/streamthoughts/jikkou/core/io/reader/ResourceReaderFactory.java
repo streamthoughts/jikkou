@@ -8,11 +8,9 @@ package io.streamthoughts.jikkou.core.io.reader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.common.utils.IOUtils;
-import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +92,7 @@ public class ResourceReaderFactory {
                         new DirectoryResourceReader(Path.of(location.getPath()), this) :
                         new DirectoryResourceReader(Path.of(location), this)
                 :
-                getResourceReader(() -> newInputStream(location), location);
+                getResourceReader(() -> IOUtils.newInputStream(location), location);
     }
 
     @NotNull
@@ -103,24 +101,5 @@ public class ResourceReaderFactory {
         return isTemplateEnable && templateRenderer != null ?
             new TemplateResourceReader(templateRenderer, inputStreamSupplier, objectMapper, location) :
             new InputStreamResourceReader(inputStreamSupplier, objectMapper, location);
-    }
-
-    @NotNull
-    private static InputStream newInputStream(final URI location) {
-        try {
-            return IOUtils.openStream(location);
-        } catch (RuntimeException e) {
-            Throwable t = e.getCause() != null ? e.getCause() : e;
-            if (t instanceof NoSuchFileException) {
-                throw new InvalidResourceFileException(
-                        location,
-                        String.format("Failed to read '%s': No such file or directory.", location)
-                );
-            } else {
-                throw new InvalidResourceFileException(
-                        location,
-                        String.format("Failed to read '%s': %s", location, t.getMessage()));
-            }
-        }
     }
 }

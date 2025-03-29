@@ -1,0 +1,7 @@
+apiVersion: core.jikkou.io/v1
+kind: Values
+spec:
+  values:
+{% for key, value in values.items() %}
+    {{ key }}: {{ value }}
+{% endfor %}

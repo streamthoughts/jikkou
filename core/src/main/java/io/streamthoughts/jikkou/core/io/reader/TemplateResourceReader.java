@@ -67,7 +67,7 @@ public final class TemplateResourceReader extends AbstractResourceReader {
      * {@inheritDoc}
      */
     @Override
-    public List<HasMetadata> readAllResources(@NotNull final ResourceReaderOptions options) throws JikkouRuntimeException {
+    public List<HasMetadata> readAll(@NotNull final ResourceReaderOptions options) throws JikkouRuntimeException {
 
         var factory =  mapper.getFactory();
         try (var rawInputStream = resourceSupplier.get()) {

@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.common.utils;
 
+import io.streamthoughts.jikkou.core.exceptions.InvalidResourceFileException;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,11 +18,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.StreamSupport;
+import org.jetbrains.annotations.NotNull;
 
 public final class IOUtils {
 
@@ -63,6 +66,26 @@ public final class IOUtils {
         return false;
     }
 
+    @NotNull
+    public static InputStream newInputStream(final URI location) {
+        try {
+            return IOUtils.openStream(location);
+        } catch (RuntimeException e) {
+            Throwable t = e.getCause() != null ? e.getCause() : e;
+            if (t instanceof NoSuchFileException) {
+                throw new InvalidResourceFileException(
+                    location,
+                    "Failed to read '%s': No such file or directory.".formatted(location)
+                );
+            } else {
+                throw new InvalidResourceFileException(
+                    location,
+                    "Failed to read '%s': %s".formatted(location, t.getMessage()));
+            }
+        }
+    }
+
+    @NotNull
     public static InputStream openStream(final URI location) {
         String scheme = location.getScheme();
         if (scheme == null)

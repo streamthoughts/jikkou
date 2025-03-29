@@ -6,13 +6,14 @@
  */
 package io.streamthoughts.jikkou.core.repository;
 
+import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
 
 /**
  * Service interface for loading
  */
-public interface ResourceRepository {
+public interface ResourceRepository extends Extension {
 
     /**
      * Gets all the resources for this repository.

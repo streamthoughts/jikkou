@@ -21,7 +21,7 @@ public interface ResourceReader extends AutoCloseable {
     /**
      * Reads all the resources.
      */
-    List<HasMetadata> readAllResources(@NotNull ResourceReaderOptions options) throws JikkouRuntimeException;
+    List<HasMetadata> readAll(@NotNull ResourceReaderOptions options) throws JikkouRuntimeException;
 
     /**
      * {@inheritDoc}

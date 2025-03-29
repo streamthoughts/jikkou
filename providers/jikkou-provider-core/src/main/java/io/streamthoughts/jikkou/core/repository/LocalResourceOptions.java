@@ -4,17 +4,15 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.core.io;
+package io.streamthoughts.jikkou.core.repository;
 
-import io.streamthoughts.jikkou.core.models.NamedValue;
+import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import java.util.List;
 
 /**
  * Inputs for loading resources.
- *
- * @see ResourceLoaderFacade
  */
-public interface ResourceLoaderInputs {
+public interface LocalResourceOptions {
 
     /**
      * Get the locations of the resource definition files to load.
@@ -26,7 +24,7 @@ public interface ResourceLoaderInputs {
     /**
      * Get the pattern to use for matching the resource definition files to be loaded.
      *
-     * @return  the string pattern.
+     * @return the string pattern.
      */
     String getResourceFilePattern();
 
@@ -38,15 +36,23 @@ public interface ResourceLoaderInputs {
     List<String> getValuesFileLocations();
 
     /**
+     * Get the pattern to use for matching the values files to be loaded.
+     *
+     * @return the string pattern.
+     */
+    String getValuesFilePattern();
+
+    /**
      * Get the additional labels to be used when templating is enabled.
      *
-     * @return  the labels
+     * @return the labels
      */
-    Iterable<NamedValue> getLabels();
+    NamedValueSet getLabels();
 
     /**
      * Get the additional values to be used when templating is enabled.
-     * @return  the values.
+     *
+     * @return the values.
      */
-    Iterable<NamedValue> getValues();
+    NamedValueSet getValues();
 }

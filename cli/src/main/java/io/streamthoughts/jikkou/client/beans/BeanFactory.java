@@ -21,15 +21,15 @@ import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
-import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.core.io.writer.DefaultResourceWriter;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
+import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.runtime.JikkouContext;
-import io.streamthoughts.jikkou.runtime.configurator.ChangeReporterApiConfigurator;
+import io.streamthoughts.jikkou.runtime.configurator.ReporterApiConfigurator;
+import io.streamthoughts.jikkou.runtime.configurator.RepositoryApiConfigurator;
 import io.streamthoughts.jikkou.runtime.configurator.TransformationApiConfigurator;
 import io.streamthoughts.jikkou.runtime.configurator.ValidationApiConfigurator;
 import jakarta.inject.Singleton;
@@ -73,7 +73,8 @@ public final class BeanFactory {
         ApiConfigurator[] configurators = {
             new ValidationApiConfigurator(registry),
             new TransformationApiConfigurator(registry),
-            new ChangeReporterApiConfigurator(registry)
+            new ReporterApiConfigurator(registry),
+            new RepositoryApiConfigurator(registry)
         };
         return context.createApi(apiBuilder, configurators);
     }
@@ -101,11 +102,11 @@ public final class BeanFactory {
     }
 
     @Singleton
-    public ResourceLoaderFacade resourceLoaderFacade(Configuration configuration) {
+    public LocalResourceRepository localResourceRepository(Configuration configuration) {
         ResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer()
             .withPreserveRawTags(false)
             .withFailOnUnknownTokens(false);
         renderer.configure(configuration);
-        return new ResourceLoaderFacade(renderer, Jackson.YAML_OBJECT_MAPPER);
+        return new LocalResourceRepository(renderer);
     }
 }

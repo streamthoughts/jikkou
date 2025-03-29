@@ -47,7 +47,7 @@ class JinjaResourceTemplateRendererTest {
             )) {
 
                 // When
-                List<HasMetadata> results = reader.readAllResources(options);
+                List<HasMetadata> results = reader.readAll(options);
 
                 // Then
                 Assertions.assertNotNull(results);

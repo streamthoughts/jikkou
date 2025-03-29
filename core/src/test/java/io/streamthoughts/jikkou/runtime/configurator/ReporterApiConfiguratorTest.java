@@ -31,7 +31,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ChangeReporterApiConfiguratorTest {
+class ReporterApiConfiguratorTest {
 
     @Test
     void shouldRegisterConfiguredExtensions() {
@@ -43,7 +43,7 @@ class ChangeReporterApiConfiguratorTest {
         TestReporter reporter = new TestReporter();
         registry.register(TestReporter.class, () -> reporter);
 
-        ChangeReporterApiConfigurator configurator = new ChangeReporterApiConfigurator(registry);
+        ReporterApiConfigurator configurator = new ReporterApiConfigurator(registry);
 
         DefaultExtensionFactory factory = new DefaultExtensionFactory(registry);
         DefaultApi.Builder builder = DefaultApi.builder(factory, new DefaultResourceRegistry());

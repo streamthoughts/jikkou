@@ -13,12 +13,12 @@ import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
-import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceList;
+import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
@@ -55,7 +55,7 @@ public class ValidateCommand extends CLIBaseCommand implements Callable<Integer>
     @Inject
     JikkouApi api;
     @Inject
-    ResourceLoaderFacade loader;
+    LocalResourceRepository localResourceRepository;
     @Inject
     ResourceWriter writer;
 
@@ -79,7 +79,7 @@ public class ValidateCommand extends CLIBaseCommand implements Callable<Integer>
 
     @NotNull
     private HasItems getResources() {
-        return loader.load(fileOptions);
+        return localResourceRepository.all(fileOptions);
     }
 
     @NotNull
