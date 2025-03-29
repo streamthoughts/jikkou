@@ -6,44 +6,47 @@
  */
 package io.streamthoughts.jikkou.client.command;
 
-import io.streamthoughts.jikkou.core.io.ResourceLoaderInputs;
-import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
+import io.streamthoughts.jikkou.core.repository.LocalResourceOptions;
+import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import picocli.CommandLine.Option;
 
-public class FileOptionsMixin implements ResourceLoaderInputs {
+public class FileOptionsMixin implements LocalResourceOptions {
 
     @Option(
             names = {"--files", "-f"},
             arity = "1..*",
-            required = true,
-            description = "Specify the locations containing the definitions for resources in a YAML file, a directory or a URL (can specify multiple)."
+            description = LocalResourceRepository.Config.FILE_DESCRIPTION
     )
     public List<String> resourceFiles;
 
     @Option(
             names = {"--file-name", "-n"},
             defaultValue = "**/*.{yaml,yml}",
-            description =
-                "Specify the pattern used to match YAML file paths when one or multiple directories are given through the files argument. " +
-                "Pattern should be passed in the form of 'syntax:pattern'. The \"glob\" and \"regex\" syntaxes are supported (e.g.: **/*.{yaml,yml}). " +
-                "If no syntax is specified the 'glob' syntax is used."
+            description = LocalResourceRepository.Config.FILE_NAME_DESCRIPTION
     )
-    public String pattern;
+    public String resourceFilePattern;
 
     @Option(
             names = {"--values-files"},
             arity = "1..*",
-            description = "Specify the values-files containing the variables to pass into the template engine built-in object 'Values' (can specify multiple)."
+            description = LocalResourceRepository.Config.VALUES_FILES_DESCRIPTION
     )
     public List<String> valuesFiles = new LinkedList<>();
 
+    @Option(
+        names = {"--values-file-name"},
+        defaultValue = "**/*.{yaml,yml}",
+        description = LocalResourceRepository.Config.VALUES_FILE_NAME_DESCRIPTION
+    )
+    public String valuesFilePattern;
+
     @Option(names = { "--set-label", "-l" },
-            description = "Set labels on the command line (can specify multiple values)."
+            description = LocalResourceRepository.Config.LABELS_DESCRIPTION
     )
     public Map<String, Object> clientLabels = new HashMap<>();
 
@@ -66,7 +69,7 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
     /** {@inheritDoc} **/
     @Override
     public String getResourceFilePattern() {
-        return pattern;
+        return resourceFilePattern;
     }
 
     /** {@inheritDoc} **/
@@ -75,19 +78,24 @@ public class FileOptionsMixin implements ResourceLoaderInputs {
         return valuesFiles;
     }
 
+    @Override
+    public String getValuesFilePattern() {
+        return valuesFilePattern;
+    }
+
     /** {@inheritDoc} **/
     @Override
-    public Iterable<NamedValue> getLabels() {
+    public NamedValueSet getLabels() {
         return NamedValueSet.setOf(clientLabels);
     }
 
-    public Iterable<NamedValue> getAnnotations() {
+    public NamedValueSet getAnnotations() {
         return NamedValueSet.setOf(clientAnnotations);
     }
 
     /** {@inheritDoc} **/
     @Override
-    public Iterable<NamedValue> getValues() {
+    public NamedValueSet getValues() {
         return NamedValueSet.setOf(clientValues);
     }
 }

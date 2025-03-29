@@ -18,14 +18,14 @@ import org.jetbrains.annotations.NotNull;
  * An {@link ApiConfigurator} used to configure {@link JikkouApi} with all {@link ChangeReporter}
  * dynamically passed through the CLI configuration.
  */
-public final class ChangeReporterApiConfigurator extends ExtensionApiConfigurator<ChangeReporter> {
+public final class ReporterApiConfigurator extends ExtensionApiConfigurator<ChangeReporter> {
 
     /**
      * Creates a new {@link BaseApiConfigurator} instance.
      *
      * @param registry an {@link ExtensionDescriptorRegistry}.
      */
-    public ChangeReporterApiConfigurator(@NotNull ExtensionDescriptorRegistry registry) {
+    public ReporterApiConfigurator(@NotNull ExtensionDescriptorRegistry registry) {
         super(registry, JikkouConfigProperties.REPORTERS_CONFIG);
     }
 }

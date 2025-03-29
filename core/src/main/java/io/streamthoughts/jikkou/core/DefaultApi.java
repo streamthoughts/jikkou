@@ -371,8 +371,12 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList reconcile(@NotNull final HasItems resources,
                                          @NotNull final ReconciliationMode mode,
                                          @NotNull final ReconciliationContext context) {
+
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
         // Get all changes
-        List<ResourceChange> changes = getDiff(resources, NOOP_RESOURCE_CHANGE_FILTER, context).getItems();
+        List<ResourceChange> changes = doDiff(all, NOOP_RESOURCE_CHANGE_FILTER, context).getItems();
 
         // Get and apply all policies
         List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
@@ -389,8 +393,11 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
 
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
         // Get all changes
-        List<ResourceChange> changes = resources.getAllByClass(ResourceChange.class);
+        List<ResourceChange> changes = all.getAllByClass(ResourceChange.class);
 
         // Get and apply all policies
         List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
@@ -492,8 +499,11 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @Override
     public ApiValidationResult<HasMetadata> validate(final @NotNull HasItems resources,
                                                      final @NotNull ReconciliationContext context) {
-        @SuppressWarnings("unchecked")
-        List<HasMetadata> items = (List<HasMetadata>) prepare(resources, context).getItems();
+
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        List<HasMetadata> items = doPrepare(all, context).getItems();
         ValidationResult validationChainResult = this.newResourceValidationChain().validate(items);
 
         // Get and apply all policies
@@ -549,6 +559,16 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiResourceChangeList getDiff(@NotNull HasItems resources,
                                          @NotNull ResourceChangeFilter filter,
                                          @NotNull ReconciliationContext context) {
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        return doDiff(all, filter, context);
+    }
+
+    @NotNull
+    private ApiResourceChangeList doDiff(@NotNull HasItems resources,
+                                         @NotNull ResourceChangeFilter filter,
+                                         @NotNull ReconciliationContext context) {
         // Exclude any resource changes that might be transmitted by inadvertence to the diff command.
         List<? extends HasMetadata> list = resources.getItems()
             .stream()
@@ -585,6 +605,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends HasMetadata> ResourceList<T> listResources(final @NotNull ResourceType type,
                                                                  final @NotNull Selector selector,
                                                                  final @NotNull Configuration configuration) {
@@ -593,6 +614,8 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ResourceList<T> result = collector.listAll(configuration, selector);
 
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
+
+        result = ResourceList.of((List<T>) addAllResourcesFromRepositories(result).getAllByType(type));
 
         List<T> items = result.getItems()
             .stream()

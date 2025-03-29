@@ -18,9 +18,9 @@ import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
-import io.streamthoughts.jikkou.core.io.ResourceLoaderFacade;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.HasItems;
+import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import jakarta.inject.Inject;
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -45,7 +45,7 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
     JikkouApi api;
 
     @Inject
-    ResourceLoaderFacade loader;
+    LocalResourceRepository localResourceRepository;
     
     /**
      * {@inheritDoc}
@@ -77,7 +77,7 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
     }
 
     protected @NotNull HasItems getResources() {
-        return loader.load(fileOptions);
+        return localResourceRepository.all(fileOptions);
     }
 
     protected abstract @NotNull ReconciliationMode getReconciliationMode();

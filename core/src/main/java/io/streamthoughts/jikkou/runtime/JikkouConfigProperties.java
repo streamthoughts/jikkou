@@ -11,6 +11,7 @@ import io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 public final class JikkouConfigProperties {
 
@@ -28,27 +29,29 @@ public final class JikkouConfigProperties {
         .description("A list of directories from which to load external resource and extensions (controller, collector, transformation, validation, etc.")
         .defaultValue(Collections.emptyList());
 
-    public static final ConfigProperty<List<ExtensionConfigEntry>> PROVIDERS_CONFIG = ConfigProperty
-        .ofConfigList("providers")
-        .description("The list of extension providers.")
-        .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-        .defaultValue(Collections.emptyList());
+    public static final ConfigProperty<List<ExtensionConfigEntry>> PROVIDERS_CONFIG = createExtensionConfig(
+        "providers", "The list of extension providers.");
 
-    public static final ConfigProperty<List<ExtensionConfigEntry>> VALIDATIONS_CONFIG = ConfigProperty
-        .ofConfigList("validations")
-        .description("The list of custom validations to apply on resources.")
-        .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-        .defaultValue(Collections.emptyList());
+    public static final ConfigProperty<List<ExtensionConfigEntry>> VALIDATIONS_CONFIG = createExtensionConfig(
+        "validations", "The list of custom validations to apply on resources.");
 
-    public static final ConfigProperty<List<ExtensionConfigEntry>> TRANSFORMATION_CONFIG = ConfigProperty
-        .ofConfigList("transformations")
-        .description("The list of custom transformations to apply on resources.")
-        .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-        .defaultValue(Collections.emptyList());
+    public static final ConfigProperty<List<ExtensionConfigEntry>> TRANSFORMATION_CONFIG = createExtensionConfig(
+        "transformations", "The list of custom transformations to apply on resources.");
 
-    public static final ConfigProperty<List<ExtensionConfigEntry>> REPORTERS_CONFIG = ConfigProperty
-        .ofConfigList("reporters")
-        .description("The list of custom reporters.")
-        .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
-        .defaultValue(Collections.emptyList());
+    public static final ConfigProperty<List<ExtensionConfigEntry>> REPORTERS_CONFIG = createExtensionConfig(
+        "reporters", "The list of custom reporters.");
+
+    public static final ConfigProperty<List<ExtensionConfigEntry>> REPOSITORIES_CONFIG = createExtensionConfig(
+        "repositories", "The list of resource repositories.");
+
+    @NotNull
+    private static ConfigProperty<List<ExtensionConfigEntry>> createExtensionConfig(final String configKey,
+                                                                                    final String configDescription) {
+        return ConfigProperty
+            .ofConfigList(configKey)
+            .description(configDescription)
+            .map(configs -> configs.stream().map(ExtensionConfigEntry::of).collect(Collectors.toList()))
+            .defaultValue(List.of());
+    }
+
 }

@@ -31,7 +31,8 @@ import io.streamthoughts.jikkou.rest.health.indicator.JikkouHealthIndicator;
 import io.streamthoughts.jikkou.rest.health.indicator.JikkouHealthIndicatorConfiguration;
 import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import io.streamthoughts.jikkou.runtime.JikkouContext;
-import io.streamthoughts.jikkou.runtime.configurator.ChangeReporterApiConfigurator;
+import io.streamthoughts.jikkou.runtime.configurator.ReporterApiConfigurator;
+import io.streamthoughts.jikkou.runtime.configurator.RepositoryApiConfigurator;
 import io.streamthoughts.jikkou.runtime.configurator.TransformationApiConfigurator;
 import io.streamthoughts.jikkou.runtime.configurator.ValidationApiConfigurator;
 import jakarta.inject.Inject;
@@ -87,7 +88,8 @@ public final class BeanFactory {
         ApiConfigurator[] configurators = {
                 new ValidationApiConfigurator(registry),
                 new TransformationApiConfigurator(registry),
-                new ChangeReporterApiConfigurator(registry)
+                new ReporterApiConfigurator(registry),
+                new RepositoryApiConfigurator(registry)
         };
         return context.createApi(configurators);
     }

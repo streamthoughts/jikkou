@@ -12,6 +12,8 @@ import java.io.File;
 import java.net.URL;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import picocli.CommandLine;
 
 class JikkouTest {
@@ -29,12 +31,6 @@ class JikkouTest {
     void shouldReturnUsageCodeForNoArgs() {
         int exitCode = Jikkou.execute(new String[]{});
         Assertions.assertEquals(CommandLine.ExitCode.USAGE, exitCode);
-    }
-
-    @Test
-    void shouldPrintPrepareHelp() {
-        int execute = Jikkou.execute(new String[]{"prepare"});
-        Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);
     }
 
     @Test
@@ -67,28 +63,31 @@ class JikkouTest {
         Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
     }
 
-    // TEST SUBCOMMANDS --HELP
-    @Test
-    void testCommandCreateHelp() {
-        int execute = Jikkou.execute(new String[]{"create", "--help"});
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "delete",
+        "apply",
+        "create",
+        "update",
+        "prepare",
+        "validate",
+    })
+    void testCommandGivenNoArg(String command) {
+        int execute = Jikkou.execute(new String[]{command});
         Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
     }
 
-    @Test
-    void testCommandUpdateHelp() {
-        int execute = Jikkou.execute(new String[]{"update", "--help"});
-        Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
-    }
-
-    @Test
-    void testCommandDeleteHelp() {
-        int execute = Jikkou.execute(new String[]{"delete", "--help"});
-        Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
-    }
-
-    @Test
-    void testCommandApplyHelp() {
-        int execute = Jikkou.execute(new String[]{"apply", "--help"});
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "delete",
+        "apply",
+        "create",
+        "update",
+        "prepare",
+        "validate",
+    })
+    void testCommandHelp(String command) {
+        int execute = Jikkou.execute(new String[]{command, "--help"});
         Assertions.assertEquals(CommandLine.ExitCode.OK, execute);
     }
 }

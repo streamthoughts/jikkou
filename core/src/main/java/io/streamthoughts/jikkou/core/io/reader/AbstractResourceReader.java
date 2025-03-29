@@ -8,9 +8,7 @@ package io.streamthoughts.jikkou.core.io.reader;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
@@ -18,6 +16,8 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static io.streamthoughts.jikkou.core.models.CoreAnnotations.JKKOU_IO_MANAGED_BY_LOCATION;
 
 public abstract class AbstractResourceReader implements ResourceReader {
 
@@ -44,11 +44,8 @@ public abstract class AbstractResourceReader implements ResourceReader {
         if (location == null) {
             return resource;
         }
-        ObjectMeta meta = resource
-                .optionalMetadata()
-                .orElse(new ObjectMeta()).toBuilder()
-                .withAnnotation(CoreAnnotations.JKKOU_IO_MANAGED_BY_LOCATION, location.toString())
-                .build();
-        return resource.withMetadata(meta);
+
+        resource.getMetadata().addAnnotationIfAbsent(JKKOU_IO_MANAGED_BY_LOCATION, location.toString());
+        return resource;
     }
 }

@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
+import io.streamthoughts.jikkou.core.repository.ResourceRepository;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceDeserializer;
@@ -176,6 +177,14 @@ public abstract class BaseApi implements JikkouApi {
     public HasItems prepare(final @NotNull HasItems resources,
                             final @NotNull ReconciliationContext context) {
 
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        return doPrepare(all, context);
+    }
+
+    @NotNull
+    protected ResourceList<HasMetadata> doPrepare(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
         return Stream.of(resources)
             .map(this::convert)
             .map(items -> transform(items, context))
@@ -262,6 +271,16 @@ public abstract class BaseApi implements JikkouApi {
             Converter.class,
             Qualifiers.enabled());
         return new ConverterChain(converters);
+    }
+
+    protected ResourceList<HasMetadata> addAllResourcesFromRepositories(HasItems resources) {
+        Stream<? extends HasMetadata> stream = extensionFactory
+            .getAllExtensions(ResourceRepository.class, Qualifiers.enabled())
+            .stream().flatMap(repository -> {
+                LOG.info("Loading resources from repository '{}'", repository.getName());
+                return repository.all().stream();
+            });
+        return ResourceList.of(Stream.concat(stream, resources.getItems().stream()).toList());
     }
 
     @SuppressWarnings("unchecked")

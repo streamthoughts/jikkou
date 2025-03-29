@@ -88,7 +88,7 @@ public class GenericResource extends BaseHasMetadata implements HasMetadata {
      */
     @Override
     public HasMetadata withMetadata(final ObjectMeta metadata) {
-        return new GenericResource(apiVersion, kind, metadata, template);
+        return new GenericResource(apiVersion, kind, metadata, template, additionalProperties);
     }
 
     @JsonProperty("template")

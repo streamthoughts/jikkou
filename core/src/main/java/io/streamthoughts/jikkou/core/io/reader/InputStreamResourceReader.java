@@ -28,16 +28,6 @@ public class InputStreamResourceReader extends AbstractResourceReader {
     /**
      * Creates a new {@link InputStreamResourceReader} instance.
      *
-     * @param resourceSupplier the {@link InputStream} from which to read resources.
-     */
-    public InputStreamResourceReader(@NotNull final Supplier<InputStream> resourceSupplier,
-                                     @NotNull final ObjectMapper objectMapper) {
-        this(resourceSupplier, objectMapper, null);
-    }
-
-    /**
-     * Creates a new {@link InputStreamResourceReader} instance.
-     *
      * @param location         the location {@link Path} of the template to read.
      * @param resourceSupplier the {@link InputStream} from which to read resources.
      */
@@ -51,7 +41,7 @@ public class InputStreamResourceReader extends AbstractResourceReader {
      * {@inheritDoc}
      */
     @Override
-    public List<HasMetadata> readAllResources(@NotNull final ResourceReaderOptions options) throws JikkouRuntimeException {
+    public List<HasMetadata> readAll(@NotNull final ResourceReaderOptions options) throws JikkouRuntimeException {
 
         var factory = mapper.getFactory();
         try (var rawInputStream = resourceSupplier.get()) {
@@ -71,11 +61,8 @@ public class InputStreamResourceReader extends AbstractResourceReader {
 
         } catch (IOException e) {
             String errorMessage = location != null ?
-                    String.format(
-                            "Failed to parse and/or render resource file at location '%s'.",
-                            location
-                    ) :
-                    "Failed to parse and/or render resource file.";
+                "Failed to parse and/or render resource file at location '%s'.".formatted(location) :
+                "Failed to parse and/or render resource file.";
             throw new InvalidResourceException(errorMessage, e);
         }
     }

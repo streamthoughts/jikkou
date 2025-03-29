@@ -195,7 +195,10 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
                                          @NotNull ReconciliationMode mode,
                                          @NotNull ReconciliationContext context) {
 
-        Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        Map<ResourceType, List<HasMetadata>> resourcesByType = doPrepare(all, context).groupByType();
 
         List<ChangeResult> changes = new ArrayList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {
@@ -232,7 +235,11 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     @SuppressWarnings("unchecked")
     public ApiValidationResult<HasMetadata> validate(@NotNull HasItems resources,
                                                      @NotNull ReconciliationContext context) {
-        Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
+
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        Map<ResourceType, List<HasMetadata>> resourcesByType = doPrepare(all, context).groupByType();
 
         List<HasMetadata> validated = new LinkedList<>();
         List<ValidationError> errors = new ArrayList<>();
@@ -280,7 +287,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
                                          @NotNull ResourceChangeFilter filter,
                                          @NotNull ReconciliationContext context) {
 
-        Map<ResourceType, List<HasMetadata>> resourcesByType = prepare(resources, context).groupByType();
+        Map<ResourceType, List<HasMetadata>> resourcesByType = doPrepare(resources, context).groupByType();
 
         List<ResourceChange> changes = new ArrayList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {

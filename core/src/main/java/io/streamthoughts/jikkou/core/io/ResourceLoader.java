@@ -6,7 +6,6 @@
  */
 package io.streamthoughts.jikkou.core.io;
 
-import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderOptions;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -64,7 +63,7 @@ public final class ResourceLoader {
      * @return a new {@link HasItems}.
      */
     public HasItems load(@NotNull final InputStream file) {
-        return ResourceList.of(factory.create(file).readAllResources(options));
+        return ResourceList.of(factory.create(file).readAll(options));
     }
 
     /**
@@ -73,14 +72,14 @@ public final class ResourceLoader {
      * @param locations locations from which to resource definitions.
      * @return a list of {@link HasItems}.
      */
-    public HasItems load(final @NotNull List<String> locations) {
-        if (locations.isEmpty()) {
-            throw new JikkouRuntimeException("No resource definition file loaded");
+    public HasItems load(final List<String> locations) {
+        if (locations == null || locations.isEmpty()) {
+            return ResourceList.empty();
         }
 
         return ResourceList.of(locations.stream()
                 .map(location -> factory.create(URI.create(location)))
-                .flatMap(reader -> reader.readAllResources(options).stream())
+                .flatMap(reader -> reader.readAll(options).stream())
                 .toList()
         );
     }

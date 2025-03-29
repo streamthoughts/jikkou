@@ -276,7 +276,7 @@ public interface JikkouApi extends AutoCloseable {
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
-    default ApiValidationResult validate(@NotNull HasItems resources) {
+    default ApiValidationResult<HasMetadata> validate(@NotNull HasItems resources) {
         return validate(resources, ReconciliationContext.Default.EMPTY);
     }
 
