@@ -19,7 +19,6 @@ import io.micronaut.runtime.event.annotation.EventListener;
 import io.streamthoughts.jikkou.client.banner.Banner;
 import io.streamthoughts.jikkou.client.banner.BannerPrinterBuilder;
 import io.streamthoughts.jikkou.client.banner.JikkouBanner;
-import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.DiffCommand;
 import io.streamthoughts.jikkou.client.command.PrepareCommand;
 import io.streamthoughts.jikkou.client.command.action.ActionCommandLineFactory;
@@ -48,6 +47,7 @@ import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -135,16 +135,22 @@ public final class Jikkou {
         }
 
         try {
-            CommandLine commandLine = new CommandLine(new CLIBaseCommand());
-            CommandLine.ParseResult parseResult = commandLine.parseArgs(args);
-            
-            if (parseResult.hasMatchedOption(LoggingMixin.LOGGER_LEVEL)) {
-                return Optional.ofNullable(parseResult.matchedOptionValue(LoggingMixin.LOGGER_LEVEL, null))
-                    .map(Object::toString)
-                    .map(level -> level.toUpperCase(Locale.ROOT))
-                    .map(ch.qos.logback.classic.Level::toLevel)
-                    .orElse(null);
+            List<String> argList = Arrays.asList(args);
+            String loggingLevel = null;
+            for (int i = 0; i < argList.size(); i++) {
+                if (argList.get(i).startsWith(LoggingMixin.LOGGER_LEVEL)) {
+                    if (argList.get(i).contains("=")) {
+                        loggingLevel = argList.get(i).split("=", 2)[1];
+                    } else if (i + 1 < argList.size()) {
+                        loggingLevel = argList.get(i + 1);
+                    }
+                }
             }
+            return Optional.ofNullable(loggingLevel)
+                .map(Object::toString)
+                .map(level -> level.toUpperCase(Locale.ROOT))
+                .map(ch.qos.logback.classic.Level::toLevel)
+                .orElse(null);
         } catch (Exception ignore) {
             /* silently ignore */
         }
