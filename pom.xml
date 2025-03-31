@@ -119,7 +119,7 @@
         <picocli.version>4.7.6</picocli.version>
         <jackson.version>2.18.3</jackson.version>
         <jinjava.version>2.7.2</jinjava.version>
-        <lombok.version>1.18.32</lombok.version>
+        <lombok.version>1.18.36</lombok.version>
         <config.version>1.4.3</config.version>
         <annotations.version>24.1.0</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
