@@ -184,7 +184,7 @@
         <dependency>
             <groupId>io.micronaut.test</groupId>
             <artifactId>micronaut-test-junit5</artifactId>
-            <version>4.6.2</version>
+            <version>4.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
