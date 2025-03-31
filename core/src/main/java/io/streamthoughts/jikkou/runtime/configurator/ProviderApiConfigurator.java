@@ -74,7 +74,13 @@ public class ProviderApiConfigurator extends BaseApiConfigurator {
         for (ExtensionProvider provider : ServiceLoaders.loadAllServices(ExtensionProvider.class, cls)) {
             String type = provider.getClass().getName();
             if (providers.containsKey(type)) {
-                builder = builder.register(provider, providers.get(type).config());
+                Configuration config = providers.get(type).config();
+                // Looking for direct provider config override
+                Optional<Configuration> override = configuration().findConfig(provider.getName());
+                if (override.isPresent()) {
+                    config  = override.get().withFallback(config);
+                }
+                builder = builder.register(provider, config);
             } else {
                 // backward-compatibility
                 Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.get(configuration());
