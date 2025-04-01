@@ -127,7 +127,7 @@
         <cel.version>0.9.1</cel.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <logback.version>1.5.16</logback.version>
+        <logback.version>1.5.18</logback.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <!-- Build -->
         <graal-sdk.version>24.0.1</graal-sdk.version>
