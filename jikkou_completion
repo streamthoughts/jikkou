@@ -266,7 +266,7 @@ function _picocli_jikkou_create() {
 
   local commands=""
   local flag_opts="--pretty --dry-run -h --help -V --version"
-  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -288,6 +288,9 @@ function _picocli_jikkou_create() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -329,7 +332,7 @@ function _picocli_jikkou_delete() {
 
   local commands=""
   local flag_opts="--pretty --dry-run -h --help -V --version"
-  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -351,6 +354,9 @@ function _picocli_jikkou_delete() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -392,7 +398,7 @@ function _picocli_jikkou_update() {
 
   local commands=""
   local flag_opts="--pretty --dry-run -h --help -V --version"
-  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -414,6 +420,9 @@ function _picocli_jikkou_update() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -455,7 +464,7 @@ function _picocli_jikkou_apply() {
 
   local commands=""
   local flag_opts="--pretty --dry-run -h --help -V --version"
-  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -477,6 +486,9 @@ function _picocli_jikkou_apply() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -518,7 +530,7 @@ function _picocli_jikkou_patch() {
 
   local commands=""
   local flag_opts="--pretty --dry-run -h --help -V --version"
-  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options --mode"
+  local arg_opts="--logger-level --output -o --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --options --mode"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local mode_option_args=("CREATE" "DELETE" "UPDATE" "FULL") # --mode values
@@ -541,6 +553,9 @@ function _picocli_jikkou_patch() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -674,7 +689,7 @@ function _picocli_jikkou_diff() {
 
   local commands=""
   local flag_opts="--list -h --help -V --version"
-  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options --filter-resource-op --filter-change-op"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options --filter-resource-op --filter-change-op"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
   local filterOutAllResourcesExcept_option_args=("NONE" "CREATE" "DELETE" "UPDATE") # --filter-resource-op values
@@ -693,6 +708,9 @@ function _picocli_jikkou_diff() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -749,7 +767,7 @@ function _picocli_jikkou_prepare() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
@@ -766,6 +784,9 @@ function _picocli_jikkou_prepare() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
@@ -812,7 +833,7 @@ function _picocli_jikkou_validate() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--logger-level --files -f --file-name -n --values-files --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
+  local arg_opts="--logger-level --files -f --file-name -n --values-files --values-file-name --set-label -l --set-annotation --set-value -v --selector -s --selector-match --output -o --options"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
@@ -829,6 +850,9 @@ function _picocli_jikkou_validate() {
       return
       ;;
     --values-files)
+      return
+      ;;
+    --values-file-name)
       return
       ;;
     --set-label|-l)
