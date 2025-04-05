@@ -7,6 +7,8 @@
 package io.streamthoughts.jikkou.core.io.reader;
 
 
+import static io.streamthoughts.jikkou.core.models.CoreAnnotations.JKKOU_IO_MANAGED_BY_LOCATION;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.io.InputStream;
@@ -16,8 +18,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static io.streamthoughts.jikkou.core.models.CoreAnnotations.JKKOU_IO_MANAGED_BY_LOCATION;
 
 public abstract class AbstractResourceReader implements ResourceReader {
 
