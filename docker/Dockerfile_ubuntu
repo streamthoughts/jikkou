@@ -40,6 +40,6 @@ LABEL org.opencontainers.image.created=$CREATED \
 
 ENV PATH="$PATH:/app"
 
-ENTRYPOINT ["./jikkou"]
+ENTRYPOINT ["jikkou"]
 
 
