@@ -384,7 +384,7 @@
                 <plugin>
                     <groupId>org.vafer</groupId>
                     <artifactId>jdeb</artifactId>
-                    <version>1.12</version>
+                    <version>1.13</version>
                 </plugin>
             </plugins>
         </pluginManagement>
