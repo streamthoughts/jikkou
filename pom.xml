@@ -96,7 +96,7 @@
         <sonar.skip>${env.SONAR_SKIP}</sonar.skip>
         <!-- START Maven plugin versions -->
         <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
