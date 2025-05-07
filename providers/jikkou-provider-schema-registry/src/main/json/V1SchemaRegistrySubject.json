@@ -81,11 +81,11 @@
         "schemaType": {
           "type": "string",
           "description": "The schema format: AVRO, PROTOBUF, JSON.",
-          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.SchemaType"
+          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaType"
         },
         "schema": {
           "type": "object",
-          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.SchemaHandle",
+          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaHandle",
           "properties": {
             "$ref": {
               "type": "string"

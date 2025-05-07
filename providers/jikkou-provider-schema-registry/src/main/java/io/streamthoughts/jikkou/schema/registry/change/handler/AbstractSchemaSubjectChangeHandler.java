@@ -11,6 +11,7 @@ import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChang
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
 
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.StateChangeList;
@@ -30,7 +31,6 @@ import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistrati
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescription;
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;

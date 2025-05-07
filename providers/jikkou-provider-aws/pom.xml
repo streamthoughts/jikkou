@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: Apache-2.0
+  Copyright (c) The original authors
+
+  Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.streamthoughts</groupId>
+        <artifactId>jikkou-parent</artifactId>
+        <version>0.36.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <name>Jikkou Extension :: AWS</name>
+    <artifactId>jikkou-provider-aws</artifactId>
+
+    <properties>
+        <license.header.file>${project.parent.basedir}/header</license.header.file>
+        <avro.version>1.11.3</avro.version>
+        <maven-clean-plugin.directory>
+            ${project.basedir}/src/main/java/io/streamthoughts/jikkou/aws/models
+        </maven-clean-plugin.directory>
+        <jsonschema2pojo.targetPackage>
+            io.streamthoughts.jikkou.aws.models
+        </jsonschema2pojo.targetPackage>
+        <glue.version>2.31.16</glue.version>
+    </properties>
+
+    <dependencies>
+        <!-- region START Jikkou dependencies -->
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-processor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>jikkou-resource-generator</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- endregion END Jikkou dependencies -->
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>glue</artifactId>
+            <version>${glue.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsonschema2pojo</groupId>
+            <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+        <!-- region START test dependencies -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>localstack</artifactId>
+            <version>1.20.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- region END test dependencies -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <parameters>${maven.compiler.parameters}</parameters>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.streamthoughts</groupId>
+                            <artifactId>jikkou-processor</artifactId>
+                            <version>${project.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${maven-clean-plugin.directory}</directory>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.streamthoughts</groupId>
+                        <artifactId>jikkou-resource-generator</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>1.1.2</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/json</sourceDirectory>
+                    <targetPackage>${jsonschema2pojo.targetPackage}</targetPackage>
+                    <generateBuilders>false</generateBuilders>
+                    <addCompileSourceRoot>true</addCompileSourceRoot>
+                    <outputDirectory>src/main/java</outputDirectory>
+                    <includeSetters>false</includeSetters>
+                    <includeGetters>true</includeGetters>
+                    <useInnerClassBuilders>false</useInnerClassBuilders>
+                    <includeJsr303Annotations>false</includeJsr303Annotations>
+                    <useJakartaValidation>true</useJakartaValidation>
+                    <includeHashcodeAndEquals>true</includeHashcodeAndEquals>
+                    <includeAllPropertiesConstructor>true</includeAllPropertiesConstructor>
+                    <includeConstructorPropertiesAnnotation>true</includeConstructorPropertiesAnnotation>
+                    <includeConstructors>true</includeConstructors>
+                    <customAnnotator>io.streamthoughts.jikkou.generator.JikkouAnnotator</customAnnotator>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

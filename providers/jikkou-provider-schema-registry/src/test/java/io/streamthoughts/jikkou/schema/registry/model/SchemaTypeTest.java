@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.model;
 
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -60,7 +60,7 @@ public final class GenericResourceChange implements ResourceChange {
     public static HasSpecBuilder<GenericResourceChange, GenericResourceChangeSpec> builder(Class<? extends Resource> resource) {
         return new DefaultHasSpecBuilder<>(
             Resource.getApiVersion(resource),
-            ResourceChange.getChangeKindFromResource(resource),
+            ResourceChange.getResourceKindOf(resource),
             build -> new GenericResourceChange(
                 build.apiVersion(),
                 build.kind(),

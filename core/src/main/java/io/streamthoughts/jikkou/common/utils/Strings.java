@@ -18,12 +18,13 @@ public final class Strings {
     private Strings() {
     }
 
-    public static boolean isBlank(String string) {
-        if (string == null) {
-            return true;
-        }
+    public static boolean isBlank(final String string) {
+        return string == null || string.trim().isEmpty();
 
-        return string.trim().isEmpty();
+    }
+
+    public static boolean isNotBlank(final String string) {
+        return !isBlank(string);
     }
 
     public static Properties toProperties(String string) {

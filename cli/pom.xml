@@ -120,6 +120,11 @@
             <artifactId>jikkou-provider-kafka-connect</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-provider-aws</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- END dependencies for Jikkou Extension Providers -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

@@ -25,6 +25,7 @@
         <module>providers/jikkou-provider-schema-registry</module>
         <module>providers/jikkou-provider-core</module>
         <module>providers/jikkou-provider-kafka-connect</module>
+        <module>providers/jikkou-provider-aws</module>
         <module>server/jikkou-api-client</module>
         <module>server/jikkou-api-server</module>
         <module>server/jikkou-api-data</module>
@@ -125,6 +126,7 @@
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
         <reactor-core.version>3.7.4</reactor-core.version>
         <cel.version>0.9.1</cel.version>
+        <avro.version>1.11.4</avro.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.18</logback.version>
@@ -140,6 +142,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.graalvm.sdk</groupId>
                 <artifactId>graal-sdk</artifactId>
@@ -284,6 +291,48 @@
             <!-- END dependencies for Tests -->
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!--region  START dependencies for test -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <!--endregion END dependencies for test -->
+    </dependencies>
 
     <build>
         <pluginManagement>

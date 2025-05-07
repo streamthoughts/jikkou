@@ -11,6 +11,9 @@ import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChang
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA_TYPE;
 
+import io.streamthoughts.jikkou.core.data.SchemaAndType;
+import io.streamthoughts.jikkou.core.data.SchemaHandle;
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -18,9 +21,6 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChangeSpec;
 import io.streamthoughts.jikkou.core.models.change.StateChange;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.Collections;

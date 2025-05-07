@@ -47,14 +47,11 @@ public interface ResourceChange extends HasSpec<ResourceChangeSpec>, Change {
         return getSpec().getOp();
     }
 
-    static String getChangeKindFromResource(Class<? extends Resource> resourceClass) {
+    static String getResourceKindOf(Class<? extends Resource> resourceClass) {
         return Resource.getKind(resourceClass) + RESOURCE_CHANGE_KIND_SUFFIX;
     }
 
-    static ResourceType fromResource(final Class<? extends Resource> resourceClass) {
-        return ResourceType.of(
-            ResourceChange.getChangeKindFromResource(resourceClass),
-            Resource.getApiVersion(resourceClass)
-        );
+    static ResourceType getResourceTypeOf(final Class<? extends Resource> resourceClass) {
+        return ResourceType.of(getResourceKindOf(resourceClass), Resource.getApiVersion(resourceClass));
     }
 }
