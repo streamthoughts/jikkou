@@ -1,0 +1,84 @@
+{
+  "type": "object",
+  "title": "AwsGlueSchema",
+  "description": "The AwsGlueSchema resource allows managing schemas  for AWS Glue.",
+  "javaInterfaces": [
+    "io.streamthoughts.jikkou.core.models.Resource",
+    "io.streamthoughts.jikkou.core.models.HasMetadata",
+    "io.streamthoughts.jikkou.core.models.HasSpec<AwsGlueSchemaSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "aws-glueschema",
+        "plural": "aws-glueschemas"
+      },
+      "verbs": [
+        "*"
+      ]
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "aws.jikkou.io/v1"
+    },
+    "kind": {
+      "type": "string",
+      "default": "AwsGlueSchema"
+    },
+    "metadata": {
+      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+      "type": "object"
+    },
+    "spec": {
+      "$ref": "#/$defs/AwsGlueSchemaSpec"
+    }
+  },
+  "$defs": {
+    "AwsGlueSchemaSpec": {
+      "type": "object",
+      "javaInterfaces": [],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "compatibility": {
+          "type": "string",
+          "description": "The data format applies to all versions of a Glue schema.",
+          "existingJavaType": "io.streamthoughts.jikkou.aws.model.Compatibility"
+        },
+        "dataFormat": {
+          "type": "string",
+          "description": "The data format applies to all versions of the Glue schema: AVRO, PROTOBUF, JSON.",
+          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaType"
+        },
+        "schemaDefinition": {
+          "type": "object",
+          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaHandle",
+          "properties": {
+            "$ref": {
+              "type": "string"
+            }
+          }
+        },
+        "description": {
+          "type": "String",
+          "description": "Provides description about the schema."
+        }
+      }
+    }
+  }
+}

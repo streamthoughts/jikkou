@@ -4,7 +4,7 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.schema.registry.avro;
+package io.streamthoughts.jikkou.core.data.avro;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaNormalization;

@@ -192,7 +192,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
             V1KafkaUser.class
         ).forEach(resource -> {
             registry.register(resource);
-            registry.register(GenericResourceChange.class, ResourceChange.fromResource(resource));
+            registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(resource));
         });
 
         // register collections

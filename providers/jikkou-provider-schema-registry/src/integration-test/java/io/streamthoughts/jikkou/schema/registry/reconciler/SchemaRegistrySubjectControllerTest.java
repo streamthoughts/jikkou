@@ -8,6 +8,8 @@ package io.streamthoughts.jikkou.schema.registry.reconciler;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.data.SchemaHandle;
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
@@ -17,8 +19,6 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.schema.registry.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.List;

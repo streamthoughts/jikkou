@@ -4,16 +4,19 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.schema.registry.model;
+package io.streamthoughts.jikkou.core.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.streamthoughts.jikkou.common.utils.Enums;
+import io.streamthoughts.jikkou.core.data.avro.AvroSchema;
 import io.streamthoughts.jikkou.core.data.json.Json;
-import io.streamthoughts.jikkou.schema.registry.avro.AvroSchema;
 import org.jetbrains.annotations.Nullable;
 
 public enum SchemaType {
 
+    /**
+     * Avro Data Format
+     */
     AVRO {
         @Override
         public Object comparableSchemaForm(final String schema, boolean useCanonicalFingerPrint) {
@@ -21,12 +24,20 @@ public enum SchemaType {
 
             return useCanonicalFingerPrint ? new AvroSchema(schema).fingerprint64() : Json.normalize(schema);
         }
-    }, PROTOBUF {
+    },
+    /**
+     * Protobug Data Format
+     */
+    PROTOBUF {
         @Override
         public Object comparableSchemaForm(final String schema, boolean useCanonicalFingerPrint) {
             return schema;
         }
-    }, JSON {
+    },
+    /**
+     * Json Data Format
+     */
+    JSON {
         @Override
         public Object comparableSchemaForm(final String schema, boolean useCanonicalFingerPrint) {
             return Json.normalize(schema);

@@ -13,6 +13,9 @@ import static io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChang
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.data.SchemaAndType;
+import io.streamthoughts.jikkou.core.data.SchemaHandle;
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
@@ -25,9 +28,6 @@ import io.streamthoughts.jikkou.extension.aiven.ApiVersions;
 import io.streamthoughts.jikkou.extension.aiven.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.Collections;

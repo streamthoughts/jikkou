@@ -7,9 +7,9 @@
 package io.streamthoughts.jikkou.schema.registry.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.data.SchemaHandle;
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.core.models.ResourceList;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaHandle;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import org.junit.jupiter.api.Assertions;

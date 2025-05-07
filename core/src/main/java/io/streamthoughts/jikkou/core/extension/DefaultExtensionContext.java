@@ -86,9 +86,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
     public ExtensionContext contextForExtension(Class<? extends Extension> extension) {
         if (factory == null) throw new IllegalStateException("No factory configured");
         return factory.findDescriptorByClass(extension)
-            .map(descriptor ->
-                new DefaultExtensionContext(factory, descriptor)
-            )
+            .map(descriptor -> new DefaultExtensionContext(factory, descriptor))
             .orElseThrow(() -> new NoSuchExtensionException("No extension registered for type: " + extension.getName()));
     }
 

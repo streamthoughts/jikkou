@@ -4,16 +4,14 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.schema.registry.model;
+package io.streamthoughts.jikkou.core.data;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.util.Objects;
-import lombok.Builder;
-import lombok.extern.jackson.Jacksonized;
 import org.jetbrains.annotations.NotNull;
 
-@Builder
-@Jacksonized
+@Reflectable
 public class SchemaAndType {
 
     private static final SchemaAndType EMPTY = new SchemaAndType();

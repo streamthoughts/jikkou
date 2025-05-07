@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.schema.registry.change;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.streamthoughts.jikkou.core.data.SchemaAndType;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.data.converter.ObjectTypeConverter;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
@@ -20,7 +21,6 @@ import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaAndType;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.Map;
 import java.util.Optional;

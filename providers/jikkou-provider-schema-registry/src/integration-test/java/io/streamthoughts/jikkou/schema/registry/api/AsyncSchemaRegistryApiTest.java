@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.schema.registry.api;
 
 import static io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest.CONFLUENT_PLATFORM_VERSION;
 
+import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.http.client.RestClientBuilder;
 import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
@@ -17,7 +18,6 @@ import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
-import io.streamthoughts.jikkou.schema.registry.model.SchemaType;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Assertions;
