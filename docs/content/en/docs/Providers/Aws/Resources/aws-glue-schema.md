@@ -68,8 +68,8 @@ metadata:
   annotations:
     glue.aws.amazon.com/normalize-schema: true
 spec:
-  compatibility: "FULL_TRANSITIVE"
-  schemaType: "AVRO"
+  compatibility: "BACKWARD"
+  dataFormat: "AVRO"
   schema:
     $ref: ./user-schema.avsc
 ```
@@ -116,8 +116,8 @@ metadata:
   annotations:
     glue.aws.amazon.com/normalize-schema: true
 spec:
-  compatibility: "FULL_TRANSITIVE"
-  schemaType: "AVRO"
+  compatibility: "BACKWARD"
+  dataFormat: "AVRO"
   schema: |
     {
       "namespace": "example.avro",
