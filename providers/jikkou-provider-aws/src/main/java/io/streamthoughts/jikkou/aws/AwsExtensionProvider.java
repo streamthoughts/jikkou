@@ -53,7 +53,7 @@ public class AwsExtensionProvider extends BaseExtensionProvider {
 
         ConfigProperty<String> ENDPOINT_OVERRIDE = ConfigProperty
             .ofString("aws.client.endpointOverride")
-            .description("The endpoint with which the SDK should communicate allowing you to use a different S3 compatible service")
+            .description("The endpoint with which the SDK should communicate allowing you to use a different S3 compatible service.")
             .required(false);
 
         ConfigProperty<List<String>> GLUE_REGISTRIES = ConfigProperty
