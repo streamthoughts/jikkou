@@ -18,4 +18,8 @@
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the &lt;a href="https://aiven.io/kafka">Aiven for Kafka&lt;/a> extensions.&lt;/p>
 &lt;/div>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Aws</title><link>https://www.jikkou.io/docs/providers/aws/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information to use the &lt;a href="https://docs.aws.amazon.com">Aws&lt;/a> extensions (Jikkou v0.36).&lt;/p>
+&lt;/div>
 &lt;p>More information:&lt;/p></description></item></channel></rss>

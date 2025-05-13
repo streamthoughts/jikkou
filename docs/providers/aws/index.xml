@@ -1,0 +1,64 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Aws</title><link>https://www.jikkou.io/docs/providers/aws/</link><description>Recent content in Aws on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://www.jikkou.io/docs/providers/aws/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported by the extension for AWS.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>You can configure the properties to be used to connect the AWS services
+through the Jikkou client configuration property &lt;code>jikkou.providers&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+providers = [
+# AWS
+{
+enabled = true
+name = aws
+type = io.streamthoughts.jikkou.aws.AwsExtensionProvider
+config = {
+# The AWS S3 Region, e.g. us-east-1
+aws.client.region = &amp;#34;&amp;#34;
+# The AWS Access Key ID.
+aws.client.accessKeyId = &amp;#34;&amp;#34;
+# The AWS Secret Access Key.
+aws.client.secretAccessKey = &amp;#34;&amp;#34;
+# The AWS session token.
+aws.client.sessionToken = &amp;#34;&amp;#34;
+# The endpoint with which the SDK should communicate allowing you to use a different S3 compatible service
+aws.client.endpointOverride = &amp;#34;&amp;#34;
+# The name of the registries. Used only for lookup.
+aws.glue.registryNames = &amp;#34;&amp;#34;
+}
+},
+]
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://www.jikkou.io/docs/providers/aws/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/resources/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported by the extensions for AWS.&lt;/p>
+&lt;/div>
+&lt;h2 id="aws-resources">AWS Resources&lt;/h2>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Validations</title><link>https://www.jikkou.io/docs/providers/aws/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/validations/</guid><description>
+&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
+&lt;p>&lt;em>No validation&lt;/em>&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://www.jikkou.io/docs/providers/aws/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/annotations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information about the annotations provided by the AWS extension for Jikkou.&lt;/p>
+&lt;/div>
+&lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
+&lt;h4 id="glueawsamazoncomcreated-time">&lt;code>glue.aws.amazon.com/created-time&lt;/code>&lt;/h4>
+&lt;p>The date and time the schema was created.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou.&lt;/p>
+&lt;h4 id="glueawsamazoncomupdated-time">&lt;code>glue.aws.amazon.com/updated-time&lt;/code>&lt;/h4>
+&lt;p>The date and time the schema was updated.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou.&lt;/p>
+&lt;h4 id="glueawsamazoncomregistry-name">&lt;code>glue.aws.amazon.com/registry-name&lt;/code>&lt;/h4>
+&lt;p>The name of the registry.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou.&lt;/p>
+&lt;h4 id="glueawsamazoncomregistry-arn">&lt;code>glue.aws.amazon.com/registry-arn&lt;/code>&lt;/h4>
+&lt;p>The Amazon Resource Name (ARN) of the registry.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou.&lt;/p>
+&lt;h4 id="glueawsamazoncomschema-arn">&lt;code>glue.aws.amazon.com/schema-arn&lt;/code>&lt;/h4>
+&lt;p>The Amazon Resource Name (ARN) of the schema.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou.&lt;/p>
+&lt;h4 id="glueawsamazoncomschema-version-id">&lt;code>glue.aws.amazon.com/schema-version-id&lt;/code>&lt;/h4>
+&lt;p>The SchemaVersionId of the schema version.&lt;/p>
+&lt;p>The annotation is automatically added by Jikkou.&lt;/p>
+&lt;h4 id="glueawsamazoncomuse-canonical-fingerprint">&lt;code>glue.aws.amazon.com/use-canonical-fingerprint&lt;/code>&lt;/h4>
+&lt;p>This annotation can be used to use a canonical fingerprint to compare schemas (only supported for Avro schema).&lt;/p></description></item></channel></rss>
