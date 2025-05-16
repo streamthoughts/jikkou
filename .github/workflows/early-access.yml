@@ -17,7 +17,7 @@ env:
 jobs:
   build-distribution:
     if: github.repository == 'streamthoughts/jikkou'
-    name: 'Build with GraalVM on ${{ matrix.os }}'
+    name: 'Build with ${{ matrix.setup }} on ${{ matrix.os }}'
     strategy:
       fail-fast: true
       matrix:
@@ -62,12 +62,12 @@ jobs:
       - name: 'Build Native Image (macOS)'
         if: ${{ runner.os == 'macOS' && matrix.setup == 'graalvm' }}
         run: |
-          ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
+          ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Build Native Image (Windows)'
         if: ${{ runner.os == 'windows' && matrix.setup == 'graalvm'  }}
         run: |
-          ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
+          ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Build Debian Package (Linux)'
         if: ${{ runner.os == 'Linux' && matrix.setup == 'graalvm' }}
