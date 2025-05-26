@@ -39,4 +39,8 @@ public enum Operation {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    public boolean isUpdateOrCreate() {
+        return UPDATE == this || CREATE == this;
+    }
+
 }

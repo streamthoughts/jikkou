@@ -65,15 +65,11 @@ public class DeleteAwsGlueSchemaChangeHandler extends AbstractAwsGlueSchemaChang
                 .build();
 
             Mono<Object> mono = Mono.fromSupplier(() -> client.deleteSchema(deleteRequest))
-                .handle((versions, sink) -> {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info(
-                            "Deleted schema '{}' from registry name {}",
-                            schemaName,
-                            versions
-                        );
-                    }
-                });
+                .handle((versions, sink) -> LOG.info(
+                    "Deleted schema '{}' from registry name {}",
+                    schemaName,
+                    versions
+                ));
             results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;

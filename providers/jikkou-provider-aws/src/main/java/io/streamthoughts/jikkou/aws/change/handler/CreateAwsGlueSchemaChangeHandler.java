@@ -96,20 +96,16 @@ public final class CreateAwsGlueSchemaChangeHandler
                 .getLast(DATA_SCHEMA_DESCRIPTION, TypeConverter.String());
 
             if (description != null) {
-                builder = builder.compatibility(description.getAfter());
+                builder = builder.description(description.getAfter());
             }
 
             CreateSchemaRequest request = builder.build();
             Mono<Object> mono = Mono.fromSupplier(() -> client.createSchema(request))
-                .handle((response, sink) -> {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info(
-                            "Create new schema named '{}' into registry '{}'.",
-                            change.getMetadata().getName(),
-                            registryName
-                        );
-                    }
-                });
+                .handle((response, sink) -> LOG.info(
+                    "Create new schema named '{}' into registry '{}'.",
+                    change.getMetadata().getName(),
+                    registryName
+                ));
             results.add(toChangeResponse(change, mono.toFuture()));
         }
 

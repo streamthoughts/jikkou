@@ -97,7 +97,7 @@ public interface StateChangeList<T extends StateChange> extends Iterable<T> {
      * Gets the first data change for the given name.
      *
      * @param name The name of the data change.
-     * @return The {@link StateChange}, or {@code null} of no change exist for the give name.
+     * @return The {@link StateChange}, or {@code null} if no change exist for the give name.
      */
     T getFirst(String name);
 
@@ -113,7 +113,7 @@ public interface StateChangeList<T extends StateChange> extends Iterable<T> {
      * Gets the last data change of this list for the given name.
      *
      * @param name The name of the data change.
-     * @return The {@link StateChange}, or {@code null} of no change exist for the give name.
+     * @return The {@link StateChange}, or {@code null} if no change exist for the give name.
      */
     T getLast(String name);
 
@@ -121,7 +121,7 @@ public interface StateChangeList<T extends StateChange> extends Iterable<T> {
      * Gets the last data change of this list for the given name.
      *
      * @param name The name of the data change.
-     * @return The {@link StateChange}, or {@code null} of no change exist for the give name.
+     * @return The {@link StateChange}, or {@code null} if no change exist for the give name.
      */
     default <V> SpecificStateChange<V> getLast(String name, TypeConverter<V> typeConverter) {
         T last = getLast(name);

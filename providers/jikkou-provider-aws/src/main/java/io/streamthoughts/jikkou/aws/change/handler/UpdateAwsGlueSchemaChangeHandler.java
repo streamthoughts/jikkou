@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.aws.change.handler;
 import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DATA_COMPATIBILITY;
 import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DATA_SCHEMA_DESCRIPTION;
-import static io.streamthoughts.jikkou.core.reconciler.Operation.CREATE;
 import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
 
 import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
@@ -22,6 +21,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
@@ -77,30 +77,28 @@ public final class UpdateAwsGlueSchemaChangeHandler
             }
 
             // Compatibility
-            SpecificStateChange<Compatibility> compatibility = StateChangeList
+            Optional<SpecificStateChange<Compatibility>> compatibility = StateChangeList
                 .of(change.getSpec().getChanges())
-                .getLast(DATA_COMPATIBILITY, TypeConverter.of(Compatibility.class));
+                .findLast(DATA_COMPATIBILITY, TypeConverter.of(Compatibility.class))
+                .filter(it -> it.getOp().isUpdateOrCreate());
 
-            if (isUpdateOrCreate(compatibility)) {
-                mono = mono.then(updateCompatibility(registryName, schemaName, compatibility));
+            if (compatibility.isPresent()) {
+                mono = mono.then(updateCompatibility(registryName, schemaName, compatibility.get()));
             }
 
             // Description
-            SpecificStateChange<String> description = StateChangeList
+            Optional<SpecificStateChange<String>> description = StateChangeList
                 .of(change.getSpec().getChanges())
-                .getLast(DATA_SCHEMA_DESCRIPTION, TypeConverter.String());
+                .findLast(DATA_SCHEMA_DESCRIPTION, TypeConverter.String())
+                .filter(it -> it.getOp().isUpdateOrCreate());
 
-            if (isUpdateOrCreate(description)) {
-                mono = mono.then(updateDescription(registryName, schemaName, description));
+            if (description.isPresent()) {
+                mono = mono.then(updateDescription(registryName, schemaName, description.get()));
             }
 
             results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;
-    }
-
-    private static boolean isUpdateOrCreate(SpecificStateChange<?> change) {
-        return UPDATE == change.getOp() || CREATE == change.getOp();
     }
 
     private Mono<Void> updateSchema(final String registryName,
