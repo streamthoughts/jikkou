@@ -61,8 +61,11 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
                 .builder()
                 .withOperation(Operation.CREATE)
                 .withChange(StateChange.create(DATA_SCHEMA, getSchemaAndType(after)))
-                .withChange(StateChange.create(DATA_FORMAT, after.getSpec().getDataFormat()))
-                .withChange(StateChange.create(DATA_SCHEMA_DESCRIPTION, after.getSpec().getDescription()));
+                .withChange(StateChange.create(DATA_FORMAT, after.getSpec().getDataFormat()));
+
+            if (after.getSpec().getDescription() != null) {
+                builder.withChange(StateChange.create(DATA_SCHEMA_DESCRIPTION, after.getSpec().getDescription()));
+            }
 
             if (after.getSpec().getCompatibility() != null) {
                 builder.withChange(StateChange.create(DATA_COMPATIBILITY, after.getSpec().getCompatibility()));

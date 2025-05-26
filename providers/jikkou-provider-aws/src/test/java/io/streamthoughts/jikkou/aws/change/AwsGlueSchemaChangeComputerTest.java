@@ -73,4 +73,40 @@ class AwsGlueSchemaChangeComputerTest {
             .build();
         Assertions.assertEquals(change, changes.getFirst());
     }
+
+    @Test
+    void shouldGetCreateChangeGivenNoDescription() {
+        // Given
+        AwsGlueSchema schema = AwsGlueSchema
+            .builder()
+            .withMetadata(ObjectMeta.builder().withName("schema").build())
+            .withSpec(AwsGlueSchemaSpec
+                .builder()
+                .withCompatibility(Compatibility.BACKWARD)
+                .withDataFormat(SchemaType.AVRO)
+                .withSchemaDefinition(new SchemaHandle("{}"))
+                .build()
+            )
+            .build();
+        // When
+        List<ResourceChange> changes = computer.computeChanges(List.of(), List.of(schema));
+
+        // Then
+        GenericResourceChange change = GenericResourceChange
+            .builder()
+            .withApiVersion(ApiVersions.AWS_GLUE_API_VERSION)
+            .withKind("AwsGlueSchemaChange")
+            .withMetadata(ObjectMeta.builder().withName("schema").build())
+            .withSpec(new GenericResourceChangeSpec(
+                Operation.CREATE,
+                List.of(
+                    StateChange.create(AwsGlueSchemaChangeComputer.DATA_SCHEMA, new SchemaAndType("{}", SchemaType.AVRO)),
+                    StateChange.create(AwsGlueSchemaChangeComputer.DATA_FORMAT, SchemaType.AVRO),
+                    StateChange.create(AwsGlueSchemaChangeComputer.DATA_COMPATIBILITY, Compatibility.BACKWARD)
+                ),
+                Map.of()
+            ))
+            .build();
+        Assertions.assertEquals(change, changes.getFirst());
+    }
 }
