@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.core.template;
 
 import io.streamthoughts.jikkou.core.config.Configurable;
+import java.net.URI;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,10 +19,12 @@ public interface ResourceTemplateRenderer extends Configurable {
      * Render the given resource template.
      *
      * @param template  the template to be rendered.
-     * @param bindings
+     * @param location  the template location.
+     * @param bindings  the template bindings variables.
      *
      * @return          the resource rendered.
      */
     String render(@NotNull String template,
+                  @NotNull URI location,
                   @NotNull TemplateBindings bindings);
 }

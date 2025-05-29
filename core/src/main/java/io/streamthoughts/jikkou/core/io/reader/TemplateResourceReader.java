@@ -42,17 +42,6 @@ public final class TemplateResourceReader extends AbstractResourceReader {
      * Creates a new {@link TemplateResourceReader} instance.
      *
      * @param renderer           the render to be used for rendering resource template.
-     * @param resourceSupplier   the {@link InputStream} from which to read resources.
-     */
-    public TemplateResourceReader(@NotNull final ResourceTemplateRenderer renderer,
-                                  @NotNull final Supplier<InputStream> resourceSupplier,
-                                  @NotNull final ObjectMapper objectMapper) {
-        this(renderer, resourceSupplier, objectMapper, null);
-    }
-    /**
-     * Creates a new {@link TemplateResourceReader} instance.
-     *
-     * @param renderer           the render to be used for rendering resource template.
      * @param location the location {@link Path} of the template to read.
      */
     public TemplateResourceReader(@NotNull ResourceTemplateRenderer renderer,
@@ -160,8 +149,8 @@ public final class TemplateResourceReader extends AbstractResourceReader {
                     String.format("Resource file at location '%s' is empty", location)
             );
         }
-
-        final String rendered = renderer.render(resource, templateBindings);
+        ;
+        final String rendered = renderer.render(resource, location, templateBindings);
 
         return IOUtils.openStream(rendered);
     }

@@ -18,7 +18,10 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.core.template.TemplateBindings;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +47,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
 
     // list of scopes for bindings
     public enum Scopes {
-        LABELS, VALUES, SYSTEM, ENV, PROPS;
+        LABELS, VALUES, SYSTEM, ENV, PROPS, RESOURCE;
 
         public String key() {
             return name().toLowerCase();
@@ -80,6 +83,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
      **/
     @Override
     public String render(@NotNull final String template,
+                         @NotNull final URI location,
                          @NotNull final TemplateBindings bindings) {
         LOG.debug("Starting resource template rendering");
         JinjavaConfig config = JinjavaConfig.newBuilder()
@@ -90,7 +94,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
                 .build();
 
         Jinjava jinjava = new Jinjava(config);
-        Map<String, Object> bindingsMap = buildBindingsMapFrom(bindings);
+        Map<String, Object> bindingsMap = buildBindingsMapFrom(bindings, location);
         RenderResult result = jinjava.renderForResult(template, bindingsMap);
 
         List<TemplateError> errors = result.getErrors();
@@ -112,7 +116,8 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
 
     @NotNull
     @VisibleForTesting
-    static Map<String, Object> buildBindingsMapFrom(final TemplateBindings bindings) {
+    static Map<String, Object> buildBindingsMapFrom(final TemplateBindings bindings,
+                                                    final URI location) {
         HashMap<String, Object> bindingsMap = new HashMap<>();
 
         bindingsMap.put(Scopes.VALUES.key(), bindings.getValues());
@@ -127,6 +132,16 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
         systemValues.put(Scopes.PROPS.key(), bindings.getSystemProps());
 
         bindingsMap.put(Scopes.SYSTEM.key(), systemValues);
+
+        if (location != null) {
+            Path path = Paths.get(location.getPath());
+            bindingsMap.put(Scopes.RESOURCE.key(), Map.of(
+                "path", path,
+                "name", path.getFileName().toString(),
+                "directoryPath",  path.getParent().toAbsolutePath())
+            );
+        }
+
         return bindingsMap;
     }
 

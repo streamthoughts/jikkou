@@ -43,7 +43,8 @@ class JinjaResourceTemplateRendererTest {
             try (var reader = new TemplateResourceReader(
                 new JinjaResourceTemplateRenderer(),
                 () -> template,
-                OBJECT_MAPPER
+                OBJECT_MAPPER,
+                null
             )) {
 
                 // When
