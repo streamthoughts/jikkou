@@ -13,7 +13,7 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.aws.ApiVersions;
 import io.streamthoughts.jikkou.aws.AwsExtensionProvider;
-import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
+import io.streamthoughts.jikkou.aws.AwsGlueLabelsAndAnnotations;
 import io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer;
 import io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeDescription;
 import io.streamthoughts.jikkou.aws.change.handler.CreateAwsGlueSchemaChangeHandler;
@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -77,31 +76,31 @@ public class AwsGlueSchemaController
             @NotNull Collection<AwsGlueSchema> resources,
             @NotNull ReconciliationContext context) {
 
-        // Get described resources that are candidates for this reconciliation.
-        Map<String, List<AwsGlueSchema>> expectedSchemas = groupBySchemaRegistryName(resources, context.selector()::apply);
+        // Get Schemas that are candidates for this reconciliation.
+        List<AwsGlueSchema> filtered = resources.stream().filter(context.selector()::apply).toList();
 
+        if (filtered.isEmpty()) {
+            return List.of();
+        }
 
-        // Get existing resources from the environment.
-        AwsGlueSchemaCollector collector = new AwsGlueSchemaCollector();
+        final AwsGlueSchemaCollector collector = new AwsGlueSchemaCollector();
         collector.init(this.extensionContext().contextForExtension(AwsGlueSchemaCollector.class));
 
-        AwsGlueSchemaChangeComputer computer = new AwsGlueSchemaChangeComputer();
-        List<ResourceChange> allChanges = new LinkedList<>();
-        for (Map.Entry<String, List<AwsGlueSchema>> schemas : expectedSchemas.entrySet()) {
-            Set<String> registryNames = schemas.getValue().stream()
-                .map(AwsGlueSchema::getMetadata)
-                .map(it -> it.findAnnotationByKey(AwsGlueAnnotations.SCHEMA_REGISTRY_NAME))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(Object::toString)
-                .collect(Collectors.toSet());
+        final AwsGlueSchemaChangeComputer computer = new AwsGlueSchemaChangeComputer();
+        final List<ResourceChange> allChanges = new LinkedList<>();
 
-            List<AwsGlueSchema> actualSubjects = collector.listAll(registryNames, context.selector()).stream()
+        // Group all Schemas by Registry Name
+        Map<String, List<AwsGlueSchema>> expectedSchemas = groupBySchemaRegistryName(filtered, context.selector()::apply);
+        for (Map.Entry<String, List<AwsGlueSchema>> schemas : expectedSchemas.entrySet()) {
+            final String registryName = schemas.getKey();
+
+            // Get existing Schemas for current Registry Name
+            List<AwsGlueSchema> actualSchemas = collector.listAll(Set.of(registryName), context.selector()).stream()
                 .filter(context.selector()::apply)
                 .toList();
 
             // Compute changes
-            allChanges.addAll(computer.computeChanges(actualSubjects, schemas.getValue()));
+            allChanges.addAll(computer.computeChanges(actualSchemas, schemas.getValue()));
         }
 
         return allChanges;
@@ -115,7 +114,7 @@ public class AwsGlueSchemaController
             .filter(predicate)
             .collect(Collectors.groupingBy(
                 it -> it.getMetadata()
-                    .getLabelByKey(AwsGlueAnnotations.SCHEMA_REGISTRY_NAME)
+                    .getLabelByKey(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_NAME)
                     .getValue()
                     .toString(),
                 Collectors.toList())

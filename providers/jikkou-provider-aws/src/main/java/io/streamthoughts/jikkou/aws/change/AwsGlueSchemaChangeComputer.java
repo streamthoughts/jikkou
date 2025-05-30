@@ -6,7 +6,7 @@
  */
 package io.streamthoughts.jikkou.aws.change;
 
-import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
+import io.streamthoughts.jikkou.aws.AwsGlueLabelsAndAnnotations;
 import io.streamthoughts.jikkou.aws.models.AwsGlueSchema;
 import io.streamthoughts.jikkou.core.data.SchemaAndType;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
@@ -21,7 +21,6 @@ import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<String, AwsGlueSchema, ResourceChange> {
 
@@ -44,17 +43,30 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
          **/
         @Override
         public ResourceChange createChangeForDelete(String key, AwsGlueSchema before) {
+            ResourceChangeSpecBuilder builder = ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.DELETE)
+                .withChange(StateChange.delete(DATA_SCHEMA, getSchemaAndType(before)))
+                .withChange(StateChange.delete(DATA_FORMAT, before.getSpec().getDataFormat()));
+
+            if (before.getSpec().getDescription() != null) {
+                builder.withChange(StateChange.delete(DATA_SCHEMA_DESCRIPTION, before.getSpec().getDescription()));
+            }
+
+            if (before.getSpec().getCompatibility() != null) {
+                builder.withChange(StateChange.delete(DATA_COMPATIBILITY, before.getSpec().getCompatibility()));
+            }
+
             return GenericResourceChange
                 .builder(AwsGlueSchema.class)
                 .withMetadata(before.getMetadata())
-                .withSpec(ResourceChangeSpec
-                    .builder()
-                    .withOperation(Operation.DELETE)
-                    .build()
-                )
+                .withSpec(builder.build())
                 .build();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public ResourceChange createChangeForCreate(String key, AwsGlueSchema after) {
             ResourceChangeSpecBuilder builder = ResourceChangeSpec
@@ -78,12 +90,16 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
                 .build();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public ResourceChange createChangeForUpdate(String key, AwsGlueSchema before, AwsGlueSchema after) {
             StateChangeList<StateChange> changes = StateChangeList.emptyList()
-                .with(getChangeForCompatibility(before, after))
-                .with(getChangeForSchema(before, after))
-                .with(getChangeForSchemaType(before, after));
+                .with(StateChange.with(DATA_COMPATIBILITY, before.getSpec().getCompatibility(), after.getSpec().getCompatibility()))
+                .with(StateChange.with(DATA_FORMAT, before.getSpec().getDataFormat(), after.getSpec().getDataFormat()))
+                .with(StateChange.with(DATA_SCHEMA_DESCRIPTION, before.getSpec().getDescription(), after.getSpec().getDescription()))
+                .with(StateChange.with(DATA_SCHEMA, getSchemaAndType(before), getSchemaAndType(after)));
 
             return GenericResourceChange
                 .builder(AwsGlueSchema.class)
@@ -97,43 +113,13 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
                 .build();
         }
 
-        @NotNull
-        private StateChange getChangeForSchemaType(AwsGlueSchema before,
-                                                   AwsGlueSchema after) {
-            return StateChange.with(
-                DATA_FORMAT,
-                Optional.ofNullable(before).map(o -> o.getSpec().getDataFormat()).orElse(null),
-                Optional.ofNullable(after).map(o -> o.getSpec().getDataFormat()).orElse(null)
-            );
-        }
-
-        @NotNull
-        private StateChange getChangeForCompatibility(AwsGlueSchema before,
-                                                      AwsGlueSchema after) {
-            return StateChange.with(
-                DATA_COMPATIBILITY,
-                Optional.ofNullable(before).map(o -> o.getSpec().getCompatibility()).orElse(null),
-                Optional.ofNullable(after).map(o -> o.getSpec().getCompatibility()).orElse(null)
-            );
-        }
-
-        @NotNull
-        private StateChange getChangeForSchema(AwsGlueSchema before,
-                                               AwsGlueSchema after) {
-
-            SchemaAndType beforeSchema = getSchemaAndType(before);
-            SchemaAndType afterSchema = getSchemaAndType(after);
-
-            return StateChange.with(DATA_SCHEMA, beforeSchema, afterSchema);
-        }
-
         private SchemaAndType getSchemaAndType(AwsGlueSchema subject) {
             return Optional.ofNullable(subject)
                 .map(AwsGlueSchema::getSpec)
                 .map(spec -> new SchemaAndType(
                     spec.getSchemaDefinition().value(),
                     spec.getDataFormat(),
-                    CoreAnnotations.isAnnotatedWith(subject, AwsGlueAnnotations.SCHEMA_REGISTRY_USE_CANONICAL_FINGERPRINT)
+                    CoreAnnotations.isAnnotatedWith(subject, AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_USE_CANONICAL_FINGERPRINT)
                 ))
                 .orElse(SchemaAndType.empty());
         }

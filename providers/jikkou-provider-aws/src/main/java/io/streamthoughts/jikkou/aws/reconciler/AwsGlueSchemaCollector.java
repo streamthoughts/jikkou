@@ -7,7 +7,7 @@
 package io.streamthoughts.jikkou.aws.reconciler;
 
 import io.streamthoughts.jikkou.aws.AwsExtensionProvider;
-import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
+import io.streamthoughts.jikkou.aws.AwsGlueLabelsAndAnnotations;
 import io.streamthoughts.jikkou.aws.model.Compatibility;
 import io.streamthoughts.jikkou.aws.models.AwsGlueSchema;
 import io.streamthoughts.jikkou.aws.models.AwsGlueSchemaSpec;
@@ -109,12 +109,12 @@ public class AwsGlueSchemaCollector extends ContextualExtension implements Colle
             .withMetadata(ObjectMeta
                 .builder()
                 .withName(schemaName)
-                .withLabel(AwsGlueAnnotations.SCHEMA_REGISTRY_NAME, schema.registryName())
-                .withAnnotation(AwsGlueAnnotations.SCHEMA_CREATED_TIME, schema.createdTime())
-                .withAnnotation(AwsGlueAnnotations.SCHEMA_UPDATED_TIME, schema.updatedTime())
-                .withAnnotation(AwsGlueAnnotations.SCHEMA_REGISTRY_ARN, schema.registryArn())
-                .withAnnotation(AwsGlueAnnotations.SCHEMA_SCHEMA_ARN, schema.schemaArn())
-                .withAnnotation(AwsGlueAnnotations.SCHEMA_SCHEMA_VERSION_ID, versionResponse.schemaVersionId())
+                .withLabel(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_NAME, schema.registryName())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_CREATED_TIME, schema.createdTime())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_UPDATED_TIME, schema.updatedTime())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_ARN, schema.registryArn())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_ARN, schema.schemaArn())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_VERSION_ID, versionResponse.schemaVersionId())
                 .build()
             )
             .withSpec(AwsGlueSchemaSpec
@@ -122,6 +122,7 @@ public class AwsGlueSchemaCollector extends ContextualExtension implements Colle
                 .withCompatibility(Compatibility.valueOf(schema.compatibilityAsString()))
                 .withDataFormat(SchemaType.valueOf(schema.dataFormatAsString()))
                 .withSchemaDefinition(new SchemaHandle(versionResponse.schemaDefinition()))
+                .withDescription(schema.description())
                 .build()
             )
             .build();

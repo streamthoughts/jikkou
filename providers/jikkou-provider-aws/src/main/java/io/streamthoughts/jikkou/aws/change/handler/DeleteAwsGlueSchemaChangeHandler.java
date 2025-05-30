@@ -6,7 +6,7 @@
  */
 package io.streamthoughts.jikkou.aws.change.handler;
 
-import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
+import io.streamthoughts.jikkou.aws.AwsGlueLabelsAndAnnotations;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
@@ -54,7 +54,7 @@ public class DeleteAwsGlueSchemaChangeHandler extends AbstractAwsGlueSchemaChang
             final String schemaName = change.getMetadata().getName();
 
             final String registryName = (String) change.getMetadata()
-                .getLabelByKey(AwsGlueAnnotations.SCHEMA_REGISTRY_NAME)
+                .getLabelByKey(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_NAME)
                 .getValue();
 
             DeleteSchemaRequest deleteRequest = DeleteSchemaRequest.builder()

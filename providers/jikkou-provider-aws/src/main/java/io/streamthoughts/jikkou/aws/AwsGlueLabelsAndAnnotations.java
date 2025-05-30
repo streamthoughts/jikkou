@@ -6,7 +6,7 @@
  */
 package io.streamthoughts.jikkou.aws;
 
-public interface AwsGlueAnnotations {
+public interface AwsGlueLabelsAndAnnotations {
 
     String SCHEMAREGISTRY_AWSGLUE_PREFIX = "glue.aws.amazon.com/";
 

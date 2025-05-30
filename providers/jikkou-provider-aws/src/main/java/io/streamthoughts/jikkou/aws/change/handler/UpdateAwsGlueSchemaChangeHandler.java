@@ -11,7 +11,7 @@ import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DA
 import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DATA_SCHEMA_DESCRIPTION;
 import static io.streamthoughts.jikkou.core.reconciler.Operation.UPDATE;
 
-import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
+import io.streamthoughts.jikkou.aws.AwsGlueLabelsAndAnnotations;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
@@ -29,11 +29,17 @@ import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.glue.model.Compatibility;
 import software.amazon.awssdk.services.glue.model.RegisterSchemaVersionRequest;
 import software.amazon.awssdk.services.glue.model.SchemaId;
+import software.amazon.awssdk.services.glue.model.SchemaVersionNumber;
 import software.amazon.awssdk.services.glue.model.UpdateSchemaRequest;
 
 public final class UpdateAwsGlueSchemaChangeHandler
     extends AbstractAwsGlueSchemaChangeHandler
     implements ChangeHandler<ResourceChange> {
+
+    public static final SchemaVersionNumber LATEST_VERSION_NUMBER = SchemaVersionNumber
+        .builder()
+        .latestVersion(true)
+        .build();
 
     /**
      * Creates a new {@link UpdateAwsGlueSchemaChangeHandler} instance.
@@ -68,7 +74,7 @@ public final class UpdateAwsGlueSchemaChangeHandler
 
             final String schemaName = change.getMetadata().getName();
             final String registryName = (String) change.getMetadata()
-                .getLabelByKey(AwsGlueAnnotations.SCHEMA_REGISTRY_NAME)
+                .getLabelByKey(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_NAME)
                 .getValue();
 
             // Schema Definition
@@ -124,6 +130,7 @@ public final class UpdateAwsGlueSchemaChangeHandler
                 .schemaName(schemaName)
                 .build())
             .description(description.getAfter())
+            .schemaVersionNumber(LATEST_VERSION_NUMBER)
             .build();
         return Mono.fromRunnable(() -> client.updateSchema(request));
     }
@@ -137,6 +144,7 @@ public final class UpdateAwsGlueSchemaChangeHandler
                 .schemaName(schemaName)
                 .build())
             .compatibility(compatibility.getAfter()) // Options: NONE, BACKWARD, FORWARD, FULL
+            .schemaVersionNumber(LATEST_VERSION_NUMBER)
             .build();
         return Mono.fromRunnable(() -> client.updateSchema(request));
     }

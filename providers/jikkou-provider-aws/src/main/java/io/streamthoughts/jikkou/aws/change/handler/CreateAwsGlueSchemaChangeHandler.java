@@ -11,7 +11,7 @@ import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DA
 import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DATA_SCHEMA;
 import static io.streamthoughts.jikkou.aws.change.AwsGlueSchemaChangeComputer.DATA_SCHEMA_DESCRIPTION;
 
-import io.streamthoughts.jikkou.aws.AwsGlueAnnotations;
+import io.streamthoughts.jikkou.aws.AwsGlueLabelsAndAnnotations;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.models.change.SpecificStateChange;
@@ -74,7 +74,7 @@ public final class CreateAwsGlueSchemaChangeHandler
                 .getAfter();
 
             String registryName = (String) change.getMetadata()
-                .getLabelByKey(AwsGlueAnnotations.SCHEMA_REGISTRY_NAME)
+                .getLabelByKey(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_NAME)
                 .getValue();
 
             CreateSchemaRequest.Builder builder = CreateSchemaRequest.builder()
