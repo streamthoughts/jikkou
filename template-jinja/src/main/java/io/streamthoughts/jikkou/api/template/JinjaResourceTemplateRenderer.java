@@ -25,8 +25,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +85,7 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
      **/
     @Override
     public String render(@NotNull final String template,
-                         @NotNull final URI location,
+                         @Nullable final URI location,
                          @NotNull final TemplateBindings bindings) {
         LOG.debug("Starting resource template rendering");
         JinjavaConfig config = JinjavaConfig.newBuilder()
@@ -138,7 +140,8 @@ public class JinjaResourceTemplateRenderer implements ResourceTemplateRenderer {
             bindingsMap.put(Scopes.RESOURCE.key(), Map.of(
                 "path", path,
                 "name", path.getFileName().toString(),
-                "directoryPath",  path.getParent().toAbsolutePath())
+                "directoryPath", Optional.ofNullable(path.getParent()).map(Path::toAbsolutePath).map(Path::toString).orElse("")
+                )
             );
         }
 

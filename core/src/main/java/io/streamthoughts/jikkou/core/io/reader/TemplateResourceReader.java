@@ -149,7 +149,7 @@ public final class TemplateResourceReader extends AbstractResourceReader {
                     String.format("Resource file at location '%s' is empty", location)
             );
         }
-        ;
+
         final String rendered = renderer.render(resource, location, templateBindings);
 
         return IOUtils.openStream(rendered);
