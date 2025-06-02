@@ -53,6 +53,11 @@ public class AwsGlueSchemaCollector extends ContextualExtension implements Colle
 
     private static final Logger LOG = LoggerFactory.getLogger(AwsGlueSchemaCollector.class);
 
+    public static final SchemaVersionNumber LATEST_VERSION_NUMBER = SchemaVersionNumber
+        .builder()
+        .latestVersion(true)
+        .build();
+
     public interface Config {
         ConfigProperty<String> REGISTRY_NAME = ConfigProperty
             .ofString("registryName")
@@ -84,26 +89,22 @@ public class AwsGlueSchemaCollector extends ContextualExtension implements Colle
                                       @NotNull String registryName,
                                       @NotNull GlueClient glueClient) {
 
-        GetSchemaRequest getSchemaReq = GetSchemaRequest.builder()
+        // Get schema
+        GetSchemaResponse schema = glueClient.getSchema(GetSchemaRequest.builder()
             .schemaId(SchemaId.builder()
                 .registryName(registryName)
                 .schemaName(schemaName)
-                .build())
-            .build();
-
-        GetSchemaResponse schema = glueClient.getSchema(getSchemaReq);
-
-        long latestVersion = schema.latestSchemaVersion();
-
-        GetSchemaVersionResponse versionResponse = glueClient.getSchemaVersion(GetSchemaVersionRequest.builder()
-            .schemaId(SchemaId.builder()
-                .registryName(registryName)
-                .schemaName(schemaName)
-                .build())
-            .schemaVersionNumber(SchemaVersionNumber.builder()
-                .versionNumber(latestVersion)
                 .build())
             .build());
+
+        // Get latest checkpoint version
+        GetSchemaVersionResponse schemaVersion = glueClient.getSchemaVersion(GetSchemaVersionRequest.builder()
+            .schemaId(SchemaId.builder()
+                .registryName(registryName)
+                .schemaName(schemaName)
+                .build())
+            .schemaVersionNumber(LATEST_VERSION_NUMBER).build()
+        );
 
         return AwsGlueSchema.builder()
             .withMetadata(ObjectMeta
@@ -114,14 +115,14 @@ public class AwsGlueSchemaCollector extends ContextualExtension implements Colle
                 .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_UPDATED_TIME, schema.updatedTime())
                 .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_ARN, schema.registryArn())
                 .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_ARN, schema.schemaArn())
-                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_VERSION_ID, versionResponse.schemaVersionId())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_VERSION_ID, schemaVersion.schemaVersionId())
                 .build()
             )
             .withSpec(AwsGlueSchemaSpec
                 .builder()
                 .withCompatibility(Compatibility.valueOf(schema.compatibilityAsString()))
                 .withDataFormat(SchemaType.valueOf(schema.dataFormatAsString()))
-                .withSchemaDefinition(new SchemaHandle(versionResponse.schemaDefinition()))
+                .withSchemaDefinition(new SchemaHandle(schemaVersion.schemaDefinition()))
                 .withDescription(schema.description())
                 .build()
             )
