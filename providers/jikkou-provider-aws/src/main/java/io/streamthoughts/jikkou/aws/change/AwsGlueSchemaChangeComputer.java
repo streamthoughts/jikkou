@@ -28,6 +28,7 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
     public static final String DATA_SCHEMA = "schema";
     public static final String DATA_FORMAT = "dataFormat";
     public static final String DATA_SCHEMA_DESCRIPTION = "description";
+    public static final String EMPTY_DESCRIPTION = "";
 
     /**
      * Creates a new {@link AwsGlueSchemaChangeComputer} instance.
@@ -98,7 +99,10 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
             StateChangeList<StateChange> changes = StateChangeList.emptyList()
                 .with(StateChange.with(DATA_COMPATIBILITY, before.getSpec().getCompatibility(), after.getSpec().getCompatibility()))
                 .with(StateChange.with(DATA_FORMAT, before.getSpec().getDataFormat(), after.getSpec().getDataFormat()))
-                .with(StateChange.with(DATA_SCHEMA_DESCRIPTION, before.getSpec().getDescription(), after.getSpec().getDescription()))
+                .with(StateChange.with(DATA_SCHEMA_DESCRIPTION,
+                    Optional.ofNullable(before.getSpec().getDescription()).orElse(EMPTY_DESCRIPTION),
+                    Optional.ofNullable(after.getSpec().getDescription()).orElse(EMPTY_DESCRIPTION))
+                )
                 .with(StateChange.with(DATA_SCHEMA, getSchemaAndType(before), getSchemaAndType(after)));
 
             return GenericResourceChange
