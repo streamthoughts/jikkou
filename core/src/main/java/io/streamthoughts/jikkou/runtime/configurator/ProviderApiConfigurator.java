@@ -8,13 +8,12 @@ package io.streamthoughts.jikkou.runtime.configurator;
 
 import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSIONS_PROVIDER_DEFAULT_ENABLED;
 import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSION_PROVIDER_CONFIG_PREFIX;
-import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.PROVIDERS_CONFIG;
+import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.PROVIDER_CONFIG;
 
 import io.streamthoughts.jikkou.common.utils.ServiceLoaders;
 import io.streamthoughts.jikkou.core.BaseApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.exceptions.InvalidConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionClassLoader;
 import io.streamthoughts.jikkou.core.extension.ExtensionResolver;
 import io.streamthoughts.jikkou.core.extension.ExternalExtension;
@@ -60,23 +59,21 @@ public class ProviderApiConfigurator extends BaseApiConfigurator {
         Set<ClassLoader> cls = getAllClassLoaders(extensionPaths);
 
         // Load ExtensionProvider configurations
-        final Map<String, ExtensionConfigEntry> providers = Optional.ofNullable(getPropertyValue(PROVIDERS_CONFIG)).orElse(List.of())
+        final List<ExtensionConfigEntry> providers = Optional.ofNullable(getPropertyValue(PROVIDER_CONFIG)).orElse(List.of())
             .stream()
             .filter(ExtensionConfigEntry::enabled)
-            .collect(Collectors.toMap(ExtensionConfigEntry::type, Function.identity(), (o1, o2) -> {
-                throw new InvalidConfigException(
-                    String.format(
-                        "Multiple providers are configured and enabled for type: %s. Please disable or delete one of the configurations.", o1.type())
-                );
-            }));
+            .toList();
+
+        final Map<String, ExtensionConfigEntry> providerByName = providers.stream()
+            .collect(Collectors.toMap(ExtensionConfigEntry::name, Function.identity()));
 
         // Load all ExtensionProviders
         for (ExtensionProvider provider : ServiceLoaders.loadAllServices(ExtensionProvider.class, cls)) {
-            String type = provider.getClass().getName();
-            if (providers.containsKey(type)) {
-                Configuration config = providers.get(type).config();
+            final String providerName = provider.getName();
+            if (providerByName.containsKey(providerName)) {
+                Configuration config = providerByName.get(providerName).config();
                 // Looking for direct provider config override
-                Optional<Configuration> override = configuration().findConfig(provider.getName());
+                Optional<Configuration> override = configuration().findConfig(providerName);
                 if (override.isPresent()) {
                     config  = override.get().withFallback(config);
                 }
@@ -84,14 +81,14 @@ public class ProviderApiConfigurator extends BaseApiConfigurator {
             } else {
                 // backward-compatibility
                 Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.get(configuration());
-                if (legacyIsExtensionProviderEnabled(configuration(), provider.getName(), extensionEnabledByDefault)) {
-                    Optional<Configuration> legacyConfiguration = configuration().findConfig(provider.getName());
-                    LOG.warn("Deprecated provider configuration `jikkou.{}` was detected. Please, you should consider using the new `jikkou.providers`.", provider.getName());
+                if (legacyIsExtensionProviderEnabled(configuration(), providerName, extensionEnabledByDefault)) {
+                    Optional<Configuration> legacyConfiguration = configuration().findConfig(providerName);
+                    LOG.warn("Deprecated provider configuration `jikkou.{}` was detected. Please, you should consider using the new `jikkou.providers`.", providerName);
                     builder = builder.register(provider, legacyConfiguration.orElse(Configuration.empty()));
                 } else {
                     LOG.debug(
                         "Provider '{}' was found but will be ignored. This provider is either not configured or disabled through.",
-                        type
+                        providerName
                     );
                 }
             }

@@ -42,6 +42,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
 
     final ConfigProperty<String> schemaRegistryUrl = ConfigProperty
         .ofString("url")
+        .required(true)
         .description("Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas.");
 
     final ConfigProperty<String> schemaRegistryVendor = ConfigProperty

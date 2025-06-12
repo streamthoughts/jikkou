@@ -10,14 +10,17 @@ import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
 import io.streamthoughts.jikkou.client.context.Context;
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -29,17 +32,23 @@ import picocli.CommandLine.Parameters;
 @Singleton
 public class SetContextCommand extends CLIBaseCommand implements Callable<Integer> {
 
-    @Parameters(index = "0", description = "Context name")
+    @Parameters(index = "0", description = "The name of the context to which the configuration applies.")
     String contextName;
 
-    @Option(names = {"--config-props-file"}, description = "Configuration properties file for client")
+    @Option(names = {"--config-props-file"}, description = "Path(s) to one or more configuration properties files.")
     String[] clientConfigPropertiesFile;
 
-    @Option(names = {"--config-props"}, description = "Configuration properties for client")
+    @Option(names = {"--config-props"}, description = "Inline configuration properties in the form of key=value pairs.")
     String[] clientConfigProperties;
 
-    @Option(names = {"--config-file"}, description = "Configuration file for client")
+    @Option(names = {"--config-file"}, description = "Path to a Jikkou configuration file.")
     String clientConfigFile;
+
+    @Option(names = {"--provider"}, description = "Name of the provider to which this configuration should be attached.")
+    String provider;
+
+    @Option(names = {"--config-prefix"}, description = "Prefix to apply to all configuration property keys.")
+    String configPrefix;
 
     @Inject
     private ConfigurationContext configurationContext;
@@ -70,9 +79,16 @@ public class SetContextCommand extends CLIBaseCommand implements Callable<Intege
             }
         }
 
-        final var clientConfigMap = new HashMap<String, Object>();
+        Map<String, Object> clientConfigMap = new HashMap<>();
         for (final String name : clientConfigProps.stringPropertyNames()) {
-            clientConfigMap.put(name, clientConfigProps.getProperty(name));
+            String key = configPrefix != null ? configPrefix + "." + name : name;
+            clientConfigMap.put(key, clientConfigProps.getProperty(name));
+        }
+
+        if (provider != null) {
+            String providerConfigKey = JikkouConfigProperties.PROVIDER_CONFIG.key() + "." + provider + ".config.";
+            clientConfigMap = clientConfigMap.entrySet().stream()
+                .collect(Collectors.toMap(entry -> providerConfigKey + entry.getKey(), Map.Entry::getValue));
         }
 
         configurationContext.setContext(contextName, new Context(clientConfigFile, clientConfigMap));

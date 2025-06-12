@@ -50,25 +50,25 @@ jikkou:
   extension.paths: []
 
   # The providers
-  providers:
-    - name: core
+  provider:
+    core:
       enabled: true
       type: io.streamthoughts.jikkou.core.CoreExtensionProvider
     # Default configuration for Apache Kafka
-    - name: kafka
+    kafka:
       enabled: true
       type: io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
       config:
         client:
           bootstrap.servers: localhost:9092
     # Default configuration for Schema Registry
-    - name: schemaregistry
+    schemaregistry:
       enabled: true
       type: io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
       config:
         url: http://localhost:8081
     # Default configuration for Kafka Connect
-    - name: kafkaconnect
+    kafkaconnect:
       enabled: true
       type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
       config:

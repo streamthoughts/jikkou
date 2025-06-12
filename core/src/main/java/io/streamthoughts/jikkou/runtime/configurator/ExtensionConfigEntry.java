@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,11 +31,12 @@ public record ExtensionConfigEntry(String name,
     public static final ConfigProperty<String> NAME_CONFIG = ConfigProperty
         .ofString("name")
         .description("The name of the configured extension")
-        .defaultValue((String) null);
+        .required(false);
 
     public static final ConfigProperty<String> TYPE_CONFIG = ConfigProperty
         .ofString("type")
-        .description("The type or fully qualified class name of the extension");
+        .description("The type or fully qualified class name of the extension")
+        .required(false);
 
     public static final ConfigProperty<Integer> PRIORITY_CONFIG = ConfigProperty
         .ofInt("priority")
@@ -52,9 +54,13 @@ public record ExtensionConfigEntry(String name,
         .defaultValue(Configuration.empty());
 
     public static ExtensionConfigEntry of(final @NotNull Configuration config) {
+        return of(config, null);
+    }
+
+    public static ExtensionConfigEntry of(final @NotNull Configuration config, String name) {
         Objects.requireNonNull(config, "config must not be null");
         return new ExtensionConfigEntry(
-            NAME_CONFIG.get(config),
+            Optional.ofNullable(name).orElseGet(() -> NAME_CONFIG.get(config)),
             TYPE_CONFIG.get(config),
             PRIORITY_CONFIG.get(config),
             ENABLED_CONFIG.get(config),

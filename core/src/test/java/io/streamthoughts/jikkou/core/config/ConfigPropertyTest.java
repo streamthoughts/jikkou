@@ -120,13 +120,22 @@ class ConfigPropertyTest {
     }
 
     @Test
-    void shouldThrowExceptionGivenNoValue() {
+    void shouldThrowExceptionGivenNoValueAndRequiredTrue() {
         // Given
-        ConfigProperty<String> config = ConfigProperty.ofString(KEY);
+        ConfigProperty<String> config = ConfigProperty.ofString(KEY).required(true);
 
         // When, Then
         ConfigException.Missing exception = assertThrows(ConfigException.Missing.class, () -> config.get(Configuration.empty()));
         Assertions.assertEquals(KEY, exception.property().key());
+    }
+
+    @Test
+    void shouldNotThrowExceptionGivenNoValueAndRequiredFalse() {
+        // Given
+        ConfigProperty<String> config = ConfigProperty.ofString(KEY).required(false);
+
+        // When, Then
+        Assertions.assertDoesNotThrow(() -> config.get(Configuration.empty()));
     }
 
     @Test

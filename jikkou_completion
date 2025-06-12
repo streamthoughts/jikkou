@@ -1061,7 +1061,7 @@ function _picocli_jikkou_config_setcontext() {
 
   local commands=""
   local flag_opts="-h --help -V --version"
-  local arg_opts="--logger-level --config-props-file --config-props --config-file"
+  local arg_opts="--logger-level --config-props-file --config-props --config-file --provider --config-prefix"
 
   type compopt &>/dev/null && compopt +o default
 
@@ -1076,6 +1076,12 @@ function _picocli_jikkou_config_setcontext() {
       return
       ;;
     --config-file)
+      return
+      ;;
+    --provider)
+      return
+      ;;
+    --config-prefix)
       return
       ;;
   esac

@@ -312,7 +312,7 @@ public final class ConfigProperty<T> {
      */
     public T get(final @NotNull Configuration config) {
         Optional<T> option = getOptional(config);
-        return option.orElseThrow(() -> new ConfigException.Missing(this));
+        return isRequired ? option.orElseThrow(() -> new ConfigException.Missing(this)) : option.orElse(null);
     }
 
     /**

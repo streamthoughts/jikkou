@@ -29,8 +29,15 @@ public final class JikkouConfigProperties {
         .description("A list of directories from which to load external resource and extensions (controller, collector, transformation, validation, etc.")
         .defaultValue(Collections.emptyList());
 
-    public static final ConfigProperty<List<ExtensionConfigEntry>> PROVIDERS_CONFIG = createExtensionConfig(
-        "providers", "The list of extension providers.");
+    public static final ConfigProperty<List<ExtensionConfigEntry>> PROVIDER_CONFIG = ConfigProperty
+        .ofConfig( "provider")
+        .description( "The extension providers.")
+        .map(config -> config.asMap(false).keySet()
+            .stream()
+            .map(key -> ExtensionConfigEntry.of(config.getConfig(key), key))
+            .toList()
+        )
+        .defaultValue(List.of());
 
     public static final ConfigProperty<List<ExtensionConfigEntry>> VALIDATIONS_CONFIG = createExtensionConfig(
         "validations", "The list of custom validations to apply on resources.");
