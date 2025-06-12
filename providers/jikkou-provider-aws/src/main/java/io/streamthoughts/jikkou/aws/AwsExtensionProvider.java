@@ -34,7 +34,8 @@ public class AwsExtensionProvider extends BaseExtensionProvider {
     public interface Config {
         ConfigProperty<String> REGION = ConfigProperty
             .ofString("aws.client.region")
-            .description("The AWS S3 Region, e.g. us-east-1");
+            .description("The AWS S3 Region, e.g. us-east-1")
+            .required(true);
 
         ConfigProperty<String> ACCESS_KEY_ID = ConfigProperty
             .ofString("aws.client.accessKeyId")

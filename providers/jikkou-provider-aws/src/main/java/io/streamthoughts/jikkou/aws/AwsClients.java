@@ -37,7 +37,7 @@ public final class AwsClients {
         region.ifPresent(s -> builder.region(Region.of(AwsExtensionProvider.Config.REGION.get(configuration))));
 
         Optional<String> endpointOverride = AwsExtensionProvider.Config.ENDPOINT_OVERRIDE.getOptional(configuration);
-        endpointOverride.ifPresent(s -> builder.endpointOverride(URI.create(s)));
+        endpointOverride.filter(Strings::isNotBlank).ifPresent(s -> builder.endpointOverride(URI.create(s)));
 
         return builder.build();
     }
