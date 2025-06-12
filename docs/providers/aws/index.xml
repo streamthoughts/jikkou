@@ -7,12 +7,9 @@
 through the Jikkou client configuration property &lt;code>jikkou.providers&lt;/code>.&lt;/p>
 &lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-providers = [
 # AWS
-{
+provider.aws {
 enabled = true
-name = aws
-type = io.streamthoughts.jikkou.aws.AwsExtensionProvider
 config = {
 # The AWS S3 Region, e.g. us-east-1
 aws.client.region = &amp;#34;&amp;#34;
@@ -27,8 +24,7 @@ aws.client.endpointOverride = &amp;#34;&amp;#34;
 # The name of the registries. Used only for lookup.
 aws.glue.registryNames = &amp;#34;&amp;#34;
 }
-},
-]
+}
 }
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://www.jikkou.io/docs/providers/aws/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/resources/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
