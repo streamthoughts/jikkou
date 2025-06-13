@@ -13,10 +13,12 @@ import io.streamthoughts.jikkou.core.models.ConfigValue;
 import io.streamthoughts.jikkou.core.models.Configs;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
+import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.kafka.common.config.TopicConfig;
 import org.jetbrains.annotations.NotNull;
@@ -51,16 +53,15 @@ public class TopicConfigKeysValidation extends TopicValidation {
                 })
                 .toList();
 
+        List<Pattern> ignoreConfigKeys = context().<KafkaExtensionProvider>provider().topicValidationIgnoreConfigKeys();
         final List<ValidationError> errors = configs.flatten().values().stream()
                 .map(ConfigValue::name)
+                .filter(o -> ignoreConfigKeys.stream().noneMatch(pattern -> pattern.matcher(o).matches()))
                 .filter(o -> !definedStaticConfigKeys.contains(o))
                 .map(o -> newValidationError(resource, o))
                 .toList();
 
-        if (!errors.isEmpty()) {
-            return new ValidationResult(errors);
-        }
-        return ValidationResult.success();
+        return !errors.isEmpty() ? new ValidationResult(errors) : ValidationResult.success();
     }
 
     @NotNull

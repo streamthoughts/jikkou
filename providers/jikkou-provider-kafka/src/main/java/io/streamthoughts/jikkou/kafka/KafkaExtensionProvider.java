@@ -57,7 +57,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
     /**
      * The provider config.
      */
-    interface Config {
+    public interface Config {
         ConfigProperty<Map<String, Object>> CLIENT = ConfigProperty
             .ofMap("client")
             .description("The kafka client configuration properties.")
@@ -74,6 +74,14 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
                 Pattern.compile("^__.*$"),
                 Pattern.compile(".*-changelog$")
             ));
+
+        ConfigProperty<List<Pattern>> TOPICS_VALIDATION_IGNORE_CONFIG_KEYS = ConfigProperty
+            .ofList("topics.validation.ignoreConfigKeys")
+            .description("List of regex patterns for config keys to ignore during topic validation.")
+            .map(l -> l.stream().map(Pattern::compile).toList())
+            .defaultValue(() -> List.of(
+                Pattern.compile("^confluent.*")
+            ));
     }
 
     /**
@@ -86,6 +94,10 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
 
     public List<Pattern> topicDeleteExcludePatterns() {
         return Config.TOPIC_DELETE_EXCLUDE_PATTERNS.get(configuration);
+    }
+
+    public List<Pattern> topicValidationIgnoreConfigKeys() {
+        return Config.TOPICS_VALIDATION_IGNORE_CONFIG_KEYS.get(configuration);
     }
 
     public AdminClientContextFactory newAdminClientContextFactory() {
