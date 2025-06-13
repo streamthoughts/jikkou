@@ -6,40 +6,29 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.config.internals.Type;
-import io.streamthoughts.jikkou.core.data.TypeConverter;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
- * Default ExtensionContext.
+ * Default {@link ExtensionContext}.
  */
 public final class DefaultExtensionContext implements ExtensionContext {
 
     private final ExtensionFactory factory;
     private final ExtensionDescriptor<?> descriptor;
-    private final Map<String, ConfigProperty> propertiesByName;
 
     /**
      * Creates a new {@link DefaultExtensionContext} instance.
      *
-     * @param descriptor    The ExtensionDescriptor
+     * @param descriptor The ExtensionDescriptor
      */
     public DefaultExtensionContext(final ExtensionFactory factory,
                                    final ExtensionDescriptor<?> descriptor) {
         this.factory = factory;
         this.descriptor = Objects.requireNonNull(descriptor, "descriptor cannot be null");
-        this.propertiesByName = getConfigProperties(descriptor)
-            .stream()
-            .collect(Collectors.toMap(ConfigProperty::key, Function.identity()));
     }
 
     /**
@@ -60,27 +49,6 @@ public final class DefaultExtensionContext implements ExtensionContext {
 
     /**
      * {@inheritDoc}
-
-    @Override
-    public Map<String, ConfigProperty> configProperties() {
-        return Collections.unmodifiableMap(propertiesByName);
-    }
-     **/
-    /**
-     * {@inheritDoc}
-
-    @Override
-    public <T> ConfigProperty<T> configProperty(final String key) {
-        if (Strings.isBlank(key)) throw new IllegalArgumentException("key cannot be null or empty");
-        ConfigProperty<T> property = getConfigProperty(key);
-        if (property == null) {
-            throw new NoSuchElementException("Unknown config property for key '" + key + "'");
-        }
-        return property;
-    }
-     **/
-    /**
-     * {@inheritDoc}
      **/
     @Override
     public ExtensionContext contextForExtension(Class<? extends Extension> extension) {
@@ -97,39 +65,6 @@ public final class DefaultExtensionContext implements ExtensionContext {
     @SuppressWarnings("unchecked")
     public <T extends ExtensionProvider> T provider() {
         return (T) descriptor.providerSupplier().get();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> ConfigProperty<T> getConfigProperty(String key) {
-        return (ConfigProperty<T>) propertiesByName.get(key);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    static List<ConfigProperty> getConfigProperties(final ExtensionDescriptor<?> descriptor) {
-        if (descriptor == null || descriptor.properties() == null) {
-            return Collections.emptyList();
-        }
-        return descriptor.properties()
-            .stream()
-            .map(spec -> {
-                Class specType = spec.type();
-                Type type = Type.forClass(specType);
-                ConfigProperty property = null;
-                if (type != null) {
-                    property = ConfigProperty.of(type, spec.name());
-                } else if (Enum.class.isAssignableFrom(specType)) {
-                    Class<Enum> enumType = (Class<Enum>) specType;
-                    property = ConfigProperty.ofEnum(spec.name(), enumType);
-                } else {
-                    property = ConfigProperty.of(spec.name(), TypeConverter.of(specType));
-                }
-                property = property.description(spec.description());
-                if (!spec.required()) {
-                    property = property.defaultValue(() -> type.converter().convertValue(spec.defaultValue()));
-                }
-                return property;
-            })
-            .collect(Collectors.toList());
     }
 
     /**
