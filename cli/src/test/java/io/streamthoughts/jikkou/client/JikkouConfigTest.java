@@ -6,18 +6,15 @@
  */
 package io.streamthoughts.jikkou.client;
 
-import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.runtime.JikkouConfig;
+import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class JikkouConfigTest {
+import java.util.List;
 
-    public static final ConfigProperty<List<ExtensionConfigEntry>> PROVIDERS = ConfigProperty
-        .ofConfigList("providers")
-        .map(list -> list.stream().map(ExtensionConfigEntry::of).toList());
+class JikkouConfigTest {
 
     @Test
     void shouldLoadDefaultProviders() {
@@ -25,7 +22,8 @@ class JikkouConfigTest {
         JikkouConfig config = JikkouConfig.load();
 
         // When
-        List<ExtensionConfigEntry> providers = PROVIDERS.get(config);
+        List<ExtensionConfigEntry> providers = JikkouConfigProperties.PROVIDER_CONFIG.get(config);
+
         // Then
         Assertions.assertNotNull(providers);
         Assertions.assertFalse(providers.isEmpty());
