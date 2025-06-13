@@ -9,10 +9,9 @@ package io.streamthoughts.jikkou.client;
 import io.streamthoughts.jikkou.runtime.JikkouConfig;
 import io.streamthoughts.jikkou.runtime.JikkouConfigProperties;
 import io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 class JikkouConfigTest {
 

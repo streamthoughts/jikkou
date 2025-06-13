@@ -525,10 +525,6 @@
                             <!-- define the steps to apply to those files -->
                             <trimTrailingWhitespace/>
                             <endWithNewline/>
-                            <indent>
-                                <tabs>true</tabs>
-                                <spacesPerTab>4</spacesPerTab>
-                            </indent>
                         </format>
                     </formats>
                     <!-- define a language-specific format -->

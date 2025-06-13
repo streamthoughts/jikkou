@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
-
 import java.util.Objects;
 
 /**
