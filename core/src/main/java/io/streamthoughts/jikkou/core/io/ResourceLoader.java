@@ -67,6 +67,17 @@ public final class ResourceLoader {
     }
 
     /**
+     * Loads resource definitions from the given {@code InputStream}.
+     *
+     * @param file the input stream.
+     * @param location location from which the resource definitions is loaded.
+     * @return a new {@link HasItems}.
+     */
+    public HasItems load(@NotNull final InputStream file, final URI location) {
+        return ResourceList.of(factory.create(file, location).readAll(options));
+    }
+
+    /**
      * Loads resource definitions from the given locations, e.g., files, directories, or URLs.
      *
      * @param locations locations from which to resource definitions.

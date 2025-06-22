@@ -77,7 +77,18 @@ public class ResourceReaderFactory {
      * @return a new {@link ResourceReader}.
      */
     public ResourceReader create(final InputStream inputStream) {
-        return getResourceReader(() -> inputStream, null);
+        return create(inputStream, null);
+    }
+
+    /**
+     * Creates a new {@link ResourceReader} to read resource(s) from the given {@link InputStream}.
+     *
+     * @param inputStream the {@link InputStream} from which resource(s) must be read.
+     * @param location    the {@link URI} of the resource(s) to be read.
+     * @return a new {@link ResourceReader}.
+     */
+    public ResourceReader create(final InputStream inputStream, final URI location) {
+        return getResourceReader(() -> inputStream, location);
     }
 
     /**

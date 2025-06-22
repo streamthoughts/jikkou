@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.ConfigMapList;
 import io.streamthoughts.jikkou.core.policy.model.ValidatingResourcePolicy;
+import io.streamthoughts.jikkou.core.repository.GitHubResourceRepository;
 import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.transform.ConfigMapsTransformation;
@@ -39,6 +40,7 @@ public final class CoreExtensionProvider implements ExtensionProvider {
         registry.register(ResourceListConverter.class, ResourceListConverter::new);
         registry.register(SystemTimeAction.class, SystemTimeAction::new);
         registry.register(LocalResourceRepository.class, LocalResourceRepository::new);
+        registry.register(GitHubResourceRepository.class, GitHubResourceRepository::new);
     }
 
     /**

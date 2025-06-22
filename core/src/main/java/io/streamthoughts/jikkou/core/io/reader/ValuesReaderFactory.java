@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Factory class to create new {@link ResourceReader}.
@@ -39,7 +40,18 @@ public class ValuesReaderFactory {
      * @return a new {@link ResourceReader}.
      */
     public ValuesReader create(final InputStream inputStream) {
-        return new InputStreamValuesReader(() -> inputStream, objectMapper, null);
+        return create(inputStream,  null);
+    }
+
+    /**
+     * Creates a new {@link ResourceReader} to read resource(s) from the given {@link InputStream}.
+     *
+     * @param inputStream the {@link InputStream} from which resource(s) must be read.
+     * @param location the {@link URI} of the resource(s) to be read.
+     * @return a new {@link ResourceReader}.
+     */
+    public ValuesReader create(final InputStream inputStream, @Nullable final URI location) {
+        return new InputStreamValuesReader(() -> inputStream, objectMapper, location);
     }
 
     /**

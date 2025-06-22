@@ -127,8 +127,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
     private ResourceReaderOptions createResourceReaderOptions(final LocalResourceOptions inputs) {
         NamedValueSet values = NamedValueSet.emptySet();
         if (!inputs.getValuesFileLocations().isEmpty()) {
-            values = new ValuesLoader(YAML_OBJECT_MAPPER)
-                .load(inputs.getValuesFileLocations(), ValuesReaderOptions.of(inputs.getValuesFilePattern()));
+            values = ValuesLoader.loadFromLocations(inputs.getValuesFileLocations(), ValuesReaderOptions.of(inputs.getValuesFilePattern()));
         }
         values = values.with(inputs.getValues());
 
