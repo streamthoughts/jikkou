@@ -1,0 +1,13 @@
+{
+  "resources": [
+    {
+      "pattern": "\\Qreference.conf\\E"
+    },
+    {
+      "pattern": "\\Qlogback.xml\\E"
+    },
+    {
+      "pattern": "\\Qapplication.yml\\E"
+    }
+  ]
+}
