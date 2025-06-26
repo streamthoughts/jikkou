@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.core.config.ConfigException;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider.Config;
 import io.streamthoughts.jikkou.schema.registry.api.AuthMethod;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,6 @@ class SchemaRegistryExtensionProviderTest {
 
     public static final String REGISTRY_URL = "http://localhost:8081";
 
-    private final SchemaRegistryExtensionProvider provider = new SchemaRegistryExtensionProvider();
-
-
     @Test
     void shouldThrowExceptionForMissingSchemaRegistryUrl() {
         // Given
@@ -26,17 +24,17 @@ class SchemaRegistryExtensionProviderTest {
 
         // When - Then
         ConfigException.Missing missing = Assertions
-                .assertThrowsExactly(ConfigException.Missing.class, () -> provider.schemaRegistryUrl.get(configuration));
-        Assertions.assertEquals(provider.schemaRegistryUrl, missing.property());
+                .assertThrowsExactly(ConfigException.Missing.class, () -> Config.SCHEMA_REGISTRY_URL.get(configuration));
+        Assertions.assertEquals(Config.SCHEMA_REGISTRY_URL, missing.property());
     }
 
     @Test
     void shouldReturnPassedValueForSchemaRegistryUrl() {
         // Given
-        Configuration configuration = provider.schemaRegistryUrl.asConfiguration(REGISTRY_URL);
+        Configuration configuration = Config.SCHEMA_REGISTRY_URL.asConfiguration(REGISTRY_URL);
 
         // When
-        String registryUrl = provider.schemaRegistryUrl.get(configuration);
+        String registryUrl = Config.SCHEMA_REGISTRY_URL.get(configuration);
 
         // Then
         Assertions.assertEquals(REGISTRY_URL, registryUrl);
@@ -47,7 +45,7 @@ class SchemaRegistryExtensionProviderTest {
         // Given
         Configuration configuration = Configuration.empty();
         // When
-        AuthMethod authMethod = provider.schemaRegistryAuthMethod.get(configuration);
+        AuthMethod authMethod =  Config.SCHEMA_REGISTRY_AUTH_METHOD.get(configuration);
         // Then
         Assertions.assertEquals(AuthMethod.NONE, authMethod);
     }
@@ -55,9 +53,9 @@ class SchemaRegistryExtensionProviderTest {
     @Test
     void shouldReturnPassedValueForValidSchemaRegistryAuthMethod() {
         // Given
-        Configuration configuration = provider.schemaRegistryAuthMethod.asConfiguration(AuthMethod.BASICAUTH.name());
+        Configuration configuration = Config.SCHEMA_REGISTRY_AUTH_METHOD.asConfiguration(AuthMethod.BASICAUTH.name());
         // When
-        AuthMethod authMethod = provider.schemaRegistryAuthMethod.get(configuration);
+        AuthMethod authMethod = Config.SCHEMA_REGISTRY_AUTH_METHOD.get(configuration);
         // Then
         Assertions.assertEquals(AuthMethod.BASICAUTH, authMethod);
     }
@@ -65,9 +63,9 @@ class SchemaRegistryExtensionProviderTest {
     @Test
     void shouldReturnInvalidValueForInvalidSchemaRegistryAuthMethod() {
         // Given
-        Configuration configuration = provider.schemaRegistryAuthMethod.asConfiguration("dummy");
+        Configuration configuration = Config.SCHEMA_REGISTRY_AUTH_METHOD.asConfiguration("dummy");
         // When
-        AuthMethod authMethod = provider.schemaRegistryAuthMethod.get(configuration);
+        AuthMethod authMethod =  Config.SCHEMA_REGISTRY_AUTH_METHOD.get(configuration);
         // Then
         Assertions.assertEquals(AuthMethod.INVALID, authMethod);
     }

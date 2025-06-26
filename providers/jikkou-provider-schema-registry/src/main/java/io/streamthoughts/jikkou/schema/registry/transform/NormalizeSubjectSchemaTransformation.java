@@ -12,9 +12,11 @@ import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.data.SchemaHandle;
 import io.streamthoughts.jikkou.core.data.json.Json;
+import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.transform.Transformation;
+import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import java.util.Optional;
@@ -29,6 +31,16 @@ public class NormalizeSubjectSchemaTransformation implements Transformation<V1Sc
 
     private static final Logger LOG = LoggerFactory.getLogger(NormalizeSubjectSchemaTransformation.class);
 
+    private ExtensionContext extensionContext;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(@NotNull ExtensionContext context) {
+        this.extensionContext = context;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -36,6 +48,12 @@ public class NormalizeSubjectSchemaTransformation implements Transformation<V1Sc
     public @NotNull Optional<V1SchemaRegistrySubject> transform(@NotNull V1SchemaRegistrySubject resource,
                                                                 @NotNull HasItems resources,
                                                                 @NotNull ReconciliationContext context) {
+        SchemaRegistryExtensionProvider provider = extensionContext.provider();
+
+        if (!provider.isNormalizeSchemaEnabled()) {
+            return Optional.of(resource);
+        }
+
         V1SchemaRegistrySubjectSpec spec = resource.getSpec();
 
         final String value = spec.getSchema().value();

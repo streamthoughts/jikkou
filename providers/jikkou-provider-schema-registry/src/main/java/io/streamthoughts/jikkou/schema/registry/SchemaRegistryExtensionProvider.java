@@ -40,34 +40,41 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider {
 
-    final ConfigProperty<String> schemaRegistryUrl = ConfigProperty
-        .ofString("url")
-        .required(true)
-        .description("Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas.");
+    public interface Config {
+        ConfigProperty<String> SCHEMA_REGISTRY_URL = ConfigProperty
+            .ofString("url")
+            .required(true)
+            .description("Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas.");
 
-    final ConfigProperty<String> schemaRegistryVendor = ConfigProperty
-        .ofString("vendor")
-        .defaultValue("generic")
-        .description("The name of the schema registry implementation vendor.");
+        ConfigProperty<String> SCHEMA_REGISTRY_VENDOR = ConfigProperty
+            .ofString("vendor")
+            .defaultValue("generic")
+            .description("The name of the schema registry implementation vendor.");
 
-    final ConfigProperty<AuthMethod> schemaRegistryAuthMethod = ConfigProperty
-        .ofString("authMethod")
-        .map(val -> Enums.getForNameIgnoreCase(val, AuthMethod.class, AuthMethod.INVALID))
-        .defaultValue(AuthMethod.NONE)
-        .description("Method to use for authenticating on Schema Registry. Available values are: [none, basicauth, ssl]");
+        ConfigProperty<AuthMethod> SCHEMA_REGISTRY_AUTH_METHOD = ConfigProperty
+            .ofString("authMethod")
+            .map(val -> Enums.getForNameIgnoreCase(val, AuthMethod.class, AuthMethod.INVALID))
+            .defaultValue(AuthMethod.NONE)
+            .description("Method to use for authenticating on Schema Registry. Available values are: [none, basicauth, ssl]");
 
-    final ConfigProperty<String> schemaRegistryBasicAuthUser = ConfigProperty
-        .ofString("basicAuthUser")
-        .description("Use when 'authMethod' is 'basicauth' to specify the username for Authorization Basic header");
+        ConfigProperty<String> SCHEMA_REGISTRY_BASIC_AUTH_USER = ConfigProperty
+            .ofString("basicAuthUser")
+            .description("Use when 'authMethod' is 'basicauth' to specify the username for Authorization Basic header");
 
-    final ConfigProperty<String> schemaRegistryBasicAuthPassword = ConfigProperty
-        .ofString("basicAuthPassword")
-        .description("Use when 'authMethod' is 'basicauth' to specify the password for Authorization Basic header");
+        ConfigProperty<String> SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD = ConfigProperty
+            .ofString("basicAuthPassword")
+            .description("Use when 'authMethod' is 'basicauth' to specify the password for Authorization Basic header");
 
-    final ConfigProperty<Boolean> schemaRegistryDebugLoggingEnabled = ConfigProperty
-        .ofBoolean("debugLoggingEnabled")
-        .description("Enable debug logging.")
-        .defaultValue(false);
+        ConfigProperty<Boolean> SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED = ConfigProperty
+            .ofBoolean("debugLoggingEnabled")
+            .description("Enable debug logging.")
+            .defaultValue(false);
+
+        ConfigProperty<Boolean> NORMALIZE_SCHEMAS_ENABLED = ConfigProperty
+            .ofBoolean("normalizeSchemasEnabled")
+            .description("Specify whether to normalize schemas (default: true).")
+            .defaultValue(true);
+    }
 
     private SchemaRegistryClientConfig clientConfig;
 
@@ -76,18 +83,22 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         super.configure(configuration);
         this.clientConfig = new SchemaRegistryClientConfig(
-            schemaRegistryUrl.get(configuration),
-            schemaRegistryVendor.get(configuration),
-            schemaRegistryAuthMethod.get(configuration),
-            () -> schemaRegistryBasicAuthUser.get(configuration),
-            () -> schemaRegistryBasicAuthPassword.get(configuration),
+            Config.SCHEMA_REGISTRY_URL.get(configuration),
+            Config.SCHEMA_REGISTRY_VENDOR.get(configuration),
+            Config.SCHEMA_REGISTRY_AUTH_METHOD.get(configuration),
+            () -> Config.SCHEMA_REGISTRY_BASIC_AUTH_USER.get(configuration),
+            () -> Config.SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD.get(configuration),
             () -> SSLConfig.from(configuration),
-            schemaRegistryDebugLoggingEnabled.get(configuration)
+            Config.SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED.get(configuration)
         );
     }
 
     public SchemaRegistryClientConfig clientConfig() {
         return clientConfig;
+    }
+
+    public boolean isNormalizeSchemaEnabled() {
+        return Config.NORMALIZE_SCHEMAS_ENABLED.get(configuration);
     }
 
     /**
