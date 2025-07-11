@@ -120,47 +120,99 @@ definition:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">jikkou.io/delete&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Selectors</title><link>https://www.jikkou.io/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/selectors/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
-&lt;p>&lt;strong>Selectors&lt;/strong> allows you to include or exclude some resource objects from being returned or reconciled by Jikkou.&lt;/p>
+&lt;p>&lt;strong>Selectors&lt;/strong> allow you to include or exclude resource objects when returned or reconciled by Jikkou.&lt;/p>
 &lt;/div>
 &lt;h2 id="selector-expressions">Selector Expressions&lt;/h2>
-&lt;p>Selectors are passed as arguments to Jikkou as expression strings in the following form:&lt;/p>
+&lt;p>Selectors are passed to Jikkou using the &lt;code>--selector&lt;/code> CLI option.
+They allow you to define filtering logic to target specific resources during execution.&lt;/p>
+&lt;p>Selector expressions follow one of the following formats:&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>&amp;lt;SELECTOR&amp;gt;: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE&lt;/code>&lt;/li>
-&lt;li>&lt;code>&amp;lt;SELECTOR&amp;gt;: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE[, VALUES])&lt;/code>&lt;/li>
+&lt;li>With an explicit selector:&lt;/li>
 &lt;/ul>
-&lt;p>or (using default field selector):&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE&lt;/code>&lt;/li>
-&lt;li>&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE[, VALUES])&lt;/code>&lt;/li>
+&lt;pre tabindex="0">&lt;code>&amp;lt;SELECTOR&amp;gt;: &amp;lt;EXPRESSION&amp;gt;
+&lt;/code>&lt;/pre>&lt;ul>
+&lt;li>Using the default &lt;code>field&lt;/code> selector (shorthand):&lt;/li>
 &lt;/ul>
-&lt;h3 id="selectors">Selectors&lt;/h3>
-&lt;h4 id="field-default">Field (default)&lt;/h4>
-&lt;p>Jikkou packs with a built-in &lt;code>FieldSelector&lt;/code> allowing to filter resource objects based on a &lt;em>field key&lt;/em>.&lt;/p>
-&lt;p>For example, the expression below shows you how to select only resource having a label &lt;code>environement&lt;/code> equals to
-either &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>.&lt;/p>
-&lt;pre tabindex="0">&lt;code>metadata.labels.environement IN (staging, production)
-&lt;/code>&lt;/pre>&lt;p>&lt;em>Note: In the above example, we have omitted the selector because &lt;code>field&lt;/code> is the default selector.&lt;/em>&lt;/p>
-&lt;h3 id="expression-operators">Expression Operators&lt;/h3>
-&lt;p>Five kinds of operators are supported:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>IN&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>NOTIN&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>EXISTS&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>MATCHES&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>DOESNOTMATCH&lt;/strong>&lt;/li>
-&lt;/ul>
+&lt;pre tabindex="0">&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE`
+&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE1[, VALUE2, ...])
+&lt;/code>&lt;/pre>&lt;blockquote>
+&lt;p>&lt;strong>Note:&lt;/strong> The &lt;code>field:&lt;/code> selector is the default, so it can be omitted when using field-based expressions.&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="supported-selectors">Supported Selectors&lt;/h2>
+&lt;h3 id="field-default">Field (default)&lt;/h3>
+&lt;p>The &lt;code>field&lt;/code> selector filters resources based on arbitrary fields in the resource object.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>field: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>field: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE1, VALUE2, ...)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="examples">Examples&lt;/h4>
+&lt;p>Select resources with a label &lt;code>environment&lt;/code> equal to &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>:&lt;/p>
+&lt;pre tabindex="0">&lt;code>field: metadata.labels.environement IN (staging, production)
+&lt;/code>&lt;/pre>&lt;p>or omitting the selector:&lt;/p>
+&lt;pre tabindex="0">&lt;code> metadata.labels.environement IN (staging, production)
+&lt;/code>&lt;/pre>&lt;h3 id="label">Label&lt;/h3>
+&lt;p>The &lt;code>label&lt;/code> selector provides a convenient way to filter resources by their labels.
+This is often simpler and more intuitive than referencing label fields directly via the &lt;code>field&lt;/code> selector.&lt;/p>
+&lt;h4 id="examples-1">Examples&lt;/h4>
+&lt;p>Select resources with a label &lt;code>environment&lt;/code> equal to &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>:&lt;/p>
+&lt;pre tabindex="0">&lt;code>label: environement IN (staging, production)
+&lt;/code>&lt;/pre>&lt;h3 id="expression-_since-jikkou-v036_">Expression (&lt;em>since: Jikkou v0.36&lt;/em>)&lt;/h3>
+&lt;p>The &lt;code>expr&lt;/code> selector allows complex filtering using the &lt;a href="https://cel.dev/">Common Expression Language (CEL)&lt;/a>, providing
+powerful and expressive syntax for filtering by any resource attribute, including arrays and maps.&lt;/p>
+&lt;h4 id="examples-2">Examples&lt;/h4>
+&lt;p>Select resources with the label &lt;code>env&lt;/code> in &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>:&lt;/p>
+&lt;pre tabindex="0">&lt;code>expr: has(resource.metadata.labels.env) &amp;amp;&amp;amp; resource.metadata.labels.env in [&amp;#39;staging&amp;#39;, &amp;#39;production&amp;#39;]
+&lt;/code>&lt;/pre>&lt;p>Select Kafka topics with at least 12 partitions:&lt;/p>
+&lt;pre tabindex="0">&lt;code>expr: resource.kind == &amp;#39;KafkaTopic&amp;#39; &amp;amp;&amp;amp; resource.spec.partitions &amp;gt;= 12
+&lt;/code>&lt;/pre>&lt;p>Select resources missing a specific annotation:&lt;/p>
+&lt;pre tabindex="0">&lt;code>expr: !has(resource.metadata.annotations[&amp;#39;mycompany.io/owner&amp;#39;])
+&lt;/code>&lt;/pre>
 &lt;div class="alert alert-info" role="alert">
-&lt;h4 class="alert-heading">Using JIKKOU CLI&lt;/h4>
-Selectors can be specified via the Jikkou CLI option: &lt;code>--selector&lt;/code>.
+&lt;h4 class="alert-heading">Tip&lt;/h4>
+Use the &lt;code>expr&lt;/code> selector when you need advanced filtering logic, or when targeting nested fields, maps, or arrays.
 &lt;/div>
-&lt;h3 id="matching-strategies">Matching Strategies&lt;/h3>
-&lt;p>Jikkou allows you to use multiple selector expressions. To indicate how these expressions are to be combined, you can pass one of the following matching strategies:&lt;/p>
+&lt;h2 id="expression-operators">Expression Operators&lt;/h2>
+&lt;p>The following operators are supported for both &lt;code>field&lt;/code> and &lt;code>label&lt;/code> selectors:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Operator&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>IN&lt;/code>&lt;/td>
+&lt;td>Match if the field/label value is in the given list&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>NOTIN&lt;/code>&lt;/td>
+&lt;td>Match if the field/label value is &lt;strong>not&lt;/strong> in the given list&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>EXISTS&lt;/code>&lt;/td>
+&lt;td>Match if the field/label is present&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>MATCHES&lt;/code>&lt;/td>
+&lt;td>Match if the field/label value matches a regular expression&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>DOESNOTMATCH&lt;/code>&lt;/td>
+&lt;td>Match if the field/label value does &lt;strong>not&lt;/strong> match the regex&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Note: These operators are &lt;strong>not&lt;/strong> available for the &lt;code>expr&lt;/code> selector, which uses CEL syntax instead.&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="matching-strategies">Matching Strategies&lt;/h2>
+&lt;p>When specifying multiple selectors, you can define how they are logically combined using the &lt;code>--selector-match&lt;/code> option.&lt;/p>
+&lt;p>Available strategies:&lt;/p>
 &lt;ul>
-&lt;li>&lt;code>ALL&lt;/code>: A resource is selected if it matches all selectors.&lt;/li>
-&lt;li>&lt;code>ANY&lt;/code>: A resource is selected if it matches one of the selectors.&lt;/li>
-&lt;li>&lt;code>NONE&lt;/code>: A resource is selected if it matches none of the selectors.&lt;/li>
+&lt;li>&lt;code>ALL&lt;/code>: The resource must match &lt;strong>all&lt;/strong> selector expressions (logical AND).&lt;/li>
+&lt;li>&lt;code>ANY&lt;/code>: The resource must match &lt;strong>at least one&lt;/strong> selector (logical OR).&lt;/li>
+&lt;li>&lt;code>NONE&lt;/code>: The resource must &lt;strong>not match any&lt;/strong> selector (logical NOT).&lt;/li>
 &lt;/ul>
-&lt;p>&lt;em>Example:&lt;/em>&lt;/p>
+&lt;h4 id="examples-3">Examples&lt;/h4>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
