@@ -6,59 +6,123 @@ weight: 4
 ---
 
 {{% pageinfo color="info" %}}
-**Selectors** allows you to include or exclude some resource objects from being returned or reconciled by Jikkou.
+**Selectors** allow you to include or exclude resource objects when returned or reconciled by Jikkou.
 {{% /pageinfo %}}
 
 ## Selector Expressions
 
-Selectors are passed as arguments to Jikkou as expression strings in the following form: 
+Selectors are passed to Jikkou using the `--selector` CLI option. 
+They allow you to define filtering logic to target specific resources during execution.
 
-* `<SELECTOR>: <KEY> <OPERATOR> VALUE`
-* `<SELECTOR>: <KEY> <OPERATOR> (VALUE[, VALUES])`
+Selector expressions follow one of the following formats:
 
-or (using default field selector):
-
-* `<KEY> <OPERATOR> VALUE`
-* `<KEY> <OPERATOR> (VALUE[, VALUES])`
-
-### Selectors
-
-#### Field (default)
-
-Jikkou packs with a built-in `FieldSelector` allowing to filter resource objects based on a _field key_.
-
-For example, the expression below shows you how to select only resource having a label `environement` equals to
-either `staging` or `production`.
+- With an explicit selector:
 
 ```
-metadata.labels.environement IN (staging, production)
+<SELECTOR>: <EXPRESSION>
 ```
 
-_Note: In the above example, we have omitted the selector because `field` is the default selector._
+- Using the default `field` selector (shorthand):
 
-### Expression Operators
+```
+<KEY> <OPERATOR> VALUE`
+<KEY> <OPERATOR> (VALUE1[, VALUE2, ...])
+```
 
-Five kinds of operators are supported:
+> **Note:** The `field:` selector is the default, so it can be omitted when using field-based expressions.
 
-* **IN**
-* **NOTIN**
-* **EXISTS**
-* **MATCHES**
-* **DOESNOTMATCH**
+## Supported Selectors
 
-{{% alert title="Using JIKKOU CLI" color="info" %}}
-Selectors can be specified via the Jikkou CLI option: `--selector`.
+### Field (default)
+
+The `field` selector filters resources based on arbitrary fields in the resource object.
+
+```text
+field: <KEY> <OPERATOR> VALUE
+field: <KEY> <OPERATOR> (VALUE1, VALUE2, ...)
+```
+
+#### Examples
+
+Select resources with a label `environment` equal to `staging` or `production`:
+
+```
+field: metadata.labels.environement IN (staging, production)
+```
+
+or omitting the selector:
+
+```
+ metadata.labels.environement IN (staging, production)
+```
+
+### Label
+
+The `label` selector provides a convenient way to filter resources by their labels.
+This is often simpler and more intuitive than referencing label fields directly via the `field` selector.
+
+#### Examples
+
+Select resources with a label `environment` equal to `staging` or `production`:
+
+```
+label: environement IN (staging, production)
+```
+
+### Expression (_since: Jikkou v0.36_)
+
+The `expr` selector allows complex filtering using the [Common Expression Language (CEL)](https://cel.dev/), providing
+powerful and expressive syntax for filtering by any resource attribute, including arrays and maps.
+
+#### Examples
+
+Select resources with the label `env` in `staging` or `production`:
+
+```
+expr: has(resource.metadata.labels.env) && resource.metadata.labels.env in ['staging', 'production']
+```
+
+Select Kafka topics with at least 12 partitions:
+
+```
+expr: resource.kind == 'KafkaTopic' && resource.spec.partitions >= 12
+```
+
+Select resources missing a specific annotation:
+
+```
+expr: !has(resource.metadata.annotations['mycompany.io/owner'])
+```
+
+{{% alert title="Tip" color="info" %}}
+Use the `expr` selector when you need advanced filtering logic, or when targeting nested fields, maps, or arrays.
 {{% /alert %}}
 
-### Matching Strategies
+## Expression Operators
 
-Jikkou allows you to use multiple selector expressions. To indicate how these expressions are to be combined, you can pass one of the following matching strategies:
+The following operators are supported for both `field` and `label` selectors:
 
-* `ALL`: A resource is selected if it matches all selectors.
-* `ANY`: A resource is selected if it matches one of the selectors.
-* `NONE`: A resource is selected if it matches none of the selectors.
+| Operator       | Description                                                 |
+|----------------|-------------------------------------------------------------|
+| `IN`           | Match if the field/label value is in the given list         |
+| `NOTIN`        | Match if the field/label value is **not** in the given list |
+| `EXISTS`       | Match if the field/label is present                         |
+| `MATCHES`      | Match if the field/label value matches a regular expression |
+| `DOESNOTMATCH` | Match if the field/label value does **not** match the regex |
 
-*Example:*
+> Note: These operators are **not** available for the `expr` selector, which uses CEL syntax instead.
+
+## Matching Strategies
+
+When specifying multiple selectors, you can define how they are logically combined using the `--selector-match` option.
+
+Available strategies:
+
+- `ALL`: The resource must match **all** selector expressions (logical AND).
+- `ANY`: The resource must match **at least one** selector (logical OR).
+- `NONE`: The resource must **not match any** selector (logical NOT).
+
+#### Examples
 
 ```bash
 jikkou get kafkatopics \
@@ -66,4 +130,6 @@ jikkou get kafkatopics \
 --selector 'metadata.name IN (_schemas)' \
 --selector-match ANY
 ```
+
+
 
