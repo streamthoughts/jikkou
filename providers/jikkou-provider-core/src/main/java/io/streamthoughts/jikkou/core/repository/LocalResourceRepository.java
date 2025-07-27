@@ -43,7 +43,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
             .defaultValue(List.of());
 
         String FILE_NAME_DESCRIPTION = """
-            Specify the pattern used to match YAML file paths when one or multiple directories are given through the files argument.
+            Specify the pattern used to match YAML file paths when one or multiple directories are given through the files property.
             Pattern should be passed in the form of 'syntax:pattern'. The "glob" and "regex" syntaxes are supported (e.g.: **/*.{yaml,yml}).
             If no syntax is specified the 'glob' syntax is used.
             """;
@@ -60,7 +60,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
             .defaultValue(List.of());
 
         String VALUES_FILE_NAME_DESCRIPTION = """
-            Specify the pattern used to match YAML file paths when one or multiple directories are given through the 'values-files' argument.
+            Specify the pattern used to match YAML file paths when one or multiple directories are given through the 'values-files' property.
             Pattern should be passed in the form of 'syntax:pattern'. The "glob" and "regex" syntaxes are supported (e.g.: **/*.{yaml,yml}).
             If no syntax is specified the 'glob' syntax is used.
             """;
@@ -69,7 +69,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
             .description(VALUES_FILE_NAME_DESCRIPTION)
             .defaultValue("**/*.{yaml,yml}");
 
-        String LABELS_DESCRIPTION = "Set labels on the command line (can specify multiple values)";
+        String LABELS_DESCRIPTION = "The labels to add to all resources loaded from the repository";
         ConfigProperty<Map<String, Object>> LABEL_CONFIG = ConfigProperty
             .ofMap("labels")
             .description(LABELS_DESCRIPTION)

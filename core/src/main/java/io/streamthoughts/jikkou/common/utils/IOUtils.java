@@ -36,13 +36,17 @@ public final class IOUtils {
 
     public static List<Path> findMatching(final Path startingDirectory,
                                           final String pattern) {
-        var syntaxAndPattern = isPrefixWithSyntax(pattern) ? pattern : SYNTAX_GLOB + pattern;
-        PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(syntaxAndPattern);
+        PathMatcher pathMatcher = getPathMatcher(pattern);
         try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(startingDirectory, pathMatcher::matches)) {
             return StreamSupport.stream(dirStream.spliterator(), false).toList();
         } catch (IOException e) {
             throw new RuntimeException("", e);
         }
+    }
+
+    public static PathMatcher getPathMatcher(final String pattern) {
+        var syntaxAndPattern = isPrefixWithSyntax(pattern) ? pattern : SYNTAX_GLOB + pattern;
+        return FileSystems.getDefault().getPathMatcher(syntaxAndPattern);
     }
 
     private static boolean isPrefixWithSyntax(String pattern) {
