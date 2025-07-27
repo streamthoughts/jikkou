@@ -1,8 +1,8 @@
 ---
 categories: [ ]
 tags: [ "feature", "extensions" ]
-title: "Extensions"
-linkTitle: "Extensions"
+title: "Extensions and providers"
+linkTitle: "Extensions and providers"
 weight: 10
 ---
 
@@ -17,6 +17,7 @@ Jikkou ships with a number of extension providers:
 
 * [Aiven]({{< ref "/docs/providers/aiven" >}} "Aiven")
 * [Apache Kafka]({{< ref "/docs/providers/kafka" >}} "Apache Kafka")
+* [AWS]({{< ref "/docs/providers/aws" >}} "AWS")
 * [Core]({{< ref "/docs/providers/core" >}} "Core")
 * [Kafka Connect]({{< ref "/docs/providers/kafka connect" >}} "Kafka Connect")
 * [Schema Registry]({{< ref "/docs/providers/schema registry" >}} "Schema Registry")
