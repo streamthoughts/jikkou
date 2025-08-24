@@ -28,6 +28,7 @@ jobs:
       HEAD: ${{ steps.version.outputs.HEAD }}
       RELEASE_VERSION: ${{ steps.version.outputs.RELEASE_VERSION }}
       NEXT_VERSION: ${{ steps.version.outputs.NEXT_VERSION }}
+      BRANCH_NAME: ${{ github.ref_name }}
 
     steps:
       - name: 'Checkout GitHub repository'
@@ -146,13 +147,6 @@ jobs:
           ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
 
-      - name: 'Download all artifacts'
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          pattern: artifacts-*
-          merge-multiple: true
-
       - name: 'Set up Java'
         uses: actions/setup-java@v4
         with:
@@ -165,9 +159,20 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
+      - name: 'Download all artifacts'
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: artifacts-*
+          merge-multiple: true
+
+      - name: 'Check artifacts'
+        run: |
+          ls -l ./artifacts
+
       - name: 'Release with JReleaser'
         env:
-          JRELEASER_BRANCH: ${{ needs.set-release-version.outputs.HEAD }}
+          JRELEASER_BRANCH: ${{ needs.set-release-version.outputs.BRANCH_NAME }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

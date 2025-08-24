@@ -714,7 +714,7 @@
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
                         <version>${jreleaser-maven-plugin.version}</version>
-                        <inherited>true</inherited>
+                        <inherited>false</inherited>
                         <configuration>
                             <jreleaser>
                                 <signing>
