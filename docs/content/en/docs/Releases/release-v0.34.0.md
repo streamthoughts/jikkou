@@ -10,7 +10,7 @@ We're excited to unveil the latest release of
 Jikkou [0.34.0](https://github.com/streamthoughts/jikkou/releases/tag/v0.34.0). 🎉
 
 To install the new version, please visit the [installation guide](https://www.jikkou.io/docs/install/). For detailed
-release notes, check out the [GitHub page](https://github.com/streamthoughts/jikkou/releases/tag/v0.33.0).
+release notes, check out the [GitHub page](https://github.com/streamthoughts/jikkou/releases/tag/v0.34.0).
 
 ### What's New in Jikkou 0.34.0?
 
@@ -132,7 +132,7 @@ to define dynamic configuration.
 
 ## Wrapping Up
 
-We hope you enjoy these new features. If you encounter any issues with Jikkou v0.33.0, please feel free to open a GitHub
+We hope you enjoy these new features. If you encounter any issues with Jikkou v0.34.0, please feel free to open a GitHub
 issue on our [project page](https://github.com/streamthoughts/jikkou/issues). Don't forget to give us a ⭐️
 on [Github](https://github.com/streamthoughts/jikkou) to support
 the team, and join us on [Slack](https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA).
