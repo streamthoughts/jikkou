@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: 'Checkout GitHub repository'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           clean: true
 
@@ -85,7 +85,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout GitHub repository'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
@@ -142,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub repository'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
