@@ -500,7 +500,7 @@ the team, and join us on &lt;a href="https://join.slack.com/t/jikkou-io/shared_i
 &lt;p>We&amp;rsquo;re excited to unveil the latest release of
 Jikkou &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.34.0">0.34.0&lt;/a>. 🎉&lt;/p>
 &lt;p>To install the new version, please visit the &lt;a href="https://www.jikkou.io/docs/install/">installation guide&lt;/a>. For detailed
-release notes, check out the &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.33.0">GitHub page&lt;/a>.&lt;/p>
+release notes, check out the &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.34.0">GitHub page&lt;/a>.&lt;/p>
 &lt;h3 id="whats-new-in-jikkou-0340">What&amp;rsquo;s New in Jikkou 0.34.0?&lt;/h3>
 &lt;ul>
 &lt;li>Enhanced Aiven provider with support for Kafka topics.&lt;/li>
@@ -587,7 +587,226 @@ the new metadata annotation new metadata annotation: &lt;code>jikkou.io/config-o
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This new annotation can be used with the Jikkou&amp;rsquo;s Jinja template creation mechanism
 to define dynamic configuration.&lt;/p>
 &lt;h2 id="wrapping-up">Wrapping Up&lt;/h2>
-&lt;p>We hope you enjoy these new features. If you encounter any issues with Jikkou v0.33.0, please feel free to open a GitHub
+&lt;p>We hope you enjoy these new features. If you encounter any issues with Jikkou v0.34.0, please feel free to open a GitHub
 issue on our &lt;a href="https://github.com/streamthoughts/jikkou/issues">project page&lt;/a>. Don&amp;rsquo;t forget to give us a ⭐️
 on &lt;a href="https://github.com/streamthoughts/jikkou">Github&lt;/a> to support
-the team, and join us on &lt;a href="https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA">Slack&lt;/a>.&lt;/p></description></item></channel></rss>
+the team, and join us on &lt;a href="https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA">Slack&lt;/a>.&lt;/p></description></item><item><title>Docs: Release v0.36.0</title><link>https://www.jikkou.io/docs/releases/release-v0.36.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v0.36.0/</guid><description>
+&lt;h2 id="-introducing-jikkou-0360">🚀 Introducing Jikkou 0.36.0&lt;/h2>
+&lt;p>We’re excited to announce the release of
+&lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.36.0">Jikkou 0.36.0&lt;/a>! 🎉&lt;/p>
+&lt;p>This release brings &lt;strong>major new features&lt;/strong> to make Jikkou more powerful, flexible, and GitOps-friendly than ever before:&lt;/p>
+&lt;ul>
+&lt;li>🆕 New resource for managing &lt;strong>AWS Glue Schemas&lt;/strong>&lt;/li>
+&lt;li>🛡️ New resource for defining &lt;strong>ValidatingResourcePolicy&lt;/strong>&lt;/li>
+&lt;li>🔎 Support for &lt;strong>Google CEL selectors&lt;/strong>&lt;/li>
+&lt;li>📦 New concept of &lt;strong>Resource Repositories&lt;/strong>&lt;/li>
+&lt;li>⚙️ Enhanced Kafka &lt;strong>actions&lt;/strong>&lt;/li>
+&lt;li>🔄 Evolved provider configuration system&lt;/li>
+&lt;/ul>
+&lt;p>To install the new version, check out the &lt;a href="https://www.jikkou.io/docs/install/">installation guide&lt;/a>.&lt;br>
+For detailed release notes, see the &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.36.0">GitHub page&lt;/a>.&lt;/p>
+&lt;hr>
+&lt;h2 id="-aws-glue-schema-provider">🆕 AWS Glue Schema Provider&lt;/h2>
+&lt;p>We know that many developers and DevOps teams rely on Jikkou to manage their &lt;strong>AWS MSK clusters&lt;/strong>.&lt;br>
+With this release, we’re going one step further: Jikkou 0.36.0 adds a new provider for &lt;strong>AWS Glue Schemas&lt;/strong>.&lt;/p>
+&lt;p>You can now &lt;strong>fully manage schemas registered in AWS Glue Registries&lt;/strong> — just like you already do with Confluent Schema
+Registry.&lt;/p>
+&lt;p>Example:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># file: ./aws-glue-schema-user.yaml&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#000">---&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;aws.jikkou.io/v1&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;AwsGlueSchema&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Person&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">labels&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">glue.aws.amazon.com/registry-name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">Test&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">annotations&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">glue.aws.amazon.com/normalize-schema&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">compatibility&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;BACKWARD&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">dataFormat&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;AVRO&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">schemaDefinition&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000;font-weight:bold">|&lt;/span>&lt;span style="color:#8f5902;font-style:italic">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;namespace&amp;#34;: &amp;#34;example&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;type&amp;#34;: &amp;#34;record&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;name&amp;#34;: &amp;#34;Person&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;fields&amp;#34;: [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;name&amp;#34;: &amp;#34;id&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;doc&amp;#34;: &amp;#34;The person&amp;#39;s unique ID (required)&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;name&amp;#34;: &amp;#34;firstname&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;doc&amp;#34;: &amp;#34;The person&amp;#39;s legal firstname (required)&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> },
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;name&amp;#34;: &amp;#34;lastname&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> &amp;#34;doc&amp;#34;: &amp;#34;The person&amp;#39;s legal lastname (required)&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 With the Jikkou CLI, you can now run commands like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get aws-glueschemas
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more information: &lt;a href="https://www.jikkou.io/docs/providers/aws/">AWS Provider Documentation&lt;/a>&lt;/p>
+&lt;hr>
+&lt;h2 id="-validatingresourcepolicy-for-smarter-governance">🛡️ ValidatingResourcePolicy for Smarter Governance&lt;/h2>
+&lt;p>Validating resources has always been a challenge in Jikkou.&lt;br>
+Earlier releases provided a &lt;a href="https://www.jikkou.io/docs/providers/kafka/validations/">validation chain&lt;/a> with built-in
+checks (e.g., &lt;code>TopicMinReplicationFactor&lt;/code>, &lt;code>TopicMaxNumPartitions&lt;/code>, &lt;code>TopicNamePrefix&lt;/code>).&lt;br>
+However, these were &lt;strong>limited, provider-specific, and mostly resource-scoped&lt;/strong>.&lt;/p>
+&lt;p>With Jikkou 0.36, we’re introducing &lt;strong>&lt;code>ValidatingResourcePolicy&lt;/code>&lt;/strong> — a declarative, reusable way to enforce governance
+and compliance across &lt;em>any&lt;/em> resource.&lt;/p>
+&lt;h3 id="-how-it-works">⚡ How It Works&lt;/h3>
+&lt;p>A &lt;code>ValidatingResourcePolicy&lt;/code> defines:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>Selectors&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>Match by resource kinds or operations&lt;/li>
+&lt;li>Match by labels&lt;/li>
+&lt;li>Use &lt;strong>Google CEL&lt;/strong> expressions for advanced logic&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Rules&lt;/strong>:&lt;br>
+Write expressions using &lt;a href="https://cel.dev/?hl=fr">Google CEL&lt;/a> to enforce validation logic.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Failure Policies&lt;/strong>:&lt;br>
+Decide what happens when validation fails:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>FAIL&lt;/code> → abort the operation&lt;/li>
+&lt;li>&lt;code>CONTINUE&lt;/code> → log but proceed&lt;/li>
+&lt;li>&lt;code>FILTER&lt;/code> → automatically remove invalid resources&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="-examples">📑 Examples&lt;/h3>
+&lt;p>Enforcing min/max partitions for &lt;code>KafkaTopic&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">---&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">core.jikkou.io/v1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">ValidatingResourcePolicy&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">KafkaTopicPolicy&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">failurePolicy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">FAIL&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">selector&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">matchResources&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">KafkaTopic&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">rules&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">MaxTopicPartitions&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">expression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;resource.spec.partitions &amp;lt;= 50&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">messageExpression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#39;Topic partitions MUST be &amp;lt;= 50, but was: &amp;#39; + string(resource.spec.partitions)&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">MinTopicPartitions&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">expression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;resource.spec.partitions &amp;gt;= 3&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">message&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Topic must have at least 3 partitions&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Filtering out &lt;code>DELETE&lt;/code> operations on Kafka Topics:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">---&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">apiVersion&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">core.jikkou.io/v1&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">kind&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">ValidatingResourcePolicy&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">metadata&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">KafkaTopicPolicy&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline">&lt;/span>&lt;span style="color:#204a87;font-weight:bold">spec&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">failurePolicy&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">FILTER&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">selector&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">matchResources&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">kinds&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">KafkaTopicChange&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">rules&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">FilterDeleteOperation&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">expression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;resource.spec.op == &amp;#39;DELETE&amp;#39;&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">messageExpression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#39;Operation &amp;#39; + resource.spec.op + &amp;#39; on topics is not authorized&amp;#39;&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 Learn more: &lt;a href="https://www.jikkou.io/docs/concepts/validations/">ValidatingResourcePolicy Documentation&lt;/a>&lt;/p>
+&lt;hr>
+&lt;h2 id="-resource-repositories--gitops-friendly-resource-management">📦 Resource Repositories — GitOps-Friendly Resource Management&lt;/h2>
+&lt;p>Managing and sharing resource definitions just got easier.&lt;br>
+Jikkou 0.36 introduces &lt;strong>Resource Repositories&lt;/strong>, allowing you to load resources directly from &lt;strong>GitHub repositories&lt;/strong>
+or &lt;strong>local directories&lt;/strong>.&lt;/p>
+&lt;p>Repositories are perfect for:&lt;/p>
+&lt;ul>
+&lt;li>Reusable resources across multiple environments&lt;/li>
+&lt;li>Shared definitions across teams&lt;/li>
+&lt;li>Keeping &lt;strong>transient or computed resources&lt;/strong> (e.g., &lt;code>ConfigMap&lt;/code>, &lt;code>ValidatingResourcePolicy&lt;/code>) separate from persistent
+ones&lt;/li>
+&lt;li>Injecting dynamic configuration without polluting your main repo&lt;/li>
+&lt;/ul>
+&lt;p>💡 &lt;strong>Use Case Spotlight&lt;/strong>:&lt;br>
+Instead of keeping temporary validation policies or config maps in your CLI input, you can store them in a repository
+and inject them dynamically. This makes transient resources &lt;strong>clean, shareable, and environment-specific&lt;/strong>.&lt;/p>
+&lt;h3 id="example-configuration">Example Configuration&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+repositories = [
+{
+name = &amp;#34;github-repository&amp;#34;
+type = io.streamthoughts.jikkou.core.repository.GitHubResourceRepository
+config {
+repository = &amp;#34;streamthoughts/jikkou&amp;#34;
+branch = &amp;#34;main&amp;#34;
+paths = [
+&amp;#34;examples/&amp;#34;,
+]
+# Optionally set an access token for private repositories
+# token = ${?GITHUB_TOKEN}
+}
+}
+]
+}
+&lt;/code>&lt;/pre>&lt;p>👉 Learn more: &lt;a href="https://www.jikkou.io/docs/concepts/repositories/">Repositories Documentation&lt;/a>&lt;/p>
+&lt;hr>
+&lt;h2 id="-expression-based-cli-selectors">🔎 Expression-based CLI Selectors&lt;/h2>
+&lt;p>Selectors just became more powerful with &lt;strong>Google CEL&lt;/strong>.&lt;br>
+You can now filter resources dynamically based on &lt;em>any&lt;/em> attribute.&lt;/p>
+&lt;p>Example: List all topics with more than 12 partitions:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --selector &lt;span style="color:#4e9a06">&amp;#34;expr: resource.spec.partitions &amp;gt;= 12&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="-actions-improvements">⚙️ Actions Improvements&lt;/h2>
+&lt;ul>
+&lt;li>Added &lt;strong>&lt;code>TruncateKafkaTopicRecords&lt;/code>&lt;/strong> action → truncate topic-partitions to a specific datetime.&lt;/li>
+&lt;li>Extended &lt;strong>&lt;code>KafkaConsumerGroupsResetOffsets&lt;/code>&lt;/strong>:
+&lt;ul>
+&lt;li>Reset offsets for multiple consumer groups.&lt;/li>
+&lt;li>New options:
+&lt;ul>
+&lt;li>&lt;code>--all&lt;/code>: apply to all consumer groups&lt;/li>
+&lt;li>&lt;code>--groups&lt;/code>: specify consumer groups&lt;/li>
+&lt;li>&lt;code>--includes&lt;/code>: regex patterns for inclusion&lt;/li>
+&lt;li>&lt;code>--excludes&lt;/code>: regex patterns for exclusion&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="-migration-provider-configurations">🔄 Migration: Provider Configurations&lt;/h2>
+&lt;p>Starting in 0.36.0, provider configuration has evolved to support future extensibility.&lt;/p>
+&lt;p>&lt;strong>Before 0.36.0:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+extension.providers {
+kafka.enabled = true
+}
+kafka {
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>After 0.36.0:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">provider.kafka {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>⚠️ Old configs still work for now, but we &lt;strong>recommend migrating&lt;/strong>.&lt;/p>
+&lt;hr>
+&lt;h2 id="-wrapping-up">✅ Wrapping Up&lt;/h2>
+&lt;p>We can’t wait to see what you build with this new release.&lt;/p>
+&lt;p>If you encounter any issues, please open a GitHub issue on
+our &lt;a href="https://github.com/streamthoughts/jikkou/issues">project page&lt;/a>.&lt;br>
+Don’t forget to give us a ⭐️ on &lt;a href="https://github.com/streamthoughts/jikkou">GitHub&lt;/a> and join the community
+on &lt;a href="https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA">Slack&lt;/a>.&lt;/p></description></item></channel></rss>
