@@ -11,27 +11,18 @@ This section describes how to configure the Kafka Connect extension.
 {{% /pageinfo %}}
 
 
-## Extension
-
-The Kafka Connect extension can be enabled/disabled via the configuration properties: 
-
-```hocon
-# Example
-jikkou {
-  extensions.provider.kafkaconnect.enabled = true
-}
-```
-
 ## Configuration
 
 You can configure the properties to be used to connect the Kafka Connect cluster
-through the Jikkou client configuration property: `jikkou.kafkaConnect`.
+through the Jikkou client configuration property: `jikkou.provider.kafkaconnect`.
 
 **Example:**
 
 ```hocon
 jikkou {
-  kafkaConnect {
+  provider.kafkaconnect {
+    enabled: true
+    type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
     # Array of Kafka Connect clusters configurations.
     clusters = [
       {
