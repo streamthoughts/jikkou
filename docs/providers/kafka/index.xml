@@ -4,10 +4,13 @@
 &lt;/div>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;p>The Apache Kafka extension is built on top of the Kafka Admin Client. You can configure the properties to be passed to
-kafka client through the Jikkou client configuration property &lt;code>jikkou.kafka.client&lt;/code>.&lt;/p>
+kafka client through the Jikkou client configuration property &lt;code>jikkou.provider.kafka&lt;/code>.&lt;/p>
 &lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-kafka {
+provider.kafka {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
 client {
 bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
 security.protocol = &amp;#34;SSL&amp;#34;
@@ -20,10 +23,14 @@ ssl.key.password = &amp;#34;password&amp;#34;
 }
 }
 }
+}
 &lt;/code>&lt;/pre>&lt;p>In addition, the extension support configuration settings to wait for at least a minimal number of brokers before
 processing.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-kafka {
+provider.kafka {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
 brokers {
 # If &amp;#39;True&amp;#39;
 waitForEnabled = true
@@ -37,6 +44,7 @@ waitForRetryBackoffMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
 # Wait until brokers are available or this timeout is reached.
 waitForTimeoutMs = 60000
 waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
+}
 }
 }
 }

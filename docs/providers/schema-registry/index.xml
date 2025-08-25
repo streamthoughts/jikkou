@@ -4,10 +4,13 @@
 &lt;/div>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;p>You can configure the properties to be used to connect the SchemaRegistry service
-through the Jikkou client configuration property &lt;code>jikkou.schemaRegistry&lt;/code>.&lt;/p>
+through the Jikkou client configuration property &lt;code>jikkou.provider.schemaregistry&lt;/code>.&lt;/p>
 &lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-schemaRegistry {
+provider.schemaregistry {
+enabled = true
+type = io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+config = {
 # Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas
 url = &amp;#34;http://localhost:8081&amp;#34;
 # The name of the schema registry implementation vendor - can be any value
@@ -37,6 +40,7 @@ sslTrustStoreType = &amp;#34;JKS&amp;#34;
 sslTrustStorePassword = &amp;#34;password&amp;#34;
 # Specifies whether to ignore the hostname verification.
 sslIgnoreHostnameVerification = true
+}
 }
 }
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://www.jikkou.io/docs/providers/schema-registry/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/schema-registry/resources/</guid><description>
