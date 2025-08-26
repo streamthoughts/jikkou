@@ -9,9 +9,9 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-hV&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>--logger-level&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&amp;lt;level&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>COMMAND&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision all the assets of your data infrastructure.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Jikkou CLI:: A command-line client designed to provide an efficient and easy way to manage, automate, and provision resources.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Find more information at: https://streamthoughts.github.io/jikkou/.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Find more information at: https://www.jikkou.io/.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OPTIONS:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
@@ -26,8 +26,9 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> apply Update the resources as described by the resource definition files.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> create Create resources from the resource definition files &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>only non-existing resources will be created&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> delete Delete resources that are no longer described by the resource definition files.
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> diff Show changes required by the current resource definitions.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> diff Show resource changes required by the current resource definitions.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> get Display one or many specific resources.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> patch Execute all changes &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> the specified reconciliation mode.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> prepare Prepare the resource definition files &lt;span style="color:#204a87;font-weight:bold">for&lt;/span> validation.
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> update Create or update resources from the resource definition files
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> validate Check whether the resources definitions meet all validation requirements.
@@ -45,8 +46,8 @@
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>(The output from your current Jikkou version may be different than the above example.)&lt;/p>
 &lt;h2 id="checking-jikkou-version">Checking Jikkou Version&lt;/h2>
 &lt;p>Run the &lt;code>jikkou --version&lt;/code> to display your current installation version:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Jikkou version &lt;span style="color:#4e9a06">&amp;#34;0.32.0&amp;#34;&lt;/span> 2023-11-28
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>JVM: 21.0.1 &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>GraalVM Community Substrate VM 21.0.1+12&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Jikkou version &lt;span style="color:#4e9a06">&amp;#34;0.36.0&amp;#34;&lt;/span> 2025-08-24
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>JVM: 21.0.2 &lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>GraalVM Community Substrate VM 21.0.2+13&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="shell-tab-completion">Shell Tab-completion&lt;/h2>
 &lt;p>It is recommended to install the bash/zsh completion script &lt;code>jikkou_completion&lt;/code>.&lt;/p>
 &lt;p>The completion script can be downloaded from the project Github repository:&lt;/p>
@@ -69,7 +70,7 @@ automatically when you create a configuration context using:&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;localhost&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;configFile&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;configProps&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;kafka.client.bootstrap.servers&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;provider.kafka.client.bootstrap.servers&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
@@ -87,22 +88,22 @@ to a &lt;a href="https://github.com/streamthoughts/jikkou/blob/main/jikkou-cli/s
 file that you can use as a template to define your own configuration.&lt;/p>
 &lt;p>&lt;strong>&lt;em>reference.conf&lt;/em>&lt;/strong>:&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-extension.providers {
-# By default, disable all extensions
-default.enabled: true
-# Explicitly enabled/disable extensions
-#&amp;lt;provider_name&amp;gt;.enabled: &amp;lt;boolean&amp;gt;
-# schemaregistry.enabled = true
-# kafka.enabled = true
-# aiven.enabled = true
-# kafkaconnect.enabled = true
-}
 # Configure Jikkou Proxy Mode
 # proxy {
 # url = &amp;#34;http://localhost:8080&amp;#34;
 # }
-# Kafka Extension
-kafka {
+# Configure Extension Providers
+extension {
+}
+# Core
+provider.core {
+enabled = true
+}
+# Apache Kafka Provider
+provider.kafka {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
 # The default Kafka Client configuration
 client {
 bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
@@ -123,9 +124,15 @@ waitForTimeoutMs = 60000
 waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
 }
 }
-schemaRegistry {
+}
+# Schema Registry Provider
+provider.schemaregistry {
+enabled = true
+type = io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+config = {
 url = &amp;#34;http://localhost:8081&amp;#34;
 url = ${?JIKKOU_DEFAULT_SCHEMA_REGISTRY_URL}
+}
 }
 # The default custom transformations to apply on any resources.
 transformations = []
@@ -178,6 +185,9 @@ reporters = [
 # }
 # }
 ]
+jinja {
+enableRecursiveMacroCalls = false
+}
 }
 &lt;/code>&lt;/pre>&lt;h3 id="listing-contexts">Listing Contexts&lt;/h3>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ jikkou config get-contexts
@@ -194,7 +204,7 @@ reporters = [
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> KEY VALUE
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigFile
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigProps &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;kafka.client.bootstrap.servers&amp;#34;&lt;/span>: &lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigProps &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;provider.kafka.config.client.bootstrap.servers&amp;#34;&lt;/span>:&lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="verify-current-configuration">Verify Current Configuration&lt;/h3>
 &lt;p>You can use &lt;code>jikkou config view&lt;/code> command to show the configuration currently used by Jikkou CLI.&lt;/p>
 &lt;div class="alert alert-info" role="alert">

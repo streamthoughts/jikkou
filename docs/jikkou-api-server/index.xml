@@ -12,7 +12,7 @@
 You can check the correct installation of Java by issuing the following command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>java -version
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="step-1-download">Step 1: Download&lt;/h4>
-&lt;p>Download the latest Java binary distribution from the &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a> (e.g. &lt;code>jikkou-api-server-0.31.0.zip&lt;/code>)&lt;/p>
+&lt;p>Download the latest Java binary distribution from the &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a> (e.g. &lt;code>jikkou-api-server-0.36.0.zip&lt;/code>)&lt;/p>
 &lt;p>Unpack the download distribution and move the unpacked directory to a desired destination&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>unzip jikkou-api-server-&lt;span style="color:#000">$LATEST_VERSION&lt;/span>.zip
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>mv jikkou-api-server-&lt;span style="color:#000">$LATEST_VERSION&lt;/span> /opt/jikkou
