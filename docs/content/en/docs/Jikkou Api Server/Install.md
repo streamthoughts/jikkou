@@ -28,7 +28,7 @@ java -version
 
 #### Step 1: Download
 
-Download the latest Java binary distribution from the [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (e.g. `jikkou-api-server-0.31.0.zip`)
+Download the latest Java binary distribution from the [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (e.g. `jikkou-api-server-0.36.0.zip`)
 
 Unpack the download distribution and move the unpacked directory to a desired destination
 

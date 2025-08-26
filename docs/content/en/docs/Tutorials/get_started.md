@@ -45,9 +45,9 @@ $ ./up              # use ./down for stopping the docker-compose stack
 Run the following commands to install the latest version:
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.34.0/jikkou-0.34.0-linux-x86_64.zip && \
-unzip jikkou-0.34.0-linux-x86_64.zip  && \
-cp jikkou-0.34.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.36.0/jikkou-0.36.0-linux-x86_64.zip && \
+unzip jikkou-0.36.0-linux-x86_64.zip  && \
+cp jikkou-0.36.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
 source <(jikkou generate-completion) && \
 jikkou --version
 ```
@@ -59,7 +59,9 @@ For more details, or for other options, see the [installation]({{% relref "../In
 Set configuration context for localhost
 
 ```bash
-jikkou config set-context localhost --config-props=kafka.client.bootstrap.servers=localhost:9092
+jikkou config set-context localhost \
+--provider kafka \
+--config-props client.bootstrap.servers=localhost:9092
 ```
 
 Show the complete configuration.
@@ -80,12 +82,15 @@ If OK, you should get an output similar to :
 
 ```yaml
 ---
+apiVersion: "core.jikkou.io/v1"
+kind: "ApiHealthResult"
 name: "kafka"
-status: "UP"
+status:
+  name: "UP"
 details:
-  resource: "urn:kafka:cluster:id:KRzY-7iRTHy4d1UVyNlcuw"
+  resource: "urn:kafka:cluster:id:xtzWWN4bTjitpL3kfd9s5g"
   brokers:
-    - id: "1"
+    - id: "101"
       host: "localhost"
       port: 9092
 ```
@@ -126,58 +131,82 @@ jikkou create -f ./kafka-topics.yaml
 (output)
 
 ```yaml
-TASK [ADD] Add topic 'my-first-topic' (partitions=5, replicas=-1, configs=[cleanup.policy=compact]) - CHANGED
-  {
-    "changed": true,
-    "end": 1683986528117,
-    "resource": {
-      "name": "my-first-topic",
-      "partitions": {
-        "after": 5
-      },
-      "replicas": {
-        "after": -1
-      },
-      "configs": {
-        "cleanup.policy": {
-          "after": "compact",
-          "operation": "ADD"
-        }
-      },
-      "operation": "ADD"
+TASK [CREATE] Create topic 'my-second-topic' (partitions=4, replicas=-1, configs=[cleanup.policy=delete]) - CHANGED
+{
+  "end" : "2025-08-26T00:00:00.000000Z",
+  "status" : "CHANGED",
+  "description" : "Create topic 'my-second-topic' (partitions=4, replicas=-1, configs=[cleanup.policy=delete])",
+  "change" : {
+    "apiVersion" : "kafka.jikkou.io/v1beta2",
+    "kind" : "KafkaTopicChange",
+    "metadata" : {
+      "name" : "my-second-topic",
+      "labels" : { },
+      "annotations" : {
+        "jikkou.io/items-count" : 2
+      }
     },
-    "failed": false,
-    "status": "CHANGED"
-  }
-  TASK [ADD] Add topic 'my-second-topic' (partitions=4, replicas=-1, configs=[cleanup.policy=delete]) - CHANGED
-  {
-    "changed": true,
-    "end": 1683986528117,
-    "resource": {
-      "name": "my-second-topic",
-      "partitions": {
-        "after": 4
-      },
-      "replicas": {
-        "after": -1
-      },
-      "configs": {
-        "cleanup.policy": {
-          "after": "delete",
-          "operation": "ADD"
-        }
-      },
-      "operation": "ADD"
+    "spec" : {
+      "changes" : [ {
+        "name" : "partitions",
+        "op" : "CREATE",
+        "after" : 4
+      }, {
+        "name" : "replicas",
+        "op" : "CREATE",
+        "after" : -1
+      }, {
+        "name" : "config.cleanup.policy",
+        "op" : "CREATE",
+        "after" : "delete"
+      } ],
+      "op" : "CREATE",
+      "data" : { }
+    }
+  },
+  "changed" : true,
+  "failed" : false
+}
+  
+TASK [CREATE] Create topic 'my-first-topic' (partitions=5, replicas=-1, configs=[cleanup.policy=compact]) - CHANGED
+{
+  "end" : "2025-08-26T00:00:00.000000Z",
+  "status" : "CHANGED",
+  "description" : "Create topic 'my-first-topic' (partitions=5, replicas=-1, configs=[cleanup.policy=compact])",
+  "change" : {
+    "apiVersion" : "kafka.jikkou.io/v1beta2",
+    "kind" : "KafkaTopicChange",
+    "metadata" : {
+      "name" : "my-first-topic",
+      "labels" : { },
+      "annotations" : {
+        "jikkou.io/items-count" : 2
+      }
     },
-    "failed": false,
-    "status": "CHANGED"
-  }
-  EXECUTION in 772ms
-ok:
-  0, created:
-    2, altered:
-      0, deleted:
-        0 failed: 0
+    "spec" : {
+      "changes" : [ {
+        "name" : "partitions",
+        "op" : "CREATE",
+        "after" : 5
+      }, {
+        "name" : "replicas",
+        "op" : "CREATE",
+        "after" : -1
+      }, {
+        "name" : "config.cleanup.policy",
+        "op" : "CREATE",
+        "after" : "compact"
+      } ],
+      "op" : "CREATE",
+      "data" : { }
+    }
+  },
+  "changed" : true,
+  "failed" : false
+}
+
+EXECUTION in 114ms
+ok : 0, created : 2, altered : 0, deleted : 0 failed : 0
 ```
 
 {{% alert title="Tips" color="info" %}}

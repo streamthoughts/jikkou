@@ -29,7 +29,7 @@ sdk install jikkou
 Every [`release`](https://github.com/streamthoughts/jikkou/releases) released versions of Jikkou is available:
 
 * As a zip/tar.gz package from [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (for Linux, MacOS)
-* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou-cli/0.34.0/)
+* As a fatJar available from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou-cli/0.36.0/)
 * As a docker image available from [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou).
 
 These are the official ways to get Jikkou releases that you manually downloaded and installed.
@@ -37,8 +37,8 @@ These are the official ways to get Jikkou releases that you manually downloaded 
 #### Install From Release distribution
 
 1. Download your desired [version](https://github.com/streamthoughts/jikkou/releases)
-2. Unpack it (`unzip jikkou-0.34.0-linux-x86_64.zip`)
-3. Move the unpacked directory to the desired destination (`mv jikkou-0.34.0-linux-x86_64 /opt/jikkou`)
+2. Unpack it (`unzip jikkou-0.36.0-linux-x86_64.zip`)
+3. Move the unpacked directory to the desired destination (`mv jikkou-0.36.0-linux-x86_64 /opt/jikkou`)
 4. Add the executable to your PATH (`export PATH=$PATH:/opt/jikkou/bin`)
 
 From there, you should be able to run the client: `jikkou help`.
@@ -65,7 +65,7 @@ cat << EOF >jikkouconfig
   "localhost" : {
     "configFile" : null,
     "configProps" : {
-      "kafka.client.bootstrap.servers" : "localhost:9092"
+     "provider.kafka.config.client.bootstrap.servers" : "localhost:9092"
     }
   }
 }

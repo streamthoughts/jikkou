@@ -29,15 +29,34 @@ However, you can enable (or disable) additional providers:
 
 ```yaml
 jikkou:
-  extensions.provider:
-    # By default, disable all extension providers.
-    default.enabled: false
-    
-    # Explicitly enabled/disable an extension provider
-    #<provider_name>.enabled: <boolean>
-    core.enabled: true
-    kafka.enabled: true
-    # schemaregistry.enabled: true
-    # aiven.enabled: true
-    # kafkaconnect.enabled: true
+  # The providers
+  provider:
+    # Core
+    core:
+      enabled: true
+      type: io.streamthoughts.jikkou.core.CoreExtensionProvider
+      
+    # Default configuration for Apache Kafka
+    kafka:
+      enabled: true
+      type: io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+      config:
+        client:
+          bootstrap.servers: localhost:9092
+          
+    # Default configuration for Schema Registry
+    schemaregistry:
+      enabled: true
+      type: io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+      config:
+        url: http://localhost:8081
+        
+    # Default configuration for Kafka Connect
+    kafkaconnect:
+      enabled: true
+      type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
+      config:
+        clusters:
+          - name: localhost
+            url: http://localhost:8083
 ```

@@ -32,7 +32,7 @@ For example, below is the config file created during the [Getting Started]({{< r
   "localhost": {
     "configFile": null,
     "configProps": {
-      "kafka.client.bootstrap.servers": "localhost:9092"
+      "provider.kafka.client.bootstrap.servers": "localhost:9092"
     }
   }
 }
@@ -57,48 +57,54 @@ file that you can use as a template to define your own configuration.
 ```hocon
 jikkou {
 
-  extension.providers {
-    # By default, disable all extensions
-    default.enabled: true
-    # Explicitly enabled/disable extensions
-    #<provider_name>.enabled: <boolean>
-    # schemaregistry.enabled = true
-    # kafka.enabled = true
-    # aiven.enabled = true
-    # kafkaconnect.enabled = true
-  }
-
   # Configure Jikkou Proxy Mode
   # proxy {
   #  url = "http://localhost:8080"
   # }
 
-  # Kafka Extension
-  kafka {
-    # The default Kafka Client configuration
-    client {
-      bootstrap.servers = "localhost:9092"
-      bootstrap.servers = ${?JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS}
-    }
-    brokers {
-      # If 'True' 
-      waitForEnabled = true
-      waitForEnabled = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_ENABLED}
-      # The minimal number of brokers that should be alive for the CLI stops waiting.
-      waitForMinAvailable = 1
-      waitForMinAvailable = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE}
-      # The amount of time to wait before verifying that brokers are available.
-      waitForRetryBackoffMs = 1000
-      waitForRetryBackoffMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
-      # Wait until brokers are available or this timeout is reached.
-      waitForTimeoutMs = 60000
-      waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
-    }
+  # Configure Extension Providers
+  extension {
   }
 
-  schemaRegistry {
-    url = "http://localhost:8081"
-    url = ${?JIKKOU_DEFAULT_SCHEMA_REGISTRY_URL}
+  # Core
+  provider.core {
+    enabled = true
+  }
+  # Apache Kafka Provider
+  provider.kafka {
+    enabled = true
+    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    config = {
+      # The default Kafka Client configuration
+      client {
+        bootstrap.servers = "localhost:9092"
+        bootstrap.servers = ${?JIKKOU_DEFAULT_KAFKA_BOOTSTRAP_SERVERS}
+      }
+
+      brokers {
+        # If 'True'
+        waitForEnabled = true
+        waitForEnabled = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_ENABLED}
+        # The minimal number of brokers that should be alive for the CLI stops waiting.
+        waitForMinAvailable = 1
+        waitForMinAvailable = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE}
+        # The amount of time to wait before verifying that brokers are available.
+        waitForRetryBackoffMs = 1000
+        waitForRetryBackoffMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS}
+        # Wait until brokers are available or this timeout is reached.
+        waitForTimeoutMs = 60000
+        waitForTimeoutMs = ${?JIKKOU_KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS}
+      }
+    }
+  }
+  # Schema Registry Provider
+  provider.schemaregistry {
+    enabled = true
+    type = io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+    config = {
+      url = "http://localhost:8081"
+      url = ${?JIKKOU_DEFAULT_SCHEMA_REGISTRY_URL}
+    }
   }
 
   # The default custom transformations to apply on any resources.
@@ -153,6 +159,10 @@ jikkou {
     #      }
     #    }
   ]
+
+  jinja {
+    enableRecursiveMacroCalls = false
+  }
 }
 ```
 
@@ -178,7 +188,7 @@ Using context 'localhost'
 
  KEY          VALUE                                                                         
  ConfigFile   
- ConfigProps  {"kafka.client.bootstrap.servers": "localhost:9092"}  
+ ConfigProps  {"provider.kafka.config.client.bootstrap.servers":"localhost:9092"} 
 ```
 
 ### Verify Current Configuration
