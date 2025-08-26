@@ -17,6 +17,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <name>Jikkou Extension :: REST Client</name>
+
     <artifactId>jikkou-extension-rest-client</artifactId>
     <description>APIs for building RESTful client leveraging existing JAX-RS APIs</description>
 
