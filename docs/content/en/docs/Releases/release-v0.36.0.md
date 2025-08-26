@@ -13,7 +13,7 @@ This release brings **major new features** to make Jikkou more powerful, flexibl
 
 - 🆕 New resource for managing **AWS Glue Schemas**
 - 🛡️ New resource for defining **ValidatingResourcePolicy**
-- 🔎 Support for **Google CEL selectors**
+- 🔎 New selector based on **Google Common Expression Language**
 - 📦 New concept of **Resource Repositories**
 - ⚙️ Enhanced Kafka **actions**
 - 🔄 Evolved provider configuration system
@@ -77,7 +77,7 @@ spec:
 jikkou get aws-glueschemas
 ```
 
-For more information: [AWS Provider Documentation](https://www.jikkou.io/docs/providers/aws/)
+👉 Learn more: [AWS Provider Documentation](https://www.jikkou.io/docs/providers/aws/)
 
 ---
 
@@ -101,7 +101,7 @@ A `ValidatingResourcePolicy` defines:
     - Use **Google CEL** expressions for advanced logic
 
 - **Rules**:  
-  Write expressions using [Google CEL](https://cel.dev/?hl=fr) to enforce validation logic.
+  Write expressions using [Google Common Expression Language](https://cel.dev/?hl=fr) to enforce validation logic.
 
 - **Failure Policies**:  
   Decide what happens when validation fails:
@@ -153,7 +153,7 @@ spec:
       messageExpression: "'Operation ' + resource.spec.op + ' on topics is not authorized'"
 ```
 
-👉 Learn more: [ValidatingResourcePolicy Documentation](https://www.jikkou.io/docs/concepts/validations/)
+👉 Learn more: [ValidatingResourcePolicy Documentation](https://www.jikkou.io/docs/providers/core/resources/validatingresourcepolicy/)
 
 ---
 
@@ -211,6 +211,8 @@ Example: List all topics with more than 12 partitions:
 ```bash
 jikkou get kafkatopics --selector "expr: resource.spec.partitions >= 12"
 ```
+
+👉 Learn more: [Expression Documentation](https://www.jikkou.io/docs/concepts/selectors/#expression-_since-jikkou-v036_)
 
 ---
 
