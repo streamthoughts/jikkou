@@ -4081,7 +4081,7 @@ the team, and join us on &lt;a href="https://join.slack.com/t/jikkou-io/shared_i
 &lt;ul>
 &lt;li>🆕 New resource for managing &lt;strong>AWS Glue Schemas&lt;/strong>&lt;/li>
 &lt;li>🛡️ New resource for defining &lt;strong>ValidatingResourcePolicy&lt;/strong>&lt;/li>
-&lt;li>🔎 Support for &lt;strong>Google CEL selectors&lt;/strong>&lt;/li>
+&lt;li>🔎 New selector based on &lt;strong>Google Common Expression Language&lt;/strong>&lt;/li>
 &lt;li>📦 New concept of &lt;strong>Resource Repositories&lt;/strong>&lt;/li>
 &lt;li>⚙️ Enhanced Kafka &lt;strong>actions&lt;/strong>&lt;/li>
 &lt;li>🔄 Evolved provider configuration system&lt;/li>
@@ -4132,7 +4132,7 @@ Registry.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"> }&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 With the Jikkou CLI, you can now run commands like:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get aws-glueschemas
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For more information: &lt;a href="https://www.jikkou.io/docs/providers/aws/">AWS Provider Documentation&lt;/a>&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 Learn more: &lt;a href="https://www.jikkou.io/docs/providers/aws/">AWS Provider Documentation&lt;/a>&lt;/p>
 &lt;hr>
 &lt;h2 id="-validatingresourcepolicy-for-smarter-governance">🛡️ ValidatingResourcePolicy for Smarter Governance&lt;/h2>
 &lt;p>Validating resources has always been a challenge in Jikkou.&lt;br>
@@ -4154,7 +4154,7 @@ and compliance across &lt;em>any&lt;/em> resource.&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>&lt;strong>Rules&lt;/strong>:&lt;br>
-Write expressions using &lt;a href="https://cel.dev/?hl=fr">Google CEL&lt;/a> to enforce validation logic.&lt;/p>
+Write expressions using &lt;a href="https://cel.dev/?hl=fr">Google Common Expression Language&lt;/a> to enforce validation logic.&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>&lt;strong>Failure Policies&lt;/strong>:&lt;br>
@@ -4201,7 +4201,7 @@ Decide what happens when validation fails:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>- &lt;span style="color:#204a87;font-weight:bold">name&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#000">FilterDeleteOperation&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">expression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;resource.spec.op == &amp;#39;DELETE&amp;#39;&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#204a87;font-weight:bold">messageExpression&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline"> &lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#39;Operation &amp;#39; + resource.spec.op + &amp;#39; on topics is not authorized&amp;#39;&amp;#34;&lt;/span>&lt;span style="color:#f8f8f8;text-decoration:underline">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 Learn more: &lt;a href="https://www.jikkou.io/docs/concepts/validations/">ValidatingResourcePolicy Documentation&lt;/a>&lt;/p>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 Learn more: &lt;a href="https://www.jikkou.io/docs/providers/core/resources/validatingresourcepolicy/">ValidatingResourcePolicy Documentation&lt;/a>&lt;/p>
 &lt;hr>
 &lt;h2 id="-resource-repositories--gitops-friendly-resource-management">📦 Resource Repositories — GitOps-Friendly Resource Management&lt;/h2>
 &lt;p>Managing and sharing resource definitions just got easier.&lt;br>
@@ -4243,7 +4243,8 @@ paths = [
 You can now filter resources dynamically based on &lt;em>any&lt;/em> attribute.&lt;/p>
 &lt;p>Example: List all topics with more than 12 partitions:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --selector &lt;span style="color:#4e9a06">&amp;#34;expr: resource.spec.partitions &amp;gt;= 12&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>👉 Learn more: &lt;a href="https://www.jikkou.io/docs/concepts/selectors/#expression-_since-jikkou-v036_">Expression Documentation&lt;/a>&lt;/p>
+&lt;hr>
 &lt;h2 id="-actions-improvements">⚙️ Actions Improvements&lt;/h2>
 &lt;ul>
 &lt;li>Added &lt;strong>&lt;code>TruncateKafkaTopicRecords&lt;/code>&lt;/strong> action → truncate topic-partitions to a specific datetime.&lt;/li>
