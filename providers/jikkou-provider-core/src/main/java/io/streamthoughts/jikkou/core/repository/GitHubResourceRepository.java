@@ -6,6 +6,8 @@
  */
 package io.streamthoughts.jikkou.core.repository;
 
+import static io.streamthoughts.jikkou.core.io.Jackson.YAML_OBJECT_MAPPER;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.common.utils.Pair;
@@ -24,8 +26,6 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -38,8 +38,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static io.streamthoughts.jikkou.core.io.Jackson.YAML_OBJECT_MAPPER;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@link ResourceRepository} implementation for loading resources from GitHub repository.
