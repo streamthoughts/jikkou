@@ -43,8 +43,7 @@ public final class ExtensionProviderAwareRegistry implements ExtensionRegistry {
     @Override
     public <T> void register(@NotNull Class<T> type,
                              @NotNull Supplier<T> supplier) {
-        delegate.register(type, supplier, ExtensionDescriptorModifiers
-            .withProvider(provider, new InternalExtensionProviderSupplier(provider, configuration)));
+        delegate.register(type, supplier, newProviderModifier());
     }
 
     /**
@@ -55,9 +54,13 @@ public final class ExtensionProviderAwareRegistry implements ExtensionRegistry {
                              @NotNull Supplier<T> supplier,
                              ExtensionDescriptorModifier... modifiers) {
         ExtensionDescriptorModifier[] newModifiers = Arrays.copyOf(modifiers, modifiers.length + 1);
-        newModifiers[newModifiers.length - 1] = ExtensionDescriptorModifiers
-            .withProvider(provider, new InternalExtensionProviderSupplier(provider, configuration));
+        newModifiers[newModifiers.length - 1] = newProviderModifier();
         delegate.register(type, supplier, newModifiers);
+    }
+
+    @NotNull
+    private ExtensionDescriptorModifier newProviderModifier() {
+        return ExtensionDescriptorModifiers.withProvider(provider, new InternalExtensionProviderSupplier(provider, configuration));
     }
 
     private static final class InternalExtensionProviderSupplier implements Supplier<ExtensionProvider> {

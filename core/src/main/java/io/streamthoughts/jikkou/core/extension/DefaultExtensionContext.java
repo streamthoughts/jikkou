@@ -9,7 +9,11 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
+
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Default {@link ExtensionContext}.
@@ -63,7 +67,9 @@ public final class DefaultExtensionContext implements ExtensionContext {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends ExtensionProvider> T provider() {
-        return (T) descriptor.providerSupplier().get();
+        return (T) Optional.ofNullable(descriptor.providerSupplier())
+            .map(Supplier::get)
+            .orElseThrow(() -> new NoSuchElementException("No provider registered for extension: " + descriptor.name()));
     }
 
     /**

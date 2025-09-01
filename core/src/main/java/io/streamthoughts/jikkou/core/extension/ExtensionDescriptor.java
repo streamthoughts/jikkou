@@ -96,7 +96,6 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
      */
     Class<? extends ExtensionProvider> provider();
 
-
     /**
      * Gets the supplier for the provider to which this extension belongs to.
      *
