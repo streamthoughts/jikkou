@@ -94,7 +94,7 @@ public abstract class BaseApi implements JikkouApi {
             // Register resource descriptors to the global registry
             registry.allDescriptors().forEach(resourceRegistry::register);
 
-            // Registry resource descriptors to the Resource Deserializer.
+            // Register resource descriptors to the Resource Deserializer.
             registry.allDescriptors()
                 .stream()
                 .filter(ResourceDescriptor::isEnabled)

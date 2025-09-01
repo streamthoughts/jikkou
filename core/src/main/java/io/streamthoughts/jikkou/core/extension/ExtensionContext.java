@@ -20,14 +20,18 @@ public interface ExtensionContext {
     /**
      * Returns the name of the extension.
      *
-     * @return The name.
+     * @return the extension name.
      */
     String name();
 
     /**
-     * Returns the provider configuration.
+     * Returns the configuration associated with this extension.
+     * <p>
+     * If the extension was registered directly, this method returns the configuration
+     * it was registered with. If the extension was registered through a provider,
+     * the returned configuration may be empty.
      *
-     * @return The configuration.
+     * @return the extension configuration
      */
     Configuration configuration();
 
@@ -35,7 +39,7 @@ public interface ExtensionContext {
      * Gets a new extension context from the specified extension type.
      *
      * @param extension The extension type.
-     * @return The ExtensionContext.
+     * @return the {@link ExtensionContext}.
      */
     ExtensionContext contextForExtension(Class<? extends Extension> extension);
 
