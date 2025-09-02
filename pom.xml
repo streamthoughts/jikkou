@@ -119,7 +119,7 @@
         <jinjava.version>2.7.4</jinjava.version>
         <lombok.version>1.18.38</lombok.version>
         <config.version>1.4.3</config.version>
-        <annotations.version>24.1.0</annotations.version>
+        <annotations.version>26.0.2-1</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
         <reactor-core.version>3.7.4</reactor-core.version>
         <cel.version>0.9.1</cel.version>
