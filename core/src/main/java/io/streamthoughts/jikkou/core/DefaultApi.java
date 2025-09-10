@@ -56,7 +56,6 @@ import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.Reconciler;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.reconciler.config.ApiOptionSpecFactory;
-import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
@@ -129,7 +128,6 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         }
     }
 
-    private final List<ChangeReporter> reporters = new LinkedList<>();
     private final ResourceRegistry resourceRegistry;
     private boolean enableBuiltInAnnotations = false;
 
@@ -445,11 +443,11 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             );
         }
 
-        if (!context.isDryRun() && !reporters.isEmpty()) {
+        if (!context.isDryRun()) {
             List<ChangeResult> reportable = changeResults.stream()
                 .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.change()))
                 .collect(Collectors.toList());
-            CombineChangeReporter reporter = new CombineChangeReporter(reporters);
+            CombineChangeReporter reporter = newCombineReporter();
             reporter.report(reportable);
         }
         return new ApiChangeResultList(context.isDryRun(), new ObjectMeta(), changeResults);
