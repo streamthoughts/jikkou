@@ -26,6 +26,8 @@ import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
+import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
+import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
 import io.streamthoughts.jikkou.core.repository.ResourceRepository;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
@@ -263,6 +265,10 @@ public abstract class BaseApi implements JikkouApi {
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected TransformationChain newResourceTransformationChain() {
         return new TransformationChain((List)extensionFactory.getAllExtensions(Transformation.class, Qualifiers.enabled()));
+    }
+
+    protected CombineChangeReporter newCombineReporter() {
+        return new CombineChangeReporter(extensionFactory.getAllExtensions(ChangeReporter.class, Qualifiers.enabled()));
     }
 
     protected ConverterChain getConverterChain() {
