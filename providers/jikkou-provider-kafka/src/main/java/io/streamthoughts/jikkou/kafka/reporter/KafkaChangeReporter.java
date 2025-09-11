@@ -133,8 +133,9 @@ public class KafkaChangeReporter implements ChangeReporter {
             LOG.debug("Sending completed for {} records", results.size());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } catch (ExecutionException ignore) {
+        } catch (ExecutionException exception) {
             // There is nothing we can do here
+            LOG.warn("Error during production, reconcile flow continue anyway", exception);
         }
     }
 
