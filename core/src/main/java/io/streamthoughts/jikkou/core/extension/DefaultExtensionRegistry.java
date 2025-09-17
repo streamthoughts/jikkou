@@ -262,7 +262,7 @@ public final class DefaultExtensionRegistry implements ExtensionRegistry, Extens
 
         if (extensionsByKey.put(key, new DefaultExtensionSupplier<>(descriptor)) != null) {
             throw new ConflictingExtensionDefinitionException(
-                "Failed to resister ExtensionDescriptor, extension already exists for key: " + key);
+                "Failed to register ExtensionDescriptor, extension already exists for key: " + key);
         }
         registerAliasesFor(descriptor);
 
