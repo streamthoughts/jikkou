@@ -8,8 +8,20 @@ package io.streamthoughts.jikkou.schema.registry;
 
 import io.streamthoughts.jikkou.core.config.ConfigException;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
+import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifiers;
+import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
+import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.reconciler.Controller;
+import io.streamthoughts.jikkou.core.transform.Transformation;
+import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider.Config;
 import io.streamthoughts.jikkou.schema.registry.api.AuthMethod;
+import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -68,5 +80,27 @@ class SchemaRegistryExtensionProviderTest {
         AuthMethod authMethod =  Config.SCHEMA_REGISTRY_AUTH_METHOD.get(configuration);
         // Then
         Assertions.assertEquals(AuthMethod.INVALID, authMethod);
+    }
+
+    @Test
+    void shouldRegisterExtensions() {
+        // Given
+        SchemaRegistryExtensionProvider provider = new SchemaRegistryExtensionProvider();
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry(
+                new DefaultExtensionDescriptorFactory(),
+                new ClassExtensionAliasesGenerator()
+        );
+
+        // When
+        provider.registerExtensions(registry);
+
+        // Then
+        Assertions.assertFalse(registry.findAllDescriptorsByClass(Transformation.class).isEmpty());
+        Assertions.assertFalse(registry.findAllDescriptorsByClass(Controller.class).isEmpty());
+
+        List<ExtensionDescriptor<Validation>> allSchemaValidationDescriptors = registry
+                .findAllDescriptorsByClass(Validation.class,
+                        Qualifiers.bySupportedResource(ResourceType.of(V1SchemaRegistrySubject.class)));
+        Assertions.assertEquals(3, allSchemaValidationDescriptors.size());
     }
 }

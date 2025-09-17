@@ -78,9 +78,7 @@ public final class SupportedResourceQualifier<T> implements Qualifier<T> {
         else if (!Strings.isBlank(kind)) {
             resourceType = ResourceType.of(kind);
         }
-
-        return equals == Objects.equals(this.type, resourceType);
-
+        return equals == (resourceType != null && this.type.canAccept(resourceType));
     }
 
     /**
