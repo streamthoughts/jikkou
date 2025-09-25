@@ -7,19 +7,12 @@
 package io.streamthoughts.jikkou.core.extension.qualifier;
 
 import io.streamthoughts.jikkou.common.utils.Classes;
-import io.streamthoughts.jikkou.core.annotation.ApiVersion;
-import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
-import io.streamthoughts.jikkou.core.annotation.Transient;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorFactory;
-import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.ObjectMeta;
-import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
