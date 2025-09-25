@@ -82,6 +82,10 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-latest, macOS-latest, macOS-13, windows-latest ]
+        setup: [ graalvm ]
+        include:
+          - os: ubuntu-latest
+            setup: java
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout GitHub repository'
@@ -104,29 +108,30 @@ jobs:
           native-image-job-reports: 'true'
 
       - name: 'Build Native Image (Linux)'
-        if: ${{ runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' && matrix.setup == 'graalvm' }}
         run: |
-          ./mvnw -ntp -B --file pom.xml -Pnative package
+          ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Build Native Image (macOS)'
-        if: ${{ runner.os == 'macOS' }}
+        if: ${{ runner.os == 'macOS' && matrix.setup == 'graalvm' }}
         run: |
-          ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
+          ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Build Native Image (Windows)'
-        if: ${{ runner.os == 'Windows' }}
+        if: ${{ runner.os == 'windows' && matrix.setup == 'graalvm'  }}
         run: |
-          ./mvnw -ntp -B --file pom.xml -Pnative package "-DskipTests"
-
-      - name: 'Build Java Binary Distribution'
-        run: |
-          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
+          ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Build Debian Package (Linux)'
-        if: ${{ runner.os == 'Linux' }}
+        if: ${{ runner.os == 'Linux' && matrix.setup == 'graalvm' }}
         run: |
           ./mvnw -ntp -B --file pom.xml -Pdeb package -DskipTests
 
+      - name: 'Build Distribution'
+        if: ${{ runner.os == 'Linux' && matrix.setup == 'java'  }}
+        run: |
+          ./mvnw -ntp -B --file pom.xml -Pdist package
+          
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v4
         with:
