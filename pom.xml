@@ -121,7 +121,7 @@
         <annotations.version>24.1.0</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
         <reactor-core.version>3.7.4</reactor-core.version>
-        <cel.version>0.9.1</cel.version>
+        <cel.version>0.11.0</cel.version>
         <avro.version>1.11.4</avro.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
