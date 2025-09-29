@@ -13,7 +13,7 @@
     <groupId>io.streamthoughts</groupId>
     <artifactId>jikkou-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.36.2</version>
+    <version>0.36.3-SNAPSHOT</version>
     <modules>
         <module>resource-generator</module>
         <module>core</module>
