@@ -10,6 +10,7 @@ import static io.streamthoughts.jikkou.core.io.Jackson.YAML_OBJECT_MAPPER;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
+import io.streamthoughts.jikkou.common.utils.IOUtils;
 import io.streamthoughts.jikkou.common.utils.Pair;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -34,6 +35,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,11 +100,12 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
             List<HasMetadata> allResources = new ArrayList<>();
             ResourceLoader loader = new ResourceLoader(resourceReaderFactory, readerOptions);
 
+            PathMatcher pathMatcher = IOUtils.getPathMatcher(configs.resourceFilePattern());
             for (String path : configs.resourceFileLocations()) {
                 List<GitHubFile> files = listFilesInPath(configs.repository(), configs.branch(), path, configs.token());
 
                 for (GitHubFile file : files) {
-                    if (file.path().endsWith(".yaml") || file.path().endsWith(".yml")) {
+                    if (pathMatcher.matches(Path.of(file.path()))) {
                         String content = downloadFileContent(file, configs.token());
                         try (InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8))) {
                             HasItems items = loader.load(inputStream, file.uri());
