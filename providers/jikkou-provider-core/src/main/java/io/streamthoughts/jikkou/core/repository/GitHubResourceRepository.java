@@ -42,11 +42,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ResourceRepository} implementation for loading resources from GitHub repository.
  */
 public class GitHubResourceRepository extends ContextualExtension implements ResourceRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GitHubResourceRepository.class);
 
     private static final String GITHUB_API_BASE = "https://api.github.com";
     private static final String GITHUB_RAW_BASE = "https://raw.githubusercontent.com";
@@ -102,10 +106,17 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
 
             PathMatcher pathMatcher = IOUtils.getPathMatcher(configs.resourceFilePattern());
             for (String path : configs.resourceFileLocations()) {
+                LOG.debug(
+                    "Listing resources from GitHub repository '{}' and branch '{}' for path '{}'",
+                    configs.repository(),
+                    configs.branch(),
+                    path
+                );
                 List<GitHubFile> files = listFilesInPath(configs.repository(), configs.branch(), path, configs.token());
 
                 for (GitHubFile file : files) {
                     if (pathMatcher.matches(Path.of(file.path()))) {
+                        LOG.debug("Reading resource content from path {}", file.path());
                         String content = downloadFileContent(file, configs.token());
                         try (InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8))) {
                             HasItems items = loader.load(inputStream, file.uri());
@@ -166,7 +177,8 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to list files in GitHub repository: " + response.body());
+            LOG.warn("Failed to list files from GitHub repository '{}' for path '{}'. Error: {}", repository, path, response.body());
+            return List.of();
         }
 
         JsonNode jsonResponse = Jackson.json().readTree(response.body());
