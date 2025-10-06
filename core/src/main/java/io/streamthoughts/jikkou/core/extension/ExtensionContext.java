@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.core.extension;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -50,4 +51,36 @@ public interface ExtensionContext {
      * @throws NoSuchElementException if no provider is attached to this context.
      */
     <T extends ExtensionProvider> T provider();
+
+    /**
+     * Static helper method for constructing a new {@link ExtensionContext} from a given configuration.
+     * <p>
+     * This method is expected to be used only for testing purpose.
+     *
+     * @param configuration the configuration.
+     * @return a new {@link ExtensionContext}
+     */
+    static ExtensionContext fromConfiguration(Configuration configuration) {
+        return new ExtensionContext() {
+            @Override
+            public String name() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Configuration configuration() {
+                return configuration;
+            }
+
+            @Override
+            public ExtensionContext contextForExtension(Class<? extends Extension> extension) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public <T extends ExtensionProvider> T provider() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
 }
