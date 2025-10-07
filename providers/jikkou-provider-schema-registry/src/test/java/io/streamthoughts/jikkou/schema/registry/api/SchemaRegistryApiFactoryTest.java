@@ -1,10 +1,15 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.streamthoughts.jikkou.schema.registry.api;
 
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
 import io.streamthoughts.jikkou.schema.registry.mock.HttpPathBasedDispatcher;
 import java.io.IOException;
-import java.net.http.HttpHeaders;
 import java.util.List;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;

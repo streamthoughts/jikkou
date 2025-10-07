@@ -9,10 +9,9 @@ package io.streamthoughts.jikkou.core.repository;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 class GitHubResourceRepositoryTest {
 
