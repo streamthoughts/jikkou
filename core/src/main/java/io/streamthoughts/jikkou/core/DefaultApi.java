@@ -501,7 +501,12 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
-        List<HasMetadata> items = doPrepare(all, context).getItems();
+        return doValidate(all, context);
+    }
+
+    @NotNull
+    private ApiValidationResult<HasMetadata> doValidate(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
+        List<HasMetadata> items = doPrepare(resources, context).getItems();
         ValidationResult validationChainResult = this.newResourceValidationChain().validate(items);
 
         // Get and apply all policies
@@ -575,7 +580,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ResourceList filtered = ResourceList.of(list);
 
         // Validate resources.
-        Map<ResourceType, List<HasMetadata>> resourcesByType = validate(filtered, context).get().groupByType();
+        Map<ResourceType, List<HasMetadata>> resourcesByType = doValidate(filtered, context).get().groupByType();
 
         // Diff
         List<ResourceChange> results = resourcesByType.entrySet()
