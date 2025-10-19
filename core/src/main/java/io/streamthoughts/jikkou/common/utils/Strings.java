@@ -27,13 +27,13 @@ public final class Strings {
         return !isBlank(string);
     }
 
-    public static Properties toProperties(String string) {
-        final String formattedString = string.trim().replace(",", System.lineSeparator());
+    public static Properties toProperties(final String string) {
+        final String formattedString = string.trim().replaceAll(",(?=[^,]+=)", System.lineSeparator());
         try (StringReader stringReader = new StringReader(formattedString)) {
             final Properties properties = new Properties();
             properties.load(stringReader);
             return properties;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }

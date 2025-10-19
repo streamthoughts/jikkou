@@ -34,11 +34,12 @@ class StringsTest {
 
     @Test
     void shouldGetPropertiesWhenParsingValidString() {
-        Properties properties = Strings.toProperties("a=1,b=2,c=3");
+        Properties properties = Strings.toProperties("a=1,b=2,c=3,3,4,d=5,1");
         Assertions.assertEquals(new Properties(){{
             setProperty("a", "1");
             setProperty("b", "2");
-            setProperty("c", "3");
+            setProperty("c", "3,3,4");
+            setProperty("d", "5,1");
         }}, properties);
     }
     
