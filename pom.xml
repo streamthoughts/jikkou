@@ -113,7 +113,7 @@
         <testcontainer.version>1.21.3</testcontainer.version>
         <mockwebserver.version>5.1.0</mockwebserver.version>
         <!-- Dependencies -->
-        <kafka.version>3.7.0</kafka.version>
+        <kafka.version>4.1.0</kafka.version>
         <picocli.version>4.7.6</picocli.version>
         <jackson.version>2.18.3</jackson.version>
         <jinjava.version>2.7.4</jinjava.version>
