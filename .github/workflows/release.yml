@@ -173,7 +173,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: 'Download all artifacts'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: artifacts
           pattern: artifacts-*
