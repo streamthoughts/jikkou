@@ -22,7 +22,7 @@ jobs:
     name: 'Build Docker Image (CLI Native)'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: docker/setup-buildx-action@v3
 
       - name: 'Set up GraalVM'
@@ -91,7 +91,7 @@ jobs:
     name: 'Build Docker Image (CLI Java Binary)'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: docker/setup-buildx-action@v3
 
       - name: 'Set up Java'
@@ -156,7 +156,7 @@ jobs:
     name: 'Build Docker Image (Server)'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: docker/setup-buildx-action@v3
 
       - name: 'Set up Java'
