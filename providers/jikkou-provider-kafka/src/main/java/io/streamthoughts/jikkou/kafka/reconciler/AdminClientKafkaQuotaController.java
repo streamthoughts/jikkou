@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class AdminClientKafkaQuotaController
         extends ContextualExtension
-        implements Controller<V1KafkaClientQuota, ResourceChange> {
+        implements Controller<V1KafkaClientQuota> {
 
     /**
      * The extension config
@@ -116,13 +116,13 @@ public final class AdminClientKafkaQuotaController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull ReconciliationContext context) {
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             final AdminClient adminClient = clientContext.getAdminClient();
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                     new KafkaClientQuotaChangeHandler(adminClient),
-                    new ChangeHandler.None<>(KafkaClientQuotaChangeDescription::new)
+                    new ChangeHandler.None(KafkaClientQuotaChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }

@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 @ControllerConfiguration(
     supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
-public final class KafkaConnectorController extends ContextualExtension implements Controller<V1KafkaConnector, ResourceChange> {
+public final class KafkaConnectorController extends ContextualExtension implements Controller<V1KafkaConnector> {
 
     private KafkaConnectClusterConfigs configuration;
 
@@ -68,7 +68,7 @@ public final class KafkaConnectorController extends ContextualExtension implemen
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull final ReconciliationContext context) {
 
         List<ResourceChange> changes = executor.changes();
@@ -82,14 +82,11 @@ public final class KafkaConnectorController extends ContextualExtension implemen
             final String cluster = entry.getKey();
             KafkaConnectClientConfig connectClientConfig = configuration.resolveClientConfigForCluster(cluster, entry.getValue());
             try (KafkaConnectApi api = KafkaConnectApiFactory.create(connectClientConfig)) {
-                List<ChangeHandler<ResourceChange>> handlers = List.of(
+                List<ChangeHandler> handlers = List.of(
                     new KafkaConnectorChangeHandler(api, cluster),
-                    new ChangeHandler.None<>(change -> new KafkaConnectorChangeDescription(cluster, change))
+                    new ChangeHandler.None(change -> new KafkaConnectorChangeDescription(cluster, change))
                 );
-                DefaultChangeExecutor<ResourceChange> dedicatedExecutor = new DefaultChangeExecutor<>(
-                    context,
-                    entry.getValue()
-                );
+                DefaultChangeExecutor dedicatedExecutor = new DefaultChangeExecutor(context, entry.getValue());
                 results.addAll(dedicatedExecutor.applyChanges(handlers));
             }
         }

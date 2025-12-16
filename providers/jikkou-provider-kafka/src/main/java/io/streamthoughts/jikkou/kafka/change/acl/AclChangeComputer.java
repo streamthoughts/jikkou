@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public final class AclChangeComputer
-        extends ResourceChangeComputer<String, V1KafkaPrincipalAuthorization, ResourceChange> {
+        extends ResourceChangeComputer<String, V1KafkaPrincipalAuthorization> {
 
     public static final String ACL = "acl";
 
@@ -42,7 +42,7 @@ public final class AclChangeComputer
         );
     }
 
-    public static class AclChangeFactory extends ResourceChangeFactory<String, V1KafkaPrincipalAuthorization, ResourceChange> {
+    public static class AclChangeFactory extends ResourceChangeFactory<String, V1KafkaPrincipalAuthorization> {
 
         private final KafkaAclBindingBuilder kafkaAclBindingBuilder;
 

@@ -45,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class AdminClientKafkaAclController
     extends ContextualExtension
-    implements Controller<V1KafkaPrincipalAuthorization, ResourceChange> {
+    implements Controller<V1KafkaPrincipalAuthorization> {
 
     interface Config {
         ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
@@ -126,13 +126,13 @@ public final class AdminClientKafkaAclController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult> execute(@NotNull ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull ChangeExecutor executor,
                                       @NotNull ReconciliationContext context) {
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             final AdminClient adminClient = clientContext.getAdminClient();
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                 new AclChangeHandler(adminClient),
-                new ChangeHandler.None<>(KafkaPrincipalAuthorizationDescription::new)
+                new ChangeHandler.None(KafkaPrincipalAuthorizationDescription::new)
             );
             return executor.applyChanges(handlers);
         }

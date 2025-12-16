@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 @Enabled
 @Category(ExtensionCategory.CONTROLLER)
 @ControllerConfiguration
-public interface Controller<R extends HasMetadata, C extends ResourceChange> extends HasMetadataAcceptable, Extension {
+public interface Controller<R extends HasMetadata> extends HasMetadataAcceptable, Extension {
 
     /**
      * Executes all changes for the given reconciliation mode.
@@ -42,7 +42,7 @@ public interface Controller<R extends HasMetadata, C extends ResourceChange> ext
      * @param context  The ReconciliationContext.
      * @return The list of ChangeResult.
      */
-    List<ChangeResult> execute(@NotNull ChangeExecutor<C> executor,
+    List<ChangeResult> execute(@NotNull ChangeExecutor executor,
                                @NotNull ReconciliationContext context);
 
     /**
@@ -52,8 +52,8 @@ public interface Controller<R extends HasMetadata, C extends ResourceChange> ext
      * @param context   The ReconciliationContext.
      * @return The list of changes.
      */
-    List<C> plan(@NotNull Collection<R> resources,
-                 @NotNull ReconciliationContext context);
+    List<ResourceChange> plan(@NotNull Collection<R> resources,
+                              @NotNull ReconciliationContext context);
 
     /**
      * Gets the set of reconciliation modes supported by this controller.

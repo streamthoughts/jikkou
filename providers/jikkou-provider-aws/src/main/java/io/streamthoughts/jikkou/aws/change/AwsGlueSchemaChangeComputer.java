@@ -22,7 +22,7 @@ import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import java.util.Optional;
 
-public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<String, AwsGlueSchema, ResourceChange> {
+public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<String, AwsGlueSchema> {
 
     public static final String DATA_COMPATIBILITY = "compatibility";
     public static final String DATA_SCHEMA = "schema";
@@ -37,7 +37,7 @@ public final class AwsGlueSchemaChangeComputer extends ResourceChangeComputer<St
         super(object -> object.getMetadata().getName(), new AwsGlueSchemaChangeFactory());
     }
 
-    public static class AwsGlueSchemaChangeFactory extends ResourceChangeFactory<String, AwsGlueSchema, ResourceChange> {
+    public static class AwsGlueSchemaChangeFactory extends ResourceChangeFactory<String, AwsGlueSchema> {
 
         /**
          * {@inheritDoc}

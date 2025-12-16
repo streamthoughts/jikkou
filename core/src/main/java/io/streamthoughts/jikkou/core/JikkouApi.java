@@ -260,6 +260,17 @@ public interface JikkouApi extends AutoCloseable {
                               @NotNull ReconciliationContext context);
 
     /**
+     * Replaces all the given list of resources.
+     *
+     * @param resources the resources.
+     * @param context   the context to be used for conciliation.
+     * @return the results of the changes applied on resources.
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    ApiChangeResultList replace(@NotNull HasItems resources, @NotNull ReconciliationContext context);
+
+    /**
      * Executes the specified action for the specified resource type.
      *
      * @param action        The name of the action.

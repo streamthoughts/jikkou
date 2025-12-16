@@ -53,6 +53,7 @@ import io.streamthoughts.jikkou.core.policy.model.ValidatingResourcePolicy;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
+import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.Reconciler;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.reconciler.config.ApiOptionSpecFactory;
@@ -404,6 +405,27 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         return doPatch(policies, changes, mode, context);
     }
 
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiChangeResultList replace(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        // Add annotation for replace
+        all.forEach(it -> it.getMetadata().addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_CONFIG_REPLACE, true));
+
+        // Get all changes
+        List<ResourceChange> changes = doDiff(all, NOOP_RESOURCE_CHANGE_FILTER, context).getItems();
+
+        // Get and apply all policies
+        List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
+
+        // Patch
+        return doPatch(policies, changes, ReconciliationMode.FULL, context);
+    }
+
     @NotNull
     private ApiChangeResultList doPatch(List<ResourcePolicy> policies,
                                         List<ResourceChange> changes,
@@ -412,13 +434,36 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
 
         ResourceList<ResourceChange> validated = applyValidatingResourcePolicy(policies, changes).get();
 
-        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = validated.groupBy(ResourceType::of);
+        Map<Boolean, List<ResourceChange>> changesGroupByIsReplace = validated.stream().collect(Collectors.groupingBy(it -> Operation.REPLACE.equals(it.getOp())));
 
-        final List<ChangeResult> changeResults = new LinkedList<>();
+        List<ResourceChange> allChangesForReplaceOp = changesGroupByIsReplace.get(Boolean.TRUE);
+        List<ResourceChange> allChangesForAnyOtherOp = changesGroupByIsReplace.get(Boolean.FALSE);
 
-        for (Map.Entry<ResourceType, List<ResourceChange>> entry : changesGroupByResourceType.entrySet()) {
+        final List<ChangeResult> results = new LinkedList<>();
+        if (allChangesForAnyOtherOp != null) {
+            results.addAll(applyPatchesAndGetResults(mode, context, allChangesForAnyOtherOp));
+        }
+
+        if (allChangesForReplaceOp != null) {
+            results.addAll(applyPatchesAndGetResults(mode, context, allChangesForReplaceOp.stream().map(it -> (ResourceChange) it.getSpec().getChanges().getLast("delete").getBefore()).toList()));
+            results.addAll(applyPatchesAndGetResults(mode, context, allChangesForReplaceOp.stream().map(it -> (ResourceChange) it.getSpec().getChanges().getLast("create").getAfter()).toList()));
+        }
+
+        if (!context.isDryRun()) {
+            List<ChangeResult> reportable = results.stream()
+                .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.change()))
+                .collect(Collectors.toList());
+            CombineChangeReporter reporter = newCombineReporter();
+            reporter.report(reportable);
+        }
+        return new ApiChangeResultList(context.isDryRun(), new ObjectMeta(), results);
+    }
+
+    private List<ChangeResult> applyPatchesAndGetResults(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context, List<ResourceChange> changes) {
+        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList.of(changes).groupBy(ResourceType::of);
+        return changesGroupByResourceType.entrySet().stream().flatMap(entry -> {
             ResourceType type = entry.getKey();
-            Controller<HasMetadata, ResourceChange> controller = getMatchingController(type);
+            Controller<HasMetadata> controller = getMatchingController(type);
             List<ResourceChange> items = entry.getValue();
             LOG.info("Applying {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
                 items.size(),
@@ -429,9 +474,8 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 mode,
                 context.isDryRun()
             );
-            Reconciler<HasMetadata, ResourceChange> reconciler = new Reconciler<>(controller);
+            Reconciler<HasMetadata> reconciler = new Reconciler<>(controller);
             List<ChangeResult> results = reconciler.apply(items, mode, context);
-            changeResults.addAll(results);
             LOG.info("Executed {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
                 results.size(),
                 type.group(),
@@ -441,16 +485,8 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 mode,
                 context.isDryRun()
             );
-        }
-
-        if (!context.isDryRun()) {
-            List<ChangeResult> reportable = changeResults.stream()
-                .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.change()))
-                .collect(Collectors.toList());
-            CombineChangeReporter reporter = newCombineReporter();
-            reporter.report(reportable);
-        }
-        return new ApiChangeResultList(context.isDryRun(), new ObjectMeta(), changeResults);
+            return results.stream();
+        }).toList();
     }
 
     /**
@@ -587,7 +623,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .stream()
             .map(e -> {
                 final ResourceType type = e.getKey();
-                Controller<HasMetadata, ResourceChange> controller = getMatchingController(type);
+                Controller<HasMetadata> controller = getMatchingController(type);
                 List<HasMetadata> items = e.getValue();
                 LOG.info("Planning changes of {} resources for group={}, apiVersion={} and kind={} using controller: '{}'.",
                     items.size(),

@@ -222,6 +222,24 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
+    public ApiChangeResultList replace(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        Map<ResourceType, List<HasMetadata>> resourcesByType = doPrepare(all, context).groupByType();
+
+        List<ChangeResult> changes = new ArrayList<>();
+        for (Map.Entry<ResourceType, List<HasMetadata>> entry : resourcesByType.entrySet()) {
+            ApiChangeResultList result = apiClient.replace(entry.getKey(), entry.getValue(), context);
+            changes.addAll(result.results());
+        }
+        return new ApiChangeResultList(context.isDryRun(), CollectionUtils.cast(changes));
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action,
                                                                  @NotNull Configuration configuration) {

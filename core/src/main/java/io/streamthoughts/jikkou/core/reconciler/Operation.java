@@ -27,6 +27,10 @@ public enum Operation {
      */
     DELETE,
     /**
+     * An operation that resulted in an existing resource or data being deleted and re-created in the system.
+     */
+    REPLACE,
+    /**
      * An operation that resulted in an existing resource or data being updated in the system.
      */
     UPDATE;

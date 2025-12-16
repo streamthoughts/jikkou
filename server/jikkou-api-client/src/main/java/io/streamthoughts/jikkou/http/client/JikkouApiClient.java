@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.http.client;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.JikkouApiException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
@@ -24,6 +25,7 @@ import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
+import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
@@ -196,6 +198,18 @@ public interface JikkouApiClient {
                                                           @NotNull List<T> resources,
                                                           @NotNull ReconciliationMode mode,
                                                           @NotNull ReconciliationContext context);
+    /**
+     * Replaces all the given list of resources.
+     *
+     * @param resources the resources.
+     * @param context   the context to be used for conciliation.
+     * @return the results of the changes applied on resources.
+     * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
+     *                            or more than one descriptor match the type.
+     */
+    <T extends HasMetadata> ApiChangeResultList replace(@NotNull ResourceType type,
+                                                        @NotNull List<T> resources,
+                                                        @NotNull ReconciliationContext context);
 
     /**
      * Applies all the changes provided through the given list of resources.

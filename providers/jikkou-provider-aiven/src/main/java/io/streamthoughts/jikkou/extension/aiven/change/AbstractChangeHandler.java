@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractChangeHandler extends BaseChangeHandler<ResourceChange> {
+public abstract class AbstractChangeHandler extends BaseChangeHandler {
 
     protected final AivenApiClient api;
 
@@ -48,8 +48,7 @@ public abstract class AbstractChangeHandler extends BaseChangeHandler<ResourceCh
         this.api = Objects.requireNonNull(api, "api must not be null");
     }
 
-    protected <R> ChangeResponse<ResourceChange> executeAsync(final ResourceChange change,
-                                                              final Supplier<R> supplier) {
+    protected <R> ChangeResponse executeAsync(final ResourceChange change, final Supplier<R> supplier) {
         CompletableFuture<ChangeMetadata> future = CompletableFuture
                 .supplyAsync(() -> {
                     try {
@@ -69,7 +68,7 @@ public abstract class AbstractChangeHandler extends BaseChangeHandler<ResourceCh
                         }
                     }
                 });
-        return new ChangeResponse<>(change, future);
+        return new ChangeResponse(change, future);
     }
 
     public static <T> T getEntry(ResourceChange change, Class<T> entryType) {

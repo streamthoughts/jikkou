@@ -46,7 +46,7 @@ import org.jetbrains.annotations.NotNull;
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
-public final class AdminClientKafkaTableController implements Controller<V1KafkaTableRecord, ResourceChange> {
+public final class AdminClientKafkaTableController implements Controller<V1KafkaTableRecord> {
 
     private ProducerFactory<byte[], byte[]> producerFactory;
 
@@ -100,12 +100,12 @@ public final class AdminClientKafkaTableController implements Controller<V1Kafka
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult> execute(@NotNull ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull ChangeExecutor executor,
                                       @NotNull ReconciliationContext context) {
         try (var producer = producerFactory.createProducer()) {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                     new KafkaTableRecordChangeHandler(producer),
-                    new ChangeHandler.None<>(KafkaTableRecordChangeDescription::new)
+                    new ChangeHandler.None(KafkaTableRecordChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }

@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
         apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = "KafkaQuotaChange"
 )
-public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, ResourceChange> {
+public class AivenKafkaQuotaController implements Controller<V1KafkaQuota> {
 
     public static final ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
@@ -88,11 +88,11 @@ public class AivenKafkaQuotaController implements Controller<V1KafkaQuota, Resou
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor, @NotNull ReconciliationContext context) {
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor, @NotNull ReconciliationContext context) {
 
         AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                     new KafkaQuotaChangeHandler.Create(api),
                     new KafkaQuotaChangeHandler.Delete(api),
                     new KafkaQuotaChangeHandler.None()

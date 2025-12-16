@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteConsumerGroupHandler extends BaseChangeHandler<ResourceChange> {
+public class DeleteConsumerGroupHandler extends BaseChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteConsumerGroupHandler.class);
 
@@ -45,7 +45,7 @@ public class DeleteConsumerGroupHandler extends BaseChangeHandler<ResourceChange
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
 
         Map<String, ResourceChange> consumerGroupsByName = changes
                 .stream()
@@ -71,7 +71,7 @@ public class DeleteConsumerGroupHandler extends BaseChangeHandler<ResourceChange
                         return ChangeMetadata.empty();
                     });
                     ResourceChange item = consumerGroupsByName.get(e.getKey());
-                    return new ChangeResponse<>(item, future);
+                    return new ChangeResponse(item, future);
                 })
                 .toList();
     }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<String, V1KafkaConnector, ResourceChange> {
+public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<String, V1KafkaConnector> {
 
     public static final String DATA_CONNECTOR_CLASS = "connectorClass";
     public static final String DATA_TASKS_MAX = "tasksMax";
@@ -36,7 +36,7 @@ public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<S
         super(object -> object.getMetadata().getName(), new KafkaConnectorChangeFactory());
     }
 
-    public static class KafkaConnectorChangeFactory extends ResourceChangeFactory<String, V1KafkaConnector, ResourceChange> {
+    public static class KafkaConnectorChangeFactory extends ResourceChangeFactory<String, V1KafkaConnector> {
 
         @Override
         public ResourceChange createChangeForCreate(String key, V1KafkaConnector after) {

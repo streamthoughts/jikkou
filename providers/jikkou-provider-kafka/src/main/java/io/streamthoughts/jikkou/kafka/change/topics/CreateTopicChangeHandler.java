@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default command to create multiple topics.
  */
-public final class CreateTopicChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class CreateTopicChangeHandler extends BaseChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateTopicChangeHandler.class);
 
@@ -66,8 +66,7 @@ public final class CreateTopicChangeHandler extends BaseChangeHandler<ResourceCh
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<ResourceChange>> handleChanges(
-            final @NotNull List<ResourceChange> changes) {
+    public @NotNull List<ChangeResponse> handleChanges(final @NotNull List<ResourceChange> changes) {
         List<NewTopic> topics = changes
                 .stream()
                 .map(this::toNewTopic)
@@ -99,7 +98,7 @@ public final class CreateTopicChangeHandler extends BaseChangeHandler<ResourceCh
                                 }
                                 return ChangeMetadata.empty();
                             });
-                    return new ChangeResponse<>(resource, future);
+                    return new ChangeResponse(resource, future);
                 })
                 .toList();
     }

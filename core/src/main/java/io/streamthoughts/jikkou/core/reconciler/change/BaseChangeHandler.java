@@ -6,15 +6,14 @@
  */
 package io.streamthoughts.jikkou.core.reconciler.change;
 
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import java.util.Set;
 
 /**
- * @param <T> Type of the {@link ResourceChange}.
+ * Base class for implementation a {@link ChangeHandler}
  */
-public abstract class BaseChangeHandler<T extends ResourceChange> implements ChangeHandler<T> {
+public abstract class BaseChangeHandler implements ChangeHandler {
 
     private final Set<Operation> supportedOperations;
 

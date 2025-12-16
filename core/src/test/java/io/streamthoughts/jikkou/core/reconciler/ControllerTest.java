@@ -8,7 +8,6 @@ package io.streamthoughts.jikkou.core.reconciler;
 
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -26,8 +25,7 @@ class ControllerTest {
             supportedModes = {ReconciliationMode.CREATE}
     )
     static abstract class TestController<
-            R extends HasMetadata,
-            C extends ResourceChange> implements Controller<R, C> {
+            R extends HasMetadata> implements Controller<R> {
 
     }
 }

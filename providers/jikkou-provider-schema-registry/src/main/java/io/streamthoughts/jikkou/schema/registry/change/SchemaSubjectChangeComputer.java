@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
-public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<String, V1SchemaRegistrySubject, ResourceChange> {
+public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<String, V1SchemaRegistrySubject> {
 
     public static final String DATA_COMPATIBILITY_LEVEL = "compatibilityLevel";
     public static final String DATA_SCHEMA = "schema";
@@ -42,7 +42,7 @@ public final class SchemaSubjectChangeComputer extends ResourceChangeComputer<St
         super(object -> object.getMetadata().getName(), new SchemaSubjectChangeFactory());
     }
 
-    public static class SchemaSubjectChangeFactory extends ResourceChangeFactory<String, V1SchemaRegistrySubject, ResourceChange> {
+    public static class SchemaSubjectChangeFactory extends ResourceChangeFactory<String, V1SchemaRegistrySubject> {
 
         /**
          * {@inheritDoc}

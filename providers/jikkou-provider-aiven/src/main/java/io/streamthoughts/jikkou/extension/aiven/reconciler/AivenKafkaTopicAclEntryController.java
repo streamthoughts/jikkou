@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
         apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = "KafkaTopicAclEntryChange"
 )
-public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopicAclEntry, ResourceChange> {
+public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopicAclEntry> {
 
     interface Config {
         ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
@@ -89,12 +89,12 @@ public class AivenKafkaTopicAclEntryController implements Controller<V1KafkaTopi
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull ReconciliationContext context) {
 
         AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                     new KafkaAclEntryChangeHandler.Create(api),
                     new KafkaAclEntryChangeHandler.Delete(api),
                     new KafkaAclEntryChangeHandler.None()

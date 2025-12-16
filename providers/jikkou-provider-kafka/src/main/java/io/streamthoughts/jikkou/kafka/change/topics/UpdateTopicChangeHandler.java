@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default command to alter multiple topics.
  */
-public final class UpdateTopicChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class UpdateTopicChangeHandler extends BaseChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateTopicChangeHandler.class);
 
@@ -68,7 +68,7 @@ public final class UpdateTopicChangeHandler extends BaseChangeHandler<ResourceCh
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<ResourceChange>> handleChanges(final @NotNull List<ResourceChange> items) {
+    public @NotNull List<ChangeResponse> handleChanges(final @NotNull List<ResourceChange> items) {
 
         final Map<ConfigResource, Collection<AlterConfigOp>> alterConfigs = new HashMap<>();
         final Map<String, NewPartitions> newPartitions = new HashMap<>();
@@ -145,7 +145,7 @@ public final class UpdateTopicChangeHandler extends BaseChangeHandler<ResourceCh
                     List<CompletableFuture<ChangeMetadata>> futures = e.getValue().stream()
                             .map(f -> f.thenApply(unused -> ChangeMetadata.empty()))
                             .toList();
-                    return new ChangeResponse<>(item, futures);
+                    return new ChangeResponse(item, futures);
                 })
                 .toList();
     }

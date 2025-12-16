@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ResourceChangeComputer for {@link V1KafkaUser}.
  */
-public final class UserChangeComputer extends ResourceChangeComputer<String, V1KafkaUser, ResourceChange> {
+public final class UserChangeComputer extends ResourceChangeComputer<String, V1KafkaUser> {
 
     public static final String AUTHENTICATIONS_CHANGE_PREFIX = "authentications.";
 
@@ -42,7 +42,7 @@ public final class UserChangeComputer extends ResourceChangeComputer<String, V1K
         super(ChangeComputerBuilder.KeyMapper.byName(), new UserChangeFactory(), false);
     }
 
-    public static final class UserChangeFactory extends ResourceChangeFactory<String, V1KafkaUser, ResourceChange> {
+    public static final class UserChangeFactory extends ResourceChangeFactory<String, V1KafkaUser> {
 
         /**
          * {@inheritDoc}

@@ -23,7 +23,6 @@ import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
-import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reporter.ChangeReporter;
@@ -307,7 +306,7 @@ public abstract class BaseApi implements JikkouApi {
     }
 
     @SuppressWarnings("unchecked")
-    protected Controller<HasMetadata, ResourceChange> getMatchingController(@NotNull ResourceType resource) {
+    protected Controller<HasMetadata> getMatchingController(@NotNull ResourceType resource) {
         LOG.info("Looking for a controller accepting resource type: group={}, apiVersion={} and kind={}",
             resource.group(),
             resource.apiVersion(),

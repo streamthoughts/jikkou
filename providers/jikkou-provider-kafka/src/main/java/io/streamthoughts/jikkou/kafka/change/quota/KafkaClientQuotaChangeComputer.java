@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 
-public final class KafkaClientQuotaChangeComputer extends ResourceChangeComputer<ClientQuotaEntity, V1KafkaClientQuota, ResourceChange> {
+public final class KafkaClientQuotaChangeComputer extends ResourceChangeComputer<ClientQuotaEntity, V1KafkaClientQuota> {
 
     /**
      * Creates a new {@link TopicChangeComputer} instance.
@@ -39,7 +39,7 @@ public final class KafkaClientQuotaChangeComputer extends ResourceChangeComputer
         );
     }
 
-    public static final class KafkaClientQuotaChangeFactory extends ResourceChangeFactory<ClientQuotaEntity, V1KafkaClientQuota, ResourceChange> {
+    public static final class KafkaClientQuotaChangeFactory extends ResourceChangeFactory<ClientQuotaEntity, V1KafkaClientQuota> {
 
         private final boolean isLimitDeletionEnabled;
 

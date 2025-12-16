@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default command to delete multiple topics.
  */
-public final class DeleteTopicChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class DeleteTopicChangeHandler extends BaseChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteTopicChangeHandler.class);
 
@@ -55,7 +55,7 @@ public final class DeleteTopicChangeHandler extends BaseChangeHandler<ResourceCh
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<ResourceChange>> handleChanges(
+    public @NotNull List<ChangeResponse> handleChanges(
             final @NotNull List<ResourceChange> changes) {
         List<String> topics = changes
                 .stream()
@@ -80,7 +80,7 @@ public final class DeleteTopicChangeHandler extends BaseChangeHandler<ResourceCh
                         return ChangeMetadata.empty();
                     });
                     ResourceChange item = changesByTopicName.get(e.getKey());
-                    return new ChangeResponse<>(item, future);
+                    return new ChangeResponse(item, future);
                 })
                 .toList();
     }

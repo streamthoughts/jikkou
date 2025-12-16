@@ -30,7 +30,7 @@ import org.apache.kafka.common.internals.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TopicChangeComputer extends ResourceChangeComputer<String, V1KafkaTopic, ResourceChange> {
+public final class TopicChangeComputer extends ResourceChangeComputer<String, V1KafkaTopic> {
 
     /**
      * Creates a new {@link TopicChangeComputer} instance.
@@ -54,7 +54,7 @@ public final class TopicChangeComputer extends ResourceChangeComputer<String, V1
         );
     }
 
-    public static final class TopicChangeFactory extends ResourceChangeFactory<String, V1KafkaTopic, ResourceChange> {
+    public static final class TopicChangeFactory extends ResourceChangeFactory<String, V1KafkaTopic> {
 
         private final ChangeComputer<ConfigValue, StateChange> configEntryChangeComputer;
         private final List<Pattern> topicPatternsToExcludeFromDeletion;

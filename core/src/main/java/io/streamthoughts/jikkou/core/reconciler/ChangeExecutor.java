@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Service interface for executing reconciliation changes.
  */
-public interface ChangeExecutor<C extends ResourceChange> {
+public interface ChangeExecutor {
 
     /**
      * Executes all the changes attached to this executor with the specified handlers.
@@ -23,13 +23,13 @@ public interface ChangeExecutor<C extends ResourceChange> {
      * @throws IllegalArgumentException if more than one handler is provided for a same {@link Operation}.
      * @throws NullPointerException     if the list of handlers is {@code null}.
      */
-    List<ChangeResult> applyChanges(@NotNull final List<? extends ChangeHandler<C>> handlers);
+    List<ChangeResult> applyChanges(@NotNull final List<? extends ChangeHandler> handlers);
 
     /**
      * Gets the list of changes that will be applied by the executor.
      *
      * @return The list of HasMetadataChange.
      */
-    @NotNull List<C> changes();
+    @NotNull List<ResourceChange> changes();
 
 }

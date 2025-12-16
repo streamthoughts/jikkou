@@ -18,7 +18,7 @@ import io.streamthoughts.jikkou.extension.aiven.adapter.KafkaQuotaAdapter;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
 import java.util.List;
 
-public final class KafkaQuotaChangeComputer extends ResourceChangeComputer<Object, V1KafkaQuota, ResourceChange> {
+public final class KafkaQuotaChangeComputer extends ResourceChangeComputer<Object, V1KafkaQuota> {
 
     /**
      * Creates a new {@link KafkaQuotaChangeComputer} instance.
@@ -29,7 +29,7 @@ public final class KafkaQuotaChangeComputer extends ResourceChangeComputer<Objec
         super(o -> Pair.of(o.getSpec().getUser(), o.getSpec().getClientId()), new V1KafkaQuotaChangeFactory(), deleteOrphans);
     }
 
-    private static class V1KafkaQuotaChangeFactory extends ResourceChangeFactory<Object, V1KafkaQuota, ResourceChange> {
+    private static class V1KafkaQuotaChangeFactory extends ResourceChangeFactory<Object, V1KafkaQuota> {
 
         public static final String ENTRY = "entry";
 

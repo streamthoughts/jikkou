@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class SchemaRegistryAclEntryChangeComputer
-        extends ResourceChangeComputer<SchemaRegistryAclEntry, V1SchemaRegistryAclEntry, ResourceChange> {
+        extends ResourceChangeComputer<SchemaRegistryAclEntry, V1SchemaRegistryAclEntry> {
 
     /**
      * Creates a new {@link SchemaRegistryAclEntryChangeComputer} instance.
@@ -31,7 +31,7 @@ public final class SchemaRegistryAclEntryChangeComputer
         super(SchemaRegistryAclEntryAdapter::map, new SchemaRegistryAclEntryChangeFactory(), deleteOrphans);
     }
 
-    public static class SchemaRegistryAclEntryChangeFactory extends ResourceChangeFactory<SchemaRegistryAclEntry, V1SchemaRegistryAclEntry, ResourceChange> {
+    public static class SchemaRegistryAclEntryChangeFactory extends ResourceChangeFactory<SchemaRegistryAclEntry, V1SchemaRegistryAclEntry> {
 
         public static final String ENTRY = "entry";
 

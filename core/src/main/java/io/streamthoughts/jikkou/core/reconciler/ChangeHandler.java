@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface for applying resource changes.
  */
-public interface ChangeHandler<T extends ResourceChange> {
+public interface ChangeHandler {
 
     /**
      * Gets all the change types supported by this handler.
@@ -31,7 +31,7 @@ public interface ChangeHandler<T extends ResourceChange> {
      * @param changes the list of objects holding a {@link Change}.
      * @return The list of change application response.
      */
-    List<ChangeResponse<T>> handleChanges(@NotNull final List<T> changes);
+    List<ChangeResponse> handleChanges(@NotNull final List<ResourceChange> changes);
 
     /**
      * Gets a textual description for the given {@link Change}.
@@ -39,24 +39,24 @@ public interface ChangeHandler<T extends ResourceChange> {
      * @param change The resource change.
      * @return The textual description.
      */
-    TextDescription describe(@NotNull final T change);
+    TextDescription describe(@NotNull final ResourceChange change);
 
-    class None<T extends ResourceChange> extends BaseChangeHandler<T> {
+    class None extends BaseChangeHandler {
 
-        private final Function<T, TextDescription> description;
+        private final Function<ResourceChange, TextDescription> description;
 
-        public None(Function<T, TextDescription> description) {
+        public None(Function<ResourceChange, TextDescription> description) {
             super(Operation.NONE);
             this.description = description;
         }
 
         @Override
-        public TextDescription describe(@NotNull T change) {
+        public TextDescription describe(@NotNull ResourceChange change) {
             return description.apply(change);
         }
 
         @Override
-        public List<ChangeResponse<T>> handleChanges(@NotNull List<T> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             return changes.stream().map(ChangeResponse::new).toList();
         }
     }
