@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
     supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 public final class AivenKafkaTopicController
-    extends ContextualExtension implements Controller<V1KafkaTopic, ResourceChange> {
+    extends ContextualExtension implements Controller<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenKafkaTopicController.class);
 
@@ -112,11 +112,11 @@ public final class AivenKafkaTopicController
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull final ReconciliationContext context) {
 
         try (AivenApiClient api = AivenApiClientFactory.create(apiClientConfig)) {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                 new KafkaTopicChangeHandler.Create(api),
                 new KafkaTopicChangeHandler.Update(api),
                 new KafkaTopicChangeHandler.Delete(api),

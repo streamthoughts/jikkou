@@ -28,7 +28,7 @@ import org.apache.kafka.common.quota.ClientQuotaAlteration;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.jetbrains.annotations.NotNull;
 
-public final class KafkaClientQuotaChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class KafkaClientQuotaChangeHandler extends BaseChangeHandler {
 
     private final AdminClient client;
 
@@ -57,7 +57,7 @@ public final class KafkaClientQuotaChangeHandler extends BaseChangeHandler<Resou
      * {@inheritDoc}
      */
     @Override
-    public @NotNull List<ChangeResponse<ResourceChange>> handleChanges(@NotNull final List<ResourceChange> changes) {
+    public @NotNull List<ChangeResponse> handleChanges(@NotNull final List<ResourceChange> changes) {
         final List<ClientQuotaAlteration> alterations = changes
                 .stream()
                 .map(item -> {
@@ -89,7 +89,7 @@ public final class KafkaClientQuotaChangeHandler extends BaseChangeHandler<Resou
 
         return results.entrySet()
                 .stream()
-                .map(e -> new ChangeResponse<>(
+                .map(e -> new ChangeResponse(
                                 changeByQuotaEntity.get(e.getKey()),
                                 e.getValue().thenApply(unused -> ChangeMetadata.empty())
                         )

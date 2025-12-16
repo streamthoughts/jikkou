@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandler<ResourceChange> {
+public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSchemaSubjectChangeHandler.class);
 
@@ -150,8 +150,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 });
     }
 
-    public ChangeResponse<ResourceChange> toChangeResponse(ResourceChange change,
-                                                           CompletableFuture<?> future) {
+    public ChangeResponse toChangeResponse(ResourceChange change, CompletableFuture<?> future) {
         CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
             if (throwable == null) {
                 return ChangeMetadata.empty();
@@ -168,7 +167,7 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
             return ChangeMetadata.of(throwable);
         });
 
-        return new ChangeResponse<>(change, handled);
+        return new ChangeResponse(change, handled);
     }
 
     /**

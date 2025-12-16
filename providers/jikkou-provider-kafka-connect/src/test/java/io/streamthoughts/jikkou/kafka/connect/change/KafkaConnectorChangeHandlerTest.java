@@ -47,7 +47,7 @@ class KafkaConnectorChangeHandlerTest {
                 )
                 .build();
 
-        List<ChangeResponse<ResourceChange>> results = handler.handleChanges(List.of(change));
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.getFirst().getResults());
@@ -77,7 +77,7 @@ class KafkaConnectorChangeHandlerTest {
                 )
                 .build();
 
-        List<ChangeResponse<ResourceChange>> results = handler.handleChanges(List.of(change));
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.getFirst().getResults());
@@ -107,7 +107,7 @@ class KafkaConnectorChangeHandlerTest {
                 )
                 .build();
 
-        List<ChangeResponse<ResourceChange>> results = handler.handleChanges(List.of(change));
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.getFirst().getResults());
@@ -137,7 +137,7 @@ class KafkaConnectorChangeHandlerTest {
                 )
                 .build();
 
-        List<ChangeResponse<ResourceChange>> results = handler.handleChanges(List.of(change));
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.getFirst().getResults());
@@ -167,7 +167,7 @@ class KafkaConnectorChangeHandlerTest {
                 )
                 .build();
 
-        List<ChangeResponse<ResourceChange>> results = handler.handleChanges(List.of(change));
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
         Assertions.assertEquals(1, results.size());
 
         AsyncUtils.getValue(results.getFirst().getResults());

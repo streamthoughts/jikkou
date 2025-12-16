@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
 
 public final class UpdateSchemaSubjectChangeHandler
         extends AbstractSchemaSubjectChangeHandler
-        implements ChangeHandler<ResourceChange> {
+        implements ChangeHandler {
 
     /**
      * Creates a new {@link UpdateSchemaSubjectChangeHandler} instance.
@@ -49,9 +49,9 @@ public final class UpdateSchemaSubjectChangeHandler
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
 
-        List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
+        List<ChangeResponse> results = new ArrayList<>();
         for (ResourceChange change : changes) {
             Mono<Void> mono = Mono.empty();
 

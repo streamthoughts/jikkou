@@ -73,6 +73,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     private static class ResourceLinkKeys {
         static String LIST = "list";
         static String RECONCILE = "reconcile";
+        static String REPLACE = "replace";
         static String VALIDATE = "validate";
         static String DIFF = "diff";
         static String SELECT = "select";
@@ -372,9 +373,27 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                                                                  @NotNull List<T> resources,
                                                                  @NotNull ReconciliationMode mode,
                                                                  @NotNull ReconciliationContext context) {
+        return doSendReconcileRequest(type, resources, mode, context, ResourceLinkKeys.RECONCILE);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public <T extends HasMetadata> ApiChangeResultList replace(@NotNull ResourceType type,
+                                                               @NotNull List<T> resources,
+                                                               @NotNull ReconciliationContext context) {
+        return doSendReconcileRequest(type, resources, ReconciliationMode.FULL, context, ResourceLinkKeys.REPLACE);
+    }
+
+    private <T extends HasMetadata> ApiChangeResultList doSendReconcileRequest(@NotNull ResourceType type,
+                                                                               @NotNull List<T> resources,
+                                                                               @NotNull ReconciliationMode mode,
+                                                                               @NotNull ReconciliationContext context,
+                                                                               @NotNull String linkKey) {
         ApiResource apiResource = queryApiResourceForType(type);
 
-        Link link = findResourceLinkByKey(Links.of(apiResource.metadata()), ResourceLinkKeys.RECONCILE, type);
+        Link link = findResourceLinkByKey(Links.of(apiResource.metadata()), linkKey, type);
         final URI uri = UriBuilder.of(apiClient.getBasePath())
             .path(link.getHref())
             .expand(Map.of(
@@ -391,6 +410,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         Request httpRequest = builder.url(HttpUrl.get(uri))
             .post(body)
             .build();
+
         // Execute Request
         ApiResponse<ApiChangeResultList> response = apiClient.execute(
             httpRequest,
@@ -553,7 +573,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
                     "Cannot find _links['%s'] field from returned ApiResourceList metadata.(%s)",
                 action,
                 type.group(),
-                type.group(),
+                type.apiVersion(),
                 type.kind(),
                 action,
                 getHttpUrlBuilderForApiGroupVersion(type.group(), type.apiVersion()).build()

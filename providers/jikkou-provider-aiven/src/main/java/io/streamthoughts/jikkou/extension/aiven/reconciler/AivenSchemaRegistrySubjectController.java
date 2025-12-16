@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
         apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = ApiVersions.SCHEMA_REGISTRY_CHANGE_KIND
 )
-public class AivenSchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject, ResourceChange> {
+public class AivenSchemaRegistrySubjectController implements Controller<V1SchemaRegistrySubject> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AivenSchemaRegistrySubjectController.class);
 
@@ -93,15 +93,15 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull ChangeExecutor executor,
                                       @NotNull ReconciliationContext context) {
         AsyncSchemaRegistryApi api = new AivenAsyncSchemaRegistryApi(AivenApiClientFactory.create(apiClientConfig));
         try {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                 new CreateSchemaSubjectChangeHandler(api),
                 new UpdateSchemaSubjectChangeHandler(api),
                 new DeleteSchemaSubjectChangeHandler(api),
-                new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
+                new ChangeHandler.None(SchemaSubjectChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         } finally {

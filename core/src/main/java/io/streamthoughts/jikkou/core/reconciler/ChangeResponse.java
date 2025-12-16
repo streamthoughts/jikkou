@@ -19,9 +19,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents the response
  */
-public final class ChangeResponse<C extends ResourceChange> {
+public final class ChangeResponse {
 
-    private final C change;
+    private final ResourceChange change;
 
     private final List<CompletableFuture<ChangeMetadata>> results;
 
@@ -30,7 +30,7 @@ public final class ChangeResponse<C extends ResourceChange> {
      *
      * @param change the change to attached to this response.
      */
-    public ChangeResponse(@NotNull C change) {
+    public ChangeResponse(@NotNull ResourceChange change) {
         this(change, new ArrayList<>());
     }
 
@@ -40,7 +40,7 @@ public final class ChangeResponse<C extends ResourceChange> {
      * @param change the change to attached to this response.
      * @param result the result to attached to this response;
      */
-    public ChangeResponse(@NotNull C change,
+    public ChangeResponse(@NotNull ResourceChange change,
                           @NotNull CompletableFuture<ChangeMetadata> result) {
         this(change, List.of(result));
     }
@@ -51,7 +51,7 @@ public final class ChangeResponse<C extends ResourceChange> {
      * @param change  the change object.
      * @param results the change results.
      */
-    public ChangeResponse(@NotNull C change, @NotNull List<CompletableFuture<ChangeMetadata>> results) {
+    public ChangeResponse(@NotNull ResourceChange change, @NotNull List<CompletableFuture<ChangeMetadata>> results) {
         this.change = change;
         this.results = new ArrayList<>(results);
     }
@@ -70,7 +70,7 @@ public final class ChangeResponse<C extends ResourceChange> {
      *
      * @return the change.
      */
-    public C getChange() {
+    public ResourceChange getChange() {
         return change;
     }
 
@@ -81,13 +81,13 @@ public final class ChangeResponse<C extends ResourceChange> {
      */
     public CompletableFuture<List<ChangeMetadata>> getResults() {
         List<CompletableFuture<ChangeMetadata>> futures = results.stream()
-                .map(f -> f.exceptionally(throwable -> {
-                    if (throwable instanceof CompletionException completionException) {
-                        return ChangeMetadata.of(completionException.getCause());
-                    }
-                    return ChangeMetadata.of(throwable);
-                }))
-                .collect(Collectors.toList());
+            .map(f -> f.exceptionally(throwable -> {
+                if (throwable instanceof CompletionException completionException) {
+                    return ChangeMetadata.of(completionException.getCause());
+                }
+                return ChangeMetadata.of(throwable);
+            }))
+            .collect(Collectors.toList());
         return AsyncUtils.waitForAll(futures);
     }
 
@@ -96,7 +96,7 @@ public final class ChangeResponse<C extends ResourceChange> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChangeResponse<C> that = (ChangeResponse<C>) o;
+        ChangeResponse that = (ChangeResponse) o;
         return Objects.equals(change, that.change) && Objects.equals(results, that.results);
     }
 

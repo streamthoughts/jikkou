@@ -44,7 +44,7 @@ public abstract class KafkaTopicChangeHandler extends AbstractChangeHandler {
         }
 
         @Override
-        public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             return changes.stream()
                 .map(change -> executeAsync(
                     change,
@@ -64,7 +64,7 @@ public abstract class KafkaTopicChangeHandler extends AbstractChangeHandler {
         }
 
         @Override
-        public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             return changes.stream()
                 .map(change -> executeAsync(
                     change,
@@ -84,7 +84,7 @@ public abstract class KafkaTopicChangeHandler extends AbstractChangeHandler {
         }
 
         @Override
-        public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             return changes.stream()
                 .map(change -> executeAsync(
                     change,
@@ -94,7 +94,7 @@ public abstract class KafkaTopicChangeHandler extends AbstractChangeHandler {
         }
     }
 
-    public static class None extends ChangeHandler.None<ResourceChange> {
+    public static class None extends ChangeHandler.None{
         public None() {
             super(TopicChange::getDescription);
         }

@@ -33,7 +33,7 @@ import org.apache.kafka.clients.admin.AlterUserScramCredentialsResult;
 import org.apache.kafka.clients.admin.UserScramCredentialAlteration;
 import org.jetbrains.annotations.NotNull;
 
-public class UserChangeHandler extends BaseChangeHandler<ResourceChange> {
+public class UserChangeHandler extends BaseChangeHandler {
 
     private final AdminClient client;
 
@@ -46,7 +46,7 @@ public class UserChangeHandler extends BaseChangeHandler<ResourceChange> {
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
 
         Map<String, ResourceChange> changesByName = CollectionUtils.keyBy(changes, it -> it.getMetadata().getName());
 
@@ -59,6 +59,7 @@ public class UserChangeHandler extends BaseChangeHandler<ResourceChange> {
                         String userName = user.getMetadata().getName();
                         Pair<V1KafkaUserAuthentication, UserScramCredentialAlteration> pair = switch (change.getOp()) {
                             case NONE -> null;
+                            case REPLACE -> null;
                             case CREATE, UPDATE -> {
                                 V1KafkaUserAuthentication authentication = (V1KafkaUserAuthentication) change.getAfter();
                                 yield switch (authentication) {
@@ -101,7 +102,7 @@ public class UserChangeHandler extends BaseChangeHandler<ResourceChange> {
                             .toCompletionStage()
                             .toCompletableFuture()
                             .thenApply(unused -> ChangeMetadata.empty());
-                        return new ChangeResponse<>(resource, future);
+                        return new ChangeResponse(resource, future);
                     });
             })
             .toList();

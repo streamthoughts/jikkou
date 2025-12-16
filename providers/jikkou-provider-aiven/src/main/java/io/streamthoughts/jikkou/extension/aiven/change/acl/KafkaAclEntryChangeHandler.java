@@ -37,7 +37,7 @@ public abstract class KafkaAclEntryChangeHandler extends AbstractChangeHandler {
          * {@inheritDoc}
          */
         @Override
-        public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             return changes.stream()
                     .map(change -> executeAsync(
                             change,
@@ -57,7 +57,7 @@ public abstract class KafkaAclEntryChangeHandler extends AbstractChangeHandler {
          * {@inheritDoc}
          */
         @Override
-        public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             return changes.stream()
                     .map(change -> executeAsync(
                             change,
@@ -67,7 +67,7 @@ public abstract class KafkaAclEntryChangeHandler extends AbstractChangeHandler {
         }
     }
 
-    public static class None extends ChangeHandler.None<ResourceChange> {
+    public static class None extends ChangeHandler.None {
         public None() {
             super(change -> KafkaChangeDescriptions.of(change.getSpec().getOp(), getEntry(change, KafkaAclEntry.class)));
         }

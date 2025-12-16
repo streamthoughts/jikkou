@@ -40,7 +40,7 @@ import software.amazon.awssdk.services.glue.model.UpdateSchemaRequest;
 
 public final class UpdateAwsGlueSchemaChangeHandler
     extends AbstractAwsGlueSchemaChangeHandler
-    implements ChangeHandler<ResourceChange> {
+    implements ChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateAwsGlueSchemaChangeHandler.class);
 
@@ -70,9 +70,9 @@ public final class UpdateAwsGlueSchemaChangeHandler
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
 
-        List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
+        List<ChangeResponse> results = new ArrayList<>();
         for (ResourceChange change : changes) {
             Mono<Void> mono = Mono.empty();
 

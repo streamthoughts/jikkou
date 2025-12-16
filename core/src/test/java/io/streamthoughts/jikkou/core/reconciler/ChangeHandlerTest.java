@@ -19,7 +19,7 @@ class ChangeHandlerTest {
     @Test
     void shouldGetDefaultChangeHandler() {
         // Given
-        ChangeHandler.None<ResourceChange> handler = new ChangeHandler.None<>(change -> () -> "NONE");
+        ChangeHandler.None handler = new ChangeHandler.None(change -> () -> "NONE");
         ResourceChange change = GenericResourceChange.builder()
                 .withSpec(ResourceChangeSpec
                         .builder()
@@ -34,10 +34,10 @@ class ChangeHandlerTest {
         Assertions.assertEquals(Operation.NONE, handler.supportedChangeTypes().iterator().next());
 
         // When
-        List<ChangeResponse<ResourceChange>> results = handler.handleChanges(List.of(change));
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
 
         // Then
-        List<ChangeResponse<ResourceChange>> expected = List.of(new ChangeResponse<>(change));
+        List<ChangeResponse> expected = List.of(new ChangeResponse(change));
         Assertions.assertEquals(expected, results);
 
         // When / Then

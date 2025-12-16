@@ -34,7 +34,7 @@ import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class KafkaTableRecordChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class KafkaTableRecordChangeHandler extends BaseChangeHandler {
 
     private final Producer<byte[], byte[]> producer;
 
@@ -60,7 +60,7 @@ public final class KafkaTableRecordChangeHandler extends BaseChangeHandler<Resou
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
         KafkaRecordSender<byte[], byte[]> sender = new KafkaRecordSender<>(producer);
         return changes.stream()
                 .map(item -> send(item, sender))
@@ -68,8 +68,7 @@ public final class KafkaTableRecordChangeHandler extends BaseChangeHandler<Resou
     }
 
     @NotNull
-    private static ChangeResponse<ResourceChange> send(ResourceChange change,
-                                                       KafkaRecordSender<byte[], byte[]> sender) {
+    private static ChangeResponse send(ResourceChange change, KafkaRecordSender<byte[], byte[]> sender) {
 
         KafkaRecord<byte[], byte[]> record = toKafkaRecord(change)
                 .mapKey(k -> Optional.ofNullable(k).map(ByteBuffer::array).orElse(null))
@@ -80,7 +79,7 @@ public final class KafkaTableRecordChangeHandler extends BaseChangeHandler<Resou
                         ChangeMetadata.of(result.error()) :
                         ChangeMetadata.empty()
                 );
-        return new ChangeResponse<>(change, future);
+        return new ChangeResponse(change, future);
     }
 
     @VisibleForTesting

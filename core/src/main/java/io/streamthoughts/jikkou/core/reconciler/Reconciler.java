@@ -20,16 +20,16 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <R> type of the resource.
  */
-public final class Reconciler<R extends HasMetadata, C extends ResourceChange> {
+public final class Reconciler<R extends HasMetadata> {
 
-    private final Controller<R, C> controller;
+    private final Controller<R> controller;
 
     /**
      * Creates a new {@link Reconciler} instance.
      *
      * @param controller the controller instance. Cannot be {@code null}.
      */
-    public Reconciler(@NotNull Controller<R, C> controller) {
+    public Reconciler(@NotNull Controller<R> controller) {
         this.controller = controller;
     }
 
@@ -41,20 +41,20 @@ public final class Reconciler<R extends HasMetadata, C extends ResourceChange> {
      * @param context The reconciliation context.
      * @return The list of results.
      */
-    public List<ChangeResult> apply(@NotNull List<C> changes,
+    public List<ChangeResult> apply(@NotNull List<ResourceChange> changes,
                                     @NotNull ReconciliationMode mode,
                                     @NotNull ReconciliationContext context) {
         // Check whether this reconciliation mode is supported.
         checkReconciliationModeIsSupported(mode);
 
         // Keep only changes relevant for this reconciliation mode.
-        List<C> filtered = changes
+        List<ResourceChange> filtered = changes
                 .stream()
                 .filter(mode::isSupported)
                 .collect(Collectors.toList());
 
         // Execute changes.
-        return controller.execute(new DefaultChangeExecutor<>(context, filtered), context);
+        return controller.execute(new DefaultChangeExecutor(context, filtered), context);
     }
 
     private void checkReconciliationModeIsSupported(@NotNull ReconciliationMode mode) {

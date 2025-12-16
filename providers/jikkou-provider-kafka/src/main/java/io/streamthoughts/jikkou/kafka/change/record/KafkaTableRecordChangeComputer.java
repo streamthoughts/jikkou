@@ -20,7 +20,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTableRecordSpec;
 import org.jetbrains.annotations.NotNull;
 
 public final class KafkaTableRecordChangeComputer
-        extends ResourceChangeComputer<Object, V1KafkaTableRecord, ResourceChange> {
+        extends ResourceChangeComputer<Object, V1KafkaTableRecord> {
 
     /**
      * Creates a new {@link ResourceChangeComputer} instance.
@@ -32,7 +32,7 @@ public final class KafkaTableRecordChangeComputer
         );
     }
 
-    public static class KafkaTableRecordChangeFactory extends ResourceChangeFactory<Object, V1KafkaTableRecord, ResourceChange> {
+    public static class KafkaTableRecordChangeFactory extends ResourceChangeFactory<Object, V1KafkaTableRecord> {
 
         public static final String DATA_RECORD = "record";
 

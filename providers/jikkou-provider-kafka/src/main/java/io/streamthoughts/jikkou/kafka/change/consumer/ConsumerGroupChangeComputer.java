@@ -16,7 +16,7 @@ import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.streamthoughts.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaConsumerGroup;
 
-public final class ConsumerGroupChangeComputer extends ResourceChangeComputer<String, V1KafkaConsumerGroup, ResourceChange> {
+public final class ConsumerGroupChangeComputer extends ResourceChangeComputer<String, V1KafkaConsumerGroup> {
 
     /**
      * Creates a new {@link ResourceChangeComputer} instance.
@@ -25,7 +25,7 @@ public final class ConsumerGroupChangeComputer extends ResourceChangeComputer<St
         super(object -> object.getMetadata().getName(), new ConsumerGroupChangeFactory());
     }
 
-    public static class ConsumerGroupChangeFactory extends ResourceChangeFactory<String, V1KafkaConsumerGroup, ResourceChange> {
+    public static class ConsumerGroupChangeFactory extends ResourceChangeFactory<String, V1KafkaConsumerGroup> {
         @Override
         public ResourceChange createChangeForDelete(String key, V1KafkaConsumerGroup before) {
             return GenericResourceChange.builder(V1KafkaConsumerGroup.class)

@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class KafkaConnectorChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
 
     private final KafkaConnectApi api;
     private final String cluster;
@@ -58,13 +58,14 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
         return changes.stream().flatMap(this::handleChange).toList();
     }
 
-    private Stream<ChangeResponse<ResourceChange>> handleChange(ResourceChange change) {
+    private Stream<ChangeResponse> handleChange(ResourceChange change) {
         return switch (change.getSpec().getOp()) {
             case NONE -> Stream.empty(); // no change of these types should be handled by this class.
+            case REPLACE -> null;
             case UPDATE -> updateConnector(change);
             case CREATE -> createOrUpdateConnectorConfig(change);
             case DELETE -> deleteConnector(change);
@@ -72,7 +73,7 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
     }
 
     @NotNull
-    private Stream<ChangeResponse<ResourceChange>> updateConnector(ResourceChange change) {
+    private Stream<ChangeResponse> updateConnector(ResourceChange change) {
         if (!isStateOnlyChange(change)) {
             return createOrUpdateConnectorConfig(change);
         }
@@ -97,22 +98,20 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
 
 
     @NotNull
-    private Stream<ChangeResponse<ResourceChange>> deleteConnector(ResourceChange change) {
+    private Stream<ChangeResponse> deleteConnector(ResourceChange change) {
         CompletableFuture<Void> future = CompletableFuture
                 .runAsync(() -> api.deleteConnector(change.getMetadata().getName()));
-
-        ChangeResponse<ResourceChange> response = toChangeResponse(change, future);
-        return Stream.of(response);
+        return Stream.of(toChangeResponse(change, future));
     }
 
     @NotNull
-    private Stream<ChangeResponse<ResourceChange>> createOrUpdateConnectorConfig(ResourceChange change) {
+    private Stream<ChangeResponse> createOrUpdateConnectorConfig(ResourceChange change) {
         final Map<String, Object> configAsMap = buildConnectorConfig(change);
         CompletableFuture<ConnectorInfoResponse> future = CompletableFuture.supplyAsync(() ->
                 api.createOrUpdateConnector(change.getMetadata().getName(), configAsMap)
         );
 
-        ChangeResponse<ResourceChange> response = toChangeResponse(change, future);
+        ChangeResponse response = toChangeResponse(change, future);
         return Stream.of(response);
     }
 
@@ -174,8 +173,7 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
         return change.getSpec().getChanges().getLast(KafkaConnectorChangeComputer.DATA_TASKS_MAX, TypeConverter.Integer());
     }
 
-    private ChangeResponse<ResourceChange> toChangeResponse(ResourceChange change,
-                                                            CompletableFuture<?> future) {
+    private ChangeResponse toChangeResponse(ResourceChange change, CompletableFuture<?> future) {
         CompletableFuture<ChangeMetadata> handled = future.handle((unused, throwable) -> {
             if (throwable == null) {
                 return ChangeMetadata.empty();
@@ -192,7 +190,7 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler<Resourc
             return ChangeMetadata.of(throwable);
         });
 
-        return new ChangeResponse<>(change, handled);
+        return new ChangeResponse(change, handled);
     }
 
 

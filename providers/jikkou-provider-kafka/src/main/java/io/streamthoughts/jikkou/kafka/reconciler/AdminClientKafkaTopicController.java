@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )
 public final class AdminClientKafkaTopicController
-        extends ContextualExtension implements Controller<V1KafkaTopic, ResourceChange> {
+        extends ContextualExtension implements Controller<V1KafkaTopic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminClientKafkaTopicController.class);
 
@@ -99,16 +99,16 @@ public final class AdminClientKafkaTopicController
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull final ReconciliationContext context) {
 
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             final AdminClient adminClient = clientContext.getAdminClient();
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                 new CreateTopicChangeHandler(adminClient),
                 new UpdateTopicChangeHandler(adminClient),
                 new DeleteTopicChangeHandler(adminClient),
-                new ChangeHandler.None<>(TopicChange::getDescription)
+                new ChangeHandler.None(TopicChange::getDescription)
             );
             return executor.applyChanges(handlers);
         }

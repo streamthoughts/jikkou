@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler<ResourceChange> {
+public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChangeHandler implements ChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteSchemaSubjectChangeHandler.class);
 
@@ -46,8 +46,8 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
-        List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
+        List<ChangeResponse> results = new ArrayList<>();
         for (ResourceChange change : changes) {
             final String subject = change.getMetadata().getName();
             SchemaSubjectChangeOptions options = getSchemaSubjectChangeOptions(change);

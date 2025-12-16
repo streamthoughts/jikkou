@@ -19,7 +19,7 @@ import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class KafkaAclEntryChangeComputer extends ResourceChangeComputer<KafkaAclEntry, V1KafkaTopicAclEntry, ResourceChange> {
+public final class KafkaAclEntryChangeComputer extends ResourceChangeComputer<KafkaAclEntry, V1KafkaTopicAclEntry> {
 
 
     /**
@@ -31,7 +31,7 @@ public final class KafkaAclEntryChangeComputer extends ResourceChangeComputer<Ka
         super(KafkaAclEntryAdapter::map, new KafkaAclEntryChangeFactory(), deleteOrphans);
     }
 
-    static class KafkaAclEntryChangeFactory extends ResourceChangeFactory<KafkaAclEntry, V1KafkaTopicAclEntry, ResourceChange> {
+    static class KafkaAclEntryChangeFactory extends ResourceChangeFactory<KafkaAclEntry, V1KafkaTopicAclEntry> {
 
         public static final String ENTRY = "entry";
 

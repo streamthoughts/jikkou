@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class AdminClientConsumerGroupController
         extends ContextualExtension
-        implements Controller<V1KafkaConsumerGroup, ResourceChange> {
+        implements Controller<V1KafkaConsumerGroup> {
 
     private AdminClientContextFactory adminClientContextFactory;
 
@@ -75,14 +75,14 @@ public final class AdminClientConsumerGroupController
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResult> execute(@NotNull ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull ChangeExecutor executor,
                                       @NotNull ReconciliationContext context) {
 
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             AdminClient adminClient = clientContext.getAdminClient();
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                     new DeleteConsumerGroupHandler(adminClient),
-                    new ChangeHandler.None<>(ConsumerGroupChangeDescription::new)
+                    new ChangeHandler.None(ConsumerGroupChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }

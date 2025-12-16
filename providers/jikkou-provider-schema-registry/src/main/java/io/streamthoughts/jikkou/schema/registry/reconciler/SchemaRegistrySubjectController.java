@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 @SupportedResource(apiVersion = ApiVersions.SCHEMA_REGISTRY_V1BETA2, kind = "SchemaRegistrySubjectChange")
 public class SchemaRegistrySubjectController
         extends ContextualExtension
-        implements Controller<V1SchemaRegistrySubject, ResourceChange> {
+        implements Controller<V1SchemaRegistrySubject> {
 
     private SchemaRegistryClientConfig configuration;
 
@@ -77,14 +77,14 @@ public class SchemaRegistrySubjectController
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull final ReconciliationContext context) {
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(configuration))) {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                     new CreateSchemaSubjectChangeHandler(api),
                     new UpdateSchemaSubjectChangeHandler(api),
                     new DeleteSchemaSubjectChangeHandler(api),
-                    new ChangeHandler.None<>(SchemaSubjectChangeDescription::new)
+                    new ChangeHandler.None(SchemaSubjectChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }

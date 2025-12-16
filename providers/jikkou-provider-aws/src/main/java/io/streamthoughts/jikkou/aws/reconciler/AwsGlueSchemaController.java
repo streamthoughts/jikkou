@@ -47,22 +47,22 @@ import software.amazon.awssdk.services.glue.GlueClient;
 @SupportedResource(apiVersion = ApiVersions.AWS_GLUE_API_VERSION, kind = "AwsGlueSchemaChange")
 public class AwsGlueSchemaController
         extends ContextualExtension
-        implements Controller<AwsGlueSchema, ResourceChange> {
+        implements Controller<AwsGlueSchema> {
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> execute(@NotNull final ChangeExecutor<ResourceChange> executor,
+    public List<ChangeResult> execute(@NotNull final ChangeExecutor executor,
                                       @NotNull final ReconciliationContext context) {
 
         final AwsExtensionProvider provider = extensionContext().provider();
         try (GlueClient client = provider.newGlueClient()) {
-            List<ChangeHandler<ResourceChange>> handlers = List.of(
+            List<ChangeHandler> handlers = List.of(
                 new CreateAwsGlueSchemaChangeHandler(client),
                 new UpdateAwsGlueSchemaChangeHandler(client),
                 new DeleteAwsGlueSchemaChangeHandler(client),
-                new ChangeHandler.None<>(AwsGlueSchemaChangeDescription::new)
+                new ChangeHandler.None(AwsGlueSchemaChangeDescription::new)
             );
             return executor.applyChanges(handlers);
         }

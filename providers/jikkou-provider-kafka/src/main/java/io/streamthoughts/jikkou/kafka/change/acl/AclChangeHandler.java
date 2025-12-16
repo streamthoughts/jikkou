@@ -31,7 +31,7 @@ import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
 import org.jetbrains.annotations.NotNull;
 
-public final class AclChangeHandler extends BaseChangeHandler<ResourceChange> {
+public final class AclChangeHandler extends BaseChangeHandler {
 
     private final AdminClient client;
 
@@ -49,7 +49,7 @@ public final class AclChangeHandler extends BaseChangeHandler<ResourceChange> {
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull final List<ResourceChange> changes) {
+    public List<ChangeResponse> handleChanges(@NotNull final List<ResourceChange> changes) {
         return changes.stream()
                 .map(change -> {
                     Map<Operation, List<SpecificStateChange<KafkaAclBinding>>> changesByOperation = change
@@ -107,7 +107,7 @@ public final class AclChangeHandler extends BaseChangeHandler<ResourceChange> {
                             )
                             .toList();
                     }
-                    return new ChangeResponse<>(change, futures);
+                    return new ChangeResponse(change, futures);
                 })
                 .toList();
     }

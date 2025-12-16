@@ -33,7 +33,7 @@ class DefaultChangeExecutorTest {
                         .build()
                 )
                 .build();
-        ChangeExecutor<ResourceChange> executor = new DefaultChangeExecutor<>(
+        ChangeExecutor executor = new DefaultChangeExecutor(
                 CONTEXT_DRY_RUN_TRUE,
                 List.of(change)
         );
@@ -57,7 +57,7 @@ class DefaultChangeExecutorTest {
                         .build()
                 )
                 .build();
-        ChangeExecutor<ResourceChange> executor = new DefaultChangeExecutor<>(
+        ChangeExecutor executor = new DefaultChangeExecutor(
                 CONTEXT_DRY_RUN_FALSE,
                 List.of(change)
         );
@@ -81,7 +81,7 @@ class DefaultChangeExecutorTest {
                         .build()
                 )
                 .build();
-        ChangeExecutor<ResourceChange> executor = new DefaultChangeExecutor<>(
+        ChangeExecutor executor = new DefaultChangeExecutor(
                 CONTEXT_DRY_RUN_FALSE,
                 List.of(change)
         );
@@ -104,7 +104,7 @@ class DefaultChangeExecutorTest {
                         .build()
                 )
                 .build();
-        ChangeExecutor<ResourceChange> executor = new DefaultChangeExecutor<>(
+        ChangeExecutor executor = new DefaultChangeExecutor(
                 CONTEXT_DRY_RUN_FALSE,
                 List.of(change)
         );
@@ -118,7 +118,7 @@ class DefaultChangeExecutorTest {
     }
 
 
-    public static class TestChangeHandler extends BaseChangeHandler<ResourceChange> {
+    public static class TestChangeHandler extends BaseChangeHandler {
 
         List<ResourceChange> capturedChanges = new ArrayList<>();
 
@@ -127,7 +127,7 @@ class DefaultChangeExecutorTest {
         }
 
         @Override
-        public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
+        public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
             this.capturedChanges.addAll(changes);
             return changes.stream().map(ChangeResponse::new).toList();
         }

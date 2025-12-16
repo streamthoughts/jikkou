@@ -27,26 +27,26 @@ public final class MapEntryChangeComputer<T> implements ChangeComputer<Map.Entry
      */
     public MapEntryChangeComputer(StateComparator<T> comparator, boolean deleteOrphans) {
         this.computer = ChangeComputer
-                .<String, Map.Entry<String, T>, StateChange>builder()
-                .withDeleteOrphans(deleteOrphans)
-                .withKeyMapper(Map.Entry::getKey)
-                .withChangeFactory((key, before, after) -> {
-                    T beforeValue = Optional.ofNullable(before)
-                            .map(Map.Entry::getValue)
-                            .orElse(null);
+            .<String, Map.Entry<String, T>, StateChange>builder()
+            .withDeleteOrphans(deleteOrphans)
+            .withKeyMapper(Map.Entry::getKey)
+            .withChangeFactory((key, before, after) -> {
+                T beforeValue = Optional.ofNullable(before)
+                    .map(Map.Entry::getValue)
+                    .orElse(null);
 
-                    T afterValue = Optional.ofNullable(after)
-                            .map(Map.Entry::getValue)
-                            .orElse(null);
-                    SpecificStateChange<T> state = new SpecificStateChangeBuilder<T>()
-                        .withName(key)
-                        .withBefore(beforeValue)
-                        .withAfter(afterValue)
-                        .withComparator(comparator)
-                        .build();
-                    return Optional.of(state);
-                })
-                .build();
+                T afterValue = Optional.ofNullable(after)
+                    .map(Map.Entry::getValue)
+                    .orElse(null);
+                SpecificStateChange<T> state = new SpecificStateChangeBuilder<T>()
+                    .withName(key)
+                    .withBefore(beforeValue)
+                    .withAfter(afterValue)
+                    .withComparator(comparator)
+                    .build();
+                return Optional.of(state);
+            })
+            .build();
     }
 
     /**

@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The default change executor.
  */
-public final class DefaultChangeExecutor<C extends ResourceChange> implements ChangeExecutor<C> {
+public final class DefaultChangeExecutor implements ChangeExecutor {
 
-    private final List<C> changes;
+    private final List<ResourceChange> changes;
     private final ReconciliationContext context;
 
     /**
@@ -34,7 +34,7 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
      * @param changes the list of changes to be executed. Cannot be {@code null}.
      */
     public DefaultChangeExecutor(@NotNull ReconciliationContext context,
-                                 @NotNull List<C> changes) {
+                                 @NotNull List<ResourceChange> changes) {
         this.changes = Collections.unmodifiableList(changes);
         this.context = Objects.requireNonNull(context, "'context' must not be null");
     }
@@ -43,7 +43,7 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
      * {@inheritDoc}
      **/
     @Override
-    public @NotNull List<C> changes() {
+    public @NotNull List<ResourceChange> changes() {
         return changes;
     }
 
@@ -51,11 +51,11 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
      * {@inheritDoc}
      **/
     @Override
-    public List<ChangeResult> applyChanges(@NotNull List<? extends ChangeHandler<C>> handlers) {
+    public List<ChangeResult> applyChanges(@NotNull List<? extends ChangeHandler> handlers) {
         Objects.requireNonNull(handlers, "handlers cannot be null");
 
-        Map<Operation, ChangeHandler<C>> handlersByType = new HashMap<>();
-        for (ChangeHandler<C> handler : handlers) {
+        Map<Operation, ChangeHandler> handlersByType = new HashMap<>();
+        for (ChangeHandler handler : handlers) {
             for (var type : handler.supportedChangeTypes()) {
                 if (handlersByType.put(type, handler) != null) {
                     throw new IllegalArgumentException("ChangeHandler already registered for type: " + type);
@@ -63,7 +63,7 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
             }
         }
 
-        List<C> supportedChanges = changes.stream()
+        List<ResourceChange> supportedChanges = changes.stream()
                 .filter(it -> handlersByType.containsKey(it.getSpec().getOp()))
                 .toList();
 
@@ -72,12 +72,12 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
                 execute(supportedChanges, handlersByType);
     }
 
-    private List<ChangeResult> executeInDryRun(List<C> changes,
-                                               Map<Operation, ChangeHandler<C>> handlers) {
+    private List<ChangeResult> executeInDryRun(List<ResourceChange> changes,
+                                               Map<Operation, ChangeHandler> handlers) {
         return changes.stream()
                 .map(object -> {
                     Operation operation = object.getSpec().getOp();
-                    ChangeHandler<C> handler = handlers.get(operation);
+                    ChangeHandler handler = handlers.get(operation);
                     TextDescription description = handler.describe(object);
                     return operation == Operation.NONE ?
                             ChangeResult.ok(object, description) :
@@ -86,9 +86,9 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
                 .toList();
     }
 
-    private List<ChangeResult> execute(List<C> changes,
-                                       Map<Operation, ChangeHandler<C>> handlers) {
-        Map<Operation, List<C>> changesByType = changes
+    private List<ChangeResult> execute(List<ResourceChange> changes,
+                                       Map<Operation, ChangeHandler> handlers) {
+        Map<Operation, List<ResourceChange>> changesByType = changes
                 .stream()
                 .collect(Collectors.groupingBy(it -> it.getSpec().getOp()));
 
@@ -99,14 +99,14 @@ public final class DefaultChangeExecutor<C extends ResourceChange> implements Ch
                 .collect(Collectors.toList());
     }
 
-    private Stream<CompletableFuture<ChangeResult>> execute(final ChangeHandler<C> handler,
-                                                            final List<C> changes) {
+    private Stream<CompletableFuture<ChangeResult>> execute(final ChangeHandler handler,
+                                                            final List<ResourceChange> changes) {
         return handler.handleChanges(changes)
                 .stream()
                 .map(response -> {
                     CompletableFuture<? extends List<ChangeMetadata>> future = response.getResults();
                     return future.thenApply(metadata -> {
-                        C change = response.getChange();
+                        ResourceChange change = response.getChange();
 
                         TextDescription description = handler.describe(change);
 

@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.glue.model.DeleteSchemaRequest;
 import software.amazon.awssdk.services.glue.model.SchemaId;
 
-public class DeleteAwsGlueSchemaChangeHandler extends AbstractAwsGlueSchemaChangeHandler implements ChangeHandler<ResourceChange> {
+public class DeleteAwsGlueSchemaChangeHandler extends AbstractAwsGlueSchemaChangeHandler implements ChangeHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteAwsGlueSchemaChangeHandler.class);
 
@@ -47,8 +47,8 @@ public class DeleteAwsGlueSchemaChangeHandler extends AbstractAwsGlueSchemaChang
      * {@inheritDoc}
      */
     @Override
-    public List<ChangeResponse<ResourceChange>> handleChanges(@NotNull List<ResourceChange> changes) {
-        List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
+    public List<ChangeResponse> handleChanges(@NotNull List<ResourceChange> changes) {
+        List<ChangeResponse> results = new ArrayList<>();
         for (ResourceChange change : changes) {
 
             final String schemaName = change.getMetadata().getName();
