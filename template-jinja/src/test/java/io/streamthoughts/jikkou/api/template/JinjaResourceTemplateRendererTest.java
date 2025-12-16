@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.api.template;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.common.utils.Classes;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderOptions;
 import io.streamthoughts.jikkou.core.io.reader.TemplateResourceReader;
@@ -16,11 +17,16 @@ import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.models.generics.GenericResource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.streamthoughts.jikkou.core.template.TemplateBindings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class JinjaResourceTemplateRendererTest {
 
@@ -59,6 +65,49 @@ class JinjaResourceTemplateRendererTest {
                 Assertions.assertNotNull(topics);
                 Assertions.assertEquals(5, ((List) topics).size());
             }
+        }
+    }
+
+    @Test
+    void shouldRenderTemplateGivenConfiguredLocation(@TempDir Path tempDir) throws IOException {
+
+        // Given
+        ClassLoader classLoader = Classes.getClassLoader();
+        try(
+            InputStream is = classLoader.getResourceAsStream("datasets/extends.yaml");
+        ) {
+            Path file = Files.createFile(tempDir.resolve(Path.of("resource.yaml")));
+            String content = "prop: value";
+            Files.writeString(file, content);
+
+            // When
+            JinjaResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer();
+            renderer.configure(JinjaResourceTemplateRenderer.RESOURCE_LOCATIONS_CALLS.asConfiguration(tempDir.toString()));
+
+            String rendered = renderer.render(new String(is.readAllBytes()), null, TemplateBindings.defaults());
+
+            // Then
+            Assertions.assertEquals(rendered, content);
+        }
+    }
+
+    @Test
+    void shouldThrowExceptionWhenRenderingTemplateGivenNoFileLocation(@TempDir Path tempDir) throws IOException {
+
+        // Given
+        ClassLoader classLoader = Classes.getClassLoader();
+        try(
+            InputStream is = classLoader.getResourceAsStream("datasets/extends.yaml");
+        ) {
+            // When
+            JinjaResourceTemplateRenderer renderer = new JinjaResourceTemplateRenderer();
+
+            // Then
+            JikkouRuntimeException exception = Assertions.assertThrows(JikkouRuntimeException.class, () -> {
+                renderer.render(new String(is.readAllBytes()), null, TemplateBindings.defaults());
+            });
+            Assertions.assertEquals("Cannot render resource template. 'SyntaxError': line 1, start_pos: 1, InterpretException: Couldn't find resource: resource.yaml", exception.getMessage());
+
         }
     }
 }
