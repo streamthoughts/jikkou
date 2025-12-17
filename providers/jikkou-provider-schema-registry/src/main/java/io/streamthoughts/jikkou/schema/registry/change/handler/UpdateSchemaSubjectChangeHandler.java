@@ -55,14 +55,6 @@ public final class UpdateSchemaSubjectChangeHandler
         for (ResourceChange change : changes) {
             Mono<Void> mono = Mono.empty();
 
-            StateChange schema = StateChangeList
-                    .of(change.getSpec().getChanges())
-                    .getLast(DATA_SCHEMA);
-
-            if (UPDATE == schema.getOp()) {
-                mono = mono.then(registerSubjectVersion(change));
-            }
-
             StateChange compatibilityLevels = StateChangeList
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_COMPATIBILITY_LEVEL);
@@ -74,6 +66,15 @@ public final class UpdateSchemaSubjectChangeHandler
             if (DELETE == compatibilityLevels.getOp()) {
                 mono = mono.then(deleteCompatibilityLevel(change));
             }
+
+            StateChange schema = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_SCHEMA);
+
+            if (UPDATE == schema.getOp()) {
+                mono = mono.then(registerSubjectVersion(change));
+            }
+
             results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;
