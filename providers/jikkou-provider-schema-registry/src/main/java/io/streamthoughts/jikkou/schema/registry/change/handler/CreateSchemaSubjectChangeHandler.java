@@ -51,7 +51,7 @@ public final class CreateSchemaSubjectChangeHandler
 
         List<ChangeResponse<ResourceChange>> results = new ArrayList<>();
         for (ResourceChange change : changes) {
-            Mono<Void> mono = registerSubjectVersion(change);
+            Mono<Void> mono = Mono.empty();
 
             StateChange compatibilityLevels = StateChangeList
                     .of(change.getSpec().getChanges())
@@ -60,6 +60,8 @@ public final class CreateSchemaSubjectChangeHandler
             if (compatibilityLevels != null) {
                 mono = mono.then(updateCompatibilityLevel(change));
             }
+
+            mono = mono.then(registerSubjectVersion(change));
 
             results.add(toChangeResponse(change, mono.toFuture()));
         }
