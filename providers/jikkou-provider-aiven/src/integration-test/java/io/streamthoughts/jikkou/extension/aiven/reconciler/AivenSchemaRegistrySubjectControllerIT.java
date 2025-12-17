@@ -79,6 +79,14 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
                         }
                         """)
         );
+        // Update Config
+        enqueueResponse(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {}
+                        """)
+        );
         // Update Schema
         enqueueResponse(new MockResponse()
                 .setHeader("Content-Type", "application/json")
@@ -87,14 +95,6 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
                         {
                             "version": 1
                         }
-                        """)
-        );
-        // Update Config
-        enqueueResponse(new MockResponse()
-                .setHeader("Content-Type", "application/json")
-                .setResponseCode(200)
-                .setBody("""
-                        {}
                         """)
         );
         V1SchemaRegistrySubject resource = V1SchemaRegistrySubject
