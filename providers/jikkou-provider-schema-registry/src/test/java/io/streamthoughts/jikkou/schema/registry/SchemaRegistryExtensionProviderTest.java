@@ -100,6 +100,6 @@ class SchemaRegistryExtensionProviderTest {
         List<ExtensionDescriptor<Validation>> allSchemaValidationDescriptors = registry
                 .findAllDescriptorsByClass(Validation.class,
                         Qualifiers.bySupportedResource(ResourceType.of(V1SchemaRegistrySubject.class)));
-        Assertions.assertEquals(3, allSchemaValidationDescriptors.size());
+        Assertions.assertEquals(4, allSchemaValidationDescriptors.size());
     }
 }
