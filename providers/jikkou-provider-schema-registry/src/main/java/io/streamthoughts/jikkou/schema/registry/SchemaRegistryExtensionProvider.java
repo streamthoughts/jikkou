@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.schema.registry.transform.NormalizeSubjectSchema
 import io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.CompatibilityLevelValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
+import io.streamthoughts.jikkou.schema.registry.validation.SubjectNameRegexValidation;
 import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,6 +117,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
         registry.register(AvroSchemaValidation.class, AvroSchemaValidation::new);
         registry.register(SchemaCompatibilityValidation.class, SchemaCompatibilityValidation::new);
         registry.register(CompatibilityLevelValidation.class, CompatibilityLevelValidation::new);
+        registry.register(SubjectNameRegexValidation.class, SubjectNameRegexValidation::new);
 
         // Transformations
         registry.register(NormalizeSubjectSchemaTransformation.class, NormalizeSubjectSchemaTransformation::new);
