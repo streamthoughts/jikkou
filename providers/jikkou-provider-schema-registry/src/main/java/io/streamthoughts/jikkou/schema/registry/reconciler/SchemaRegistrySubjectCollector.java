@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
+import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -22,6 +23,7 @@ import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApiFactory;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryClientConfig;
+import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubjectList;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -33,6 +35,8 @@ import reactor.core.publisher.Mono;
 
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistrySubjectCollector extends ContextualExtension implements Collector<V1SchemaRegistrySubject> {
+
+    public static final String EMPTY_STRING = "";
 
     public interface Config {
         ConfigProperty<Boolean> DEFAULT_GLOBAL_COMPATIBILITY_LEVEL = ConfigProperty
@@ -94,6 +98,7 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     }
 
     public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration, @NotNull List<String> subjects) {
+        System.err.println(subjects);
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config))) {
             return listAll(configuration, Flux.fromIterable(subjects), api);
         }
@@ -104,18 +109,21 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
                                                           @NotNull AsyncSchemaRegistryApi api) {
         Flux<V1SchemaRegistrySubject> flux = subjects
             // Get Schema Registry Latest Subject Version
-            .flatMap(api::getLatestSubjectSchema)
-            .onErrorResume(t -> t instanceof RestClientException rce && isNotFound(rce) ? Mono.empty() : Mono.error(t))
-            // Get Schema Registry Subject Compatibility
-            .flatMap(subjectSchemaVersion -> api
-                .getSubjectCompatibilityLevel(subjectSchemaVersion.subject(), Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration))
-                .map(compatibilityObject ->
-                    CompatibilityLevels.valueOf(compatibilityObject.compatibilityLevel()))
-                .map(compatibilityLevels ->
-                    schemaRegistrySubjectFactory.createSchemaRegistrySubject(subjectSchemaVersion, compatibilityLevels))
-                .onErrorResume(t -> t instanceof RestClientException rce && isNotFound(rce) ?
-                    Mono.just(schemaRegistrySubjectFactory.createSchemaRegistrySubject(subjectSchemaVersion, null)) :
-                    Mono.error(t))
+            .flatMap(subject -> api.getLatestSubjectSchema(subject).onErrorResume(SchemaRegistrySubjectCollector::emptyOn404))
+            .flatMap(subjectSchemaVersion -> {
+                    // Get Schema Registry Subject Compatibility
+                    Mono<String> compatibilityMono =
+                        api.getSubjectCompatibilityLevel(subjectSchemaVersion.subject(), Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration))
+                            .map(CompatibilityLevelObject::compatibilityLevel)
+                            .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404)
+                            .defaultIfEmpty(EMPTY_STRING);
+
+                    return compatibilityMono
+                        .map(compatibilityLevels -> schemaRegistrySubjectFactory.createSchemaRegistrySubject(
+                            subjectSchemaVersion,
+                            Enums.safeValueOf(CompatibilityLevels.class, compatibilityLevels))
+                        );
+                }
             );
         try {
             return new V1SchemaRegistrySubjectList.Builder().withItems(flux.collectList().block()).build();
@@ -134,5 +142,11 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     SchemaRegistrySubjectCollector prettyPrintSchema(final boolean prettyPrintSchema) {
         this.prettyPrintSchema = prettyPrintSchema;
         return this;
+    }
+
+    private static <T> Mono<T> emptyOn404(Throwable t) {
+        return t instanceof RestClientException rce && isNotFound(rce)
+            ? Mono.empty()
+            : Mono.error(t);
     }
 }
