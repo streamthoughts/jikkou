@@ -6,7 +6,6 @@
  */
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
-import com.google.common.base.Strings;
 import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
@@ -101,6 +100,7 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     }
 
     public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration, @NotNull List<String> subjects) {
+        System.err.println(subjects);
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config))) {
             return listAll(configuration, Flux.fromIterable(subjects), api);
         }
@@ -112,15 +112,11 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
         Flux<V1SchemaRegistrySubject> flux =
             subjects
                 // Get Schema Registry Latest Subject Version
-                .flatMap(api::getLatestSubjectSchema)
-                .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404)
+                .flatMap(subject -> api.getLatestSubjectSchema(subject).onErrorResume(SchemaRegistrySubjectCollector::emptyOn404))
                 .flatMap(subjectSchemaVersion -> {
                     // Get Schema Registry Subject Compatibility
                     Mono<String> compatibilityMono =
-                        api.getSubjectCompatibilityLevel(
-                                subjectSchemaVersion.subject(),
-                                Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration)
-                            )
+                        api.getSubjectCompatibilityLevel(subjectSchemaVersion.subject(), Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.get(configuration))
                             .map(CompatibilityLevelObject::compatibilityLevel)
                             .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404);
                     // Get Schema Registry Subject Mode
