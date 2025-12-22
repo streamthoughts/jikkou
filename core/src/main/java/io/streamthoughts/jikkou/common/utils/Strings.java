@@ -18,6 +18,10 @@ public final class Strings {
     private Strings() {
     }
 
+    public static boolean isNullOrEmpty(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
     public static boolean isBlank(final String string) {
         return string == null || string.trim().isEmpty();
 

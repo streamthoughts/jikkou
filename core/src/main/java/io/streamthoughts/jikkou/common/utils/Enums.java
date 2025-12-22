@@ -19,6 +19,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class Enums {
 
+    public static <E extends Enum<E>> E safeValueOf(Class<E> type, String value) {
+        try {
+            return Strings.isNullOrEmpty(value) ? null : Enum.valueOf(type, value);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     /**
      * Gets the enum for specified string name.
      *
