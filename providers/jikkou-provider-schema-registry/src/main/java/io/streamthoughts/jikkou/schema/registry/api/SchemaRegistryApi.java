@@ -249,8 +249,7 @@ public interface SchemaRegistryApi extends AutoCloseable {
     @GET
     @Path("mode/{subject}")
     @Produces("application/vnd.schemaregistry.v1+json")
-    ModeObject getMode(@PathParam("subject") String subject,
-                       @QueryParam("defaultToGlobal") @DefaultValue("false") boolean defaultToGlobal);
+    ModeObject getMode(@PathParam("subject") String subject);
 
     @PUT
     @Path("mode/{subject}")

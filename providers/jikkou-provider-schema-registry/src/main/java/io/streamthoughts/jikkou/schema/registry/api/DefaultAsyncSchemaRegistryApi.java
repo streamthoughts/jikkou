@@ -106,8 +106,8 @@ public final class DefaultAsyncSchemaRegistryApi implements AutoCloseable, Async
     }
 
     @Override
-    public Mono<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal) {
-        return Mono.fromCallable(() -> api.getMode(subject, defaultToGlobal));
+    public Mono<ModeObject> getSubjectMode(@NotNull String subject) {
+        return Mono.fromCallable(() -> api.getMode(subject));
     }
 
     @Override

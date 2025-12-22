@@ -106,10 +106,9 @@ public interface AsyncSchemaRegistryApi extends AutoCloseable {
      * Gets mode level for the specified subject.
      *
      * @param subject         the name of the subject.
-     * @param defaultToGlobal flag to default to global mode.
      * @return                the mode.
      */
-    Mono<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal);
+    Mono<ModeObject> getSubjectMode(@NotNull String subject);
 
     /**
      * Updates mode for the specified subject.

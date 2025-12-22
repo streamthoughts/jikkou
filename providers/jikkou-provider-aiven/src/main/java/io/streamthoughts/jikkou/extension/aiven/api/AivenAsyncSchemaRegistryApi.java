@@ -184,7 +184,7 @@ public final class AivenAsyncSchemaRegistryApi implements AsyncSchemaRegistryApi
      * {@inheritDoc}
      **/
     @Override
-    public Mono<ModeObject> getSubjectMode(@NotNull String subject, boolean defaultToGlobal) {
+    public Mono<ModeObject> getSubjectMode(@NotNull String subject) {
         throw new UnsupportedOperationException("Aiven schema registry does not support subject mode");
     }
 

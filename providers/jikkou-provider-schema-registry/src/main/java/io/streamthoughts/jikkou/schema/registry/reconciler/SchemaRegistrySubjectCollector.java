@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
 import com.google.common.base.Strings;
+import io.streamthoughts.jikkou.common.utils.Enums;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -124,16 +125,16 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
                             .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404);
                     // Get Schema Registry Subject Mode
                     Mono<String> modeMono =
-                        api.getGlobalMode()
+                        api.getSubjectMode(subjectSchemaVersion.subject())
                             .map(ModeObject::mode)
                             .onErrorResume(SchemaRegistrySubjectCollector::emptyOn404);
 
                     return Mono.zip(compatibilityMono.defaultIfEmpty(EMPTY_STRING), modeMono.defaultIfEmpty(EMPTY_STRING))
-                        .map(tuple -> {
-                            CompatibilityLevels compatibilityLevel = Strings.isNullOrEmpty(tuple.getT1()) ? null : CompatibilityLevels.valueOf(tuple.getT1());
-                            Modes mode = Strings.isNullOrEmpty(tuple.getT1()) ? null : Modes.valueOf(tuple.getT2());
-                            return schemaRegistrySubjectFactory.createSchemaRegistrySubject(subjectSchemaVersion, compatibilityLevel, mode);
-                        });
+                        .map(tuple -> schemaRegistrySubjectFactory.createSchemaRegistrySubject(
+                            subjectSchemaVersion,
+                            Enums.safeValueOf(CompatibilityLevels.class, tuple.getT1()),
+                            Enums.safeValueOf(Modes.class, tuple.getT2())
+                        ));
                 });
         try {
             return new V1SchemaRegistrySubjectList.Builder().withItems(flux.collectList().block()).build();
