@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.ProviderSelectionContext;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoUniqueExtensionException;
 import java.util.Collection;
@@ -156,6 +157,49 @@ public interface ExtensionFactory extends ExtensionDescriptorRegistry {
     <T> List<T> getAllExtensions(@NotNull final Class<T> type,
                                  @Nullable final Qualifier<T> qualifier);
 
+    // Provider context-aware methods
+
+    /**
+     * Gets a new extension instance for the specified type with provider context.
+     *
+     * @param type            the extension class.
+     * @param qualifier       the options used to qualify the extension.
+     * @param providerContext the provider selection context.
+     * @param <T>             the type of the extension.
+     * @return the instance of type {@link T}.
+     * @throws NoUniqueExtensionException if more than one extension is registered for the given type.
+     * @throws NoSuchExtensionException   if no extension is registered for the given type.
+     */
+    <T> T getExtension(@NotNull final Class<T> type,
+                       @Nullable final Qualifier<T> qualifier,
+                       @Nullable final ProviderSelectionContext providerContext);
+
+    /**
+     * Finds a new extension instance for the specified type with provider context.
+     *
+     * @param type            the extension class.
+     * @param qualifier       the options used to qualify the extension.
+     * @param providerContext the provider selection context.
+     * @param <T>             the type of the extension.
+     * @return an optional instance of type {@link T}.
+     * @throws NoUniqueExtensionException if more than one extension is registered for the given type.
+     */
+    <T> Optional<T> findExtension(@NotNull final Class<T> type,
+                                  @Nullable final Qualifier<T> qualifier,
+                                  @Nullable final ProviderSelectionContext providerContext);
+
+    /**
+     * Gets all instances for the specified type and qualifier with provider context.
+     *
+     * @param type            the extension class.
+     * @param qualifier       the options used to qualify the extension.
+     * @param providerContext the provider selection context.
+     * @param <T>             the type of the extension.
+     * @return all instances of type {@link T}.
+     */
+    <T> List<T> getAllExtensions(@NotNull final Class<T> type,
+                                 @Nullable final Qualifier<T> qualifier,
+                                 @Nullable final ProviderSelectionContext providerContext);
 
     /**
      * Duplicates this factory.

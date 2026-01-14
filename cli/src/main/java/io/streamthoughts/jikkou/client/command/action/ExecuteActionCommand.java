@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.client.command.action;
 
 import io.micronaut.context.annotation.Prototype;
 import io.streamthoughts.jikkou.client.command.AbstractApiCommand;
+import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -41,8 +42,10 @@ public class ExecuteActionCommand extends AbstractApiCommand {
             defaultValue = "YAML",
             description = "Prints the output in the specified format. Allowed values: ${COMPLETION-CANDIDATES} (default YAML)."
     )
-
     private Format format;
+
+    @CommandLine.Mixin
+    ProviderOptionMixin providerMixin;
 
     // Picocli require an empty constructor to generate the completion file
     public ExecuteActionCommand() {
@@ -53,7 +56,7 @@ public class ExecuteActionCommand extends AbstractApiCommand {
      **/
     @Override
     public Integer call() throws Exception {
-        ApiActionResultSet<?> results = api.execute(name, Configuration.from(options()));
+        ApiActionResultSet<?> results = api.execute(name, Configuration.from(options()), providerMixin.getProvider());
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             switch (format) {
                 case JSON -> Jackson.JSON_OBJECT_MAPPER

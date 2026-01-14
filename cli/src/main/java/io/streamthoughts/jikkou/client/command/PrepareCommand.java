@@ -24,10 +24,10 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
 @Command(name = "prepare",
-        header = "Prepare the resource definition files for validation.",
-        description = """
-                Prepare the resource definition files specified through the command line arguments for validation.
-                """
+    header = "Prepare the resource definition files for validation.",
+    description = """
+        Prepare the resource definition files specified through the command line arguments for validation.
+        """
 )
 @Singleton
 public class PrepareCommand extends CLIBaseCommand implements Callable<Integer> {
@@ -41,7 +41,8 @@ public class PrepareCommand extends CLIBaseCommand implements Callable<Integer> 
     FormatOptionsMixin formatOptions;
     @Mixin
     ConfigOptionsMixin configOptionsMixin;
-
+    @Mixin
+    ProviderOptionMixin providerOptionMixin;
     // API
     @Inject
     JikkouApi api;
@@ -58,8 +59,8 @@ public class PrepareCommand extends CLIBaseCommand implements Callable<Integer> 
 
         try {
             HasItems result = api.prepare(
-                    getResources(),
-                    getReconciliationContext()
+                getResources(),
+                getReconciliationContext()
             );
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 writer.write(formatOptions.format, result.getItems(), baos);
@@ -80,12 +81,13 @@ public class PrepareCommand extends CLIBaseCommand implements Callable<Integer> 
     @NotNull
     private ReconciliationContext getReconciliationContext() {
         return ReconciliationContext
-                .builder()
-                .dryRun(true)
-                .configuration(configOptionsMixin.getConfiguration())
-                .selector(selectorOptions.getResourceSelector())
-                .labels(fileOptions.getLabels())
-                .annotations(fileOptions.getAnnotations())
-                .build();
+            .builder()
+            .dryRun(true)
+            .configuration(configOptionsMixin.getConfiguration())
+            .selector(selectorOptions.getResourceSelector())
+            .labels(fileOptions.getLabels())
+            .annotations(fileOptions.getAnnotations())
+            .providerName(providerOptionMixin.getProvider())
+            .build();
     }
 }

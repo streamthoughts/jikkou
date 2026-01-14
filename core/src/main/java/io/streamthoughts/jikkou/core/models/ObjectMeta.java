@@ -144,7 +144,7 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
      * @return {@code true} if the name is present, otherwise {@code false}.
      */
     public boolean hasName() {
-        return !Strings.isBlank(getName());
+        return !Strings.isNullOrEmpty(getName());
     }
 
     /**

@@ -64,7 +64,7 @@ class ClassExtensionAliasesGeneratorTest {
             ExtensionCategory.EXTENSION,
             Collections.emptyList(),
             null,
-            () -> null,
+            (unused) -> null,
             clazz,
             clazz.getClassLoader(),
             () -> null,

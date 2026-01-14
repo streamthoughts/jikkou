@@ -72,10 +72,10 @@ public final class SupportedResourceQualifier<T> implements Qualifier<T> {
         if (type != HasMetadata.class) {
             resourceType = ResourceType.of(type);
         }
-        else if (!Strings.isBlank(apiVersion)) {
+        else if (!Strings.isNullOrEmpty(apiVersion)) {
             resourceType = ResourceType.of(kind, apiVersion);
         }
-        else if (!Strings.isBlank(kind)) {
+        else if (!Strings.isNullOrEmpty(kind)) {
             resourceType = ResourceType.of(kind);
         }
         return equals == (resourceType != null && this.type.canAccept(resourceType));

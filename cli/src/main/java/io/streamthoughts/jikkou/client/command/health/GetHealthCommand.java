@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.client.command.health;
 
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
+import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.health.HealthStatus;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -44,6 +45,9 @@ public class GetHealthCommand extends CLIBaseCommand implements Callable<Integer
             description = "Timeout in milliseconds for retrieving health indicators (default: ${DEFAULT-VALUE}).")
     long timeoutMs;
 
+    @CommandLine.Mixin
+    ProviderOptionMixin providerMixin;
+
     @Parameters(
             paramLabel = "HEALTH_INDICATOR",
             description = "Name of the health indicator (use 'all' to get all indicators).")
@@ -60,9 +64,9 @@ public class GetHealthCommand extends CLIBaseCommand implements Callable<Integer
         Duration timeout = Duration.ofMillis(timeoutMs);
         ApiHealthResult result;
         if (indicator.equalsIgnoreCase(HEALTH_INDICATOR_ALL)) {
-            result = api.getApiHealth(timeout);
+            result = api.getApiHealth(timeout, providerMixin.getProvider());
         } else {
-            result = api.getApiHealth(indicator, timeout);
+            result = api.getApiHealth(indicator, timeout, providerMixin.getProvider());
         }
 
         if (result != null) {

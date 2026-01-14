@@ -52,9 +52,9 @@ public class ApiExtensionResource extends AbstractController {
 
         ApiExtensionList extensions;
 
-        if (!Strings.isBlank(category)) {
+        if (!Strings.isNullOrEmpty(category)) {
             extensions = api.getApiExtensions(ExtensionCategory.getForNameIgnoreCase(category));
-        }else if (!Strings.isBlank(type)) {
+        }else if (!Strings.isNullOrEmpty(type)) {
             extensions = api.getApiExtensions(type);
         } else {
             extensions = api.getApiExtensions();

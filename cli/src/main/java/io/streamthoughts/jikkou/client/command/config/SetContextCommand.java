@@ -59,7 +59,7 @@ public class SetContextCommand extends CLIBaseCommand implements Callable<Intege
 
         if (this.clientConfigPropertiesFile != null) {
             for (final String propertiesFile : clientConfigPropertiesFile) {
-                if (!Strings.isBlank(propertiesFile)) {
+                if (!Strings.isNullOrEmpty(propertiesFile)) {
                     final String expandedPath = Paths.get(propertiesFile).toAbsolutePath().toString();
                     try (var reader = new FileReader(expandedPath)) {
                         clientConfigProps.load(reader);

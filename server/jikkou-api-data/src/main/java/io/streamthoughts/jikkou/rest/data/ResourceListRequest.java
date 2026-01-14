@@ -22,21 +22,26 @@ import javax.annotation.Nullable;
  * @param options   The parameters.
  * @param selectors The list of selector expressions.
  * @param selectorMatchingStrategy The selector matching strategy.
+ * @param provider The provider name for selecting specific provider instance.
  */
 public record ResourceListRequest(@Nullable @JsonProperty("options") Map<String, Object> options,
                                   @Nullable @JsonProperty("selectors") List<String> selectors,
-                                  @Nullable @JsonProperty("selectors_match") SelectorMatchingStrategy selectorMatchingStrategy) {
+                                  @Nullable @JsonProperty("selectors_match") SelectorMatchingStrategy selectorMatchingStrategy,
+                                  @Nullable @JsonProperty("provider") String provider) {
 
     /**
      * Creates a new {@link ResourceListRequest} instance.
      *
      * @param options   The parameters.
      * @param selectors The selector expression.
+     * @param selectorMatchingStrategy The selector matching strategy.
+     * @param provider The provider name.
      */
     @ConstructorProperties({
             "options",
             "selectors",
-            "selectors_match"
+            "selectors_match",
+            "provider"
     })
     public ResourceListRequest {
     }
@@ -47,20 +52,33 @@ public record ResourceListRequest(@Nullable @JsonProperty("options") Map<String,
      * @param options The parameters.
      */
     public ResourceListRequest(Map<String, Object> options) {
-        this(options, null, null);
+        this(options, null, null, null);
     }
 
     /**
      * Creates a new {@link ResourceListRequest} instance.
      */
     public ResourceListRequest() {
-        this(null, null, null);
+        this(null, null, null, null);
+    }
+
+    /**
+     * Creates a new {@link ResourceListRequest} instance with selector parameters.
+     *
+     * @param options   The parameters.
+     * @param selectors The selector expressions.
+     * @param selectorMatchingStrategy The selector matching strategy.
+     */
+    public ResourceListRequest(Map<String, Object> options,
+                               List<String> selectors,
+                               SelectorMatchingStrategy selectorMatchingStrategy) {
+        this(options, selectors, selectorMatchingStrategy, null);
     }
 
     public ResourceListRequest options(Map<String, ?> options) {
         Map<String, Object> map = new HashMap<>(options());
         map.putAll(options);
-        return new ResourceListRequest(map, selectors, selectorMatchingStrategy);
+        return new ResourceListRequest(map, selectors, selectorMatchingStrategy, provider);
     }
 
     /**

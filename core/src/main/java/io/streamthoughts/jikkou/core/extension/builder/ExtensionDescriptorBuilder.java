@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.extension.Example;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionMetadata;
+import io.streamthoughts.jikkou.core.extension.ProviderSupplier;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +35,7 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
     private List<ConfigPropertySpec> properties;
     private ExtensionCategory category;
     private Class<? extends ExtensionProvider> provider;
-    private Supplier<? extends ExtensionProvider> providerSupplier;
+    private ProviderSupplier providerSupplier;
     private ExtensionMetadata metadata;
     private Class<T> type;
     private boolean isEnabled;
@@ -240,12 +241,12 @@ public final class ExtensionDescriptorBuilder<T> implements ExtensionDescriptor<
      * {@inheritDoc}
      */
     @Override
-    public Supplier<? extends ExtensionProvider> providerSupplier() {
+    public ProviderSupplier providerSupplier() {
         return providerSupplier;
     }
 
     public ExtensionDescriptorBuilder<T> provider(Class<? extends ExtensionProvider> provider,
-                                                  Supplier<? extends ExtensionProvider> supplier) {
+                                                  ProviderSupplier supplier) {
         this.provider = provider;
         this.providerSupplier = supplier;
         return this;

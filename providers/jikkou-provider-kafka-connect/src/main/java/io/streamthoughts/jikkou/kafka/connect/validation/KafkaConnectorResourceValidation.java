@@ -49,10 +49,10 @@ public class KafkaConnectorResourceValidation implements Validation<V1KafkaConne
         //Validate spec
         Optional<V1KafkaConnectorSpec> optionalSpec = Optional.ofNullable(resource.getSpec());
         optionalSpec.ifPresentOrElse(spec -> {
-                if (Strings.isBlank(spec.getConnectorClass())) {
+                if (Strings.isNullOrEmpty(spec.getConnectorClass())) {
                     errors.add(newError(resource, "Missing or empty field: 'spec.connectorClass'."));
                 }
-                if (Strings.isBlank(spec.getConnectorClass())) {
+                if (Strings.isNullOrEmpty(spec.getConnectorClass())) {
                     errors.add(newError(resource, "Missing or empty field: 'spec.tasksMax'."));
                 }
             }, () -> errors.add(newError(resource, "Missing or empty field: 'spec'"))

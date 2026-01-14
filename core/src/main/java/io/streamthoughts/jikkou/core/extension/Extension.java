@@ -20,7 +20,7 @@ import io.streamthoughts.jikkou.core.validation.Validation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The top-level interface for extension.
+ * The top-level interface for extensions.
  *
  * @see Action
  * @see Resource

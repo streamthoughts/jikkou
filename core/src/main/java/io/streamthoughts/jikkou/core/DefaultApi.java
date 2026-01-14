@@ -14,6 +14,7 @@ import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptor;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.ProviderConfigurationRegistry;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.health.Health;
@@ -125,7 +126,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
          **/
         @Override
         public DefaultApi build() {
-            return new DefaultApi(extensionFactory, resourceRegistry);
+            return new DefaultApi(extensionFactory, resourceRegistry, providerConfigurationRegistry);
         }
     }
 
@@ -136,8 +137,9 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * Creates a new {@link DefaultApi} instance.
      */
     private DefaultApi(@NotNull final ExtensionFactory extensionFactory,
-                       @NotNull final ResourceRegistry resourceRegistry) {
-        super(extensionFactory);
+                       @NotNull final ResourceRegistry resourceRegistry,
+                       @NotNull final ProviderConfigurationRegistry providerConfigurationRegistry) {
+        super(extensionFactory, providerConfigurationRegistry);
         this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
     }
 
@@ -246,8 +248,9 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      **/
     @Override
     public ApiHealthResult getApiHealth(@NotNull String name,
-                                        @NotNull Duration timeout) {
-        Health health = getHealth(name, timeout);
+                                        @NotNull Duration timeout,
+                                        String providerName) {
+        Health health = getHealth(name, timeout, providerName);
         return ApiHealthResult.from(health);
     }
 
@@ -255,10 +258,10 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      * {@inheritDoc}
      **/
     @Override
-    public ApiHealthResult getApiHealth(@NotNull Duration timeout) {
+    public ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName) {
         ApiHealthIndicatorList list = getApiHealthIndicators();
         List<Health> health = list.indicators().stream()
-            .map(indicator -> getHealth(indicator.name(), timeout))
+            .map(indicator -> getHealth(indicator.name(), timeout, providerName))
             .toList();
 
         HealthAggregator aggregator = new HealthAggregator();
@@ -267,10 +270,12 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     }
 
 
-    private Health getHealth(@NotNull String name, @NotNull Duration timeout) {
+    private Health getHealth(@NotNull String name, @NotNull Duration timeout, String providerName) {
+        ProviderSelectionContext providerContext = createProviderContext(providerName);
         HealthIndicator extension = extensionFactory.getExtension(
             HealthIndicator.class,
-            Qualifiers.byName(name)
+            Qualifiers.byName(name),
+            providerContext
         );
         Health health;
         try {
@@ -370,7 +375,6 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList reconcile(@NotNull final HasItems resources,
                                          @NotNull final ReconciliationMode mode,
                                          @NotNull final ReconciliationContext context) {
-
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
@@ -391,7 +395,6 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList patch(@NotNull HasItems resources,
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
-
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
@@ -453,17 +456,18 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             List<ChangeResult> reportable = results.stream()
                 .filter(t -> !CoreAnnotations.isAnnotatedWithNoReport(t.change()))
                 .collect(Collectors.toList());
-            CombineChangeReporter reporter = newCombineReporter();
+            CombineChangeReporter reporter = newCombineReporter(createProviderContext(context));
             reporter.report(reportable);
         }
         return new ApiChangeResultList(context.isDryRun(), new ObjectMeta(), results);
     }
 
     private List<ChangeResult> applyPatchesAndGetResults(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context, List<ResourceChange> changes) {
+        ProviderSelectionContext providerContext = createProviderContext(context);
         Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList.of(changes).groupBy(ResourceType::of);
         return changesGroupByResourceType.entrySet().stream().flatMap(entry -> {
             ResourceType type = entry.getKey();
-            Controller<HasMetadata> controller = getMatchingController(type);
+            Controller<HasMetadata> controller = getMatchingController(type, providerContext);
             List<ResourceChange> items = entry.getValue();
             LOG.info("Applying {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
                 items.size(),
@@ -495,15 +499,17 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @Override
     @SuppressWarnings("unchecked")
     public <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String name,
-                                                                 @NotNull Configuration configuration) {
+                                                                 @NotNull Configuration configuration,
+                                                                 String providerName) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(configuration, "configuration cannot be null");
-        Action<HasMetadata> action = getMatchingAction(name);
+        Action<HasMetadata> action = getMatchingAction(name, providerName);
         if (LOG.isDebugEnabled()) {
             LOG.debug(
-                "Executing action '{}' with configuration: {}",
+                "Executing action '{}' with configuration: {}{}",
                 name,
-                configuration.asMap()
+                configuration.asMap(),
+                providerName != null ? " (provider: " + providerName + ")" : ""
             );
         }
         ExecutionResultSet<HasMetadata> resultSet = action.execute(configuration);
@@ -516,14 +522,18 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     }
 
     @SuppressWarnings("unchecked")
-    private Action<HasMetadata> getMatchingAction(@NotNull String action) {
-        LOG.info("Looking for an action named '{}'", action);
+    private Action<HasMetadata> getMatchingAction(@NotNull String action, String providerName) {
+        LOG.info("Looking for an action named '{}'{}",
+            action,
+            providerName != null ? " (provider: " + providerName + ")" : ""
+        );
+        ProviderSelectionContext providerContext = createProviderContext(providerName);
         return extensionFactory.findExtension(
             Action.class,
             Qualifiers.byQualifiers(
                 Qualifiers.byName(action)
-            )
-
+            ),
+            providerContext
         ).orElseThrow(() -> new NoSuchExtensionException(String.format("Cannot find action '%s'", action)));
     }
 
@@ -543,7 +553,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @NotNull
     private ApiValidationResult<HasMetadata> doValidate(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
         List<HasMetadata> items = doPrepare(resources, context).getItems();
-        ValidationResult validationChainResult = this.newResourceValidationChain().validate(items);
+        ValidationResult validationChainResult = this.newResourceValidationChain(createProviderContext(context)).validate(items);
 
         // Get and apply all policies
         List<ResourcePolicy> policies = getResourcePoliciesFrom(resources);
@@ -575,10 +585,12 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @Override
     public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                                  @NotNull String name,
-                                                 @NotNull Configuration configuration) {
-        Collector<T> collector = getMatchingCollector(type);
+                                                 @NotNull GetContext context) {
+        // Create provider context from GetContext
+        ProviderSelectionContext providerContext = createProviderContext(context.providerName());
+        Collector<T> collector = getMatchingCollector(type, providerContext);
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
-        return collector.get(name, configuration)
+        return collector.get(name, context.configuration())
             .map(item -> addBuiltInAnnotations(item, timestamp))
             .orElseThrow(() -> new ResourceNotFoundException(
                 String.format(
@@ -618,12 +630,15 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         // Validate resources.
         Map<ResourceType, List<HasMetadata>> resourcesByType = doValidate(filtered, context).get().groupByType();
 
+        // Create provider context
+        ProviderSelectionContext providerContext = createProviderContext(context);
+
         // Diff
         List<ResourceChange> results = resourcesByType.entrySet()
             .stream()
             .map(e -> {
                 final ResourceType type = e.getKey();
-                Controller<HasMetadata> controller = getMatchingController(type);
+                Controller<HasMetadata> controller = getMatchingController(type, providerContext);
                 List<HasMetadata> items = e.getValue();
                 LOG.info("Planning changes of {} resources for group={}, apiVersion={} and kind={} using controller: '{}'.",
                     items.size(),
@@ -646,9 +661,13 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @Override
     @SuppressWarnings("unchecked")
     public <T extends HasMetadata> ResourceList<T> listResources(final @NotNull ResourceType type,
-                                                                 final @NotNull Selector selector,
-                                                                 final @NotNull Configuration configuration) {
-        final Collector<T> collector = getMatchingCollector(type);
+                                                                 final @NotNull ListContext context) {
+        // Create provider context from ListContext
+        ProviderSelectionContext providerContext = createProviderContext(context.providerName());
+        final Collector<T> collector = getMatchingCollector(type, providerContext);
+
+        Selector selector = context.selector();
+        Configuration configuration = context.configuration();
 
         ResourceList<T> result = collector.listAll(configuration, selector);
 

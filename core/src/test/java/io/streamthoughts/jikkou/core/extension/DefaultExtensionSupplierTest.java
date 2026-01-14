@@ -29,7 +29,7 @@ class DefaultExtensionSupplierTest {
             ExtensionCategory.EXTENSION,
             NO_PROPERTIES,
             null,
-            () -> null,
+            (unused) -> null,
             ExtensionDescriptorModifiersTest.class,
             ExtensionDescriptorModifiersTest.class.getClassLoader(),
             () -> null,
@@ -41,7 +41,7 @@ class DefaultExtensionSupplierTest {
 
         Assertions.assertThrows(
             ExtensionCreationException.class,
-            () -> supplier.get(Mockito.mock(ExtensionFactory.class))
+            () -> supplier.get(Mockito.mock(ExtensionFactory.class), null)
         );
     }
 
@@ -56,7 +56,7 @@ class DefaultExtensionSupplierTest {
             ExtensionCategory.EXTENSION,
             NO_PROPERTIES,
             null,
-            () -> null,
+            (unused) -> null,
             Extension.class,
             Extension.class.getClassLoader(),
             () -> mock,
@@ -65,7 +65,7 @@ class DefaultExtensionSupplierTest {
             null
         );
         var supplier = new DefaultExtensionSupplier<>(descriptor);
-        Extension extension = supplier.get(Mockito.mock(ExtensionFactory.class));
+        Extension extension = supplier.get(Mockito.mock(ExtensionFactory.class), null);
         Assertions.assertEquals(mock, extension);
         Mockito.verify(mock, Mockito.atLeastOnce()).init(Mockito.any(ExtensionContext.class));
     }

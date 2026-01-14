@@ -30,7 +30,7 @@ class LocalResourceRepositoryTest {
     void shouldGetEmptyListGivenNoFile() {
         // Given
         LocalResourceRepository repository = new LocalResourceRepository();
-        repository.init(new DefaultExtensionContext(null, DESCRIPTOR));
+        repository.init(new DefaultExtensionContext(null, DESCRIPTOR, null));
 
         // When
         List<? extends HasMetadata> results = repository.all();
@@ -50,7 +50,7 @@ class LocalResourceRepositoryTest {
         ).apply(DESCRIPTOR);
 
         LocalResourceRepository repository = new LocalResourceRepository();
-        repository.init(new DefaultExtensionContext(null, descriptor));
+        repository.init(new DefaultExtensionContext(null, descriptor, null));
 
         // When
         List<? extends HasMetadata> results = repository.all();

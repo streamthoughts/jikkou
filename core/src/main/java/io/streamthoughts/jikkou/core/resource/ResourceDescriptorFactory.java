@@ -48,8 +48,8 @@ public final class ResourceDescriptorFactory {
                     type,
                     description,
                     resource,
-                    Strings.isBlank(names.singular()) ? null : names.singular(),
-                    Strings.isBlank(names.plural()) ? null : names.plural(),
+                    Strings.isNullOrEmpty(names.singular()) ? null : names.singular(),
+                    Strings.isNullOrEmpty(names.plural()) ? null : names.plural(),
                     new TreeSet<>(Arrays.asList(names.shortNames())),
                     extractVerbs(resource),
                     Resource.isTransient(resource)

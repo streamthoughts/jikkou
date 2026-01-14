@@ -91,7 +91,7 @@ public class KafkaUserService {
         );
 
         String password = auth.password();
-        if (Strings.isBlank(auth.password())) {
+        if (Strings.isNullOrEmpty(auth.password())) {
             password = SecurePasswordGenerator.getDefault().generate(32);
         }
 
@@ -114,7 +114,7 @@ public class KafkaUserService {
         );
 
         String password = auth.password();
-        if (Strings.isBlank(auth.password())) {
+        if (Strings.isNullOrEmpty(auth.password())) {
             password = SecurePasswordGenerator.getDefault().generate(32);
         }
 

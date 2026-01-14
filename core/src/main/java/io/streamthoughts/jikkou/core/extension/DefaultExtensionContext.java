@@ -6,13 +6,14 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.ProviderSelectionContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.exceptions.NoSuchExtensionException;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Default {@link ExtensionContext}.
@@ -21,16 +22,21 @@ public final class DefaultExtensionContext implements ExtensionContext {
 
     private final ExtensionFactory factory;
     private final ExtensionDescriptor<?> descriptor;
+    private final ProviderSelectionContext providerContext;
 
     /**
      * Creates a new {@link DefaultExtensionContext} instance.
      *
-     * @param descriptor The ExtensionDescriptor
+     * @param factory         The ExtensionFactory
+     * @param descriptor      The ExtensionDescriptor
+     * @param providerContext The ProviderSelectionContext (optional)
      */
     public DefaultExtensionContext(final ExtensionFactory factory,
-                                   final ExtensionDescriptor<?> descriptor) {
+                                   final ExtensionDescriptor<?> descriptor,
+                                   @Nullable final ProviderSelectionContext providerContext) {
         this.factory = factory;
         this.descriptor = Objects.requireNonNull(descriptor, "descriptor cannot be null");
+        this.providerContext = providerContext;
     }
 
     /**
@@ -56,7 +62,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
     public ExtensionContext contextForExtension(Class<? extends Extension> extension) {
         if (factory == null) throw new IllegalStateException("No factory configured");
         return factory.findDescriptorByClass(extension)
-            .map(descriptor -> new DefaultExtensionContext(factory, descriptor))
+            .map(descriptor -> new DefaultExtensionContext(factory, descriptor, providerContext))
             .orElseThrow(() -> new NoSuchExtensionException("No extension registered for type: " + extension.getName()));
     }
 
@@ -67,7 +73,7 @@ public final class DefaultExtensionContext implements ExtensionContext {
     @SuppressWarnings("unchecked")
     public <T extends ExtensionProvider> T provider() {
         return (T) Optional.ofNullable(descriptor.providerSupplier())
-            .map(Supplier::get)
+            .map(supplier -> supplier.get(providerContext))
             .orElseThrow(() -> new NoSuchElementException("No provider registered for extension: " + descriptor.name()));
     }
 

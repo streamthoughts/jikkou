@@ -22,8 +22,8 @@ class JikkouTest {
         URL resource = JikkouTest.class.getResource("/test-jikkou-config.json");
         String path = resource.getPath();
         GlobalConfigurationContext.setConfigurationContext(new ConfigurationContext(
-                new File(path),
-                new ObjectMapper()
+            new File(path),
+            new ObjectMapper()
         ));
     }
 
@@ -50,7 +50,7 @@ class JikkouTest {
         int execute = Jikkou.execute(new String[]{"get"});
         Assertions.assertEquals(CommandLine.ExitCode.USAGE, execute);
     }
-    
+
     @Test
     void testCommandHealthGetIndicators() {
         int execute = Jikkou.execute(new String[]{"health", "get-indicators"});

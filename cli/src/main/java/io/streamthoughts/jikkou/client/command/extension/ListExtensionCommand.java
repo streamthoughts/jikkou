@@ -52,7 +52,7 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
     @Override
     public void run() {
 
-        ApiExtensionList apiExtensions = Strings.isBlank(kind) ?
+        ApiExtensionList apiExtensions = Strings.isNullOrEmpty(kind) ?
                 api.getApiExtensions() : api.getApiExtensions(kind);
 
         Predicate<ApiExtensionSummary> predicate = Stream.<Predicate<ApiExtensionSummary>>of(

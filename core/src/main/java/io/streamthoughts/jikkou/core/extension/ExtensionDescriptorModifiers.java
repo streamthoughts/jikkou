@@ -9,7 +9,6 @@ package io.streamthoughts.jikkou.core.extension;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.builder.ExtensionDescriptorBuilder;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,7 +54,7 @@ public final class ExtensionDescriptorModifiers {
      * @return a new {@link ExtensionDescriptorModifier} instance.
      */
     public static ExtensionDescriptorModifier withProvider(@NotNull final Class<? extends ExtensionProvider> provider,
-                                                           @NotNull final Supplier<? extends ExtensionProvider> supplier) {
+                                                           @NotNull final ProviderSupplier supplier) {
         return new ExtensionDescriptorModifier() {
             @Override
             public <T> ExtensionDescriptor<T> apply(final ExtensionDescriptor<T> descriptor) {

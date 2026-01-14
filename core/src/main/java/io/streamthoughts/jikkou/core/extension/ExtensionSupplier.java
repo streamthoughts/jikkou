@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
+import io.streamthoughts.jikkou.core.ProviderSelectionContext;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for supplying extension instance.
@@ -16,12 +18,14 @@ import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationExcep
 public interface ExtensionSupplier<T> {
 
     /**
-     * Create a new extension instance.
+     * Create a new extension instance with provider context support.
      *
+     * @param factory         the extension factory
+     * @param providerContext the provider selection context (optional)
      * @return a new instance of {@link T}.
      * @throws ExtensionCreationException if the extension cannot be created or configured.
      */
-    T get(ExtensionFactory factor);
+    T get(ExtensionFactory factory, @Nullable ProviderSelectionContext providerContext);
 
     /**
      * Gets the descriptor for the extension supplied by this class.

@@ -48,7 +48,7 @@ public final class KafkaConnectClusterService {
 
     public CompletableFuture<V1KafkaConnector> getConnectorAsync(@NotNull final String connectorName,
                                                                  boolean expandStatus) {
-        if (Strings.isBlank(connectorName)) {
+        if (Strings.isNullOrEmpty(connectorName)) {
             throw new IllegalArgumentException("connectorName is null or empty.");
         }
         return CompletableFuture

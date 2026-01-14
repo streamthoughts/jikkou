@@ -31,7 +31,8 @@ class ReconciliationContextTest {
                 Configuration.empty(),
                 true,
                 NamedValueSet.setOf(new NamedValue("label", "value")),
-                NamedValueSet.setOf(new NamedValue("annotation", "value"))
+                NamedValueSet.setOf(new NamedValue("annotation", "value")),
+                null
         ), context);
     }
 

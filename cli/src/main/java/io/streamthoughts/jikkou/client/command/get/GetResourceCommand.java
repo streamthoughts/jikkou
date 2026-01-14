@@ -9,9 +9,12 @@ package io.streamthoughts.jikkou.client.command.get;
 import io.micronaut.context.annotation.Prototype;
 import io.streamthoughts.jikkou.client.command.AbstractApiCommand;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
+import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.GetContext;
 import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -36,6 +39,8 @@ public class GetResourceCommand extends AbstractApiCommand {
     SelectorOptionsMixin selectorOptions;
     @Mixin
     FormatOptionsMixin formatOptions;
+    @Mixin
+    ProviderOptionMixin providerOptions;
     @Option(names = {"--list"},
             defaultValue = "false",
             description = "Get resources as ResourceListObject (default: ${DEFAULT-VALUE})."
@@ -68,18 +73,19 @@ public class GetResourceCommand extends AbstractApiCommand {
     @Override
     public Integer call() throws Exception {
         ResourceList<HasMetadata> resources;
-        if (Strings.isBlank(name)) {
-            resources = api.listResources(
-                    type,
-                    selectorOptions.getResourceSelector(),
-                    Configuration.from(options())
-            );
+        if (Strings.isNullOrEmpty(name)) {
+            ListContext context = ListContext.builder()
+                    .selector(selectorOptions.getResourceSelector())
+                    .configuration(Configuration.from(options()))
+                    .providerName(providerOptions.getProvider())
+                    .build();
+            resources = api.listResources(type, context);
         } else {
-            HasMetadata resource = api.getResource(
-                    type,
-                    name,
-                    Configuration.from(options())
-            );
+            GetContext getContext = GetContext.builder()
+                    .configuration(Configuration.from(options()))
+                    .providerName(providerOptions.getProvider())
+                    .build();
+            HasMetadata resource = api.getResource(type, name, getContext);
             resources = ResourceList.of(resource);
         }
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

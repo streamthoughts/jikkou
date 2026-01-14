@@ -162,14 +162,14 @@ public final class UserChangeComputer extends ResourceChangeComputer<String, V1K
             return switch (authentication) {
                 case V1KafkaUserAuthentication.ScramSha256 scramSha256 -> {
                     yield new V1KafkaUserAuthentication.ScramSha256(
-                        Strings.isBlank(scramSha256.password()) ? SecurePasswordGenerator.getDefault().generate(32) : scramSha256.password(),
+                        Strings.isNullOrEmpty(scramSha256.password()) ? SecurePasswordGenerator.getDefault().generate(32) : scramSha256.password(),
                         Optional.ofNullable(scramSha256.iterations()).orElse(V1KafkaUserAuthentication.DEFAULT_ITERATIONS),
                         scramSha256.salt()
                     );
                 }
                 case V1KafkaUserAuthentication.ScramSha512 scramSha512 -> {
                     yield new V1KafkaUserAuthentication.ScramSha512(
-                        Strings.isBlank(scramSha512.password()) ? SecurePasswordGenerator.getDefault().generate(32) : scramSha512.password(),
+                        Strings.isNullOrEmpty(scramSha512.password()) ? SecurePasswordGenerator.getDefault().generate(32) : scramSha512.password(),
                         Optional.ofNullable(scramSha512.iterations()).orElse(V1KafkaUserAuthentication.DEFAULT_ITERATIONS),
                         scramSha512.salt()
                     );

@@ -30,11 +30,11 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 @Command(name = "diff",
-        header = "Show resource changes required by the current resource definitions.",
-        description = """
-                Generates a speculative reconciliation plan, showing the resource changes Jikkou would apply to reconcile the resource definitions.
-                This command does not actually perform the reconciliation actions.
-                """)
+    header = "Show resource changes required by the current resource definitions.",
+    description = """
+        Generates a speculative reconciliation plan, showing the resource changes Jikkou would apply to reconcile the resource definitions.
+        This command does not actually perform the reconciliation actions.
+        """)
 @Singleton
 public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
 
@@ -47,22 +47,24 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
     FormatOptionsMixin formatOptions;
     @Mixin
     ConfigOptionsMixin configOptionsMixin;
+    @Mixin
+    ProviderOptionMixin providerOptionMixin;
 
     @Option(names = {"--" + SimpleResourceChangeFilter.FILTER_RESOURCE_OPS_NAME},
-            split = ",",
-            description = "Filter out all resources except those corresponding to given operations. Valid values: ${COMPLETION-CANDIDATES}."
+        split = ",",
+        description = "Filter out all resources except those corresponding to given operations. Valid values: ${COMPLETION-CANDIDATES}."
     )
     Set<Operation> filterOutAllResourcesExcept = new HashSet<>();
 
     @Option(names = {"--" + SimpleResourceChangeFilter.FILTER_CHANGE_OP_NAME},
-            split = ",",
-            description = "Filter out all state-changes except those corresponding to given operations. Valid values: ${COMPLETION-CANDIDATES}."
+        split = ",",
+        description = "Filter out all state-changes except those corresponding to given operations. Valid values: ${COMPLETION-CANDIDATES}."
     )
     Set<Operation> filterOutAllChangesExcept = new HashSet<>();
 
     @Option(names = {"--list"},
-            defaultValue = "false",
-            description = "Get resources as ApiResourceChangeList (default: ${DEFAULT-VALUE})."
+        defaultValue = "false",
+        description = "Get resources as ApiResourceChangeList (default: ${DEFAULT-VALUE})."
     )
     private boolean list;
 
@@ -82,11 +84,11 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
 
         try {
             ApiResourceChangeList result = api.getDiff(
-                    getResources(),
-                    new SimpleResourceChangeFilter()
-                            .filterOutAllResourcesExcept(filterOutAllResourcesExcept)
-                            .filterOutAllChangesExcept(filterOutAllChangesExcept),
-                    getReconciliationContext()
+                getResources(),
+                new SimpleResourceChangeFilter()
+                    .filterOutAllResourcesExcept(filterOutAllResourcesExcept)
+                    .filterOutAllChangesExcept(filterOutAllChangesExcept),
+                getReconciliationContext()
             );
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 if (list) {
@@ -111,12 +113,13 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
     @NotNull
     private ReconciliationContext getReconciliationContext() {
         return ReconciliationContext
-                .builder()
-                .dryRun(true)
-                .configuration(configOptionsMixin.getConfiguration())
-                .selector(selectorOptions.getResourceSelector())
-                .labels(fileOptions.getLabels())
-                .annotations(fileOptions.getAnnotations())
-                .build();
+            .builder()
+            .dryRun(true)
+            .configuration(configOptionsMixin.getConfiguration())
+            .selector(selectorOptions.getResourceSelector())
+            .labels(fileOptions.getLabels())
+            .annotations(fileOptions.getAnnotations())
+            .providerName(providerOptionMixin.getProvider())
+            .build();
     }
 }

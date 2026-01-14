@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.rest.services;
 
 import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -102,12 +103,11 @@ public final class DefaultApiResourceService implements ApiResourceService {
      **/
     @Override
     public ResourceList<HasMetadata> search(ApiResourceIdentifier identifier,
-                                            ReconciliationContext context) {
+                                            ListContext context) {
         ResourceDescriptor descriptor = getResourceDescriptorByIdentifier(identifier);
         return api.listResources(
             descriptor.resourceType(),
-            context.selector(),
-            context.configuration()
+            context
         );
     }
 

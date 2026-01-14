@@ -11,6 +11,7 @@ import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
 import io.streamthoughts.jikkou.client.command.ExecOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
+import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import io.streamthoughts.jikkou.core.JikkouApi;
@@ -46,6 +47,8 @@ public final class PatchResourceCommand extends CLIBaseCommand implements Callab
     SelectorOptionsMixin selectorOptions;
     @Mixin
     ConfigOptionsMixin configOptionsMixin;
+    @Mixin
+    ProviderOptionMixin providerOptionMixin;
 
     @Option(names = {"--mode"},
             required = true,
@@ -86,6 +89,7 @@ public final class PatchResourceCommand extends CLIBaseCommand implements Callab
                 .selector(selectorOptions.getResourceSelector())
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
+                .providerName(providerOptionMixin.getProvider())
                 .build();
     }
 

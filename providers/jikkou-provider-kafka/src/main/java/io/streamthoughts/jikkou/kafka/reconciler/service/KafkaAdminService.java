@@ -103,7 +103,7 @@ public final class KafkaAdminService {
                                                           @NotNull List<String> topics,
                                                           @NotNull OffsetSpec offsetSpec,
                                                           boolean dryRun) {
-        if (Strings.isBlank(groupId)) {
+        if (Strings.isNullOrEmpty(groupId)) {
             throw new IllegalArgumentException("groupId cannot be null");
         }
         if (topics == null) {

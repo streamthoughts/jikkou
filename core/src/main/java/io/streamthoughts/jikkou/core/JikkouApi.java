@@ -14,7 +14,6 @@ import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.exceptions.ConflictingExtensionDefinitionException;
-import io.streamthoughts.jikkou.core.health.HealthIndicator;
 import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
@@ -33,7 +32,6 @@ import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.time.Duration;
 import java.util.List;
@@ -67,6 +65,18 @@ public interface JikkouApi extends AutoCloseable {
             return register(provider, Configuration.empty());
         }
 
+        /**
+         * Registers a provider configuration.
+         *
+         * @param providerName  the name of the provider instance (e.g., "kafka-prod", "kafka-dev")
+         * @param providerType  the fully qualified class name of the provider type
+         * @param configuration the configuration for this provider instance
+         * @param isDefault     whether this is the default provider when multiple instances exist
+         */
+        void registerProviderConfiguration(@NotNull String providerName,
+                                           @NotNull String providerType,
+                                           @NotNull Configuration configuration,
+                                           boolean isDefault);
 
         /**
          * Registers an extension provider with the given configuration.
@@ -160,22 +170,50 @@ public interface JikkouApi extends AutoCloseable {
      * Gets the health details for the specified health indicator name.
      *
      * @param name the health indicator name.
-     * @return a new {@link HealthIndicator} instance.
+     * @param timeout the timeout duration.
+     * @return a new {@link ApiHealthResult} instance.
      */
-    ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout);
+    default ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout) {
+        return getApiHealth(name, timeout, null);
+    }
+
+    /**
+     * Gets the health details for the specified health indicator name with provider selection.
+     *
+     * @param name the health indicator name.
+     * @param timeout the timeout duration.
+     * @param providerName the provider name for selecting specific provider instance.
+     * @return a new {@link ApiHealthResult} instance.
+     * @since 0.37.0
+     */
+    ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout, String providerName);
 
     /**
      * Gets the health details for all supported health indicators.
      *
-     * @return a new {@link HealthIndicator} instance.
+     * @param timeout the timeout duration.
+     * @return a new {@link ApiHealthResult} instance.
      */
-    ApiHealthResult getApiHealth(@NotNull Duration timeout);
+    default ApiHealthResult getApiHealth(@NotNull Duration timeout) {
+        return getApiHealth(timeout, null);
+    }
+
+    /**
+     * Gets the health details for all supported health indicators with provider selection.
+     *
+     * @param timeout the timeout duration.
+     * @param providerName the provider name for selecting specific provider instance.
+     * @return a new {@link ApiHealthResult} instance.
+     * @since 0.37.0
+     */
+    ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName);
 
     /**
      * Gets the health details for the specified {@link ApiHealthIndicator}.
      *
      * @param indicator the {@link ApiHealthIndicator}.
-     * @return a new {@link HealthIndicator} instance.
+     * @param timeout the timeout duration.
+     * @return a new {@link ApiHealthResult} instance.
      */
     default ApiHealthResult getApiHealth(@NotNull ApiHealthIndicator indicator,
                                          @NotNull Duration timeout) {
@@ -277,7 +315,23 @@ public interface JikkouApi extends AutoCloseable {
      * @param configuration The configuration.
      * @return The ApiExecutionResult.
      */
-    <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action, @NotNull Configuration configuration);
+    default <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action,
+                                                                   @NotNull Configuration configuration) {
+        return execute(action, configuration, null);
+    }
+
+    /**
+     * Executes the specified action for the specified resource type with provider selection.
+     *
+     * @param action        The name of the action.
+     * @param configuration The configuration.
+     * @param providerName  The provider name for selecting specific provider instance.
+     * @return The ApiExecutionResult.
+     * @since 0.37.0
+     */
+    <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action,
+                                                          @NotNull Configuration configuration,
+                                                          String providerName);
 
     /**
      * Execute validations on the given resources.
@@ -318,14 +372,19 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param type The class of the resource to be described.
      * @param name The name of the resource.
+     * @param configuration The configuration.
      * @return the {@link HasMetadata}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
+     * @deprecated Use {@link #getResource(ResourceType, String, GetContext)} instead.
      */
+    @Deprecated(since = "0.37.0", forRemoval = true)
     default <T extends HasMetadata> T getResource(@NotNull Class<? extends HasMetadata> type,
                                                   @NotNull String name,
                                                   @NotNull Configuration configuration) {
-        return getResource(ResourceType.of(type), name, configuration);
+        return getResource(ResourceType.of(type), name, GetContext.builder()
+                .configuration(configuration)
+                .build());
     }
 
     /**
@@ -333,14 +392,37 @@ public interface JikkouApi extends AutoCloseable {
      *
      * @param type The class of the resource to be described.
      * @param name The name of the resource.
+     * @param configuration The configuration.
      * @return the {@link HasMetadata}.
      * @throws JikkouApiException        if no {@link Collector} can be found for the specified type,
      *                                   or more than one descriptor match the type.
      * @throws ResourceNotFoundException if no resource can be found for the given name.
+     * @deprecated Use {@link #getResource(ResourceType, String, GetContext)} instead.
+     */
+    @Deprecated(since = "0.37.0", forRemoval = true)
+    default <T extends HasMetadata> T getResource(@NotNull ResourceType type,
+                                                  @NotNull String name,
+                                                  @NotNull Configuration configuration) {
+        return getResource(type, name, GetContext.builder()
+                .configuration(configuration)
+                .build());
+    }
+
+    /**
+     * Get the resource associated for the specified type.
+     *
+     * @param type    The type of the resource to be described.
+     * @param name    The name of the resource.
+     * @param context The get context containing configuration and provider.
+     * @return the {@link HasMetadata}.
+     * @throws JikkouApiException        if no {@link Collector} can be found for the specified type,
+     *                                   or more than one descriptor match the type.
+     * @throws ResourceNotFoundException if no resource can be found for the given name.
+     * @since 0.37.0
      */
     <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                           @NotNull String name,
-                                          @NotNull Configuration configuration);
+                                          @NotNull GetContext context);
 
     /**
      * Get all the changes for the given resources.
@@ -372,35 +454,42 @@ public interface JikkouApi extends AutoCloseable {
      *                            or more than one descriptor match the type.
      */
     default ResourceList<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass) {
-        return listResources(resourceClass, Selectors.NO_SELECTOR, Configuration.empty());
+        return listResources(ResourceType.of(resourceClass), ListContext.Default.EMPTY);
     }
 
     /**
      * List the resources associated for the specified type.
      *
      * @param resourceClass the class of the resource to be described.
+     * @param selector      the selector to filter resources.
      * @return the {@link HasMetadata}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
      */
     default ResourceList<HasMetadata> listResources(@NotNull Class<? extends HasMetadata> resourceClass,
                                                     @NotNull Selector selector) {
-        return listResources(resourceClass, selector, Configuration.empty());
+        return listResources(ResourceType.of(resourceClass), ListContext.builder().selector(selector).build());
     }
 
     /**
      * List the resources associated for the specified type.
      *
      * @param type          the class of the resource to be described.
+     * @param selector      the selector to filter resources.
      * @param configuration the configuration to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
      * @throws JikkouApiException if no {@link Collector} can be found for the specified type,
      *                            or more than one descriptor match the type.
+     * @deprecated Use {@link #listResources(ResourceType, ListContext)} instead.
      */
+    @Deprecated(since = "0.37.0", forRemoval = true)
     default <T extends HasMetadata> ResourceList<T> listResources(@NotNull Class<? extends HasMetadata> type,
                                                                   @NotNull Selector selector,
                                                                   @NotNull Configuration configuration) {
-        return listResources(ResourceType.of(type), selector, configuration);
+        return listResources(ResourceType.of(type), ListContext.builder()
+                .selector(selector)
+                .configuration(configuration)
+                .build());
     }
 
     /**
@@ -410,30 +499,50 @@ public interface JikkouApi extends AutoCloseable {
      * @return the {@link HasMetadata}.
      */
     default <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType) {
-        return listResources(resourceType, Selectors.NO_SELECTOR, Configuration.empty());
+        return listResources(resourceType, ListContext.Default.EMPTY);
     }
 
     /**
      * List the resources associated for the specified type.
      *
      * @param resourceType the type of the resource to be described.
+     * @param selector     the selector to filter resources.
      * @return the {@link HasMetadata}.
      */
     default <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
                                                                   @NotNull Selector selector) {
-        return listResources(resourceType, selector, Configuration.empty());
+        return listResources(resourceType, ListContext.builder().selector(selector).build());
     }
 
     /**
      * List the resources associated for the specified type.
      *
      * @param resourceType  the type of the resource to be described.
+     * @param selector      the selector to filter resources.
      * @param configuration the option to be used for describing the resource-type.
      * @return the {@link HasMetadata}.
+     * @deprecated Use {@link #listResources(ResourceType, ListContext)} instead.
+     */
+    @Deprecated(since = "0.37.0", forRemoval = true)
+    default <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
+                                                                  @NotNull Selector selector,
+                                                                  @NotNull Configuration configuration) {
+        return listResources(resourceType, ListContext.builder()
+                .selector(selector)
+                .configuration(configuration)
+                .build());
+    }
+
+    /**
+     * List the resources associated for the specified type.
+     *
+     * @param resourceType the type of the resource to be described.
+     * @param context      the list context containing selector, configuration and provider.
+     * @return the {@link HasMetadata}.
+     * @since 0.37.0
      */
     <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
-                                                          @NotNull Selector selector,
-                                                          @NotNull Configuration configuration);
+                                                          @NotNull ListContext context);
 
     @SuppressWarnings("rawtypes")
     ApiBuilder toBuilder();

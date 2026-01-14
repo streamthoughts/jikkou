@@ -32,7 +32,7 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
     private final ExtensionCategory category;
     private final List<ConfigPropertySpec> properties;
     private final Class<? extends ExtensionProvider> provider;
-    private final Supplier<? extends ExtensionProvider> providerSupplier;
+    private final ProviderSupplier providerSupplier;
     private final Class<T> type;
     private final Supplier<T> supplier;
     private final boolean isEnabled;
@@ -60,7 +60,7 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
                                       final ExtensionCategory category,
                                       final List<ConfigPropertySpec> properties,
                                       final Class<? extends ExtensionProvider> provider,
-                                      final Supplier<? extends ExtensionProvider> providerSupplier,
+                                      final ProviderSupplier providerSupplier,
                                       final Class<T> type,
                                       final ClassLoader classLoader,
                                       final Supplier<T> supplier,
@@ -179,7 +179,7 @@ public class DefaultExtensionDescriptor<T> implements ExtensionDescriptor<T> {
      * {@inheritDoc}
      */
     @Override
-    public Supplier<? extends ExtensionProvider> providerSupplier() {
+    public ProviderSupplier providerSupplier() {
         return providerSupplier;
     }
 
