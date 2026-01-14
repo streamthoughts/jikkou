@@ -100,7 +100,6 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     }
 
     public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration, @NotNull List<String> subjects) {
-        System.err.println(subjects);
         try (AsyncSchemaRegistryApi api = new DefaultAsyncSchemaRegistryApi(SchemaRegistryApiFactory.create(config))) {
             return listAll(configuration, Flux.fromIterable(subjects), api);
         }

@@ -101,7 +101,7 @@ public interface ExtensionDescriptor<T> extends Comparable<ExtensionDescriptor<T
      *
      * @return The provider.
      */
-    Supplier<? extends ExtensionProvider> providerSupplier();
+    ProviderSupplier providerSupplier();
 
     /**
      * Adds new aliases to reference the described extension.

@@ -14,22 +14,22 @@ class StringsTest {
 
     @Test
     void shouldReturnTrueForNullString() {
-        Assertions.assertTrue(Strings.isBlank(null));
+        Assertions.assertTrue(Strings.isNullOrEmpty(null));
     }
 
     @Test
     void shouldReturnTrueForEmptyString() {
-        Assertions.assertTrue(Strings.isBlank(""));
+        Assertions.assertTrue(Strings.isNullOrEmpty(""));
     }
 
     @Test
     void shouldReturnTrueForBlankString() {
-        Assertions.assertTrue(Strings.isBlank("     "));
+        Assertions.assertTrue(Strings.isNullOrEmpty("     "));
     }
 
     @Test
     void shouldReturnFalseForNonEmptyString() {
-        Assertions.assertFalse(Strings.isBlank("dummy"));
+        Assertions.assertFalse(Strings.isNullOrEmpty("dummy"));
     }
 
     @Test

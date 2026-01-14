@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.rest.services;
 
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -71,11 +72,11 @@ public interface ApiResourceService {
      * Search resources for the specified identifier and context.
      *
      * @param identifier The resource identifier.
-     * @param context    The reconciliation context.
-     * @return an optional
+     * @param context    The list context containing selector, configuration and provider.
+     * @return the list of matching resources.
      */
     ResourceList<HasMetadata> search(ApiResourceIdentifier identifier,
-                                     ReconciliationContext context);
+                                     ListContext context);
 
     /**
      * Gets the resource for the specified identifier and name.

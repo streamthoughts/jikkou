@@ -26,6 +26,7 @@ public record ExtensionConfigEntry(String name,
                                    String type,
                                    Integer priority,
                                    Boolean enabled,
+                                   Boolean isDefault,
                                    Configuration config) {
 
     public static final ConfigProperty<String> NAME_CONFIG = ConfigProperty
@@ -53,6 +54,11 @@ public record ExtensionConfigEntry(String name,
         .description("The configuration of the extension")
         .defaultValue(Configuration.empty());
 
+    public static final ConfigProperty<Boolean> DEFAULT_CONFIG = ConfigProperty
+        .ofBoolean("default")
+        .description("The configuration of the extension")
+        .defaultValue(false);
+
     public static ExtensionConfigEntry of(final @NotNull Configuration config) {
         return of(config, null);
     }
@@ -64,6 +70,7 @@ public record ExtensionConfigEntry(String name,
             TYPE_CONFIG.get(config),
             PRIORITY_CONFIG.get(config),
             ENABLED_CONFIG.get(config),
+            DEFAULT_CONFIG.get(config),
             CONFIGURATION_CONFIG.get(config)
         );
     }

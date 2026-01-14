@@ -15,6 +15,7 @@ import io.streamthoughts.jikkou.core.io.reader.TemplateResourceReader;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.models.generics.GenericResource;
+import io.streamthoughts.jikkou.core.template.TemplateBindings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -22,8 +23,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.streamthoughts.jikkou.core.template.TemplateBindings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.rest.adapters;
 
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
@@ -52,6 +53,24 @@ public final class ReconciliationContextAdapter {
                 .dryRun(true)
                 .configuration(Configuration.from(request.options()))
                 .selector(selector)
+                .providerName(request.provider())
+                .build();
+    }
+
+    /**
+     * Creates a ListContext from a ResourceListRequest.
+     *
+     * @param request the ResourceListRequest.
+     * @return a new ListContext instance.
+     */
+    public ListContext getListContext(ResourceListRequest request) {
+        Selector selector = request.selectorMatchingStrategy()
+                .combines(selectorFactory.make(request.selectors()));
+        return ListContext
+                .builder()
+                .configuration(Configuration.from(request.options()))
+                .selector(selector)
+                .providerName(request.provider())
                 .build();
     }
 }

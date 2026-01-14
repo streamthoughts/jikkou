@@ -119,7 +119,7 @@ public class ApiResource extends AbstractController {
         ApiResourceIdentifier identifier = new ApiResourceIdentifier(group, version, plural);
         ResourceList<HasMetadata> result = service.search(
             identifier,
-            adapter.getReconciliationContext(requestBody)
+            adapter.getListContext(requestBody)
         );
         return HttpResponse.<ResourceList<?>>ok()
             .body(new ResourceResponse<>(result).link(Link.SELF, getSelfLink(httpRequest)));

@@ -8,6 +8,8 @@ package io.streamthoughts.jikkou.http.client;
 
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.http.uri.UriBuilder;
+import io.streamthoughts.jikkou.core.GetContext;
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -155,13 +157,17 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      **/
     @Override
     public ApiHealthResult getApiHealth(@NotNull String name,
-                                        @NotNull Duration timeout) {
-        HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
+                                        @NotNull Duration timeout,
+                                        String providerName) {
+        HttpUrl.Builder urlBuilder = baseHttpUrlBuilder(API_CORE_VERSION)
             .addPathSegments(API_HEALTHS)
             .addPathSegments(name)
             .addPathSegments("status")
-            .addQueryParameter("timeout", String.valueOf(timeout.toMillis()))
-            .build();
+            .addQueryParameter("timeout", String.valueOf(timeout.toMillis()));
+        if (providerName != null) {
+            urlBuilder.addQueryParameter("provider", providerName);
+        }
+        HttpUrl url = urlBuilder.build();
         // Build Request
         Request httpRequest = new Request.Builder()
             .url(url)
@@ -176,10 +182,10 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      * {@inheritDoc}
      **/
     @Override
-    public ApiHealthResult getApiHealth(@NotNull Duration timeout) {
+    public ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName) {
         ApiHealthIndicatorList list = getApiHealthIndicators();
         List<Health> health = list.indicators().stream()
-            .map(indicator -> getApiHealth(indicator.name(), timeout))
+            .map(indicator -> getApiHealth(indicator.name(), timeout, providerName))
             .map(result -> Health
                 .builder()
                 .name(result.name())
@@ -310,19 +316,27 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     @SuppressWarnings("unchecked")
     public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                                  @NotNull String name,
-                                                 @NotNull Configuration configuration) {
+                                                 @NotNull GetContext context) {
         ApiResource resource = queryApiResourceForType(type);
         Link link = findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.GET, type);
+
+        Configuration configuration = context.configuration();
+        String providerName = context.providerName();
+
         HashMap<String, Object> expandValues = new HashMap<>(configuration.asMap());
         expandValues.put(PATH_PARAM_NAME, name);
         final URI uri = UriBuilder.of(apiClient.getBasePath())
             .path(link.getHref())
             .expand(expandValues);
 
-        HttpUrl url = toHttpUrl(link);
+        HttpUrl.Builder urlBuilder = HttpUrl.get(uri).newBuilder();
+        if (providerName != null) {
+            urlBuilder.addQueryParameter("provider", providerName);
+        }
+
         // Build Request
         Request httpRequest = new Request.Builder()
-            .url(HttpUrl.get(uri))
+            .url(urlBuilder.build())
             .get()
             .build();
         // Execute Request
@@ -338,10 +352,14 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      **/
     @Override
     public <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType type,
-                                                                 @NotNull Selector selector,
-                                                                 @NotNull Configuration configuration) {
+                                                                 @NotNull ListContext context) {
         ApiResource resource = queryApiResourceForType(type);
         Link link = findResourceLinkByKey(Links.of(resource.metadata()), ResourceLinkKeys.SELECT, type);
+
+        Configuration configuration = context.configuration();
+        Selector selector = context.selector();
+        String providerName = context.providerName();
+
         final URI uri = UriBuilder.of(apiClient.getBasePath())
             .path(link.getHref())
             .expand(configuration.asMap());
@@ -349,7 +367,8 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         ResourceListRequest payload = new ResourceListRequest(
             configuration.asMap(),
             selector.getSelectorExpressions(),
-            selector.getSelectorMatchingStrategy()
+            selector.getSelectorMatchingStrategy(),
+            providerName
         );
         // Build Request
         RequestBody requestBody = apiClient.serialize(payload, "application/json");
@@ -516,12 +535,16 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
      **/
     @Override
     @SuppressWarnings("rawuse")
-    public ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration) {
+    public ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration, String providerName) {
         // Build Path
         HttpUrl.Builder builder = baseHttpUrlBuilder(API_CORE_VERSION)
             .addPathSegments(API_ACTIONS)
             .addPathSegments(action)
             .addPathSegments("execute");
+
+        if (providerName != null) {
+            builder.addQueryParameter("provider", providerName);
+        }
 
         for (String key : configuration.keys()) {
             Object value = configuration.getAny(key);

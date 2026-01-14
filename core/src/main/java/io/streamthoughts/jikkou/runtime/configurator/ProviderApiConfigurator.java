@@ -6,8 +6,6 @@
  */
 package io.streamthoughts.jikkou.runtime.configurator;
 
-import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSIONS_PROVIDER_DEFAULT_ENABLED;
-import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.EXTENSION_PROVIDER_CONFIG_PREFIX;
 import static io.streamthoughts.jikkou.runtime.JikkouConfigProperties.PROVIDER_CONFIG;
 
 import io.streamthoughts.jikkou.common.utils.ServiceLoaders;
@@ -24,11 +22,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -64,43 +60,40 @@ public class ProviderApiConfigurator extends BaseApiConfigurator {
             .filter(ExtensionConfigEntry::enabled)
             .toList();
 
-        final Map<String, ExtensionConfigEntry> providerByName = providers.stream()
-            .collect(Collectors.toMap(ExtensionConfigEntry::name, Function.identity()));
+        final Map<String, List<ExtensionConfigEntry>> providerConfigByType = providers.stream()
+            .filter(entry -> entry.type() != null)
+            .collect(Collectors.groupingBy(ExtensionConfigEntry::type));
 
         // Load all ExtensionProviders
         for (ExtensionProvider provider : ServiceLoaders.loadAllServices(ExtensionProvider.class, cls)) {
             final String providerName = provider.getName();
-            if (providerByName.containsKey(providerName)) {
-                Configuration config = providerByName.get(providerName).config();
-                // Looking for direct provider config override
-                Optional<Configuration> override = configuration().findConfig(providerName);
-                if (override.isPresent()) {
-                    config  = override.get().withFallback(config);
-                }
-                builder = builder.register(provider, config);
-            } else {
-                // backward-compatibility
-                Boolean extensionEnabledByDefault = EXTENSIONS_PROVIDER_DEFAULT_ENABLED.get(configuration());
-                if (legacyIsExtensionProviderEnabled(configuration(), providerName, extensionEnabledByDefault)) {
-                    Optional<Configuration> legacyConfiguration = configuration().findConfig(providerName);
-                    LOG.warn("Deprecated provider configuration `jikkou.{}` was detected. Please, you should consider using the new `jikkou.providers`.", providerName);
-                    builder = builder.register(provider, legacyConfiguration.orElse(Configuration.empty()));
-                } else {
-                    LOG.debug(
-                        "Provider '{}' was found but will be ignored. This provider is either not configured or disabled through.",
-                        providerName
+            final String providerType = provider.getClass().getName();
+
+            if (providerConfigByType.containsKey(providerType)) {
+                // Register provider
+                builder.register(provider);
+
+                // Register provider configurations
+                providerConfigByType.get(providerType).forEach(extensionConfigEntry -> {
+
+                    // Looking for direct provider config override
+                    Configuration config = extensionConfigEntry.config();
+                    Optional<Configuration> override = configuration().findConfig(extensionConfigEntry.name());
+                    if (override.isPresent()) {
+                        config = override.get().withFallback(config);
+                    }
+
+                    // Register configuration
+                    builder.registerProviderConfiguration(
+                        extensionConfigEntry.name(),
+                        extensionConfigEntry.type(),
+                        config,
+                        extensionConfigEntry.isDefault()
                     );
-                }
+                });
             }
         }
         return builder;
-    }
-
-    private static boolean legacyIsExtensionProviderEnabled(@NotNull Configuration configuration,
-                                                            @NotNull String name,
-                                                            boolean defaultValue) {
-        String property = String.format(EXTENSION_PROVIDER_CONFIG_PREFIX + ".%s.enabled", name.toLowerCase(Locale.ROOT));
-        return configuration.findBoolean(property).orElse(defaultValue);
     }
 
     /**

@@ -25,7 +25,7 @@ class ExtensionDescriptorModifiersTest {
         ExtensionCategory.EXTENSION,
         NO_PROPERTIES,
         null,
-        () -> null,
+        (unused) -> null,
         ExtensionDescriptorModifiersTest.class,
         ExtensionDescriptorModifiersTest.class.getClassLoader(),
         () -> null,

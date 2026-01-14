@@ -53,7 +53,7 @@ public class ListApiResourcesCommand extends CLIBaseCommand implements Runnable 
      **/
     @Override
     public void run() {
-        List<ApiResourceList> apiResourceLists = Strings.isBlank(group) ?
+        List<ApiResourceList> apiResourceLists = Strings.isNullOrEmpty(group) ?
                 api.listApiResources() :
                 api.listApiResources(group);
 

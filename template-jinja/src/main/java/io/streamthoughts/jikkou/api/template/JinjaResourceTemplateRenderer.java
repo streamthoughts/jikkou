@@ -6,6 +6,8 @@
  */
 package io.streamthoughts.jikkou.api.template;
 
+import static java.util.stream.Collectors.toCollection;
+
 import com.hubspot.jinjava.Jinjava;
 import com.hubspot.jinjava.JinjavaConfig;
 import com.hubspot.jinjava.interpret.RenderResult;
@@ -22,12 +24,6 @@ import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.template.ResourceTemplateRenderer;
 import io.streamthoughts.jikkou.core.template.TemplateBindings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -41,8 +37,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.toCollection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Jinja based template rendered.

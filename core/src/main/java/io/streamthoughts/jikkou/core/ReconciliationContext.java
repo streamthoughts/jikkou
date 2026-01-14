@@ -59,6 +59,13 @@ public interface ReconciliationContext {
     boolean isDryRun();
 
     /**
+     * Returns the selected provider name for this reconciliation operation.
+     *
+     * @return the provider name, or null if not specified.
+     */
+    String providerName();
+
+    /**
      * Gets a new ReconciliationContext builder.
      *
      * @return a new {@link Builder} instance.
@@ -94,7 +101,8 @@ public interface ReconciliationContext {
                     configuration,
                     internal.isDryRun(),
                     internal.labels(),
-                    internal.annotations()
+                    internal.annotations(),
+                    internal.providerName()
             ));
         }
 
@@ -110,7 +118,8 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     dryRun,
                     internal.labels(),
-                    internal.annotations()
+                    internal.annotations(),
+                    internal.providerName()
             ));
         }
 
@@ -126,7 +135,8 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
-                    internal.annotations()
+                    internal.annotations(),
+                    internal.providerName()
             ));
         }
 
@@ -142,7 +152,8 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     NamedValueSet.setOf(labels),
-                    internal.annotations()
+                    internal.annotations(),
+                    internal.providerName()
             ));
         }
 
@@ -158,7 +169,8 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     NamedValueSet.setOf(internal.labels()).with(label),
-                    internal.annotations()
+                    internal.annotations(),
+                    internal.providerName()
             ));
         }
 
@@ -173,7 +185,8 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
-                    NamedValueSet.setOf(annotations)
+                    NamedValueSet.setOf(annotations),
+                    internal.providerName()
             ));
         }
 
@@ -188,7 +201,25 @@ public interface ReconciliationContext {
                     internal.configuration(),
                     internal.isDryRun(),
                     internal.labels(),
-                    NamedValueSet.setOf(internal.annotations()).with(annotation)
+                    NamedValueSet.setOf(internal.annotations()).with(annotation),
+                    internal.providerName()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given provider name.
+         *
+         * @param providerName the provider name
+         * @return a new {@link Builder}
+         */
+        public Builder providerName(String providerName) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    providerName
             ));
         }
 
@@ -209,12 +240,14 @@ public interface ReconciliationContext {
      * @param selector      The selector to filter resources to be included in the reconciliation.
      * @param configuration The config for computing resource changes.
      * @param isDryRun      Specify if the reconciliation should be run in dry-run.
+     * @param providerName The selected provider name for this reconciliation operation.
      */
     record Default(Selector selector,
                    Configuration configuration,
                    boolean isDryRun,
                    NamedValueSet labels,
-                   NamedValueSet annotations)
+                   NamedValueSet annotations,
+                   String providerName)
             implements ReconciliationContext {
 
         public static Default EMPTY = new Default(
@@ -222,7 +255,8 @@ public interface ReconciliationContext {
                 Configuration.empty(),
                 true,
                 NamedValueSet.emptySet(),
-                NamedValueSet.emptySet()
+                NamedValueSet.emptySet(),
+                null
         );
     }
 }

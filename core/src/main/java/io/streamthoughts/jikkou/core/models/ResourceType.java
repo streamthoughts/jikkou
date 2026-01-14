@@ -188,7 +188,7 @@ public record ResourceType(@JsonProperty("kind") @NotNull String kind,
                                   @Nullable final String apiVersion,
                                   final boolean isTransient) {
         Objects.requireNonNull(kind, "'kind' should not be null");
-        if (Strings.isBlank(apiVersion)) {
+        if (Strings.isNullOrEmpty(apiVersion)) {
             return new ResourceType(kind, null, null, isTransient);
         } else {
             String[] versionParts = new String[]{apiVersion, null};

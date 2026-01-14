@@ -43,7 +43,7 @@ public final class DefaultSelectorParser implements SelectorParser {
     @Override
     public List<Selector> parseExpression(@NotNull String expression) {
 
-        if (Strings.isBlank(expression)) {
+        if (Strings.isNullOrEmpty(expression)) {
             throw new InvalidSelectorException("Cannot parse empty or blank expression string");
         }
 

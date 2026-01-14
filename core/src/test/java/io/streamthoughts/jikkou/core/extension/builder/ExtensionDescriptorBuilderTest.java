@@ -32,7 +32,7 @@ class ExtensionDescriptorBuilderTest {
             ExtensionCategory.EXTENSION,
             NO_PROPERTIES,
             null,
-            () -> null,
+            (unused) -> null,
             ExtensionDescriptorBuilderTest.class,
             ExtensionDescriptorBuilderTest.class.getClassLoader(),
             () -> null,

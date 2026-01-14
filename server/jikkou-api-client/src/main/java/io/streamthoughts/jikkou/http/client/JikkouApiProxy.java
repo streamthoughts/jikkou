@@ -9,13 +9,16 @@ package io.streamthoughts.jikkou.http.client;
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.core.BaseApi;
 import io.streamthoughts.jikkou.core.DefaultApi;
+import io.streamthoughts.jikkou.core.GetContext;
 import io.streamthoughts.jikkou.core.JikkouApi;
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
+import io.streamthoughts.jikkou.core.extension.ProviderConfigurationRegistry;
 import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
@@ -34,7 +37,6 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
-import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
 import io.streamthoughts.jikkou.rest.data.ErrorEntity;
@@ -77,7 +79,7 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
          **/
         @Override
         public JikkouApiProxy build() {
-            return new JikkouApiProxy(extensionFactory, resourceRegistry, apiClient);
+            return new JikkouApiProxy(extensionFactory, resourceRegistry, providerConfigurationRegistry, apiClient);
         }
     }
 
@@ -92,8 +94,9 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      */
     public JikkouApiProxy(final @NotNull ExtensionFactory extensionFactory,
                           final @NotNull ResourceRegistry resourceRegistry,
+                          final @NotNull ProviderConfigurationRegistry providerConfigurationRegistry,
                           final @NotNull JikkouApiClient apiClient) {
-        super(extensionFactory);
+        super(extensionFactory, providerConfigurationRegistry);
         this.apiClient = Objects.requireNonNull(apiClient, "apiClient must not be null");
         this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
     }
@@ -126,16 +129,16 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      * {@inheritDoc}
      **/
     @Override
-    public ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout) {
-        return apiClient.getApiHealth(name, timeout);
+    public ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout, String providerName) {
+        return apiClient.getApiHealth(name, timeout, providerName);
     }
 
     /**
      * {@inheritDoc}
      **/
     @Override
-    public ApiHealthResult getApiHealth(@NotNull Duration timeout) {
-        return apiClient.getApiHealth(timeout);
+    public ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName) {
+        return apiClient.getApiHealth(timeout, providerName);
     }
 
     /**
@@ -242,8 +245,9 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends HasMetadata> ApiActionResultSet<T> execute(@NotNull String action,
-                                                                 @NotNull Configuration configuration) {
-        return (ApiActionResultSet<T>) apiClient.execute(action, configuration);
+                                                                 @NotNull Configuration configuration,
+                                                                 String providerName) {
+        return (ApiActionResultSet<T>) apiClient.execute(action, configuration, providerName);
     }
 
     /**
@@ -293,8 +297,8 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     @Override
     public <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                                  @NotNull String name,
-                                                 @NotNull Configuration configuration) {
-        return apiClient.getResource(type, name, configuration);
+                                                 @NotNull GetContext context) {
+        return apiClient.getResource(type, name, context);
     }
 
     /**
@@ -320,9 +324,8 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
      **/
     @Override
     public <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
-                                                                 @NotNull Selector selector,
-                                                                 @NotNull Configuration configuration) {
-        return apiClient.listResources(resourceType, selector, configuration);
+                                                                 @NotNull ListContext context) {
+        return apiClient.listResources(resourceType, context);
     }
 
     /**

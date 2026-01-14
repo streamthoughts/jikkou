@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
 import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FormatOptionsMixin;
+import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
@@ -30,13 +31,13 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
 @Command(name = "validate",
-        header = "Check whether the resources definitions meet all validation requirements.",
-        description = """
-                Validate the resource definition files specified through the command line arguments.
-                
-                Validate runs all the user-defined validation requirements after performing any relevant resource transformations.
-                Validation rules are applied only to resources matching the selectors passed through the command line arguments.
-                """
+    header = "Check whether the resources definitions meet all validation requirements.",
+    description = """
+        Validate the resource definition files specified through the command line arguments.
+        
+        Validate runs all the user-defined validation requirements after performing any relevant resource transformations.
+        Validation rules are applied only to resources matching the selectors passed through the command line arguments.
+        """
 )
 @Singleton
 public class ValidateCommand extends CLIBaseCommand implements Callable<Integer> {
@@ -50,7 +51,8 @@ public class ValidateCommand extends CLIBaseCommand implements Callable<Integer>
     FormatOptionsMixin formatOptions;
     @Mixin
     ConfigOptionsMixin configOptionsMixin;
-
+    @Mixin
+    ProviderOptionMixin providerOptionMixin;
     // SERVICES
     @Inject
     JikkouApi api;
@@ -85,11 +87,12 @@ public class ValidateCommand extends CLIBaseCommand implements Callable<Integer>
     @NotNull
     private ReconciliationContext getReconciliationContext() {
         return ReconciliationContext.builder()
-                .dryRun(true)
-                .configuration(configOptionsMixin.getConfiguration())
-                .selector(selectorOptions.getResourceSelector())
-                .labels(fileOptions.getLabels())
-                .annotations(fileOptions.getAnnotations())
-                .build();
+            .dryRun(true)
+            .configuration(configOptionsMixin.getConfiguration())
+            .selector(selectorOptions.getResourceSelector())
+            .labels(fileOptions.getLabels())
+            .annotations(fileOptions.getAnnotations())
+            .providerName(providerOptionMixin.getProvider())
+            .build();
     }
 }

@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionRegistry;
+import io.streamthoughts.jikkou.core.extension.DefaultProviderConfigurationRegistry;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiExtensionSummary;
@@ -60,7 +61,7 @@ class JikkouApiProxyTest {
                 )
         );
         DefaultResourceRegistry resourceRegistry = new DefaultResourceRegistry();
-        API = new JikkouApiProxy(factory, resourceRegistry, new DefaultJikkouApiClient(client));
+        API = new JikkouApiProxy(factory, resourceRegistry, new DefaultProviderConfigurationRegistry(), new DefaultJikkouApiClient(client));
     }
 
     @Test

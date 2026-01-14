@@ -132,7 +132,7 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
 
             offsetSpec = Config.TO_DATETIME
                 .getOptional(configuration)
-                .filter(Predicate.not(Strings::isBlank))
+                .filter(Predicate.not(Strings::isNullOrEmpty))
                 .map(dataTime -> (KafkaOffsetSpec) KafkaOffsetSpec.ToTimestamp.fromISODateTime(dataTime))
                 .orElse(offsetSpec);
 

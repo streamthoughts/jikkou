@@ -6,6 +6,8 @@
  */
 package io.streamthoughts.jikkou.http.client;
 
+import io.streamthoughts.jikkou.core.GetContext;
+import io.streamthoughts.jikkou.core.ListContext;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
@@ -27,7 +29,6 @@ import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
-import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiClientException;
 import io.streamthoughts.jikkou.http.client.exception.JikkouApiResponseException;
 import io.streamthoughts.jikkou.rest.data.Info;
@@ -85,22 +86,26 @@ public interface JikkouApiClient {
      * Gets the health details for the specified health indicator name.
      *
      * @param name the health indicator name.
+     * @param timeout the timeout duration.
+     * @param providerName the provider name for selecting specific provider instance, or null for default.
      * @return a new {@link ApiHealthResult} instance.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout);
+    ApiHealthResult getApiHealth(@NotNull String name, @NotNull Duration timeout, String providerName);
 
     /**
      * Get the health details for all supported health indicators.
      *
+     * @param timeout the timeout duration.
+     * @param providerName the provider name for selecting specific provider instance, or null for default.
      * @return a new {@link ApiHealthResult} instance.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    ApiHealthResult getApiHealth(@NotNull Duration timeout);
+    ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName);
 
     /**
      * Get the supported API extensions.
@@ -158,29 +163,33 @@ public interface JikkouApiClient {
     /**
      * Get the resource associated for the specified type.
      *
-     * @param type The class of the resource to be described.
-     * @param name The name of the resource.
+     * @param type    The type of the resource to be described.
+     * @param name    The name of the resource.
+     * @param context The get context containing configuration and provider.
      * @return the {@link HasMetadata}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     * @since 0.37.0
      */
     <T extends HasMetadata> T getResource(@NotNull ResourceType type,
                                           @NotNull String name,
-                                          @NotNull Configuration configuration);
+                                          @NotNull GetContext context);
 
     /**
-     * List all resources matching the specified type and selectors.
+     * List all resources matching the specified type and context.
      *
+     * @param resourceType the resource type.
+     * @param context      the list context containing selector, configuration and provider.
      * @param <T> type of the resource-list items.
      * @return a {@link ResourceList}.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     * @since 0.37.0
      */
     <T extends HasMetadata> ResourceList<T> listResources(@NotNull ResourceType resourceType,
-                                                          @NotNull Selector selector,
-                                                          @NotNull Configuration configuration);
+                                                          @NotNull ListContext context);
 
     /**
      * Applies the creation changes required to reconcile the specified resources.
@@ -262,11 +271,12 @@ public interface JikkouApiClient {
      *
      * @param action        The name of the action.
      * @param configuration The context of the execution.
+     * @param providerName  the provider name for selecting specific provider instance, or null for default.
      * @return The ApiExecutionResult.
      * @throws JikkouApiResponseException if the client receives an error response from the server.
      * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
-    ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration);
+    ApiActionResultSet<?> execute(@NotNull String action, @NotNull Configuration configuration, String providerName);
 
 }

@@ -6,11 +6,12 @@
  */
 package io.streamthoughts.jikkou.core.extension;
 
-
+import io.streamthoughts.jikkou.core.ProviderSelectionContext;
 import io.streamthoughts.jikkou.core.extension.exceptions.ExtensionCreationException;
 import java.util.Objects;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public final class DefaultExtensionSupplier<T> implements ExtensionSupplier<T> {
      * {@inheritDoc}
      **/
     @Override
-    public T get(ExtensionFactory factory) {
+    public T get(ExtensionFactory factory, @Nullable ProviderSelectionContext providerContext) {
         Supplier<T> supplier = descriptor.supplier();
         try {
             T t = supplier.get();
@@ -47,7 +48,7 @@ public final class DefaultExtensionSupplier<T> implements ExtensionSupplier<T> {
                     LOG.info("Initializing extension '{}'", extension.getName());
                 }
 
-                extension.init(new DefaultExtensionContext(factory, descriptor));
+                extension.init(new DefaultExtensionContext(factory, descriptor, providerContext));
             }
             return t;
         } catch (Exception e) {

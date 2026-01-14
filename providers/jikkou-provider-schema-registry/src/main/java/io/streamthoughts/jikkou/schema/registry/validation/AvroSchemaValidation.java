@@ -123,7 +123,7 @@ public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject>
                                                     String parentPath) {
         List<ValidationError> errors = new ArrayList<>();
         if (schema.getType() == Schema.Type.RECORD) {
-            if (Strings.isBlank(schema.getDoc())) {
+            if (Strings.isNullOrEmpty(schema.getDoc())) {
                 errors.add(new ValidationError(
                         getName(),
                         subject,
@@ -136,7 +136,7 @@ public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject>
             }
             for (Schema.Field field : schema.getFields()) {
                 String fieldPath = parentPath.isEmpty() ? field.name() : parentPath + "." + field.name();
-                if (Strings.isBlank(field.doc())) {
+                if (Strings.isNullOrEmpty(field.doc())) {
                     errors.add(new ValidationError(
                             getName(),
                             subject,

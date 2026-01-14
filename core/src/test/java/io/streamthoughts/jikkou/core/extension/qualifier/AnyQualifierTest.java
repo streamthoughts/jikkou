@@ -40,7 +40,7 @@ class AnyQualifierTest {
             ExtensionCategory.EXTENSION,
             Collections.emptyList(),
             null,
-            () -> null,
+            (unused) -> null,
             clazz,
             clazz.getClassLoader(),
             () -> null,

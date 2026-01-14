@@ -43,11 +43,11 @@ public interface HasMetadataAcceptable {
                     if (accept.type() != HasMetadata.class) {
                         return ResourceType.of(accept.type());
                     }
-                    if (!Strings.isBlank(accept.apiVersion())) {
+                    if (!Strings.isNullOrEmpty(accept.apiVersion())) {
                         return ResourceType.of(accept.kind(), accept.apiVersion());
                     }
 
-                    if (!Strings.isBlank(accept.kind())) {
+                    if (!Strings.isNullOrEmpty(accept.kind())) {
                         return ResourceType.of(accept.kind());
                     }
 

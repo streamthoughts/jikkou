@@ -7,14 +7,17 @@
 package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.common.utils.Pair;
+import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.converter.Converter;
 import io.streamthoughts.jikkou.core.converter.ConverterChain;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
+import io.streamthoughts.jikkou.core.extension.DefaultProviderConfigurationRegistry;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifier;
 import io.streamthoughts.jikkou.core.extension.ExtensionFactory;
 import io.streamthoughts.jikkou.core.extension.ExtensionProviderAwareRegistry;
+import io.streamthoughts.jikkou.core.extension.ProviderConfigurationRegistry;
 import io.streamthoughts.jikkou.core.extension.qualifier.Qualifiers;
 import io.streamthoughts.jikkou.core.models.ApiGroup;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
@@ -58,6 +61,7 @@ public abstract class BaseApi implements JikkouApi {
     private static final Logger LOG = LoggerFactory.getLogger(BaseApi.class);
 
     protected final ExtensionFactory extensionFactory;
+    protected final ProviderConfigurationRegistry providerConfigurationRegistry;
 
     /**
      * An abstract base implementation of the {@link BaseBuilder} object instance.
@@ -66,14 +70,25 @@ public abstract class BaseApi implements JikkouApi {
 
         protected final ExtensionFactory extensionFactory;
         protected final ResourceRegistry resourceRegistry;
+        protected final ProviderConfigurationRegistry providerConfigurationRegistry;
 
         /**
          * Creates a new {@link ExtensionFactory} instance.
          */
         public BaseBuilder(@NotNull ExtensionFactory extensionFactory,
                            @NotNull ResourceRegistry resourceRegistry) {
+            this(extensionFactory, resourceRegistry, new DefaultProviderConfigurationRegistry());
+        }
+
+        /**
+         * Creates a new {@link ExtensionFactory} instance with provider configuration registry.
+         */
+        public BaseBuilder(@NotNull ExtensionFactory extensionFactory,
+                           @NotNull ResourceRegistry resourceRegistry,
+                           @NotNull ProviderConfigurationRegistry providerConfigurationRegistry) {
             this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
             this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
+            this.providerConfigurationRegistry = Objects.requireNonNull(providerConfigurationRegistry, "providerConfigurationRegistry must not be null");
         }
 
         /**
@@ -86,7 +101,12 @@ public abstract class BaseApi implements JikkouApi {
             final String name = provider.getName();
 
             LOG.info("Loading extensions from provider '{}'", name);
-            provider.registerExtensions(new ExtensionProviderAwareRegistry(extensionFactory, provider.getClass(), configuration));
+            provider.registerExtensions(new ExtensionProviderAwareRegistry(
+                extensionFactory,
+                provider.getClass(),
+                configuration,
+                providerConfigurationRegistry
+            ));
 
             LOG.info("Loading resources from provider '{}'", name);
             var registry = new DefaultResourceRegistry(false);
@@ -105,6 +125,16 @@ public abstract class BaseApi implements JikkouApi {
                     desc.resourceClass())
                 );
             return (B) this;
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        public void registerProviderConfiguration(@NotNull String providerName,
+                                                  @NotNull String providerType,
+                                                  @NotNull Configuration configuration, boolean isDefault) {
+            this.providerConfigurationRegistry.registerProviderConfiguration(providerName, providerType, configuration, isDefault);
         }
 
         /**
@@ -134,10 +164,13 @@ public abstract class BaseApi implements JikkouApi {
     /**
      * Creates a new {@link BaseApi} instance.
      *
-     * @param extensionFactory The ExtensionFactory.
+     * @param extensionFactory              The ExtensionFactory.
+     * @param providerConfigurationRegistry The ProviderConfigurationRegistry.
      */
-    public BaseApi(@NotNull ExtensionFactory extensionFactory) {
+    public BaseApi(@NotNull ExtensionFactory extensionFactory,
+                   @NotNull ProviderConfigurationRegistry providerConfigurationRegistry) {
         this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory cannot be null");
+        this.providerConfigurationRegistry = Objects.requireNonNull(providerConfigurationRegistry, "providerConfigurationRegistry cannot be null");
     }
 
     /**
@@ -187,16 +220,16 @@ public abstract class BaseApi implements JikkouApi {
     @NotNull
     protected ResourceList<HasMetadata> doPrepare(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
         return Stream.of(resources)
-            .map(this::convert)
+            .map(it -> convert(it, context))
             .map(items -> transform(items, context))
             .map(items -> select(items, context))
             .findAny()
             .get();
     }
 
-    private ResourceList<HasMetadata> convert(final @NotNull HasItems resources) {
+    private ResourceList<HasMetadata> convert(final @NotNull HasItems resources, @NotNull ReconciliationContext context) {
 
-        ConverterChain converter = getConverterChain();
+        ConverterChain converter = newConverterChain(createProviderContext(context));
         List<HasMetadata> converted = resources.getItems()
             .stream()
             .map(resource -> {
@@ -224,7 +257,7 @@ public abstract class BaseApi implements JikkouApi {
     private ResourceList<HasMetadata> transform(final @NotNull HasItems items,
                                                 final @NotNull ReconciliationContext context) {
 
-        TransformationChain transformationChain = newResourceTransformationChain();
+        TransformationChain transformationChain = newResourceTransformationChain(createProviderContext(context));
 
         List<HasMetadata> transformed = new LinkedList<>();
         for (Map.Entry<ResourceType, List<HasMetadata>> entry : items.groupByType().entrySet()) {
@@ -253,29 +286,25 @@ public abstract class BaseApi implements JikkouApi {
             .filter(Predicate.not(resource -> Resource.isTransient(resource.getClass())))
             .filter(context.selector()::apply)
             .toList();
-        return ResourceList.of((List<HasMetadata>)filtered);
+        return ResourceList.of((List<HasMetadata>) filtered);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected ValidationChain newResourceValidationChain() {
-        return new ValidationChain((List)extensionFactory.getAllExtensions(Validation.class, Qualifiers.enabled()));
+    protected ValidationChain newResourceValidationChain(ProviderSelectionContext context) {
+        return new ValidationChain((List) extensionFactory.getAllExtensions(Validation.class, Qualifiers.enabled(), context));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected TransformationChain newResourceTransformationChain() {
-        return new TransformationChain((List)extensionFactory.getAllExtensions(Transformation.class, Qualifiers.enabled()));
+    protected TransformationChain newResourceTransformationChain(ProviderSelectionContext context) {
+        return new TransformationChain((List) extensionFactory.getAllExtensions(Transformation.class, Qualifiers.enabled(), context));
     }
 
-    protected CombineChangeReporter newCombineReporter() {
-        return new CombineChangeReporter(extensionFactory.getAllExtensions(ChangeReporter.class, Qualifiers.enabled()));
+    protected CombineChangeReporter newCombineReporter(ProviderSelectionContext context) {
+        return new CombineChangeReporter(extensionFactory.getAllExtensions(ChangeReporter.class, Qualifiers.enabled(), context));
     }
 
-    protected ConverterChain getConverterChain() {
-        @SuppressWarnings("rawtypes")
-        List<Converter> converters = extensionFactory.getAllExtensions(
-            Converter.class,
-            Qualifiers.enabled());
-        return new ConverterChain(converters);
+    protected ConverterChain newConverterChain(ProviderSelectionContext context) {
+        return new ConverterChain(extensionFactory.getAllExtensions(Converter.class, Qualifiers.enabled(), context));
     }
 
     protected ResourceList<HasMetadata> addAllResourcesFromRepositories(HasItems resources) {
@@ -288,15 +317,36 @@ public abstract class BaseApi implements JikkouApi {
         return ResourceList.of(Stream.concat(stream, resources.getItems().stream()).toList());
     }
 
+    /**
+     * Creates a ProviderSelectionContext from a ReconciliationContext.
+     *
+     * @param context the reconciliation context.
+     * @return the provider selection context, or null if no provider name is specified.
+     */
+    protected ProviderSelectionContext createProviderContext(@NotNull ReconciliationContext context) {
+        return createProviderContext(context.providerName());
+    }
+
+    /**
+     * Creates a ProviderSelectionContext from a provider name.
+     *
+     * @param providerName the provider name.
+     * @return the provider selection context, or null if no provider name is specified.
+     */
+    protected ProviderSelectionContext createProviderContext(String providerName) {
+        return Strings.isNullOrEmpty(providerName) ? null : ProviderSelectionContext.of(providerName, providerConfigurationRegistry);
+    }
+
     @SuppressWarnings("unchecked")
-    protected <T extends HasMetadata> Collector<T> getMatchingCollector(@NotNull ResourceType resource) {
+    protected <T extends HasMetadata> Collector<T> getMatchingCollector(@NotNull ResourceType resource,
+                                                                        ProviderSelectionContext providerContext) {
         LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
             resource.group(),
             resource.apiVersion(),
             resource.kind()
         );
         return extensionFactory.
-            findExtension(Collector.class, Qualifiers.bySupportedResource(resource))
+            findExtension(Collector.class, Qualifiers.bySupportedResource(resource), providerContext)
             .orElseThrow(() -> new JikkouRuntimeException(String.format(
                 "Cannot find collector for resource type: group='%s', apiVersion='%s' and kind='%s",
                 resource.group(),
@@ -306,14 +356,15 @@ public abstract class BaseApi implements JikkouApi {
     }
 
     @SuppressWarnings("unchecked")
-    protected Controller<HasMetadata> getMatchingController(@NotNull ResourceType resource) {
+    protected Controller<HasMetadata> getMatchingController(@NotNull ResourceType resource,
+                                                            ProviderSelectionContext providerContext) {
         LOG.info("Looking for a controller accepting resource type: group={}, apiVersion={} and kind={}",
             resource.group(),
             resource.apiVersion(),
             resource.kind()
         );
         return extensionFactory
-            .findExtension(Controller.class, Qualifiers.bySupportedResource(resource))
+            .findExtension(Controller.class, Qualifiers.bySupportedResource(resource), providerContext)
             .orElseThrow(() -> new JikkouRuntimeException(String.format(
                 "Cannot find controller for resource type: group='%s', apiVersion='%s' and kind='%s",
                 resource.group(),
