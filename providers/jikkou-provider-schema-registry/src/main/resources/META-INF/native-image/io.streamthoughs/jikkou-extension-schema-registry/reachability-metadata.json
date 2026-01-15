@@ -1,0 +1,16 @@
+{
+  "reflection": [
+    {
+      "type": "io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.lang.AutoCloseable",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.io.Closeable",
+      "allDeclaredMethods": true
+    }
+  ]
+}

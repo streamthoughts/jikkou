@@ -1,0 +1,6 @@
+{
+  "reflection": [],
+  "resources": [
+    {"glob": "jikkou-info.properties"}
+  ]
+}

@@ -1,3 +1,0 @@
-[
-  { "interfaces": [ "io.streamthoughts.jikkou.extension.aiven.api.AivenApi","java.lang.AutoCloseable", "java.io.Closeable" ] }
-]

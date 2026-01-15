@@ -1,3 +1,0 @@
-[
-  { "interfaces": [ "io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi","java.lang.AutoCloseable", "java.io.Closeable" ] }
-]

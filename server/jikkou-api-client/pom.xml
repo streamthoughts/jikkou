@@ -22,8 +22,8 @@
 
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <okhttp.version>4.12.0</okhttp.version>
-        <micronaut-http.version>4.8.8</micronaut-http.version>
+        <okhttp.version>5.3.2</okhttp.version>
+        <micronaut-http.version>4.10.13</micronaut-http.version>
     </properties>
 
     <dependencyManagement>
@@ -80,31 +80,6 @@
             <artifactId>micronaut-http</artifactId>
         </dependency>
         <!-- START dependencies for test -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>

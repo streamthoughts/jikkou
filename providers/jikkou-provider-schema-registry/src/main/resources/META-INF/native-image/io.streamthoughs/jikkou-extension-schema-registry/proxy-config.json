@@ -1,3 +1,0 @@
-[
-  { "interfaces": [ "io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi","java.lang.AutoCloseable", "java.io.Closeable" ] }
-]

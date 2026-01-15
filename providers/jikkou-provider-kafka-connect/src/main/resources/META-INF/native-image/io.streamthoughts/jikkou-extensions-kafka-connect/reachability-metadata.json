@@ -1,0 +1,16 @@
+{
+  "reflection": [
+    {
+      "type": "io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.lang.AutoCloseable",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.io.Closeable",
+      "allDeclaredMethods": true
+    }
+  ]
+}

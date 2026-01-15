@@ -34,15 +34,15 @@
         <executable-suffix/>
         <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
         <!-- Micronaut -->
-        <micronaut.version>4.7.4</micronaut.version>
-        <micronaut.core.version>4.7.10</micronaut.core.version>
-        <micronaut-maven-plugin.version>4.7.2</micronaut-maven-plugin.version>
-        <micronaut-picocli-bom.version>5.7.0</micronaut-picocli-bom.version>
+        <micronaut.version>4.10.7</micronaut.version>
+        <micronaut.core.version>4.10.13</micronaut.core.version>
+        <micronaut-maven-plugin.version>4.11.5</micronaut-maven-plugin.version>
+        <micronaut-picocli-bom.version>5.9.0</micronaut-picocli-bom.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <!-- Native -->
         <imageName>jikkou</imageName>
-        <native.maven.plugin.version>0.10.6</native.maven.plugin.version>
+        <native.maven.plugin.version>0.11.3</native.maven.plugin.version>
         <exec.mainClass>io.streamthoughts.jikkou.client.Jikkou</exec.mainClass>
     </properties>
 
@@ -67,6 +67,14 @@
                 <groupId>io.micronaut.picocli</groupId>
                 <artifactId>micronaut-picocli-bom</artifactId>
                 <version>${micronaut-picocli-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- JUnit BOM - must be after Micronaut to override its JUnit versions -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -126,10 +134,7 @@
             <version>${project.version}</version>
         </dependency>
         <!-- END dependencies for Jikkou Extension Providers -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
+
         <!-- START dependencies for Micronaut/Picocli -->
         <dependency>
             <groupId>io.micronaut</groupId>
@@ -182,41 +187,6 @@
 
         <!-- START dependencies for test -->
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.micronaut.test</groupId>
             <artifactId>micronaut-test-junit5</artifactId>
             <scope>test</scope>
@@ -246,8 +216,8 @@
                 <version>${micronaut-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <micronautAotVersion>2.0.1</micronautAotVersion>
-                    <testResourcesVersion>1.2.5</testResourcesVersion>
+                    <micronautAotVersion>2.9.0</micronautAotVersion>
+                    <testResourcesVersion>2.10.1</testResourcesVersion>
                 </configuration>
             </plugin>
             <plugin>
@@ -346,6 +316,10 @@
                     <artifactId>native-maven-plugin</artifactId>
                     <version>${native.maven.plugin.version}</version>
                     <extensions>true</extensions>
+                    <configuration>
+                        <!-- Skip native tests - JUnit should not be part of production native image -->
+                        <skipNativeTests>true</skipNativeTests>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>build-native</id>
@@ -353,13 +327,6 @@
                                 <goal>build</goal>
                             </goals>
                             <phase>package</phase>
-                        </execution>
-                        <execution>
-                            <id>test-native</id>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <phase>test</phase>
                         </execution>
                     </executions>
                 </plugin>
@@ -405,10 +372,18 @@
                                 -->
                                 <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
                                 <buildArg>--initialize-at-build-time=org.slf4j.helpers.Reporter</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.NOP_FallbackServiceProvider</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.SubstituteServiceProvider</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.NOPLoggerFactory</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.SubstituteLoggerFactory</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.Reporter$TargetChoice</buildArg>
+                                <buildArg>--initialize-at-build-time=ch.qos.logback.classic.Logger</buildArg>
+                                <buildArg>--initialize-at-build-time=org.xml.sax.helpers.LocatorImpl</buildArg>
+                                <buildArg>--initialize-at-build-time=org.xml.sax.helpers.AttributesImpl</buildArg>
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
-                                <version>0.3.15</version>
+                                <version>0.3.33</version>
                             </metadataRepository>
                         </configuration>
                     </plugin>
@@ -454,10 +429,18 @@
                                 -->
                                 <buildArg>--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons</buildArg>
                                 <buildArg>--initialize-at-build-time=org.slf4j.helpers.Reporter</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.NOP_FallbackServiceProvider</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.SubstituteServiceProvider</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.NOPLoggerFactory</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.SubstituteLoggerFactory</buildArg>
+                                <buildArg>--initialize-at-build-time=org.slf4j.helpers.Reporter$TargetChoice</buildArg>
+                                <buildArg>--initialize-at-build-time=ch.qos.logback.classic.Logger</buildArg>
+                                <buildArg>--initialize-at-build-time=org.xml.sax.helpers.LocatorImpl</buildArg>
+                                <buildArg>--initialize-at-build-time=org.xml.sax.helpers.AttributesImpl</buildArg>
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
-                                <version>0.3.15</version>
+                                <version>0.3.33</version>
                             </metadataRepository>
                         </configuration>
                     </plugin>
