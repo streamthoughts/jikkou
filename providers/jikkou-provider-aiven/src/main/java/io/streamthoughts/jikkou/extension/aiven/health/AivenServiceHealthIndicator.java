@@ -63,11 +63,14 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
      */
     @Override
     public Health getHealth(final Duration timeout) {
-        if (apiClientConfig == null) {
-            throw new IllegalStateException("must be configured!");
+        if (apiClientConfig == null || apiClientConfig.project() == null) {
+            return Health
+                    .builder()
+                    .name(HEALTH_NAME)
+                    .unknown()
+                    .build();
         }
-        final AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
-        try {
+        try (AivenApiClient api = AivenApiClientFactory.create(apiClientConfig)) {
             ServiceInformationResponse response = api.getServiceInformation();
             if (!response.errors().isEmpty()) {
                 return new Health.Builder()
@@ -117,8 +120,6 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
                     .details("resource", getUrn())
                     .details(Map.of("message", "An unexpected error has occurred while retrieving the information."))
                     .build();
-        } finally {
-            api.close(); // make sure api is closed after catching exception
         }
     }
 
