@@ -17,6 +17,8 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.streamthoughts.jikkou.core.JikkouApi;
@@ -33,6 +35,7 @@ import java.util.Objects;
 
 @Controller("/api/v1/actions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@ExecuteOn(TaskExecutors.BLOCKING)
 public class ApiActionResource extends AbstractController {
 
     private final JikkouApi api;
