@@ -13,6 +13,8 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.http.hateoas.Resource;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.streamthoughts.jikkou.core.JikkouApi;
@@ -32,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Controller("/apis")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@ExecuteOn(TaskExecutors.BLOCKING)
 public class ApiGroupListResource extends AbstractController {
 
     private final JikkouApi api;
