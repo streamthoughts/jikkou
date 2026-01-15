@@ -14,6 +14,8 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.streamthoughts.jikkou.common.utils.Strings;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Controller("/api/v1/extensions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@ExecuteOn(TaskExecutors.BLOCKING)
 public class ApiExtensionResource extends AbstractController {
 
     private static final String NO_VALUE = "";
