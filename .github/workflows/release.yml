@@ -17,9 +17,9 @@ on:
         required: false
 
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '25'
   JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '21.0.1'
+  GRAAL_VERSION: '25.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
 jobs:
   set-release-version:

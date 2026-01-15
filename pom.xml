@@ -72,7 +72,7 @@
     </distributionManagement>
     <properties>
         <!-- JAVA -->
-        <jdk.version>21</jdk.version>
+        <jdk.version>25</jdk.version>
         <release.version>${jdk.version}</release.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
@@ -108,33 +108,34 @@
         <!-- END Maven plugin versions -->
 
         <!-- Tests -->
-        <junit.version>5.10.0</junit.version>
-        <junit-bom.version>5.12.2</junit-bom.version>
-        <testcontainer.version>1.21.3</testcontainer.version>
-        <mockwebserver.version>5.1.0</mockwebserver.version>
+        <junit-bom.version>6.0.2</junit-bom.version>
+        <testcontainer.version>2.0.3</testcontainer.version>
+        <mockwebserver.version>5.3.2</mockwebserver.version>
         <!-- Dependencies -->
-        <kafka.version>3.7.0</kafka.version>
-        <picocli.version>4.7.6</picocli.version>
+        <kafka.version>3.9.1</kafka.version>
+        <picocli.version>4.7.7</picocli.version>
         <jackson.version>2.18.3</jackson.version>
-        <jinjava.version>2.7.4</jinjava.version>
-        <lombok.version>1.18.38</lombok.version>
+        <jinjava.version>2.8.2</jinjava.version>
+        <lombok.version>1.18.42</lombok.version>
         <config.version>1.4.3</config.version>
         <annotations.version>26.0.2-1</annotations.version>
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
-        <reactor-core.version>3.7.4</reactor-core.version>
+        <reactor-core.version>3.8.2</reactor-core.version>
         <cel.version>0.9.1</cel.version>
-        <avro.version>1.11.4</avro.version>
+        <avro.version>1.12.1</avro.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <logback.version>1.5.18</logback.version>
+        <logback.version>1.5.24</logback.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <!-- Build -->
-        <graal-sdk.version>24.2.0</graal-sdk.version>
+        <graal-sdk.version>25.0.1</graal-sdk.version>
         <reflections.version>0.10.2</reflections.version>
-        <spotless.version>2.44.3</spotless.version>
+        <spotless.version>3.1.0</spotless.version>
         <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
         <protobuf-java.version>4.30.2</protobuf-java.version>
+        <mockito-core.version>5.21.0</mockito-core.version>
+        <junit-jupiter.version>1.21.4</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -247,7 +248,7 @@
             <dependency>
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                <version>1.2.1</version>
+                <version>1.2.2</version>
             </dependency>
             <dependency>
                 <groupId>software.amazon.msk</groupId>
@@ -263,7 +264,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>5.18.0</version>
+                <version>${mockito-core.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -275,7 +276,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>${testcontainer.version}</version>
+                <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -294,39 +295,49 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-
-        <!--region  START dependencies for test -->
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <!--region  START dependencies for test -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
         </dependency>
         <!--endregion END dependencies for test -->
     </dependencies>
@@ -588,7 +599,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.14</version>
                 <configuration>
                     <excludes>
                         <!-- contains classes generated from JSON Schemas -->

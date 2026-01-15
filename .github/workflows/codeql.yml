@@ -21,9 +21,9 @@ on:
     - cron: '17 20 * * 3'
 
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '25'
   JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '23.1.0'
+  GRAAL_VERSION: '25.0.1'
 
 jobs:
   analyze:

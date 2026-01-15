@@ -26,12 +26,12 @@
         <packaging>jar</packaging>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
         <!-- Micronaut properties -->
-        <micronaut.version>4.7.4</micronaut.version>
-        <micronaut.core.version>4.7.10</micronaut.core.version>
-        <micronaut-maven-plugin.version>4.7.2</micronaut-maven-plugin.version>
+        <micronaut.version>4.10.7</micronaut.version>
+        <micronaut.core.version>4.10.13</micronaut.core.version>
+        <micronaut-maven-plugin.version>4.11.5</micronaut-maven-plugin.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
-        <micronaut-serde-processor.version>1.5.3</micronaut-serde-processor.version>
-        <micronaut-security.version>4.12.1</micronaut-security.version>
+        <micronaut-serde-processor.version>2.16.1</micronaut-serde-processor.version>
+        <micronaut-security.version>4.15.0</micronaut-security.version>
         <micronaut.runtime>netty</micronaut.runtime>
         <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouApiServer</exec.mainClass>
         <!-- Additional -->
@@ -133,14 +133,10 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>6.4.3</version>
+            <version>7.0.2</version>
         </dependency>
 
         <!-- START dependencies for logging -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -157,34 +153,9 @@
 
         <!-- START dependencies for test -->
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.micronaut.test</groupId>
             <artifactId>micronaut-test-junit5</artifactId>
-            <version>4.7.0</version>
+            <version>4.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -258,7 +229,17 @@
                     <annotationProcessorPaths combine.children="append">
                         <path>
                             <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-core</artifactId>
+                            <version>${micronaut.core.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
                             <artifactId>micronaut-inject-java</artifactId>
+                            <version>${micronaut.core.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-graal</artifactId>
                             <version>${micronaut.core.version}</version>
                         </path>
                         <path>
@@ -281,8 +262,8 @@
                 <version>${micronaut-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <micronautAotVersion>2.0.1</micronautAotVersion>
-                    <testResourcesVersion>1.2.5</testResourcesVersion>
+                    <micronautAotVersion>2.9.0</micronautAotVersion>
+                    <testResourcesVersion>2.10.1</testResourcesVersion>
                 </configuration>
             </plugin>
         </plugins>

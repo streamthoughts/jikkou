@@ -1,0 +1,419 @@
+{
+  "reflection": [
+    {
+      "type": "[Lcom.amazonaws.internal.config.HostRegexToRegionMappingJsonHelper;"
+    },
+    {
+      "type": "[Lcom.amazonaws.internal.config.JsonIndex;"
+    },
+    {
+      "type": "com.amazonaws.internal.config.Builder",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "com.amazonaws.internal.config.HostRegexToRegionMappingJsonHelper",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setHostNameRegex",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setRegionName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.internal.config.HttpClientConfigJsonHelper",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setRegionMetadataServiceName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setServiceName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.internal.config.InternalConfigJsonHelper",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setDefaultSigner",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.SignerConfigJsonHelper"
+          ]
+        },
+        {
+          "name": "setHostRegexToRegionMappings",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.HostRegexToRegionMappingJsonHelper[]"
+          ]
+        },
+        {
+          "name": "setHttpClients",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.JsonIndex[]"
+          ]
+        },
+        {
+          "name": "setRegionSigners",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.JsonIndex[]"
+          ]
+        },
+        {
+          "name": "setServiceRegionSigners",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.JsonIndex[]"
+          ]
+        },
+        {
+          "name": "setServiceSigners",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.JsonIndex[]"
+          ]
+        },
+        {
+          "name": "setUserAgentTemplate",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.internal.config.JsonIndex",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setConfig",
+          "parameterTypes": [
+            "com.amazonaws.internal.config.Builder"
+          ]
+        },
+        {
+          "name": "setKey",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.internal.config.SignerConfigJsonHelper",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setSignerType",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.partitions.model.CredentialScope",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setRegion",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setService",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.partitions.model.Endpoint",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "setCredentialScope",
+          "parameterTypes": [
+            "com.amazonaws.partitions.model.CredentialScope"
+          ]
+        },
+        {
+          "name": "setHostName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setProtocols",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setSignatureVersions",
+          "parameterTypes": [
+            "java.util.Set"
+          ]
+        },
+        {
+          "name": "setSslCommonName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.partitions.model.Partition",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.util.Map",
+            "java.util.Map"
+          ]
+        },
+        {
+          "name": "setDefaults",
+          "parameterTypes": [
+            "com.amazonaws.partitions.model.Endpoint"
+          ]
+        },
+        {
+          "name": "setDnsSuffix",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setPartitionName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setRegionRegex",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.partitions.model.Partitions",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.util.List"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.partitions.model.Region",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.partitions.model.Service",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.util.Map"
+          ]
+        },
+        {
+          "name": "setDefaults",
+          "parameterTypes": [
+            "com.amazonaws.partitions.model.Endpoint"
+          ]
+        },
+        {
+          "name": "setPartitionEndpoint",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setRegionalized",
+          "parameterTypes": [
+            "boolean"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.google.common.collect.Lists",
+      "methods": [
+        {
+          "name": "newArrayList",
+          "parameterTypes": [
+            "java.lang.Object[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "software.amazon.msk.auth.iam.IAMClientCallbackHandler",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "software.amazon.msk.auth.iam.IAMLoginModule",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "software.amazon.msk.auth.iam.internals.AuthenticationResponse",
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "software.amazon.msk.auth.iam.internals.IAMSaslClient$ClassLoaderAwareIAMSaslClientFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "software.amazon.msk.auth.iam.internals.IAMSaslClient$IAMSaslClientFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.amazonaws.auth.AWS4Signer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.http.conn.ConnectionRequest",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.http.conn.HttpClientConnectionManager",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.http.pool.ConnPoolControl",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "com.amazonaws.http.conn.Wrapped",
+      "allDeclaredMethods": true
+    }
+  ],
+  "resources": [
+    {"glob": "com/amazonaws/internal/config/awssdk_config_default.json"},
+    {"glob": "com/amazonaws/sdk/versionInfo.properties"},
+    {"glob": "com/amazonaws/partitions/endpoints.json"},
+    {"glob": "org/joda/time/tz/data/America/New_York"},
+    {"glob": "org/joda/time/tz/data/ZoneInfoMap"}
+  ]
+}

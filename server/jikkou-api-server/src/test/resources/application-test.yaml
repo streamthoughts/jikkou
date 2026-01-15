@@ -12,6 +12,10 @@ micronaut:
 #  security:
 #    enabled: false
 
+endpoints:
+  all:
+    port: -1
+
 # Http Client Configurations
   http:
     client:
