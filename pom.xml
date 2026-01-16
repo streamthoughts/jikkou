@@ -801,15 +801,6 @@
                                             </artifact>
                                             <artifact>
                                                 <path>
-                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip
-                                                </path>
-                                                <transform>
-                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip
-                                                </transform>
-                                                <platform>osx-x86_64</platform>
-                                            </artifact>
-                                            <artifact>
-                                                <path>
                                                     {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-aarch_64.zip
                                                 </path>
                                                 <transform>
