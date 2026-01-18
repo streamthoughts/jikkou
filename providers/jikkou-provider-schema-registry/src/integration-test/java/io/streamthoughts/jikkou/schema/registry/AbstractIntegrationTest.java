@@ -16,11 +16,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
@@ -47,12 +47,15 @@ public class AbstractIntegrationTest {
 
     private static final Network KAFKA_NETWORK = Network.newNetwork();
 
-    public static final String CONFLUENT_PLATFORM_VERSION = "8.0.3";
+    public static final String APACHE_KAFKA_VERSION = "4.1.1";
+    public static final String CONFLUENT_PLATFORM_VERSION = "8.1.1";
 
     @Container
     final KafkaContainer kafkaContainer = new KafkaContainer(
-        DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION)).withKraft()
+        DockerImageName.parse("apache/kafka-native").withTag(APACHE_KAFKA_VERSION))
         .withNetwork(KAFKA_NETWORK)
+        .withNetworkAliases("kafka")
+        .withListener("kafka:19092")
         .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
         .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
         .withLogConsumer(new Slf4jLogConsumer(LOG));
