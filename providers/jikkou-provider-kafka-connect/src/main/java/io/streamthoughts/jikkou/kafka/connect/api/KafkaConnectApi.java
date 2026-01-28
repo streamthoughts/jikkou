@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.kafka.connect.api;
 
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectCluster;
+import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorCreateRequest;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorStatusResponse;
 import jakarta.ws.rs.Consumes;
@@ -57,6 +58,19 @@ public interface KafkaConnectApi extends AutoCloseable {
     @GET
     @Path("connectors")
     List<String> listConnectors();
+
+    /**
+     * Create a new connector with the given configuration and optional initial state.
+     * This method supports KIP-980, allowing the connector to be created in a specific
+     * initial state (RUNNING, STOPPED, or PAUSED).
+     *
+     * @param request the connector creation request containing name, config, and optional initial state.
+     * @return information about the created connector
+     */
+    @POST
+    @Path("connectors")
+    @Consumes(MediaType.APPLICATION_JSON)
+    ConnectorInfoResponse createConnector(ConnectorCreateRequest request);
 
     /**
      * Create a new connector using the given configuration, or update the configuration

@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.core.reconciler.change.BaseChangeHandler;
 import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
+import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorCreateRequest;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
@@ -67,7 +68,7 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
             case NONE -> Stream.empty(); // no change of these types should be handled by this class.
             case REPLACE -> null;
             case UPDATE -> updateConnector(change);
-            case CREATE -> createOrUpdateConnectorConfig(change);
+            case CREATE -> createConnector(change);
             case DELETE -> deleteConnector(change);
         };
     }
@@ -75,7 +76,7 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
     @NotNull
     private Stream<ChangeResponse> updateConnector(ResourceChange change) {
         if (!isStateOnlyChange(change)) {
-            return createOrUpdateConnectorConfig(change);
+            return updateConnectorConfig(change);
         }
         SpecificStateChange<KafkaConnectorState> stateChange = getState(change);
 
@@ -104,8 +105,39 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
         return Stream.of(toChangeResponse(change, future));
     }
 
+    /**
+     * Creates a new connector using POST /connectors with initial_state support (KIP-980).
+     */
     @NotNull
-    private Stream<ChangeResponse> createOrUpdateConnectorConfig(ResourceChange change) {
+    private Stream<ChangeResponse> createConnector(ResourceChange change) {
+        final String connectorName = change.getMetadata().getName();
+        final Map<String, Object> configAsMap = buildConnectorConfig(change);
+        final SpecificStateChange<KafkaConnectorState> stateChange = getState(change);
+        final KafkaConnectorState desiredState = stateChange.getAfter();
+
+        // Determine the initial_state parameter for KIP-980
+        // Only RUNNING, STOPPED, and PAUSED are valid initial states
+        final String initialState = switch (desiredState) {
+            case STOPPED, PAUSED -> desiredState.value();
+            // For RUNNING or other states (including null), don't set initial_state (defaults to RUNNING)
+            case RUNNING, UNASSIGNED, RESTARTING, FAILED -> null;
+            case null -> null;
+        };
+
+        ConnectorCreateRequest request = new ConnectorCreateRequest(connectorName, configAsMap, initialState);
+        CompletableFuture<ConnectorInfoResponse> future = CompletableFuture.supplyAsync(() ->
+                api.createConnector(request)
+        );
+
+        ChangeResponse response = toChangeResponse(change, future);
+        return Stream.of(response);
+    }
+
+    /**
+     * Updates an existing connector's configuration using PUT /connectors/{name}/config.
+     */
+    @NotNull
+    private Stream<ChangeResponse> updateConnectorConfig(ResourceChange change) {
         final Map<String, Object> configAsMap = buildConnectorConfig(change);
         CompletableFuture<ConnectorInfoResponse> future = CompletableFuture.supplyAsync(() ->
                 api.createOrUpdateConnector(change.getMetadata().getName(), configAsMap)
