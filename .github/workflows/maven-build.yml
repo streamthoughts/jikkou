@@ -16,12 +16,20 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '21.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
+    - name: 'Checkout code'
+      uses: actions/checkout@v4
 
     - name: 'Set up JDK'
       uses: actions/setup-java@v5
@@ -41,9 +49,90 @@ jobs:
     - name: Grant execute permission to MVN Wrapper
       run: chmod +x ./mvnw
 
-    - name: Build and analyze
+    - name: Build with Maven
+      run: ./mvnw -ntp -B verify
+
+    - name: Analyze with SonarCloud
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_SKIP: ${{ secrets.SONAR_TOKEN && 'false' || 'true' }} # skip analysis if token is missing
-      run: ./mvnw -ntp -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=streamthoughts_jikkou
+      run: |
+        if [ -n "$SONAR_TOKEN" ]; then
+          ./mvnw -ntp -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=streamthoughts_jikkou
+        else
+          echo "Skipping SonarCloud analysis (SONAR_TOKEN not set)"
+        fi
+
+    - name: Run Trivy vulnerability scanner (SARIF)
+      if: github.event_name == 'push'
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        ignore-unfixed: true
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      if: github.event_name == 'push'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Run Trivy vulnerability scanner (Table)
+      if: github.event_name == 'pull_request'
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        ignore-unfixed: true
+        format: 'table'
+        output: 'trivy-results.txt'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Add vulnerability report to PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const trivyResults = fs.readFileSync('trivy-results.txt', 'utf8');
+
+          let body = '## Security Scan Results\n\n';
+
+          if (trivyResults.trim().length === 0) {
+            body += 'No vulnerabilities found with CRITICAL or HIGH severity.\n';
+          } else {
+            body += 'Vulnerabilities detected:\n\n';
+            body += '```\n' + trivyResults + '\n```\n';
+          }
+
+          body += '\n\n<sub>Scanned by [Trivy](https://github.com/aquasecurity/trivy)</sub>';
+
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+
+          const botComment = comments.find(comment =>
+            comment.user.type === 'Bot' &&
+            comment.body.includes('Security Scan Results')
+          );
+
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: body
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+          }
