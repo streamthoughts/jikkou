@@ -10,7 +10,6 @@ import io.streamthoughts.jikkou.core.action.ExecutionError;
 import io.streamthoughts.jikkou.core.action.ExecutionResult;
 import io.streamthoughts.jikkou.core.action.ExecutionStatus;
 import io.streamthoughts.jikkou.core.config.Configuration;
-import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ApiActionResultSet;
 import io.streamthoughts.jikkou.kafka.connect.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
@@ -27,8 +26,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("integration")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class KafkaConnectRestartConnectorsActionIT extends BaseExtensionProviderIT {
-
-    private ExtensionContext context;
 
     @BeforeEach
     void beforeEach() throws Exception {
@@ -82,5 +79,73 @@ class KafkaConnectRestartConnectorsActionIT extends BaseExtensionProviderIT {
         ExecutionResult<V1KafkaConnector> result = resultSet.results().getFirst();
         Assertions.assertEquals(ExecutionStatus.FAILED, result.status());
         Assertions.assertEquals(List.of(new ExecutionError("Unknown connector: dummy", 404)), result.errors());
+    }
+    
+    @Test
+    void shouldSucceedToRestartConnectorsForSpecificClusterWithSingleStringValue() {
+        // GIVEN - Single string value for connect-cluster (simulating CLI: --connect-cluster=test)
+        Configuration configuration = Configuration.of(
+            KafkaConnectRestartConnectorsAction.Config.CONNECT_CLUSTER.key(), KAFKA_CONNECTOR_NAME
+        );
+
+        // WHEN - Execute with specific cluster name as single string
+        ApiActionResultSet<V1KafkaConnector> resultSet = api.execute(
+            KafkaConnectRestartConnectorsAction.NAME,
+            configuration
+        );
+
+        // THEN - Should succeed without ClassCastException
+        Assertions.assertNotNull(resultSet);
+        Assertions.assertEquals(1, resultSet.results().size());
+        ExecutionResult<V1KafkaConnector> result = resultSet.results().getFirst();
+        Assertions.assertEquals(ExecutionStatus.SUCCEEDED, result.status(),
+            "Should succeed when specifying a single connect-cluster as string value");
+        Assertions.assertNotNull(result.data());
+    }
+
+    @Test
+    void shouldSucceedWithBothClusterAndConnectorAsStrings() {
+        // GIVEN - Single string values for both options
+        Configuration configuration = Configuration.of(
+            KafkaConnectRestartConnectorsAction.Config.CONNECT_CLUSTER.key(), KAFKA_CONNECTOR_NAME,
+            KafkaConnectRestartConnectorsAction.Config.CONNECTOR_NAME.key(), "test",
+            KafkaConnectRestartConnectorsAction.Config.INCLUDE_TASKS.key(), true
+        );
+
+        // WHEN
+        ApiActionResultSet<V1KafkaConnector> resultSet = api.execute(
+            KafkaConnectRestartConnectorsAction.NAME,
+            configuration
+        );
+
+        // THEN
+        Assertions.assertNotNull(resultSet);
+        Assertions.assertEquals(1, resultSet.results().size());
+        ExecutionResult<V1KafkaConnector> result = resultSet.results().getFirst();
+        Assertions.assertEquals(ExecutionStatus.SUCCEEDED, result.status(),
+            "Should succeed when specifying both connect-cluster and connector-name as strings");
+        Assertions.assertNotNull(result.data());
+    }
+    
+    @Test
+    void shouldSucceedToRestartConnectorsForSpecificClusterWithListValue() {
+        // GIVEN - List value for connect-cluster
+        Configuration configuration = Configuration.of(
+            KafkaConnectRestartConnectorsAction.Config.CONNECT_CLUSTER.key(),
+            List.of(KAFKA_CONNECTOR_NAME)
+        );
+
+        // WHEN
+        ApiActionResultSet<V1KafkaConnector> resultSet = api.execute(
+            KafkaConnectRestartConnectorsAction.NAME,
+            configuration
+        );
+
+        // THEN
+        Assertions.assertNotNull(resultSet);
+        Assertions.assertEquals(1, resultSet.results().size());
+        ExecutionResult<V1KafkaConnector> result = resultSet.results().getFirst();
+        Assertions.assertEquals(ExecutionStatus.SUCCEEDED, result.status());
+        Assertions.assertNotNull(result.data());
     }
 }
