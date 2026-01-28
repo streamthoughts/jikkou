@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
+import static io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest.APACHE_KAFKA_VERSION;
 import static io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest.CONFLUENT_PLATFORM_VERSION;
 
 import io.streamthoughts.jikkou.core.data.SchemaType;
@@ -29,11 +30,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import reactor.core.publisher.Mono;
 
@@ -48,8 +49,10 @@ class AsyncSchemaRegistryApiTest {
 
     @Container
     private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer(
-            DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION)).withKraft()
+            DockerImageName.parse("apache/kafka-native").withTag(APACHE_KAFKA_VERSION))
             .withNetwork(KAFKA_NETWORK)
+            .withNetworkAliases("broker")
+            .withListener("broker:19092")
             .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
             .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
             .withLogConsumer(new Slf4jLogConsumer(LOG));
