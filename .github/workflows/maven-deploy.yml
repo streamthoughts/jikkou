@@ -46,13 +46,26 @@ jobs:
 
       - name: 'Set env VERSION'
         run: |
-          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: 'Set up Maven settings'
         run: |
-          echo "<settings><interactiveMode>false</interactiveMode><servers><server><id>sonatype-central</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_PASSWORD }}</password></server></servers></settings>" > ./settings.xml
+          cat > ./settings.xml << 'EOF'
+          <settings>
+            <interactiveMode>false</interactiveMode>
+            <servers>
+              <server>
+                <id>sonatype-central</id>
+                <username>${env.OSSRH_USERNAME}</username>
+                <password>${env.OSSRH_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
 
       - name: 'Deploy Maven Central'
-        run: |
-          ./mvnw -s ./settings.xml deploy -Possrh
+        run: ./mvnw -s ./settings.xml -B -ntp deploy -DskipTests -Possrh
