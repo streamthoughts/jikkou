@@ -6,12 +6,15 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,10 +32,20 @@ public class NamedValueSet implements Iterable<NamedValue> {
     }
 
     private NamedValueSet(final Collection<NamedValue> values) {
+        this(values, false);
+    }
+
+    private NamedValueSet(final Collection<NamedValue> values, final boolean deepMerge) {
         Map<String, NamedValue> all = new LinkedHashMap<>();
         values.forEach(field -> {
             if (field != null) {
-                all.put(field.getName(), field);
+                if (deepMerge && all.containsKey(field.getName())) {
+                    NamedValue existing = all.get(field.getName());
+                    Object mergedValue = CollectionUtils.deepMergeValues(existing.getValue(), field.getValue());
+                    all.put(field.getName(), new NamedValue(field.getName(), mergedValue));
+                } else {
+                    all.put(field.getName(), field);
+                }
             }
         });
         this.valuesByName = Collections.unmodifiableMap(all);
@@ -85,23 +98,23 @@ public class NamedValueSet implements Iterable<NamedValue> {
         if (values.length == 0) {
             return this;
         }
-        LinkedHashSet<NamedValue> all = new LinkedHashSet<>(this.valuesByName.values());
+        List<NamedValue> all = new ArrayList<>(this.valuesByName.values());
         for (NamedValue f : values) {
             if (f != null) {
                 all.add(f);
             }
         }
-        return new NamedValueSet(all);
+        return new NamedValueSet(all, true);
     }
 
     public NamedValueSet with(final Iterable<NamedValue> fields) {
-        LinkedHashSet<NamedValue> all = new LinkedHashSet<>(this.valuesByName.values());
+        List<NamedValue> all = new ArrayList<>(this.valuesByName.values());
         fields.forEach(field -> {
             if (field != null) {
                 all.add(field);
             }
         });
-        return new NamedValueSet(all);
+        return new NamedValueSet(all, true);
     }
 
     public Object get(final String name) {
