@@ -123,6 +123,8 @@
         <reactor-core.version>3.8.2</reactor-core.version>
         <cel.version>0.9.1</cel.version>
         <avro.version>1.12.1</avro.version>
+        <lz4.version>1.8.1</lz4.version>
+        <netty.version>4.1.124.Final</netty.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.24</logback.version>
@@ -144,6 +146,16 @@
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
                 <version>${avro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>${lz4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.graalvm.sdk</groupId>
