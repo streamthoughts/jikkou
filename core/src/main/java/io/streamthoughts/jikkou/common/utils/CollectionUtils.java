@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.common.utils;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -111,5 +112,38 @@ public final class CollectionUtils {
             }
             result.put(k, v);
         });
+    }
+
+    /**
+     * Deep merges two values. If both values are maps, merges them recursively.
+     * If both values are lists, concatenates them.
+     * Otherwise, the new value overwrites the existing value.
+     *
+     * @param existing the existing value
+     * @param newValue the new value to merge
+     * @return the merged value
+     */
+    @SuppressWarnings("unchecked")
+    public static Object deepMergeValues(Object existing, Object newValue) {
+        if (existing instanceof Map && newValue instanceof Map) {
+            Map<String, Object> existingMap = (Map<String, Object>) existing;
+            Map<String, Object> newMap = (Map<String, Object>) newValue;
+            Map<String, Object> result = new LinkedHashMap<>(existingMap);
+            newMap.forEach((key, value) -> {
+                if (result.containsKey(key)) {
+                    result.put(key, deepMergeValues(result.get(key), value));
+                } else {
+                    result.put(key, value);
+                }
+            });
+            return result;
+        } else if (existing instanceof List && newValue instanceof List) {
+            List<Object> existingList = (List<Object>) existing;
+            List<Object> newList = (List<Object>) newValue;
+            List<Object> result = new java.util.ArrayList<>(existingList);
+            result.addAll(newList);
+            return result;
+        }
+        return newValue;
     }
 }

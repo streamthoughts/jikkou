@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -23,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 public final class IOUtils {
@@ -34,13 +33,40 @@ public final class IOUtils {
     private IOUtils() {
     }
 
-    public static List<Path> findMatching(final Path startingDirectory,
-                                          final String pattern) {
+    /**
+     * Finds all files matching the given glob pattern starting from the specified directory.
+     * This method recursively traverses all subdirectories.
+     *
+     * @param startingDirectory the directory to start searching from.
+     * @param pattern           the glob pattern to match files against (e.g., "**&#47;*.{yaml,yml}").
+     * @return a list of paths matching the pattern.
+     */
+    public static List<Path> findMatching(final Path startingDirectory, final String pattern) {
         PathMatcher pathMatcher = getPathMatcher(pattern);
-        try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(startingDirectory, pathMatcher::matches)) {
-            return StreamSupport.stream(dirStream.spliterator(), false).toList();
+        // Create a secondary matcher for the filename only when pattern starts with **/
+        // This handles files in the root directory since **/ requires at least one directory
+        String normalizedPattern = pattern.startsWith(SYNTAX_GLOB) ? pattern.substring(SYNTAX_GLOB.length()) : pattern;
+        normalizedPattern =
+                normalizedPattern.startsWith(SYNTAX_REGEX) ? normalizedPattern.substring(SYNTAX_REGEX.length()) : normalizedPattern;
+        PathMatcher fileNameMatcher =
+                normalizedPattern.startsWith("**/") ? getPathMatcher(normalizedPattern.substring(3)) : null;
+        try (Stream<Path> pathStream = Files.walk(startingDirectory)) {
+            return pathStream
+                    .filter(Files::isRegularFile)
+                    .filter(path -> {
+                        Path relativePath = startingDirectory.relativize(path);
+                        if (pathMatcher.matches(relativePath)) {
+                            return true;
+                        }
+                        // For files in root directory, also try matching just the filename
+                        if (fileNameMatcher != null && relativePath.getNameCount() == 1) {
+                            return fileNameMatcher.matches(relativePath.getFileName());
+                        }
+                        return false;
+                    })
+                    .toList();
         } catch (IOException e) {
-            throw new RuntimeException("", e);
+            throw new RuntimeException("Failed to traverse directory: " + startingDirectory, e);
         }
     }
 
