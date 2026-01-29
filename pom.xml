@@ -123,7 +123,11 @@
         <jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
         <reactor-core.version>3.7.4</reactor-core.version>
         <cel.version>0.9.1</cel.version>
-        <avro.version>1.11.4</avro.version>
+        <commons-io.version>2.14.0</commons-io.version>
+        <commons-compress.version>1.26.0</commons-compress.version>
+        <avro.version>1.12.1</avro.version>
+        <lz4.version>1.8.1</lz4.version>
+        <netty.version>4.1.124.Final</netty.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.18</logback.version>
@@ -145,6 +149,19 @@
                 <version>${avro.version}</version>
             </dependency>
             <dependency>
+<<<<<<< HEAD
+=======
+                <groupId>org.lz4</groupId>
+                <artifactId>lz4-java</artifactId>
+                <version>${lz4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+>>>>>>> ce020a67 (fix(deps): upgrade vulnerable dependencies (CVE-2024-47561, CVE-2025-12183, CVE-2025-55163))
                 <groupId>org.graalvm.sdk</groupId>
                 <artifactId>graal-sdk</artifactId>
                 <version>${graal-sdk.version}</version>
