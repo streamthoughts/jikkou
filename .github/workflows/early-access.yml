@@ -80,7 +80,7 @@ jobs:
           ./mvnw -ntp -B --file pom.xml -Pdist package
 
       - name: 'Upload build artifact'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-${{ runner.os }}-${{ runner.arch }}-${{ matrix.setup }}
           path: |
@@ -128,7 +128,7 @@ jobs:
 
       - name: 'JReleaser output'
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: jreleaser-logs
           path: |
