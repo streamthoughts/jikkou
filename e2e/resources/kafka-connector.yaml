@@ -1,0 +1,14 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta1"
+kind: "KafkaConnector"
+metadata:
+  name: "e2e-file-sink"
+  labels:
+    kafka.jikkou.io/connect-cluster: "e2e-connect"
+spec:
+  connectorClass: "FileStreamSink"
+  tasksMax: 1
+  config:
+    file: "/tmp/e2e-test.sink.txt"
+    topics: "e2e-topic-1"
+  state: "RUNNING"

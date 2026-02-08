@@ -69,4 +69,10 @@ install:
 	./mvnw clean package -Pnative,deb -DskipTests 
 	sudo dpkg -i ./dist/jikkou-${VERSION}-linux-x86_64.deb
 
+e2e-test:
+	./e2e/run-tests.sh
+
+e2e-test-quick:
+	./e2e/run-tests.sh --skip-build
+
 clean: clean-containers clean-images clean-build
