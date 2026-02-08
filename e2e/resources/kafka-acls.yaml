@@ -1,0 +1,14 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaPrincipalAuthorization"
+metadata:
+  name: "User:e2e-alice"
+spec:
+  acls:
+    - resource:
+        type: 'topic'
+        pattern: 'e2e-topic-'
+        patternType: 'PREFIXED'
+      type: "ALLOW"
+      operations: ['READ', 'WRITE']
+      host: "*"

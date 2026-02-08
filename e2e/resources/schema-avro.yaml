@@ -1,0 +1,21 @@
+---
+apiVersion: "schemaregistry.jikkou.io/v1beta2"
+kind: "SchemaRegistrySubject"
+metadata:
+  name: "E2ePersonAvro"
+  annotations:
+    schemaregistry.jikkou.io/normalize-schema: true
+spec:
+  compatibilityLevel: "BACKWARD"
+  schemaType: "AVRO"
+  schema: |
+    {
+      "namespace": "e2e",
+      "type": "record",
+      "name": "Person",
+      "fields": [
+        { "name": "id", "type": "int" },
+        { "name": "firstname", "type": "string" },
+        { "name": "lastname", "type": "string" }
+      ]
+    }

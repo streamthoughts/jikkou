@@ -1,0 +1,26 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: KafkaTopic
+metadata:
+  name: 'e2e-topic-1'
+  labels:
+    environment: e2e
+spec:
+  partitions: 3
+  replicas: 1
+  configs:
+    min.insync.replicas: 1
+    cleanup.policy: 'delete'
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: KafkaTopic
+metadata:
+  name: 'e2e-topic-2'
+  labels:
+    environment: e2e
+spec:
+  partitions: 1
+  replicas: 1
+  configs:
+    min.insync.replicas: 1
+    cleanup.policy: 'compact'

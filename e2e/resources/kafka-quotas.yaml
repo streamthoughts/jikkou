@@ -1,0 +1,13 @@
+---
+apiVersion: "kafka.jikkou.io/v1beta2"
+kind: "KafkaClientQuota"
+metadata:
+  labels: {}
+spec:
+  type: 'CLIENT'
+  entity:
+    clientId: 'e2e-client'
+  configs:
+    requestPercentage: 10
+    producerByteRate: 1048576
+    consumerByteRate: 1048576
