@@ -1,30 +1,222 @@
 {
   "reflection": [
     {
-      "type": "org.glassfish.jersey.jackson.JacksonFeature",
+      "type": "org.jboss.resteasy.plugins.providers.jackson.ResteasyJackson2Provider",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider",
+      "allDeclaredConstructors": true,
+      "allPublicConstructors": true,
+      "allDeclaredMethods": true,
+      "allPublicMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "condition": { "typeReached": "org.jboss.resteasy.resteasy_jaxrs.i18n.Messages" },
+      "type": "org.jboss.resteasy.resteasy_jaxrs.i18n.Messages_$bundle",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "condition": { "typeReached": "org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages" },
+      "type": "org.jboss.resteasy.resteasy_jaxrs.i18n.LogMessages_$logger",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "condition": { "typeReached": "org.jboss.resteasy.client.jaxrs.i18n.Messages" },
+      "type": "org.jboss.resteasy.client.jaxrs.i18n.Messages_$bundle",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "condition": { "typeReached": "org.jboss.resteasy.client.jaxrs.i18n.LogMessages" },
+      "type": "org.jboss.resteasy.client.jaxrs.i18n.LogMessages_$logger",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "condition": { "typeReached": "org.jboss.resteasy.plugins.providers.jackson._private.JacksonLogger" },
+      "type": "org.jboss.resteasy.plugins.providers.jackson._private.JacksonLogger_$logger",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.DefaultTextPlain",
       "allDeclaredConstructors": true,
       "allDeclaredFields": true
     },
     {
-      "type": "org.glassfish.jersey.jackson.internal.DefaultJacksonJaxbJsonProvider",
+      "type": "org.jboss.resteasy.plugins.providers.DefaultNumberWriter",
       "allDeclaredConstructors": true,
-      "allPublicConstructors": true,
-      "allDeclaredMethods": true,
-      "allPublicMethods": true
+      "allDeclaredFields": true
     },
     {
-      "type": "com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector",
+      "type": "org.jboss.resteasy.plugins.providers.DefaultBooleanWriter",
       "allDeclaredConstructors": true,
-      "allPublicConstructors": true,
-      "allDeclaredMethods": true,
-      "allPublicMethods": true
+      "allDeclaredFields": true
     },
     {
-      "type": "org.glassfish.jersey.internal.JaxrsProviders",
+      "type": "org.jboss.resteasy.plugins.providers.StringTextStar",
       "allDeclaredConstructors": true,
-      "allPublicConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.InputStreamProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.ReaderProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.ByteArrayProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.FormUrlEncodedProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.JaxrsFormProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.CompletionStageProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.ReactiveStreamProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.FileProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.FileRangeWriter",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.StreamingOutputProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.AsyncStreamingOutputProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.DataSourceProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.DocumentProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.SourceProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.IIOImageProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.MultiValuedParamConverterProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.interceptors.CacheControlFeature",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.interceptors.ClientContentEncodingAnnotationFeature",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.interceptors.ServerContentEncodingAnnotationFeature",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.interceptors.MessageSanitizerContainerResponseFilter",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.sse.SseEventProvider",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.plugins.providers.sse.SseEventSinkInterceptor",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl",
+      "allDeclaredConstructors": true,
       "allDeclaredMethods": true,
-      "allPublicMethods": true
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jboss.resteasy.client.jaxrs.internal.proxy.ProxyBuilderImpl",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "jakarta.ws.rs.ext.Providers"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jboss.resteasy.spi.ResteasyConfiguration"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.jboss.resteasy.client.jaxrs.internal.proxy.ResteasyClientProxy"
+        ]
+      }
     }
+  ],
+  "resources": [
+    { "glob": "META-INF/services/jakarta.ws.rs.ext.Providers" },
+    { "glob": "META-INF/services/jakarta.ws.rs.client.ClientBuilder" },
+    { "glob": "META-INF/services/jakarta.ws.rs.ext.RuntimeDelegate" }
   ]
 }

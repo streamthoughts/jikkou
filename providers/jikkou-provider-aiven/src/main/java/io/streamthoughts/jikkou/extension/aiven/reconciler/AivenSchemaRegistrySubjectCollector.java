@@ -27,9 +27,9 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientException;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaSubjectsResponse;
 import io.streamthoughts.jikkou.extension.aiven.collections.V1SchemaRegistrySubjectList;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -112,8 +112,8 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
             Optional<Throwable> exception = AsyncUtils.getException(result);
             if (exception.isPresent()) {
                 Throwable error = exception.get();
-                if (error instanceof RestClientException rce)
-                    throw rce;
+                if (error instanceof WebApplicationException wae)
+                    throw wae;
 
                 throw new AivenApiClientException("Failed to list schema registry subject versions", error);
             }
@@ -123,14 +123,14 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
                     .toList();
             return new V1SchemaRegistrySubjectList.Builder().withItems(items).build();
 
-        } catch (RestClientException e) {
+        } catch (WebApplicationException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER
                         .writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(e.getResponseEntity(JsonNode.class));
+                        .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
             } catch (JsonProcessingException ex) {
-                response = e.getResponseEntity();
+                response = e.getResponse().readEntity(String.class);
             }
             throw new AivenApiClientException(String.format(
                     "failed to list schema registry subject versions. %s:%n%s",

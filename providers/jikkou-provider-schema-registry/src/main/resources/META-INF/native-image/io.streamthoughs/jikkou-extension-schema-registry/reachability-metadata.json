@@ -11,6 +11,14 @@
     {
       "type": "java.io.Closeable",
       "allDeclaredMethods": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi",
+          "org.jboss.resteasy.client.jaxrs.internal.proxy.ResteasyClientProxy"
+        ]
+      }
     }
   ]
 }

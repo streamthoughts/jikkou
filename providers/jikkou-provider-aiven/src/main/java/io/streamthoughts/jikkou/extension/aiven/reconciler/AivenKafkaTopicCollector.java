@@ -31,9 +31,9 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicConfigInfo;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicInfoResponse;
 import io.streamthoughts.jikkou.extension.aiven.api.data.KafkaTopicListResponse;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -101,13 +101,13 @@ public class AivenKafkaTopicCollector extends ContextualExtension implements Col
             
             return new GenericResourceList.Builder<V1KafkaTopic>().withItems(items).build();
 
-        } catch (RestClientException e) {
+        } catch (WebApplicationException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(e.getResponseEntity(JsonNode.class));
+                    .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
             } catch (JsonProcessingException ex) {
-                response = e.getResponseEntity();
+                response = e.getResponse().readEntity(String.class);
             }
             throw new AivenApiClientException(String.format(
                 "Failed to list kafka topics. %s:%n%s",

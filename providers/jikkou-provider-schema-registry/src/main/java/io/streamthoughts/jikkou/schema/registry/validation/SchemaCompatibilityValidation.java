@@ -13,7 +13,6 @@ import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.DefaultAsyncSchemaRegistryApi;
@@ -25,6 +24,7 @@ import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
@@ -82,8 +82,8 @@ public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistr
             }
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            if (cause instanceof RestClientException clientException) {
-                ErrorResponse response = clientException.getResponseEntity(ErrorResponse.class);
+            if (cause instanceof WebApplicationException clientException) {
+                ErrorResponse response = clientException.getResponse().readEntity(ErrorResponse.class);
                 List<Integer> shippableErrors = List.of(ErrorCode.SUBJECT_NOT_FOUND, ErrorCode.VERSION_NOT_FOUND);
                 if (!shippableErrors.contains(response.errorCode())) {
                     fail(response.message());

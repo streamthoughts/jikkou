@@ -10,7 +10,6 @@ import static io.streamthoughts.jikkou.schema.registry.AbstractIntegrationTest.C
 
 import io.streamthoughts.jikkou.core.data.SchemaType;
 import io.streamthoughts.jikkou.http.client.RestClientBuilder;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
@@ -18,6 +17,8 @@ import io.streamthoughts.jikkou.schema.registry.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Assertions;
@@ -180,9 +181,10 @@ class AsyncSchemaRegistryApiTest {
         Mono<CompatibilityLevelObject> future = async.getSubjectCompatibilityLevel("unknown", false);
 
         // Then
-        RestClientException exception = Assertions.assertThrowsExactly(RestClientException.class, future::block);
+        WebApplicationException exception = Assertions.assertThrows(WebApplicationException.class, future::block);
 
-        ErrorResponse response = exception.getResponseEntity(ErrorResponse.class);
+        Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), exception.getResponse().getStatus());
+        ErrorResponse response = exception.getResponse().readEntity(ErrorResponse.class);
         Assertions.assertEquals(40408, response.errorCode());
         Assertions.assertEquals("Subject 'unknown' does not have subject-level compatibility configured", response.message());
     }

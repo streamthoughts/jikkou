@@ -16,7 +16,7 @@ import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.change.BaseChangeHandler;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.data.MessageErrorsResponse;
-import io.streamthoughts.jikkou.http.client.RestClientException;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -54,9 +54,9 @@ public abstract class AbstractChangeHandler extends BaseChangeHandler {
                     try {
                         supplier.get();
                         return ChangeMetadata.empty();
-                    } catch (RestClientException e) {
+                    } catch (WebApplicationException e) {
                         try {
-                            MessageErrorsResponse entity = e.getResponseEntity(MessageErrorsResponse.class);
+                            MessageErrorsResponse entity = e.getResponse().readEntity(MessageErrorsResponse.class);
                             if (entity.errors().size() == 1) {
                                 MessageErrorsResponse.Error error = entity.errors().getFirst();
                                 return new ChangeMetadata(new ChangeError(error.message(), error.status()));

@@ -21,12 +21,12 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
 import io.streamthoughts.jikkou.core.reconciler.change.BaseChangeHandler;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorCreateRequest;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
 import io.streamthoughts.jikkou.kafka.connect.api.data.ErrorResponse;
 import io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,8 +215,8 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
                 throwable = throwable.getCause();
             }
 
-            if (throwable instanceof RestClientException e) {
-                ErrorResponse error = e.getResponseEntity(ErrorResponse.class);
+            if (throwable instanceof WebApplicationException e) {
+                ErrorResponse error = e.getResponse().readEntity(ErrorResponse.class);
                 return new ChangeMetadata(new ChangeError(error.message(), error.errorCode()));
             }
             return ChangeMetadata.of(throwable);

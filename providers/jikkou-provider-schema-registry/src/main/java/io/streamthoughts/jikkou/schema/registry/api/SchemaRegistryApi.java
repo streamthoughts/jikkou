@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.api;
 
+import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityCheck;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityLevelObject;
 import io.streamthoughts.jikkou.schema.registry.api.data.CompatibilityObject;
@@ -32,6 +33,7 @@ import java.util.List;
  * REST API for Schema Registry implementation.
  */
 @Path("/")
+@Reflectable
 public interface SchemaRegistryApi extends AutoCloseable {
 
 
