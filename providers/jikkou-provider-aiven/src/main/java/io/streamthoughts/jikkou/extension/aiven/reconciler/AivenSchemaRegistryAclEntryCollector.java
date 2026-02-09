@@ -26,7 +26,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListSchemaRegistryAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.collections.V1SchemaRegistryAclEntryList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
-import io.streamthoughts.jikkou.http.client.RestClientException;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -88,13 +88,13 @@ public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1S
                     .collect(Collectors.toList());
             return new V1SchemaRegistryAclEntryList.Builder().withItems(items).build();
 
-        } catch (RestClientException e) {
+        } catch (WebApplicationException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(e.getResponseEntity(JsonNode.class));
+                        .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
             } catch (JsonProcessingException ex) {
-                response = e.getResponseEntity();
+                response = e.getResponse().readEntity(String.class);
             }
             throw new JikkouRuntimeException(String.format(
                     "failed to list schema registry acl entries. %s:%n%s",

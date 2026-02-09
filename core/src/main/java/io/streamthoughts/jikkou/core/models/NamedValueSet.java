@@ -8,7 +8,6 @@ package io.streamthoughts.jikkou.core.models;
 
 import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

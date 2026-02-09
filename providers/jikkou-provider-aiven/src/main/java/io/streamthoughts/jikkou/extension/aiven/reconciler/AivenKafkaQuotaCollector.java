@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaQuotaResponse;
 import io.streamthoughts.jikkou.extension.aiven.collections.V1KafkaQuotaList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaQuota;
-import io.streamthoughts.jikkou.http.client.RestClientException;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -88,13 +88,13 @@ public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
                     .collect(Collectors.toList());
             return new V1KafkaQuotaList.Builder().withItems(items).build();
 
-        } catch (RestClientException e) {
+        } catch (WebApplicationException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(e.getResponseEntity(JsonNode.class));
+                        .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
             } catch (JsonProcessingException ex) {
-                response = e.getResponseEntity();
+                response = e.getResponse().readEntity(String.class);
             }
             throw new AivenApiClientException(String.format(
                     "failed to list kafka quotas. %s:%n%s",

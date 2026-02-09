@@ -11,6 +11,14 @@
     {
       "type": "java.io.Closeable",
       "allDeclaredMethods": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "io.streamthoughts.jikkou.kafka.connect.api.KafkaConnectApi",
+          "org.jboss.resteasy.client.jaxrs.internal.proxy.ResteasyClientProxy"
+        ]
+      }
     }
   ]
 }

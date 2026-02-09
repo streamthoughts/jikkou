@@ -11,6 +11,7 @@ import static io.streamthoughts.jikkou.core.models.CoreAnnotations.JKKOU_IO_MANA
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
@@ -45,7 +46,11 @@ public abstract class AbstractResourceReader implements ResourceReader {
             return resource;
         }
 
-        resource.getMetadata().addAnnotationIfAbsent(JKKOU_IO_MANAGED_BY_LOCATION, location.toString());
-        return resource;
+        ObjectMeta metadata = resource.optionalMetadata()
+                .map(ObjectMeta::toBuilder)
+                .orElseGet(ObjectMeta::builder)
+                .build();
+        metadata.addAnnotationIfAbsent(JKKOU_IO_MANAGED_BY_LOCATION, location.toString());
+        return resource.withMetadata(metadata);
     }
 }

@@ -21,7 +21,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClient;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ServiceInformationResponse;
-import io.streamthoughts.jikkou.http.client.RestClientException;
+import jakarta.ws.rs.WebApplicationException;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -99,13 +99,13 @@ public final class AivenServiceHealthIndicator implements HealthIndicator {
                     .details("resource", getUrn())
                     .details("service", details)
                     .build();
-        } catch (RestClientException e) {
+        } catch (WebApplicationException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(e.getResponseEntity(JsonNode.class));
+                        .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
             } catch (JsonProcessingException ex) {
-                response = e.getResponseEntity();
+                response = e.getResponse().readEntity(String.class);
             }
             return new Health.Builder()
                     .down()

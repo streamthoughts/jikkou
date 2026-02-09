@@ -16,7 +16,6 @@ import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.reconciler.Collector;
 import io.streamthoughts.jikkou.core.selector.Selector;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
@@ -29,7 +28,7 @@ import io.streamthoughts.jikkou.schema.registry.collections.V1SchemaRegistrySubj
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.Modes;
 import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
@@ -138,11 +137,8 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
         }
     }
 
-    private static boolean isNotFound(final RestClientException exception) {
-        return exception.response()
-                .map(Response::getStatus)
-                .filter(status -> status.equals(404))
-                .isPresent();
+    private static boolean isNotFound(final WebApplicationException exception) {
+        return exception.getResponse().getStatus() == 404;
     }
 
     SchemaRegistrySubjectCollector prettyPrintSchema(final boolean prettyPrintSchema) {
@@ -151,7 +147,7 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     }
 
     private static <T> Mono<T> emptyOn404(Throwable t) {
-        return t instanceof RestClientException rce && isNotFound(rce)
+        return t instanceof WebApplicationException wae && isNotFound(wae)
             ? Mono.empty()
             : Mono.error(t);
     }

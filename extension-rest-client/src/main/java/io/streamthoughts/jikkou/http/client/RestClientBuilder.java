@@ -9,16 +9,14 @@ package io.streamthoughts.jikkou.http.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
-import io.streamthoughts.jikkou.http.client.internal.ProxyInvocationHandler;
 import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
 import io.streamthoughts.jikkou.http.client.ssl.SSLContextFactory;
 import io.streamthoughts.jikkou.http.client.ssl.SSLUtils;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.ext.ContextResolver;
-import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,42 +33,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
-import org.glassfish.jersey.logging.LoggingFeature;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
- * This class is used to abstract the way a REST API is build based on a given interface.
+ * Builder for creating REST API clients based on JAX-RS annotated interfaces.
+ * Uses RESTEasy's native proxy client API.
  */
 public class RestClientBuilder {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(RestClientBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestClientBuilder.class);
 
     public static final AllowAllHostNameVerifier NO_HOST_NAME_VERIFIER = new AllowAllHostNameVerifier();
 
     private URI baseUri;
-
     private boolean followRedirects;
-
-    private Map<String, List<Object>> headers;
-
+    private final Map<String, List<Object>> headers = new HashMap<>();
     private boolean enableClientDebugging = false;
-
-    private final ClientBuilder clientBuilder;
-
-    private SSLContext sslContext;
-
+    private final ResteasyClientBuilder clientBuilder;
     private ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
 
     /**
@@ -82,15 +70,12 @@ public class RestClientBuilder {
         return new RestClientBuilder();
     }
 
-    /**
-     * Creates a new {@link RestClientBuilder} instance.
-     */
     private RestClientBuilder() {
-        this.clientBuilder = ClientBuilder.newBuilder();
+        this.clientBuilder = (ResteasyClientBuilder) ClientBuilder.newBuilder();
     }
 
     /**
-     * Sets the base url.
+     * Sets the base URI.
      *
      * @return {@code this}.
      */
@@ -99,18 +84,17 @@ public class RestClientBuilder {
     }
 
     /**
-     * Sets the base url.
+     * Sets the base URI.
      *
      * @return {@code this}.
      */
     public RestClientBuilder baseUri(URI uri) {
         this.baseUri = uri;
-        this.headers = new HashMap<>();
         return this;
     }
 
     /**
-     * Sets the base url.
+     * Sets the base URL.
      *
      * @return {@code this}.
      */
@@ -171,6 +155,7 @@ public class RestClientBuilder {
 
     public RestClientBuilder followRedirects(boolean followRedirects) {
         this.followRedirects = followRedirects;
+        // RESTEasy follows redirects by default; setting is applied via property at build time
         return this;
     }
 
@@ -221,31 +206,28 @@ public class RestClientBuilder {
                 sslConfig.trustStoreLocation(),
                 sslConfig.trustStorePassword().toCharArray(),
                 sslConfig.trustStoreType(),
-                KeyManagerFactory.getDefaultAlgorithm()
-            );
-        } catch (CertificateException |
-                 NoSuchAlgorithmException |
-                 KeyStoreException |
-                 IOException e) {
+                KeyManagerFactory.getDefaultAlgorithm());
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
             LOG.error("Could not create trust managers for Client Certificate authentication.", e);
             throw new JikkouRuntimeException(e);
         }
+
         KeyManager[] keyManagers;
         try {
             keyManagers = SSLUtils.createKeyManagers(
                 sslConfig.keyStoreLocation(),
                 sslConfig.keyStorePassword().toCharArray(),
                 sslConfig.keyStoreType(),
-                KeyManagerFactory.getDefaultAlgorithm()
-            );
-        } catch (CertificateException |
-                 NoSuchAlgorithmException |
-                 UnrecoverableKeyException |
-                 KeyStoreException |
-                 IOException e) {
+                KeyManagerFactory.getDefaultAlgorithm());
+        } catch (CertificateException
+                 | NoSuchAlgorithmException
+                 | UnrecoverableKeyException
+                 | KeyStoreException
+                 | IOException e) {
             LOG.error("Could not create key managers for Client Certificate authentication.", e);
             throw new JikkouRuntimeException(e);
         }
+
         SSLContextFactory sslContextFactory = new SSLContextFactory();
         clientBuilder.sslContext(sslContextFactory.getSSLContext(keyManagers, trustManagers));
 
@@ -255,54 +237,41 @@ public class RestClientBuilder {
     /**
      * Builds a new client for the given resource interface.
      *
-     * @param resourceInterface the interface that defines REST API methods for use
-     * @return a new instance of an implementation of this REST interface that can be used for making requests to the server.
+     * @param resourceInterface the interface that defines REST API methods
+     * @return a new instance implementing the REST interface
      */
     public <T> T build(Class<T> resourceInterface) {
         if (baseUri == null) {
             throw new IllegalStateException("baseUri has not been set");
         }
 
-        ClientBuilder cb = clientBuilder;
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        // Register ObjectMapper provider
+        clientBuilder.register(new ObjectMapperContextResolver(objectMapper));
 
-        LoggingFeature.LoggingFeatureBuilder builder = LoggingFeature.builder()
-                .withLogger(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME));
-
-        if (enableClientDebugging) {
-            builder = builder
-                    .level(Level.INFO)
-                    .verbosity(LoggingFeature.Verbosity.PAYLOAD_ANY);
+        // Register headers filter
+        if (!headers.isEmpty()) {
+            clientBuilder.register(new HeadersRequestFilter(headers));
         }
-        cb = cb.register(builder.build());
 
-        Client client = cb
-                .register(new CustomJacksonMapperProvider(objectMapper))
-                .register(new JacksonJsonProvider())
-                .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
-                .build();
+        // Register logging filter
+        if (enableClientDebugging) {
+            clientBuilder.register(new LoggingRequestFilter());
+        }
 
-        WebTarget webTarget = client.target(baseUri);
-        webTarget.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
+        Client client = clientBuilder.build();
+        ResteasyWebTarget target = (ResteasyWebTarget) client.target(baseUri);
+        target.property("org.jboss.resteasy.follow.redirects", followRedirects);
 
-        MultivaluedHashMap<String, Object> inboundHeaders = new MultivaluedHashMap<>();
-        inboundHeaders.putAll(headers);
-
-        return ProxyInvocationHandler.newResource(
-                resourceInterface,
-                client,
-                webTarget,
-                inboundHeaders
-        );
+        return target.proxy(resourceInterface);
     }
 
-    @Provider
-    public static class CustomJacksonMapperProvider implements ContextResolver<ObjectMapper> {
-
+    /**
+     * ContextResolver that provides a custom ObjectMapper to RESTEasy.
+     */
+    public static class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
         private final ObjectMapper mapper;
 
-        public CustomJacksonMapperProvider(final @NotNull ObjectMapper mapper) {
+        public ObjectMapperContextResolver(@NotNull ObjectMapper mapper) {
             this.mapper = Objects.requireNonNull(mapper, "objectMapper cannot be null");
         }
 
@@ -313,17 +282,43 @@ public class RestClientBuilder {
     }
 
     /**
-     * A {@link HostnameVerifier} that accept all certificates.
+     *
+     * ClientRequestFilter that injects custom headers into requests.
+     */
+    private static class HeadersRequestFilter implements ClientRequestFilter {
+        private final Map<String, List<Object>> headers;
+
+        HeadersRequestFilter(Map<String, List<Object>> headers) {
+            this.headers = headers;
+        }
+
+        @Override
+        public void filter(ClientRequestContext requestContext) {
+            headers.forEach((name, values) ->
+                values.forEach(value -> requestContext.getHeaders().add(name, value)));
+        }
+    }
+
+    /**
+     * ClientRequestFilter that logs HTTP requests.
+     */
+    private static class LoggingRequestFilter implements ClientRequestFilter {
+        @Override
+        public void filter(ClientRequestContext requestContext) {
+            LOG.info("HTTP Request: {} {}", requestContext.getMethod(), requestContext.getUri());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Headers: {}", requestContext.getHeaders());
+            }
+        }
+    }
+
+    /**
+     * A {@link HostnameVerifier} that accepts all certificates.
      */
     public static class AllowAllHostNameVerifier implements HostnameVerifier {
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean verify(final String hostname, final SSLSession sslSession) {
             return true;
         }
     }
-
 }

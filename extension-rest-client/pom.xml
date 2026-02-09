@@ -24,17 +24,11 @@
 
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <jersey.version>4.0.0</jersey.version>
+        <resteasy.version>6.2.11.Final</resteasy.version>
         <okhttp.version>5.3.2</okhttp.version>
-        <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>${jul-to-slf4j.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>jikkou-resource-generator</artifactId>
@@ -45,25 +39,17 @@
             <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- RESTEasy JAX-RS Client -->
         <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>${resteasy.version}</version>
         </dependency>
+        <!-- RESTEasy Jackson Provider -->
         <dependency>
-            <groupId>org.glassfish.jersey.inject</groupId>
-            <artifactId>jersey-hk2</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-proxy-client</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <version>${resteasy.version}</version>
         </dependency>
         <!-- START dependencies for test -->
         <dependency>

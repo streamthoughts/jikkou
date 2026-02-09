@@ -25,7 +25,7 @@ import io.streamthoughts.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.streamthoughts.jikkou.extension.aiven.api.data.ListKafkaAclResponse;
 import io.streamthoughts.jikkou.extension.aiven.collections.V1KafkaTopicAclEntryList;
 import io.streamthoughts.jikkou.extension.aiven.models.V1KafkaTopicAclEntry;
-import io.streamthoughts.jikkou.http.client.RestClientException;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -88,13 +88,13 @@ public class AivenKafkaTopicAclEntryCollector implements Collector<V1KafkaTopicA
 
             return new V1KafkaTopicAclEntryList.Builder().withItems(items).build();
 
-        } catch (RestClientException e) {
+        } catch (WebApplicationException e) {
             String response;
             try {
                 response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(e.getResponseEntity(JsonNode.class));
+                        .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
             } catch (JsonProcessingException ex) {
-                response = e.getResponseEntity();
+                response = e.getResponse().readEntity(String.class);
             }
             throw new AivenApiClientException(String.format(
                     "failed to list kafka acl entries. %s:%n%s",

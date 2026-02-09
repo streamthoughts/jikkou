@@ -21,7 +21,6 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeMetadata;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResponse;
 import io.streamthoughts.jikkou.core.reconciler.TextDescription;
-import io.streamthoughts.jikkou.http.client.RestClientException;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.streamthoughts.jikkou.schema.registry.api.SchemaRegistryApi;
@@ -34,6 +33,7 @@ import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeDescri
 import io.streamthoughts.jikkou.schema.registry.change.SchemaSubjectChangeOptions;
 import io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels;
 import io.streamthoughts.jikkou.schema.registry.model.Modes;
+import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -209,8 +209,8 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                 throwable = throwable.getCause();
             }
 
-            if (throwable instanceof RestClientException e) {
-                ErrorResponse error = e.getResponseEntity(ErrorResponse.class);
+            if (throwable instanceof WebApplicationException e) {
+                ErrorResponse error = e.getResponse().readEntity(ErrorResponse.class);
                 return new ChangeMetadata(new ChangeError(error.message(), error.errorCode()));
             }
             return ChangeMetadata.of(throwable);
