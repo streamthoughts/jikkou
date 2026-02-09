@@ -51,17 +51,32 @@ public class DeleteSchemaSubjectChangeHandler extends AbstractSchemaSubjectChang
         for (ResourceChange change : changes) {
             final String subject = change.getMetadata().getName();
             SchemaSubjectChangeOptions options = getSchemaSubjectChangeOptions(change);
+            // Always perform a soft delete first.
             Mono<Void> mono = api
-                    .deleteSubjectVersions(subject, options.permanentDelete())
+                    .deleteSubjectVersions(subject, false)
                     .handle((versions, sink) -> {
                         if (LOG.isInfoEnabled()) {
                             LOG.info(
-                                    "Deleted all versions for Schema Registry subject '{}': {}",
+                                    "Soft-deleted all versions for Schema Registry subject '{}': {}",
                                     subject,
                                     versions
                             );
                         }
                     });
+            // If permanent delete is requested, follow with a hard delete.
+            if (options.permanentDelete()) {
+                mono = mono.then(api
+                        .deleteSubjectVersions(subject, true)
+                        .handle((versions, sink) -> {
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info(
+                                        "Hard-deleted all versions for Schema Registry subject '{}': {}",
+                                        subject,
+                                        versions
+                                );
+                            }
+                        }));
+            }
             results.add(toChangeResponse(change, mono.toFuture()));
         }
         return results;
