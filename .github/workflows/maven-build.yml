@@ -8,9 +8,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, hotfix/* ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, hotfix/* ]
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRO: 'zulu'

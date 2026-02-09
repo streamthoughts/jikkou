@@ -116,7 +116,7 @@
         <kafka.version>3.9.1</kafka.version>
         <picocli.version>4.7.6</picocli.version>
         <jackson.version>2.18.3</jackson.version>
-        <jinjava.version>2.8.2</jinjava.version>
+        <jinjava.version>2.8.3</jinjava.version>
         <lombok.version>1.18.38</lombok.version>
         <config.version>1.4.3</config.version>
         <annotations.version>24.1.0</annotations.version>
@@ -149,8 +149,6 @@
                 <version>${avro.version}</version>
             </dependency>
             <dependency>
-<<<<<<< HEAD
-=======
                 <groupId>org.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
                 <version>${lz4.version}</version>
@@ -161,7 +159,16 @@
                 <version>${netty.version}</version>
             </dependency>
             <dependency>
->>>>>>> ce020a67 (fix(deps): upgrade vulnerable dependencies (CVE-2024-47561, CVE-2025-12183, CVE-2025-55163))
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.graalvm.sdk</groupId>
                 <artifactId>graal-sdk</artifactId>
                 <version>${graal-sdk.version}</version>

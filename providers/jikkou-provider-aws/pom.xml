@@ -21,7 +21,6 @@
 
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <avro.version>1.11.3</avro.version>
         <maven-clean-plugin.directory>
             ${project.basedir}/src/main/java/io/streamthoughts/jikkou/aws/models
         </maven-clean-plugin.directory>
@@ -58,7 +57,6 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
