@@ -51,14 +51,14 @@ jobs:
 
       - name: 'Set up Maven settings'
         run: |
-          cat > ./settings.xml << 'EOF'
+          cat > ./settings.xml << EOF
           <settings>
             <interactiveMode>false</interactiveMode>
             <servers>
               <server>
                 <id>sonatype-central</id>
-                <username>${env.OSSRH_USERNAME}</username>
-                <password>${env.OSSRH_PASSWORD}</password>
+                <username>${OSSRH_USERNAME}</username>
+                <password>${OSSRH_PASSWORD}</password>
               </server>
             </servers>
           </settings>
