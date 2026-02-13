@@ -85,7 +85,7 @@ public final class SchemaRegistryHealthIndicator implements HealthIndicator {
                 builder = builder.details("http.response.status", response.getStatus());
             }
             return builder
-                    .details("schema.registry.url", config.url())
+                    .details("schema.registry.url", config.urls())
                     .build();
         } finally {
             api.close();

@@ -29,6 +29,8 @@ import io.streamthoughts.jikkou.schema.registry.validation.CompatibilityLevelVal
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
 import io.streamthoughts.jikkou.schema.registry.validation.SubjectNameRegexValidation;
 import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
+import java.util.Arrays;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -83,8 +85,12 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
     @Override
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         super.configure(configuration);
+        List<String> urls = Arrays.stream(Config.SCHEMA_REGISTRY_URL.get(configuration).split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .toList();
         this.clientConfig = new SchemaRegistryClientConfig(
-            Config.SCHEMA_REGISTRY_URL.get(configuration),
+            urls,
             Config.SCHEMA_REGISTRY_VENDOR.get(configuration),
             Config.SCHEMA_REGISTRY_AUTH_METHOD.get(configuration),
             () -> Config.SCHEMA_REGISTRY_BASIC_AUTH_USER.get(configuration),

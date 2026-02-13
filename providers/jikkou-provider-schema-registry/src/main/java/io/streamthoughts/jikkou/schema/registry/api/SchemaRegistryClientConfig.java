@@ -7,10 +7,11 @@
 package io.streamthoughts.jikkou.schema.registry.api;
 
 import io.streamthoughts.jikkou.http.client.ssl.SSLConfig;
+import java.util.List;
 import java.util.function.Supplier;
 
 public record SchemaRegistryClientConfig(
-    String url,
+    List<String> urls,
     String vendor,
     AuthMethod authMethod,
     Supplier<String> basicAuthUser,
@@ -19,4 +20,12 @@ public record SchemaRegistryClientConfig(
     Boolean debugLoggingEnabled
 ) {
 
+    /**
+     * Returns the first URL from the list.
+     *
+     * @return the first configured URL.
+     */
+    public String firstUrl() {
+        return urls.getFirst();
+    }
 }

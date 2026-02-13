@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.health.Health;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.schema.registry.BaseExtensionProviderIT;
 import java.time.Duration;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class SchemaRegistryHealthIndicatorTest extends BaseExtensionProviderIT {
         Health expected = Health.builder()
             .up()
             .name("schemaregistry")
-            .details("schema.registry.url", schemaRegistryUrl())
+            .details("schema.registry.url", List.of(schemaRegistryUrl()))
             .details("http.response.status", 200)
             .build();
         Assertions.assertEquals(ApiHealthResult.from(expected), result);
