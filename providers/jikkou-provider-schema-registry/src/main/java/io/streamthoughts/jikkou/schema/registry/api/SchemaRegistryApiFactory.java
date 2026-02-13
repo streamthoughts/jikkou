@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.common.utils.Encoding;
 import io.streamthoughts.jikkou.http.client.RestClientBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +24,24 @@ public final class SchemaRegistryApiFactory {
 
     /**
      * Creates a new {@link SchemaRegistryApi} for the given configuration.
+     * If multiple URLs are configured, a {@link FailoverSchemaRegistryApi} is returned
+     * that tries each URL in order on connection failure.
      *
      * @param config the configuration.
      * @return a new {@link SchemaRegistryApi} instance.
      */
     public static SchemaRegistryApi create(SchemaRegistryClientConfig config) {
-        URI baseUri = URI.create(config.url());
+        List<String> urls = config.urls();
+        if (urls.size() == 1) {
+            return createForUrl(URI.create(urls.getFirst()), config);
+        }
+        List<SchemaRegistryApi> delegates = urls.stream()
+                .map(url -> createForUrl(URI.create(url), config))
+                .toList();
+        return new FailoverSchemaRegistryApi(delegates);
+    }
+
+    private static SchemaRegistryApi createForUrl(URI baseUri, SchemaRegistryClientConfig config) {
         LOG.info("Create new Schema Registry client for: {}", baseUri);
         RestClientBuilder builder = RestClientBuilder
                 .newBuilder()

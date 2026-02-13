@@ -42,7 +42,7 @@ class SchemaRegistryApiFactoryTest {
                 .build();
         schemaRegistryMockServer.setDispatcher(schemaRegistryHTTPDispatcher);
         SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
-                String.format("http://%s:%s", schemaRegistryMockServer.getHostName(), schemaRegistryMockServer.getPort()),
+                List.of(String.format("http://%s:%s", schemaRegistryMockServer.getHostName(), schemaRegistryMockServer.getPort())),
                 "generic",
                 AuthMethod.BASICAUTH,
                 () -> "username",
@@ -62,6 +62,94 @@ class SchemaRegistryApiFactoryTest {
         String authorization = schemaRegistryMockServer.takeRequest().getHeaders().get("Authorization");
         // result should correspond to base64 encoded string "username:password" prefixed with "Basic"
         Assertions.assertEquals(authorization, "Basic dXNlcm5hbWU6cGFzc3dvcmQ=");
+    }
+
+    @Test
+    @DisplayName("Should failover to second URL when first server is down")
+    public void shouldFailoverToSecondUrl() throws IOException {
+        // Given
+        MockWebServer downServer = new MockWebServer();
+        downServer.start();
+        int downPort = downServer.getPort();
+        downServer.close(); // shut it down to simulate unreachable server
+
+        MockWebServer upServer = new MockWebServer();
+        upServer.start();
+        HttpPathBasedDispatcher dispatcher = HttpPathBasedDispatcher.builder()
+                .forPath("/subjects", new MockResponse.Builder()
+                        .code(200)
+                        .addHeader("Content-Type", "application/vnd.schemaregistry.v1+json")
+                        .body("[\"subject-1\",\"subject-2\"]")
+                        .build())
+                .build();
+        upServer.setDispatcher(dispatcher);
+
+        SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
+                List.of(
+                        String.format("http://localhost:%s", downPort),
+                        String.format("http://%s:%s", upServer.getHostName(), upServer.getPort())
+                ),
+                "generic",
+                AuthMethod.NONE,
+                () -> null,
+                () -> null,
+                () -> SSLConfig.from(Configuration.empty()),
+                false
+        );
+
+        // When
+        List<String> subjects;
+        try (SchemaRegistryApi schemaRegistryApi = SchemaRegistryApiFactory.create(config)) {
+            subjects = schemaRegistryApi.listSubjects();
+        }
+
+        // Then
+        Assertions.assertNotNull(subjects);
+        Assertions.assertEquals(List.of("subject-1", "subject-2"), subjects);
+
+        upServer.close();
+    }
+
+    @Test
+    @DisplayName("Should create single client when only one URL is configured")
+    public void shouldCreateSingleClientForOneUrl() {
+        // Given
+        SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
+                List.of(String.format("http://%s:%s", schemaRegistryMockServer.getHostName(), schemaRegistryMockServer.getPort())),
+                "generic",
+                AuthMethod.NONE,
+                () -> null,
+                () -> null,
+                () -> SSLConfig.from(Configuration.empty()),
+                false
+        );
+
+        // When
+        try (SchemaRegistryApi api = SchemaRegistryApiFactory.create(config)) {
+            // Then - should not be a FailoverSchemaRegistryApi
+            Assertions.assertFalse(api instanceof FailoverSchemaRegistryApi);
+        }
+    }
+
+    @Test
+    @DisplayName("Should create failover client when multiple URLs are configured")
+    public void shouldCreateFailoverClientForMultipleUrls() {
+        // Given
+        SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
+                List.of("http://host-a:8081", "http://host-b:8081"),
+                "generic",
+                AuthMethod.NONE,
+                () -> null,
+                () -> null,
+                () -> SSLConfig.from(Configuration.empty()),
+                false
+        );
+
+        // When
+        try (SchemaRegistryApi api = SchemaRegistryApiFactory.create(config)) {
+            // Then - should be a FailoverSchemaRegistryApi
+            Assertions.assertInstanceOf(FailoverSchemaRegistryApi.class, api);
+        }
     }
 
     @AfterAll

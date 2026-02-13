@@ -81,7 +81,7 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
         this.config = config;
         this.schemaRegistrySubjectFactory = new V1SchemaRegistrySubjectFactory(
             config.vendor(),
-            config.url(),
+            config.firstUrl(),
             prettyPrintSchema
         );
     }
