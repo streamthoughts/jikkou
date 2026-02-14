@@ -21,21 +21,34 @@ import javax.annotation.Nullable;
  *
  * @param params    the query parameters.
  * @param resources the resource entities.
+ * @param provider  the provider name to use for reconciliation.
  */
 public record ResourceReconcileRequest(
         @Nullable @JsonProperty("params") Params params,
-        @Nullable @JsonProperty("resources") List<? extends HasMetadata> resources) {
+        @Nullable @JsonProperty("resources") List<? extends HasMetadata> resources,
+        @Nullable @JsonProperty("provider") String provider) {
 
     @ConstructorProperties({
             "params",
-            "resources"
+            "resources",
+            "provider"
     })
     public ResourceReconcileRequest {
     }
 
     // Empty constructor
     public ResourceReconcileRequest() {
-        this(null, null);
+        this(null, null, null);
+    }
+
+    /**
+     * Creates a new {@link ResourceReconcileRequest} without provider.
+     *
+     * @param params    the query parameters.
+     * @param resources the resource entities.
+     */
+    public ResourceReconcileRequest(@Nullable Params params, @Nullable List<? extends HasMetadata> resources) {
+        this(params, resources, null);
     }
 
     @Override
