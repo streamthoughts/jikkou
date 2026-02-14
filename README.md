@@ -1,120 +1,76 @@
-<h1 style="text-align: center;">Jikkou: The Open Source Resource as Code framework for Apache Kafka&reg;.</h1>
-
-<p style="text-align: center;">
-  <img src="./assets/jikkou-logo-title.png" alt="Jikkou Logo"/>
-  <h2 style="text-align: center;">
-    Developed by Kafka ❤️, for all Kafka users!
-  </h2>
+<p align="center">
+  <img src="./assets/jikkou-logo-title.png" alt="Jikkou Logo" width="400"/>
 </p>
 
-<p style="text-align: center;">
-
-![](https://img.shields.io/github/license/streamthoughts/jikkou)
-![](https://img.shields.io/github/issues/streamthoughts/jikkou)
-![](https://img.shields.io/github/forks/streamthoughts/jikkou)
-![](https://img.shields.io/github/stars/streamthoughts/jikkou)
-![](https://github.com/streamthoughts/jikkou/actions/workflows/maven-build.yml/badge.svg)
-
-![Reliability_rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=reliability_rating)
-![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=sqale_rating)
-![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=vulnerabilities)
-![Coverage](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=coverage)
-
-[![Slack Community](https://img.shields.io/badge/Slack-Join%20Community-c92760?logo=slack)](https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA)
-[![Website](https://img.shields.io/badge/Wesite-Jikkou-c92760)](https://streamthoughts.github.io/jikkou/)
-
+<h3 align="center">Resource as Code for Apache Kafka</h3>
+<p align="center">
+  Declare. Apply. Automate.<br/>
+  Manage your Kafka resources the same way you manage your infrastructure.
 </p>
 
-See: [official documentation](https://streamthoughts.github.io/jikkou/)
-
-<img src="./assets/demo.gif" alt="Jikkou Demonstration"/>
-
-## Do You Like This Project? ⭐
-
-Please consider giving us a star ⭐ on GitHub. Your stars motivate us to persistently improve and help other developers discover our project. ![](https://img.shields.io/github/stars/streamthoughts/jikkou)
-
-## Introduction
-
-**[Jikkou](https://github.com/streamthoughts/jikkou)** (jikkō / 実行) is an open-source tool built to provide an efficient
-and easy way to manage, automate, and provision resources on your event-stream platform.
-
-Developed by Kafka ❤️, Jikkou aims to streamline daily operations on [Apache Kafka](https://kafka.apache.org/documentation/), ensuring that platform governance is no longer a boring and tedious task for both **Developers** and **Administrators**.
-
-Jikkou enables a declarative management approach of **Topics**, **ACLs**, **Quotas**, **Schemas**, **Connectors** and even more with the use of YAML files called **_Resource Definitions_**.
-
-Taking inspiration from `kubectl` and Kubernetes resource definition files, Jikkou offers an intuitive and user-friendly approach to configuration management.
-
-<p style="text-align: center;">
-  <img src="./docs/content/en/docs/Overview/jikkou-architecture-overview.png" alt="Jikkou Logo"/>
+<p align="center">
+  <a href="https://github.com/streamthoughts/jikkou/actions/workflows/maven-build.yml"><img src="https://github.com/streamthoughts/jikkou/actions/workflows/maven-build.yml/badge.svg" alt="Build Status"/></a>
+  <a href="https://github.com/streamthoughts/jikkou/blob/main/LICENSE"><img src="https://img.shields.io/github/license/streamthoughts/jikkou" alt="License"/></a>
+  <a href="https://github.com/streamthoughts/jikkou/releases"><img src="https://img.shields.io/github/v/release/streamthoughts/jikkou?color=blue&label=latest" alt="Release"/></a>
+  <a href="https://github.com/streamthoughts/jikkou/stargazers"><img src="https://img.shields.io/github/stars/streamthoughts/jikkou?style=flat" alt="Stars"/></a>
 </p>
 
-Jikkou can be used with [Apache Kafka](https://kafka.apache.org/), [Aiven](https://aiven.io/kafka), [MSK](https://aws.amazon.com/fr/msk/), [Confluent Cloud](https://www.confluent.io/confluent-cloud/), [Redpanda](https://redpanda.com/), etc.
+<p align="center">
+  <a href="https://sonarcloud.io/dashboard?id=streamthoughts_jikkou"><img src="https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=reliability_rating" alt="Reliability"/></a>
+  <a href="https://sonarcloud.io/dashboard?id=streamthoughts_jikkou"><img src="https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=sqale_rating" alt="Maintainability"/></a>
+  <a href="https://sonarcloud.io/dashboard?id=streamthoughts_jikkou"><img src="https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_jikkou&metric=coverage" alt="Coverage"/></a>
+</p>
 
+<p align="center">
+  <a href="https://jikkou.io/">Documentation</a> &bull;
+  <a href="https://jikkou.io/docs/install/">Install</a> &bull;
+  <a href="https://jikkou.io/docs/tutorials/">Tutorials</a> &bull;
+  <a href="https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA">Slack</a>
+</p>
 
-## 🛠️ Installation
+---
 
-The latest stable release of jikkou (x86) for Linux, and macOS can be retrieved via https://sdkman.io/[SDKMan]:
+**Jikkou** (jikkou / 実行 — *execution* in Japanese) is an open-source tool that lets you manage Apache Kafka resources declaratively using YAML files, the same way `kubectl` manages Kubernetes resources.
+
+Stop writing scripts. Stop clicking through UIs. Define your desired state, and Jikkou makes it happen.
+
+<p align="center">
+  <img src="./assets/demo.gif" alt="Jikkou in action" width="800"/>
+</p>
+
+## Why Jikkou?
+
+| | |
+|---|---|
+| **Declarative** | Define Topics, ACLs, Schemas, Connectors, and Quotas as code in simple YAML files |
+| **GitOps-Ready** | Version-control your Kafka configuration and automate changes through CI/CD |
+| **Stateless** | No database needed — Jikkou uses your Kafka platform as the source of truth |
+| **Safe** | Built-in dry-run mode, validations, and reconciliation engine prevent accidents |
+| **Extensible** | Plugin-based architecture with providers, validators, transformations, and templates |
+| **Multi-Platform** | Works with Apache Kafka, Confluent Cloud, Aiven, Amazon MSK, Redpanda, and more |
+
+## Quick Start
+
+### Install
 
 ```bash
+# Via SDKMan (recommended)
 sdk install jikkou
+
+# Or via Docker
+docker pull streamthoughts/jikkou
 ```
 
-Alternatively, the latest stable release of jikkou (x86) for Linux, and macOS can be downloaded from  https://github.com/streamthoughts/jikkou/releases/latest[GitHub Releases]
+> See the full [installation guide](https://jikkou.io/docs/install/) for native binaries, Homebrew, and more.
 
-Below are the convenience links for the base downloads of Jikkou.
-
-| Platform | Link                                                                                                                                              |
-|----------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| Linux    | ⬇️ [download (jikkou-0.35.0-linux-x86_64.zip)](https://github.com/streamthoughts/jikkou/releases/download/v0.35.0/jikkou-0.35.0-linux-x86_64.zip) |
-| macOS    | ⬇️ [download (jikkou-0.35.0-osx-x86_64.zip)](https://github.com/streamthoughts/jikkou/releases/download/v0.35.0/jikkou-0.35.0-osx-x86_64.zip)     |
-
-Download the jikkou binary from the [releases page](https://github.com/streamthoughts/jikkou/releases), uncompress and copy to the desired location.
-
-```bash
-# Download the latest stable release
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.35.0/jikkou-0.35.0-linux-x86_64.zip
-
-# Uncompress
-unzip jikkou-0.35.0-linux-x86_64.zip
-
-# Copy to the desired location
-cp jikkou-0.35.0-linux-x86_64/bin/jikkou $HOME/.local/bin
-```
-
-Finally, Jikkou is can also be retrieved :
-
-* As a **fatJar** from [Maven Central](https://repo.maven.apache.org/maven2/io/streamthoughts/jikkou/0.35.0/)
-* As a **Docker Image** from [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou).
-
-Note, it is recommended to install the bash/zsh completion script `jikkou_completion`:
-
-```bash
-wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion . jikkou_completion
-```
-
-or alternatively, run the following command for generation the completion script.
-
-```bash
-source <(jikkou generate-completion)
-```
-
-  **WARNING:** If you are using macOS you may need to remove the quarantine attribute from the bits before you can use them To do this, run the following: `sudo xattr -r -d com.apple.quarantine path/to/jikkou/folder/`
-
-## Overview
-
-Here is an example of how to create and manage a _Kafka topic_ using Jikkou:
-
-* Create a resource file _kafka-topics.yaml_:
-kafka-topics.yaml:::
+### Define a Kafka topic
 
 ```yaml
-# file:./kafka-topics.yaml
+# kafka-topics.yaml
 apiVersion: 'kafka.jikkou.io/v1beta2'
 kind: 'KafkaTopic'
 metadata:
-  name: 'my-first-topic-with-jikkou'
-  labels: {}
-  annotations: {}
+  name: 'my-topic'
 spec:
   partitions: 12
   replicas: 3
@@ -122,133 +78,110 @@ spec:
     min.insync.replicas: 2
 ```
 
-* Then run the following command:
+### Apply it
 
 ```bash
-$ jikkou apply --files ./kafka-topics.yaml
+jikkou apply --files ./kafka-topics.yaml
 ```
 
-Jikkou will then take care of computing and applying the necessary changes directly to your cluster.
-
-_(output)_:
+That's it. Jikkou computes the diff and applies only the necessary changes:
 
 ```
-TASK [CREATE] Create a new topic my-first-topic-with-jikkou (partitions=12, replicas=3) - CHANGED **********************
+TASK [CREATE] Create a new topic my-topic (partitions=12, replicas=3) - CHANGED
+EXECUTION in 2s 661ms
+ok: 0, created: 1, altered: 0, deleted: 0, failed: 0
 ```
 
-```json
-{
-  "changed" : true,
-  "end" : 1634071489773,
-  "resource" : {
-    "name" : "my-first-topic-with-jikkou",
-    "operation" : "ADD",
-    "partitions" : {
-      "after" : 12,
-      "operation" : "ADD"
-    },
-    "replicas" : {
-      "after" : 3,
-      "operation" : "ADD"
-    },
-    "configs" : {
-      "min.insync.replicas" : {
-        "after" : "2",
-        "operation" : "ADD"
-      }
-    }
-  },
-  "failed" : false,
-  "status" : "CHANGED"
-}
-```
+## Supported Resources
 
-```
-EXECUTION in 2s 661ms (DRY_RUN)
-ok : 0, created : 1, altered : 0, deleted : 0 failed : 0
-```
+| Apache Kafka | Schema Registry | Kafka Connect | Cloud Providers |
+|:---:|:---:|:---:|:---:|
+| Topics & Configs | Avro Schemas | Connectors | Aiven (ACLs, Quotas) |
+| ACLs | JSON Schemas | | AWS Glue Schemas |
+| Quotas | Protobuf Schemas | | |
+| Consumer Groups | | | |
+| Brokers & Users | | | |
+| KTable Records | | | |
+
+## How It Works
+
+<p align="center">
+  <img src="./docs/content/en/docs/Overview/jikkou-architecture-overview.png" alt="Architecture" width="800"/>
+</p>
+
+Jikkou follows a simple reconciliation loop:
+
+1. **Read** your resource definitions from YAML files (with Jinja templating support)
+2. **Compute** the differences between desired state and actual cluster state
+3. **Apply** only the minimal set of changes needed
+4. **Report** what was created, updated, or deleted
+
+## Deployment Modes
+
+| Mode              | Description                                                                                   |
+|-------------------|-----------------------------------------------------------------------------------------------|
+| **CLI**           | Run as a command-line tool — perfect for local development and CI/CD pipelines                |
+| **API Server**    | Run as a REST API server — ideal for platform teams and automation                            |
+| **Docker**        | Available as container images on [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou) |
+| **Native Binary** | GraalVM-compiled native executables for instant startup                                       |
 
 ## Documentation
 
-Check the official [documentation](https://jikkou.io) for further [installation](https://www.jikkou.io/docs/install/) and [use cases](https://www.jikkou.io/docs/tutorials/).
+Full documentation is available at **[jikkou.io](https://jikkou.io/)**.
 
-## 🏭 Developers
+- [Getting Started](https://jikkou.io/docs/install/)
+- [Concepts & Architecture](https://jikkou.io/docs/concepts/)
+- [Providers Reference](https://jikkou.io/docs/providers/)
+- [Tutorials](https://jikkou.io/docs/tutorials/)
 
-You need to have [Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and [Docker](https://www.docker.com/) installed.
+## Developers
 
-### Dependencies
+For build instructions, development setup, and contribution guidelines, see:
 
-Jikkou CLI is built with [Micronaut](https://micronaut.io/) and [Picocli](https://picocli.info/)
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — How to contribute, coding guidelines, commit conventions
+- **[AGENTS.md](./AGENTS.md)** — Detailed development guidelines, build commands, and architecture
 
-To build the project you will need:
-
-* Java 21
-* [GraalVM](https://www.graalvm.org/) 22.1.0 or newer to create native executable
-* [TestContainer](https://testcontainers.com/) to run integration tests
-
-### Build project
-
-This project includes [Maven Wrapper](https://maven.apache.org/wrapper/).
-
-Below are the commands commonly used to build the project:
+### Quick Build
 
 ```bash
 # Build and run all tests
 ./mvnw clean verify
 
-# Build and skip integration tests
+# Build without tests
 ./mvnw clean verify -DskipTests
+
+# Apply code formatting
+./mvnw spotless:apply
 ```
 
-### Build Docker Images (locally)
+**Requirements:** Java 25, Docker (for integration tests), GraalVM (for native builds)
 
-```bash
-$ make
-```
+## Contributors
 
-### Create Native Executable
+Jikkou is built by its community. Thank you to everyone who has contributed!
 
-```bash
-# Build and run all tests
-./mvnw clean verify -Pnative
-```
+<!-- CONTRIBUTORS-START -->
+<a href="https://github.com/streamthoughts/jikkou/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=streamthoughts/jikkou&max=100&columns=12" alt="Contributors"/>
+</a>
+<!-- CONTRIBUTORS-END -->
 
-You can then execute the native executable with: `./jikkou-cli/target/jikkou-$PROJECT_VERSION-runner`
+Want to see your name here? Check out the [contribution guide](./CONTRIBUTING.md) and [open issues](https://github.com/streamthoughts/jikkou/issues).
 
-### Create Debian Package (on Linux)
+## Support the Project
 
-```bash
-# Build and run all tests
-./mvnw clean package -Pnative
-./mvnw package -Pdeb
-```
+If you find Jikkou useful, please consider:
 
-You can then install the package with: `sudo dpkg -i ./dist/jikkou-$PROJECT_VERSION-linux-x86_64.deb`
+- Giving it a **[star on GitHub](https://github.com/streamthoughts/jikkou)** to help others discover it
+- Joining the **[Slack community](https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA)** to ask questions and share feedback
+- **[Contributing](./CONTRIBUTING.md)** code, documentation, or bug reports
 
-NOTE: Jikkou will install itself in the directory :  `/opt/jikkou`
+## License
 
-### Formats
+Licensed under the [Apache License, Version 2.0](./LICENSE).
 
-This project uses the Maven plugin [Spotless](https://github.com/diffplug/spotless/tree/master/plugin-maven)
-to format all Java classes and to apply some code quality checks.
+---
 
-### Bugs
-
-This project uses the Maven plugin [SpotBugs](https://spotbugs.github.io/) and [FindSecBugs](https://find-sec-bugs.github.io/)
-to run some static analysis to look for bugs in Java code.
-
-Reported bugs can be analysed using SpotBugs GUI:
-```bash
-$ ./mvnw spotbugs:gui
-```
-
-## 💡 Contributions
-
-Any feedback, bug reports and PRs are greatly appreciated!
-
-- **Source Code**: https://github.com/streamthoughts/jikkou
-- **Issue Tracker**: https://github.com/streamthoughts/jikkou/issues
-
-## Licence
-
-This code base is available under the Apache License, version 2.
+<p align="center">
+  Developed with &#10084; by <a href="https://github.com/fhussonnois">Florian Hussonnois</a> and the Jikkou community.
+</p>
