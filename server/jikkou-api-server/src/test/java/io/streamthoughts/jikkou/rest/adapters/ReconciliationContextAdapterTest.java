@@ -73,6 +73,41 @@ class ReconciliationContextAdapterTest {
     }
 
     @Test
+    void shouldGetReconciliationContextWithProviderFromReconcileRequest() {
+        // Given
+        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
+        ResourceReconcileRequest request = new ResourceReconcileRequest(
+            new ResourceReconcileRequest.Params(),
+            Collections.emptyList(),
+            "kafka-prod"
+        );
+
+        // When
+        ReconciliationContext context = adapter.getReconciliationContext(request, false);
+
+        // Then
+        Assertions.assertNotNull(context);
+        Assertions.assertEquals("kafka-prod", context.providerName());
+    }
+
+    @Test
+    void shouldGetReconciliationContextWithNullProviderFromReconcileRequest() {
+        // Given
+        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
+        ResourceReconcileRequest request = new ResourceReconcileRequest(
+            new ResourceReconcileRequest.Params(),
+            Collections.emptyList()
+        );
+
+        // When
+        ReconciliationContext context = adapter.getReconciliationContext(request, false);
+
+        // Then
+        Assertions.assertNotNull(context);
+        Assertions.assertNull(context.providerName());
+    }
+
+    @Test
     void shouldGetReconciliationContextWithProviderFromResourceListRequest() {
         // Given
         ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
