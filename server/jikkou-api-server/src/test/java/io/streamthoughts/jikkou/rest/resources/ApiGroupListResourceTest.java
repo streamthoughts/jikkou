@@ -28,4 +28,14 @@ class ApiGroupListResourceTest {
         Assertions.assertNotNull(response);
     }
 
+    @Test
+    void shouldReturnNonEmptyGroupListWhenProvidersConfigured() {
+        // When
+        ApiGroupList response = client.toBlocking().retrieve(HttpRequest.GET("/apis"), ApiGroupList.class);
+
+        // Then
+        Assertions.assertEquals("ApiGroupList", response.kind());
+        Assertions.assertNotNull(response.groups());
+        Assertions.assertFalse(response.groups().isEmpty());
+    }
 }

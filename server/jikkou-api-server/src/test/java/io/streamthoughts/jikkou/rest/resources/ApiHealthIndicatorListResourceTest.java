@@ -25,11 +25,24 @@ class ApiHealthIndicatorListResourceTest {
     HttpClient client;
 
     @Test
-    void ApiResourceList() {
+    void shouldListHealthIndicators() {
         ApiHealthIndicatorList response = client.toBlocking().retrieve(
                 HttpRequest.GET(JIKKOU_API),
                 ApiHealthIndicatorList.class
         );
         Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void shouldReturnExpectedKindWhenHealthIndicatorsListed() {
+        // When
+        ApiHealthIndicatorList response = client.toBlocking().retrieve(
+                HttpRequest.GET(JIKKOU_API),
+                ApiHealthIndicatorList.class
+        );
+
+        // Then
+        Assertions.assertEquals("ApiHealthIndicatorList", response.kind());
+        Assertions.assertNotNull(response.indicators());
     }
 }
