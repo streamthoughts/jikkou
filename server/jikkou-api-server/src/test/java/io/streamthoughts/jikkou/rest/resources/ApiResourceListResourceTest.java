@@ -25,11 +25,25 @@ class ApiResourceListResourceTest {
     HttpClient client;
 
     @Test
-    void ApiResourceList() {
+    void shouldListApiResources() {
         ApiResourceList response = client.toBlocking().retrieve(
                 HttpRequest.GET(JIKKOU_API),
                 ApiResourceList.class
         );
         Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void shouldReturnResourcesWithExpectedKindWhenQueried() {
+        // When
+        ApiResourceList response = client.toBlocking().retrieve(
+                HttpRequest.GET(JIKKOU_API),
+                ApiResourceList.class
+        );
+
+        // Then
+        Assertions.assertEquals("ApiResourceList", response.kind());
+        Assertions.assertNotNull(response.resources());
+        Assertions.assertFalse(response.resources().isEmpty());
     }
 }

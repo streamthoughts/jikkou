@@ -32,4 +32,17 @@ class ApiActionResourceTest {
         );
         Assertions.assertNotNull(response);
     }
+
+    @Test
+    void shouldReturnExpectedKindWhenActionsListed() {
+        // When
+        ApiExtensionList response = client.toBlocking().retrieve(
+                HttpRequest.GET(JIKKOU_API),
+                ApiExtensionList.class
+        );
+
+        // Then
+        Assertions.assertEquals("ApiExtensionList", response.kind());
+        Assertions.assertNotNull(response.extensions());
+    }
 }
