@@ -56,7 +56,7 @@ import lombok.extern.jackson.Jacksonized;
     "spec",
     "status"
 })
-@ApiVersion("kafka.jikkou.io/v1beta1")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaConnector")
 @Jacksonized
 @Reflectable
@@ -72,7 +72,7 @@ public class V1KafkaConnector implements HasMetadata, HasSpec<V1KafkaConnectorSp
     @JsonProperty("apiVersion")
     @JsonPropertyDescription("The version of specification format for that particular resource.")
     @Builder.Default
-    private String apiVersion = "kafka.jikkou.io/v1beta1";
+    private String apiVersion = "kafka.jikkou.io/v1";
     /**
      * The kind of that resource.
      * (Required)

@@ -47,7 +47,7 @@ import lombok.extern.jackson.Jacksonized;
     "metadata",
     "items"
 })
-@ApiVersion("kafka.aiven.io/v1beta1")
+@ApiVersion("kafka.aiven.io/v1")
 @Kind("SchemaRegistryAclEntryList")
 @Jacksonized
 @Reflectable
@@ -62,7 +62,7 @@ public class V1SchemaRegistryAclEntryList implements ResourceList<V1SchemaRegist
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "kafka.aiven.io/v1beta1";
+    private String apiVersion = "kafka.aiven.io/v1";
     /**
      * 
      * (Required)

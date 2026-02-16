@@ -37,7 +37,7 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "kafka.aiven.io/v1beta1"
+      "default": "kafka.aiven.io/v1"
     },
     "kind": {
       "type": "string",

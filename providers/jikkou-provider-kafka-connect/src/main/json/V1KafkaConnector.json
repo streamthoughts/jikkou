@@ -31,7 +31,7 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "kafka.jikkou.io/v1beta1",
+      "default": "kafka.jikkou.io/v1",
       "description": "The version of specification format for that particular resource."
     },
     "kind": {

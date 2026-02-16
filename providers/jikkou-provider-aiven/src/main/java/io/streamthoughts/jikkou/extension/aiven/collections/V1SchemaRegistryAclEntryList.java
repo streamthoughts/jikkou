@@ -16,7 +16,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("kafka.aiven.io/v1beta1")
+@ApiVersion("kafka.aiven.io/v1")
 @Kind("SchemaRegistryAclEntryList")
 public class V1SchemaRegistryAclEntryList extends SpecificResourceList<V1SchemaRegistryAclEntryList, V1SchemaRegistryAclEntry> {
 

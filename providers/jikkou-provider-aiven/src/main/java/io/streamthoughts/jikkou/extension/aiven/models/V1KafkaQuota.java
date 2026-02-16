@@ -53,7 +53,7 @@ import lombok.extern.jackson.Jacksonized;
     "metadata",
     "spec"
 })
-@ApiVersion("kafka.aiven.io/v1beta1")
+@ApiVersion("kafka.aiven.io/v1")
 @Kind("KafkaQuota")
 @Jacksonized
 @Reflectable
@@ -68,7 +68,7 @@ public class V1KafkaQuota implements HasMetadata, HasSpec<V1KafkaQuotaSpec> , Re
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "kafka.aiven.io/v1beta1";
+    private String apiVersion = "kafka.aiven.io/v1";
     /**
      * 
      * (Required)

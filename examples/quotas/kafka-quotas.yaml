@@ -1,5 +1,5 @@
 ---
-apiVersion: 'kafka.jikkou.io/v1beta2'
+apiVersion: 'kafka.jikkou.io/v1'
 kind: 'KafkaClientQuota'
 metadata:
   labels: {}
@@ -13,7 +13,7 @@ spec:
     producerByteRate: 1024
     consumerByteRate: 1024
 ---
-apiVersion: 'kafka.jikkou.io/v1beta2'
+apiVersion: 'kafka.jikkou.io/v1'
 kind: 'KafkaClientQuota'
 metadata:
   labels: {}

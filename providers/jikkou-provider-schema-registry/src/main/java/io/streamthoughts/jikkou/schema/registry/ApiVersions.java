@@ -8,5 +8,5 @@ package io.streamthoughts.jikkou.schema.registry;
 
 public final class ApiVersions {
 
-    public static final String SCHEMA_REGISTRY_V1BETA2 = "schemaregistry.jikkou.io/v1beta2";
+    public static final String SCHEMA_REGISTRY_V1BETA2 = "schemaregistry.jikkou.io/v1";
 }

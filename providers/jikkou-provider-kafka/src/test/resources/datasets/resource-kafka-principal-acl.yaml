@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalAuthorization"
 metadata:
   name: "User:Alice"
@@ -13,7 +13,7 @@ spec:
       operations: [ 'READ', 'WRITE' ]
       host: "*"
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalAuthorization"
 metadata:
   name: "User:Bob"

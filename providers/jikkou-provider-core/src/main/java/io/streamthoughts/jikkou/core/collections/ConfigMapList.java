@@ -18,7 +18,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("core.jikkou.io/v1beta2")
+@ApiVersion("core.jikkou.io/v1")
 @Kind("ConfigMapList")
 @Reflectable
 @JsonDeserialize(builder = ConfigMapList.Builder.class)

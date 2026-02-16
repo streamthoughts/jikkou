@@ -16,7 +16,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("kafka.jikkou.io/v1beta2")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaTableRecordList")
 public class V1KafkaTableRecordList extends SpecificResourceList<V1KafkaTableRecordList, V1KafkaTableRecord> {
 

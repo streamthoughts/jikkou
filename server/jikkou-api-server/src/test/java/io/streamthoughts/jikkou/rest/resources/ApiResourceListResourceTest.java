@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 @MicronautTest
 class ApiResourceListResourceTest {
 
-    public static final String JIKKOU_API = "/apis/kafka.jikkou.io/v1beta2";
+    public static final String JIKKOU_API = "/apis/kafka.jikkou.io/v1";
 
     @Inject
     @Client("/")

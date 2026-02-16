@@ -80,14 +80,14 @@ class ApiResourceTest {
                 .thenReturn(expected);
 
         // When
-        controller.list(mockRequest, "kafka.jikkou.io", "v1beta2", "kafkatopics", mockParameters);
+        controller.list(mockRequest, "kafka.jikkou.io", "v1", "kafkatopics", mockParameters);
 
         // Then
         ArgumentCaptor<ApiResourceIdentifier> captor = ArgumentCaptor.forClass(ApiResourceIdentifier.class);
         Mockito.verify(mockService).search(captor.capture(), Mockito.any(ListContext.class));
         ApiResourceIdentifier identifier = captor.getValue();
         Assertions.assertEquals("kafka.jikkou.io", identifier.group());
-        Assertions.assertEquals("v1beta2", identifier.version());
+        Assertions.assertEquals("v1", identifier.version());
         Assertions.assertEquals("kafkatopics", identifier.plural());
     }
 

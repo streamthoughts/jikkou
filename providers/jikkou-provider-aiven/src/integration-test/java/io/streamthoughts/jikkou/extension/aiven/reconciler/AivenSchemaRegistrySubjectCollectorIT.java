@@ -57,7 +57,7 @@ class AivenSchemaRegistrySubjectCollectorIT extends BaseExtensionProviderIT {
         );
         // When
         ResourceList<V1SchemaRegistrySubject> result = api.listResources(
-            ResourceType.of("SchemaRegistrySubject", "kafka.aiven.io/v1beta1"),
+            ResourceType.of("SchemaRegistrySubject", "kafka.aiven.io/v1"),
             Selectors.NO_SELECTOR,
             Configuration.empty()
         );

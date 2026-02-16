@@ -28,7 +28,7 @@ class ApiResourceNotFoundExceptionHandlerTest {
     @Test
     void shouldReturnNotFoundWhenHandled() {
         // Given
-        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1beta2", "kafkatopics");
+        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1", "kafkatopics");
         ApiResourceNotFoundException exception = new ApiResourceNotFoundException(identifier);
 
         // When
@@ -41,7 +41,7 @@ class ApiResourceNotFoundExceptionHandlerTest {
     @Test
     void shouldReturnCorrectMessageWhenHandled() {
         // Given
-        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1beta2", "kafkatopics");
+        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1", "kafkatopics");
         ApiResourceNotFoundException exception = new ApiResourceNotFoundException(identifier);
 
         // When
@@ -56,7 +56,7 @@ class ApiResourceNotFoundExceptionHandlerTest {
     @Test
     void shouldReturnErrorEntityWithNotFoundCodeWhenHandled() {
         // Given
-        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1beta2", "kafkatopics");
+        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1", "kafkatopics");
         ApiResourceNotFoundException exception = new ApiResourceNotFoundException(identifier);
 
         // When
@@ -74,7 +74,7 @@ class ApiResourceNotFoundExceptionHandlerTest {
     @Test
     void shouldIncludeIdentifierInErrorMessageWhenHandled() {
         // Given
-        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1beta2", "kafkatopics");
+        ApiResourceIdentifier identifier = new ApiResourceIdentifier("kafka.jikkou.io", "v1", "kafkatopics");
         ApiResourceNotFoundException exception = new ApiResourceNotFoundException(identifier);
 
         // When
@@ -85,7 +85,7 @@ class ApiResourceNotFoundExceptionHandlerTest {
         Assertions.assertNotNull(body);
         String errorMessage = body.errors().get(0).message();
         Assertions.assertTrue(errorMessage.contains("kafka.jikkou.io"));
-        Assertions.assertTrue(errorMessage.contains("v1beta2"));
+        Assertions.assertTrue(errorMessage.contains("v1"));
         Assertions.assertTrue(errorMessage.contains("kafkatopics"));
     }
 }

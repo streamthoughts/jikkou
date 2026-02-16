@@ -36,7 +36,7 @@ import java.util.Optional;
     "metadata",
     "items"
 })
-@ApiVersion("core.jikkou.io/v1beta2")
+@ApiVersion("core.jikkou.io/v1")
 @Kind("GenericResourceList")
 @JsonDeserialize
 @Reflectable

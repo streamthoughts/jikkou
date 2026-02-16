@@ -32,7 +32,7 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "kafka.jikkou.io/v1beta1"
+      "default": "kafka.jikkou.io/v1"
     },
     "kind": {
       "type": "string",

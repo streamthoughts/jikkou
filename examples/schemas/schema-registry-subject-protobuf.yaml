@@ -1,5 +1,5 @@
 ---
-apiVersion: "schemaregistry.jikkou.io/v1beta2"
+apiVersion: "schemaregistry.jikkou.io/v1"
 kind: "SchemaRegistrySubject"
 metadata:
   name: "PersonProto"

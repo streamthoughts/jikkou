@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: KafkaTopic
 metadata:
   name: 'e2e-topic-1'

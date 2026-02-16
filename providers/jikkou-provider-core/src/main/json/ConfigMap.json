@@ -22,7 +22,7 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "core.jikkou.io/v1beta2"
+      "default": "core.jikkou.io/v1"
     },
     "kind": {
       "type": "string",

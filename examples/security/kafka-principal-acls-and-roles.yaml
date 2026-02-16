@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalRole"
 metadata:
   name: "KafkaTopicPublicRead"
@@ -13,7 +13,7 @@ spec:
         patternType: 'MATCH'
       host: "*"
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalRole"
 metadata:
   name: "KafkaTopicPublicWrite"
@@ -27,7 +27,7 @@ spec:
         patternType: 'MATCH'
       host: "*"
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalAuthorization"
 metadata:
   name: "User:Alice"
@@ -36,7 +36,7 @@ spec:
     - "KafkaTopicPublicRead"
     - "KafkaTopicPublicWrite"
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalAuthorization"
 metadata:
   name: "User:Bob"
@@ -44,7 +44,7 @@ spec:
   roles:
     - "KafkaTopicPublicRead"
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalAuthorization"
 metadata:
   name: "User:ANONYMOUS"

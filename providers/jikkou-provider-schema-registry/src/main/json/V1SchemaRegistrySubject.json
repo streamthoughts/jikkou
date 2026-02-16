@@ -33,7 +33,7 @@
   "properties": {
     "apiVersion": {
       "type": "string",
-      "default": "schemaregistry.jikkou.io/v1beta2"
+      "default": "schemaregistry.jikkou.io/v1"
     },
     "kind": {
       "type": "string",

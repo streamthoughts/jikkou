@@ -54,7 +54,7 @@ import lombok.extern.jackson.Jacksonized;
     "metadata",
     "spec"
 })
-@ApiVersion("schemaregistry.jikkou.io/v1beta2")
+@ApiVersion("schemaregistry.jikkou.io/v1")
 @Kind("SchemaRegistrySubject")
 @Jacksonized
 @Reflectable
@@ -69,7 +69,7 @@ public class V1SchemaRegistrySubject implements HasMetadata, HasSpec<V1SchemaReg
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "schemaregistry.jikkou.io/v1beta2";
+    private String apiVersion = "schemaregistry.jikkou.io/v1";
     /**
      * 
      * (Required)

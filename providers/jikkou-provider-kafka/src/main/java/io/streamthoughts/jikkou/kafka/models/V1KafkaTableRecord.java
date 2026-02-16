@@ -56,7 +56,7 @@ import lombok.extern.jackson.Jacksonized;
     "template",
     "spec"
 })
-@ApiVersion("kafka.jikkou.io/v1beta1")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaTableRecord")
 @Jacksonized
 @Reflectable
@@ -71,7 +71,7 @@ public class V1KafkaTableRecord implements HasMetadata, HasSpec<V1KafkaTableReco
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "kafka.jikkou.io/v1beta1";
+    private String apiVersion = "kafka.jikkou.io/v1";
     /**
      * 
      * (Required)
