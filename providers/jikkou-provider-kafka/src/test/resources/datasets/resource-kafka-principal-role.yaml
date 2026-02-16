@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalRole"
 metadata:
   name: "group_one"
@@ -13,7 +13,7 @@ spec:
         patternType: 'MATCH'
       host: "*"
 ---
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaPrincipalRole"
 metadata:
   name: "group_two"

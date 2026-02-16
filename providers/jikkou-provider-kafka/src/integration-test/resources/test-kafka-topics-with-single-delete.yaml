@@ -1,4 +1,4 @@
-apiVersion: "kafka.jikkou.io/v1beta2"
+apiVersion: "kafka.jikkou.io/v1"
 kind: KafkaTopicList
 metadata:
   annotations: {}

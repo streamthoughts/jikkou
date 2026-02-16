@@ -55,7 +55,7 @@ import lombok.extern.jackson.Jacksonized;
     "template",
     "spec"
 })
-@ApiVersion("kafka.jikkou.io/v1beta2")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaPrincipalAuthorization")
 @Jacksonized
 @Reflectable
@@ -70,7 +70,7 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "kafka.jikkou.io/v1beta2";
+    private String apiVersion = "kafka.jikkou.io/v1";
     /**
      * 
      * (Required)

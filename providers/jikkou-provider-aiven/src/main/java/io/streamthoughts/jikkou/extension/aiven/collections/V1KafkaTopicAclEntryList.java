@@ -16,7 +16,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("kafka.aiven.io/v1beta1")
+@ApiVersion("kafka.aiven.io/v1")
 @Kind("KafkaTopicAclEntryList")
 public class V1KafkaTopicAclEntryList extends SpecificResourceList<V1KafkaTopicAclEntryList, V1KafkaTopicAclEntry> {
 

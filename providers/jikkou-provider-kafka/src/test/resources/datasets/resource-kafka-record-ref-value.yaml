@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.jikkou.io/v1beta1"
+apiVersion: "kafka.jikkou.io/v1"
 kind: "KafkaTableRecord"
 spec:
   # The name of the kafka table topic.

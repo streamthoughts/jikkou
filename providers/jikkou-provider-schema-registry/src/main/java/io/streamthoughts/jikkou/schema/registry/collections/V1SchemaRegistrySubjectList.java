@@ -16,7 +16,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("schemaregistry.jikkou.io/v1beta2")
+@ApiVersion("schemaregistry.jikkou.io/v1")
 @Kind("SchemaRegistrySubjectList")
 public class V1SchemaRegistrySubjectList extends SpecificResourceList<V1SchemaRegistrySubjectList, V1SchemaRegistrySubject> {
 

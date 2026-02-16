@@ -46,7 +46,7 @@ import lombok.extern.jackson.Jacksonized;
     "template",
     "items"
 })
-@ApiVersion("core.jikkou.io/v1beta2")
+@ApiVersion("core.jikkou.io/v1")
 @Kind("ConfigMapList")
 @Jacksonized
 @Reflectable
@@ -61,7 +61,7 @@ public class ConfigMapList implements ResourceList<ConfigMap>
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "core.jikkou.io/v1beta2";
+    private String apiVersion = "core.jikkou.io/v1";
     /**
      * 
      * (Required)

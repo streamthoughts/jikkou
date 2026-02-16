@@ -16,7 +16,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("kafka.jikkou.io/v1beta2")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaBrokerList")
 public class V1KafkaBrokerList extends SpecificResourceList<V1KafkaBrokerList, V1KafkaBroker> {
 

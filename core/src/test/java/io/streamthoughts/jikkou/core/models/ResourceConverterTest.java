@@ -19,9 +19,9 @@ class ResourceConverterTest {
 
     @Test
     void should_create_given_kind_and_version() {
-        ResourceType type = ResourceType.of("KafkaTopicList", "kafka.jikkou.io/v1beta2");
+        ResourceType type = ResourceType.of("KafkaTopicList", "kafka.jikkou.io/v1");
         Assertions.assertEquals("KafkaTopicList", type.kind());
-        Assertions.assertEquals("v1beta2", type.apiVersion());
+        Assertions.assertEquals("v1", type.apiVersion());
         Assertions.assertEquals("kafka.jikkou.io", type.group());
     }
 }

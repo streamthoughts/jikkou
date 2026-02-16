@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta1"
+apiVersion: "kafka.aiven.io/v1"
 kind: "KafkaTopicAclEntry"
 metadata:
   labels: {}
@@ -10,7 +10,7 @@ spec:
   username: "avnadmin"
   topic: "*"
 ---
-apiVersion: "kafka.aiven.io/v1beta2"
+apiVersion: "kafka.aiven.io/v1"
 kind: "KafkaTopicAclEntry"
 metadata:
   labels: {}

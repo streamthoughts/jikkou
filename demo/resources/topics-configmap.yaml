@@ -1,4 +1,4 @@
-apiVersion: 'kafka.jikkou.io/v1beta2'
+apiVersion: 'kafka.jikkou.io/v1'
 kind: 'KafkaTopicList'
 items:
   - metadata:
@@ -20,7 +20,7 @@ items:
       configs:
         cleanup.policy: 'delete'
 ---
-apiVersion: "core.jikkou.io/v1beta2"
+apiVersion: "core.jikkou.io/v1"
 kind: "ConfigMap"
 metadata:
   name: TopicConfig

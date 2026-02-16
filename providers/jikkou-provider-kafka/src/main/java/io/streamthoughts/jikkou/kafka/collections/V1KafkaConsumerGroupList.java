@@ -16,7 +16,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@ApiVersion("kafka.jikkou.io/v1beta1")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaConsumerGroupList")
 public class V1KafkaConsumerGroupList extends SpecificResourceList<V1KafkaConsumerGroupList, V1KafkaConsumerGroup> {
 

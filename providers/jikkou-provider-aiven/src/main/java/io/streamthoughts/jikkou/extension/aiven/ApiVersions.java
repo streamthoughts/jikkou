@@ -8,8 +8,8 @@ package io.streamthoughts.jikkou.extension.aiven;
 
 public final class ApiVersions {
 
-    public static final String KAFKA_AIVEN_V1BETA1 = "kafka.aiven.io/v1beta1";
-    public static final String KAFKA_AIVEN_V1BETA2 = "kafka.aiven.io/v1beta2";
+    public static final String KAFKA_AIVEN_V1BETA1 = "kafka.aiven.io/v1";
+    public static final String KAFKA_AIVEN_V1BETA2 = "kafka.aiven.io/v1";
     public static final String SCHEMA_REGISTRY_KIND = "SchemaRegistrySubject";
     public static final String SCHEMA_REGISTRY_CHANGE_KIND = "SchemaRegistrySubjectChange";
 }

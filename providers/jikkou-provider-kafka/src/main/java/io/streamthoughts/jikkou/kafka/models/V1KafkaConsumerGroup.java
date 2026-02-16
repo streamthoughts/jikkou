@@ -51,7 +51,7 @@ import lombok.extern.jackson.Jacksonized;
     "template",
     "status"
 })
-@ApiVersion("kafka.jikkou.io/v1beta1")
+@ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaConsumerGroup")
 @Jacksonized
 @Reflectable
@@ -66,7 +66,7 @@ public class V1KafkaConsumerGroup implements HasMetadata, Resource
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private String apiVersion = "kafka.jikkou.io/v1beta1";
+    private String apiVersion = "kafka.jikkou.io/v1";
     /**
      * 
      * (Required)

@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta1"
+apiVersion: "kafka.aiven.io/v1"
 kind: "SchemaRegistryAclEntry"
 metadata:
   labels: {}
@@ -10,7 +10,7 @@ spec:
   username: "bob"
   resource: "Subject:*alice*"
 ---
-apiVersion: "kafka.aiven.io/v1beta1"
+apiVersion: "kafka.aiven.io/v1"
 kind: "SchemaRegistryAclEntry"
 metadata:
   labels: {}

@@ -8,5 +8,5 @@ package io.streamthoughts.jikkou.kafka.connect;
 
 public final class ApiVersions {
 
-    public static final String KAFKA_V1BETA = "kafka.jikkou.io/v1beta1";
+    public static final String KAFKA_V1BETA = "kafka.jikkou.io/v1";
 }

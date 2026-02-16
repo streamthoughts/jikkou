@@ -45,7 +45,7 @@ import lombok.extern.jackson.Jacksonized;
     "template",
     "data"
 })
-@ApiVersion("core.jikkou.io/v1beta2")
+@ApiVersion("core.jikkou.io/v1")
 @Kind("ConfigMap")
 @Jacksonized
 @Reflectable
@@ -60,7 +60,7 @@ public class ConfigMap implements HasMetadata, Resource
      */
     @JsonProperty("apiVersion")
     @Builder.Default
-    private java.lang.String apiVersion = "core.jikkou.io/v1beta2";
+    private java.lang.String apiVersion = "core.jikkou.io/v1";
     /**
      * 
      * (Required)

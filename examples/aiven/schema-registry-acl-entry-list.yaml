@@ -1,5 +1,5 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta1"
+apiVersion: "kafka.aiven.io/v1"
 kind: "SchemaRegistryAclEntryList"
 items:
   - spec:

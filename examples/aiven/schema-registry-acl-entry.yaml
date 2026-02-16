@@ -1,12 +1,12 @@
 ---
-apiVersion: "kafka.aiven.io/v1beta1"
+apiVersion: "kafka.aiven.io/v1"
 kind: "SchemaRegistryAclEntry"
 spec:
   permission: "WRITE"
   username: "alice"
   resource: "Subject:public.sales.*-value"
 ---
-apiVersion: "kafka.aiven.io/v1beta1"
+apiVersion: "kafka.aiven.io/v1"
 kind: "SchemaRegistryAclEntry"
 spec:
   permission: "READ"
