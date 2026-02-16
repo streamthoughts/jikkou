@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
@@ -53,6 +54,7 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
 
     private static Resource fromObjectNode(JsonParser jp, JsonNode node) throws IOException {
         Class<? extends Resource> resourceType = null;
+        boolean resolvedByFallback = false;
 
         ResourceType key = ResourceType.of(node);
 
@@ -79,6 +81,7 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
                 for (ResourceTypeResolver r : resolvers) {
                     resourceType = r.resolvesType(node);
                     if (resourceType != null) {
+                        resolvedByFallback = true;
                         break;
                     }
                 }
@@ -97,10 +100,18 @@ public final class ResourceDeserializer extends JsonDeserializer<Resource> {
             }
             return jp.getCodec().treeToValue(node, GenericResource.class);
         } else if (Resource.class.isAssignableFrom(resourceType)) {
+            String resolvedApiVersion = Resource.getApiVersion(resourceType);
             LOG.debug("Read specific resource for apiVersion={}, kind={}.",
-                Resource.getApiVersion(resourceType),
+                resolvedApiVersion,
                 Resource.getKind(resourceType)
             );
+            // Normalize the apiVersion in the node when the type was resolved by a fallback
+            // resolver (e.g., LatestApiVersionResourceTypeResolver). This ensures that the
+            // deserialized resource carries the canonical apiVersion of the resolved class,
+            // not the (potentially outdated) version from the YAML input.
+            if (resolvedByFallback && resolvedApiVersion != null && node.isObject()) {
+                ((ObjectNode) node).put("apiVersion", resolvedApiVersion);
+            }
             return jp.getCodec().treeToValue(node, resourceType);
         }
         LOG.warn("Failed get resource type from JsonNode");
