@@ -1,7 +1,7 @@
 ---
 title: "Release v0.37.0"
 linkTitle: "Release v0.37.0"
-weight: 37
+weight: -37
 ---
 
 ## 🚀 Introducing Jikkou 0.37.0

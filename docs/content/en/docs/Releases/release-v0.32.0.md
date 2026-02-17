@@ -1,7 +1,7 @@
 ---
 title: "Release v0.32.0"
 linkTitle: "Release v0.32.0"
-weight: 32
+weight: -32
 ---
 
 ## Jikkou 0.32.0: Moving Beyond Apache Kafka. Introducing new features: Extension Providers, Actions, etc.!
