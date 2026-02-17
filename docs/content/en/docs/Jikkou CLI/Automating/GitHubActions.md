@@ -30,7 +30,7 @@ A specific version of Jikkou CLI can be installed:
 steps:
   - uses: streamthoughts/setup-jikkou@v0.1.0
     with:
-      jikkou_version: 0.29.0
+      jikkou_version: 0.37.0
 ```
 
 A custom configuration file can be specified:

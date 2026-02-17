@@ -1,14 +1,10 @@
 ---
-title: "CLI Configuration"
-linkTitle: "CLI Configuration"
+title: "Configuration"
+linkTitle: "Configuration"
 weight: 2
 description: >
-  Learn how to configure Jikkou CLI.
+  Contexts, configuration files, and HOCON settings.
 ---
-
-{{% pageinfo %}}
-**Hands-on:** Try the Jikkou: [Get Started tutorials]({{% relref "../Tutorials/get_started.md" %}}).
-{{% /pageinfo %}}
 
 
 ## Configuration
@@ -17,7 +13,7 @@ To set up the configuration settings used by Jikkou CLI, you will need create a 
 automatically when you create a configuration context using:
 
 ```bash
-jikkou config set-context <context-name> [--config-file=<config-gile>] [--config-props=<config-value>]
+jikkou config set-context <context-name> [--config-file=<config-file>] [--config-props=<config-value>]
 ```
 
 By default, the configuration of `jikkou` is located under the path `$HOME/.jikkou/config`.
@@ -166,36 +162,17 @@ jikkou {
 }
 ```
 
-### Listing Contexts
+### Managing Contexts
 
-```bash
-$ jikkou config get-contexts 
- 
- NAME         
- localhost *
- development
- staging
- production
-```
+For detailed usage of all configuration commands, see the [Commands Reference]({{% relref "./Commands/jikkou-config" %}}):
 
-### Verify Current Context
-
-You can use `jikkou config current-context` command to show the context currently used by Jikkou CLI.
-
-```bash
-$ jikkou config current-context
-Using context 'localhost'
-
- KEY          VALUE                                                                         
- ConfigFile   
- ConfigProps  {"provider.kafka.config.client.bootstrap.servers":"localhost:9092"} 
-```
-
-### Verify Current Configuration
-
-You can use `jikkou config view` command to show the configuration currently used by Jikkou CLI.
+- [jikkou config set-context]({{% relref "./Commands/jikkou-config-set-context" %}}) - Create or update a configuration context
+- [jikkou config get-contexts]({{% relref "./Commands/jikkou-config-get-contexts" %}}) - List all configured contexts
+- [jikkou config current-context]({{% relref "./Commands/jikkou-config-current-context" %}}) - Show the current context
+- [jikkou config use-context]({{% relref "./Commands/jikkou-config-use-context" %}}) - Switch to a different context
+- [jikkou config view]({{% relref "./Commands/jikkou-config-view" %}}) - Show the merged configuration
 
 {{% alert title="Tips" color="info" %}}
-To debug the configuration use by Jikkou, you can run the following command: `jikkou config view --comments`
+To debug the configuration used by Jikkou, you can run the following command: `jikkou config view --comments`
 or `jikkou config view --debug`
 {{% /alert %}}

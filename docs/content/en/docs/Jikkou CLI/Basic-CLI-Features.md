@@ -1,15 +1,12 @@
 ---
-title: "Basic CLI Features"
-linkTitle: "Basic CLI Features"
+title: "Overview"
+linkTitle: "Overview"
 weight: 1
-description: 
+description: >
+  Global options, version information, and shell tab-completion.
 ---
 
-{{% pageinfo %}}
-**Hands-on:** Try the Jikkou: [Get Started tutorials]({{% relref "../Tutorials/get_started.md" %}}).
-{{% /pageinfo %}}
-
-The command line interface to **Jikkou** is the `jikkou` command, which accepts a variety of subcommands such as 
+The command line interface to **Jikkou** is the `jikkou` command, which accepts a variety of subcommands such as
 `jikkou apply` or `jikkou validate`.
 
 To view a list of the commands available in your current Jikkou version, run `jikkou` with no additional arguments:
@@ -40,6 +37,7 @@ CORE COMMANDS:
   get                       Display one or many specific resources.
   patch                     Execute all changes for the specified reconciliation mode.
   prepare                   Prepare the resource definition files for validation.
+  replace                   Replace all resources.
   update                    Create or update resources from the resource definition files
   validate                  Check whether the resources definitions meet all validation requirements.
 
@@ -53,17 +51,21 @@ ADDITIONAL COMMANDS:
   config                    Sets or retrieves the configuration of this client
   generate-completion       Generate bash/zsh completion script for jikkou.
   help                      Display help information about the specified command.
+
+See 'jikkou --help' for more information about a command.
 ```
 
 (The output from your current Jikkou version may be different than the above example.)
+
+> For detailed options and usage examples for each command, see the [Commands Reference]({{% relref "./Commands" %}}).
 
 ## Checking Jikkou Version
 
 Run the `jikkou --version` to display your current installation version:
 
 ```bash                                                                                                                                                  2 ↵
-Jikkou version "0.36.0" 2025-08-24
-JVM: 21.0.2 (GraalVM Community Substrate VM 21.0.2+13)
+Jikkou version "0.37.0" 2026-02-17
+JVM: 25.0.1 (GraalVM Community Substrate VM 25.0.1+8)
 ```
 
 ## Shell Tab-completion
@@ -73,7 +75,7 @@ It is recommended to install the bash/zsh completion script `jikkou_completion`.
 The completion script can be downloaded from the project Github repository:
 
 ```bash
-wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion . jikkou_completion
+wget https://raw.githubusercontent.com/streamthoughts/jikkou/main/jikkou_completion -O jikkou_completion
 ```
 
 or alternatively, you can run the following command to generate it.

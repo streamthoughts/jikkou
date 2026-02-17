@@ -1,8 +1,7 @@
 ---
-title: "Automating Jikkou"
-linkTitle: "Automating Jikkou"
-weight: 3
+title: "Automating"
+linkTitle: "Automating"
+weight: 4
 description: >
-  Learn automating Jikkou
+  Integrate Jikkou into CI/CD pipelines.
 ---
-
