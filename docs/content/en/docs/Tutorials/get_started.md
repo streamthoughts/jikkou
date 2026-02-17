@@ -21,7 +21,7 @@ Make sure the following is installed:
 
 * An Apache Kafka cluster.
     * Using Docker, [Docker Compose](https://docs.docker.com/compose/) is the easiest way to use it.
-* Java 21 (not required when using the binary version).
+* Java 25 (not required when using the binary version).
 
 ## Start your local Apache Kafka Cluster
 
@@ -45,9 +45,9 @@ $ ./up              # use ./down for stopping the docker-compose stack
 Run the following commands to install the latest version:
 
 ```bash
-wget https://github.com/streamthoughts/jikkou/releases/download/v0.36.0/jikkou-0.36.0-linux-x86_64.zip && \
-unzip jikkou-0.36.0-linux-x86_64.zip  && \
-cp jikkou-0.36.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
+wget https://github.com/streamthoughts/jikkou/releases/download/v0.37.0/jikkou-0.37.0-linux-x86_64.zip && \
+unzip jikkou-0.37.0-linux-x86_64.zip  && \
+cp jikkou-0.37.0-linux-x86_64/bin/jikkou $HOME/.local/bin && \
 source <(jikkou generate-completion) && \
 jikkou --version
 ```
