@@ -27,7 +27,7 @@
         <jsonschema2pojo.targetPackage>
             io.streamthoughts.jikkou.aws.models
         </jsonschema2pojo.targetPackage>
-        <glue.version>2.31.16</glue.version>
+        <glue.version>2.41.30</glue.version>
     </properties>
 
     <dependencies>
