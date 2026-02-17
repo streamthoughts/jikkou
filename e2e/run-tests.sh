@@ -313,6 +313,59 @@ EOF
   assert_output_not_contains "e2e-topic-to-delete" || return 1
 }
 
+# ── Kafka TopicList (apply + delete via KafkaTopicList kind) ──────────────────
+
+test_kafka_topic_list_apply() {
+  run_jikkou_capture apply --files "${E2E_RESOURCES}/kafka-topic-list.yaml"
+  assert_exit_code 0 || return 1
+
+  # Verify both topics from the list were created
+  run_jikkou_capture get kafkatopics --name 'e2e-topic-list-1'
+  assert_exit_code 0 || return 1
+  assert_output_contains "e2e-topic-list-1" || return 1
+
+  run_jikkou_capture get kafkatopics --name 'e2e-topic-list-2'
+  assert_exit_code 0 || return 1
+  assert_output_contains "e2e-topic-list-2" || return 1
+}
+
+test_kafka_topic_list_delete() {
+  local tmpfile
+  tmpfile=$(mktemp /tmp/e2e-topic-list-delete-XXXXXX.yaml)
+  trap "rm -f ${tmpfile}" RETURN
+
+  cat > "${tmpfile}" <<'EOF'
+---
+apiVersion: "kafka.jikkou.io/v1"
+kind: "KafkaTopicList"
+items:
+  - metadata:
+      name: 'e2e-topic-list-1'
+      annotations:
+        jikkou.io/delete: true
+    spec:
+      partitions: 1
+      replicas: 1
+  - metadata:
+      name: 'e2e-topic-list-2'
+      annotations:
+        jikkou.io/delete: true
+    spec:
+      partitions: 2
+      replicas: 1
+EOF
+
+  run_jikkou_capture apply --files "${tmpfile}"
+  assert_exit_code 0 || return 1
+
+  # Verify both topics are gone
+  run_jikkou_capture get kafkatopics --name 'e2e-topic-list-1'
+  assert_output_not_contains "e2e-topic-list-1" || return 1
+
+  run_jikkou_capture get kafkatopics --name 'e2e-topic-list-2'
+  assert_output_not_contains "e2e-topic-list-2" || return 1
+}
+
 # ── Kafka ACLs (create, read, delete — no update for ACLs) ──────────────────
 
 test_kafka_acls_create() {
@@ -565,6 +618,10 @@ main() {
   run_test "Kafka Topics: update"           test_kafka_topics_update
   run_test "Kafka Topics: diff"             test_kafka_topics_diff
   run_test "Kafka Topics: delete"           test_kafka_topics_delete
+
+  # ── Kafka TopicList ──
+  run_test "Kafka TopicList: apply"          test_kafka_topic_list_apply
+  run_test "Kafka TopicList: delete"         test_kafka_topic_list_delete
 
   # ── Kafka ACLs CRD (no update — ACLs are atomic) ──
   run_test "Kafka ACLs: create"             test_kafka_acls_create
