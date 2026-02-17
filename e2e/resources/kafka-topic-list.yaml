@@ -1,0 +1,18 @@
+---
+apiVersion: "kafka.jikkou.io/v1"
+kind: "KafkaTopicList"
+items:
+  - metadata:
+      name: 'e2e-topic-list-1'
+      labels:
+        environment: e2e
+    spec:
+      partitions: 1
+      replicas: 1
+  - metadata:
+      name: 'e2e-topic-list-2'
+      labels:
+        environment: e2e
+    spec:
+      partitions: 2
+      replicas: 1
