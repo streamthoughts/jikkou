@@ -1,0 +1,2106 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Commands</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/</link><description>Recent content in Commands on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-cli/commands/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: jikkou action</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-action/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-action/</guid><description>
+&lt;p>List and execute actions.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>The &lt;code>action&lt;/code> command manages Jikkou actions. Actions are named operations that can be executed on the target platform.
+Like the &lt;code>get&lt;/code> command, &lt;code>action&lt;/code> uses dynamic subcommands based on the actions available from your configured providers.&lt;/p>
+&lt;p>Each action is registered as a subcommand under &lt;code>jikkou action&lt;/code>, and has an &lt;code>execute&lt;/code> subcommand to run it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou action &amp;lt;action-name&amp;gt; execute &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all available actions (shown as subcommands in help)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action --help
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Execute an action&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action KafkaConsumerGroupsResetOffsets execute --options &lt;span style="color:#000">topic&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>my-topic --options &lt;span style="color:#000">group&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>my-group
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Execute an action with YAML output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action KafkaConsumerGroupsResetOffsets execute -o YAML
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Execute an action targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou action KafkaConsumerGroupsResetOffsets execute --provider kafka-prod --options &lt;span style="color:#000">topic&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>my-topic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options-execute-subcommand">Options (execute subcommand)&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Additional options may be available depending on the action. These are dynamically registered based on the
+action&amp;rsquo;s &lt;code>ApiOptionSpec&lt;/code> definitions. Use &lt;code>jikkou api-extensions get &amp;lt;action-name&amp;gt;&lt;/code> to view options for a
+specific action.&lt;/p>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-api-extensions">jikkou api-extensions&lt;/a> - List and inspect available extensions&lt;/li>
+&lt;li>&lt;a href="../jikkou-get">jikkou get&lt;/a> - Display resources from the platform&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou api-extensions</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-api-extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-api-extensions/</guid><description>
+&lt;p>Print the supported API extensions.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>The &lt;code>api-extensions&lt;/code> command lists and inspects the API extensions registered in Jikkou. Extensions include resource
+collectors, transformations, validations, actions, health indicators, and controllers.&lt;/p>
+&lt;p>This command has two subcommands:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>api-extensions list&lt;/code> - List all extensions&lt;/li>
+&lt;li>&lt;code>api-extensions get&lt;/code> - Get details about a specific extension&lt;/li>
+&lt;/ul>
+&lt;h2 id="subcommands">Subcommands&lt;/h2>
+&lt;h2 id="jikkou-api-extensions-list">&lt;code>jikkou api-extensions list&lt;/code>&lt;/h2>
+&lt;p>Print a summary table of all supported API extensions.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou api-extensions list &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all extensions&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List extensions of a specific category&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --category Transformation
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List extensions from a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --provider kafka
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List extensions that support a specific resource kind&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --kind KafkaTopic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--category&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Limit to extensions of the specified category&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Limit to extensions of the specified provider&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--kind&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Limit to extensions that support the specified resource kind&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;hr>
+&lt;h2 id="jikkou-api-extensions-get">&lt;code>jikkou api-extensions get&lt;/code>&lt;/h2>
+&lt;p>Print detailed information about a specific API extension, including its title, description, configuration options,
+and usage examples.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou api-extensions get &amp;lt;name&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples-1">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get details about an extension in WIDE format (default)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions get KafkaTopicMaxRetentionMs
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get details in JSON format&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions get KafkaTopicMaxRetentionMs -o JSON
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get details in YAML format&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions get KafkaTopicMaxRetentionMs -o YAML
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options-1">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>WIDE&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML, WIDE&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-api-resources">jikkou api-resources&lt;/a> - List available resource types&lt;/li>
+&lt;li>&lt;a href="../jikkou-get">jikkou get&lt;/a> - Display resources of a given type&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou api-resources</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-api-resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-api-resources/</guid><description>
+&lt;p>Print the supported API resources.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>List the API resources supported by the Jikkou CLI or Jikkou API Server (in proxy mode). This command shows the
+resource name, short names, API version, kind, and supported verbs for each resource type.&lt;/p>
+&lt;p>Use this command to discover which resource types are available with your current configuration and providers.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou api-resources &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all available API resources&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources for a specific API group&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources --api-group kafka.jikkou.io
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources that support specific verbs&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources --verbs LIST,GET
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources that support CREATE&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources --verbs CREATE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Combine filters&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources --api-group kafka.jikkou.io --verbs LIST
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="sample-output">Sample output&lt;/h2>
+&lt;pre tabindex="0">&lt;code>NAME SHORTNAMES APIVERSION KIND VERBS
+kafkatopics kt kafka.jikkou.io/v1beta2 KafkaTopic CREATE, DELETE, GET, LIST, UPDATE
+kafkaconsumergroups kafka.jikkou.io/v1beta2 KafkaConsumerGroup DELETE, GET, LIST
+&lt;/code>&lt;/pre>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--api-group&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Limit to resources in the specified API group&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--verbs&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Limit to resources that support the specified verbs (comma-separated)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-api-extensions">jikkou api-extensions&lt;/a> - List and inspect available extensions&lt;/li>
+&lt;li>&lt;a href="../jikkou-get">jikkou get&lt;/a> - Display resources of a given type&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou apply</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-apply/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-apply/</guid><description>
+&lt;p>Update the resources aand as described by the resource definition files.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Reconciles the target platform so that the resources match the resource definition files passed as arguments.
+This command uses the &lt;strong>FULL&lt;/strong> reconciliation mode, meaning it will create, update, and delete resources as needed
+to match the desired state defined in your resource files.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou apply &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources defined in a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources with dry-run to preview changes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --dry-run
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources with specific selector&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (my-topic)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources with template values&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --values-files values.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply with inline template variable&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml -v &lt;span style="color:#000">topicName&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>my-topic
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply with custom labels&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml -l &lt;span style="color:#000">environment&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>production
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply with controller options&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --options delete-orphans&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply with JSON output format&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml -o JSON --pretty
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>TEXT&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: TEXT, COMPACT, JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--pretty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Pretty print JSON output&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Execute command in dry-run mode (preview changes without applying)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-create">jikkou create&lt;/a> - Create resources (CREATE mode only)&lt;/li>
+&lt;li>&lt;a href="../jikkou-update">jikkou update&lt;/a> - Create or update resources (UPDATE mode only)&lt;/li>
+&lt;li>&lt;a href="../jikkou-delete">jikkou delete&lt;/a> - Delete resources (DELETE mode only)&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;li>&lt;a href="../jikkou-validate">jikkou validate&lt;/a> - Validate resource definitions&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou config</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config/</guid><description>
+&lt;p>Sets or retrieves the configuration of this client.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>The &lt;code>config&lt;/code> command manages Jikkou CLI configuration contexts. A context defines the configuration settings
+(config file path, inline properties, provider bindings) used when running Jikkou commands.&lt;/p>
+&lt;p>Configuration is stored in the Jikkou config file, located by default at &lt;code>$HOME/.jikkou/config&lt;/code>.&lt;/p>
+&lt;h2 id="subcommands">Subcommands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Command&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;a href="../jikkou-config-set-context">jikkou config set-context&lt;/a>&lt;/td>
+&lt;td>Configure a context with the provided arguments&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../jikkou-config-get-contexts">jikkou config get-contexts&lt;/a>&lt;/td>
+&lt;td>List all configured contexts&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../jikkou-config-current-context">jikkou config current-context&lt;/a>&lt;/td>
+&lt;td>Display the current context&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../jikkou-config-use-context">jikkou config use-context&lt;/a>&lt;/td>
+&lt;td>Switch to a specified context&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../jikkou-config-view">jikkou config view&lt;/a>&lt;/td>
+&lt;td>Show merged configuration settings&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/cli-configuration/">Configuration&lt;/a> - Learn how to configure Jikkou CLI&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou config current-context</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-current-context/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-current-context/</guid><description>
+&lt;p>Display the current context.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Displays the current context used by Jikkou CLI, including the configuration file path and inline configuration
+properties associated with it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config current-context
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Show the current context&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ jikkou config current-context
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Using context &lt;span style="color:#4e9a06">&amp;#39;localhost&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> KEY VALUE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigFile
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ConfigProps &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;provider.kafka.config.client.bootstrap.servers&amp;#34;&lt;/span>:&lt;span style="color:#4e9a06">&amp;#34;localhost:9092&amp;#34;&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;p>This command has no specific options.&lt;/p>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-config-get-contexts">jikkou config get-contexts&lt;/a> - List all contexts&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-use-context">jikkou config use-context&lt;/a> - Switch to a different context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-view">jikkou config view&lt;/a> - Show the merged configuration&lt;/li>
+&lt;li>&lt;a href="../jikkou-config">jikkou config&lt;/a> - Config command overview&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou config get-contexts</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-get-contexts/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-get-contexts/</guid><description>
+&lt;p>List all configured contexts.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Get all contexts defined in the Jikkou config file. The current context is marked with an asterisk (&lt;code>*&lt;/code>).&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config get-contexts
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all contexts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ jikkou config get-contexts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> NAME
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> localhost *
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> development
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> staging
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> production
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;p>This command has no specific options.&lt;/p>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-config-current-context">jikkou config current-context&lt;/a> - Show the current context details&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-use-context">jikkou config use-context&lt;/a> - Switch to a context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-set-context">jikkou config set-context&lt;/a> - Create or update a context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config">jikkou config&lt;/a> - Config command overview&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou config set-context</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-set-context/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-set-context/</guid><description>
+&lt;p>Configure a context with the provided arguments.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Configures the specified context with the provided arguments. A context stores a reference to a configuration file
+and/or inline configuration properties. If the context already exists, it will be updated.&lt;/p>
+&lt;p>After setting a context, use &lt;code>jikkou config use-context&lt;/code> to switch to it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config set-context &amp;lt;context-name&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create a context with inline Kafka bootstrap server&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config set-context localhost &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>provider.kafka.config.client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>localhost:9092
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create a context pointing to a configuration file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config set-context production --config-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>/path/to/production.conf
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create a context with a properties file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config set-context staging --config-props-file&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>/path/to/staging.properties
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create a context with provider-scoped properties&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config set-context dev &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --provider kafka &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>kafka-dev:9092
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create a context with a config prefix&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config set-context dev &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --config-prefix&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>provider.kafka.config &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --config-props&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>client.bootstrap.servers&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>kafka-dev:9092
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--config-file&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Path to a Jikkou configuration file&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--config-props&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Inline configuration properties as key=value pairs (repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--config-props-file&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Path(s) to one or more configuration properties files (repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Name of the provider to which this configuration should be attached&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--config-prefix&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Prefix to apply to all configuration property keys&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="arguments">Arguments&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Argument&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>context-name&lt;/code>&lt;/td>
+&lt;td>&lt;strong>(required)&lt;/strong> The name of the context to configure&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-config-use-context">jikkou config use-context&lt;/a> - Switch to a context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-get-contexts">jikkou config get-contexts&lt;/a> - List all contexts&lt;/li>
+&lt;li>&lt;a href="../jikkou-config">jikkou config&lt;/a> - Config command overview&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou config use-context</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-use-context/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-use-context/</guid><description>
+&lt;p>Switch to a specified context.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Configures Jikkou to use the specified context. All subsequent commands will use the configuration associated with
+this context.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config use-context &amp;lt;context-name&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Switch to the production context&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ jikkou config use-context production
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Using context &lt;span style="color:#4e9a06">&amp;#39;production&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># If already using the specified context&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ jikkou config use-context production
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Already using context production
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="arguments">Arguments&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Argument&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>context-name&lt;/code>&lt;/td>
+&lt;td>&lt;strong>(required)&lt;/strong> The name of the context to switch to&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options">Options&lt;/h2>
+&lt;p>This command has no specific options.&lt;/p>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-config-get-contexts">jikkou config get-contexts&lt;/a> - List all available contexts&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-current-context">jikkou config current-context&lt;/a> - Display the current context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-set-context">jikkou config set-context&lt;/a> - Create or update a context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config">jikkou config&lt;/a> - Config command overview&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou config view</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-config-view/</guid><description>
+&lt;p>Show merged configuration settings.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Show the merged Jikkou configuration settings for the current context (or a named context). The configuration is
+rendered in HOCON format, showing all resolved values from the config file, inline properties, and defaults.&lt;/p>
+&lt;p>Use &lt;code>--debug&lt;/code> to see the origin of each setting, or &lt;code>--comments&lt;/code> to include human-written comments from the
+configuration files.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou config view &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># View the current configuration&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config view
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># View configuration for a specific context&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config view --name production
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># View configuration with origin comments (useful for debugging)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config view --debug
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># View configuration with human-written comments&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou config view --comments
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The name of the context configuration to view (defaults to current context)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--debug&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Print configuration with the origin of each setting as comments&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--comments&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Print configuration with human-written comments&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-config-current-context">jikkou config current-context&lt;/a> - Display the current context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config-set-context">jikkou config set-context&lt;/a> - Create or update a context&lt;/li>
+&lt;li>&lt;a href="../jikkou-config">jikkou config&lt;/a> - Config command overview&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou create</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-create/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-create/</guid><description>
+&lt;p>Create resources from the resource definition files (only non-existing resources will be created).&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Reconcile the target platform by creating all non-existing resources that are described by the resource definition files
+passed as arguments. This command uses the &lt;strong>CREATE&lt;/strong> reconciliation mode, meaning only new resources will be created.
+Existing resources will not be updated or deleted.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou create &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create resources defined in a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou create -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Preview what would be created&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou create -f my-resources.yaml --dry-run
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou create -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create resources with template values&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou create -f my-resources.yaml --values-files values.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Create resources targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou create -f my-resources.yaml --provider kafka-dev
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>TEXT&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: TEXT, COMPACT, JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--pretty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Pretty print JSON output&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Execute command in dry-run mode (preview changes without applying)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes (FULL mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-update">jikkou update&lt;/a> - Create or update resources (UPDATE mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-delete">jikkou delete&lt;/a> - Delete resources (DELETE mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou delete</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-delete/</guid><description>
+&lt;p>Delete resources that are no longer described by the resource definition files.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Reconcile the target platform by deleting all existing resources that are no longer described by the resource definition
+files passed as arguments. This command uses the &lt;strong>DELETE&lt;/strong> reconciliation mode, meaning only deletions will be
+performed. No resources will be created or updated.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou delete &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Delete resources no longer defined in a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou delete -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Preview what would be deleted&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou delete -f my-resources.yaml --dry-run
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Delete resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou delete -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Delete with selector to target specific resources&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou delete -f my-resources.yaml -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (old-topic)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Delete resources targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou delete -f my-resources.yaml --provider kafka-dev
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>TEXT&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: TEXT, COMPACT, JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--pretty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Pretty print JSON output&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Execute command in dry-run mode (preview changes without applying)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes (FULL mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-create">jikkou create&lt;/a> - Create resources only (CREATE mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-update">jikkou update&lt;/a> - Create or update resources (UPDATE mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou diff</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-diff/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-diff/</guid><description>
+&lt;p>Show resource changes required by the current resource definitions.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Generates a speculative reconciliation plan, showing the resource changes Jikkou would apply to reconcile the resource
+definitions. This command does not actually perform the reconciliation actions.&lt;/p>
+&lt;p>Use &lt;code>diff&lt;/code> to preview what changes would be made before running &lt;code>apply&lt;/code>, &lt;code>create&lt;/code>, &lt;code>update&lt;/code>, or &lt;code>delete&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou diff &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Show changes required by a resource definition file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Show only resources that would be created&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml --filter-resource-op CREATE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Show only resources that would be created or deleted&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml --filter-resource-op CREATE,DELETE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Filter changes to show only update operations&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml --filter-change-op UPDATE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Output as a resource list&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml --list
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Output in JSON format&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml -o JSON
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Diff with a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Diff with selector&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou diff -f my-resources.yaml -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (my-topic-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--filter-resource-op&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Filter resources by operation (comma-separated). Valid values: NONE, CREATE, DELETE, REPLACE, UPDATE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--filter-change-op&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Filter state changes by operation (comma-separated). Valid values: NONE, CREATE, DELETE, REPLACE, UPDATE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--list&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Output resources as an ApiResourceChangeList&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes&lt;/li>
+&lt;li>&lt;a href="../jikkou-validate">jikkou validate&lt;/a> - Validate resource definitions&lt;/li>
+&lt;li>&lt;a href="../jikkou-prepare">jikkou prepare&lt;/a> - Prepare resources for validation&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou get</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-get/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-get/</guid><description>
+&lt;p>Display one or many specific resources.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Display one or many resources of a given type from the target platform. The &lt;code>get&lt;/code> command uses dynamic subcommands
+based on the resource types available from your configured providers. Use &lt;code>jikkou api-resources&lt;/code> to discover the
+available resource types.&lt;/p>
+&lt;p>When a resource name is specified, it retrieves that specific resource. Otherwise, it lists all resources of the
+given type.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get &amp;lt;resource-type&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>name&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all Kafka topics&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get a specific Kafka topic by name&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics my-topic
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources with a selector&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (my-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources with JSON output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -o JSON
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources as a ResourceListObject&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --list
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources with custom options&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --options describe-default-configs&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>&lt;span style="color:#204a87">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List resources targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --provider kafka-prod
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Discover available resource types&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources --verbs LIST,GET
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--list&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Output resources as a ResourceListObject&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Additional options may be available depending on the resource type. These are dynamically registered based on the
+provider&amp;rsquo;s &lt;code>ApiOptionSpec&lt;/code> definitions. Use &lt;code>jikkou api-extensions get &amp;lt;extension-name&amp;gt;&lt;/code> to view options for a
+specific resource collector.&lt;/p>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-api-resources">jikkou api-resources&lt;/a> - List available resource types&lt;/li>
+&lt;li>&lt;a href="../jikkou-api-extensions">jikkou api-extensions&lt;/a> - List and inspect extensions&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes between desired and actual state&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou health</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-health/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-health/</guid><description>
+&lt;p>Print or describe health indicators.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>The &lt;code>health&lt;/code> command provides information about the health of target environments. It has two subcommands:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>health get&lt;/code> - Retrieve health status for one or all indicators&lt;/li>
+&lt;li>&lt;code>health get-indicators&lt;/code> - List all available health indicators&lt;/li>
+&lt;/ul>
+&lt;h2 id="subcommands">Subcommands&lt;/h2>
+&lt;h2 id="jikkou-health-get">&lt;code>jikkou health get&lt;/code>&lt;/h2>
+&lt;p>Get health information for a specific indicator or all indicators.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou health get &amp;lt;indicator&lt;span style="color:#000;font-weight:bold">|&lt;/span>all&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get health for all indicators&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou health get all
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get health for a specific indicator&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou health get kafka
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get health with a custom timeout&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou health get all --timeout-ms &lt;span style="color:#0000cf;font-weight:bold">5000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get health in JSON format&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou health get all -o JSON
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get health targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou health get kafka --provider kafka-prod
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--timeout-ms&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>2000&lt;/code>&lt;/td>
+&lt;td>Timeout in milliseconds for retrieving health indicators&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>The command exits with code 0 if the health status is UP, or a non-zero code otherwise.&lt;/p>
+&lt;hr>
+&lt;h2 id="jikkou-health-get-indicators">&lt;code>jikkou health get-indicators&lt;/code>&lt;/h2>
+&lt;p>List all available health indicators. This command takes no options and displays the name and description of each
+registered health indicator.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou health get-indicators
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples-1">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all health indicators&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou health get-indicators
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options-1">Options&lt;/h2>
+&lt;p>This subcommand has no specific options.&lt;/p>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-api-extensions">jikkou api-extensions&lt;/a> - List and inspect extensions&lt;/li>
+&lt;li>&lt;a href="../jikkou-server-info">jikkou server-info&lt;/a> - Display server information (proxy mode)&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou patch</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-patch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-patch/</guid><description>
+&lt;p>Execute all changes for the specified reconciliation mode.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Reconcile resources by applying all the changes as defined in the resource descriptor files passed through the
+arguments. Unlike the other reconciliation commands (&lt;code>apply&lt;/code>, &lt;code>create&lt;/code>, &lt;code>update&lt;/code>, &lt;code>delete&lt;/code>), &lt;code>patch&lt;/code> requires you to
+explicitly specify the reconciliation mode using the &lt;code>--mode&lt;/code> flag.&lt;/p>
+&lt;p>The &lt;code>patch&lt;/code> command applies changes to existing resources on the platform by computing a diff between the current
+and desired states, then executing only the operations allowed by the selected mode.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou patch --mode &amp;lt;mode&amp;gt; &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Patch resources using FULL reconciliation mode&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou patch --mode FULL -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Patch resources - create only&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou patch --mode CREATE -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Patch resources - update only&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou patch --mode UPDATE -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Preview patches without applying&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou patch --mode FULL -f my-resources.yaml --dry-run
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Patch with a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou patch --mode UPDATE -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--mode&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;strong>(required)&lt;/strong> The reconciliation mode. Valid values: CREATE, DELETE, UPDATE, FULL&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>TEXT&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: TEXT, COMPACT, JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--pretty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Pretty print JSON output&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Execute command in dry-run mode (preview changes without applying)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes (FULL mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-replace">jikkou replace&lt;/a> - Replace resources by deleting and recreating&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou prepare</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-prepare/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-prepare/</guid><description>
+&lt;p>Prepare the resource definition files for validation.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Prepare the resource definition files specified through the command line arguments for validation. This command applies
+all configured transformations to the resource definitions and outputs the result, without running validation rules or
+performing reconciliation.&lt;/p>
+&lt;p>Use &lt;code>prepare&lt;/code> to inspect how your resources look after template rendering and transformations, before validation and
+reconciliation happen.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou prepare &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Prepare resources from a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou prepare -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Prepare resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou prepare -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Prepare with template values&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou prepare -f my-resources.yaml --values-files values.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Prepare with JSON output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou prepare -f my-resources.yaml -o JSON
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Prepare with selector&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou prepare -f my-resources.yaml -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (my-topic)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Prepare targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou prepare -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-validate">jikkou validate&lt;/a> - Validate prepared resources&lt;/li>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply changes&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou replace</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-replace/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-replace/</guid><description>
+&lt;p>Replace all resources.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Replaces resources by deleting and (re)creating all the resources as defined in the resource descriptor files passed
+through the arguments. Unlike &lt;code>apply&lt;/code>, which performs incremental updates, &lt;code>replace&lt;/code> performs a full replacement of
+resources: existing resources are deleted first and then recreated from scratch.&lt;/p>
+&lt;p>Use &lt;code>replace&lt;/code> when you need to ensure resources exactly match the desired state without any leftover configuration
+from previous versions.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou replace &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Replace resources defined in a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou replace -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Preview what would be replaced&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou replace -f my-resources.yaml --dry-run
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Replace resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou replace -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Replace resources targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou replace -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Replace with JSON output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou replace -f my-resources.yaml -o JSON --pretty
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>TEXT&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: TEXT, COMPACT, JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--pretty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Pretty print JSON output&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Execute command in dry-run mode (preview changes without applying)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes (FULL mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-patch">jikkou patch&lt;/a> - Patch resources with a specified mode&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou server-info</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-server-info/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-server-info/</guid><description>
+&lt;p>Display Jikkou API server information.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Print information about the Jikkou API server. This command is only available when Jikkou is configured in
+&lt;strong>proxy mode&lt;/strong> (i.e., when &lt;code>jikkou.proxy.url&lt;/code> is set in your configuration).&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou server-info &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get server information in YAML format (default)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou server-info
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Get server information in JSON format&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou server-info -o JSON
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-health">jikkou health&lt;/a> - Check health of target environments&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/cli-configuration/">Configuration&lt;/a> - Learn how to configure proxy mode&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou update</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-update/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-update/</guid><description>
+&lt;p>Create or update resources from the resource definition files.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Reconcile the target platform by creating or updating resources that are described by the resource definition files
+passed as arguments. This command uses the &lt;strong>UPDATE&lt;/strong> reconciliation mode, meaning new resources will be created and
+existing resources will be updated. Resources that exist on the platform but are not described in the resource files
+will not be deleted.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou update &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Update resources defined in a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou update -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Preview what would be created or updated&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou update -f my-resources.yaml --dry-run
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Update resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou update -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Update resources with selector to filter specific resources&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou update -f my-resources.yaml -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (my-topic-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Update resources targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou update -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>TEXT&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: TEXT, COMPACT, JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--pretty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Pretty print JSON output&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Execute command in dry-run mode (preview changes without applying)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes (FULL mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-create">jikkou create&lt;/a> - Create resources only (CREATE mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-delete">jikkou delete&lt;/a> - Delete resources (DELETE mode)&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item><item><title>Docs: jikkou validate</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-validate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-validate/</guid><description>
+&lt;p>Check whether the resources definitions meet all validation requirements.&lt;/p>
+&lt;h2 id="synopsis">Synopsis&lt;/h2>
+&lt;p>Validate the resource definition files specified through the command line arguments.&lt;/p>
+&lt;p>Validate runs all the user-defined validation requirements after performing any relevant resource transformations.
+Validation rules are applied only to resources matching the selectors passed through the command line arguments.&lt;/p>
+&lt;p>If validation passes, the command outputs the validated resources. If validation fails, the command prints the
+validation errors and exits with a non-zero status code.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou validate &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>flags&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Validate resources defined in a YAML file&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou validate -f my-resources.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Validate resources from a directory&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou validate -f ./resources/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Validate with a selector to filter specific resources&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou validate -f my-resources.yaml -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (my-topic-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Validate with template values&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou validate -f my-resources.yaml --values-files values.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Validate with JSON output&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou validate -f my-resources.yaml -o JSON
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Validate targeting a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou validate -f my-resources.yaml --provider kafka-prod
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Short&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--files&lt;/code>&lt;/td>
+&lt;td>&lt;code>-f&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Resource definition file or directory locations (one or more required)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--file-name&lt;/code>&lt;/td>
+&lt;td>&lt;code>-n&lt;/code>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter resource files when using directories&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-files&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Template values file locations (one or more)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--values-file-name&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>**/*.{yaml,yml}&lt;/code>&lt;/td>
+&lt;td>Glob pattern to filter values files&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-label&lt;/code>&lt;/td>
+&lt;td>&lt;code>-l&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set labels on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-annotation&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set annotations on resources (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--set-value&lt;/code>&lt;/td>
+&lt;td>&lt;code>-v&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Set template variables for the built-in &lt;code>Values&lt;/code> object (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector&lt;/code>&lt;/td>
+&lt;td>&lt;code>-s&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Selector expression for including or excluding resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--options&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Controller configuration options (key=value, repeatable)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--provider&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Select a specific provider instance&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>--output&lt;/code>&lt;/td>
+&lt;td>&lt;code>-o&lt;/code>&lt;/td>
+&lt;td>&lt;code>YAML&lt;/code>&lt;/td>
+&lt;td>Output format. Valid values: JSON, YAML&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Flag&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
+&lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="../jikkou-prepare">jikkou prepare&lt;/a> - Prepare resources for validation&lt;/li>
+&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply changes after validation&lt;/li>
+&lt;li>&lt;a href="../jikkou-diff">jikkou diff&lt;/a> - Show changes without applying&lt;/li>
+&lt;/ul></description></item></channel></rss>

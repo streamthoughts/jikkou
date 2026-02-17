@@ -122,55 +122,88 @@ definition:&lt;/p>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>Selectors&lt;/strong> allow you to include or exclude resource objects when returned or reconciled by Jikkou.&lt;/p>
 &lt;/div>
-&lt;h2 id="selector-expressions">Selector Expressions&lt;/h2>
-&lt;p>Selectors are passed to Jikkou using the &lt;code>--selector&lt;/code> CLI option.
-They allow you to define filtering logic to target specific resources during execution.&lt;/p>
-&lt;p>Selector expressions follow one of the following formats:&lt;/p>
+&lt;h2 id="overview">Overview&lt;/h2>
+&lt;p>Selectors filter which resources Jikkou operates on. They are passed via the &lt;code>--selector&lt;/code> (or &lt;code>-s&lt;/code>) CLI option and
+can be used with any command that accepts resources, including &lt;code>get&lt;/code>, &lt;code>apply&lt;/code>, &lt;code>create&lt;/code>, &lt;code>update&lt;/code>, &lt;code>delete&lt;/code>, &lt;code>diff&lt;/code>,
+&lt;code>validate&lt;/code>, and &lt;code>prepare&lt;/code>.&lt;/p>
+&lt;p>You can specify multiple selectors by repeating the &lt;code>--selector&lt;/code> flag, and control how they are combined using the
+&lt;code>--selector-match&lt;/code> option.&lt;/p>
+&lt;h2 id="selector-expression-syntax">Selector Expression Syntax&lt;/h2>
+&lt;p>A selector expression follows one of two formats:&lt;/p>
 &lt;ul>
-&lt;li>With an explicit selector:&lt;/li>
+&lt;li>With an explicit selector type prefix:&lt;/li>
 &lt;/ul>
-&lt;pre tabindex="0">&lt;code>&amp;lt;SELECTOR&amp;gt;: &amp;lt;EXPRESSION&amp;gt;
+&lt;pre tabindex="0">&lt;code>&amp;lt;SELECTOR_TYPE&amp;gt;: &amp;lt;EXPRESSION&amp;gt;
 &lt;/code>&lt;/pre>&lt;ul>
-&lt;li>Using the default &lt;code>field&lt;/code> selector (shorthand):&lt;/li>
+&lt;li>Using the default &lt;code>field&lt;/code> selector (the prefix can be omitted):&lt;/li>
 &lt;/ul>
-&lt;pre tabindex="0">&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE`
-&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE1[, VALUE2, ...])
-&lt;/code>&lt;/pre>&lt;blockquote>
-&lt;p>&lt;strong>Note:&lt;/strong> The &lt;code>field:&lt;/code> selector is the default, so it can be omitted when using field-based expressions.&lt;/p>
-&lt;/blockquote>
-&lt;h2 id="supported-selectors">Supported Selectors&lt;/h2>
+&lt;pre tabindex="0">&lt;code>&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; &amp;lt;VALUE&amp;gt;
+&amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE1, VALUE2, ...)
+&lt;/code>&lt;/pre>&lt;h2 id="supported-selectors">Supported Selectors&lt;/h2>
 &lt;h3 id="field-default">Field (default)&lt;/h3>
-&lt;p>The &lt;code>field&lt;/code> selector filters resources based on arbitrary fields in the resource object.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>field: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; VALUE
+&lt;p>The &lt;code>field&lt;/code> selector filters resources based on any field in the resource object, using dot-notation to navigate
+nested properties.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>field: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; &amp;lt;VALUE&amp;gt;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>field: &amp;lt;KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE1, VALUE2, ...)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="examples">Examples&lt;/h4>
-&lt;p>Select resources with a label &lt;code>environment&lt;/code> equal to &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>:&lt;/p>
-&lt;pre tabindex="0">&lt;code>field: metadata.labels.environement IN (staging, production)
-&lt;/code>&lt;/pre>&lt;p>or omitting the selector:&lt;/p>
-&lt;pre tabindex="0">&lt;code> metadata.labels.environement IN (staging, production)
-&lt;/code>&lt;/pre>&lt;h3 id="label">Label&lt;/h3>
-&lt;p>The &lt;code>label&lt;/code> selector provides a convenient way to filter resources by their labels.
-This is often simpler and more intuitive than referencing label fields directly via the &lt;code>field&lt;/code> selector.&lt;/p>
-&lt;h4 id="examples-1">Examples&lt;/h4>
-&lt;p>Select resources with a label &lt;code>environment&lt;/code> equal to &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>:&lt;/p>
-&lt;pre tabindex="0">&lt;code>label: environement IN (staging, production)
-&lt;/code>&lt;/pre>&lt;h3 id="expression-_since-jikkou-v036_">Expression (&lt;em>since: Jikkou v0.36&lt;/em>)&lt;/h3>
-&lt;p>The &lt;code>expr&lt;/code> selector allows complex filtering using the &lt;a href="https://cel.dev/">Common Expression Language (CEL)&lt;/a>, providing
-powerful and expressive syntax for filtering by any resource attribute, including arrays and maps.&lt;/p>
-&lt;h4 id="examples-2">Examples&lt;/h4>
-&lt;p>Select resources with the label &lt;code>env&lt;/code> in &lt;code>staging&lt;/code> or &lt;code>production&lt;/code>:&lt;/p>
-&lt;pre tabindex="0">&lt;code>expr: has(resource.metadata.labels.env) &amp;amp;&amp;amp; resource.metadata.labels.env in [&amp;#39;staging&amp;#39;, &amp;#39;production&amp;#39;]
-&lt;/code>&lt;/pre>&lt;p>Select Kafka topics with at least 12 partitions:&lt;/p>
-&lt;pre tabindex="0">&lt;code>expr: resource.kind == &amp;#39;KafkaTopic&amp;#39; &amp;amp;&amp;amp; resource.spec.partitions &amp;gt;= 12
-&lt;/code>&lt;/pre>&lt;p>Select resources missing a specific annotation:&lt;/p>
-&lt;pre tabindex="0">&lt;code>expr: !has(resource.metadata.annotations[&amp;#39;mycompany.io/owner&amp;#39;])
-&lt;/code>&lt;/pre>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Since &lt;code>field&lt;/code> is the default selector type, the &lt;code>field:&lt;/code> prefix can be omitted.&lt;/p>
+&lt;h4 id="examples">Examples&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select resources by name&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (my-topic, other-topic)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select by kind&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;kind IN (KafkaTopic)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select by label (using field selector)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;metadata.labels.environment IN (staging, production)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select topics matching a regex pattern&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^public-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Exclude internal topics&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name DOESNOTMATCH (^__.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># With explicit field: prefix (equivalent to above)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;field: metadata.name MATCHES (^public-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="label">Label&lt;/h3>
+&lt;p>The &lt;code>label&lt;/code> selector provides a shorthand to filter resources by their metadata labels, without needing the full
+&lt;code>metadata.labels.&lt;/code> path prefix.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>label: &amp;lt;LABEL_KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; &amp;lt;VALUE&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>label: &amp;lt;LABEL_KEY&amp;gt; &amp;lt;OPERATOR&amp;gt; (VALUE1, VALUE2, ...)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="examples-1">Examples&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select resources with a specific label value&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;label: environment IN (staging, production)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select resources that have a specific label (regardless of value)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;label: team EXISTS&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select resources that do NOT have a specific label&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics -s &lt;span style="color:#4e9a06">&amp;#39;label: deprecated DOESNOTEXIST&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="expression-_since-jikkou-v036_">Expression &lt;em>(since Jikkou v0.36)&lt;/em>&lt;/h3>
+&lt;p>The &lt;code>expr&lt;/code> selector enables complex filtering using the
+&lt;a href="https://cel.dev/">Common Expression Language (CEL)&lt;/a>. This is the most powerful selector type, supporting conditions
+on nested fields, arrays, maps, and computed expressions.&lt;/p>
+&lt;p>The resource being evaluated is available as the &lt;code>resource&lt;/code> variable.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-text" data-lang="text">&lt;span style="display:flex;">&lt;span>expr: &amp;lt;CEL_EXPRESSION&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="examples-2">Examples&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select resources with a label value in a list&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;expr: has(resource.metadata.labels.env) &amp;amp;&amp;amp; resource.metadata.labels.env in [&amp;#34;staging&amp;#34;, &amp;#34;production&amp;#34;]&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select Kafka topics with at least 12 partitions&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;expr: resource.kind == &amp;#34;KafkaTopic&amp;#34; &amp;amp;&amp;amp; resource.spec.partitions &amp;gt;= 12&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Select resources missing a specific annotation&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;expr: !has(resource.metadata.annotations[&amp;#34;mycompany.io/owner&amp;#34;])&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Tip&lt;/h4>
-Use the &lt;code>expr&lt;/code> selector when you need advanced filtering logic, or when targeting nested fields, maps, or arrays.
+Use the &lt;code>expr&lt;/code> selector when you need advanced filtering logic that goes beyond simple key-operator-value matching,
+such as numeric comparisons, boolean combinations, or presence checks on nested maps.
 &lt;/div>
 &lt;h2 id="expression-operators">Expression Operators&lt;/h2>
-&lt;p>The following operators are supported for both &lt;code>field&lt;/code> and &lt;code>label&lt;/code> selectors:&lt;/p>
+&lt;p>The following operators are available for &lt;code>field&lt;/code> and &lt;code>label&lt;/code> selectors:&lt;/p>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -181,43 +214,84 @@ Use the &lt;code>expr&lt;/code> selector when you need advanced filtering logic,
 &lt;tbody>
 &lt;tr>
 &lt;td>&lt;code>IN&lt;/code>&lt;/td>
-&lt;td>Match if the field/label value is in the given list&lt;/td>
+&lt;td>Match if the value is in the given list&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>NOTIN&lt;/code>&lt;/td>
-&lt;td>Match if the field/label value is &lt;strong>not&lt;/strong> in the given list&lt;/td>
+&lt;td>Match if the value is &lt;strong>not&lt;/strong> in the given list&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>EXISTS&lt;/code>&lt;/td>
-&lt;td>Match if the field/label is present&lt;/td>
+&lt;td>Match if the field or label exists&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>DOESNOTEXIST&lt;/code>&lt;/td>
+&lt;td>Match if the field or label does &lt;strong>not&lt;/strong> exist&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>MATCHES&lt;/code>&lt;/td>
-&lt;td>Match if the field/label value matches a regular expression&lt;/td>
+&lt;td>Match if the value matches a regular expression&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>DOESNOTMATCH&lt;/code>&lt;/td>
-&lt;td>Match if the field/label value does &lt;strong>not&lt;/strong> match the regex&lt;/td>
+&lt;td>Match if the value does &lt;strong>not&lt;/strong> match the regular expression&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;blockquote>
-&lt;p>Note: These operators are &lt;strong>not&lt;/strong> available for the &lt;code>expr&lt;/code> selector, which uses CEL syntax instead.&lt;/p>
-&lt;/blockquote>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+These operators are &lt;strong>not&lt;/strong> available for the &lt;code>expr&lt;/code> selector, which uses
+&lt;a href="https://cel.dev/">CEL syntax&lt;/a> instead.
+&lt;/div>
 &lt;h2 id="matching-strategies">Matching Strategies&lt;/h2>
-&lt;p>When specifying multiple selectors, you can define how they are logically combined using the &lt;code>--selector-match&lt;/code> option.&lt;/p>
-&lt;p>Available strategies:&lt;/p>
+&lt;p>When specifying multiple selectors, use &lt;code>--selector-match&lt;/code> to control how they are combined:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Strategy&lt;/th>
+&lt;th>Behavior&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
+&lt;td>The resource must match &lt;strong>all&lt;/strong> selectors (logical AND).&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ANY&lt;/code>&lt;/td>
+&lt;td>The resource must match &lt;strong>at least one&lt;/strong> selector (logical OR).&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>NONE&lt;/code>&lt;/td>
+&lt;td>The resource must match &lt;strong>none&lt;/strong> of the selectors (logical NOT).&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>The default strategy is &lt;code>ALL&lt;/code>.&lt;/p>
+&lt;h3 id="examples-3">Examples&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Match resources whose name starts with &amp;#34;__&amp;#34; OR is exactly &amp;#34;_schemas&amp;#34; (ANY)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --selector-match ANY
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Match resources that have both labels (ALL - default)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;label: environment IN (production)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;label: team EXISTS&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Exclude resources matching any selector (NONE)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> -s &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span> --selector-match NONE
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="see-also">SEE ALSO&lt;/h2>
 &lt;ul>
-&lt;li>&lt;code>ALL&lt;/code>: The resource must match &lt;strong>all&lt;/strong> selector expressions (logical AND).&lt;/li>
-&lt;li>&lt;code>ANY&lt;/code>: The resource must match &lt;strong>at least one&lt;/strong> selector (logical OR).&lt;/li>
-&lt;li>&lt;code>NONE&lt;/code>: The resource must &lt;strong>not match any&lt;/strong> selector (logical NOT).&lt;/li>
-&lt;/ul>
-&lt;h4 id="examples-3">Examples&lt;/h4>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name MATCHES (^__.*)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector &lt;span style="color:#4e9a06">&amp;#39;metadata.name IN (_schemas)&amp;#39;&lt;/span> &lt;span style="color:#4e9a06">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#4e9a06">&lt;/span>--selector-match ANY
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Transformations</title><link>https://www.jikkou.io/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/transformations/</guid><description>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-get/">jikkou get&lt;/a> - Display resources with selectors&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-apply/">jikkou apply&lt;/a> - Apply resources with selectors&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-diff/">jikkou diff&lt;/a> - Diff resources with selectors&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/concepts/labels-and-annotations/">Labels and annotations&lt;/a> - Using labels for resource organization&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Transformations</title><link>https://www.jikkou.io/docs/concepts/transformations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/transformations/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Transformations&lt;/em>&lt;/strong> are applied to inbound resources. &lt;em>Transformations&lt;/em> are used to transform, enrich, or filter
 resource entities
@@ -536,7 +610,168 @@ system.&lt;/p>
 &lt;h2 id="available-controllers">Available Controllers&lt;/h2>
 &lt;p>You can list all the available controllers using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Controller &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Resource Repositories</title><link>https://www.jikkou.io/docs/concepts/repositories/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/repositories/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Providers</title><link>https://www.jikkou.io/docs/concepts/providers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/providers/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;strong>Providers&lt;/strong> are pluggable modules that supply Jikkou with extensions and resource definitions for a specific
+platform or service (e.g., Apache Kafka, Schema Registry, Aiven).&lt;/p>
+&lt;/div>
+&lt;h2 id="what-is-a-provider">What is a Provider?&lt;/h2>
+&lt;p>A provider is a pluggable module that registers a cohesive set of
+extensions (controllers, collectors, transformations, validations, actions, health
+indicators) and &lt;a href="https://www.jikkou.io/docs/concepts/resource/">resource&lt;/a> types into Jikkou at runtime.&lt;/p>
+&lt;p>Each provider targets a specific platform and is responsible for:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Registering extensions&lt;/strong> such as controllers, collectors, transformations, validations, and actions.&lt;/li>
+&lt;li>&lt;strong>Registering resource types&lt;/strong> that describe the API resources it manages.&lt;/li>
+&lt;li>&lt;strong>Accepting configuration&lt;/strong> specific to its platform (e.g., Kafka bootstrap servers, Schema Registry URL).&lt;/li>
+&lt;/ul>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>Providers are configured in the Jikkou configuration file under the &lt;code>jikkou.provider&lt;/code> namespace. Each provider entry
+has a unique name and includes its type, an &lt;code>enabled&lt;/code> flag, and a &lt;code>config&lt;/code> block.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+provider.kafka {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+}
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;h3 id="configuration-properties">Configuration Properties&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Property&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>enabled&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Whether this provider is active. Defaults to &lt;code>true&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>type&lt;/code>&lt;/td>
+&lt;td>String&lt;/td>
+&lt;td>Fully qualified class name of the provider implementation.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>default&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Mark this instance as the default for its provider type. Defaults to &lt;code>false&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>config&lt;/code>&lt;/td>
+&lt;td>Object&lt;/td>
+&lt;td>Provider-specific configuration (e.g., connection settings).&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="multiple-instances">Multiple Instances&lt;/h2>
+&lt;p>You can configure multiple instances of the same provider type by giving each a unique name. This is useful when you
+need to manage resources across different environments (e.g., dev vs. production Kafka clusters) from a single Jikkou
+installation.&lt;/p>
+&lt;p>Use &lt;code>default = true&lt;/code> to mark one instance as the default for its provider type:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+provider.kafka-prod {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+default = true
+config = {
+client.bootstrap.servers = &amp;#34;kafka-prod:9092&amp;#34;
+}
+}
+provider.kafka-staging {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
+client.bootstrap.servers = &amp;#34;kafka-staging:9092&amp;#34;
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>Use the &lt;code>--provider&lt;/code> flag to target a specific provider instance when running commands:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Uses the default provider (kafka-prod)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Explicitly target the staging provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --provider kafka-staging
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources to staging&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --provider kafka-staging
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="provider-resolution">Provider Resolution&lt;/h3>
+&lt;p>The &lt;code>--provider&lt;/code> flag is &lt;strong>always optional&lt;/strong>. Jikkou resolves the target provider using the following fallback chain:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Single provider of a given type&lt;/strong>: It is used automatically — no &lt;code>--provider&lt;/code> flag needed, no &lt;code>default&lt;/code> property
+needed. If you only have one Kafka provider configured, everything works exactly as before.&lt;/li>
+&lt;li>&lt;strong>Multiple providers, one marked &lt;code>default = true&lt;/code>&lt;/strong>: The default is used when &lt;code>--provider&lt;/code> is omitted. You only need
+the flag when targeting a non-default instance.&lt;/li>
+&lt;li>&lt;strong>Multiple providers, no default&lt;/strong>: You &lt;strong>must&lt;/strong> specify &lt;code>--provider&lt;/code> on every command. Omitting it results in an
+error: &lt;em>&amp;ldquo;No default configuration defined, and multiple configurations found for provider type&amp;rdquo;&lt;/em>.&lt;/li>
+&lt;/ol>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+Existing single-provider configurations continue to work without any changes. The &lt;code>default&lt;/code> property and &lt;code>--provider&lt;/code>
+flag only matter once you add a second instance of the same provider type.
+&lt;/div>
+&lt;p>Provider selection works across all commands — &lt;code>apply&lt;/code>, &lt;code>create&lt;/code>, &lt;code>update&lt;/code>, &lt;code>delete&lt;/code>, &lt;code>diff&lt;/code>, &lt;code>validate&lt;/code>, &lt;code>replace&lt;/code>,
+&lt;code>patch&lt;/code>, &lt;code>get&lt;/code>, &lt;code>action&lt;/code>, and &lt;code>health&lt;/code> — and extends to the REST API server with a &lt;code>provider&lt;/code> field in reconciliation
+request bodies.&lt;/p>
+&lt;h2 id="built-in-providers">Built-in Providers&lt;/h2>
+&lt;p>Jikkou ships with the following built-in extension providers:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Provider&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/kafka/">Apache Kafka&lt;/a>&lt;/td>
+&lt;td>Manage Kafka Topics, ACLs, Quotas, and Consumer Groups&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/schema-registry/">Schema Registry&lt;/a>&lt;/td>
+&lt;td>Manage Schema Registry subjects and schemas&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/">Kafka Connect&lt;/a>&lt;/td>
+&lt;td>Manage Kafka Connect connectors&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/aiven/">Aiven&lt;/a>&lt;/td>
+&lt;td>Manage Aiven-specific resources (ACLs, Quotas, Schema Registry)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/aws/">AWS&lt;/a>&lt;/td>
+&lt;td>Manage AWS Glue Schema Registry resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/core/">Core&lt;/a>&lt;/td>
+&lt;td>Core resource types (e.g., ConfigMap)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="discovering-providers">Discovering Providers&lt;/h2>
+&lt;p>You can inspect providers and the extensions they contribute using the CLI:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all registered extensions with their provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List extensions for a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --provider kafka
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List API resources and their supported verbs&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/concepts/controller/">Controllers&lt;/a> - Extensions that reconcile resources&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/concepts/collector/">Collectors&lt;/a> - Extensions that collect resource state&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/cli-configuration/">Configuration&lt;/a> - How to configure providers via contexts&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Resource Repositories</title><link>https://www.jikkou.io/docs/concepts/repositories/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/repositories/</guid><description>
 &lt;h2 id="overview">Overview&lt;/h2>
 &lt;p>A &lt;strong>Resource Repository&lt;/strong> is an extensible component in Jikkou that enables dynamic loading of resources from various
 sources (e.g., local directories, remote Git repositories) into the execution context.&lt;/p>

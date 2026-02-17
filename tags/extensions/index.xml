@@ -1,17 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extensions</title><link>https://www.jikkou.io/tags/extensions/</link><description>Recent content in extensions on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/tags/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Extensions and providers</title><link>https://www.jikkou.io/docs/concepts/extensions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/extensions/</guid><description>
-&lt;h2 id="extension-providers">Extension Providers&lt;/h2>
-&lt;p>Most of the Jikkou&amp;rsquo;s features are provided by &lt;strong>Jikkou Extension Providers&lt;/strong>. A provider is a module providing a set of
-extensions used to manage one or more resources.&lt;/p>
-&lt;h2 id="built-in-extension-providers">Built-in Extension Providers&lt;/h2>
-&lt;p>Jikkou ships with a number of extension providers:&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/aiven/" title="Aiven">Aiven&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka/" title="Apache Kafka">Apache Kafka&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/aws/" title="AWS">AWS&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/core/" title="Core">Core&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/" title="Kafka Connect">Kafka Connect&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://www.jikkou.io/docs/providers/schema-registry/" title="Schema Registry">Schema Registry&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Reporters</title><link>https://www.jikkou.io/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reporters/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – extensions</title><link>https://www.jikkou.io/tags/extensions/</link><description>Recent content in extensions on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/tags/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Reporters</title><link>https://www.jikkou.io/docs/concepts/reporters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/reporters/</guid><description>
 &lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Reporters&lt;/em>&lt;/strong> can be used to report changes applied by Jikkou to a third-party system.&lt;/p>
 &lt;/div>

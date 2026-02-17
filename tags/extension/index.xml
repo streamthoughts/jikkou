@@ -127,7 +127,168 @@ system.&lt;/p>
 &lt;h2 id="available-controllers">Available Controllers&lt;/h2>
 &lt;p>You can list all the available controllers using the Jikkou CLI command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>jikkou extensions list --type&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>Controller &lt;span style="color:#ce5c00;font-weight:bold">[&lt;/span>-kinds &amp;lt;a resource kind to filter returned results&amp;gt;&lt;span style="color:#ce5c00;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Resource Repositories</title><link>https://www.jikkou.io/docs/concepts/repositories/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/repositories/</guid><description>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Providers</title><link>https://www.jikkou.io/docs/concepts/providers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/providers/</guid><description>
+&lt;div class="pageinfo pageinfo-info">
+&lt;p>&lt;strong>Providers&lt;/strong> are pluggable modules that supply Jikkou with extensions and resource definitions for a specific
+platform or service (e.g., Apache Kafka, Schema Registry, Aiven).&lt;/p>
+&lt;/div>
+&lt;h2 id="what-is-a-provider">What is a Provider?&lt;/h2>
+&lt;p>A provider is a pluggable module that registers a cohesive set of
+extensions (controllers, collectors, transformations, validations, actions, health
+indicators) and &lt;a href="https://www.jikkou.io/docs/concepts/resource/">resource&lt;/a> types into Jikkou at runtime.&lt;/p>
+&lt;p>Each provider targets a specific platform and is responsible for:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Registering extensions&lt;/strong> such as controllers, collectors, transformations, validations, and actions.&lt;/li>
+&lt;li>&lt;strong>Registering resource types&lt;/strong> that describe the API resources it manages.&lt;/li>
+&lt;li>&lt;strong>Accepting configuration&lt;/strong> specific to its platform (e.g., Kafka bootstrap servers, Schema Registry URL).&lt;/li>
+&lt;/ul>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>Providers are configured in the Jikkou configuration file under the &lt;code>jikkou.provider&lt;/code> namespace. Each provider entry
+has a unique name and includes its type, an &lt;code>enabled&lt;/code> flag, and a &lt;code>config&lt;/code> block.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+provider.kafka {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
+client {
+bootstrap.servers = &amp;#34;localhost:9092&amp;#34;
+}
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;h3 id="configuration-properties">Configuration Properties&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Property&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>enabled&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Whether this provider is active. Defaults to &lt;code>true&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>type&lt;/code>&lt;/td>
+&lt;td>String&lt;/td>
+&lt;td>Fully qualified class name of the provider implementation.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>default&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>Mark this instance as the default for its provider type. Defaults to &lt;code>false&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>config&lt;/code>&lt;/td>
+&lt;td>Object&lt;/td>
+&lt;td>Provider-specific configuration (e.g., connection settings).&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="multiple-instances">Multiple Instances&lt;/h2>
+&lt;p>You can configure multiple instances of the same provider type by giving each a unique name. This is useful when you
+need to manage resources across different environments (e.g., dev vs. production Kafka clusters) from a single Jikkou
+installation.&lt;/p>
+&lt;p>Use &lt;code>default = true&lt;/code> to mark one instance as the default for its provider type:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+provider.kafka-prod {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+default = true
+config = {
+client.bootstrap.servers = &amp;#34;kafka-prod:9092&amp;#34;
+}
+}
+provider.kafka-staging {
+enabled = true
+type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+config = {
+client.bootstrap.servers = &amp;#34;kafka-staging:9092&amp;#34;
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>Use the &lt;code>--provider&lt;/code> flag to target a specific provider instance when running commands:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Uses the default provider (kafka-prod)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Explicitly target the staging provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou get kafkatopics --provider kafka-staging
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># Apply resources to staging&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou apply -f my-resources.yaml --provider kafka-staging
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="provider-resolution">Provider Resolution&lt;/h3>
+&lt;p>The &lt;code>--provider&lt;/code> flag is &lt;strong>always optional&lt;/strong>. Jikkou resolves the target provider using the following fallback chain:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Single provider of a given type&lt;/strong>: It is used automatically — no &lt;code>--provider&lt;/code> flag needed, no &lt;code>default&lt;/code> property
+needed. If you only have one Kafka provider configured, everything works exactly as before.&lt;/li>
+&lt;li>&lt;strong>Multiple providers, one marked &lt;code>default = true&lt;/code>&lt;/strong>: The default is used when &lt;code>--provider&lt;/code> is omitted. You only need
+the flag when targeting a non-default instance.&lt;/li>
+&lt;li>&lt;strong>Multiple providers, no default&lt;/strong>: You &lt;strong>must&lt;/strong> specify &lt;code>--provider&lt;/code> on every command. Omitting it results in an
+error: &lt;em>&amp;ldquo;No default configuration defined, and multiple configurations found for provider type&amp;rdquo;&lt;/em>.&lt;/li>
+&lt;/ol>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+Existing single-provider configurations continue to work without any changes. The &lt;code>default&lt;/code> property and &lt;code>--provider&lt;/code>
+flag only matter once you add a second instance of the same provider type.
+&lt;/div>
+&lt;p>Provider selection works across all commands — &lt;code>apply&lt;/code>, &lt;code>create&lt;/code>, &lt;code>update&lt;/code>, &lt;code>delete&lt;/code>, &lt;code>diff&lt;/code>, &lt;code>validate&lt;/code>, &lt;code>replace&lt;/code>,
+&lt;code>patch&lt;/code>, &lt;code>get&lt;/code>, &lt;code>action&lt;/code>, and &lt;code>health&lt;/code> — and extends to the REST API server with a &lt;code>provider&lt;/code> field in reconciliation
+request bodies.&lt;/p>
+&lt;h2 id="built-in-providers">Built-in Providers&lt;/h2>
+&lt;p>Jikkou ships with the following built-in extension providers:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Provider&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/kafka/">Apache Kafka&lt;/a>&lt;/td>
+&lt;td>Manage Kafka Topics, ACLs, Quotas, and Consumer Groups&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/schema-registry/">Schema Registry&lt;/a>&lt;/td>
+&lt;td>Manage Schema Registry subjects and schemas&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/kafka-connect/">Kafka Connect&lt;/a>&lt;/td>
+&lt;td>Manage Kafka Connect connectors&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/aiven/">Aiven&lt;/a>&lt;/td>
+&lt;td>Manage Aiven-specific resources (ACLs, Quotas, Schema Registry)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/aws/">AWS&lt;/a>&lt;/td>
+&lt;td>Manage AWS Glue Schema Registry resources&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="https://www.jikkou.io/docs/providers/core/">Core&lt;/a>&lt;/td>
+&lt;td>Core resource types (e.g., ConfigMap)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="discovering-providers">Discovering Providers&lt;/h2>
+&lt;p>You can inspect providers and the extensions they contribute using the CLI:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List all registered extensions with their provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List extensions for a specific provider&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-extensions list --provider kafka
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#8f5902;font-style:italic"># List API resources and their supported verbs&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>jikkou api-resources
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="see-also">SEE ALSO&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/concepts/controller/">Controllers&lt;/a> - Extensions that reconcile resources&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/concepts/collector/">Collectors&lt;/a> - Extensions that collect resource state&lt;/li>
+&lt;li>&lt;a href="https://www.jikkou.io/docs/jikkou-cli/cli-configuration/">Configuration&lt;/a> - How to configure providers via contexts&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Resource Repositories</title><link>https://www.jikkou.io/docs/concepts/repositories/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/repositories/</guid><description>
 &lt;h2 id="overview">Overview&lt;/h2>
 &lt;p>A &lt;strong>Resource Repository&lt;/strong> is an extensible component in Jikkou that enables dynamic loading of resources from various
 sources (e.g., local directories, remote Git repositories) into the execution context.&lt;/p>
