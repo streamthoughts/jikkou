@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.common.utils.CollectionUtils;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.io.ResourceLoader;
 import io.streamthoughts.jikkou.core.io.reader.ResourceReaderFactory;
@@ -20,6 +21,9 @@ import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.DefaultChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Operation;
+import io.streamthoughts.jikkou.core.selector.ExpressionOperator;
+import io.streamthoughts.jikkou.core.selector.LabelSelector;
+import io.streamthoughts.jikkou.core.selector.PreparedExpression;
 import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.BaseExtensionProviderIT;
 import io.streamthoughts.jikkou.kafka.collections.V1KafkaTopicList;
@@ -36,6 +40,7 @@ public class AdminClientKafkaTopicControllerIT extends BaseExtensionProviderIT {
     public static final String CLASSPATH_RESOURCE_TOPICS = "test-kafka-topics.yaml";
     public static final String CLASSPATH_RESOURCE_TOPIC_ALL_DELETE = "test-kafka-topics-with-all-delete.yaml";
     public static final String CLASSPATH_RESOURCE_TOPIC_SINGLE_DELETE = "test-kafka-topics-with-single-delete.yaml";
+    public static final String CLASSPATH_RESOURCE_TOPICS_WITH_LABELS = "test-kafka-topics-with-labels.yaml";
     public static final String TOPIC_TEST_A = "topic-test-A";
     public static final String TOPIC_TEST_B = "topic-test-B";
     public static final String TOPIC_TEST_C = "topic-test-C";
@@ -258,6 +263,66 @@ public class AdminClientKafkaTopicControllerIT extends BaseExtensionProviderIT {
             .anyMatch(it -> it.equals(Operation.DELETE));
 
         Assertions.assertTrue(delete);
+    }
+
+    @Test
+    public void shouldReconcileExistingTopicsWithLabelSelectorWithoutCreatingDuplicates() {
+        // GIVEN - Create topics that already exist on the cluster
+        createTopic(TOPIC_TEST_A);
+        createTopic(TOPIC_TEST_B);
+
+        // Load resources that define the same topics but with user-defined labels
+        var resources = loader.loadFromClasspath(CLASSPATH_RESOURCE_TOPICS_WITH_LABELS);
+
+        // Build a label selector: team IN (my-service)
+        LabelSelector labelSelector = new LabelSelector(
+                new PreparedExpression("team", ExpressionOperator.IN, List.of("my-service"))
+        );
+
+        var context = ReconciliationContext.builder()
+                .selector(Selectors.allMatch(List.of(labelSelector)))
+                .dryRun(false)
+                .build();
+
+        // WHEN
+        List<ChangeResult> results = api.reconcile(resources, ReconciliationMode.UPDATE, context).results();
+
+        // THEN - Both topics should be UPDATE or NONE, never CREATE
+        Map<String, ResourceChange> changeByName = results.stream()
+                .map(ChangeResult::change)
+                .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
+
+        Assertions.assertEquals(2, changeByName.size(), "Expected changes for both topics");
+
+        // Neither topic should be CREATE — they already exist and the selector must not filter them out
+        changeByName.forEach((name, change) -> {
+            Assertions.assertNotEquals(
+                    Operation.CREATE,
+                    change.getSpec().getOp(),
+                    "Topic '" + name + "' should not be CREATE (it already exists on the cluster)"
+            );
+        });
+    }
+
+    @Test
+    public void shouldThrowWhenLabelSelectorUsedWithDeleteOrphans() {
+        // GIVEN
+        var resources = loader.loadFromClasspath(CLASSPATH_RESOURCE_TOPICS_WITH_LABELS);
+
+        LabelSelector labelSelector = new LabelSelector(
+                new PreparedExpression("team", ExpressionOperator.IN, List.of("my-service"))
+        );
+
+        var context = ReconciliationContext.builder()
+                .selector(Selectors.allMatch(List.of(labelSelector)))
+                .configuration(Configuration.of("delete-orphans", true))
+                .dryRun(false)
+                .build();
+
+        // WHEN / THEN
+        Assertions.assertThrows(JikkouRuntimeException.class, () ->
+                api.reconcile(resources, ReconciliationMode.FULL, context)
+        );
     }
 
     @NotNull
