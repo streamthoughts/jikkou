@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.streamthoughts</groupId>
         <artifactId>jikkou-parent</artifactId>
-        <version>0.37.2-SNAPSHOT</version>
+        <version>0.37.2</version>
     </parent>
 
     <name>Jikkou Extension :: Annotation Processor</name>
