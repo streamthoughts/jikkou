@@ -6,6 +6,9 @@
  */
 package io.streamthoughts.jikkou.core.selector;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +41,41 @@ class SelectorsTest {
         Selector selector = Selectors.noneMatch(EXPRESSIONS);
         Assertions.assertEquals(List.of("expr1", "expr2"), selector.getSelectorExpressions());
         Assertions.assertEquals(SelectorMatchingStrategy.NONE, selector.getSelectorMatchingStrategy());
+    }
+
+    @Test
+    void shouldReturnFalseForNoSelector() {
+        assertFalse(Selectors.containsLabelSelector(Selectors.NO_SELECTOR));
+    }
+
+    @Test
+    void shouldReturnTrueForLabelSelector() {
+        PreparedExpression expr = new PreparedExpression("env", ExpressionOperator.EXISTS, List.of());
+        LabelSelector labelSelector = new LabelSelector(expr);
+        assertTrue(Selectors.containsLabelSelector(labelSelector));
+    }
+
+    @Test
+    void shouldReturnFalseForFieldSelector() {
+        PreparedExpression expr = new PreparedExpression("metadata.name", ExpressionOperator.IN, List.of("test"));
+        FieldSelector fieldSelector = new FieldSelector(expr);
+        assertFalse(Selectors.containsLabelSelector(fieldSelector));
+    }
+
+    @Test
+    void shouldReturnTrueForAggregateSelectorWithNestedLabelSelector() {
+        PreparedExpression expr = new PreparedExpression("env", ExpressionOperator.EXISTS, List.of());
+        LabelSelector labelSelector = new LabelSelector(expr);
+        Selector aggregate = Selectors.allMatch(List.of(labelSelector));
+        assertTrue(Selectors.containsLabelSelector(aggregate));
+    }
+
+    @Test
+    void shouldReturnFalseForAggregateSelectorWithoutLabelSelector() {
+        PreparedExpression expr = new PreparedExpression("metadata.name", ExpressionOperator.IN, List.of("test"));
+        FieldSelector fieldSelector = new FieldSelector(expr);
+        Selector aggregate = Selectors.allMatch(List.of(fieldSelector));
+        assertFalse(Selectors.containsLabelSelector(aggregate));
     }
 
     @NotNull

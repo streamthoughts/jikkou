@@ -52,4 +52,19 @@ public final class Selectors {
     public static Selector noneMatch(@NotNull List<Selector> selectors) {
         return new NoneMatchSelector(selectors);
     }
+
+    /**
+     * Checks whether the given selector contains a {@link LabelSelector},
+     * either directly or nested within an {@link AggregateSelector}.
+     *
+     * @param selector the selector to check.
+     * @return {@code true} if the selector contains a {@link LabelSelector}.
+     */
+    public static boolean containsLabelSelector(@NotNull Selector selector) {
+        if (selector instanceof LabelSelector) return true;
+        if (selector instanceof AggregateSelector agg) {
+            return agg.selectors.stream().anyMatch(Selectors::containsLabelSelector);
+        }
+        return false;
+    }
 }
