@@ -11,6 +11,7 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.*;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.Configs;
@@ -20,6 +21,8 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.selector.Selector;
+import io.streamthoughts.jikkou.core.selector.Selectors;
 import io.streamthoughts.jikkou.kafka.ApiVersions;
 import io.streamthoughts.jikkou.kafka.KafkaExtensionProvider;
 import io.streamthoughts.jikkou.kafka.change.topics.*;
@@ -29,7 +32,9 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -124,9 +129,19 @@ public final class AdminClientKafkaTopicController
 
         LOG.info("Computing reconciliation change for '{}' resources", resources.size());
 
-        // Get the list of described resource that are candidates for this reconciliation
-        List<V1KafkaTopic> expectedKafkaTopics = resources.stream()
-                .filter(context.selector()::apply)
+        Selector selector = context.selector();
+        boolean deleteOrphans = Config.IS_DELETE_ORPHANS_ENABLED.get(context.configuration());
+
+        if (deleteOrphans && Selectors.containsLabelSelector(selector)) {
+            throw new JikkouRuntimeException(
+                "Cannot use label selectors together with delete-orphans=true. " +
+                "Label selectors filter out actual resources that lack user-defined labels, " +
+                "which would cause all non-matching topics to be deleted."
+            );
+        }
+
+        // Get the list of expected resources with flattened configs (unfiltered)
+        List<V1KafkaTopic> allExpectedKafkaTopics = resources.stream()
                 .map(resource -> {
                     V1KafkaTopicSpec spec = resource.getSpec();
                     Configs configs = spec.getConfigs();
@@ -134,21 +149,57 @@ public final class AdminClientKafkaTopicController
                 })
                 .toList();
 
-        // Get the list of remote resources that are candidates for this reconciliation
+        // Get the list of actual remote resources (unfiltered)
         AdminClientKafkaTopicCollector collector = new AdminClientKafkaTopicCollector(adminClientContextFactory);
         collector.init(extensionContext().contextForExtension(AdminClientKafkaTopicCollector.class));
+        List<V1KafkaTopic> allActualKafkaTopics = collector.listAll().getItems();
 
-        List<V1KafkaTopic> actualKafkaTopics = collector.listAll()
-            .stream()
-            .filter(context.selector()::apply)
-            .toList();
+        // Enrich actual topics with labels from expected topics so label selectors work on both sides
+        enrichLabelsFromExpected(allActualKafkaTopics, allExpectedKafkaTopics);
+
+        // Now apply the selector to both sides
+        List<V1KafkaTopic> expectedKafkaTopics = allExpectedKafkaTopics.stream()
+                .filter(selector::apply)
+                .toList();
+
+        List<V1KafkaTopic> actualKafkaTopics = allActualKafkaTopics.stream()
+                .filter(selector::apply)
+                .toList();
 
         TopicChangeComputer changeComputer = new TopicChangeComputer(
             topicDeleteExcludePatterns,
-            Config.IS_DELETE_ORPHANS_ENABLED.get(context.configuration()),
+            deleteOrphans,
             Config.IS_CONFIG_DELETE_ORPHANS_ENABLED.get(context.configuration())
         );
         return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics);
+    }
+
+    /**
+     * Enriches actual topics with labels from matching expected topics.
+     * Labels from expected topics are propagated to actual topics (joined by name),
+     * preserving any existing labels on the actual topics (e.g., system labels).
+     *
+     * @param actual   the list of actual (collected) topics.
+     * @param expected the list of expected (input) topics.
+     */
+    static void enrichLabelsFromExpected(
+            @NotNull List<V1KafkaTopic> actual,
+            @NotNull List<V1KafkaTopic> expected) {
+
+        Map<String, Map<String, Object>> labelsByName = expected.stream()
+                .collect(Collectors.toMap(
+                        t -> t.getMetadata().getName(),
+                        t -> t.getMetadata().getLabels(),
+                        (a, b) -> b // last-one-wins for duplicate names
+                ));
+
+        for (V1KafkaTopic topic : actual) {
+            Map<String, Object> expectedLabels = labelsByName.get(topic.getMetadata().getName());
+            if (expectedLabels == null || expectedLabels.isEmpty()) {
+                continue;
+            }
+            expectedLabels.forEach(topic.getMetadata()::addLabelIfAbsent);
+        }
     }
 
     /**
