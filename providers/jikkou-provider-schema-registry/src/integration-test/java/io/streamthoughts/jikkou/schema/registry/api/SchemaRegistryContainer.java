@@ -7,9 +7,9 @@
 package io.streamthoughts.jikkou.schema.registry.api;
 
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.kafka.KafkaContainer;
 
 public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryContainer> {
 
@@ -29,7 +29,7 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
     }
 
     public SchemaRegistryContainer withKafka(KafkaContainer kafka) {
-        return withKafka(kafka.getNetwork(), kafka.getNetworkAliases().get(0) + ":9092");
+        return withKafka(kafka.getNetwork(), kafka.getNetworkAliases().get(0) + ":19092");
     }
 
     public SchemaRegistryContainer withKafka(Network network, String bootstrapServers) {
