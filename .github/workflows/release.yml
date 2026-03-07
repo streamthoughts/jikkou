@@ -21,9 +21,15 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '25.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
+
+permissions:
+  contents: read
+
 jobs:
   set-release-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       HEAD: ${{ steps.version.outputs.HEAD }}
       RELEASE_VERSION: ${{ steps.version.outputs.RELEASE_VERSION }}
@@ -57,10 +63,11 @@ jobs:
 
       - name: 'Set release version'
         id: version
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
+          NEXT_VERSION: ${{ github.event.inputs.next }}
         run: |
-          RELEASE_VERSION=${{ github.event.inputs.version }}
-          NEXT_VERSION=${{ github.event.inputs.next }}
-          if [ -z $NEXT_VERSION ]
+          if [ -z "$NEXT_VERSION" ]
           then
             PLAIN_VERSION=`echo ${RELEASE_VERSION} | awk 'match($0, /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)/) { print substr($0, RSTART, RLENGTH); }'`
             NEXT_VERSION="${PLAIN_VERSION}-SNAPSHOT"
@@ -78,6 +85,8 @@ jobs:
   build-distribution:
     needs: [ set-release-version ]
     name: 'Build with GraalVM on ${{ matrix.os }}'
+    permissions:
+      contents: read
     strategy:
       fail-fast: true
       matrix:
@@ -153,6 +162,8 @@ jobs:
   release-artifacts:
     needs: [ set-release-version, build-distribution ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4
@@ -207,7 +218,7 @@ jobs:
         env:
           NEXT_VERSION: ${{ needs.set-release-version.outputs.NEXT_VERSION }}
         run: |
-          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=${{ env.NEXT_VERSION }}
+          ./mvnw -ntp -B versions:set versions:commit -DnewVersion="$NEXT_VERSION"
           find . -name 'pom.xml' | xargs git add
-          git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
+          git commit -m "ci: bump version for next iteration to $NEXT_VERSION"
           git push origin HEAD:${GITHUB_REF#refs/heads/}

@@ -16,6 +16,10 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '25.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
+
+permissions:
+  contents: read
+
 jobs:
   build-cli:
     if: github.repository == 'streamthoughts/jikkou'

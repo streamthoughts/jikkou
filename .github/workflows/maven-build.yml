@@ -19,13 +19,14 @@ env:
 permissions:
   contents: read
   security-events: write
-  pull-requests: write
 
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      pull-requests: write
     steps:
     - name: 'Checkout code'
       uses: actions/checkout@v4
