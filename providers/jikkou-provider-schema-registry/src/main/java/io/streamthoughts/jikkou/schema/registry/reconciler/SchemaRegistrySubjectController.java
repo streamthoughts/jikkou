@@ -20,6 +20,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeHandler;
 import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.schema.registry.ApiVersions;
 import io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider;
 import io.streamthoughts.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
@@ -98,24 +99,29 @@ public class SchemaRegistrySubjectController
             @NotNull Collection<V1SchemaRegistrySubject> resources,
             @NotNull ReconciliationContext context) {
 
-        // Get described resources that are candidates for this reconciliation.
-        List<V1SchemaRegistrySubject> expectedSubjects = resources.stream()
-            .filter(context.selector()::apply)
-            .toList();
+        Selector selector = context.selector();
+
+        // Get all expected resources (unfiltered)
+        List<V1SchemaRegistrySubject> allExpectedSubjects = resources.stream().toList();
 
         // Get existing resources from the environment.
         SchemaRegistrySubjectCollector collector = new SchemaRegistrySubjectCollector(configuration)
             .prettyPrintSchema(false);
 
-        List<String> subjects = expectedSubjects.stream()
+        List<String> subjects = allExpectedSubjects.stream()
             .map(V1SchemaRegistrySubject::getMetadata)
             .map(ObjectMeta::getName)
             .toList();
 
         Configuration collectorConfig = SchemaRegistrySubjectCollector.Config.DEFAULT_GLOBAL_COMPATIBILITY_LEVEL.asConfiguration(false);
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(collectorConfig, subjects).stream()
-            .filter(context.selector()::apply)
-            .toList();
+        List<V1SchemaRegistrySubject> allActualSubjects = collector.listAll(collectorConfig, subjects).getItems();
+
+        // Enrich actual subjects with labels from expected subjects so label selectors work on both sides
+        Controller.enrichLabelsFromExpected(allActualSubjects, allExpectedSubjects);
+
+        // Apply selector to both sides
+        List<V1SchemaRegistrySubject> expectedSubjects = allExpectedSubjects.stream().filter(selector::apply).toList();
+        List<V1SchemaRegistrySubject> actualSubjects = allActualSubjects.stream().filter(selector::apply).toList();
 
         SchemaSubjectChangeComputer computer = new SchemaSubjectChangeComputer();
 
