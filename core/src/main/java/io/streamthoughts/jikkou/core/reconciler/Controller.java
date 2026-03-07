@@ -20,7 +20,9 @@ import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfigurat
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -54,6 +56,37 @@ public interface Controller<R extends HasMetadata> extends HasMetadataAcceptable
      */
     List<ResourceChange> plan(@NotNull Collection<R> resources,
                               @NotNull ReconciliationContext context);
+
+    /**
+     * Enriches actual resources with labels from name-matched expected resources.
+     * Labels from expected resources are propagated to actual resources (joined by name),
+     * preserving any existing labels on the actual resources (e.g., system labels).
+     * This is used to make label selectors work correctly: actual (collected) resources
+     * lack user-defined labels, so they must be enriched before the selector is applied.
+     *
+     * @param actual   the list of actual (collected) resources.
+     * @param expected the list of expected (input) resources.
+     * @param <R>      the resource type.
+     */
+    static <R extends HasMetadata> void enrichLabelsFromExpected(
+            @NotNull List<R> actual,
+            @NotNull List<R> expected) {
+
+        Map<String, Map<String, Object>> labelsByName = expected.stream()
+                .collect(Collectors.toMap(
+                        t -> t.getMetadata().getName(),
+                        t -> t.getMetadata().getLabels(),
+                        (a, b) -> b
+                ));
+
+        for (R resource : actual) {
+            Map<String, Object> expectedLabels = labelsByName.get(resource.getMetadata().getName());
+            if (expectedLabels == null || expectedLabels.isEmpty()) {
+                continue;
+            }
+            expectedLabels.forEach(resource.getMetadata()::addLabelIfAbsent);
+        }
+    }
 
     /**
      * Gets the set of reconciliation modes supported by this controller.
