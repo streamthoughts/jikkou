@@ -1,1 +1,8 @@
 * @fhussonnois
+
+# Require explicit maintainer review for workflow and AI agent instruction files.
+# Any PR touching these paths must be approved by a maintainer before merge.
+.github/workflows/**  @fhussonnois
+.github/CODEOWNERS    @fhussonnois
+AGENTS.md             @fhussonnois
+CLAUDE.md             @fhussonnois

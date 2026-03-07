@@ -14,6 +14,10 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '25.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
+
+permissions:
+  contents: read
+
 jobs:
   build-distribution:
     if: github.repository == 'streamthoughts/jikkou'
@@ -92,11 +96,12 @@ jobs:
   release-artifacts:
     needs: [ build-distribution ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
 
       - name: 'Download all artifacts'
