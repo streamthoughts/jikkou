@@ -32,9 +32,7 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import io.streamthoughts.jikkou.kafka.models.V1KafkaTopicSpec;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -155,7 +153,7 @@ public final class AdminClientKafkaTopicController
         List<V1KafkaTopic> allActualKafkaTopics = collector.listAll().getItems();
 
         // Enrich actual topics with labels from expected topics so label selectors work on both sides
-        enrichLabelsFromExpected(allActualKafkaTopics, allExpectedKafkaTopics);
+        Controller.enrichLabelsFromExpected(allActualKafkaTopics, allExpectedKafkaTopics);
 
         // Now apply the selector to both sides
         List<V1KafkaTopic> expectedKafkaTopics = allExpectedKafkaTopics.stream()
@@ -172,34 +170,6 @@ public final class AdminClientKafkaTopicController
             Config.IS_CONFIG_DELETE_ORPHANS_ENABLED.get(context.configuration())
         );
         return changeComputer.computeChanges(actualKafkaTopics, expectedKafkaTopics);
-    }
-
-    /**
-     * Enriches actual topics with labels from matching expected topics.
-     * Labels from expected topics are propagated to actual topics (joined by name),
-     * preserving any existing labels on the actual topics (e.g., system labels).
-     *
-     * @param actual   the list of actual (collected) topics.
-     * @param expected the list of expected (input) topics.
-     */
-    static void enrichLabelsFromExpected(
-            @NotNull List<V1KafkaTopic> actual,
-            @NotNull List<V1KafkaTopic> expected) {
-
-        Map<String, Map<String, Object>> labelsByName = expected.stream()
-                .collect(Collectors.toMap(
-                        t -> t.getMetadata().getName(),
-                        t -> t.getMetadata().getLabels(),
-                        (a, b) -> b // last-one-wins for duplicate names
-                ));
-
-        for (V1KafkaTopic topic : actual) {
-            Map<String, Object> expectedLabels = labelsByName.get(topic.getMetadata().getName());
-            if (expectedLabels == null || expectedLabels.isEmpty()) {
-                continue;
-            }
-            expectedLabels.forEach(topic.getMetadata()::addLabelIfAbsent);
-        }
     }
 
     /**

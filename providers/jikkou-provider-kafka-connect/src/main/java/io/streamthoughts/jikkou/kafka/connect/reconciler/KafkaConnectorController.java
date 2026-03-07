@@ -23,6 +23,7 @@ import io.streamthoughts.jikkou.core.reconciler.ChangeResult;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
 import io.streamthoughts.jikkou.core.reconciler.DefaultChangeExecutor;
 import io.streamthoughts.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.kafka.connect.ApiVersions;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectClusterConfigs;
 import io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider;
@@ -102,20 +103,27 @@ public final class KafkaConnectorController extends ContextualExtension implemen
         @NotNull Collection<V1KafkaConnector> resources,
         @NotNull ReconciliationContext context) {
 
+        Selector selector = context.selector();
+
         Map<String, List<V1KafkaConnector>> resourcesByCluster = groupByKafkaConnectCluster(
             resources,
-            context.selector()::apply);
+            t -> true);
 
         KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer();
 
         List<ResourceChange> allChanges = new LinkedList<>();
         for (Map.Entry<String, List<V1KafkaConnector>> entry : resourcesByCluster.entrySet()) {
-            KafkaConnectClientConfig connectClientConfig = configuration.resolveClientConfigForCluster(entry.getKey(), entry.getValue());
-            List<V1KafkaConnector> actualStates = collector.listAll(entry.getKey(), connectClientConfig, false)
-                .stream()
-                .filter(context.selector()::apply)
-                .toList();
-            allChanges.addAll(computer.computeChanges(actualStates, entry.getValue()));
+            List<V1KafkaConnector> allExpected = entry.getValue();
+            KafkaConnectClientConfig connectClientConfig = configuration.resolveClientConfigForCluster(entry.getKey(), allExpected);
+            List<V1KafkaConnector> allActual = collector.listAll(entry.getKey(), connectClientConfig, false);
+
+            // Enrich actual connectors with labels from expected so label selectors work on both sides
+            Controller.enrichLabelsFromExpected(allActual, allExpected);
+
+            List<V1KafkaConnector> expectedConnectors = allExpected.stream().filter(selector::apply).toList();
+            List<V1KafkaConnector> actualConnectors = allActual.stream().filter(selector::apply).toList();
+
+            allChanges.addAll(computer.computeChanges(actualConnectors, expectedConnectors));
         }
         return allChanges;
     }
