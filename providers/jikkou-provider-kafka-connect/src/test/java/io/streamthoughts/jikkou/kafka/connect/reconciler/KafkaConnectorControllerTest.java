@@ -4,39 +4,39 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.streamthoughts.jikkou.kafka.reconciler;
+package io.streamthoughts.jikkou.kafka.connect.reconciler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.reconciler.Controller;
-import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
+import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class AdminClientKafkaTopicControllerTest {
+class KafkaConnectorControllerTest {
 
     @Test
-    void shouldEnrichActualTopicWithLabelsFromExpected() {
+    void shouldEnrichActualConnectorWithLabelsFromExpected() {
         // GIVEN
-        V1KafkaTopic actual = V1KafkaTopic.builder()
+        V1KafkaConnector actual = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("my-topic")
+                        .withName("my-connector")
                         .build())
                 .build();
 
-        V1KafkaTopic expected = V1KafkaTopic.builder()
+        V1KafkaConnector expected = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("my-topic")
+                        .withName("my-connector")
                         .withLabel("my-label", "my-service")
                         .build())
                 .build();
 
         // WHEN
-        List<V1KafkaTopic> actualList = new ArrayList<>(List.of(actual));
+        List<V1KafkaConnector> actualList = new ArrayList<>(List.of(actual));
         Controller.enrichLabelsFromExpected(actualList, List.of(expected));
 
         // THEN
@@ -46,21 +46,21 @@ class AdminClientKafkaTopicControllerTest {
     @Test
     void shouldLeaveActualUnchangedWhenNoMatchingExpected() {
         // GIVEN
-        V1KafkaTopic actual = V1KafkaTopic.builder()
+        V1KafkaConnector actual = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("other-topic")
+                        .withName("other-connector")
                         .build())
                 .build();
 
-        V1KafkaTopic expected = V1KafkaTopic.builder()
+        V1KafkaConnector expected = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("my-topic")
+                        .withName("my-connector")
                         .withLabel("my-label", "my-service")
                         .build())
                 .build();
 
         // WHEN
-        List<V1KafkaTopic> actualList = new ArrayList<>(List.of(actual));
+        List<V1KafkaConnector> actualList = new ArrayList<>(List.of(actual));
         Controller.enrichLabelsFromExpected(actualList, List.of(expected));
 
         // THEN
@@ -70,46 +70,46 @@ class AdminClientKafkaTopicControllerTest {
     @Test
     void shouldPreserveSystemLabelsOnActualAfterEnrichment() {
         // GIVEN
-        V1KafkaTopic actual = V1KafkaTopic.builder()
+        V1KafkaConnector actual = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("my-topic")
-                        .withLabel("jikkou.io/kafka.topic.id", "abc-123")
+                        .withName("my-connector")
+                        .withLabel("jikkou.io/kafka-connect.cluster", "cluster-1")
                         .build())
                 .build();
 
-        V1KafkaTopic expected = V1KafkaTopic.builder()
+        V1KafkaConnector expected = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("my-topic")
+                        .withName("my-connector")
                         .withLabel("my-label", "my-service")
                         .build())
                 .build();
 
         // WHEN
-        List<V1KafkaTopic> actualList = new ArrayList<>(List.of(actual));
+        List<V1KafkaConnector> actualList = new ArrayList<>(List.of(actual));
         Controller.enrichLabelsFromExpected(actualList, List.of(expected));
 
         // THEN
         Map<String, Object> labels = actual.getMetadata().getLabels();
-        assertEquals("abc-123", labels.get("jikkou.io/kafka.topic.id"));
+        assertEquals("cluster-1", labels.get("jikkou.io/kafka-connect.cluster"));
         assertEquals("my-service", labels.get("my-label"));
     }
 
     @Test
     void shouldLeaveActualUnchangedWhenExpectedListIsEmpty() {
         // GIVEN
-        V1KafkaTopic actual = V1KafkaTopic.builder()
+        V1KafkaConnector actual = V1KafkaConnector.builder()
                 .withMetadata(ObjectMeta.builder()
-                        .withName("my-topic")
-                        .withLabel("jikkou.io/kafka.topic.id", "abc-123")
+                        .withName("my-connector")
+                        .withLabel("jikkou.io/kafka-connect.cluster", "cluster-1")
                         .build())
                 .build();
 
         // WHEN
-        List<V1KafkaTopic> actualList = new ArrayList<>(List.of(actual));
+        List<V1KafkaConnector> actualList = new ArrayList<>(List.of(actual));
         Controller.enrichLabelsFromExpected(actualList, List.of());
 
         // THEN
-        assertEquals(Map.of("jikkou.io/kafka.topic.id", "abc-123"),
+        assertEquals(Map.of("jikkou.io/kafka-connect.cluster", "cluster-1"),
                 actual.getMetadata().getLabels());
     }
 }
