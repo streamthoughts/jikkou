@@ -40,7 +40,7 @@ jobs:
           native-image-musl: 'true'
 
       - name: 'Login to DockerHub'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -105,7 +105,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: 'Login to DockerHub'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -170,7 +170,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: 'Login to DockerHub'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
