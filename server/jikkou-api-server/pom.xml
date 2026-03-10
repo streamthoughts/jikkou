@@ -35,7 +35,7 @@
         <micronaut.runtime>netty</micronaut.runtime>
         <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouApiServer</exec.mainClass>
         <!-- Additional -->
-        <git-commit-id-maven-plugin.version>7.0.0</git-commit-id-maven-plugin.version>
+        <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
         <docker.image.name>streamthoughts/${project.artifactId}</docker.image.name>
         <docker.image.tag>main</docker.image.tag>
     </properties>
