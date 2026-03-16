@@ -89,7 +89,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
      */
     @Override
     public List<ConfigProperty<?>> configProperties() {
-        return List.of(Config.CLIENT, Config.TOPIC_DELETE_EXCLUDE_PATTERNS);
+        return List.of(Config.CLIENT, Config.TOPIC_DELETE_EXCLUDE_PATTERNS, Config.TOPICS_VALIDATION_IGNORE_CONFIG_KEYS);
     }
 
     public List<Pattern> topicDeleteExcludePatterns() {
