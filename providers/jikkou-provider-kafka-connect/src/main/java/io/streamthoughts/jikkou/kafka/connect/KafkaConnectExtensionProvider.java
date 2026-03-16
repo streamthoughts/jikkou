@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * Extension provider for Kafka Connect.
  */
 @Provider(
-    name = "KafkaConnect",
+    name = "kafkaconnect",
     description = "Extension provider for Kafka Connect",
     tags = {"Apache Kafka", "Kafka Connect"}
 )
