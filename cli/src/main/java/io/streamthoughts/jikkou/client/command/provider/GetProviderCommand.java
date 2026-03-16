@@ -11,8 +11,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
+import io.streamthoughts.jikkou.client.command.OutputFormat;
+import io.streamthoughts.jikkou.client.command.OutputFormatMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
-import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ApiExtensionSummary;
 import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiProvider;
@@ -29,7 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "get",
@@ -42,15 +43,8 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
     private static final String NOT_AVAILABLE = "N/A";
     private static final String NEW_LINE = System.lineSeparator();
 
-    enum Format {
-        JSON, YAML, WIDE
-    }
-
-    @Option(names = {"--output", "-o"},
-            defaultValue = "WIDE",
-            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
-    )
-    private Format format;
+    @Mixin
+    OutputFormatMixin outputFormat;
 
     @Parameters(
             paramLabel = "NAME",
@@ -63,23 +57,16 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
     public GetProviderCommand() {
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
     public Integer call() throws IOException {
         ApiProvider provider = api.getApiProvider(name);
 
-        ApiProviderSpec spec = provider.spec();
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            switch (format) {
-                case JSON -> Jackson.JSON_OBJECT_MAPPER
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValue(os, provider);
-                case YAML -> Jackson.YAML_OBJECT_MAPPER
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValue(os, provider);
-                case WIDE -> writeText(os, spec);
+            if (outputFormat.format() == OutputFormat.TABLE) {
+                writeText(os, provider.spec());
+            } else {
+                outputFormat.format().serialize(provider, os);
             }
             System.out.println(os);
             return CommandLine.ExitCode.OK;

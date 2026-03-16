@@ -10,6 +10,8 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
+import io.streamthoughts.jikkou.client.command.OutputFormat;
+import io.streamthoughts.jikkou.client.command.OutputFormatMixin;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiResource;
@@ -17,9 +19,14 @@ import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.Verb;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 @Command(name = "api-resources",
@@ -27,7 +34,7 @@ import picocli.CommandLine.Option;
         description = "List the API resources supported by the Jikkou CLI or Jikkou API Server (in proxy mode)."
 )
 @Singleton
-public class ListApiResourcesCommand extends CLIBaseCommand implements Runnable {
+public class ListApiResourcesCommand extends CLIBaseCommand implements Callable<Integer> {
 
     private List<Verb> verbs;
 
@@ -45,47 +52,55 @@ public class ListApiResourcesCommand extends CLIBaseCommand implements Runnable 
         this.verbs = verbs.stream().map(Verb::getForNameIgnoreCase).collect(Collectors.toList());
     }
 
+    @Mixin
+    OutputFormatMixin outputFormat;
+
     @Inject
     private JikkouApi api;
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
-    public void run() {
+    public Integer call() throws IOException {
         List<ApiResourceList> apiResourceLists = Strings.isNullOrEmpty(group) ?
                 api.listApiResources() :
                 api.listApiResources(group);
 
-        String[][] data = apiResourceLists
-                .stream()
-                .flatMap(apiResourceList -> {
-                    List<ApiResource> resources = apiResourceList.resources();
-                    return resources
-                            .stream()
-                            .filter(resource -> {
-                                if (verbs == null || verbs.isEmpty()) return true;
-                                return verbs.stream().allMatch(resource::isVerbSupported);
-                            })
-                            .map(resource -> new String[]{
-                                    resource.name(),
-                                    String.join(", ", resource.shortNames()),
-                                    apiResourceList.groupVersion(),
-                                    resource.kind(),
-                                    String.join(", ", resource.verbs())
-
-                            });
-                })
-                .toArray(String[][]::new);
-        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
-                new Column[]{
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("SHORTNAMES").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("APIVERSION").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("KIND").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("VERBS").dataAlign(HorizontalAlign.LEFT)
-                },
-                data);
-        System.out.println(table);
+        if (outputFormat.format() == OutputFormat.TABLE) {
+            String[][] data = apiResourceLists
+                    .stream()
+                    .flatMap(apiResourceList -> {
+                        List<ApiResource> resources = apiResourceList.resources();
+                        return resources
+                                .stream()
+                                .filter(resource -> {
+                                    if (verbs == null || verbs.isEmpty()) return true;
+                                    return verbs.stream().allMatch(resource::isVerbSupported);
+                                })
+                                .map(resource -> new String[]{
+                                        resource.name(),
+                                        String.join(", ", resource.shortNames()),
+                                        apiResourceList.groupVersion(),
+                                        resource.kind(),
+                                        String.join(", ", resource.verbs())
+                                });
+                    })
+                    .toArray(String[][]::new);
+            String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
+                    new Column[]{
+                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("SHORTNAMES").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("APIVERSION").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("KIND").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("VERBS").dataAlign(HorizontalAlign.LEFT)
+                    },
+                    data);
+            System.out.println(table);
+        } else {
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                outputFormat.format().serialize(apiResourceLists, os);
+                System.out.println(os);
+            }
+        }
+        return CommandLine.ExitCode.OK;
     }
 }
