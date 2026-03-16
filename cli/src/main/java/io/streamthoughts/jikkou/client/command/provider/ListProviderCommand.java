@@ -10,50 +10,66 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
+import io.streamthoughts.jikkou.client.command.OutputFormat;
+import io.streamthoughts.jikkou.client.command.OutputFormatMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiProviderSummary;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Comparator;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
 @Command(name = "list",
         header = "Print the registered API providers",
         description = "Print the registered API providers")
 @Singleton
-public class ListProviderCommand extends CLIBaseCommand implements Runnable {
+public class ListProviderCommand extends CLIBaseCommand implements Callable<Integer> {
+
+    @Mixin
+    OutputFormatMixin outputFormat;
 
     @Inject
     private JikkouApi api;
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
-    public void run() {
+    public Integer call() throws IOException {
         ApiProviderList apiProviders = api.getApiProviders();
 
         Stream<ApiProviderSummary> providers = apiProviders.providers()
                 .stream()
                 .sorted(Comparator.comparing(ApiProviderSummary::name));
 
-        String[][] data = providers
-                .map(provider -> new String[]{
-                        provider.name(),
-                        provider.type(),
-                        String.valueOf(provider.enabled())
-                })
-                .toArray(String[][]::new);
+        if (outputFormat.format() == OutputFormat.TABLE) {
+            String[][] data = providers
+                    .map(provider -> new String[]{
+                            provider.name(),
+                            provider.type(),
+                            String.valueOf(provider.enabled())
+                    })
+                    .toArray(String[][]::new);
 
-        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
-                new Column[]{
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT)
-                },
-                data);
-        System.out.println(table);
+            String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
+                    new Column[]{
+                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT)
+                    },
+                    data);
+            System.out.println(table);
+        } else {
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                outputFormat.format().serialize(providers.toList(), os);
+                System.out.println(os);
+            }
+        }
+        return CommandLine.ExitCode.OK;
     }
 }

@@ -11,9 +11,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import io.streamthoughts.jikkou.client.command.CLIBaseCommand;
+import io.streamthoughts.jikkou.client.command.OutputFormat;
+import io.streamthoughts.jikkou.client.command.OutputFormatMixin;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.extension.Example;
-import io.streamthoughts.jikkou.core.io.Jackson;
 import io.streamthoughts.jikkou.core.models.ApiExtension;
 import io.streamthoughts.jikkou.core.models.ApiExtensionSpec;
 import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
@@ -29,7 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "get",
@@ -46,16 +47,8 @@ public class GetExtensionCommand extends CLIBaseCommand implements Callable<Inte
     private static final String WIDE_COLUMN_OPTIONS = "OPTIONS";
     private static final String WIDE_COLUMN_EXAMPLES = "EXAMPLES";
 
-    enum Format {
-        JSON, YAML, WIDE
-    }
-
-    @Option(names = {"--output", "-o"},
-            defaultValue = "WIDE",
-            description = "Prints the output in the specified format. Valid values: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE})."
-    )
-
-    private Format format;
+    @Mixin
+    OutputFormatMixin outputFormat;
 
     @Parameters(
             paramLabel = "NAME",
@@ -68,28 +61,20 @@ public class GetExtensionCommand extends CLIBaseCommand implements Callable<Inte
     public GetExtensionCommand() {
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+    /** {@inheritDoc} **/
     @Override
     public Integer call() throws IOException {
         ApiExtension extension = api.getApiExtension(name);
 
-        ApiExtensionSpec spec = extension.spec();
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            switch (format) {
-                case JSON -> Jackson.JSON_OBJECT_MAPPER
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValue(os, extension);
-                case YAML -> Jackson.YAML_OBJECT_MAPPER
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValue(os, extension);
-                case WIDE -> writeText(os, spec);
+            if (outputFormat.format() == OutputFormat.TABLE) {
+                writeText(os, extension.spec());
+            } else {
+                outputFormat.format().serialize(extension, os);
             }
             System.out.println(os);
             return CommandLine.ExitCode.OK;
         }
-
     }
 
     private static void writeText(OutputStream os, ApiExtensionSpec spec) {
