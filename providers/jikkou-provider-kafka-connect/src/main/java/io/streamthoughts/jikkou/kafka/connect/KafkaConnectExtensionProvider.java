@@ -46,6 +46,12 @@ public final class KafkaConnectExtensionProvider extends BaseExtensionProvider {
 
     private KafkaConnectClusterConfigs clusterConfigs;
 
+    /** {@inheritDoc} **/
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(clusters);
+    }
+
     /**
      * {@inheritDoc}
      **/
