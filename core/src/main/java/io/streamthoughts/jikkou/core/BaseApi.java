@@ -98,6 +98,17 @@ public abstract class BaseApi implements JikkouApi {
         @SuppressWarnings("unchecked")
         public B register(@NotNull ExtensionProvider provider,
                           @NotNull Configuration configuration) {
+            return register(provider, configuration, new ExtensionDescriptorModifier[0]);
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        @SuppressWarnings("unchecked")
+        public B register(@NotNull ExtensionProvider provider,
+                          @NotNull Configuration configuration,
+                          @NotNull ExtensionDescriptorModifier... modifiers) {
             final String name = provider.getName();
 
             LOG.info("Loading extensions from provider '{}'", name);
@@ -105,7 +116,8 @@ public abstract class BaseApi implements JikkouApi {
                 extensionFactory,
                 provider.getClass(),
                 configuration,
-                providerConfigurationRegistry
+                providerConfigurationRegistry,
+                modifiers
             ));
 
             LOG.info("Loading resources from provider '{}'", name);
@@ -346,7 +358,7 @@ public abstract class BaseApi implements JikkouApi {
             resource.kind()
         );
         return extensionFactory.
-            findExtension(Collector.class, Qualifiers.bySupportedResource(resource), providerContext)
+            findExtension(Collector.class, Qualifiers.byQualifiers(Qualifiers.bySupportedResource(resource), Qualifiers.enabled()), providerContext)
             .orElseThrow(() -> new JikkouRuntimeException(String.format(
                 "Cannot find collector for resource type: group='%s', apiVersion='%s' and kind='%s",
                 resource.group(),
@@ -364,7 +376,7 @@ public abstract class BaseApi implements JikkouApi {
             resource.kind()
         );
         return extensionFactory
-            .findExtension(Controller.class, Qualifiers.bySupportedResource(resource), providerContext)
+            .findExtension(Controller.class, Qualifiers.byQualifiers(Qualifiers.bySupportedResource(resource), Qualifiers.enabled()), providerContext)
             .orElseThrow(() -> new JikkouRuntimeException(String.format(
                 "Cannot find controller for resource type: group='%s', apiVersion='%s' and kind='%s",
                 resource.group(),

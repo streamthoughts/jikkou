@@ -274,7 +274,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ProviderSelectionContext providerContext = createProviderContext(providerName);
         HealthIndicator extension = extensionFactory.getExtension(
             HealthIndicator.class,
-            Qualifiers.byName(name),
+            Qualifiers.byQualifiers(Qualifiers.byName(name), Qualifiers.enabled()),
             providerContext
         );
         Health health;
@@ -362,7 +362,8 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .map(descriptor -> new ApiExtensionSummary(
                     descriptor.name(),
                     descriptor.category().name(),
-                    descriptor.provider().getName()
+                    descriptor.provider().getName(),
+                    descriptor.isEnabled()
                 )
             ).toList();
         return new ApiExtensionList(extensions);
@@ -531,7 +532,8 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         return extensionFactory.findExtension(
             Action.class,
             Qualifiers.byQualifiers(
-                Qualifiers.byName(action)
+                Qualifiers.byName(action),
+                Qualifiers.enabled()
             ),
             providerContext
         ).orElseThrow(() -> new NoSuchExtensionException(String.format("Cannot find action '%s'", action)));

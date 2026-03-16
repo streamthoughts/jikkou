@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.BaseApiConfigurator;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionClassLoader;
+import io.streamthoughts.jikkou.core.extension.ExtensionDescriptorModifiers;
 import io.streamthoughts.jikkou.core.extension.ExtensionResolver;
 import io.streamthoughts.jikkou.core.extension.ExternalExtension;
 import io.streamthoughts.jikkou.runtime.JikkouContext;
@@ -70,7 +71,7 @@ public class ProviderApiConfigurator extends BaseApiConfigurator {
             final String providerType = provider.getClass().getName();
 
             if (providerConfigByType.containsKey(providerType)) {
-                // Register provider
+                // Register provider with its configured extensions enabled
                 builder.register(provider);
 
                 // Register provider configurations
@@ -91,6 +92,10 @@ public class ProviderApiConfigurator extends BaseApiConfigurator {
                         extensionConfigEntry.isDefault()
                     );
                 });
+            } else {
+                // Register unconfigured provider with all extensions disabled
+                LOG.info("Registering unconfigured provider '{}' (type: {}) with extensions disabled", providerName, providerType);
+                builder.register(provider, Configuration.empty(), ExtensionDescriptorModifiers.enabled(false));
             }
         }
         return builder;
