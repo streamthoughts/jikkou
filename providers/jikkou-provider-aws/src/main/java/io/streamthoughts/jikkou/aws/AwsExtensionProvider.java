@@ -64,6 +64,19 @@ public class AwsExtensionProvider extends BaseExtensionProvider {
     }
     /** {@inheritDoc} **/
     @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.REGION,
+            Config.ACCESS_KEY_ID,
+            Config.ACCESS_SECRET_KEY,
+            Config.ACCESS_SESSION_TOKEN,
+            Config.ENDPOINT_OVERRIDE,
+            Config.GLUE_REGISTRIES
+        );
+    }
+
+    /** {@inheritDoc} **/
+    @Override
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         super.configure(configuration);
     }

@@ -83,6 +83,20 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
 
     /** {@inheritDoc} **/
     @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.SCHEMA_REGISTRY_URL,
+            Config.SCHEMA_REGISTRY_VENDOR,
+            Config.SCHEMA_REGISTRY_AUTH_METHOD,
+            Config.SCHEMA_REGISTRY_BASIC_AUTH_USER,
+            Config.SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD,
+            Config.SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED,
+            Config.NORMALIZE_SCHEMAS_ENABLED
+        );
+    }
+
+    /** {@inheritDoc} **/
+    @Override
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         super.configure(configuration);
         List<String> urls = Arrays.stream(Config.SCHEMA_REGISTRY_URL.get(configuration).split(","))
