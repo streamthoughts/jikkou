@@ -22,6 +22,8 @@ import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.core.models.ApiProvider;
+import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
@@ -235,6 +237,21 @@ public interface JikkouApi extends AutoCloseable {
                                          @NotNull Duration timeout) {
         return getApiHealth(indicator.name(), timeout);
     }
+
+    /**
+     * List the registered API providers.
+     *
+     * @return a {@link ApiProviderList} instance.
+     */
+    ApiProviderList getApiProviders();
+
+    /**
+     * Gets the details for the specified API provider.
+     *
+     * @param providerName the name of the provider.
+     * @return an {@link ApiProvider} instance.
+     */
+    ApiProvider getApiProvider(@NotNull String providerName);
 
     /**
      * List the supported API extensions.

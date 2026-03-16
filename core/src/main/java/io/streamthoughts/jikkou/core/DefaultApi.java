@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.core;
 
 import io.streamthoughts.jikkou.core.action.Action;
 import io.streamthoughts.jikkou.core.action.ExecutionResultSet;
+import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.Extension;
@@ -33,6 +34,10 @@ import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
 import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
+import io.streamthoughts.jikkou.core.models.ApiProvider;
+import io.streamthoughts.jikkou.core.models.ApiProviderList;
+import io.streamthoughts.jikkou.core.models.ApiProviderSpec;
+import io.streamthoughts.jikkou.core.models.ApiProviderSummary;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
@@ -64,6 +69,7 @@ import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -289,6 +295,93 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 .build();
         }
         return health;
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiProviderList getApiProviders() {
+        Map<Class<? extends ExtensionProvider>, List<ExtensionDescriptor>> descriptorsByProvider =
+            extensionFactory.getAllDescriptors()
+                .stream()
+                .collect(Collectors.groupingBy(ExtensionDescriptor::provider));
+
+        List<ApiProviderSummary> providers = descriptorsByProvider.entrySet()
+            .stream()
+            .map(entry -> {
+                Class<? extends ExtensionProvider> providerClass = entry.getKey();
+                List<ExtensionDescriptor> descriptors = entry.getValue();
+                String name = Optional.ofNullable(providerClass.getAnnotation(Provider.class))
+                    .map(Provider::name)
+                    .orElse(providerClass.getSimpleName());
+                String type = providerClass.getName();
+                boolean enabled = descriptors.stream().anyMatch(ExtensionDescriptor::isEnabled);
+                return new ApiProviderSummary(name, type, enabled);
+            })
+            .sorted(Comparator.comparing(ApiProviderSummary::name))
+            .toList();
+        return new ApiProviderList(providers);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiProvider getApiProvider(@NotNull String providerName) {
+        Map<Class<? extends ExtensionProvider>, List<ExtensionDescriptor>> descriptorsByProvider =
+            extensionFactory.getAllDescriptors()
+                .stream()
+                .collect(Collectors.groupingBy(ExtensionDescriptor::provider));
+
+        for (Map.Entry<Class<? extends ExtensionProvider>, List<ExtensionDescriptor>> entry : descriptorsByProvider.entrySet()) {
+            Class<? extends ExtensionProvider> providerClass = entry.getKey();
+            Provider annotation = providerClass.getAnnotation(Provider.class);
+            String name = annotation != null ? annotation.name() : providerClass.getSimpleName();
+            if (!name.equals(providerName)) {
+                continue;
+            }
+
+            List<ExtensionDescriptor> descriptors = entry.getValue();
+            String type = providerClass.getName();
+            String description = annotation != null ? annotation.description() : "";
+            List<String> tags = annotation != null ? List.of(annotation.tags()) : List.of();
+            String externalDocs = annotation != null ? annotation.externalDocs() : "";
+            boolean enabled = descriptors.stream().anyMatch(ExtensionDescriptor::isEnabled);
+
+            List<ApiOptionSpec> options = List.of();
+            ExtensionDescriptor firstDescriptor = descriptors.getFirst();
+            if (firstDescriptor.providerSupplier() != null) {
+                ExtensionProvider providerInstance = firstDescriptor.providerSupplier().get(null);
+                if (providerInstance != null) {
+                    options = providerInstance.configProperties()
+                        .stream()
+                        .map(prop -> new ApiOptionSpec(
+                            prop.key(),
+                            prop.description(),
+                            prop.rawType(),
+                            prop.defaultValue(),
+                            prop.required()
+                        ))
+                        .toList();
+                }
+            }
+
+            List<ApiExtensionSummary> extensions = descriptors.stream()
+                .map(descriptor -> new ApiExtensionSummary(
+                    descriptor.name(),
+                    descriptor.category().name(),
+                    descriptor.provider().getName(),
+                    descriptor.isEnabled()
+                ))
+                .sorted(Comparator.comparing(ApiExtensionSummary::name))
+                .toList();
+
+            ApiProviderSpec spec = new ApiProviderSpec(name, type, description, tags, externalDocs, enabled, options, extensions);
+            return new ApiProvider(spec);
+        }
+
+        throw new NoSuchExtensionException("No such provider exists for name '" + providerName + "'");
     }
 
     /**
