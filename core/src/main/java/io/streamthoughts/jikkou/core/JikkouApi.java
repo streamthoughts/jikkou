@@ -92,6 +92,22 @@ public interface JikkouApi extends AutoCloseable {
                    @NotNull Configuration configuration);
 
         /**
+         * Registers an extension provider with the given configuration and additional modifiers.
+         * <p>
+         * This method is responsible for registering all extensions and resources provided by the
+         * given provider. The extra modifiers are applied to each extension descriptor registered
+         * by the provider.
+         *
+         * @param provider      the provider.
+         * @param configuration the configuration.
+         * @param modifiers     additional modifiers to apply to each extension descriptor.
+         * @return the builder.
+         */
+        B register(@NotNull ExtensionProvider provider,
+                   @NotNull Configuration configuration,
+                   @NotNull ExtensionDescriptorModifier... modifiers);
+
+        /**
          * Registers an extension supplier for the specified extension type.
          *
          * @param type     the class of the extension.

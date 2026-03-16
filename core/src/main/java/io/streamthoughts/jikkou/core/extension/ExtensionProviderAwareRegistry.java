@@ -25,6 +25,7 @@ public final class ExtensionProviderAwareRegistry implements ExtensionRegistry {
     private final Class<? extends ExtensionProvider> provider;
     private final Configuration configuration;
     private final ProviderConfigurationRegistry providerConfigurationRegistry;
+    private final ExtensionDescriptorModifier[] extraModifiers;
 
     /**
      * Creates a new {@link ExtensionProviderAwareRegistry} instance with provider configuration registry.
@@ -38,10 +39,29 @@ public final class ExtensionProviderAwareRegistry implements ExtensionRegistry {
                                           @NotNull Class<? extends ExtensionProvider> provider,
                                           @NotNull Configuration configuration,
                                           @Nullable ProviderConfigurationRegistry providerConfigurationRegistry) {
+        this(delegate, provider, configuration, providerConfigurationRegistry, new ExtensionDescriptorModifier[0]);
+    }
+
+    /**
+     * Creates a new {@link ExtensionProviderAwareRegistry} instance with provider configuration registry
+     * and additional modifiers.
+     *
+     * @param delegate The ExtensionRegistry to delegate to.
+     * @param provider The extension group name.
+     * @param configuration The default configuration.
+     * @param providerConfigurationRegistry The provider configuration registry (optional).
+     * @param extraModifiers Additional modifiers to apply to each registered extension descriptor.
+     */
+    public ExtensionProviderAwareRegistry(@NotNull ExtensionRegistry delegate,
+                                          @NotNull Class<? extends ExtensionProvider> provider,
+                                          @NotNull Configuration configuration,
+                                          @Nullable ProviderConfigurationRegistry providerConfigurationRegistry,
+                                          @NotNull ExtensionDescriptorModifier... extraModifiers) {
         this.delegate = Objects.requireNonNull(delegate, "delegate cannot be null");
         this.provider = Objects.requireNonNull(provider, "provider cannot be null");
         this.configuration = Objects.requireNonNull(configuration, "configuration cannot be null");
         this.providerConfigurationRegistry = providerConfigurationRegistry;
+        this.extraModifiers = Objects.requireNonNull(extraModifiers, "extraModifiers cannot be null");
     }
 
     /**
@@ -50,7 +70,7 @@ public final class ExtensionProviderAwareRegistry implements ExtensionRegistry {
     @Override
     public <T> void register(@NotNull Class<T> type,
                              @NotNull Supplier<T> supplier) {
-        delegate.register(type, supplier, newProviderModifier());
+        delegate.register(type, supplier, allModifiers());
     }
 
     /**
@@ -60,9 +80,16 @@ public final class ExtensionProviderAwareRegistry implements ExtensionRegistry {
     public <T> void register(@NotNull Class<T> type,
                              @NotNull Supplier<T> supplier,
                              ExtensionDescriptorModifier... modifiers) {
-        ExtensionDescriptorModifier[] newModifiers = Arrays.copyOf(modifiers, modifiers.length + 1);
-        newModifiers[newModifiers.length - 1] = newProviderModifier();
-        delegate.register(type, supplier, newModifiers);
+        ExtensionDescriptorModifier[] combined = allModifiers(modifiers);
+        delegate.register(type, supplier, combined);
+    }
+
+    @NotNull
+    private ExtensionDescriptorModifier[] allModifiers(ExtensionDescriptorModifier... modifiers) {
+        ExtensionDescriptorModifier[] result = Arrays.copyOf(modifiers, modifiers.length + 1 + extraModifiers.length);
+        result[modifiers.length] = newProviderModifier();
+        System.arraycopy(extraModifiers, 0, result, modifiers.length + 1, extraModifiers.length);
+        return result;
     }
 
     @NotNull
