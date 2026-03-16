@@ -21,6 +21,8 @@ import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.core.models.ApiProvider;
+import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -106,6 +108,27 @@ public interface JikkouApiClient {
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
     ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName);
+
+    /**
+     * Get the registered API providers.
+     *
+     * @return a {@link ApiProviderList} instance.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     */
+    ApiProviderList getApiProviders();
+
+    /**
+     * Gets the details for the specified API provider.
+     *
+     * @param providerName the name of the provider.
+     * @return an {@link ApiProvider} instance.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     */
+    ApiProvider getApiProvider(@NotNull String providerName);
 
     /**
      * Get the supported API extensions.

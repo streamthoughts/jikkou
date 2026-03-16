@@ -27,6 +27,7 @@ import io.streamthoughts.jikkou.client.command.config.ContextNamesCompletionCand
 import io.streamthoughts.jikkou.client.command.extension.ApiExtensionCommand;
 import io.streamthoughts.jikkou.client.command.get.GetCommandLineFactory;
 import io.streamthoughts.jikkou.client.command.health.HealthCommand;
+import io.streamthoughts.jikkou.client.command.provider.ApiProviderCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.ApplyResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.CreateResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.DeleteResourceCommand;
@@ -86,6 +87,7 @@ import picocli.CommandLine.Mixin;
         PatchResourceCommand.class,
         ReplaceResourceCommand.class,
         ApiExtensionCommand.class,
+        ApiProviderCommand.class,
         ListApiResourcesCommand.class,
         ConfigCommand.class,
         DiffCommand.class,
@@ -278,6 +280,7 @@ public final class Jikkou {
         if (isApiEnabled) {
             additional.add("api-resources");
             additional.add("api-extensions");
+            additional.add("api-providers");
         }
 
         additional.add("config");

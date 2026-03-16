@@ -23,6 +23,8 @@ import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.core.models.ApiProvider;
+import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
@@ -61,6 +63,7 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
     private static final String QUERY_PARAM_DRY_RUN = "dry-run";
     private static final String PATH_SEGMENT_APIS = "apis";
     private static final String API_HEALTHS = "healths";
+    private static final String API_PROVIDERS = "providers";
     private static final String API_EXTENSIONS = "extensions";
     private static final String API_ACTIONS = "actions";
     private static final String API_RESOURCES = "resources";
@@ -198,6 +201,49 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         HealthAggregator aggregator = new HealthAggregator();
         Health aggregated = aggregator.aggregate(health);
         return ApiHealthResult.from(aggregated);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiProviderList getApiProviders() {
+        HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
+            .addPathSegments(API_PROVIDERS)
+            .build();
+        // Build Request
+        Request httpRequest = new Request.Builder()
+            .url(url)
+            .get()
+            .build();
+        // Execute Request
+        ApiResponse<ApiProviderList> response = apiClient.execute(
+            httpRequest,
+            ApiProviderList.class
+        );
+        return response.getData();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiProvider getApiProvider(@NotNull String providerName) {
+        HttpUrl url = baseHttpUrlBuilder(API_CORE_VERSION)
+            .addPathSegments(API_PROVIDERS)
+            .addPathSegments(providerName)
+            .build();
+        // Build Request
+        Request httpRequest = new Request.Builder()
+            .url(url)
+            .get()
+            .build();
+        // Execute Request
+        ApiResponse<ApiProvider> response = apiClient.execute(
+            httpRequest,
+            ApiProvider.class
+        );
+        return response.getData();
     }
 
     /**
