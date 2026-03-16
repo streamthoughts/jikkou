@@ -15,16 +15,19 @@ import java.beans.ConstructorProperties;
         "name",
         "category",
         "provider",
+        "enabled",
 })
 @Reflectable
 public record ApiExtensionSummary(@JsonProperty("name")  String name,
                                   @JsonProperty("category") String category,
-                                  @JsonProperty("provider") String provider) {
+                                  @JsonProperty("provider") String provider,
+                                  @JsonProperty("enabled") boolean enabled) {
 
     @ConstructorProperties({
             "name",
             "category",
             "provider",
+            "enabled",
     })
     public ApiExtensionSummary {
 

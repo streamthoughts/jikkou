@@ -69,7 +69,8 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
                 .map(extension -> new String[]{
                         extension.name(),
                         extension.provider(),
-                        extension.category()
+                        extension.category(),
+                        String.valueOf(extension.enabled())
                 })
                 .toArray(String[][]::new);
 
@@ -77,7 +78,8 @@ public class ListExtensionCommand extends CLIBaseCommand implements Runnable {
                 new Column[]{
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
                         new Column().header("PROVIDER").dataAlign(HorizontalAlign.LEFT),
-                        new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT)
+                        new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT),
+                        new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT)
                 },
                 data);
         System.out.println(table);
