@@ -20,6 +20,8 @@ import io.streamthoughts.jikkou.core.models.ApiGroupVersion;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicator;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
+import io.streamthoughts.jikkou.core.models.ApiProvider;
+import io.streamthoughts.jikkou.core.models.ApiProviderSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
@@ -254,6 +256,65 @@ class JikkouApiProxyTest {
         Assertions.assertEquals(expected, result);
     }
 
+
+    @Test
+    void shouldGetApiProvider() {
+        SERVER.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("""
+                        {
+                          "kind": "ApiProvider",
+                          "apiVersion": "core.jikkou.io/v1",
+                          "spec": {
+                            "name": "kafka",
+                            "type": "io.streamthoughts.jikkou.kafka.KafkaExtensionProvider",
+                            "description": "Extension provider for Apache Kafka",
+                            "tags": ["kafka", "streaming"],
+                            "externalDocs": "https://docs.example.com",
+                            "enabled": true,
+                            "options": [
+                              {
+                                "name": "api.url",
+                                "description": "The API URL",
+                                "type": "String",
+                                "defaultValue": null,
+                                "required": true
+                              }
+                            ],
+                            "extensions": [
+                              {
+                                "name": "KafkaTopicCollector",
+                                "category": "COLLECTOR",
+                                "provider": "io.streamthoughts.jikkou.kafka.KafkaExtensionProvider",
+                                "enabled": true
+                              }
+                            ]
+                          }
+                        }
+                        """
+                ));
+        ApiProvider result = API.getApiProvider("kafka");
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("ApiProvider", result.kind());
+        Assertions.assertEquals("core.jikkou.io/v1", result.apiVersion());
+
+        ApiProviderSpec spec = result.spec();
+        Assertions.assertEquals("kafka", spec.name());
+        Assertions.assertEquals("io.streamthoughts.jikkou.kafka.KafkaExtensionProvider", spec.type());
+        Assertions.assertEquals("Extension provider for Apache Kafka", spec.description());
+        Assertions.assertEquals(List.of("kafka", "streaming"), spec.tags());
+        Assertions.assertEquals("https://docs.example.com", spec.externalDocs());
+        Assertions.assertTrue(spec.enabled());
+        Assertions.assertEquals(1, spec.options().size());
+        Assertions.assertEquals("api.url", spec.options().get(0).name());
+        Assertions.assertEquals("The API URL", spec.options().get(0).description());
+        Assertions.assertEquals("String", spec.options().get(0).type());
+        Assertions.assertTrue(spec.options().get(0).required());
+
+        Assertions.assertEquals(1, spec.extensions().size());
+        Assertions.assertEquals("KafkaTopicCollector", spec.extensions().get(0).name());
+    }
 
     @NotNull
     private static ApiResourceList getApiResourceList() {

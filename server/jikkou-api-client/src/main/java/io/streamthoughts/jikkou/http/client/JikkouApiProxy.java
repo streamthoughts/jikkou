@@ -26,6 +26,8 @@ import io.streamthoughts.jikkou.core.models.ApiExtensionList;
 import io.streamthoughts.jikkou.core.models.ApiGroupList;
 import io.streamthoughts.jikkou.core.models.ApiHealthIndicatorList;
 import io.streamthoughts.jikkou.core.models.ApiHealthResult;
+import io.streamthoughts.jikkou.core.models.ApiProvider;
+import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
@@ -139,6 +141,22 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
     @Override
     public ApiHealthResult getApiHealth(@NotNull Duration timeout, String providerName) {
         return apiClient.getApiHealth(timeout, providerName);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiProviderList getApiProviders() {
+        return apiClient.getApiProviders();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiProvider getApiProvider(@NotNull String providerName) {
+        return apiClient.getApiProvider(providerName);
     }
 
     /**
