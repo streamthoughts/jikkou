@@ -26,8 +26,8 @@
         <packaging>jar</packaging>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
         <!-- Micronaut properties -->
-        <micronaut.version>4.10.8</micronaut.version>
-        <micronaut.core.version>4.10.13</micronaut.core.version>
+        <micronaut.version>4.10.10</micronaut.version>
+        <micronaut.core.version>4.10.17</micronaut.core.version>
         <micronaut-maven-plugin.version>4.11.6</micronaut-maven-plugin.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <micronaut-serde-processor.version>2.16.1</micronaut-serde-processor.version>

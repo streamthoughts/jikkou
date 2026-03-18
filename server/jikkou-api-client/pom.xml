@@ -23,7 +23,7 @@
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
         <okhttp.version>5.3.2</okhttp.version>
-        <micronaut-http.version>4.10.13</micronaut-http.version>
+        <micronaut-http.version>4.10.17</micronaut-http.version>
     </properties>
 
     <dependencyManagement>
