@@ -389,6 +389,20 @@
       "type": "sun.security.krb5.KrbException",
       "allDeclaredMethods": true,
       "allDeclaredConstructors": true
+    },
+    {
+      "type": "javax.security.auth.Subject",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.kafka.common.security.plain.internals.PlainSaslClient$PlainSaslClientFactory",
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true
+    },
+    {
+      "type": "org.apache.kafka.common.security.plain.PlainSaslClientProvider",
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true
     }
   ],
   "resources": [
