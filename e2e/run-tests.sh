@@ -19,11 +19,14 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 COMPOSE_FILE="${SCRIPT_DIR}/docker-compose-e2e.yml"
+COMPOSE_SASL_FILE="${SCRIPT_DIR}/docker-compose-e2e-sasl.yml"
 E2E_RESOURCES="${SCRIPT_DIR}/resources"
 JIKKOU_HOCON_CONFIG="${E2E_RESOURCES}/jikkou-e2e.conf"
+JIKKOU_SASL_HOCON_CONFIG="${E2E_RESOURCES}/jikkou-e2e-sasl.conf"
 # The CLI uses a JSON context file (like kubeconfig), not the HOCON directly.
 # We generate this at runtime so it contains the correct absolute path.
-JIKKOU_CONFIG=""  # set in setup_config()
+JIKKOU_CONFIG=""       # set in setup_config()
+JIKKOU_SASL_CONFIG=""  # set in setup_config()
 
 # ── Flags ────────────────────────────────────────────────────────────────────
 SKIP_BUILD=false
@@ -78,6 +81,18 @@ setup_config() {
 }
 EOF
   log_ok "Generated CLI context config: ${JIKKOU_CONFIG}"
+
+  JIKKOU_SASL_CONFIG=$(mktemp /tmp/jikkou-e2e-sasl-context-XXXXXX.json)
+  cat > "${JIKKOU_SASL_CONFIG}" <<EOF
+{
+  "currentContext": "e2e-sasl",
+  "e2e-sasl": {
+    "configFile": "${JIKKOU_SASL_HOCON_CONFIG}",
+    "configProps": {}
+  }
+}
+EOF
+  log_ok "Generated SASL CLI context config: ${JIKKOU_SASL_CONFIG}"
 }
 
 # Run jikkou binary with the e2e config.
@@ -90,6 +105,14 @@ run_jikkou() {
 run_jikkou_capture() {
   set +e
   JIKKOU_OUTPUT=$(JIKKOUCONFIG="${JIKKOU_CONFIG}" "${JIKKOU_BIN}" "$@" 2>&1)
+  JIKKOU_EXIT=$?
+  set -e
+}
+
+# Run jikkou binary with the SASL config.
+run_jikkou_sasl_capture() {
+  set +e
+  JIKKOU_OUTPUT=$(JIKKOUCONFIG="${JIKKOU_SASL_CONFIG}" "${JIKKOU_BIN}" "$@" 2>&1)
   JIKKOU_EXIT=$?
   set -e
 }
@@ -170,6 +193,7 @@ build_native() {
 start_services() {
   log_info "Starting Docker services..."
   docker compose -f "${COMPOSE_FILE}" up -d
+  docker compose -f "${COMPOSE_SASL_FILE}" up -d
 
   log_info "Waiting for services to become healthy..."
   local max_wait=180
@@ -178,11 +202,15 @@ start_services() {
 
   while [[ ${elapsed} -lt ${max_wait} ]]; do
     local kafka_ok=false
+    local kafka_sasl_ok=false
     local sr_ok=false
     local connect_ok=false
 
     if docker inspect --format='{{.State.Health.Status}}' e2e-kafka 2>/dev/null | grep -q healthy; then
       kafka_ok=true
+    fi
+    if docker inspect --format='{{.State.Health.Status}}' e2e-kafka-sasl 2>/dev/null | grep -q healthy; then
+      kafka_sasl_ok=true
     fi
     if docker inspect --format='{{.State.Health.Status}}' e2e-schema-registry 2>/dev/null | grep -q healthy; then
       sr_ok=true
@@ -191,18 +219,19 @@ start_services() {
       connect_ok=true
     fi
 
-    if ${kafka_ok} && ${sr_ok} && ${connect_ok}; then
+    if ${kafka_ok} && ${kafka_sasl_ok} && ${sr_ok} && ${connect_ok}; then
       log_ok "All services healthy"
       return 0
     fi
 
-    log_info "Waiting... (${elapsed}s/${max_wait}s) kafka=${kafka_ok} schema-registry=${sr_ok} connect=${connect_ok}"
+    log_info "Waiting... (${elapsed}s/${max_wait}s) kafka=${kafka_ok} kafka-sasl=${kafka_sasl_ok} schema-registry=${sr_ok} connect=${connect_ok}"
     sleep ${interval}
     elapsed=$((elapsed + interval))
   done
 
   log_error "Services did not become healthy within ${max_wait}s"
   docker compose -f "${COMPOSE_FILE}" logs
+  docker compose -f "${COMPOSE_SASL_FILE}" logs
   exit 1
 }
 
@@ -212,6 +241,7 @@ stop_services() {
   else
     log_info "Tearing down Docker services..."
     docker compose -f "${COMPOSE_FILE}" down -v
+    docker compose -f "${COMPOSE_SASL_FILE}" down -v
   fi
 }
 
@@ -583,6 +613,64 @@ EOF
   assert_output_not_contains "e2e-file-sink" || return 1
 }
 
+# ── Kafka Topics over SASL (create, read, delete) ───────────────────────────
+
+test_sasl_kafka_topics_create() {
+  run_jikkou_sasl_capture apply --files "${E2E_RESOURCES}/kafka-topics-sasl.yaml"
+  assert_exit_code 0 || return 1
+
+  run_jikkou_sasl_capture get kafkatopics --name 'e2e-sasl-topic-1'
+  assert_exit_code 0 || return 1
+  assert_output_contains "e2e-sasl-topic-1" || return 1
+}
+
+test_sasl_kafka_topics_read() {
+  run_jikkou_sasl_capture get kafkatopics
+  assert_exit_code 0 || return 1
+  assert_output_contains "e2e-sasl-topic-1" || return 1
+
+  run_jikkou_sasl_capture get kafkatopics --name 'e2e-sasl-topic-1'
+  assert_exit_code 0 || return 1
+  assert_output_contains "partitions.*3" || return 1
+  assert_output_contains "cleanup.policy" || return 1
+}
+
+test_sasl_kafka_topics_delete() {
+  local tmpfile
+  tmpfile=$(mktemp /tmp/e2e-sasl-delete-XXXXXX.yaml)
+  trap "rm -f ${tmpfile}" RETURN
+
+  cat > "${tmpfile}" <<'EOF'
+---
+apiVersion: "kafka.jikkou.io/v1"
+kind: KafkaTopic
+metadata:
+  name: 'e2e-sasl-topic-1'
+  labels:
+    environment: e2e-sasl
+  annotations:
+    jikkou.io/delete: true
+spec:
+  partitions: 3
+  replicas: 1
+  configs:
+    min.insync.replicas: 1
+    cleanup.policy: 'delete'
+EOF
+
+  run_jikkou_sasl_capture apply --files "${tmpfile}"
+  assert_exit_code 0 || return 1
+
+  run_jikkou_sasl_capture get kafkatopics --name 'e2e-sasl-topic-1'
+  assert_output_not_contains "e2e-sasl-topic-1" || return 1
+}
+
+test_sasl_health() {
+  run_jikkou_sasl_capture health get kafka
+  assert_exit_code 0 || return 1
+  assert_output_contains "UP|HEALTHY" || return 1
+}
+
 # ── Health ───────────────────────────────────────────────────────────────────
 
 test_health_indicators() {
@@ -646,6 +734,12 @@ main() {
   run_test "Kafka Connect: update"          test_kafka_connect_update
   run_test "Kafka Connect: delete"          test_kafka_connect_delete
 
+  # ── Kafka Topics over SASL (issue #726) ──
+  run_test "SASL Kafka Topics: create"     test_sasl_kafka_topics_create
+  run_test "SASL Kafka Topics: read"       test_sasl_kafka_topics_read
+  run_test "SASL Kafka Topics: delete"     test_sasl_kafka_topics_delete
+  run_test "SASL Health indicators"        test_sasl_health
+
   # ── Health ──
   run_test "Health indicators"              test_health_indicators
 
@@ -669,8 +763,9 @@ main() {
 
   stop_services
 
-  # Clean up temp config file
+  # Clean up temp config files
   rm -f "${JIKKOU_CONFIG}"
+  rm -f "${JIKKOU_SASL_CONFIG}"
 
   if [[ ${TESTS_FAILED} -gt 0 ]]; then
     exit 1
