@@ -752,7 +752,8 @@ function _picocli_jikkou_apiresources() {
 
   local commands=""
   local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--api-group' '--verbs'"
+  local arg_opts="'--logger-level' '--api-group' '--output' '-o' '--verbs'"
+  local format_option_args=("TABLE" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
@@ -762,6 +763,11 @@ function _picocli_jikkou_apiresources() {
       ;;
     '--api-group')
       return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
       ;;
     '--verbs')
       return
@@ -1094,7 +1100,8 @@ function _picocli_jikkou_apiextensions_list() {
 
   local commands=""
   local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--category' '--provider' '--kind'"
+  local arg_opts="'--logger-level' '--category' '--provider' '--kind' '--output' '-o'"
+  local format_option_args=("TABLE" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
@@ -1110,6 +1117,11 @@ function _picocli_jikkou_apiextensions_list() {
       ;;
     '--kind')
       return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
       ;;
   esac
 
@@ -1131,7 +1143,7 @@ function _picocli_jikkou_apiextensions_get() {
   local commands=""
   local flag_opts="'-h' '--help' '-V' '--version'"
   local arg_opts="'--logger-level' '--output' '-o'"
-  local format_option_args=("JSON" "YAML" "WIDE") # --output values
+  local format_option_args=("TABLE" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
@@ -1163,13 +1175,19 @@ function _picocli_jikkou_apiproviders_list() {
 
   local commands=""
   local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level'"
+  local arg_opts="'--logger-level' '--output' '-o'"
+  local format_option_args=("TABLE" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
     '--logger-level')
       return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
       ;;
   esac
 
@@ -1191,7 +1209,7 @@ function _picocli_jikkou_apiproviders_get() {
   local commands=""
   local flag_opts="'-h' '--help' '-V' '--version'"
   local arg_opts="'--logger-level' '--output' '-o'"
-  local format_option_args=("JSON" "YAML" "WIDE") # --output values
+  local format_option_args=("TABLE" "JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
 
