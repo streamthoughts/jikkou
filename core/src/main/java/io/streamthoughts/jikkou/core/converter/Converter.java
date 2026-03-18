@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.core.converter;
 
 import io.streamthoughts.jikkou.common.annotation.InterfaceStability.Evolving;
+import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
 import io.streamthoughts.jikkou.core.extension.annotations.Category;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T>  The type of the input resources to convert.
  * @param <TT> The type of the result resources.
  */
+@Enabled
 @Evolving
 @Reflectable
 @Category(ExtensionCategory.CONVERTER)

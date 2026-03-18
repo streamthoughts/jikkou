@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.action;
 
+import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> The type of the resource.
  */
+@Enabled
 @Category(ExtensionCategory.ACTION)
 public interface Action<T extends HasMetadata> extends HasMetadataAcceptable, Extension {
 
