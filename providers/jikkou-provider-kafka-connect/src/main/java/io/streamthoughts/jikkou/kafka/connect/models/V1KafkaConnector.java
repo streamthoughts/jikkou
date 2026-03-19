@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -38,6 +39,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.")
+@JsonClassDescription("The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.")
 @Names(singular = "kafkaconnector", plural = "kafkaconnectors", shortNames = {
     "kc"
 })

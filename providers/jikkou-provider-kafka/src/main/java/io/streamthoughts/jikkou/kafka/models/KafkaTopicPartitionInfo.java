@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.kafka.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import java.beans.ConstructorProperties;
@@ -29,14 +30,34 @@ import lombok.extern.jackson.Jacksonized;
 @Generated("jsonschema2pojo")
 public class KafkaTopicPartitionInfo {
 
+    /**
+     * The partition id.
+     * 
+     */
     @JsonProperty("id")
+    @JsonPropertyDescription("The partition id.")
     private Integer id;
+    /**
+     * The id of the broker that is the leader for this partition.
+     * 
+     */
     @JsonProperty("leader")
+    @JsonPropertyDescription("The id of the broker that is the leader for this partition.")
     private Integer leader;
+    /**
+     * The list of in-sync replica ids for this partition.
+     * 
+     */
     @JsonProperty("isr")
+    @JsonPropertyDescription("The list of in-sync replica ids for this partition.")
     @Singular
     private List<Integer> isr = new ArrayList<Integer>();
+    /**
+     * The list of replica ids for this partition.
+     * 
+     */
     @JsonProperty("replicas")
+    @JsonPropertyDescription("The list of replica ids for this partition.")
     @Singular
     private List<Integer> replicas = new ArrayList<Integer>();
 
@@ -68,21 +89,37 @@ public class KafkaTopicPartitionInfo {
         this.replicas = replicas;
     }
 
+    /**
+     * The partition id.
+     * 
+     */
     @JsonProperty("id")
     public Integer getId() {
         return id;
     }
 
+    /**
+     * The id of the broker that is the leader for this partition.
+     * 
+     */
     @JsonProperty("leader")
     public Integer getLeader() {
         return leader;
     }
 
+    /**
+     * The list of in-sync replica ids for this partition.
+     * 
+     */
     @JsonProperty("isr")
     public List<Integer> getIsr() {
         return isr;
     }
 
+    /**
+     * The list of replica ids for this partition.
+     * 
+     */
     @JsonProperty("replicas")
     public List<Integer> getReplicas() {
         return replicas;

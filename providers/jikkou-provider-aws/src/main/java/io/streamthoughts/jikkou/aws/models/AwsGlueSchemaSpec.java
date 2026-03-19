@@ -50,7 +50,12 @@ public class AwsGlueSchemaSpec {
     @JsonProperty("dataFormat")
     @JsonPropertyDescription("The data format applies to all versions of the Glue schema: AVRO, PROTOBUF, JSON.")
     private SchemaType dataFormat;
+    /**
+     * The schema definition content.
+     * 
+     */
     @JsonProperty("schemaDefinition")
+    @JsonPropertyDescription("The schema definition content.")
     private SchemaHandle schemaDefinition;
     /**
      * Provides description about the schema.
@@ -106,6 +111,10 @@ public class AwsGlueSchemaSpec {
         return dataFormat;
     }
 
+    /**
+     * The schema definition content.
+     * 
+     */
     @JsonProperty("schemaDefinition")
     public SchemaHandle getSchemaDefinition() {
         return schemaDefinition;

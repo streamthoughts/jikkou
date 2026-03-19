@@ -66,7 +66,12 @@ public class V1SchemaRegistrySubjectSpec {
     @JsonProperty("schemaType")
     @JsonPropertyDescription("The schema format: AVRO, PROTOBUF, JSON.")
     private SchemaType schemaType;
+    /**
+     * The schema definition.
+     * 
+     */
     @JsonProperty("schema")
+    @JsonPropertyDescription("The schema definition.")
     private SchemaHandle schema;
     /**
      * Specifies the names of referenced schemas (Optional).
@@ -143,6 +148,10 @@ public class V1SchemaRegistrySubjectSpec {
         return schemaType;
     }
 
+    /**
+     * The schema definition.
+     * 
+     */
     @JsonProperty("schema")
     public SchemaHandle getSchema() {
         return schema;

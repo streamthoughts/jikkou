@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "",
+  "description": "KafkaPrincipalRole resources define reusable sets of ACL rules.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -41,7 +41,7 @@
   "$defs": {
     "V1KafkaPrincipalRoleSpec": {
       "type": "object",
-      "description": "",
+      "description": "Specification of a Kafka principal role.",
       "additionalProperties": {
         "lombok-builder": true,
         "lombok-with": true,
@@ -53,6 +53,7 @@
       "properties": {
         "acls": {
           "type": "array",
+          "description": "The list of ACL rules for this role.",
           "items": {
             "$ref": "V1KafkaPrincipalAcl.json"
           }

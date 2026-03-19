@@ -15,6 +15,7 @@
   ],
   "properties": {
     "resource": {
+      "description": "The Kafka resource to match.",
       "$ref": "#/$defs/V1KafkaResourceMatcher"
     },
     "operations": {
@@ -32,6 +33,7 @@
     },
     "host": {
       "type": "string",
+      "description": "The host address from which the principal is allowed or denied.",
       "default": "*"
     }
   },

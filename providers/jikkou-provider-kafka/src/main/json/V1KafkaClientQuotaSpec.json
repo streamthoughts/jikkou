@@ -9,13 +9,16 @@
   "properties": {
     "type": {
       "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaType",
+      "description": "The quota type.",
       "type": "object"
     },
     "entity": {
+      "description": "The quota entity.",
       "$ref": "V1KafkaClientQuotaEntity.json"
     },
     "configs": {
       "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaConfigs",
+      "description": "The quota configuration properties.",
       "type": "object"
     }
   }
