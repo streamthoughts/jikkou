@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.ApiProvider;
 import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -169,6 +170,17 @@ public interface JikkouApi extends AutoCloseable {
      */
     ApiResourceList listApiResources(@NotNull String group,
                                      @NotNull String version);
+
+    /**
+     * Gets the JSON Schema for the specified resource type.
+     *
+     * @param resourceType the resource type.
+     * @return an {@link ApiResourceSchema} containing the JSON Schema.
+     * @throws io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException
+     *         if no resource is registered for the given type.
+     * @since 0.38.0
+     */
+    ApiResourceSchema getResourceSchema(@NotNull ResourceType resourceType);
 
     /**
      * List the supported API groups.

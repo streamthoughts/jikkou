@@ -28,6 +28,7 @@ import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
@@ -134,6 +135,22 @@ public final class DefaultJikkouApiClient implements JikkouApiClient {
         Request request = new Request.Builder().url(url).get().build();
         // Execute Request
         ApiResponse<ApiResourceList> response = apiClient.execute(request, ApiResourceList.class);
+        return response.getData();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiResourceSchema getResourceSchema(String group, String version, String kind) {
+        HttpUrl url = getHttpUrlBuilderForApiGroupVersion(group, version)
+            .addPathSegments("schema")
+            .addPathSegments(kind)
+            .build();
+        // Build Request
+        Request request = new Request.Builder().url(url).get().build();
+        // Execute Request
+        ApiResponse<ApiResourceSchema> response = apiClient.execute(request, ApiResourceSchema.class);
         return response.getData();
     }
 
