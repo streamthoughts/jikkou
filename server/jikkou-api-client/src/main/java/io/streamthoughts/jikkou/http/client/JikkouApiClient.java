@@ -25,6 +25,7 @@ import io.streamthoughts.jikkou.core.models.ApiProvider;
 import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -73,6 +74,20 @@ public interface JikkouApiClient {
      * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
      */
     ApiResourceList getApiResources(String group, String version);
+
+    /**
+     * Gets the JSON Schema for the specified resource type.
+     *
+     * @param group   the resource API group.
+     * @param version the resource API version.
+     * @param kind    the resource kind.
+     * @return an {@link ApiResourceSchema}.
+     * @throws JikkouApiResponseException if the client receives an error response from the server.
+     * @throws JikkouApiClientException   if the client has encountered an error while communicating with the server.
+     * @throws JikkouRuntimeException     if the client has encountered a previous fatal error or for any other unexpected error.
+     * @since 0.38.0
+     */
+    ApiResourceSchema getResourceSchema(String group, String version, String kind);
 
     /**
      * Gets the list of supported Health Indicators.

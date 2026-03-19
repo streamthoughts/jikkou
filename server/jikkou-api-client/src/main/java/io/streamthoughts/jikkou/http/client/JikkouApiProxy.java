@@ -30,6 +30,7 @@ import io.streamthoughts.jikkou.core.models.ApiProvider;
 import io.streamthoughts.jikkou.core.models.ApiProviderList;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -101,6 +102,15 @@ public final class JikkouApiProxy extends BaseApi implements JikkouApi {
         super(extensionFactory, providerConfigurationRegistry);
         this.apiClient = Objects.requireNonNull(apiClient, "apiClient must not be null");
         this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiResourceSchema getResourceSchema(@NotNull ResourceType resourceType) {
+        return apiClient.getResourceSchema(
+                resourceType.group(), resourceType.apiVersion(), resourceType.kind());
     }
 
     /**

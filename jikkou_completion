@@ -174,6 +174,8 @@ function _complete_jikkou() {
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-extensions get" ];    then _picocli_jikkou_apiextensions; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-providers list" ];    then _picocli_jikkou_apiproviders; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-providers get" ];    then _picocli_jikkou_apiproviders; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-resources list" ];    then _picocli_jikkou_apiresources; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-resources schema" ];    then _picocli_jikkou_apiresources; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config view" ];    then _picocli_jikkou_config; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config set-context" ];    then _picocli_jikkou_config; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config get-contexts" ];    then _picocli_jikkou_config; return $?; fi
@@ -203,21 +205,25 @@ function _complete_jikkou() {
   local cmds17=(api-extensions get)
   local cmds18=(api-providers list)
   local cmds19=(api-providers get)
-  local cmds20=(config view)
-  local cmds21=(config set-context)
-  local cmds22=(config get-contexts)
-  local cmds23=(config current-context)
-  local cmds24=(config use-context)
-  local cmds25=(health get)
-  local cmds26=(health get-indicators)
+  local cmds20=(api-resources list)
+  local cmds21=(api-resources schema)
+  local cmds22=(config view)
+  local cmds23=(config set-context)
+  local cmds24=(config get-contexts)
+  local cmds25=(config current-context)
+  local cmds26=(config use-context)
+  local cmds27=(health get)
+  local cmds28=(health get-indicators)
 
-  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
-  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_health_get; return $?; fi
-  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
-  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
-  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
-  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
-  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_config_view; return $?; fi
+  if CompWordsContainsArray "${cmds28[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
+  if CompWordsContainsArray "${cmds27[@]}"; then _picocli_jikkou_health_get; return $?; fi
+  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
+  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
+  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
+  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
+  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_config_view; return $?; fi
+  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_apiresources_schema; return $?; fi
+  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_apiresources_list; return $?; fi
   if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_apiproviders_get; return $?; fi
   if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_apiproviders_list; return $?; fi
   if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_apiextensions_get; return $?; fi
@@ -750,26 +756,14 @@ function _picocli_jikkou_apiresources() {
   local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands=""
+  local commands="list schema"
   local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--api-group' '--output' '-o' '--verbs'"
-  local format_option_args=("TABLE" "JSON" "YAML") # --output values
+  local arg_opts="'--logger-level'"
 
   type compopt &>/dev/null && compopt +o default
 
   case ${prev_word} in
     '--logger-level')
-      return
-      ;;
-    '--api-group')
-      return
-      ;;
-    '--output'|'-o')
-      local IFS=$'\n'
-      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
-      return $?
-      ;;
-    '--verbs')
       return
       ;;
   esac
@@ -1221,6 +1215,78 @@ function _picocli_jikkou_apiproviders_get() {
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
       return $?
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `list` subcommand.
+function _picocli_jikkou_apiresources_list() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--api-group' '--output' '-o' '--verbs'"
+  local format_option_args=("TABLE" "JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--api-group')
+      return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--verbs')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `schema` subcommand.
+function _picocli_jikkou_apiresources_schema() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--api-version' '--kind'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--api-version')
+      return
+      ;;
+    '--kind')
+      return
       ;;
   esac
 

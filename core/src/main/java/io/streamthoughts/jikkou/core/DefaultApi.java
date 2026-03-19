@@ -41,6 +41,7 @@ import io.streamthoughts.jikkou.core.models.ApiProviderSummary;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
@@ -64,6 +65,7 @@ import io.streamthoughts.jikkou.core.reconciler.Reconciler;
 import io.streamthoughts.jikkou.core.reconciler.ResourceChangeFilter;
 import io.streamthoughts.jikkou.core.reconciler.config.ApiOptionSpecFactory;
 import io.streamthoughts.jikkou.core.reporter.CombineChangeReporter;
+import io.streamthoughts.jikkou.core.resource.JacksonResourceSchemaGenerator;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
 import io.streamthoughts.jikkou.core.selector.Selector;
@@ -147,6 +149,21 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                        @NotNull final ProviderConfigurationRegistry providerConfigurationRegistry) {
         super(extensionFactory, providerConfigurationRegistry);
         this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ApiResourceSchema getResourceSchema(@NotNull ResourceType resourceType) {
+        ResourceDescriptor descriptor = resourceRegistry.findDescriptorByType(resourceType)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("No resource found for type: apiVersion='%s', kind='%s'",
+                                resourceType.apiVersion(), resourceType.kind())));
+        JacksonResourceSchemaGenerator generator = new JacksonResourceSchemaGenerator();
+        com.fasterxml.jackson.databind.JsonNode schema = generator.generate(descriptor.resourceClass());
+        String groupVersion = resourceType.group() + GROUP_API_VERSION_SEPARATOR + resourceType.apiVersion();
+        return new ApiResourceSchema(groupVersion, resourceType.kind(), schema);
     }
 
     /**

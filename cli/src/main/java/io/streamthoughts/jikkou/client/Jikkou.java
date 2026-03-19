@@ -34,7 +34,7 @@ import io.streamthoughts.jikkou.client.command.reconcile.DeleteResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.PatchResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.ReplaceResourceCommand;
 import io.streamthoughts.jikkou.client.command.reconcile.UpdateResourceCommand;
-import io.streamthoughts.jikkou.client.command.resources.ListApiResourcesCommand;
+import io.streamthoughts.jikkou.client.command.resources.ApiResourceCommand;
 import io.streamthoughts.jikkou.client.command.server.ServerInfoCommand;
 import io.streamthoughts.jikkou.client.command.validate.ValidateCommand;
 import io.streamthoughts.jikkou.client.context.ConfigurationContext;
@@ -88,7 +88,7 @@ import picocli.CommandLine.Mixin;
         ReplaceResourceCommand.class,
         ApiExtensionCommand.class,
         ApiProviderCommand.class,
-        ListApiResourcesCommand.class,
+        ApiResourceCommand.class,
         ConfigCommand.class,
         DiffCommand.class,
         PrepareCommand.class,

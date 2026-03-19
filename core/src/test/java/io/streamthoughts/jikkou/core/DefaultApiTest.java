@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.core;
 import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.ClassExtensionAliasesGenerator;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionDescriptorFactory;
 import io.streamthoughts.jikkou.core.extension.DefaultExtensionFactory;
@@ -24,6 +25,7 @@ import io.streamthoughts.jikkou.core.models.ApiProvider;
 import io.streamthoughts.jikkou.core.models.ApiProviderSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
+import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
@@ -144,6 +146,34 @@ class DefaultApiTest {
 
         Assertions.assertThrows(NoSuchExtensionException.class,
                 () -> api.getApiProvider("non-existent-provider"));
+    }
+
+    @Test
+    public void shouldGetResourceSchema() {
+        DefaultResourceRegistry resourceRegistry = new DefaultResourceRegistry();
+        resourceRegistry.register(new ResourceDescriptor(
+                new ResourceType("Test", "core", "v1"),
+                "A test resource",
+                TestResource.class
+        ));
+        DefaultApi api = new DefaultApi.Builder(factory, resourceRegistry).build();
+
+        ApiResourceSchema result = api.getResourceSchema(ResourceType.of("Test", "core/v1"));
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("core/v1", result.apiVersion());
+        Assertions.assertEquals("Test", result.kind());
+        Assertions.assertNotNull(result.schema());
+        Assertions.assertEquals("object", result.schema().get("type").asText());
+    }
+
+    @Test
+    public void shouldThrowResourceNotFoundExceptionForUnknownResourceType() {
+        DefaultResourceRegistry resourceRegistry = new DefaultResourceRegistry();
+        DefaultApi api = new DefaultApi.Builder(factory, resourceRegistry).build();
+
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> api.getResourceSchema(ResourceType.of("Unknown", "core/v1")));
     }
 
     @Provider(

@@ -137,6 +137,7 @@
         <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
         <protobuf-java.version>4.33.5</protobuf-java.version>
+        <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
         <mockito-core.version>5.21.0</mockito-core.version>
         <junit-jupiter.version>1.21.4</junit-jupiter.version>
     </properties>
@@ -272,6 +273,16 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-core</artifactId>
                 <version>${reactor-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-generator</artifactId>
+                <version>${jsonschema-generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-module-jackson</artifactId>
+                <version>${jsonschema-generator.version}</version>
             </dependency>
             <!-- START dependencies for Tests -->
             <dependency>

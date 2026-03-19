@@ -29,7 +29,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
-@Command(name = "api-resources",
+@Command(name = "list",
         header = "Print the supported API resources",
         description = "List the API resources supported by the Jikkou CLI or Jikkou API Server (in proxy mode)."
 )
