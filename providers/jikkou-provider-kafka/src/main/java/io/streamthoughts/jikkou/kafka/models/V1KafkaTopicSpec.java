@@ -8,6 +8,7 @@ package io.streamthoughts.jikkou.kafka.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
@@ -39,16 +40,36 @@ import lombok.extern.jackson.Jacksonized;
 public class V1KafkaTopicSpec implements HasConfigRefs
 {
 
+    /**
+     * The number of partitions for the topic.
+     * 
+     */
     @JsonProperty("partitions")
+    @JsonPropertyDescription("The number of partitions for the topic.")
     @Builder.Default
     private Integer partitions = -1;
+    /**
+     * The number of replicas for the topic.
+     * 
+     */
     @JsonProperty("replicas")
+    @JsonPropertyDescription("The number of replicas for the topic.")
     @Builder.Default
     private Short replicas = null;
+    /**
+     * The topic configuration properties.
+     * 
+     */
     @JsonProperty("configs")
+    @JsonPropertyDescription("The topic configuration properties.")
     private Configs configs;
+    /**
+     * The list of ConfigMap names from which to resolve topic configuration.
+     * 
+     */
     @JsonProperty("configMapRefs")
     @JsonDeserialize(as = java.util.LinkedHashSet.class)
+    @JsonPropertyDescription("The list of ConfigMap names from which to resolve topic configuration.")
     @Singular
     private Set<String> configMapRefs = new LinkedHashSet<String>();
 
@@ -80,21 +101,37 @@ public class V1KafkaTopicSpec implements HasConfigRefs
         this.configMapRefs = configMapRefs;
     }
 
+    /**
+     * The number of partitions for the topic.
+     * 
+     */
     @JsonProperty("partitions")
     public Integer getPartitions() {
         return partitions;
     }
 
+    /**
+     * The number of replicas for the topic.
+     * 
+     */
     @JsonProperty("replicas")
     public Short getReplicas() {
         return replicas;
     }
 
+    /**
+     * The topic configuration properties.
+     * 
+     */
     @JsonProperty("configs")
     public Configs getConfigs() {
         return configs;
     }
 
+    /**
+     * The list of ConfigMap names from which to resolve topic configuration.
+     * 
+     */
     @JsonProperty("configMapRefs")
     public Set<String> getConfigMapRefs() {
         return configMapRefs;

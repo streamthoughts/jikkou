@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -37,6 +38,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The SchemaRegistrySubject resource allows managing subjects and schema on a Schema Registry.")
+@JsonClassDescription("The SchemaRegistrySubject resource allows managing subjects and schema on a Schema Registry.")
 @Names(singular = "schemaregistrysubject", plural = "schemaregistrysubjects", shortNames = {
     "sr"
 })

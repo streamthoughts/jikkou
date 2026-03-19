@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.aws.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -37,6 +38,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The AwsGlueSchema resource allows managing schemas  for AWS Glue.")
+@JsonClassDescription("The AwsGlueSchema resource allows managing schemas  for AWS Glue.")
 @Names(singular = "aws-glueschema", plural = "aws-glueschemas")
 @Verbs({
     Verb.LIST,

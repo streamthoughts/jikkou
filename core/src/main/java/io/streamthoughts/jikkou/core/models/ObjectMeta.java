@@ -6,8 +6,10 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * @see HasMetadata
  */
 @Reflectable
+@JsonClassDescription("Metadata attached to the resource.")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "name",
@@ -87,6 +90,7 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
      * @return The string name.
      */
     @JsonProperty("name")
+    @JsonPropertyDescription("The name of the resource.")
     public String getName() {
         return name;
     }
@@ -103,6 +107,7 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
      * @return The key/value map.
      */
     @JsonProperty("labels")
+    @JsonPropertyDescription("Labels are optional key/value pairs that are attached to the resource.")
     public Map<String, Object> getLabels() {
         return Collections.unmodifiableMap(labels);
     }
@@ -113,6 +118,7 @@ public class ObjectMeta implements Nameable<ObjectMeta>, Serializable {
      * @return The key/value map.
      */
     @JsonProperty("annotations")
+    @JsonPropertyDescription("Annotations are optional key/value pairs that are attached to the resource.")
     public Map<String, Object> getAnnotations() {
         return Collections.unmodifiableMap(annotations);
     }

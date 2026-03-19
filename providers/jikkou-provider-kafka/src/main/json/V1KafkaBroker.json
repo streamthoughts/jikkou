@@ -81,6 +81,7 @@
         },
         "configs": {
           "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
+          "description": "The broker configuration properties.",
           "type": "object"
         }
       }

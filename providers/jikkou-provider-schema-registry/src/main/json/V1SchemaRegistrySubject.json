@@ -90,6 +90,7 @@
         },
         "schema": {
           "type": "object",
+          "description": "The schema definition.",
           "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaHandle",
           "properties": {
             "$ref": {

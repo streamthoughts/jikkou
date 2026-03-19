@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -34,6 +35,7 @@ import org.apache.kafka.common.acl.AclPermissionType;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.")
+@JsonClassDescription("KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.")
 @JsonPropertyOrder({
     "resource",
     "operations",
@@ -72,11 +74,12 @@ public class V1KafkaPrincipalAcl {
     @Builder.Default
     private AclPermissionType type = null;
     /**
-     * 
+     * The host address from which the principal is allowed or denied.
      * (Required)
      * 
      */
     @JsonProperty("host")
+    @JsonPropertyDescription("The host address from which the principal is allowed or denied.")
     @Builder.Default
     private String host = "*";
 
@@ -139,7 +142,7 @@ public class V1KafkaPrincipalAcl {
     }
 
     /**
-     * 
+     * The host address from which the principal is allowed or denied.
      * (Required)
      * 
      */

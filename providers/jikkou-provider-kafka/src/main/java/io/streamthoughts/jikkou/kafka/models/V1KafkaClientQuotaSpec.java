@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -30,6 +31,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("Client quota specification")
+@JsonClassDescription("Client quota specification")
 @JsonPropertyOrder({
     "type",
     "entity",
@@ -40,7 +42,12 @@ import lombok.extern.jackson.Jacksonized;
 @Generated("jsonschema2pojo")
 public class V1KafkaClientQuotaSpec {
 
+    /**
+     * The quota type.
+     * 
+     */
     @JsonProperty("type")
+    @JsonPropertyDescription("The quota type.")
     private KafkaClientQuotaType type;
     /**
      * V1KafkaClientQuotaEntity
@@ -51,7 +58,12 @@ public class V1KafkaClientQuotaSpec {
     @JsonProperty("entity")
     @JsonPropertyDescription("A secure logical group of clients that share both user principal and client ID.")
     private KafkaClientQuotaEntity entity;
+    /**
+     * The quota configuration properties.
+     * 
+     */
     @JsonProperty("configs")
+    @JsonPropertyDescription("The quota configuration properties.")
     private KafkaClientQuotaConfigs configs;
 
     /**
@@ -79,6 +91,10 @@ public class V1KafkaClientQuotaSpec {
         this.configs = configs;
     }
 
+    /**
+     * The quota type.
+     * 
+     */
     @JsonProperty("type")
     public KafkaClientQuotaType getType() {
         return type;
@@ -95,6 +111,10 @@ public class V1KafkaClientQuotaSpec {
         return entity;
     }
 
+    /**
+     * The quota configuration properties.
+     * 
+     */
     @JsonProperty("configs")
     public KafkaClientQuotaConfigs getConfigs() {
         return configs;

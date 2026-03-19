@@ -6,8 +6,10 @@
  */
 package io.streamthoughts.jikkou.kafka.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
@@ -22,12 +24,14 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
+ * Specification of a Kafka principal role.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
+@Description("Specification of a Kafka principal role.")
+@JsonClassDescription("Specification of a Kafka principal role.")
 @JsonPropertyOrder({
     "acls"
 })
@@ -37,11 +41,12 @@ import lombok.extern.jackson.Jacksonized;
 public class V1KafkaPrincipalRoleSpec {
 
     /**
-     * 
+     * The list of ACL rules for this role.
      * (Required)
      * 
      */
     @JsonProperty("acls")
+    @JsonPropertyDescription("The list of ACL rules for this role.")
     @Singular
     private List<V1KafkaPrincipalAcl> acls = new ArrayList<V1KafkaPrincipalAcl>();
 
@@ -65,7 +70,7 @@ public class V1KafkaPrincipalRoleSpec {
     }
 
     /**
-     * 
+     * The list of ACL rules for this role.
      * (Required)
      * 
      */

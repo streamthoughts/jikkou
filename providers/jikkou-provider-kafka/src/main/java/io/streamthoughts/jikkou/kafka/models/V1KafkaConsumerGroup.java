@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -38,6 +39,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.")
+@JsonClassDescription("V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.")
 @Names(singular = "kafkaconsumergroup", plural = "kafkaconsumergroups", shortNames = {
     "kcg"
 })

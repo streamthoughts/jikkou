@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -29,6 +30,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("Information about the position of a consumer for a topic-partitions")
+@JsonClassDescription("Information about the position of a consumer for a topic-partitions")
 @JsonPropertyOrder({
     "topic",
     "partition",

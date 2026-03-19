@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -29,12 +30,14 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
+ * KafkaPrincipalRole resources define reusable sets of ACL rules.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
+@Description("KafkaPrincipalRole resources define reusable sets of ACL rules.")
+@JsonClassDescription("KafkaPrincipalRole resources define reusable sets of ACL rules.")
 @Verbs({
 
 })
@@ -89,12 +92,12 @@ public class V1KafkaPrincipalRole implements HasMetadata, HasSpec<V1KafkaPrincip
     @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
-     * 
+     * Specification of a Kafka principal role.
      * (Required)
      * 
      */
     @JsonProperty("spec")
-    @JsonPropertyDescription("")
+    @JsonPropertyDescription("Specification of a Kafka principal role.")
     private io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRoleSpec spec;
 
     /**
@@ -171,7 +174,7 @@ public class V1KafkaPrincipalRole implements HasMetadata, HasSpec<V1KafkaPrincip
     }
 
     /**
-     * 
+     * Specification of a Kafka principal role.
      * (Required)
      * 
      */

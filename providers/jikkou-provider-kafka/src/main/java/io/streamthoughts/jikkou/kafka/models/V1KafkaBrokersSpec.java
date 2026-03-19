@@ -69,7 +69,12 @@ public class V1KafkaBrokersSpec {
     @JsonProperty("rack")
     @JsonPropertyDescription("The rack for this node (null if this node has no defined rack).")
     private String rack;
+    /**
+     * The broker configuration properties.
+     * 
+     */
     @JsonProperty("configs")
+    @JsonPropertyDescription("The broker configuration properties.")
     private Configs configs;
 
     /**
@@ -139,6 +144,10 @@ public class V1KafkaBrokersSpec {
         return rack;
     }
 
+    /**
+     * The broker configuration properties.
+     * 
+     */
     @JsonProperty("configs")
     public Configs getConfigs() {
         return configs;

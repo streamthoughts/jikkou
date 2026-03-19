@@ -78,19 +78,23 @@
       },
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "description": "The partition id."
         },
         "leader": {
-          "type": "integer"
+          "type": "integer",
+          "description": "The id of the broker that is the leader for this partition."
         },
         "isr": {
           "type": "array",
+          "description": "The list of in-sync replica ids for this partition.",
           "items": {
             "type": "integer"
           }
         },
         "replicas": {
           "type": "array",
+          "description": "The list of replica ids for this partition.",
           "items": {
             "type": "integer"
           }
@@ -111,19 +115,23 @@
       "properties": {
         "partitions": {
           "type": "integer",
+          "description": "The number of partitions for the topic.",
           "default": -1
         },
         "replicas": {
           "type": "object",
+          "description": "The number of replicas for the topic.",
           "existingJavaType": "Short",
           "default": -1
         },
         "configs": {
           "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
+          "description": "The topic configuration properties.",
           "type": "object"
         },
         "configMapRefs": {
           "type": "array",
+          "description": "The list of ConfigMap names from which to resolve topic configuration.",
           "items": {
             "type": "string"
           },

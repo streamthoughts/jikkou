@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -37,6 +38,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
 @Description("The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.")
+@JsonClassDescription("The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.")
 @Names(singular = "avn-schemaregistryacl", plural = "avn-schemaregistryacls", shortNames = {
     "avnsra"
 })

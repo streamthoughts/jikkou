@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.generator;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
@@ -140,6 +141,8 @@ public class JikkouAnnotator extends AbstractAnnotator {
         if (descriptionProperty != null) {
             JAnnotationUse annotate = clazz.annotate(Description.class);
             annotate.param("value", descriptionProperty.textValue());
+            JAnnotationUse jsonClassDesc = clazz.annotate(JsonClassDescription.class);
+            jsonClassDesc.param("value", descriptionProperty.textValue());
         }
 
 

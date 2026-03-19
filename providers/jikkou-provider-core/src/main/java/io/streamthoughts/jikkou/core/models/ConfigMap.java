@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.core.models;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -27,13 +28,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * ConfigMap
  * <p>
- * 
+ * ConfigMap resources contain configuration data as key/value pairs.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
+@Description("ConfigMap resources contain configuration data as key/value pairs.")
+@JsonClassDescription("ConfigMap resources contain configuration data as key/value pairs.")
 @Verbs({
 
 })
