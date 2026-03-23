@@ -24,6 +24,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ScramCredentialInfo;
 import org.apache.kafka.clients.admin.ScramMechanism;
 import org.apache.kafka.clients.admin.UserScramCredentialAlteration;
+import org.apache.kafka.clients.admin.UserScramCredentialDeletion;
 import org.apache.kafka.clients.admin.UserScramCredentialUpsertion;
 import org.apache.kafka.clients.admin.UserScramCredentialsDescription;
 import org.jetbrains.annotations.NotNull;
@@ -127,6 +128,18 @@ public class KafkaUserService {
                 .build(),
             alteration
         );
+    }
+
+    public static Pair<V1KafkaUserAuthentication, UserScramCredentialAlteration> deleteScramSha512(String userName,
+                                                                                                   V1KafkaUserAuthentication.ScramSha512 auth) {
+        var alteration = new UserScramCredentialDeletion(userName, ScramMechanism.SCRAM_SHA_512);
+        return Pair.of(auth, alteration);
+    }
+
+    public static Pair<V1KafkaUserAuthentication, UserScramCredentialAlteration> deleteScramSha256(String userName,
+                                                                                                   V1KafkaUserAuthentication.ScramSha256 auth) {
+        var alteration = new UserScramCredentialDeletion(userName, ScramMechanism.SCRAM_SHA_256);
+        return Pair.of(auth, alteration);
     }
 
     private V1KafkaUserAuthentication map(final ScramCredentialInfo info) {

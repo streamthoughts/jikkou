@@ -76,10 +76,10 @@ public class UserChangeHandler extends BaseChangeHandler {
                                 yield switch (authentication) {
                                     // SCRAM_SHA_256
                                     case V1KafkaUserAuthentication.ScramSha256 auth ->
-                                        KafkaUserService.handleScramSha256(userName, auth);
+                                        KafkaUserService.deleteScramSha256(userName, auth);
                                     // SCRAM_SHA_512
                                     case V1KafkaUserAuthentication.ScramSha512 auth ->
-                                        KafkaUserService.handleScramSha512(userName, auth);
+                                        KafkaUserService.deleteScramSha512(userName, auth);
                                 };
                             }
                         };
