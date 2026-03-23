@@ -13,18 +13,21 @@ import java.beans.ConstructorProperties;
 
 @JsonPropertyOrder({
         "name",
+        "title",
         "category",
         "provider",
         "enabled",
 })
 @Reflectable
-public record ApiExtensionSummary(@JsonProperty("name")  String name,
+public record ApiExtensionSummary(@JsonProperty("name") String name,
+                                  @JsonProperty("title") String title,
                                   @JsonProperty("category") String category,
                                   @JsonProperty("provider") String provider,
                                   @JsonProperty("enabled") boolean enabled) {
 
     @ConstructorProperties({
             "name",
+            "title",
             "category",
             "provider",
             "enabled",

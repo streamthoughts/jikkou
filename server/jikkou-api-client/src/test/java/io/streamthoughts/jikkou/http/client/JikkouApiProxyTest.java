@@ -188,6 +188,7 @@ class JikkouApiProxyTest {
                           "extensions": [
                             {
                               "name": "TestExtension",
+                              "title": "Test Title",
                               "category": "Category",
                               "provider": "Provider",
                               "enabled": true
@@ -201,6 +202,7 @@ class JikkouApiProxyTest {
                 List.of(
                         new ApiExtensionSummary(
                                 "TestExtension",
+                                "Test Title",
                                 "Category",
                                 "Provider",
                                 true

@@ -7,12 +7,15 @@
 package io.streamthoughts.jikkou.core.repository;
 
 import io.streamthoughts.jikkou.core.extension.Extension;
+import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
+import io.streamthoughts.jikkou.core.extension.annotations.Category;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import java.util.List;
 
 /**
  * Service interface for loading
  */
+@Category(ExtensionCategory.REPOSITORY)
 public interface ResourceRepository extends Extension {
 
     /**

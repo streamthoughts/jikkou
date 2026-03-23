@@ -47,6 +47,10 @@ public enum ExtensionCategory {
      */
     ACTION,
     /**
+     * For any class that implements {@link io.streamthoughts.jikkou.core.repository.ResourceRepository}.
+     */
+    REPOSITORY,
+    /**
      * Any.
      */
     EXTENSION;

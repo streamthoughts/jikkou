@@ -387,8 +387,9 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             List<ApiExtensionSummary> extensions = descriptors.stream()
                 .map(descriptor -> new ApiExtensionSummary(
                     descriptor.name(),
+                    descriptor.title(),
                     descriptor.category().name(),
-                    descriptor.provider().getName(),
+                    resolveProviderName(descriptor.provider()),
                     descriptor.isEnabled()
                 ))
                 .sorted(Comparator.comparing(ApiExtensionSummary::name))
@@ -458,7 +459,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             descriptor.description(),
             descriptor.examples(),
             descriptor.category().name(),
-            descriptor.provider().getName(),
+            resolveProviderName(descriptor.provider()),
             optionListFactory.make(descriptor),
             HasMetadataAcceptable.getSupportedResources(descriptor.type())
         );
@@ -471,12 +472,19 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .stream()
             .map(descriptor -> new ApiExtensionSummary(
                     descriptor.name(),
+                    descriptor.title(),
                     descriptor.category().name(),
-                    descriptor.provider().getName(),
+                    resolveProviderName(descriptor.provider()),
                     descriptor.isEnabled()
                 )
             ).toList();
         return new ApiExtensionList(extensions);
+    }
+
+    private static String resolveProviderName(Class<? extends ExtensionProvider> providerClass) {
+        return Optional.ofNullable(providerClass.getAnnotation(Provider.class))
+            .map(Provider::name)
+            .orElse(providerClass.getSimpleName());
     }
 
     /**
