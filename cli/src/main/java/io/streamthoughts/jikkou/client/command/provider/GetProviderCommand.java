@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
@@ -142,6 +143,7 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
         String[][] data = extensions.stream()
                 .map(ext -> new String[]{
                         ext.name(),
+                        Objects.toString(ext.title(), ""),
                         ext.category(),
                         String.valueOf(ext.enabled())
                 })
@@ -151,6 +153,8 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
                 new Column[]{
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(60, OverflowBehaviour.NEWLINE),
+                        new Column().header("TITLE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.NEWLINE),
                         new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(30, OverflowBehaviour.NEWLINE),
                         new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT)

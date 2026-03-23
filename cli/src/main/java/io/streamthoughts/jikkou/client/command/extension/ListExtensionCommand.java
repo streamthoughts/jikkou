@@ -21,6 +21,7 @@ import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -71,23 +72,27 @@ public class ListExtensionCommand extends CLIBaseCommand implements Callable<Int
         Stream<ApiExtensionSummary> extensions = apiExtensions.extensions()
                 .stream()
                 .filter(predicate)
-                .sorted(Comparator.comparing(ApiExtensionSummary::name));
+                .sorted(Comparator.comparing(ApiExtensionSummary::provider)
+                        .thenComparing(ApiExtensionSummary::category)
+                        .thenComparing(ApiExtensionSummary::name));
 
         if (outputFormat.format() == OutputFormat.TABLE) {
             String[][] data = extensions
                     .map(extension -> new String[]{
-                            extension.name(),
                             extension.provider(),
                             extension.category(),
+                            extension.name(),
+                            Objects.toString(extension.title(), ""),
                             String.valueOf(extension.enabled())
                     })
                     .toArray(String[][]::new);
 
             String table = AsciiTable.getTable(AsciiTable.NO_BORDERS,
                     new Column[]{
-                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
                             new Column().header("PROVIDER").dataAlign(HorizontalAlign.LEFT),
                             new Column().header("CATEGORY").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT),
+                            new Column().header("TITLE").dataAlign(HorizontalAlign.LEFT),
                             new Column().header("ENABLED").dataAlign(HorizontalAlign.LEFT)
                     },
                     data);
