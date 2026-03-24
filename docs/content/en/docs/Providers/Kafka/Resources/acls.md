@@ -46,7 +46,7 @@ The list below describes the valid values for the `spec.acls.[].operations` prop
 
 * `READ`
 * `WRITE`
-* `CERATE`
+* `CREATE`
 * `DELETE`
 * `ALTER`
 * `DESCRIBE`
