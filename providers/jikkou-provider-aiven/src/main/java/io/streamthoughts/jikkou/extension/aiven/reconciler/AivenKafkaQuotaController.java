@@ -12,7 +12,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -36,6 +38,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Aiven Kafka quotas")
+@Description("Reconciles Kafka quota resources on an Aiven service to match the desired state.")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

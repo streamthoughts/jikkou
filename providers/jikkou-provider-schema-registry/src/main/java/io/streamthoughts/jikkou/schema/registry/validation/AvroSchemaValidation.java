@@ -7,7 +7,9 @@
 package io.streamthoughts.jikkou.schema.registry.validation;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.data.SchemaType;
@@ -27,6 +29,8 @@ import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate Avro schemas")
+@Description("Validates that Avro schema definitions are syntactically correct and can be parsed.")
 @SupportedResource(kind = "SchemaRegistrySubject")
 public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject> {
 

@@ -82,7 +82,7 @@ public class ListExtensionCommand extends CLIBaseCommand implements Callable<Int
                             extension.provider(),
                             extension.category(),
                             extension.name(),
-                            Objects.toString(extension.title(), ""),
+                            truncate(Objects.toString(extension.title(), ""), 30),
                             String.valueOf(extension.enabled())
                     })
                     .toArray(String[][]::new);
@@ -104,5 +104,12 @@ public class ListExtensionCommand extends CLIBaseCommand implements Callable<Int
             }
         }
         return CommandLine.ExitCode.OK;
+    }
+
+    private static String truncate(String value, int maxLength) {
+        if (value == null || value.length() <= maxLength) {
+            return value;
+        }
+        return value.substring(0, maxLength - 3) + "...";
     }
 }

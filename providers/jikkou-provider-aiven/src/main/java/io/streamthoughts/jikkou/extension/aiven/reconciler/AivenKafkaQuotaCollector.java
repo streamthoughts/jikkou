@@ -8,7 +8,9 @@ package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -30,6 +32,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Collect Aiven Kafka quotas")
+@Description("Collects Kafka quota resources from an Aiven service.")
 @SupportedResource(type = V1KafkaQuota.class)
 public class AivenKafkaQuotaCollector implements Collector<V1KafkaQuota> {
 

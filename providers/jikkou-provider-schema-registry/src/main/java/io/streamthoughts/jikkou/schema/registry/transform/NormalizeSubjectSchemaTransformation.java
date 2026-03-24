@@ -7,9 +7,11 @@
 package io.streamthoughts.jikkou.schema.registry.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.data.SchemaHandle;
 import io.streamthoughts.jikkou.core.data.json.Json;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -24,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Normalize subject schemas")
+@Description("Normalizes Schema Registry subject schema definitions before reconciliation.")
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 @SupportedResource(kind = "SchemaRegistrySubject")
 @Enabled

@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.data.TypeConverter;
@@ -25,6 +27,8 @@ import java.util.Set;
 import org.apache.kafka.common.ConsumerGroupState;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Collect Kafka consumer groups")
+@Description("Collects all Kafka consumer group resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaConsumerGroup.class)
 public final class AdminClientConsumerGroupCollector extends ContextualExtension implements Collector<V1KafkaConsumerGroup> {
 

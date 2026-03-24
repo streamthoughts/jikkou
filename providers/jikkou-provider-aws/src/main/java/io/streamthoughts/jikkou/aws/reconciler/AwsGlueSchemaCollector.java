@@ -12,7 +12,9 @@ import io.streamthoughts.jikkou.aws.model.Compatibility;
 import io.streamthoughts.jikkou.aws.models.AwsGlueSchema;
 import io.streamthoughts.jikkou.aws.models.AwsGlueSchemaSpec;
 import io.streamthoughts.jikkou.common.utils.Pair;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.data.SchemaHandle;
@@ -48,6 +50,8 @@ import software.amazon.awssdk.services.glue.model.SchemaId;
 import software.amazon.awssdk.services.glue.model.SchemaListItem;
 import software.amazon.awssdk.services.glue.model.SchemaVersionNumber;
 
+@Title("Collect AWS Glue schemas")
+@Description("Collects schema resources from the AWS Glue Schema Registry.")
 @SupportedResource(type = AwsGlueSchema.class)
 public class AwsGlueSchemaCollector extends ContextualExtension implements Collector<AwsGlueSchema> {
 

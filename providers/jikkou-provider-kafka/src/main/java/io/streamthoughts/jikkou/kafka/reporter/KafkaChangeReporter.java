@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.core.JikkouInfo;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.io.Jackson;
@@ -42,6 +44,8 @@ import org.slf4j.LoggerFactory;
 /**
  * This reporter can be used to send change results into a kafka topic as Cloud Event.
  */
+@Title("Report changes to Kafka")
+@Description("Reports reconciliation change results to a Kafka topic.")
 public class KafkaChangeReporter implements ChangeReporter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaChangeReporter.class);

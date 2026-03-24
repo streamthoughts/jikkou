@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.validation.Validation;
@@ -21,6 +23,8 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubjectSp
 import io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate Aiven schema compatibility")
+@Description("Validates schema compatibility settings for Aiven Schema Registry subject resources.")
 @SupportedResource(
     apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
     kind = ApiVersions.SCHEMA_REGISTRY_KIND

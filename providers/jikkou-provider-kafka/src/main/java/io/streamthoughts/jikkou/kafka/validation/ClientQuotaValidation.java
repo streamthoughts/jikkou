@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
@@ -18,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Validation for {@link V1KafkaClientQuota}.
  */
+@Title("Validate Kafka client quotas")
+@Description("Validates Kafka client quota resources to ensure they are well-formed.")
 @SupportedResource(type = V1KafkaClientQuota.class)
 public class ClientQuotaValidation implements Validation<V1KafkaClientQuota> {
 

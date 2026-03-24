@@ -7,8 +7,10 @@
 package io.streamthoughts.jikkou.kafka.connect.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.transform.Transformation;
 import io.streamthoughts.jikkou.kafka.connect.internals.KafkaConnectUtils;
@@ -17,6 +19,8 @@ import io.streamthoughts.jikkou.kafka.connect.models.V1KafkaConnectorSpec;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Transform Kafka connector resources")
+@Description("Transforms Kafka Connect connector resources by adding the required connect cluster label.")
 @Enabled
 @SupportedResource(type = V1KafkaConnector.class)
 public class KafkaConnectorResourceTransformation implements Transformation<V1KafkaConnector> {

@@ -9,7 +9,9 @@ package io.streamthoughts.jikkou.schema.registry.reconciler;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.*;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -37,6 +39,8 @@ import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Schema Registry subjects")
+@Description("Reconciles Schema Registry subject resources to ensure they match the desired state.")
 @ControllerConfiguration(
     supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

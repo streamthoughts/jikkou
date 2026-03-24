@@ -9,7 +9,9 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.*;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -38,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Reconcile Kafka topics")
+@Description("Reconciles Kafka topic resources to ensure they match the desired state.")
 @SupportedResource(type = V1KafkaTopic.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaTopicChange")
 @ControllerConfiguration(

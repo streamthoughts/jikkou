@@ -8,7 +8,9 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 
 import static io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig.*;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -46,6 +48,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Collect Kafka brokers")
+@Description("Collects all Kafka broker resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaBroker.class)
 public final class AdminClientKafkaBrokerCollector
         extends ContextualExtension implements Collector<V1KafkaBroker> {

@@ -9,7 +9,9 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -32,6 +34,8 @@ import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Kafka consumer groups")
+@Description("Reconciles Kafka consumer group resources to ensure they match the desired state.")
 @SupportedResource(type = V1KafkaConsumerGroup.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA1, kind = "KafkaConsumerGroupChange")
 @ControllerConfiguration(

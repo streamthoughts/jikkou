@@ -9,7 +9,9 @@ package io.streamthoughts.jikkou.kafka.reconciler;
 import static io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig.*;
 import static io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig.DEFAULT_CONFIGS;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -34,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Collect Kafka topics")
+@Description("Collects all Kafka topic resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaTopic.class)
 public final class AdminClientKafkaTopicCollector extends ContextualExtension implements Collector<V1KafkaTopic> {
 

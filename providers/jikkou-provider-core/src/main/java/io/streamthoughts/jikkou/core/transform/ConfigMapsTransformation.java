@@ -12,6 +12,7 @@ import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResources;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.InvalidResourceException;
 import io.streamthoughts.jikkou.core.models.ConfigMap;
 import io.streamthoughts.jikkou.core.models.ConfigMapList;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 @Named("ConfigMapsTransformation")
+@Title("Transform config maps")
 @Description("Resolves ConfigMap objects for resources supporting ConfigRefs")
 @Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)

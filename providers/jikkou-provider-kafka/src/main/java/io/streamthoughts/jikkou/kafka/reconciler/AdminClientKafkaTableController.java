@@ -12,7 +12,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -41,6 +43,8 @@ import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Kafka tables")
+@Description("Reconciles Kafka table resources to ensure they match the desired state.")
 @SupportedResource(type = V1KafkaTableRecord.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA1, kind = "KafkaTableRecordChange")
 @ControllerConfiguration(

@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.health;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Named;
 import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Named("kafkaconnect")
 @Title("AivenServiceHealthIndicator allows checking whether Kafka Connect clusters are healthy.")
+@Description("Reports the health status of Kafka Connect clusters.")
 public class KafkaConnectHealthIndicator implements HealthIndicator {
 
     private static final String HEALTH_INDICATOR_NAME = "KafkaConnect";

@@ -12,7 +12,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChangeSpec;
@@ -48,6 +50,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Aiven - Schema Registry Subjects Controller.
  */
+@Title("Reconcile Aiven Schema Registry subjects")
+@Description("Reconciles Schema Registry subject resources on an Aiven service to match the desired state.")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

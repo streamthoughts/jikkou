@@ -6,8 +6,10 @@
  */
 package io.streamthoughts.jikkou.extension.aiven.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
 import io.streamthoughts.jikkou.core.validation.ValidationResult;
@@ -16,6 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate Schema Registry ACL entries")
+@Description("Validates Schema Registry ACL entry resources to ensure they are well-formed.")
 @SupportedResource(type = V1SchemaRegistryAclEntry.class)
 @Enabled
 public class SchemaRegistryAclEntryValidation implements Validation<V1SchemaRegistryAclEntry> {

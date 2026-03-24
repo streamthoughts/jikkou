@@ -6,8 +6,10 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -19,6 +21,8 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaTopic;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate no duplicate topics")
+@Description("Validates that no duplicate Kafka topic names exist in the resource definitions.")
 @Enabled
 @SupportedResource(type = V1KafkaTopic.class)
 public class NoDuplicateTopicsAllowedValidation implements Validation<V1KafkaTopic> {

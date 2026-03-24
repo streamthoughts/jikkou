@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -34,6 +36,8 @@ import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Collect Kafka ACLs")
+@Description("Collects all Kafka ACL resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
 public final class AdminClientKafkaAclCollector
         implements Collector<V1KafkaPrincipalAuthorization> {

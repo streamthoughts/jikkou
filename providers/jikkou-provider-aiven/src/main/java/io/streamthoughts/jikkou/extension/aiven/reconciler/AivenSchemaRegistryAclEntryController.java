@@ -11,7 +11,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.DELETE;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -34,6 +36,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Aiven Schema Registry ACLs")
+@Description("Reconciles Schema Registry ACL entry resources on an Aiven service to match the desired state.")
 @ControllerConfiguration(
         supportedModes = {CREATE, DELETE, FULL}
 )

@@ -6,8 +6,10 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -19,6 +21,8 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalRole;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate no duplicate principal roles")
+@Description("Validates that no duplicate principal role assignments exist in the resource definitions.")
 @Enabled
 @SupportedResource(type = V1KafkaPrincipalRole.class)
 public class NoDuplicatePrincipalRoleValidation implements Validation<V1KafkaPrincipalRole> {
