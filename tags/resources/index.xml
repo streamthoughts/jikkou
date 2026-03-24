@@ -694,7 +694,7 @@ documentation: &lt;a href="https://kafka.apache.org/documentation/#security_auth
 &lt;ul>
 &lt;li>&lt;code>READ&lt;/code>&lt;/li>
 &lt;li>&lt;code>WRITE&lt;/code>&lt;/li>
-&lt;li>&lt;code>CERATE&lt;/code>&lt;/li>
+&lt;li>&lt;code>CREATE&lt;/code>&lt;/li>
 &lt;li>&lt;code>DELETE&lt;/code>&lt;/li>
 &lt;li>&lt;code>ALTER&lt;/code>&lt;/li>
 &lt;li>&lt;code>DESCRIBE&lt;/code>&lt;/li>
