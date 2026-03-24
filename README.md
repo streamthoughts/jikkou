@@ -97,8 +97,8 @@ ok: 0, created: 1, altered: 0, deleted: 0, failed: 0
 | Apache Kafka | Schema Registry | Kafka Connect | Cloud Providers |
 |:---:|:---:|:---:|:---:|
 | Topics & Configs | Avro Schemas | Connectors | Aiven (ACLs, Quotas) |
-| ACLs | JSON Schemas | | AWS Glue Schemas |
-| Quotas | Protobuf Schemas | | |
+| ACLs | JSON Schemas | | Confluent Cloud (RBAC) |
+| Quotas | Protobuf Schemas | | AWS Glue Schemas |
 | Consumer Groups | | | |
 | Brokers & Users | | | |
 | KTable Records | | | |

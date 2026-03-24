@@ -1,0 +1,10 @@
+---
+apiVersion: "iam.confluent.cloud/v1"
+kind: "RoleBinding"
+metadata:
+  labels: {}
+  annotations: {}
+spec:
+  principal: "User:sa-abc123"
+  roleName: "CloudClusterAdmin"
+  crnPattern: "crn://confluent.cloud/organization=org-123/environment=env-456/cloud-cluster=lkc-789"
