@@ -125,6 +125,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-provider-confluent</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jikkou-provider-kafka-connect</artifactId>
             <version>${project.version}</version>
         </dependency>

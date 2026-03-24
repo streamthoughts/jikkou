@@ -26,6 +26,7 @@
         <module>providers/jikkou-provider-core</module>
         <module>providers/jikkou-provider-kafka-connect</module>
         <module>providers/jikkou-provider-aws</module>
+        <module>providers/jikkou-provider-confluent</module>
         <module>server/jikkou-api-client</module>
         <module>server/jikkou-api-server</module>
         <module>server/jikkou-api-data</module>
