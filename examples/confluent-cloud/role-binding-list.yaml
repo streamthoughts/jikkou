@@ -1,0 +1,16 @@
+---
+apiVersion: "iam.confluent.cloud/v1"
+kind: "RoleBindingList"
+items:
+  - spec:
+      principal: "User:sa-abc123"
+      roleName: "CloudClusterAdmin"
+      crnPattern: "crn://confluent.cloud/organization=org-123/environment=env-456/cloud-cluster=lkc-789"
+  - spec:
+      principal: "User:sa-abc123"
+      roleName: "DeveloperRead"
+      crnPattern: "crn://confluent.cloud/organization=org-123/environment=env-456/cloud-cluster=lkc-789/kafka=lkc-789/topic=my-topic"
+  - spec:
+      principal: "User:u-xyz789"
+      roleName: "OrganizationAdmin"
+      crnPattern: "crn://confluent.cloud/organization=org-123"
