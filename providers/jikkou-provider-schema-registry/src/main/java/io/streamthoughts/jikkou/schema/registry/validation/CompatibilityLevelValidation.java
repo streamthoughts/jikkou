@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -20,6 +22,8 @@ import io.streamthoughts.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate compatibility level")
+@Description("Validates that Schema Registry subject resources specify a valid schema compatibility level.")
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class CompatibilityLevelValidation implements Validation<V1SchemaRegistrySubject> {
 

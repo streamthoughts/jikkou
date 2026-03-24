@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
 import io.streamthoughts.jikkou.common.utils.IOUtils;
 import io.streamthoughts.jikkou.common.utils.Pair;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -48,6 +50,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link ResourceRepository} implementation for loading resources from GitHub repository.
  */
+@Title("GitHub resource repository")
+@Description("Loads resources from a GitHub repository.")
 public class GitHubResourceRepository extends ContextualExtension implements ResourceRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(GitHubResourceRepository.class);
@@ -58,6 +62,23 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
 
     private ResourceReaderFactory resourceReaderFactory;
     private HttpClient httpClient;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.REPOSITORY_CONFIG,
+            Config.BRANCH_CONFIG,
+            Config.PATHS_CONFIG,
+            Config.FILE_PATTERN_CONFIG,
+            Config.TOKEN_CONFIG,
+            Config.VALUE_FILES_CONFIG,
+            Config.VALUE_FILE_PATTERN_CONFIG,
+            Config.LABEL_CONFIG
+        );
+    }
 
     /**
      * Creates a new {@link GitHubResourceRepository} instance.

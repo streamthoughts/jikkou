@@ -7,9 +7,11 @@
 package io.streamthoughts.jikkou.core.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResources;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasPriority;
@@ -18,6 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Enrich resource metadata")
+@Description("Enriches resource metadata by adding predefined labels and annotations.")
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 @Enabled
 @SupportedResources

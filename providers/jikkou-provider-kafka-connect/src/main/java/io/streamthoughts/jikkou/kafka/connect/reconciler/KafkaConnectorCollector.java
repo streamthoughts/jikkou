@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.connect.reconciler;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -37,6 +39,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link Collector} to get {@link V1KafkaConnector} resources.
  */
+@Title("Collect Kafka connectors")
+@Description("Collects all Kafka Connect connector resources from one or more Kafka Connect clusters.")
 @SupportedResource(type = V1KafkaConnector.class)
 public final class KafkaConnectorCollector extends ContextualExtension implements Collector<V1KafkaConnector> {
 

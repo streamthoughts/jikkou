@@ -12,7 +12,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -37,6 +39,8 @@ import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Kafka quotas")
+@Description("Reconciles Kafka client quota resources to ensure they match the desired state.")
 @SupportedResource(type = V1KafkaClientQuota.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaClientQuotaChange")
 @ControllerConfiguration(

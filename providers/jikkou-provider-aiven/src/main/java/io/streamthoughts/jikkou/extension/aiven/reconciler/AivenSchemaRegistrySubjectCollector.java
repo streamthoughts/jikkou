@@ -10,7 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.streamthoughts.jikkou.common.utils.AsyncUtils;
 import io.streamthoughts.jikkou.common.utils.Pair;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -38,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Aiven - Schema Registry Subjects Collector.
  */
+@Title("Collect Aiven Schema Registry subjects")
+@Description("Collects Schema Registry subject resources from an Aiven service.")
 @SupportedResource(
         apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA1,
         kind = ApiVersions.SCHEMA_REGISTRY_KIND

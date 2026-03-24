@@ -13,7 +13,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 import static io.streamthoughts.jikkou.extension.aiven.ApiVersions.KAFKA_AIVEN_V1BETA2;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -44,6 +46,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Reconcile Aiven Kafka topics")
+@Description("Reconciles Kafka topic resources on an Aiven service to match the desired state.")
 @SupportedResource(apiVersion = KAFKA_AIVEN_V1BETA2, kind = "KafkaTopicChange")
 @SupportedResource(apiVersion = KAFKA_AIVEN_V1BETA2, kind = "KafkaTopic")
 @ControllerConfiguration(

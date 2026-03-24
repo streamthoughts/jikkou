@@ -10,8 +10,10 @@ import static io.streamthoughts.jikkou.core.models.CoreAnnotations.JIKKOU_IO_TRA
 import static io.streamthoughts.jikkou.kafka.internals.KafkaTopics.NO_REPLICATION_FACTOR;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -28,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This transformation can be used to enforce a minimum number of replicas for a kafka topic.
  */
+@Title("Enforce minimum topic replicas")
+@Description("Enforces a minimum replication factor on all Kafka topic resources.")
 @Priority(HasPriority.HIGHEST_PRECEDENCE)
 @SupportedResource(type = V1KafkaTopic.class)
 public class KafkaTopicMinReplicasTransformation implements Transformation<V1KafkaTopic> {

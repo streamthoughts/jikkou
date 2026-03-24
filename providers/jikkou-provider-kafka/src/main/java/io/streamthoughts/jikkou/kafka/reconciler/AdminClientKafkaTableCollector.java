@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -40,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Collect Kafka tables")
+@Description("Collects all Kafka table resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaTableRecord.class)
 public final class AdminClientKafkaTableCollector extends ContextualExtension implements Collector<V1KafkaTableRecord> {
 

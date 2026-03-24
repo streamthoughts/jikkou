@@ -6,8 +6,10 @@
  */
 package io.streamthoughts.jikkou.kafka.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.DuplicateMetadataNameException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -19,6 +21,8 @@ import io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate no duplicate principals")
+@Description("Validates that no duplicate Kafka principal entries exist in the resource definitions.")
 @Enabled
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
 public class NoDuplicatePrincipalAllowedValidation implements Validation<V1KafkaPrincipalAuthorization> {

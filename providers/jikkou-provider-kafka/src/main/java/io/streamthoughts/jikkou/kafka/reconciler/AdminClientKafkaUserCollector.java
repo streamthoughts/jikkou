@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -27,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Collect Kafka users")
+@Description("Collects all Kafka user SCRAM credential resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaUser.class)
 public final class AdminClientKafkaUserCollector extends ContextualExtension implements Collector<V1KafkaUser> {
 

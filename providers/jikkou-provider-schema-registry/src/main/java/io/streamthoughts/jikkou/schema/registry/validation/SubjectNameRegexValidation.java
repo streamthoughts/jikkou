@@ -6,6 +6,7 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Example;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
 import io.streamthoughts.jikkou.core.annotation.Title;
@@ -24,6 +25,7 @@ import java.util.regex.PatternSyntaxException;
 import org.jetbrains.annotations.NotNull;
 
 @Title("SubjectNameRegexValidation ensures that subject names conform to a specified regular expression.")
+@Description("Validates that Schema Registry subject names match a configured regular expression pattern.")
 @Example(
         title = "Validate that subject names conform to a defined regex.",
         full = true,

@@ -10,7 +10,9 @@ import static io.streamthoughts.jikkou.kafka.reconciler.KafkaConfigsConfig.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
@@ -41,6 +43,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Collect Aiven Kafka topics")
+@Description("Collects Kafka topic resources from an Aiven service.")
 @SupportedResource(kind = "KafkaTopic", apiVersion = ApiVersions.KAFKA_AIVEN_V1BETA2)
 public class AivenKafkaTopicCollector extends ContextualExtension implements Collector<V1KafkaTopic> {
 

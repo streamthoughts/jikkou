@@ -8,7 +8,9 @@ package io.streamthoughts.jikkou.extension.aiven.reconciler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ConfigException;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -31,6 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Collect Aiven Schema Registry ACLs")
+@Description("Collects Schema Registry ACL entry resources from an Aiven service.")
 @SupportedResource(type = V1SchemaRegistryAclEntry.class)
 public final class AivenSchemaRegistryAclEntryCollector implements Collector<V1SchemaRegistryAclEntry> {
 

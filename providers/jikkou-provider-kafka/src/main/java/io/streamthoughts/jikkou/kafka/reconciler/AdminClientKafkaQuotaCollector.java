@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.kafka.reconciler;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -37,6 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Title("Collect Kafka quotas")
+@Description("Collects all Kafka client quota resources from a Kafka cluster using the AdminClient API.")
 @SupportedResource(type = V1KafkaClientQuota.class)
 public final class AdminClientKafkaQuotaCollector
         implements Collector<V1KafkaClientQuota> {

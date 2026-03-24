@@ -6,7 +6,9 @@
  */
 package io.streamthoughts.jikkou.schema.registry.validation;
 
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
@@ -29,6 +31,8 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
+@Title("Validate schema compatibility")
+@Description("Validates that schema changes are compatible with the existing schema version in Schema Registry.")
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaCompatibilityValidation implements Validation<V1SchemaRegistrySubject> {
 

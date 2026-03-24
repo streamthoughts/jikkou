@@ -9,8 +9,10 @@ package io.streamthoughts.jikkou.kafka.connect.validation;
 import static io.streamthoughts.jikkou.kafka.connect.KafkaConnectLabels.KAFKA_CONNECT_CLUSTER;
 
 import io.streamthoughts.jikkou.common.utils.Strings;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.validation.Validation;
 import io.streamthoughts.jikkou.core.validation.ValidationError;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Validate Kafka connector resources")
+@Description("Validates Kafka Connect connector resources to ensure they are well-formed before reconciliation.")
 @Enabled
 @SupportedResource(type = V1KafkaConnector.class)
 public class KafkaConnectorResourceValidation implements Validation<V1KafkaConnector> {

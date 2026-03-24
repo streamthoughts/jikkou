@@ -12,7 +12,9 @@ import static io.streamthoughts.jikkou.core.ReconciliationMode.FULL;
 import static io.streamthoughts.jikkou.core.ReconciliationMode.UPDATE;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.extension.ExtensionContext;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -43,6 +45,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+@Title("Reconcile Kafka connectors")
+@Description("Reconciles Kafka Connect connector resources to ensure they match the desired state.")
 @SupportedResource(type = V1KafkaConnector.class)
 @SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA, kind = "KafkaConnectorChange")
 @ControllerConfiguration(

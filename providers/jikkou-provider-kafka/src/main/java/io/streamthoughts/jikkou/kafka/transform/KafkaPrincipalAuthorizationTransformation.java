@@ -7,9 +7,11 @@
 package io.streamthoughts.jikkou.kafka.transform;
 
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Enabled;
 import io.streamthoughts.jikkou.core.annotation.Priority;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.ResourceList;
@@ -27,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Transformation to apply all roles to topic objects.
  */
+@Title("Transform principal authorizations")
+@Description("Transforms Kafka principal authorization resources into individual ACL entries.")
 @SupportedResource(type = V1KafkaPrincipalAuthorization.class)
 @Enabled
 @Priority(HasPriority.HIGHEST_PRECEDENCE)

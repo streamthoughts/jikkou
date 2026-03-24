@@ -21,7 +21,9 @@ import io.streamthoughts.jikkou.aws.change.handler.DeleteAwsGlueSchemaChangeHand
 import io.streamthoughts.jikkou.aws.change.handler.UpdateAwsGlueSchemaChangeHandler;
 import io.streamthoughts.jikkou.aws.models.AwsGlueSchema;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awssdk.services.glue.GlueClient;
 
+@Title("Reconcile AWS Glue schemas")
+@Description("Reconciles schema resources in the AWS Glue Schema Registry to match the desired state.")
 @ControllerConfiguration(
     supportedModes = {CREATE, DELETE, UPDATE, FULL}
 )

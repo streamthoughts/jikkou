@@ -7,7 +7,9 @@
 package io.streamthoughts.jikkou.schema.registry.reconciler;
 
 import io.streamthoughts.jikkou.common.utils.Enums;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.SupportedResource;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
@@ -34,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Title("Collect Schema Registry subjects")
+@Description("Collects all Schema Registry subject resources from a Schema Registry cluster.")
 @SupportedResource(type = V1SchemaRegistrySubject.class)
 public class SchemaRegistrySubjectCollector extends ContextualExtension implements Collector<V1SchemaRegistrySubject> {
 

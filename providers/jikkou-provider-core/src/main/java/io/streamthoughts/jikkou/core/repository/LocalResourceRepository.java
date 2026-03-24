@@ -9,6 +9,8 @@ package io.streamthoughts.jikkou.core.repository;
 import static io.streamthoughts.jikkou.core.io.Jackson.YAML_OBJECT_MAPPER;
 
 import io.streamthoughts.jikkou.api.template.JinjaResourceTemplateRenderer;
+import io.streamthoughts.jikkou.core.annotation.Description;
+import io.streamthoughts.jikkou.core.annotation.Title;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.extension.ContextualExtension;
@@ -29,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A {@link ResourceRepository} implementation for loading resources from local file-system.
  */
+@Title("Local resource repository")
+@Description("Loads resources from a local file system directory.")
 public class LocalResourceRepository extends ContextualExtension implements ResourceRepository {
 
     /**
@@ -79,6 +83,20 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
     private ResourceTemplateRenderer renderer;
 
     private ResourceReaderFactory resourceReaderFactory;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(
+            Config.FILES_CONFIG,
+            Config.FILE_NAME_CONFIG,
+            Config.VALUE_FILES_CONFIG,
+            Config.VALUE_FILE_NAME_CONFIG,
+            Config.LABEL_CONFIG
+        );
+    }
 
     /**
      * Creates a new {@link LocalResourceRepository} instance.
