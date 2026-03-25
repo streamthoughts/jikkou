@@ -1,9 +1,9 @@
 ---
-title: "Core"
+title: "Core Extensions"
 linkTitle: "Core"
 weight: 10
 description: >
-  The core Extensions for Jikkou
+  Built-in Jikkou core extensions — resource repositories, validations, and transformations available in every installation.
 ---
 
 {{% pageinfo %}}

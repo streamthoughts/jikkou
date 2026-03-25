@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature", "extension" ]
-title: "Controllers"
+title: "Jikkou Controllers"
 linkTitle: "Controllers"
+description: "Learn how Jikkou controllers compute and apply changes to reconcile resources in managed systems."
 weight: 9
 ---
 

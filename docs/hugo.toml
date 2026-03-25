@@ -60,7 +60,7 @@ languageName ="English"
 weight = 1
 [languages.en.params]
 title = "Jikkou"
-description = "The Open source Resource as Code framework for Apache Kafka"
+description = "Jikkou — open-source Resource as Code framework to declare, automate, and provision Apache Kafka Topics, ACLs, Schemas, Quotas, and Connectors from YAML"
 
 [markup]
   [markup.goldmark]
@@ -159,8 +159,8 @@ sidebar_search_disable = false
 [params.ui.feedback]
 enable = true
 # The responses that the user sees after clicking "yes" (the page was helpful) or "no" (the page was not helpful).
-yes = 'Glad to hear it! Please <a href="https://github.com/USERNAME/REPOSITORY/issues/new">tell us how we can improve</a>.'
-no = 'Sorry to hear that. Please <a href="https://github.com/USERNAME/REPOSITORY/issues/new">tell us how we can improve</a>.'
+yes = 'Glad to hear it! Please <a href="https://github.com/streamthoughts/jikkou/issues/new">tell us how we can improve</a>.'
+no = 'Sorry to hear that. Please <a href="https://github.com/streamthoughts/jikkou/issues/new">tell us how we can improve</a>.'
 
 # Adds a reading time to the top of each doc.
 # If you want this feature, but occasionally need to remove the Reading time from a single page,

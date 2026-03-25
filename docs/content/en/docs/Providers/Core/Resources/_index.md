@@ -1,6 +1,7 @@
 ---
 title: "Resources"
 linkTitle: "Resources"
+description: "Core resources supported by Jikkou for infrastructure management."
 weight: 1
 ---
 

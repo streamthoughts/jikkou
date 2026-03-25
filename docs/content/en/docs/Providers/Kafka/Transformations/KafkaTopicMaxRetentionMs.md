@@ -1,6 +1,7 @@
 ---
 title: "KafkaTopicMaxRetentionMs"
 linkTitle: "KafkaTopicMaxRetentionMs"
+description: "Enforce a maximum retention.ms value for Kafka topics using this Jikkou transformation."
 ---
 
 {{% pageinfo color="info" %}}

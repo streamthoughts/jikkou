@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature" ]
-title: "Template"
-linkTitle: "Template"
+title: "Jikkou Templates"
+linkTitle: "Templates"
+description: "Learn how to use Jinja templating to dynamically define resource configuration files in Jikkou."
 weight: 7
 ---
 

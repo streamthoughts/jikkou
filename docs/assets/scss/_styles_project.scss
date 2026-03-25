@@ -921,8 +921,15 @@ h2.section-title {
     opacity: inherit;
 }
 
+// Hide text title since the logo SVG already includes it
 .td-navbar .navbar-brand__name {
-    font-size: 1.45rem !important;
+    display: none;
+}
+
+// Constrain the logo-with-title SVG to a reasonable navbar size
+.td-navbar .navbar-logo svg {
+    height: 45px;
+    width: auto;
 }
 
 .td-navbar {

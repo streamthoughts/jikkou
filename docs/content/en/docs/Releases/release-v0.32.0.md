@@ -1,6 +1,7 @@
 ---
 title: "Release v0.32.0"
 linkTitle: "Release v0.32.0"
+description: "Jikkou v0.32.0 release notes — External Extension Providers, Actions, and more."
 weight: -32
 ---
 

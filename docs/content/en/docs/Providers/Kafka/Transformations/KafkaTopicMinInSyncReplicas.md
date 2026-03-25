@@ -1,6 +1,7 @@
 ---
 title: "KafkaTopicMinInSyncReplicas"
 linkTitle: "KafkaTopicMinInSyncReplicas"
+description: "Enforce a minimum min.insync.replicas value for Kafka topics using this Jikkou transformation."
 ---
 
 {{% pageinfo color="info" %}}

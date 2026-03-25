@@ -1,6 +1,7 @@
 ---
 title: "Release v0.37.0"
 linkTitle: "Release v0.37.0"
+description: "Jikkou v0.37.0 release notes — multiple provider instances, Schema Registry enhancements, and more."
 weight: -37
 ---
 

@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature", "extension" ]
-title: "Validations"
+title: "Jikkou Validations"
 linkTitle: "Validations"
+description: "Learn how Jikkou validations enforce rules and constraints on resource definitions before applying changes."
 weight: 6
 ---
 

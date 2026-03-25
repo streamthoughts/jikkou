@@ -1,8 +1,9 @@
 ---
 categories: [ ]
 tags: [ "feature", "extensions" ]
-title: "Actions"
+title: "Jikkou Actions"
 linkTitle: "Actions"
+description: "Learn how to use Jikkou actions to execute specific one-shot operations on resources."
 weight: 12
 ---
 

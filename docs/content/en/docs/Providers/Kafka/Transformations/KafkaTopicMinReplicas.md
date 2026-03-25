@@ -1,6 +1,7 @@
 ---
 title: "KafkaTopicMinReplicas"
 linkTitle: "KafkaTopicMinReplicas"
+description: "Enforce a minimum replication factor for Kafka topics using this Jikkou transformation."
 ---
 
 {{% pageinfo color="info" %}}

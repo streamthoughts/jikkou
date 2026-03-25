@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature" ]
-title: "Selectors"
+title: "Jikkou Selectors"
 linkTitle: "Selectors"
+description: "Learn how to use Jikkou selectors to include or exclude resources during collection and reconciliation."
 weight: 4
 ---
 

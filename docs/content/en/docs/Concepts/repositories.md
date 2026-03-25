@@ -1,8 +1,9 @@
 ---
 categories: [ ]
 tags: [ "concept", "feature", "extension" ]
-title: "Resource Repositories"
+title: "Jikkou Resource Repositories"
 linkTitle: "Resource Repositories"
+description: "Explore Resource Repositories, the extensible component for loading resources from various sources."
 weight: 12
 ---
 

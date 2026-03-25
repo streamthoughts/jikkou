@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature", "extension" ]
-title: "Transformations"
+title: "Jikkou Transformations"
 linkTitle: "Transformations"
+description: "Learn how Jikkou transformations enrich, filter, and modify resource definitions before reconciliation."
 weight: 5
 ---
 

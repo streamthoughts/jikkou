@@ -1,6 +1,7 @@
 ---
 title: "Release v0.33.0"
 linkTitle: "Release v0.33.0"
+description: "Jikkou v0.33.0 release notes with new features and improvements."
 weight: -33
 ---
 

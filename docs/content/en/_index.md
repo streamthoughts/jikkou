@@ -1,6 +1,7 @@
 ---
-title: Jikkou
+title: "Jikkou — Resource as Code for Apache Kafka"
 linkTitle: Jikkou
+description: "Jikkou is an open-source Resource as Code framework for Apache Kafka. Declare, automate, and provision Topics, ACLs, Schemas, Quotas, and Connectors from YAML files."
 ---
 
 {{% blocks/cover image_anchor="top" height="max" color="white" %}}

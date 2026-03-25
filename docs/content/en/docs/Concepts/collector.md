@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature", "extension" ]
-title: "Collectors"
+title: "Jikkou Collectors"
 linkTitle: "Collectors"
+description: "Understand how collectors discover and describe existing resources in your Kafka system."
 weight: 8
 ---
 

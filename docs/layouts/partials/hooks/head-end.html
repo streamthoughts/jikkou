@@ -1,3 +1,54 @@
 {{ $asciinema := resources.Get "css/asciinema-player.css" | resources.ToCSS | resources.Minify | resources.Fingerprint }}
 <link rel="stylesheet" href="{{ $asciinema.Permalink }}">
 <script src="https://buttons.github.io/buttons.js"></script>
+
+{{/* Canonical URL */}}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{/* Organization structured data */}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Jikkou",
+  "url": "https://www.jikkou.io",
+  "logo": "https://www.jikkou.io/images/jikkou-no-title-logo-450px.png",
+  "sameAs": [
+    "https://github.com/streamthoughts/jikkou",
+    "https://twitter.com/streamthought_"
+  ]
+}
+</script>
+
+{{/* SoftwareApplication structured data (homepage only) */}}
+{{ if .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Jikkou",
+  "description": "Open-source Resource as Code framework for Apache Kafka",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Linux, macOS, Windows",
+  "url": "https://www.jikkou.io",
+  "license": "https://www.apache.org/licenses/LICENSE-2.0",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+{{ end }}
+
+{{/* BreadcrumbList structured data (non-homepage) */}}
+{{ if not .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {{ range $i, $p := .Ancestors.Reverse }}
+    { "@type": "ListItem", "position": {{ add $i 1 }}, "name": "{{ $p.Title }}", "item": "{{ $p.Permalink }}" },
+    {{ end }}
+    { "@type": "ListItem", "position": {{ add (len .Ancestors) 1 }}, "name": "{{ .Title }}" }
+  ]
+}
+</script>
+{{ end }}

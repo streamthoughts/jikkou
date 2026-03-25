@@ -1,6 +1,7 @@
 ---
 title: "Resource Repositories"
 linkTitle: "Repositories"
+description: "Core resource repositories supported by Jikkou for loading configurations from various sources."
 weight: 1
 ---
 

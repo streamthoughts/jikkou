@@ -1,6 +1,7 @@
 ---
 title: "KafkaTopicMaxNumPartitions"
 linkTitle: "KafkaTopicMaxNumPartitions"
+description: "Enforce a maximum partition count for Kafka topics using this Jikkou transformation."
 ---
 
 {{% pageinfo color="info" %}}

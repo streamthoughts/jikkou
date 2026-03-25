@@ -1,7 +1,8 @@
 ---
 tags: [ "concept" ]
-title: "Resource"
-linkTitle: "Resource"
+title: "Jikkou Resources"
+linkTitle: "Resources"
+description: "Understand Jikkou resources — entities that represent the desired state of Kafka topics, ACLs, schemas, and other system objects."
 weight: 1
 ---
 

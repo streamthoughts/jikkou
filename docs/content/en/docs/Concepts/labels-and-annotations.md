@@ -1,6 +1,7 @@
 ---
-title: "Labels and annotations"
-linkTitle: "Labels and annotations"
+title: "Labels and Annotations"
+linkTitle: "Labels and Annotations"
+description: "Learn how to use labels and annotations to attach identifying metadata to Jikkou resource objects."
 weight: 2
 ---
 

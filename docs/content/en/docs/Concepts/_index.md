@@ -1,9 +1,9 @@
 ---
-title: "Concepts"
+title: "Jikkou Concepts"
 linkTitle: "Concepts"
 weight: 5
 description: >
-  Learn the differents concepts used within Jikkou
+  Learn the core concepts behind Jikkou — resources, reconciliation, transformations, validations, providers, and more.
 ---
 
 {{% pageinfo %}}

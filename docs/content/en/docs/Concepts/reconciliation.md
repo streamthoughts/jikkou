@@ -1,7 +1,8 @@
 ---
 tags: [ "concept" ]
-title: "Reconciliation"
+title: "Jikkou Reconciliation"
 linkTitle: "Reconciliation"
+description: "Understand the reconciliation process for comparing and synchronizing desired and actual resource states."
 weight: 3
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "KafkaTopicMinRetentionMs"
 linkTitle: "KafkaTopicMinRetentionMs"
+description: "Enforce a minimum retention.ms value for Kafka topics using this Jikkou transformation."
 ---
 
 {{% pageinfo color="info" %}}

@@ -1,7 +1,8 @@
 ---
 tags: [ "concept", "feature", "extension" ]
-title: "Providers"
+title: "Jikkou Providers"
 linkTitle: "Providers"
+description: "Understand Jikkou providers — pluggable modules that supply extensions for Kafka, Schema Registry, Aiven, and other platforms."
 weight: 11
 ---
 

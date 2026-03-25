@@ -1,6 +1,7 @@
 ---
 title: "Resources"
 linkTitle: "Resources"
+description: "Community resources including blog posts, guides, and talks about GitOps for Apache Kafka with Jikkou."
 weight: 0
 menu:
   main:

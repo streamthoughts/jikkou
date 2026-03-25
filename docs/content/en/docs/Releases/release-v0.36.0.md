@@ -1,6 +1,7 @@
 ---
 title: "Release v0.36.0"
 linkTitle: "Release v0.36.0"
+description: "Jikkou v0.36.0 release notes — AWS Glue Schemas, ValidatingResourcePolicy, and more."
 weight: -36
 ---
 

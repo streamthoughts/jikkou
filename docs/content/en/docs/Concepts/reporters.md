@@ -1,8 +1,9 @@
 ---
 categories: [ ]
 tags: [ "feature", "extensions" ]
-title: "Reporters"
+title: "Jikkou Reporters"
 linkTitle: "Reporters"
+description: "Learn how to use reporters to send Jikkou reconciliation changes to third-party systems."
 weight: 11
 ---
 
