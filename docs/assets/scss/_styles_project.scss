@@ -1019,6 +1019,24 @@ h2.section-title {
 // Typography & Links (Light mode defaults)
 // ============================================================
 
+// Smooth font rendering for doc pages
+.td-main, .td-sidebar {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.td-content {
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: -0.01em;
+
+    p, li {
+        line-height: 1.75;
+        letter-spacing: -0.01em;
+    }
+}
+
 p > a, li > a {
     color: $purple;
 
@@ -1034,6 +1052,7 @@ p > a, li > a {
 .td-sidebar-nav__section-title a {
     color: #1e293b !important;
     font-weight: 600;
+    letter-spacing: -0.01em;
     &:hover {
         color: $purple !important;
     }
@@ -1043,6 +1062,9 @@ p > a, li > a {
 .td-sidebar-nav {
     .td-sidebar-link {
         color: #475569;
+        font-size: 0.9375rem;
+        letter-spacing: -0.01em;
+        line-height: 1.5;
         &:hover {
             color: $purple;
         }
@@ -1083,18 +1105,32 @@ p > a, li > a {
 }
 
 .td-content h1 {
-    font-weight: 800;
+    font-weight: 700;
     color: $dark-base;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
 }
 
 .td-content h2 {
-    font-weight: 800;
+    font-weight: 700;
     color: $dark-base;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-top: 2rem;
 }
 
 .td-content h3 {
-    font-weight: 700;
+    font-weight: 600;
     color: #1e293b;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+}
+
+.td-content h4 {
+    font-weight: 600;
+    color: #334155;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
 }
 
 h3 > code {
@@ -1131,7 +1167,8 @@ h3 > code {
     th {
         background-color: #f8fafc;
         color: $dark-base;
-        font-weight: 700;
+        font-weight: 600;
+        letter-spacing: -0.01em;
         border-bottom: 2px solid #e2e8f0;
     }
 
