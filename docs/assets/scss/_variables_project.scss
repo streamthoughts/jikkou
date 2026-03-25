@@ -4,37 +4,43 @@ Add styles or override variables from the theme here.
 
 */
 
-// Custom colors
-$dark-grey: #343A40 !default;
-$green-light: #26b793;
-$indigo: #502198;
+// Refined palette — deep space with vibrant accents
+$dark-base: #0b0f1a;
+$dark-surface: #111827;
+$dark-card: #1a1f35;
 
-$dark: #121b28 !default;
+$purple: #7c3aed;
+$purple-light: #a78bfa;
+$indigo: #6366f1;
+$cyan: #22d3ee;
+$pink: #f472b6;
+$coral: #fb7185;
+$amber: #f59e0b;
+$emerald: #34d399;
+
+// Legacy compat
+$dark-grey: #343A40 !default;
+$green-light: #34d399;
+
+$dark: $dark-base !default;
 $blue: #141440ff !default;
 $blue-light: #2880c1 !default;
 
 $gray: #6C757D !default;
 $gray-light: #F8F9FA !default;
 
-$dark-pink: #E62D4CFF !default;
-$light-purple: #6951F3FF !default;
+$dark-pink: $coral !default;
+$light-purple: $purple !default;
 
 // Variables
-$primary: #000E1BFF;
-$secondary: #CF2557FF;
+$primary: $dark-base;
+$secondary: $coral;
 $light: $gray;
-$danger: $dark-pink !default;
+$danger: $coral !default;
 
 $yellow: #D17A22;
 $green: #339989;
-$green-light: #3fd7b0;
 
 $enable-gradients: true;
 $enable-rounded: true;
 $enable-shadows: true;
-
-
-
-
-
-

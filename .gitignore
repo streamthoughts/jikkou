@@ -134,3 +134,6 @@ docs/public
 
 # .*rc files
 .sdkmanrc
+
+.claude/skills/jikkou-kafka-topic/bin
+.claude/skills/jikkou-kafka-topic/bin

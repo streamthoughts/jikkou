@@ -16,22 +16,66 @@
     padding-right: 0.8em;
 
     &-filled {
-        background-color: $primary!important ;
-        border: solid 1px $dark-pink!important ;
-        color: #ffffff !important ;
+        background-color: $dark-base !important;
+        border: solid 1px $coral !important;
+        color: #ffffff !important;
 
         &:hover {
-            border: solid 1px #ffffff !important ;
+            border: solid 1px #ffffff !important;
         }
     }
 
     &-github {
         background-color: transparent;
-        border: solid 1px $dark-pink;
-        color: #ffffff !important ;
+        border: solid 1px $coral;
+        color: #ffffff !important;
 
         &:hover {
-            border: solid 1px #ffffff !important ;
+            border: solid 1px #ffffff !important;
+        }
+    }
+
+    &-primary-cta {
+        background: linear-gradient(135deg, $purple, darken($purple, 8%));
+        border: none;
+        border-radius: 10px;
+        color: #ffffff !important;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: none;
+        padding: 0 2rem;
+        height: 48px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none !important;
+        box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.45);
+            color: #ffffff !important;
+        }
+    }
+
+    &-ghost-cta {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        color: #ffffff !important;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: none;
+        padding: 0 1.8rem;
+        height: 48px;
+        transition: border-color 0.2s, background 0.2s;
+        text-decoration: none !important;
+        backdrop-filter: blur(4px);
+
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff !important;
         }
     }
 
@@ -41,9 +85,9 @@
 }
 
 .td-blog .td-rss-button {
-    background-color: $green-light;
+    background-color: $emerald;
 
     &:hover {
-        color: #ffffff !important ;
+        color: #ffffff !important;
     }
 }

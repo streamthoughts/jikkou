@@ -3,23 +3,26 @@
 {{ $height := .Get "height" | default "auto"  }}
 {{/* Height can be one of: auto, min, med, max, full. */}}
 <a id="td-block-{{ .Ordinal }}" class="td-offset-anchor"></a>
-<section class="row td-box td-box--{{ $col_id }} position-relative td-box--gradient td-box--height-{{ $height }}">
+<section class="row td-box td-box--{{ $col_id }} position-relative td-box--gradient td-box--height-{{ $height }} showcase-section">
     <div class="container">
         <div class="col">
-            <div class="row">
+            <div class="section-header" style="margin-bottom: 3rem;">
+                <h2 class="section-heading">See it in action</h2>
+                <p class="section-subheading">Watch Jikkou manage Kafka resources in real-time from the command line</p>
+            </div>
+            <div class="row align-items-center">
                 <div class="col-lg-4 mb-5 mb-lg-0">
-                    <h2 class="section-title align-center">What is Jikkou ?</h2>
-                    <div class="align-center">
-                        <p class="h3 text-light d-inline">
+                    <div class="showcase-description">
+                        <p class="showcase-text">
                             Jikkou is a powerful, flexible open-source framework
                             that enables self-serve resource provisioning.
                             It allows developers and DevOps teams to easily manage, automate, and provision
                             all the resources needed for their Apache Kafka platform.
                         </p>
                     </div>
-                    <div class="align-center p-5">
-                        <a class="btn btn-filled" href="/docs/tutorials/get_started/">
-                            <i class="fa-solid fa-rocket mx-2"></i> Get started with Jikkou
+                    <div class="mt-4">
+                        <a class="btn btn-primary-cta" href="/docs/tutorials/get_started/">
+                            <i class="fa-solid fa-rocket me-2"></i> Get started
                         </a>
                     </div>
                 </div>
