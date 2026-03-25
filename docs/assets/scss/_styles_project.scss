@@ -1,4 +1,5 @@
 @import "buttons";
+@import "syntax";
 
 // ============================================================
 // Base & Layout
@@ -916,6 +917,25 @@ h2.section-title {
     color: white!important;
 }
 
+// Dark mode toggle in navbar
+.td-light-dark-menu {
+    .td-theme-toggle {
+        color: rgba(255, 255, 255, 0.7);
+        border: none;
+        background: none;
+        font-size: 1.1rem;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+            color: white;
+        }
+
+        i { display: none; }
+    }
+}
+
 .navbar-bg-onscroll {
     background: $dark-base !important;
     opacity: inherit;
@@ -996,7 +1016,7 @@ h2.section-title {
 }
 
 // ============================================================
-// Typography & Links
+// Typography & Links (Light mode defaults)
 // ============================================================
 
 p > a, li > a {
@@ -1012,15 +1032,30 @@ p > a, li > a {
 }
 
 .td-sidebar-nav__section-title a {
-    color: dark-grey!important;
-   &:hover {
-      color: $purple !important;
-   }
+    color: #1e293b !important;
+    font-weight: 600;
+    &:hover {
+        color: $purple !important;
+    }
+}
+
+// Left sidebar styling
+.td-sidebar-nav {
+    .td-sidebar-link {
+        color: #475569;
+        &:hover {
+            color: $purple;
+        }
+        &.active {
+            color: $purple !important;
+            font-weight: 600;
+        }
+    }
 }
 
 .td-section-nav {
     a {
-      color: $purple !important;
+        color: $purple !important;
     }
 }
 
@@ -1042,9 +1077,14 @@ p > a, li > a {
     margin: 0;
     font-size: 85%;
     word-break: normal;
-    background-color: rgba(124, 58, 237, 0.06);
+    background-color: rgba(124, 58, 237, 0.08);
     border-radius: 0.25rem;
     color: $purple !important;
+}
+
+.td-content h1 {
+    font-weight: 800;
+    color: $dark-base;
 }
 
 .td-content h2 {
@@ -1053,15 +1093,73 @@ p > a, li > a {
 }
 
 .td-content h3 {
-    font-weight: 800;
-    color: $dark-base;
+    font-weight: 700;
+    color: #1e293b;
 }
 
 h3 > code {
     color: $purple !important;
     word-break: normal;
-    background-color: rgba(124, 58, 237, 0.06);
+    background-color: rgba(124, 58, 237, 0.08);
     border-radius: 0.25rem;
+}
+
+// Right sidebar action links
+.td-page-meta {
+    a {
+        color: $indigo !important;
+        &:hover {
+            color: $purple !important;
+        }
+    }
+}
+
+// Breadcrumbs
+.breadcrumb {
+    a {
+        color: $purple;
+        &:hover {
+            color: darken($purple, 10%);
+        }
+    }
+}
+
+// Table styling
+.td-content table {
+    border-collapse: collapse;
+
+    th {
+        background-color: #f8fafc;
+        color: $dark-base;
+        font-weight: 700;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    td {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+}
+
+// Tag cloud
+.taxonomy-terms-cloud {
+    .taxonomy-term {
+        background-color: rgba(124, 58, 237, 0.08);
+        color: $purple;
+        border: 1px solid rgba(124, 58, 237, 0.15);
+        border-radius: 0.25rem;
+        &:hover {
+            background-color: rgba(124, 58, 237, 0.15);
+        }
+
+        .taxonomy-count {
+            background-color: rgba(124, 58, 237, 0.12);
+            color: $purple;
+        }
+    }
 }
 
 // ============================================================
@@ -1070,7 +1168,8 @@ h3 > code {
 
 .pageinfo-info {
     border-style: solid;
-    border-color: $cyan !important;
+    border-color: $indigo !important;
+    background-color: rgba(99, 102, 241, 0.04);
 }
 
 .pageinfo.pageinfo-dark-pink {
@@ -1084,11 +1183,12 @@ h3 > code {
 
 .alert-info {
     border-style: solid;
-    border-color: $cyan;
+    border-color: $indigo;
     border-width: 0 0 0 4px;
+    background-color: rgba(99, 102, 241, 0.04);
 
     h4.alert-heading {
-        color: darken($cyan, 15%);
+        color: $indigo;
     }
 }
 
@@ -1101,17 +1201,20 @@ h3 > code {
 // ============================================================
 
 h1.display-1 {
-   font-size: 3em;
-   font-weight: 800;
+    font-size: 3em;
+    font-weight: 800;
 }
 
-pre { border: 1px solid #e5e7eb; }
+pre {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+}
 
 .row.features {
-     p > a {
-       color: white;
-       font-weight: 700;
-       text-decoration: underline;
+    p > a {
+        color: white;
+        font-weight: 700;
+        text-decoration: underline;
 
         &:hover {
             color: $purple-light;
@@ -1121,4 +1224,199 @@ pre { border: 1px solid #e5e7eb; }
 
 .align-center {
     text-align: center;
+}
+
+// ============================================================
+// Dark Mode Overrides
+// ============================================================
+
+[data-bs-theme="dark"] {
+
+    // Main content area
+    .td-main {
+        background-color: $dark-base;
+        color: #e2e8f0;
+    }
+
+    // Left sidebar
+    .td-sidebar {
+        background-color: $dark-surface;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .td-sidebar-nav__section-title a {
+        color: #e2e8f0 !important;
+        &:hover {
+            color: $purple-light !important;
+        }
+    }
+
+    .td-sidebar-nav {
+        .td-sidebar-link {
+            color: #94a3b8;
+            &:hover {
+                color: $purple-light;
+            }
+            &.active {
+                color: $purple-light !important;
+            }
+        }
+    }
+
+    // Content
+    .td-content {
+        color: #e2e8f0;
+
+        h1, h2 {
+            color: #f1f5f9;
+        }
+
+        h3 {
+            color: #e2e8f0;
+        }
+
+        a {
+            color: $purple-light;
+            &:hover {
+                color: lighten($purple-light, 10%);
+            }
+        }
+
+        p code, li > code, table code {
+            background-color: rgba(167, 139, 250, 0.12) !important;
+            color: $purple-light !important;
+        }
+    }
+
+    h3 > code {
+        background-color: rgba(167, 139, 250, 0.12);
+        color: $purple-light !important;
+    }
+
+    // Tables
+    .td-content table {
+        color: #e2e8f0 !important;
+
+        th {
+            background-color: $dark-card !important;
+            color: #f1f5f9 !important;
+            border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        td {
+            border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+            color: #e2e8f0 !important;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        tr:nth-child(odd) {
+            background-color: transparent !important;
+        }
+    }
+
+    // Code blocks
+    pre {
+        border-color: rgba(255, 255, 255, 0.1);
+        background-color: $dark-card !important;
+    }
+
+    // Alerts & info boxes
+    .pageinfo {
+        background-color: rgba(99, 102, 241, 0.08) !important;
+        color: #e2e8f0 !important;
+    }
+
+    .pageinfo-info {
+        background-color: rgba(99, 102, 241, 0.08) !important;
+        color: #e2e8f0 !important;
+    }
+
+    .alert-info {
+        background-color: rgba(99, 102, 241, 0.08);
+        color: #e2e8f0;
+
+        h4.alert-heading {
+            color: $purple-light;
+        }
+    }
+
+    .alert-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #e2e8f0;
+    }
+
+    // Right sidebar
+    .td-page-meta {
+        a {
+            color: $purple-light !important;
+            &:hover {
+                color: lighten($purple-light, 10%) !important;
+            }
+        }
+    }
+
+    // Breadcrumbs
+    .breadcrumb {
+        a {
+            color: $purple-light;
+            &:hover {
+                color: lighten($purple-light, 10%);
+            }
+        }
+        .breadcrumb-item {
+            color: #94a3b8;
+        }
+    }
+
+    // TOC (right sidebar navigation)
+    .td-toc {
+        a {
+            color: #94a3b8;
+            &:hover {
+                color: $purple-light;
+            }
+        }
+    }
+
+    // Tag cloud
+    .taxonomy-terms-cloud {
+        .taxonomy-term {
+            background-color: rgba(167, 139, 250, 0.1) !important;
+            color: $purple-light !important;
+            border-color: rgba(167, 139, 250, 0.2) !important;
+
+            .taxonomy-count {
+                background-color: rgba(167, 139, 250, 0.15) !important;
+                color: $purple-light !important;
+            }
+        }
+    }
+
+    // Footer
+    footer {
+        background-color: $dark-base !important;
+        border-top-color: rgba(255, 255, 255, 0.05);
+    }
+
+    // Links
+    p > a, li > a {
+        color: $purple-light;
+        &:hover {
+            color: lighten($purple-light, 10%);
+        }
+    }
+
+    .td-section-nav a {
+        color: $purple-light !important;
+    }
+
+    // Search box
+    .td-search-input {
+        background-color: $dark-card;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+    }
 }

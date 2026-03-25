@@ -62,5 +62,14 @@
   <div class="d-none d-lg-block">
     {{ partial "search-input.html" . }}
   </div>
+  {{ if and .Site.Params.ui.showLightDarkModeMenu (not .IsHome) }}
+  <div class="td-light-dark-menu ms-2">
+    <button class="btn btn-link nav-link td-theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+      <i class="fas fa-sun td-theme-icon-light"></i>
+      <i class="fas fa-moon td-theme-icon-dark"></i>
+      <i class="fas fa-circle-half-stroke td-theme-icon-auto"></i>
+    </button>
+  </div>
+  {{ end }}
 </div>
 </nav>

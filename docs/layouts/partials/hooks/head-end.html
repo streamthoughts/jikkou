@@ -2,6 +2,22 @@
 <link rel="stylesheet" href="{{ $asciinema.Permalink }}">
 <script src="https://buttons.github.io/buttons.js"></script>
 
+{{/* Prevent FOUC: apply saved theme before page renders (skip homepage — always dark) */}}
+{{ if not .IsHome }}
+<script>
+(function() {
+  var saved = localStorage.getItem('jikkou-theme') || 'auto';
+  var theme;
+  if (saved === 'auto') {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  } else {
+    theme = saved;
+  }
+  document.documentElement.setAttribute('data-bs-theme', theme);
+})();
+</script>
+{{ end }}
+
 {{/* Canonical URL */}}
 <link rel="canonical" href="{{ .Permalink }}">
 

@@ -1,0 +1,51 @@
+{{/* Theme toggle logic */}}
+{{ if .Site.Params.ui.showLightDarkModeMenu }}
+<script>
+(function() {
+  var STORAGE_KEY = 'jikkou-theme';
+  var modes = ['light', 'dark', 'auto'];
+  var current = localStorage.getItem(STORAGE_KEY) || 'auto';
+
+  function applyTheme(mode) {
+    current = mode;
+    localStorage.setItem(STORAGE_KEY, mode);
+    var resolved;
+    if (mode === 'auto') {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } else {
+      resolved = mode;
+    }
+    document.documentElement.setAttribute('data-bs-theme', resolved);
+    updateIcons(mode);
+  }
+
+  function updateIcons(mode) {
+    var btns = document.querySelectorAll('.td-theme-toggle');
+    btns.forEach(function(btn) {
+      btn.querySelector('.td-theme-icon-light').style.display = mode === 'light' ? 'inline' : 'none';
+      btn.querySelector('.td-theme-icon-dark').style.display = mode === 'dark' ? 'inline' : 'none';
+      btn.querySelector('.td-theme-icon-auto').style.display = mode === 'auto' ? 'inline' : 'none';
+    });
+  }
+
+  // Cycle through modes on click
+  document.querySelectorAll('.td-theme-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = modes.indexOf(current);
+      var next = modes[(idx + 1) % modes.length];
+      applyTheme(next);
+    });
+  });
+
+  // Listen for OS preference changes when in auto mode
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+    if (current === 'auto') {
+      applyTheme('auto');
+    }
+  });
+
+  // Initialize
+  applyTheme(current);
+})();
+</script>
+{{ end }}
