@@ -75,7 +75,7 @@ debugLoggingEnabled = false
 &lt;/table>
 &lt;h3 id="creating-a-cloud-api-key">Creating a Cloud API Key&lt;/h3>
 &lt;p>Cloud API Keys can be created using the Confluent Cloud CLI:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent api-key create --resource cloud --description &lt;span style="color:#4e9a06">&amp;#34;Jikkou role binding management&amp;#34;&lt;/span>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">confluent api-key create --resource cloud --description &lt;span class="s2">&amp;#34;Jikkou role binding management&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>&lt;strong>Important:&lt;/strong> You must use a &lt;strong>Cloud API Key&lt;/strong> (organization-level), not a Cluster API Key. Cluster API Keys will result in a &lt;code>401 Unauthorized&lt;/code> error.&lt;/p>
 &lt;/blockquote>

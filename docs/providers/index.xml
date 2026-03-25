@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Extension Providers</title><link>https://www.jikkou.io/docs/providers/</link><description>Recent content in Extension Providers on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Core</title><link>https://www.jikkou.io/docs/providers/core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Extension Providers</title><link>https://www.jikkou.io/docs/providers/</link><description>Recent content in Extension Providers on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Core Extensions</title><link>https://www.jikkou.io/docs/providers/core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the Core extensions.&lt;/p>
 &lt;/div>
@@ -18,9 +18,9 @@
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the &lt;a href="https://aiven.io/kafka">Aiven for Kafka&lt;/a> extensions.&lt;/p>
 &lt;/div>
-&lt;p>More information:&lt;/p></description></item><item><title>Docs: Aws</title><link>https://www.jikkou.io/docs/providers/aws/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/</guid><description>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: AWS</title><link>https://www.jikkou.io/docs/providers/aws/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aws/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
-&lt;p>Here, you will find information to use the &lt;a href="https://docs.aws.amazon.com">Aws&lt;/a> extensions (Jikkou v0.36).&lt;/p>
+&lt;p>Here, you will find information to use the &lt;a href="https://docs.aws.amazon.com">AWS&lt;/a> extensions (Jikkou v0.36).&lt;/p>
 &lt;/div>
 &lt;p>More information:&lt;/p></description></item><item><title>Docs: Confluent Cloud</title><link>https://www.jikkou.io/docs/providers/confluent-cloud/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/confluent-cloud/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
