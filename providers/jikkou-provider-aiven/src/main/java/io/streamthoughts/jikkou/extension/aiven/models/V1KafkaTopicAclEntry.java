@@ -31,14 +31,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * KafkaTopicAclEntry
  * <p>
- * The KafkaTopicAclEntry resource allows managing topic ACLs on Aiven for Apache Kafka.
+ * Manage Kafka topic ACLs on Aiven for Apache Kafka.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The KafkaTopicAclEntry resource allows managing topic ACLs on Aiven for Apache Kafka.")
-@JsonClassDescription("The KafkaTopicAclEntry resource allows managing topic ACLs on Aiven for Apache Kafka.")
+@Description("Manage Kafka topic ACLs on Aiven for Apache Kafka.")
+@JsonClassDescription("Manage Kafka topic ACLs on Aiven for Apache Kafka.")
 @Names(singular = "avn-kafkatopicacl", plural = "avn-kafkatopicacls", shortNames = {
     "avnkta"
 })

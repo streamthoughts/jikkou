@@ -42,6 +42,7 @@ import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
+import io.streamthoughts.jikkou.core.models.ApiResourceSummary;
 import io.streamthoughts.jikkou.core.models.ApiResourceVerbOptionList;
 import io.streamthoughts.jikkou.core.models.ApiValidationResult;
 import io.streamthoughts.jikkou.core.models.CoreAnnotations;
@@ -384,6 +385,21 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 }
             }
 
+            List<ApiResourceSummary> resources = resourceRegistry.allDescriptors()
+                .stream()
+                .filter(desc -> providerClass.equals(desc.provider()))
+                .filter(ResourceDescriptor::isEnabled)
+                .filter(Predicate.not(ResourceDescriptor::isTransient))
+                .filter(Predicate.not(ResourceDescriptor::isResourceListObject))
+                .map(desc -> new ApiResourceSummary(
+                    desc.kind(),
+                    desc.group(),
+                    desc.group() + "/" + desc.apiVersion(),
+                    desc.description()
+                ))
+                .sorted(Comparator.comparing(ApiResourceSummary::kind))
+                .toList();
+
             List<ApiExtensionSummary> extensions = descriptors.stream()
                 .map(descriptor -> new ApiExtensionSummary(
                     descriptor.name(),
@@ -395,7 +411,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 .sorted(Comparator.comparing(ApiExtensionSummary::name))
                 .toList();
 
-            ApiProviderSpec spec = new ApiProviderSpec(name, type, description, tags, externalDocs, enabled, options, extensions);
+            ApiProviderSpec spec = new ApiProviderSpec(name, type, description, tags, externalDocs, enabled, options, resources, extensions);
             return new ApiProvider(spec);
         }
 

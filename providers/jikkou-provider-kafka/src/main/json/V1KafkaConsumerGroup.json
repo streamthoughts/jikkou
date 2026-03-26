@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "V1KafkaConsumerGroup",
-  "description": "V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.",
+  "description": "Manage consumer groups in a Kafka cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata"

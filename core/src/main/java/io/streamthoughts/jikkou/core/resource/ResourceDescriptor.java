@@ -11,6 +11,7 @@ import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
+import io.streamthoughts.jikkou.spi.ExtensionProvider;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -37,6 +38,7 @@ public final class ResourceDescriptor {
     private Set<Verb> verbs;
     private boolean isEnabled = true;
     private boolean isTransient = false;
+    private Class<? extends ExtensionProvider> provider;
 
     /**
      * Creates a new {@link ResourceDescriptor} instance.
@@ -272,6 +274,27 @@ public final class ResourceDescriptor {
      */
     public boolean isTransient() {
         return isTransient;
+    }
+
+    /**
+     * Gets the provider class that registered this resource.
+     *
+     * @return the provider class, or {@code null} if not set.
+     */
+    @Nullable
+    public Class<? extends ExtensionProvider> provider() {
+        return provider;
+    }
+
+    /**
+     * Sets the provider class that registered this resource.
+     *
+     * @param provider the provider class.
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setProvider(@Nullable Class<? extends ExtensionProvider> provider) {
+        this.provider = provider;
+        return this;
     }
 
     /**

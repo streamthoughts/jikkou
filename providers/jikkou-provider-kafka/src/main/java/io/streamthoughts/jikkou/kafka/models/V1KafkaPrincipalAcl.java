@@ -28,14 +28,14 @@ import org.apache.kafka.common.acl.AclPermissionType;
 /**
  * V1KafkaPrincipalAcl
  * <p>
- * KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.
+ * Describe allowed or denied ACL operations for a Kafka resource.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.")
-@JsonClassDescription("KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.")
+@Description("Describe allowed or denied ACL operations for a Kafka resource.")
+@JsonClassDescription("Describe allowed or denied ACL operations for a Kafka resource.")
 @JsonPropertyOrder({
     "resource",
     "operations",
@@ -48,12 +48,12 @@ import org.apache.kafka.common.acl.AclPermissionType;
 public class V1KafkaPrincipalAcl {
 
     /**
-     * 
+     * Match a Kafka resource by type and name pattern.
      * (Required)
      * 
      */
     @JsonProperty("resource")
-    @JsonPropertyDescription("")
+    @JsonPropertyDescription("Match a Kafka resource by type and name pattern.")
     private V1KafkaResourceMatcher resource;
     /**
      * List of ACL operations e.g., ALL, READ, WRITE, CREATE, DELETE, etc.
@@ -112,7 +112,7 @@ public class V1KafkaPrincipalAcl {
     }
 
     /**
-     * 
+     * Match a Kafka resource by type and name pattern.
      * (Required)
      * 
      */

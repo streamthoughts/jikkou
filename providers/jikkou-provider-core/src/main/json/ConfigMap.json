@@ -1,6 +1,6 @@
 {
   "title": "ConfigMap",
-  "description": "ConfigMap resources contain configuration data as key/value pairs.",
+  "description": "Store configuration data as key-value pairs.",
   "type": "object",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",

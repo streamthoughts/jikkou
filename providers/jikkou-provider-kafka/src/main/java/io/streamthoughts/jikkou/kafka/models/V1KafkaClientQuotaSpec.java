@@ -24,14 +24,14 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * Client quota specification
+ * Specification of Kafka client quotas.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("Client quota specification")
-@JsonClassDescription("Client quota specification")
+@Description("Specification of Kafka client quotas.")
+@JsonClassDescription("Specification of Kafka client quotas.")
 @JsonPropertyOrder({
     "type",
     "entity",

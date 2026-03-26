@@ -18,6 +18,7 @@ import io.streamthoughts.jikkou.core.models.ApiExtensionSummary;
 import io.streamthoughts.jikkou.core.models.ApiOptionSpec;
 import io.streamthoughts.jikkou.core.models.ApiProvider;
 import io.streamthoughts.jikkou.core.models.ApiProviderSpec;
+import io.streamthoughts.jikkou.core.models.ApiResourceSummary;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
@@ -97,6 +98,11 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
                 .append(writeOptionsAsTable(spec.options()))
                 .append(NEW_LINE)
                 .append(NEW_LINE)
+                .append("RESOURCES")
+                .append(NEW_LINE)
+                .append(writeResourcesAsTable(spec.resources()))
+                .append(NEW_LINE)
+                .append(NEW_LINE)
                 .append("EXTENSIONS")
                 .append(NEW_LINE)
                 .append(writeExtensionsAsTable(spec.extensions()));
@@ -131,6 +137,31 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
                                 .maxWidth(10, OverflowBehaviour.NEWLINE),
                         new Column().header("REQUIRED").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(10, OverflowBehaviour.NEWLINE)
+                },
+                data
+        );
+    }
+
+    private static String writeResourcesAsTable(List<ApiResourceSummary> resources) {
+        if (resources.isEmpty()) {
+            return NOT_AVAILABLE;
+        }
+        String[][] data = resources.stream()
+                .map(res -> new String[]{
+                        res.kind(),
+                        res.apiVersion(),
+                        Objects.toString(res.description(), "")
+                })
+                .toArray(String[][]::new);
+
+        return AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS,
+                new Column[]{
+                        new Column().header("KIND").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.NEWLINE),
+                        new Column().header("API VERSION").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.NEWLINE),
+                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(60, OverflowBehaviour.NEWLINE)
                 },
                 data
         );

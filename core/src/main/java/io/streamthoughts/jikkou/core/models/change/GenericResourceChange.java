@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Description("")
+@Description("Represent a change to be applied to a resource.")
 @JsonPropertyOrder({
     "apiVersion",
     "kind",

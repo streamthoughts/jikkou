@@ -23,13 +23,14 @@ import org.apache.kafka.common.resource.ResourceType;
 
 
 /**
+ * Match a Kafka resource by type and name pattern.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
-@JsonClassDescription("")
+@Description("Match a Kafka resource by type and name pattern.")
+@JsonClassDescription("Match a Kafka resource by type and name pattern.")
 @JsonPropertyOrder({
     "type",
     "pattern",

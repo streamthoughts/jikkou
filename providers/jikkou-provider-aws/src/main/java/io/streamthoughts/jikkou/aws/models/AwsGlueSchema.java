@@ -31,14 +31,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * AwsGlueSchema
  * <p>
- * The AwsGlueSchema resource allows managing schemas  for AWS Glue.
+ * Manage schemas on AWS Glue Schema Registry.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The AwsGlueSchema resource allows managing schemas  for AWS Glue.")
-@JsonClassDescription("The AwsGlueSchema resource allows managing schemas  for AWS Glue.")
+@Description("Manage schemas on AWS Glue Schema Registry.")
+@JsonClassDescription("Manage schemas on AWS Glue Schema Registry.")
 @Names(singular = "aws-glueschema", plural = "aws-glueschemas")
 @Verbs({
     Verb.LIST,

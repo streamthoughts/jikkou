@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "V1KafkaConnector",
-  "description": "The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.",
+  "description": "Manage connectors in a Kafka Connect cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",

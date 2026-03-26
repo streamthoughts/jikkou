@@ -33,14 +33,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaPrincipalAuthorization
  * <p>
- * KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.
+ * Manage ACL authorizations for a Kafka principal.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.")
-@JsonClassDescription("KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.")
+@Description("Manage ACL authorizations for a Kafka principal.")
+@JsonClassDescription("Manage ACL authorizations for a Kafka principal.")
 @Names(singular = "kafkaprincipalauthorization", plural = "kafkaprincipalauthorizations", shortNames = {
     "ka"
 })
@@ -100,12 +100,12 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
     @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
-     * 
+     * Specification of ACL authorizations for a Kafka principal.
      * (Required)
      * 
      */
     @JsonProperty("spec")
-    @JsonPropertyDescription("")
+    @JsonPropertyDescription("Specification of ACL authorizations for a Kafka principal.")
     private io.streamthoughts.jikkou.kafka.models.V1KafkaPrincipalAuthorizationSpec spec;
 
     /**
@@ -182,7 +182,7 @@ public class V1KafkaPrincipalAuthorization implements HasMetadata, HasSpec<V1Kaf
     }
 
     /**
-     * 
+     * Specification of ACL authorizations for a Kafka principal.
      * (Required)
      * 
      */

@@ -31,14 +31,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * SchemaRegistrySubject
  * <p>
- * The SchemaRegistrySubject resource allows managing subjects and schema on a Schema Registry.
+ * Manage subjects and schemas on a Schema Registry.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The SchemaRegistrySubject resource allows managing subjects and schema on a Schema Registry.")
-@JsonClassDescription("The SchemaRegistrySubject resource allows managing subjects and schema on a Schema Registry.")
+@Description("Manage subjects and schemas on a Schema Registry.")
+@JsonClassDescription("Manage subjects and schemas on a Schema Registry.")
 @Names(singular = "schemaregistrysubject", plural = "schemaregistrysubjects", shortNames = {
     "sr"
 })

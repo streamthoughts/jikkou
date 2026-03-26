@@ -30,8 +30,8 @@ import lombok.extern.jackson.Jacksonized;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The RoleBinding resource allows managing RBAC role bindings on Confluent Cloud.")
-@JsonClassDescription("The RoleBinding resource allows managing RBAC role bindings on Confluent Cloud.")
+@Description("Manage RBAC role bindings on Confluent Cloud.")
+@JsonClassDescription("Manage RBAC role bindings on Confluent Cloud.")
 @Names(singular = "ccloud-rb", plural = "ccloud-rbs", shortNames = {"ccrb"})
 @Verbs({
     Verb.APPLY,

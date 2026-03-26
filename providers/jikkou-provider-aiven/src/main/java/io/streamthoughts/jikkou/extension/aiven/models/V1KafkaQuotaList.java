@@ -28,13 +28,13 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * List of Kafka quota
+ * List of Kafka quotas on Aiven.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("List of Kafka quota")
+@Description("List of Kafka quotas on Aiven.")
 @Names(singular = "avn-kafka-quota-list", shortNames = {
     "avnkql"
 })

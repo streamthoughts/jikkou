@@ -28,14 +28,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * ConfigMap
  * <p>
- * ConfigMap resources contain configuration data as key/value pairs.
+ * Store configuration data as key-value pairs.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("ConfigMap resources contain configuration data as key/value pairs.")
-@JsonClassDescription("ConfigMap resources contain configuration data as key/value pairs.")
+@Description("Store configuration data as key-value pairs.")
+@JsonClassDescription("Store configuration data as key-value pairs.")
 @Verbs({
 
 })

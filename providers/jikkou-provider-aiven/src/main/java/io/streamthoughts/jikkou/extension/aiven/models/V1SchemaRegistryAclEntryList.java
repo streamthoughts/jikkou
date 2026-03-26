@@ -28,13 +28,13 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * List of ACL entries for Schema Registry
+ * List of Schema Registry ACL entries on Aiven.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("List of ACL entries for Schema Registry")
+@Description("List of Schema Registry ACL entries on Aiven.")
 @Names(singular = "avn-schema-registry-acl-list", shortNames = {
     "avnsral"
 })

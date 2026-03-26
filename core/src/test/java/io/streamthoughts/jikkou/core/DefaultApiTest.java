@@ -26,6 +26,7 @@ import io.streamthoughts.jikkou.core.models.ApiProviderSpec;
 import io.streamthoughts.jikkou.core.models.ApiResource;
 import io.streamthoughts.jikkou.core.models.ApiResourceList;
 import io.streamthoughts.jikkou.core.models.ApiResourceSchema;
+import io.streamthoughts.jikkou.core.models.ApiResourceSummary;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.resource.DefaultResourceRegistry;
 import io.streamthoughts.jikkou.core.resource.ResourceDescriptor;
@@ -131,6 +132,13 @@ class DefaultApiTest {
         Assertions.assertEquals("https://example.com/docs", spec.externalDocs());
         Assertions.assertFalse(spec.extensions().isEmpty());
 
+        Assertions.assertEquals(1, spec.resources().size());
+        ApiResourceSummary resource = spec.resources().get(0);
+        Assertions.assertEquals("Test", resource.kind());
+        Assertions.assertEquals("core", resource.group());
+        Assertions.assertEquals("core/v1", resource.apiVersion());
+        Assertions.assertEquals("A test resource", resource.description());
+
         Assertions.assertEquals(1, spec.options().size());
         ApiOptionSpec option = spec.options().get(0);
         Assertions.assertEquals("test.url", option.name());
@@ -200,6 +208,11 @@ class DefaultApiTest {
 
         @Override
         public void registerResources(@NotNull ResourceRegistry registry) {
+            registry.register(new ResourceDescriptor(
+                    new ResourceType("Test", "core", "v1"),
+                    "A test resource",
+                    TestResource.class
+            ));
         }
     }
 

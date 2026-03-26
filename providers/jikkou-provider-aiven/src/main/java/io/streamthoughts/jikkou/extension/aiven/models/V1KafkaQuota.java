@@ -31,14 +31,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * KafkaQuota
  * <p>
- * The KafkaQuota resource allows managing quotas and schema on Aiven for Apache Kafka.
+ * Manage Kafka quotas on Aiven for Apache Kafka.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The KafkaQuota resource allows managing quotas and schema on Aiven for Apache Kafka.")
-@JsonClassDescription("The KafkaQuota resource allows managing quotas and schema on Aiven for Apache Kafka.")
+@Description("Manage Kafka quotas on Aiven for Apache Kafka.")
+@JsonClassDescription("Manage Kafka quotas on Aiven for Apache Kafka.")
 @Names(singular = "avn-kafkaquota", plural = "avn-kafkaquotas", shortNames = {
     "avnkq"
 })

@@ -1,6 +1,6 @@
 {
   "title": "ConfigMapList",
-  "description": "",
+  "description": "List of ConfigMap resources.",
   "type": "object",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.ResourceList<ConfigMap>"

@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.core.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.streamthoughts.jikkou.core.annotation.ApiVersion;
+import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Transient;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -26,6 +27,7 @@ import java.time.Instant;
  */
 @Kind(SystemTimeResource.KIND)
 @ApiVersion(SystemTimeResource.API_VERSION)
+@Description("Provide the current system time.")
 @Transient
 @JsonPropertyOrder({
         "kind",

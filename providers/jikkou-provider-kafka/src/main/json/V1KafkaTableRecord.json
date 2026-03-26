@@ -1,6 +1,6 @@
 {
   "title": "V1KafkaTableRecord",
-  "description": "KafkaTableRecord resources provide a way of managing records in compacted Kafka topics.",
+  "description": "Manage records in compacted Kafka topics.",
   "type": "object",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",

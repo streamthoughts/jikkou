@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "V1KafkaPrincipalAcl",
-  "description": "KafkaPrincipalAcl object describes the list of allowed or denied operations for a Kafka resource.",
+  "description": "Describe allowed or denied ACL operations for a Kafka resource.",
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,
@@ -40,7 +40,7 @@
   "$defs": {
     "V1KafkaResourceMatcher": {
       "type": "object",
-      "description": "",
+      "description": "Match a Kafka resource by type and name pattern.",
       "additionalProperties": {
         "lombok-builder": true,
         "lombok-with": true,

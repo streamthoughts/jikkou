@@ -30,14 +30,14 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * KafkaPrincipalRole resources define reusable sets of ACL rules.
+ * Define reusable sets of Kafka ACL rules.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaPrincipalRole resources define reusable sets of ACL rules.")
-@JsonClassDescription("KafkaPrincipalRole resources define reusable sets of ACL rules.")
+@Description("Define reusable sets of Kafka ACL rules.")
+@JsonClassDescription("Define reusable sets of Kafka ACL rules.")
 @Verbs({
 
 })

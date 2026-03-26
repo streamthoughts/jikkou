@@ -33,14 +33,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaTableRecord
  * <p>
- * KafkaTableRecord resources provide a way of managing records in compacted Kafka topics.
+ * Manage records in compacted Kafka topics.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaTableRecord resources provide a way of managing records in compacted Kafka topics.")
-@JsonClassDescription("KafkaTableRecord resources provide a way of managing records in compacted Kafka topics.")
+@Description("Manage records in compacted Kafka topics.")
+@JsonClassDescription("Manage records in compacted Kafka topics.")
 @Names(singular = "ktable-record", plural = "kafkatablerecord", shortNames = {
     "ktr"
 })

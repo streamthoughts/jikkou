@@ -32,14 +32,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaBroker
  * <p>
- * KafkaBroker resources provide a way of describing brokers in a Kafka cluster.
+ * Describe brokers in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaBroker resources provide a way of describing brokers in a Kafka cluster.")
-@JsonClassDescription("KafkaBroker resources provide a way of describing brokers in a Kafka cluster.")
+@Description("Describe brokers in a Kafka cluster.")
+@JsonClassDescription("Describe brokers in a Kafka cluster.")
 @Names(singular = "kafkabroker", plural = "kafkabrokers", shortNames = {
     "kb"
 })

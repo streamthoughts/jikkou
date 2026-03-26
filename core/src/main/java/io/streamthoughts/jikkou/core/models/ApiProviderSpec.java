@@ -22,6 +22,7 @@ import java.util.Optional;
         "externalDocs",
         "enabled",
         "options",
+        "resources",
         "extensions"
 })
 @Reflectable
@@ -32,6 +33,7 @@ public record ApiProviderSpec(@JsonProperty("name") String name,
                               @JsonProperty("externalDocs") String externalDocs,
                               @JsonProperty("enabled") boolean enabled,
                               @JsonProperty("options") List<ApiOptionSpec> options,
+                              @JsonProperty("resources") List<ApiResourceSummary> resources,
                               @JsonProperty("extensions") List<ApiExtensionSummary> extensions) {
 
     @ConstructorProperties({
@@ -42,6 +44,7 @@ public record ApiProviderSpec(@JsonProperty("name") String name,
             "externalDocs",
             "enabled",
             "options",
+            "resources",
             "extensions"
     })
     public ApiProviderSpec {
@@ -56,6 +59,11 @@ public record ApiProviderSpec(@JsonProperty("name") String name,
     @Override
     public List<ApiOptionSpec> options() {
         return Optional.ofNullable(options).orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<ApiResourceSummary> resources() {
+        return Optional.ofNullable(resources).orElse(Collections.emptyList());
     }
 
     @Override

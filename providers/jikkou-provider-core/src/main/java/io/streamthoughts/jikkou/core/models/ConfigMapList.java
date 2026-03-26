@@ -29,14 +29,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * ConfigMapList
  * <p>
- * 
+ * List of ConfigMap resources.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
-@JsonClassDescription("")
+@Description("List of ConfigMap resources.")
+@JsonClassDescription("List of ConfigMap resources.")
 @Verbs({
 
 })

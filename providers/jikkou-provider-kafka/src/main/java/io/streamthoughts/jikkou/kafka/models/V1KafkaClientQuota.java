@@ -33,14 +33,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaClientQuota
  * <p>
- * KafkaPrincipalAuthorization resources provide a way of managing quotas in a Kafka cluster.
+ * Manage Kafka client quotas in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaPrincipalAuthorization resources provide a way of managing quotas in a Kafka cluster.")
-@JsonClassDescription("KafkaPrincipalAuthorization resources provide a way of managing quotas in a Kafka cluster.")
+@Description("Manage Kafka client quotas in a Kafka cluster.")
+@JsonClassDescription("Manage Kafka client quotas in a Kafka cluster.")
 @Names(singular = "kafkaclientquota", plural = "kafkaclientquotas", shortNames = {
     "kq"
 })
@@ -102,12 +102,12 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
     @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
-     * Client quota specification
+     * Specification of Kafka client quotas.
      * (Required)
      * 
      */
     @JsonProperty("spec")
-    @JsonPropertyDescription("Client quota specification")
+    @JsonPropertyDescription("Specification of Kafka client quotas.")
     private io.streamthoughts.jikkou.kafka.models.V1KafkaClientQuotaSpec spec;
 
     /**
@@ -184,7 +184,7 @@ public class V1KafkaClientQuota implements HasMetadata, HasSpec<V1KafkaClientQuo
     }
 
     /**
-     * Client quota specification
+     * Specification of Kafka client quotas.
      * (Required)
      * 
      */

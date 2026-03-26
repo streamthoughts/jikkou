@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "V1KafkaPrincipalAuthorization",
-  "description": "KafkaPrincipalAuthorization resources provide a way of managing authorizations in a Kafka cluster.",
+  "description": "Manage ACL authorizations for a Kafka principal.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",
@@ -54,7 +54,7 @@
   "$defs": {
     "V1KafkaPrincipalAuthorizationSpec": {
       "type": "object",
-      "description": "",
+      "description": "Specification of ACL authorizations for a Kafka principal.",
       "additionalProperties": {
         "lombok-builder": true,
         "lombok-with": true,

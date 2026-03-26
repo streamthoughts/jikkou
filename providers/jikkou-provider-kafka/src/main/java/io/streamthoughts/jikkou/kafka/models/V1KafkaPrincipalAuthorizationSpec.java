@@ -26,13 +26,14 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
+ * Specification of ACL authorizations for a Kafka principal.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("")
-@JsonClassDescription("")
+@Description("Specification of ACL authorizations for a Kafka principal.")
+@JsonClassDescription("Specification of ACL authorizations for a Kafka principal.")
 @JsonPropertyOrder({
     "acls",
     "roles"

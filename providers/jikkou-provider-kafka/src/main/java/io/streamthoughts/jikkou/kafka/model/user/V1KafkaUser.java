@@ -19,9 +19,9 @@ import io.streamthoughts.jikkou.core.models.Verb;
 /**
  * V1User
  * <p>
- * KafkaUser resources provide a way of describing User SCRAM credentials in a Kafka cluster.
+ * Manage user SCRAM credentials in a Kafka cluster.
  */
-@Description("KafkaUser resources provide a way of describing User SCRAM credentials in a Kafka cluster.")
+@Description("Manage user SCRAM credentials in a Kafka cluster.")
 @Names(singular = "kafkauser", plural = "kafkausers", shortNames = {
     "ku"
 })

@@ -32,14 +32,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaConnector
  * <p>
- * The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.
+ * Manage connectors in a Kafka Connect cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.")
-@JsonClassDescription("The KafkaConnector resource allows creating and managing connectors in a Kafka Connect cluster.")
+@Description("Manage connectors in a Kafka Connect cluster.")
+@JsonClassDescription("Manage connectors in a Kafka Connect cluster.")
 @Names(singular = "kafkaconnector", plural = "kafkaconnectors", shortNames = {
     "kc"
 })

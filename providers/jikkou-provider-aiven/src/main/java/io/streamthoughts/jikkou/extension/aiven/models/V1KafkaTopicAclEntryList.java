@@ -28,13 +28,13 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * List of ACL entries for Kafka Topic
+ * List of Kafka topic ACL entries on Aiven.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("List of ACL entries for Kafka Topic")
+@Description("List of Kafka topic ACL entries on Aiven.")
 @Names(singular = "avn-kafka-topic-acl-list", shortNames = {
     "avnktal"
 })

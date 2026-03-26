@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "V1KafkaClientQuota",
-  "description": "KafkaPrincipalAuthorization resources provide a way of managing quotas in a Kafka cluster.",
+  "description": "Manage Kafka client quotas in a Kafka cluster.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",

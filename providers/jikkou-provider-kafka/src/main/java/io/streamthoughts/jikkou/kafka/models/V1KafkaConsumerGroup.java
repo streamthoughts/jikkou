@@ -32,14 +32,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaConsumerGroup
  * <p>
- * V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.
+ * Manage consumer groups in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.")
-@JsonClassDescription("V1KafkaConsumerGroup resources provide a way of managing consumer groups in a Kafka cluster.")
+@Description("Manage consumer groups in a Kafka cluster.")
+@JsonClassDescription("Manage consumer groups in a Kafka cluster.")
 @Names(singular = "kafkaconsumergroup", plural = "kafkaconsumergroups", shortNames = {
     "kcg"
 })

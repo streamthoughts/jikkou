@@ -33,14 +33,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * V1KafkaTopic
  * <p>
- * KafkaTopic resources provide a way of managing topics in a Kafka cluster.
+ * Manage topics in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("KafkaTopic resources provide a way of managing topics in a Kafka cluster.")
-@JsonClassDescription("KafkaTopic resources provide a way of managing topics in a Kafka cluster.")
+@Description("Manage topics in a Kafka cluster.")
+@JsonClassDescription("Manage topics in a Kafka cluster.")
 @Names(singular = "kafkatopic", plural = "kafkatopics", shortNames = {
     "kt"
 })

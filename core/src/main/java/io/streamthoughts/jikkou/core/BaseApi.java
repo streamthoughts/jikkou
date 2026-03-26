@@ -124,6 +124,9 @@ public abstract class BaseApi implements JikkouApi {
             var registry = new DefaultResourceRegistry(false);
             provider.registerResources(registry);
 
+            // Tag each resource descriptor with the provider that registered it
+            registry.allDescriptors().forEach(desc -> desc.setProvider(provider.getClass()));
+
             // Register resource descriptors to the global registry
             registry.allDescriptors().forEach(resourceRegistry::register);
 

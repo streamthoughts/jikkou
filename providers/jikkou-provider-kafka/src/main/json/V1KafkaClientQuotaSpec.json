@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "description": "Client quota specification",
+  "description": "Specification of Kafka client quotas.",
   "additionalProperties": {
     "lombok-builder": true,
     "lombok-with": true,

@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "KafkaQuota",
-  "description": "The KafkaQuota resource allows managing quotas and schema on Aiven for Apache Kafka.",
+  "description": "Manage Kafka quotas on Aiven for Apache Kafka.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",

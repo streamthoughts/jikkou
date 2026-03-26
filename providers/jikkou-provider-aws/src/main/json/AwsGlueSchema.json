@@ -1,7 +1,7 @@
 {
   "type": "object",
   "title": "AwsGlueSchema",
-  "description": "The AwsGlueSchema resource allows managing schemas  for AWS Glue.",
+  "description": "Manage schemas on AWS Glue Schema Registry.",
   "javaInterfaces": [
     "io.streamthoughts.jikkou.core.models.Resource",
     "io.streamthoughts.jikkou.core.models.HasMetadata",

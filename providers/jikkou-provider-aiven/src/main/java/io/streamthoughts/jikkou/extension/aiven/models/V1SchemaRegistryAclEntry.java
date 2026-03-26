@@ -31,14 +31,14 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * SchemaRegistryAclEntry
  * <p>
- * The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.
+ * Manage Schema Registry ACLs on Aiven for Apache Kafka.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.")
-@JsonClassDescription("The SchemaRegistryAclEntry resource allows managing Schema Registry ACLs on Aiven for Apache Kafka.")
+@Description("Manage Schema Registry ACLs on Aiven for Apache Kafka.")
+@JsonClassDescription("Manage Schema Registry ACLs on Aiven for Apache Kafka.")
 @Names(singular = "avn-schemaregistryacl", plural = "avn-schemaregistryacls", shortNames = {
     "avnsra"
 })
