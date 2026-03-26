@@ -66,21 +66,25 @@ public class KafkaConnectRestartConnectorsAction extends ContextualExtension imp
     interface Config {
         ConfigProperty<List<String>> CONNECTOR_NAME = ConfigProperty
             .ofList("connector-name")
+            .displayName("Connector Name")
             .description("The connector's name.")
             .required(false);
 
         ConfigProperty<List<String>> CONNECT_CLUSTER = ConfigProperty
             .ofList("connect-cluster")
+            .displayName("Connect Cluster")
             .description("The name of the connect cluster.")
             .required(false);
 
         ConfigProperty<Boolean> INCLUDE_TASKS = ConfigProperty
             .ofBoolean("include-tasks")
+            .displayName("Include Tasks")
             .description("Specifies whether to restart the connector instance and task instances (includeTasks=true) or just the connector instance (includeTasks=false)")
             .required(false);
 
         ConfigProperty<Boolean> ONLY_FAILED = ConfigProperty
             .ofBoolean("only-failed")
+            .displayName("Only Failed")
             .description("Specifies whether to restart just the instances with a FAILED status (onlyFailed=true) or all instances (onlyFailed=false)")
             .required(false);
     }

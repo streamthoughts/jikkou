@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 public final class TopicMaxReplicationFactorValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MAX_REPLICATION_FACTOR_CONFIG = ConfigProperty
-            .ofInt("topicMaxReplicationFactor");
+            .ofInt("topicMaxReplicationFactor")
+            .displayName("Max Replication Factor")
+            .description("Maximum replication factor allowed for a Kafka topic.");
 
     private Integer maxReplicationFactor;
 

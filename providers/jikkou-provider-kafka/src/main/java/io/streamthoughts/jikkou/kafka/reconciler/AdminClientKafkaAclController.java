@@ -50,6 +50,8 @@ public final class AdminClientKafkaAclController
     interface Config {
         ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
+            .displayName("Delete Orphan ACLs")
+            .description("Specify whether to delete ACLs that exist on the cluster but are not defined in the resource.")
             .defaultValue(false);
     }
 

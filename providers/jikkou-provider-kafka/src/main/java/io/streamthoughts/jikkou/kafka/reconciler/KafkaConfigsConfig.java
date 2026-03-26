@@ -14,16 +14,19 @@ public interface KafkaConfigsConfig {
 
     ConfigProperty<Boolean> DEFAULT_CONFIGS = ConfigProperty
         .ofBoolean("default-configs")
+        .displayName("Default Configs")
         .description("Describe built-in default configuration for configs that have a default value.")
         .defaultValue(false);
 
     ConfigProperty<Boolean> DYNAMIC_BROKER_CONFIGS = ConfigProperty
         .ofBoolean("dynamic-broker-configs")
+        .displayName("Dynamic Broker Configs")
         .description("Describe dynamic configs that are configured as default for all brokers or for specific broker in the cluster.")
         .defaultValue(false);
 
     ConfigProperty<Boolean> STATIC_BROKER_CONFIGS = ConfigProperty
         .ofBoolean("static-broker-configs")
+        .displayName("Static Broker Configs")
         .description("Describe static configs provided as broker properties at start up (e.g. server.properties file).")
         .defaultValue(false);
 

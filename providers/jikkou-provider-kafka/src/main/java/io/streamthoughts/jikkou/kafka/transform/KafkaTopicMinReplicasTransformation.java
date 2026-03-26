@@ -39,7 +39,9 @@ public class KafkaTopicMinReplicasTransformation implements Transformation<V1Kaf
     public static final String JIKKOU_IO_KAFKA_MIN_REPLICAS = JIKKOU_IO_TRANSFORM_PREFIX + "/kafka-min-replicas";
 
     public static final ConfigProperty<Integer> MIN_REPLICATION_FACTOR_CONFIG = ConfigProperty
-            .ofInt("minReplicationFactor");
+            .ofInt("minReplicationFactor")
+            .displayName("Min Replication Factor")
+            .description("The minimum replication factor allowed for a Kafka topic.");
 
     private short minReplicationFactor;
 

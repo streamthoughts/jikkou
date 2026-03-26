@@ -37,7 +37,9 @@ public class KafkaTopicMaxReplicasTransformation implements Transformation<V1Kaf
     public static final String JIKKOU_IO_KAFKA_MAX_REPLICAS = JIKKOU_IO_TRANSFORM_PREFIX +  "/kafka-max-replicas";
 
     public static final ConfigProperty<Integer> MAX_REPLICATION_FACTOR_CONFIG = ConfigProperty
-            .ofInt("maxReplicationFactor");
+            .ofInt("maxReplicationFactor")
+            .displayName("Max Replication Factor")
+            .description("The maximum replication factor allowed for a Kafka topic.");
 
     private short maxReplicationFactor;
 

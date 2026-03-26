@@ -37,7 +37,9 @@ public class KafkaTopicMaxNumPartitionsTransformation implements Transformation<
     public static final String JIKKOU_IO_KAFKA_MAX_NUM_PARTITION = JIKKOU_IO_TRANSFORM_PREFIX + "/kafka-max-num-partition";
 
     public static final ConfigProperty<Integer> MAX_NUM_PARTITIONS_CONFIG = ConfigProperty
-            .ofInt("maxNumPartitions");
+            .ofInt("maxNumPartitions")
+            .displayName("Max Num Partitions")
+            .description("The maximum number of partitions allowed for a Kafka topic.");
 
     private Integer maxNumPartitions;
 

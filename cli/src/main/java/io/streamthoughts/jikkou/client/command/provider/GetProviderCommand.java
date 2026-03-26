@@ -119,6 +119,7 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
         List<String[]> options = new ArrayList<>();
         for (ApiOptionSpec option : optionSpecs) {
             String[] strings = new String[]{
+                    Objects.toString(option.displayName(), ""),
                     option.name(),
                     option.description(),
                     option.type(),
@@ -131,6 +132,8 @@ public class GetProviderCommand extends CLIBaseCommand implements Callable<Integ
                 new Column[]{
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(30, OverflowBehaviour.NEWLINE),
+                        new Column().header("CONFIG KEY").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.NEWLINE),
                         new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(60, OverflowBehaviour.NEWLINE),
                         new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT)

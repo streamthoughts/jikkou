@@ -56,6 +56,8 @@ public final class AdminClientKafkaQuotaController
     public interface Config {
         ConfigProperty<Boolean> LIMITS_DELETE_ORPHANS = ConfigProperty
             .ofBoolean("limits-delete-orphans")
+            .displayName("Delete Orphan Limits")
+            .description("Specify whether to delete quota limits that exist on the cluster but are not defined in the resource.")
             .defaultValue(true);
     }
 

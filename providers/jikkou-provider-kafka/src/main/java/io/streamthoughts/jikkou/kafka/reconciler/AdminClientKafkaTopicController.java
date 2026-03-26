@@ -58,10 +58,14 @@ public final class AdminClientKafkaTopicController
     public interface Config {
         ConfigProperty<Boolean> IS_CONFIG_DELETE_ORPHANS_ENABLED = ConfigProperty
             .ofBoolean("config-delete-orphans")
+            .displayName("Delete Orphan Configs")
+            .description("Specify whether to delete topic configs that exist on the cluster but are not defined in the resource.")
             .defaultValue(true);
 
         ConfigProperty<Boolean> IS_DELETE_ORPHANS_ENABLED = ConfigProperty
             .ofBoolean("delete-orphans")
+            .displayName("Delete Orphan Topics")
+            .description("Specify whether to delete topics that exist on the cluster but are not defined in the resource.")
             .defaultValue(false);
     }
 

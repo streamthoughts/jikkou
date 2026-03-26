@@ -46,6 +46,7 @@ public class SchemaRegistrySubjectCollector extends ContextualExtension implemen
     public interface Config {
         ConfigProperty<Boolean> DEFAULT_GLOBAL_COMPATIBILITY_LEVEL = ConfigProperty
             .ofBoolean("default-to-global-compatibility-level")
+            .displayName("Default to Global Compatibility Level")
             .description("Specifies whether to default to global compatibility.")
             .required(false)
             .defaultValue(true);

@@ -41,7 +41,9 @@ public class KafkaTopicMinInSyncReplicasTransformation implements Transformation
     public static final String JIKKOU_IO_KAFKA_MIN_INSYNC_REPLICAS = JIKKOU_IO_TRANSFORM_PREFIX + "/kafka-min-sync-replicas";
 
     public static final ConfigProperty<Integer> MIN_INSYNC_REPLICAS_CONFIG = ConfigProperty
-            .ofInt("minInSyncReplicas");
+            .ofInt("minInSyncReplicas")
+            .displayName("Min In-Sync Replicas")
+            .description("The minimum value for min.insync.replicas allowed for a Kafka topic.");
 
     private int minInSyncReplicas;
 

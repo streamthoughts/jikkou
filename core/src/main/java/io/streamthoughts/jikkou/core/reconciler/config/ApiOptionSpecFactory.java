@@ -29,6 +29,7 @@ public final class ApiOptionSpecFactory {
         return descriptor.properties()
                 .stream()
                 .map(config -> new ApiOptionSpec(
+                        config.displayName(),
                         config.name(),
                         config.description(),
                         config.type(),

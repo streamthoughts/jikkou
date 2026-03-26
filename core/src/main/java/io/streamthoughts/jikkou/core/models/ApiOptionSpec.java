@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  * @param required     specifies if the parameter is required.
  */
 @JsonPropertyOrder({
+        "displayName",
         "name",
         "description",
         "type",
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 })
 @Reflectable
 public record ApiOptionSpec(
+        @JsonProperty("displayName") String displayName,
         @JsonProperty("name") String name,
         @JsonProperty("description") String description,
         @JsonProperty("type") String type,
@@ -52,6 +54,7 @@ public record ApiOptionSpec(
      * Creates a new {@link ApiOptionSpec} instance.
      */
     @ConstructorProperties({
+            "displayName",
             "name",
             "description",
             "type",
@@ -65,6 +68,25 @@ public record ApiOptionSpec(
     /**
      * Creates a new {@link ApiOptionSpec} instance.
      *
+     * @param displayName  the human-readable display name.
+     * @param name         the name of the parameter.
+     * @param description  the description of the parameter.
+     * @param type         the type of the parameter.
+     * @param defaultValue the default value of the parameter.
+     * @param required     specifies if the parameter is required.
+     */
+    public ApiOptionSpec(String displayName,
+                         String name,
+                         String description,
+                         Class<?> type,
+                         Object defaultValue,
+                         boolean required) {
+        this(displayName, name, description, getTypeString(type), getEnumSpec(type), defaultValue, required);
+    }
+
+    /**
+     * Creates a new {@link ApiOptionSpec} instance without displayName.
+     *
      * @param name         the name of the parameter.
      * @param description  the description of the parameter.
      * @param type         the type of the parameter.
@@ -76,7 +98,7 @@ public record ApiOptionSpec(
                          Class<?> type,
                          Object defaultValue,
                          boolean required) {
-        this(name, description, getTypeString(type), getEnumSpec(type), defaultValue, required);
+        this(null, name, description, getTypeString(type), getEnumSpec(type), defaultValue, required);
     }
 
     @JsonPropertyOrder({

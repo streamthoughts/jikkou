@@ -65,6 +65,7 @@ public class AwsGlueSchemaCollector extends ContextualExtension implements Colle
     public interface Config {
         ConfigProperty<String> REGISTRY_NAME = ConfigProperty
             .ofString("registryName")
+            .displayName("Registry Name")
             .description("Specifies the registry name.")
             .required(false);
     }

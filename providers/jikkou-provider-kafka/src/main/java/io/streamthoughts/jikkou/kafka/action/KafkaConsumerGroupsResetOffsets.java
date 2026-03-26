@@ -48,45 +48,56 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
     interface Config {
         ConfigProperty<Boolean> TO_EARLIEST = ConfigProperty
             .ofBoolean("to-earliest")
+            .displayName("To Earliest")
             .description("Reset offsets to earliest offset.");
 
         ConfigProperty<Boolean> TO_LATEST = ConfigProperty
             .ofBoolean("to-latest")
+            .displayName("To Latest")
             .description("Reset offsets to latest offset.");
 
         ConfigProperty<Boolean> ALL = ConfigProperty
             .ofBoolean("all")
+            .displayName("All Groups")
             .description("Specifies to act on all consumer groups.");
 
         ConfigProperty<String> GROUP = ConfigProperty
             .ofString("group")
+            .displayName("Group")
             .description("The consumer group to act on.");
 
         ConfigProperty<List<String>> GROUPS = ConfigProperty
             .ofList("groups")
+            .displayName("Groups")
             .description("The consumer groups to act on.");
 
         ConfigProperty<List<String>> TOPIC = ConfigProperty.ofList("topic")
+            .displayName("Topic")
             .description("The topic whose partitions must be included in the reset-offset action.");
 
         ConfigProperty<List<String>> INCLUDES = ConfigProperty
             .ofList("includes")
+            .displayName("Includes")
             .description("List of patterns to match the consumer groups that must be included in the reset-offset action.");
 
         ConfigProperty<List<String>> EXCLUDES = ConfigProperty
             .ofList("excludes")
+            .displayName("Excludes")
             .description("List of patterns to match the consumer groups that must be excluded from the reset-offset action.");
 
         ConfigProperty<String> TO_DATETIME = ConfigProperty
             .ofString("to-datetime")
+            .displayName("To Datetime")
             .description("Reset offsets to offset from datetime. Format: 'YYYY-MM-DDTHH:mm:SS.sss'");
 
         ConfigProperty<Long> TO_OFFSET = ConfigProperty
             .ofLong("to-offset")
+            .displayName("To Offset")
             .description("Reset offsets to a specific offset.");
 
         ConfigProperty<Boolean> DRY_RUN = ConfigProperty
             .ofBoolean("dry-run")
+            .displayName("Dry Run")
             .description("Only show results without executing changes on Consumer Groups.")
             .defaultValue(false);
     }

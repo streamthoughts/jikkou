@@ -375,6 +375,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                     options = providerInstance.configProperties()
                         .stream()
                         .map(prop -> new ApiOptionSpec(
+                            prop.displayName(),
                             prop.key(),
                             prop.description(),
                             prop.rawType(),

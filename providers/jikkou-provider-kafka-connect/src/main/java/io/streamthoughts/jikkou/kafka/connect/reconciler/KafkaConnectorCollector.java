@@ -49,12 +49,14 @@ public final class KafkaConnectorCollector extends ContextualExtension implement
     interface Config {
         ConfigProperty<Boolean> EXPAND_STATUS = ConfigProperty
             .ofBoolean("expand-status")
+            .displayName("Expand Status")
             .description("Retrieves additional information about the status of the connector and its tasks.")
             .required(false)
             .defaultValue(false);
 
         ConfigProperty<List<String>> CONNECT_CLUSTER = ConfigProperty
             .ofList("connect-cluster")
+            .displayName("Connect Cluster")
             .description("List of Kafka Connect cluster from which to list connectors.")
             .required(false);
     }

@@ -40,6 +40,7 @@ public final class KafkaConnectExtensionProvider extends BaseExtensionProvider {
 
     private final ConfigProperty<List<KafkaConnectClientConfig>> clusters = ConfigProperty
         .ofConfigList("clusters")
+        .displayName("Kafka Connect Clusters")
         .map(list -> list.stream().map(KafkaConnectClientConfig::from).toList())
         .defaultValue(Collections.emptyList())
         .description("List of Kafka Connect Cluster configuration.");

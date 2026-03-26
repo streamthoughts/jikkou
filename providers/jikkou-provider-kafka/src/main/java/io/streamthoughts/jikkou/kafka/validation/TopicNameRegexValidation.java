@@ -38,7 +38,9 @@ import org.jetbrains.annotations.NotNull;
 public class TopicNameRegexValidation extends TopicValidation {
 
     public static final ConfigProperty<String> VALIDATION_TOPIC_NAME_REGEX_CONFIG = ConfigProperty
-            .ofString("topicNameRegex");
+            .ofString("topicNameRegex")
+            .displayName("Topic Name Regex")
+            .description("Regular expression pattern that topic names must match.");
 
     private Pattern pattern;
 

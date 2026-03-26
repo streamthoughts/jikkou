@@ -29,6 +29,7 @@ public class CompatibilityLevelValidation implements Validation<V1SchemaRegistry
 
     public static final ConfigProperty<List<CompatibilityLevels>> VALIDATION_COMPATIBILITY_CONFIG = ConfigProperty
             .ofList("compatibilityLevels")
+            .displayName("Accepted Compatibility Levels")
             .description("Set of compatibility levels accepted for subject schemas.")
             .map(l -> l.stream().map(String::toUpperCase).map(CompatibilityLevels::valueOf).toList());
 

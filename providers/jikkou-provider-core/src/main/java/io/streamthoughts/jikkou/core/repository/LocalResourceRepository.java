@@ -43,6 +43,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
 
         ConfigProperty<List<String>> FILES_CONFIG = ConfigProperty
             .ofList("files")
+            .displayName("Files")
             .description(FILE_DESCRIPTION)
             .defaultValue(List.of());
 
@@ -53,6 +54,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
             """;
         ConfigProperty<String> FILE_NAME_CONFIG = ConfigProperty
             .ofString("file-name")
+            .displayName("File Name Pattern")
             .description(FILE_NAME_DESCRIPTION)
             .defaultValue("**/*.{yaml,yml}");
 
@@ -60,6 +62,7 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
 
         ConfigProperty<List<String>> VALUE_FILES_CONFIG = ConfigProperty
             .ofList("values-files")
+            .displayName("Values Files")
             .description(VALUES_FILES_DESCRIPTION)
             .defaultValue(List.of());
 
@@ -70,12 +73,14 @@ public class LocalResourceRepository extends ContextualExtension implements Reso
             """;
         ConfigProperty<String> VALUE_FILE_NAME_CONFIG = ConfigProperty
             .ofString("values-file-name")
+            .displayName("Values File Name Pattern")
             .description(VALUES_FILE_NAME_DESCRIPTION)
             .defaultValue("**/*.{yaml,yml}");
 
         String LABELS_DESCRIPTION = "The labels to add to all resources loaded from the repository";
         ConfigProperty<Map<String, Object>> LABEL_CONFIG = ConfigProperty
             .ofMap("labels")
+            .displayName("Labels")
             .description(LABELS_DESCRIPTION)
             .defaultValue(Map::of);
     }

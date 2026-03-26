@@ -33,23 +33,28 @@ public final class ConfluentCloudExtensionProvider extends BaseExtensionProvider
     interface Config {
         ConfigProperty<String> API_URL = ConfigProperty
             .ofString("apiUrl")
+            .displayName("API URL")
             .defaultValue("https://api.confluent.cloud")
             .description("URL to the Confluent Cloud REST API.");
 
         ConfigProperty<String> API_KEY = ConfigProperty
             .ofString("apiKey")
+            .displayName("API Key")
             .description("Confluent Cloud API Key.");
 
         ConfigProperty<String> API_SECRET = ConfigProperty
             .ofString("apiSecret")
+            .displayName("API Secret")
             .description("Confluent Cloud API Secret.");
 
         ConfigProperty<String> CRN_PATTERN = ConfigProperty
             .ofString("crnPattern")
+            .displayName("CRN Pattern")
             .description("CRN pattern used to scope role binding list operations.");
 
         ConfigProperty<Boolean> DEBUG_LOGGING_ENABLED = ConfigProperty
             .ofBoolean("debugLoggingEnabled")
+            .displayName("Debug Logging")
             .description("Enable debug logging.")
             .defaultValue(false);
     }

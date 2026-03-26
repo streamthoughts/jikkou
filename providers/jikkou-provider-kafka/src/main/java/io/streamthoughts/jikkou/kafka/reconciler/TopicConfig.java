@@ -12,18 +12,22 @@ import io.streamthoughts.jikkou.kafka.model.DataType;
 public interface TopicConfig {
 
     ConfigProperty<String> TOPIC_NAME = ConfigProperty.ofString("topic-name")
+        .displayName("Topic Name")
         .description("The topic name to consume on.")
         .required(true);
 
     ConfigProperty<DataType> KEY_TYPE = ConfigProperty.ofEnum("key-type", DataType.class)
+        .displayName("Key Type")
         .description("The record key type. Valid values: ${COMPLETION-CANDIDATES}.")
         .required(true);
 
     ConfigProperty<DataType> VALUE_TYPE = ConfigProperty.ofEnum("value-type", DataType.class)
+        .displayName("Value Type")
         .description("The record value type. Valid values: ${COMPLETION-CANDIDATES}.")
         .required(true);
 
     ConfigProperty<Boolean> SKIP_MESSAGE_ON_ERROR = ConfigProperty.ofBoolean("skip-message-on-error")
+        .displayName("Skip Message On Error")
         .description("If there is an error when processing a message, skip it instead of halt.")
         .defaultValue(false)
         .required(false);

@@ -34,31 +34,37 @@ public class AwsExtensionProvider extends BaseExtensionProvider {
     public interface Config {
         ConfigProperty<String> REGION = ConfigProperty
             .ofString("aws.client.region")
+            .displayName("AWS Region")
             .description("The AWS S3 Region, e.g. us-east-1")
             .required(true);
 
         ConfigProperty<String> ACCESS_KEY_ID = ConfigProperty
             .ofString("aws.client.accessKeyId")
+            .displayName("Access Key ID")
             .description("The AWS Access Key ID.")
             .required(false);
 
         ConfigProperty<String> ACCESS_SECRET_KEY = ConfigProperty
             .ofString("aws.client.secretAccessKey")
+            .displayName("Secret Access Key")
             .description("The AWS Secret Access Key.")
             .required(false);
 
         ConfigProperty<String> ACCESS_SESSION_TOKEN = ConfigProperty
             .ofString("aws.client.sessionToken")
+            .displayName("Session Token")
             .description("The AWS session token.")
             .required(false);
 
         ConfigProperty<String> ENDPOINT_OVERRIDE = ConfigProperty
             .ofString("aws.client.endpointOverride")
+            .displayName("Endpoint Override")
             .description("The endpoint with which the SDK should communicate allowing you to use a different S3 compatible service.")
             .required(false);
 
         ConfigProperty<List<String>> GLUE_REGISTRIES = ConfigProperty
             .ofList("aws.glue.registryNames")
+            .displayName("Glue Registry Names")
             .description("The name of the registries. Used only for lookup.")
             .defaultValue(List.of());
     }

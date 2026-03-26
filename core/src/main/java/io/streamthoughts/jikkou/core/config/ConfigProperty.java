@@ -204,6 +204,8 @@ public final class ConfigProperty<T> {
 
     private final String key;
 
+    private final String displayName;
+
     private final String description;
 
     private final Supplier<? extends T> defaultValueSupplier;
@@ -222,7 +224,7 @@ public final class ConfigProperty<T> {
     public ConfigProperty(final @NotNull String key,
                           final Class<?> rawType,
                           final @NotNull BiFunction<String, Configuration, Optional<T>> valueSupplier) {
-        this(key, rawType, valueSupplier, null, null, false);
+        this(key, rawType, valueSupplier, null, null, null, false);
     }
 
     public Configuration asConfiguration(final Object value) {
@@ -245,22 +247,28 @@ public final class ConfigProperty<T> {
                           final Class<?> rawType,
                           final @NotNull BiFunction<String, Configuration, Optional<T>> accessor,
                           final @Nullable Supplier<? extends T> defaultValueSupplier,
+                          final @Nullable String displayName,
                           final @Nullable String description,
                           final boolean isRequired) {
         this.key = Objects.requireNonNull(key, "key cannot be null");
         this.rawType = Objects.requireNonNull(rawType, "rawType cannot be null");
         this.accessor = accessor;
         this.defaultValueSupplier = defaultValueSupplier;
+        this.displayName = displayName;
         this.description = description;
         this.isRequired = isRequired;
     }
 
+    public ConfigProperty<T> displayName(final String displayName) {
+        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, displayName, description, isRequired);
+    }
+
     public ConfigProperty<T> description(final String description) {
-        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, description, isRequired);
+        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, displayName, description, isRequired);
     }
 
     public ConfigProperty<T> required(boolean isRequired) {
-        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, description, isRequired);
+        return new ConfigProperty<>(key, rawType, accessor, defaultValueSupplier, displayName, description, isRequired);
     }
 
     public ConfigProperty<T> defaultValue(final T other) {
@@ -268,7 +276,7 @@ public final class ConfigProperty<T> {
     }
 
     public ConfigProperty<T> defaultValue(final @NotNull Supplier<? extends T> other) {
-        return new ConfigProperty<>(key, rawType, accessor, other, description, isRequired);
+        return new ConfigProperty<>(key, rawType, accessor, other, displayName, description, isRequired);
     }
 
     /**
@@ -290,6 +298,7 @@ public final class ConfigProperty<T> {
                 rawType,
                 (p, config) -> accessor.apply(p, config).map(mapper),
                 defaultValueSupplierWithMapper,
+                displayName,
                 description,
                 isRequired
         );
@@ -331,6 +340,15 @@ public final class ConfigProperty<T> {
      */
     public String key() {
         return key;
+    }
+
+    /**
+     * Gets the display name of this property.
+     *
+     * @return the display name string, or {@code null} if no display name was set.
+     */
+    public String displayName() {
+        return displayName;
     }
 
     /**
@@ -377,7 +395,7 @@ public final class ConfigProperty<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConfigProperty<?> that = (ConfigProperty<?>) o;
-        return key.equals(that.key) && Objects.equals(description, that.description);
+        return key.equals(that.key) && Objects.equals(displayName, that.displayName) && Objects.equals(description, that.description);
     }
 
     /**
@@ -385,7 +403,7 @@ public final class ConfigProperty<T> {
      **/
     @Override
     public int hashCode() {
-        return Objects.hash(key, description);
+        return Objects.hash(key, displayName, description);
     }
 
     /**
@@ -395,6 +413,7 @@ public final class ConfigProperty<T> {
     public String toString() {
         return "ConfigProperty[" +
                 "key=" + key +
+                ", displayName=" + displayName +
                 ", description=" + description +
                 ']';
     }

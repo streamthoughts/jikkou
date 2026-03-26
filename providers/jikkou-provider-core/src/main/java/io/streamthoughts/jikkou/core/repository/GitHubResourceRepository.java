@@ -271,20 +271,24 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
 
         public static final ConfigProperty<String> REPOSITORY_CONFIG = ConfigProperty
             .ofString("repository")
+            .displayName("Repository")
             .description("Specify the GitHub repository in the format 'owner/repo'");
 
         public static final ConfigProperty<String> BRANCH_CONFIG = ConfigProperty
             .ofString("branch")
+            .displayName("Branch")
             .description("Specify the branch or ref to load resources from")
             .defaultValue("main");
 
         public static final ConfigProperty<List<String>> PATHS_CONFIG = ConfigProperty
             .ofList("paths")
+            .displayName("Paths")
             .description("Specify the paths/directories in the repository containing the resource definitions")
             .defaultValue(List.of("."));
 
         public static final ConfigProperty<String> FILE_PATTERN_CONFIG = ConfigProperty
             .ofString("file-pattern")
+            .displayName("File Pattern")
             .description("""
                 Specify the pattern used to match YAML file paths.
                 Pattern should be passed in the form of 'syntax:pattern'. The "glob" and "regex" syntaxes are supported (e.g.: **/*.{yaml,yml}).
@@ -294,16 +298,19 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
 
         public static final ConfigProperty<String> TOKEN_CONFIG = ConfigProperty
             .ofString("token")
+            .displayName("Token")
             .description("GitHub personal access token for authentication (optional for public repositories)")
             .defaultValue("");
 
         public static final ConfigProperty<List<String>> VALUE_FILES_CONFIG = ConfigProperty
             .ofList("values-files")
+            .displayName("Values Files")
             .description("Specify the paths of the values-files containing the variables to pass into the template engine")
             .defaultValue(List.of());
 
         public static final ConfigProperty<String> VALUE_FILE_PATTERN_CONFIG = ConfigProperty
             .ofString("values-file-pattern")
+            .displayName("Values File Pattern")
             .description("""
                 Specify the pattern used to match values YAML file paths.
                 Pattern should be passed in the form of 'syntax:pattern'. The "glob" and "regex" syntaxes are supported.
@@ -313,6 +320,7 @@ public class GitHubResourceRepository extends ContextualExtension implements Res
 
         public static final ConfigProperty<Map<String, Object>> LABEL_CONFIG = ConfigProperty
             .ofMap("labels")
+            .displayName("Labels")
             .description("The labels to be added to all resources loaded from the repository")
             .defaultValue(Map::of);
 

@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 public class TopicMinNumPartitionsValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MIN_NUM_PARTITIONS_CONFIG = ConfigProperty
-            .ofInt("topicMinNumPartitions");
+            .ofInt("topicMinNumPartitions")
+            .displayName("Min Num Partitions")
+            .description("Minimum number of partitions required for a Kafka topic.");
 
     private Integer minNumPartitions;
 

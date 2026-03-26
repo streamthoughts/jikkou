@@ -38,11 +38,13 @@ public final class AdminClientConsumerGroupCollector extends ContextualExtension
     public interface Config {
         ConfigProperty<Boolean> OFFSETS = ConfigProperty
             .ofBoolean("offsets")
+            .displayName("Offsets")
             .description("Specify whether consumer group offsets should be described.")
             .defaultValue(false);
 
         ConfigProperty<Set<ConsumerGroupState>> IN_STATES = ConfigProperty
             .ofAny("in-states")
+            .displayName("In States")
             .convert(TypeConverter.ofSet(ConsumerGroupState.class))
             .description(
                 "If states is set, only groups in these states will be returned. Otherwise, all groups are returned." +

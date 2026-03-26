@@ -44,7 +44,9 @@ import org.jetbrains.annotations.NotNull;
 public class SubjectNameRegexValidation implements Validation<V1SchemaRegistrySubject> {
 
     public static final ConfigProperty<String> VALIDATION_SUBJECT_NAME_REGEX_CONFIG = ConfigProperty
-            .ofString("subjectNameRegex");
+            .ofString("subjectNameRegex")
+            .displayName("Subject Name Regex")
+            .description("The regular expression pattern that subject names must match");
 
     private Pattern pattern;
 

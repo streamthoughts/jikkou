@@ -24,6 +24,7 @@ public class KafkaJsonSerdes implements Serializer<JsonNode>, Deserializer<JsonN
     private ObjectMapper objectMapper;
 
     private static final ConfigProperty<Boolean> PRETTY_PRINT = ConfigProperty.ofBoolean("json.pretty.print")
+            .displayName("Pretty Print")
             .description("Whether JSON output should be indented (\"pretty-printed\")")
             .defaultValue(true);
 

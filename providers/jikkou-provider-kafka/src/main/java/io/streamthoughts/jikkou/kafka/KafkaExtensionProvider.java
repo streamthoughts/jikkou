@@ -60,11 +60,14 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
     public interface Config {
         ConfigProperty<Map<String, Object>> CLIENT = ConfigProperty
             .ofMap("client")
+            .displayName("Kafka Client")
             .description("The kafka client configuration properties.")
             .defaultValue(HashMap::new);
 
         ConfigProperty<List<Pattern>> TOPIC_DELETE_EXCLUDE_PATTERNS = ConfigProperty
             .ofList("topics.deletion.exclude")
+            .displayName("Topic Deletion Exclude Patterns")
+            .description("List of regex patterns for topic names to exclude from deletion.")
             .map(l -> l.stream().map(Pattern::compile).toList())
             .defaultValue(() -> List.of(
                 Pattern.compile("^_schemas$"),
@@ -77,6 +80,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
 
         ConfigProperty<List<Pattern>> TOPICS_VALIDATION_IGNORE_CONFIG_KEYS = ConfigProperty
             .ofList("topics.validation.ignoreConfigKeys")
+            .displayName("Topic Validation Ignore Config Keys")
             .description("List of regex patterns for config keys to ignore during topic validation.")
             .map(l -> l.stream().map(Pattern::compile).toList())
             .defaultValue(() -> List.of(

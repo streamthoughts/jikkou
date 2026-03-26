@@ -60,28 +60,35 @@ public final class AivenExtensionProvider extends BaseExtensionProvider {
     interface Config {
         ConfigProperty<String> PROJECT = ConfigProperty
             .ofString("project")
+            .displayName("Aiven Project")
             .description("Aiven project name.");
 
         ConfigProperty<String> SERVICE = ConfigProperty
             .ofString("service")
+            .displayName("Aiven Service")
             .description("Aiven Service name.");
 
         ConfigProperty<String> API_URL = ConfigProperty
             .ofString("apiUrl")
+            .displayName("API URL")
             .defaultValue("https://api.aiven.io/v1/")
             .description("URL to the Aiven REST API.");
 
         ConfigProperty<String> TOKEN_AUTH = ConfigProperty
             .ofString("tokenAuth")
+            .displayName("Authentication Token")
             .description("Aiven Bearer Token. Tokens can be obtained from your Aiven profile page");
 
         ConfigProperty<Boolean> DEBUG_LOGGING_ENABLED = ConfigProperty
             .ofBoolean("debugLoggingEnabled")
+            .displayName("Debug Logging Enabled")
             .description("Enable debug logging.")
             .defaultValue(false);
 
         ConfigProperty<List<Pattern>> TOPIC_DELETE_EXCLUDE_PATTERNS = ConfigProperty
             .ofList("topics.deletion.exclude")
+            .displayName("Topic Deletion Exclude Patterns")
+            .description("List of regex patterns for topics to exclude from deletion.")
             .map(l -> l.stream().map(Pattern::compile).toList())
             .defaultValue(() -> List.of(
                 Pattern.compile("^_schemas$"),

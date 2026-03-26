@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 public final class TopicMaxNumPartitionsValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MAX_NUM_PARTITIONS_CONFIG = ConfigProperty
-            .ofInt("topicMaxNumPartitions");
+            .ofInt("topicMaxNumPartitions")
+            .displayName("Max Num Partitions")
+            .description("Maximum number of partitions allowed for a Kafka topic.");
 
     private Integer maxNumPartitions;
 

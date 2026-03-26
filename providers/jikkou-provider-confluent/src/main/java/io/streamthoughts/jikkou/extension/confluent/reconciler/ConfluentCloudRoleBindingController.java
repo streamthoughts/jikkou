@@ -48,6 +48,8 @@ public class ConfluentCloudRoleBindingController implements Controller<V1RoleBin
     interface Config {
         ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
             .ofBoolean("delete-orphans")
+            .displayName("Delete Orphan Role Bindings")
+            .description("Specifies whether to delete role bindings that are not defined in the resource definitions")
             .defaultValue(false);
     }
 

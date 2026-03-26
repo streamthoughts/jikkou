@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 public class TopicNameSuffixValidation extends TopicValidation {
 
     public static final ConfigProperty<List<String>> VALIDATION_TOPIC_NAME_SUFFIXES_CONFIG = ConfigProperty
-            .ofList("topicNameSuffixes");
+            .ofList("topicNameSuffixes")
+            .displayName("Topic Name Suffixes")
+            .description("List of valid suffixes that topic names must end with.");
 
     private List<String> suffixes;
 

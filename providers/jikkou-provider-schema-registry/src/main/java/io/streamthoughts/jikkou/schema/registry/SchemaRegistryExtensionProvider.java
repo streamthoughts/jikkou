@@ -46,35 +46,42 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
     public interface Config {
         ConfigProperty<String> SCHEMA_REGISTRY_URL = ConfigProperty
             .ofString("url")
+            .displayName("URL")
             .required(true)
             .description("Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas.");
 
         ConfigProperty<String> SCHEMA_REGISTRY_VENDOR = ConfigProperty
             .ofString("vendor")
+            .displayName("Vendor")
             .defaultValue("generic")
             .description("The name of the schema registry implementation vendor.");
 
         ConfigProperty<AuthMethod> SCHEMA_REGISTRY_AUTH_METHOD = ConfigProperty
             .ofString("authMethod")
+            .displayName("Auth Method")
             .map(val -> Enums.getForNameIgnoreCase(val, AuthMethod.class, AuthMethod.INVALID))
             .defaultValue(AuthMethod.NONE)
             .description("Method to use for authenticating on Schema Registry. Available values are: [none, basicauth, ssl]");
 
         ConfigProperty<String> SCHEMA_REGISTRY_BASIC_AUTH_USER = ConfigProperty
             .ofString("basicAuthUser")
+            .displayName("Basic Auth Username")
             .description("Use when 'authMethod' is 'basicauth' to specify the username for Authorization Basic header");
 
         ConfigProperty<String> SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD = ConfigProperty
             .ofString("basicAuthPassword")
+            .displayName("Basic Auth Password")
             .description("Use when 'authMethod' is 'basicauth' to specify the password for Authorization Basic header");
 
         ConfigProperty<Boolean> SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED = ConfigProperty
             .ofBoolean("debugLoggingEnabled")
+            .displayName("Debug Logging")
             .description("Enable debug logging.")
             .defaultValue(false);
 
         ConfigProperty<Boolean> NORMALIZE_SCHEMAS_ENABLED = ConfigProperty
             .ofBoolean("normalizeSchemasEnabled")
+            .displayName("Normalize Schemas")
             .description("Specify whether to normalize schemas (default: true).")
             .defaultValue(true);
     }

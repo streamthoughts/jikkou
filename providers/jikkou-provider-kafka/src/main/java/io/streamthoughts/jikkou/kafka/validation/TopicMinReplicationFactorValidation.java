@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 public class TopicMinReplicationFactorValidation extends TopicValidation {
 
     public static final ConfigProperty<Integer> VALIDATION_TOPIC_MIN_REPLICATION_FACTOR_CONFIG = ConfigProperty
-            .ofInt("topicMinReplicationFactor");
+            .ofInt("topicMinReplicationFactor")
+            .displayName("Min Replication Factor")
+            .description("Minimum replication factor required for a Kafka topic.");
 
 
     private Integer minReplicationFactor;

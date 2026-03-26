@@ -36,14 +36,20 @@ public class AvroSchemaValidation implements Validation<V1SchemaRegistrySubject>
 
     public static final ConfigProperty<Boolean> RECORD_FIELD_MUST_HAVE_DOC = ConfigProperty
             .ofBoolean("fieldsMustHaveDoc")
+            .displayName("Fields Must Have Doc")
+            .description("Require all record fields to have documentation.")
             .defaultValue(false);
 
     public static final ConfigProperty<Boolean> RECORD_FIELDS_MUST_BE_NULLABLE = ConfigProperty
             .ofBoolean("fieldsMustBeNullable")
+            .displayName("Fields Must Be Nullable")
+            .description("Require all record fields to be nullable.")
             .defaultValue(false);
 
     public static final ConfigProperty<Boolean> RECORD_FIELDS_MUST_BE_OPTIONAL = ConfigProperty
             .ofBoolean("fieldsMustBeOptional")
+            .displayName("Fields Must Be Optional")
+            .description("Require all record fields to be optional.")
             .defaultValue(false);
 
     private boolean recordFieldsMustHaveDoc;

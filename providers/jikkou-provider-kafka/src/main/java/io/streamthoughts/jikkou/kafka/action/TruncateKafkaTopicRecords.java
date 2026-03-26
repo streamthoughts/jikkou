@@ -54,16 +54,19 @@ public class TruncateKafkaTopicRecords extends ContextualExtension implements Ac
 
     public interface Config {
         ConfigProperty<List<String>> TOPIC = ConfigProperty.ofList("topic")
+            .displayName("Topic")
             .description("The topic whose partitions must be truncated.")
             .required(true);
 
         ConfigProperty<String> TO_DATETIME = ConfigProperty
             .ofString("to-datetime")
+            .displayName("To Datetime")
             .description("Truncate topic partitions to offsets for datetime. Format: 'YYYY-MM-DDTHH:mm:SS.sss'")
             .required(true);
 
         ConfigProperty<Boolean> DRY_RUN = ConfigProperty
             .ofBoolean("dry-run")
+            .displayName("Dry Run")
             .description("Only show results without executing changes on Kafka topics.")
             .defaultValue(false);
     }

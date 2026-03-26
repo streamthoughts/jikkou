@@ -49,6 +49,7 @@ public final class AdminClientKafkaTopicCollector extends ContextualExtension im
     public interface Config {
         ConfigProperty<Boolean> STATUS_CONFIG = ConfigProperty
             .ofBoolean("status")
+            .displayName("Status")
             .description("Specify whether to describe status information about the topic-partitions")
             .defaultValue(false);
     }

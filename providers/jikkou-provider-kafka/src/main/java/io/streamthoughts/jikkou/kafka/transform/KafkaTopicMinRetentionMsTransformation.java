@@ -41,7 +41,9 @@ public class KafkaTopicMinRetentionMsTransformation implements Transformation<V1
     public static final String JIKKOU_IO_KAFKA_MIN_RETENTION_MS = JIKKOU_IO_TRANSFORM_PREFIX + "/kafka-min-retention-ms";
 
     public static final ConfigProperty<Long> MIN_RETENTIONS_MS_CONFIG = ConfigProperty
-            .ofLong("minRetentionMs");
+            .ofLong("minRetentionMs")
+            .displayName("Min Retention Ms")
+            .description("The minimum retention period in milliseconds allowed for a Kafka topic.");
 
     private Long minRetentionMs;
 

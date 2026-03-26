@@ -13,13 +13,15 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Specification of a configuration property.
  *
+ * @param displayName   The human-readable display name.
  * @param name          The name.
  * @param type          The type.
  * @param description   The description.
  * @param defaultValue  The default value.
  * @param required      Specify whether the property is required.
  */
-public record ConfigPropertySpec(@NotNull String name,
+public record ConfigPropertySpec(@Nullable String displayName,
+                                 @NotNull String name,
                                  @NotNull Class<?> type,
                                  @Nullable String description,
                                  @Nullable Object defaultValue,
@@ -28,5 +30,16 @@ public record ConfigPropertySpec(@NotNull String name,
     public ConfigPropertySpec {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
+    }
+
+    /**
+     * Convenience constructor without displayName.
+     */
+    public ConfigPropertySpec(@NotNull String name,
+                              @NotNull Class<?> type,
+                              @Nullable String description,
+                              @Nullable Object defaultValue,
+                              boolean required) {
+        this(null, name, type, description, defaultValue, required);
     }
 }

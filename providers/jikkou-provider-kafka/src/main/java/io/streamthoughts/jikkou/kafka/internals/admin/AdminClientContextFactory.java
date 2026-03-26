@@ -19,18 +19,26 @@ public final class AdminClientContextFactory {
 
     public static final ConfigProperty<Boolean> KAFKA_BROKERS_WAIT_FOR_ENABLED = ConfigProperty
             .ofBoolean("brokers.waitForEnabled")
+            .displayName("Wait For Brokers Enabled")
+            .description("Enable waiting for brokers to be available before proceeding.")
             .defaultValue(true);
 
     public static final ConfigProperty<Integer> KAFKA_BROKERS_WAIT_FOR_MIN_AVAILABLE = ConfigProperty
             .ofInt("brokers.waitForMinAvailable")
+            .displayName("Min Available Brokers")
+            .description("Minimum number of brokers that must be available.")
             .defaultValue(KafkaBrokersReady.DEFAULT_MIN_AVAILABLE_BROKERS);
 
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_RETRY_BACKOFF_MS = ConfigProperty
             .ofLong("brokers.waitForRetryBackoffMs")
+            .displayName("Wait Retry Backoff (ms)")
+            .description("Time in milliseconds to wait between retries when waiting for brokers.")
             .defaultValue(KafkaBrokersReady.DEFAULT_RETRY_BACKOFF_MS);
 
     public static final ConfigProperty<Long> KAFKA_BROKERS_WAIT_FOR_TIMEOUT_MS = ConfigProperty
             .ofLong("brokers.waitForTimeoutMs")
+            .displayName("Wait Timeout (ms)")
+            .description("Maximum time in milliseconds to wait for brokers to be available.")
             .defaultValue(KafkaBrokersReady.DEFAULT_TIMEOUT_MS);
 
     private final AdminClientFactory factory;

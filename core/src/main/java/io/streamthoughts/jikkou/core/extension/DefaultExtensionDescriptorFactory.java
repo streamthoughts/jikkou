@@ -139,6 +139,7 @@ public final class DefaultExtensionDescriptorFactory implements ExtensionDescrip
             .stream()
             .map(prop ->
                 new ConfigPropertySpec(
+                    prop.displayName(),
                     prop.key(),
                     prop.rawType(),
                     prop.description(),

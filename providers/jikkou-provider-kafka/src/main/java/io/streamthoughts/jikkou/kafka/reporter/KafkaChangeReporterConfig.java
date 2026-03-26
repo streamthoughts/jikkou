@@ -21,29 +21,37 @@ public class KafkaChangeReporterConfig {
 
     public static final ConfigProperty<String> EVENT_SOURCE_CONFIG = ConfigProperty
             .ofString("event.source")
+            .displayName("Event Source")
             .description("The 'source' of the event that will be generated");
 
     public static final ConfigProperty<String> KAFKA_TOPIC_CONFIG = ConfigProperty
             .ofString("kafka.topic.name")
+            .displayName("Kafka Topic Name")
             .description("The name of the topic the events will be sent");
 
     public static final ConfigProperty<Boolean> KAFKA_TOPIC_CREATION_ENABLED_CONFIG = ConfigProperty
             .ofBoolean("kafka.topic.creation.enabled")
+            .displayName("Topic Auto-Creation Enabled")
             .defaultValue(true)
-            .description("");
+            .description("Specifies whether the topic should be automatically created if it does not exist");
 
     public static final ConfigProperty<Integer> KAFKA_TOPIC_CREATION_DEFAULT_REPLICAS_CONFIG = ConfigProperty
             .ofInt("kafka.topic.creation.defaultReplicationFactor")
+            .displayName("Default Replication Factor")
             .defaultValue(1)
             .description("The default replication factor used for creating topic");
 
     public static final ConfigProperty<Map<String, Object>> PRODUCER_CLIENT_CONFIG = ConfigProperty
             .ofMap("kafka.client")
+            .displayName("Kafka Producer Client")
+            .description("The Kafka producer client configuration properties")
             .defaultValue(HashMap::new)
             .map(KafkaUtils::getProducerClientConfigs);
 
     public static final ConfigProperty<Map<String, Object>> ADMIN_CLIENT_CONFIG = ConfigProperty
             .ofMap("kafka.client")
+            .displayName("Kafka Admin Client")
+            .description("The Kafka admin client configuration properties")
             .defaultValue(HashMap::new)
             .map(KafkaUtils::getAdminClientConfigs);
 

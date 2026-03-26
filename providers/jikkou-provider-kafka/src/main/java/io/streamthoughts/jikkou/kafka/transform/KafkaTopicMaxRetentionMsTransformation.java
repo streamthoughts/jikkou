@@ -41,7 +41,9 @@ public class KafkaTopicMaxRetentionMsTransformation implements Transformation<V1
     public static final String JIKKOU_IO_KAFKA_MAX_RETENTION_MS = JIKKOU_IO_TRANSFORM_PREFIX + "/kafka-max-retention-ms";
 
     public static final ConfigProperty<Long> MAX_RETENTIONS_MS_CONFIG = ConfigProperty
-            .ofLong("maxRetentionMs");
+            .ofLong("maxRetentionMs")
+            .displayName("Max Retention (ms)")
+            .description("Maximum retention period in milliseconds to enforce on Kafka topics.");
 
     private Long maxRetentionMs;
 
