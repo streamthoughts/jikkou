@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR=$(dirname "$(readlink -f $0)")
+
+echo -e "\n🐳 Stopping Iceberg Docker Compose stack..."
+(cd "$BASEDIR"; docker compose down --remove-orphans -v)
+
+exit 0

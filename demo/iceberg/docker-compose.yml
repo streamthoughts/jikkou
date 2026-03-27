@@ -1,0 +1,91 @@
+---
+# Iceberg demo stack
+#
+#   PostgreSQL  — Iceberg JDBC catalog (metadata store)       localhost:5432
+#   SeaweedFS   — S3-compatible object storage                localhost:8333
+#   Nessie      — Iceberg REST catalog with versioning        localhost:19120
+#
+# NOTE: The Nessie image is hosted on GitHub Container Registry (ghcr.io).
+#       You may need to authenticate first — see README.md for instructions.
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: iceberg-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: iceberg
+      POSTGRES_USER: iceberg
+      POSTGRES_PASSWORD: iceberg
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "iceberg", "-d", "iceberg"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: iceberg-seaweedfs
+    ports:
+      - "8333:8333"
+    command: "server -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json -master.volumeSizeLimitMB=100"
+    volumes:
+      - seaweedfs-data:/data
+      - ./seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9333/cluster/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Create the default S3 bucket on startup
+  seaweedfs-init:
+    image: amazon/aws-cli:latest
+    container_name: iceberg-seaweedfs-init
+    depends_on:
+      seaweedfs:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: seaweedadmin
+      AWS_SECRET_ACCESS_KEY: seaweedadmin123
+      AWS_DEFAULT_REGION: us-east-1
+    entrypoint: >
+      /bin/sh -c "
+        aws --endpoint-url http://seaweedfs:8333 s3 mb s3://iceberg-demo || true
+      "
+
+  nessie:
+    image: ghcr.io/projectnessie/nessie:latest
+    container_name: iceberg-nessie
+    depends_on:
+      seaweedfs-init:
+        condition: service_completed_successfully
+    ports:
+      - "19120:19120"
+    environment:
+      # Use in-memory (ephemeral) version store — perfect for demos
+      NESSIE_VERSION_STORE_TYPE: IN_MEMORY
+      # Default warehouse — required by the Iceberg REST catalog
+      NESSIE_CATALOG_DEFAULT_WAREHOUSE: warehouse
+      NESSIE_CATALOG_WAREHOUSES_WAREHOUSE_LOCATION: s3://iceberg-demo/
+      # S3 / SeaweedFS configuration
+      NESSIE_CATALOG_SERVICE_S3_DEFAULT_OPTIONS_REGION: us-east-1
+      NESSIE_CATALOG_SERVICE_S3_DEFAULT_OPTIONS_PATH_STYLE_ACCESS: "true"
+      NESSIE_CATALOG_SERVICE_S3_DEFAULT_OPTIONS_ENDPOINT: http://seaweedfs:8333
+      # S3 credentials — dot-notation required because "access-key" contains a dash
+      nessie.catalog.service.s3.default-options.access-key: "urn:nessie-secret:quarkus:nessie.catalog.secrets.access-key"
+      nessie.catalog.secrets.access-key.name: seaweedadmin
+      nessie.catalog.secrets.access-key.secret: seaweedadmin123
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:19120/api/v2/config"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
+  seaweedfs-data:

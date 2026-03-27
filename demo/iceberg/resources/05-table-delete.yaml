@@ -1,0 +1,46 @@
+---
+# Step 5 — Delete a table
+# The jikkou.io/delete annotation instructs Jikkou to drop this table
+# from the catalog. By default, data files are kept unless delete-purge
+# is enabled in the provider configuration.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergTable"
+metadata:
+  name: "analytics.events.page_views"
+  annotations:
+    jikkou.io/delete: true
+spec:
+  schema:
+    columns:
+      - name: "event_id"
+        type: "uuid"
+        required: true
+        doc: "Unique event identifier"
+      - name: "user_id"
+        type: "long"
+        required: true
+        doc: "User who triggered the event"
+      - name: "url"
+        type: "string"
+        required: true
+        doc: "URL of the viewed page"
+      - name: "event_time"
+        type: "timestamptz"
+        required: true
+        doc: "Event timestamp (UTC)"
+      - name: "duration_ms"
+        type: "long"
+        doc: "Time the user spent on the page (milliseconds)"
+      - name: "referrer"
+        type: "string"
+        doc: "HTTP Referer header value"
+  partitionFields:
+    - sourceColumn: "event_time"
+      transform: "day"
+  sortFields:
+    - column: "event_time"
+      direction: "asc"
+      nullOrder: "last"
+  properties:
+    write.format.default: "parquet"
+    write.parquet.compression-codec: "zstd"

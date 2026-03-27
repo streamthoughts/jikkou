@@ -1,0 +1,36 @@
+---
+# Step 2 — Create initial table
+# A page_views event table partitioned by day and sorted by event_time.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergTable"
+metadata:
+  name: "analytics.events.page_views"
+spec:
+  schema:
+    columns:
+      - name: "event_id"
+        type: "uuid"
+        required: true
+        doc: "Unique event identifier"
+      - name: "user_id"
+        type: "long"
+        required: true
+        doc: "User who triggered the event"
+      - name: "page_url"
+        type: "string"
+        required: true
+        doc: "URL of the viewed page"
+      - name: "event_time"
+        type: "timestamptz"
+        required: true
+        doc: "Event timestamp (UTC)"
+  partitionFields:
+    - sourceColumn: "event_time"
+      transform: "day"
+  sortFields:
+    - column: "event_time"
+      direction: "asc"
+      nullOrder: "last"
+  properties:
+    write.format.default: "parquet"
+    write.parquet.compression-codec: "zstd"
