@@ -1,0 +1,487 @@
+{
+  "reflection": [
+    {
+      "type": "com.github.benmanes.caffeine.cache.WSL",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.benmanes.caffeine.cache.SSLA",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.github.benmanes.caffeine.cache.SSA",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.apache.hadoop.conf.Configurable",
+      "methods": [
+        {
+          "name": "setConf",
+          "parameterTypes": [
+            "org.apache.hadoop.conf.Configuration"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.apache.hadoop.conf.Configuration",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.mapred.JobConf"
+    },
+    {
+      "type": "org.apache.hadoop.util.PlatformName",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.apache.hadoop.util.VersionInfo",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.util.NativeCodeLoader",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.util.ShutdownHookManager",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.net.DNSDomainNameResolver",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.hadoop.security.JniBasedUnixGroupsMappingWithFallback",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.hadoop.security.UserGroupInformation",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.security.UserGroupInformation$HadoopLoginModule",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.security.UserGroupInformation$HadoopConfiguration",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.security.UserGroupInformation$HadoopLoginContext",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.security.UserGroupInformation$UgiMetrics",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "com.sun.security.auth.UnixPrincipal",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "com.sun.security.auth.UnixNumericGroupPrincipal",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "com.sun.security.auth.UnixNumericUserPrincipal",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.security.authentication.util.KerberosName",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.hadoop.fs.LocalFileSystem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.hadoop.fs.RawLocalFileSystem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.hadoop.fs.FileSystem",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.jdbc.JdbcCatalog",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.rest.RESTCatalog",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.rest.auth.NoopAuthManager",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": ["java.lang.String"]
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.rest.auth.BasicAuthManager",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": ["java.lang.String"]
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.rest.auth.OAuth2Manager",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": ["java.lang.String"]
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.hadoop.HadoopCatalog",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.hive.HiveCatalog",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.aws.glue.GlueCatalog",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.nessie.NessieCatalog",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.hadoop.HadoopFileIO",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.io.ResolvingFileIO",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.aws.s3.S3FileIO",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.iceberg.aws.AwsClientFactories$DefaultAwsClientFactory",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.aws.S3FileIOAwsClientFactories",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.aws.AwsProperties",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ListNamespacesResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ListNamespacesResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.CreateNamespaceResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.CreateNamespaceResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.GetNamespaceResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.GetNamespaceResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.UpdateNamespacePropertiesResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.UpdateNamespacePropertiesResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ListTablesResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ListTablesResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.LoadTableResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.LoadTableResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ConfigResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ConfigResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ErrorResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.ErrorResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.OAuthTokenResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.OAuthTokenResponse$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.responses.LoadViewResponse",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.CreateNamespaceRequest",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.CreateNamespaceRequest$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.UpdateNamespacePropertiesRequest",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.UpdateNamespacePropertiesRequest$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.CreateTableRequest",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.CreateTableRequest$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.UpdateTableRequest",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.RenameTableRequest",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.RenameTableRequest$Builder",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.requests.ReportMetricsRequest",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.rest.RESTMessage",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap"
+    },
+    {
+      "type": "org.apache.iceberg.relocated.com.google.common.collect.ImmutableMapEntry[]"
+    },
+    {
+      "type": "org.apache.iceberg.relocated.com.google.common.collect.RegularImmutableMap"
+    },
+    {
+      "type": "org.postgresql.Driver",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.postgresql.core.QueryExecutorCloseAction"
+    },
+    {
+      "type": "org.postgresql.jdbc.PgStatement"
+    },
+    {
+      "type": {
+        "proxy": [
+          "org.apache.hadoop.metrics2.MetricsSystem$Callback"
+        ]
+      }
+    }
+  ],
+  "resources": [
+    {"glob": "iceberg-build.properties"},
+    {"glob": "core-default.xml"},
+    {"glob": "core-site.xml"},
+    {"glob": "hadoop-site.xml"},
+    {"glob": "org/postgresql/driverconfig.properties"},
+    {"glob": "META-INF/services/java.sql.Driver"},
+    {"glob": "META-INF/services/org.apache.hadoop.fs.FileSystem"},
+    {"glob": "META-INF/services/org.apache.hadoop.security.SecurityInfo"},
+    {"glob": "META-INF/services/org.apache.hadoop.security.token.TokenIdentifier"},
+    {"glob": "META-INF/services/org.apache.hadoop.security.token.TokenRenewer"}
+  ]
+}

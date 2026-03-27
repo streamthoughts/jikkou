@@ -79,6 +79,11 @@
             <artifactId>jikkou-provider-kafka-connect</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jikkou-provider-iceberg</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- END dependencies for Jikkou Extension Providers -->
 
         <!-- START dependencies for Micronaut -->
