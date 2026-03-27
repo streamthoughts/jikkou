@@ -15,34 +15,35 @@ Here, you will find the configuration properties for the Apache Iceberg extensio
 The Apache Iceberg extension connects to an Iceberg catalog. You configure it through the Jikkou
 client configuration property `jikkou.provider.iceberg`.
 
-**Example (REST catalog):**
+**Example (JDBC catalog with PostgreSQL):**
 
 ```hocon
 jikkou {
   provider.iceberg {
     enabled = true
+    type = io.streamthoughts.jikkou.iceberg.IcebergExtensionProvider
     config = {
       # Required — type of Iceberg catalog.
       # Accepted values: rest, hive, jdbc, glue, nessie, hadoop
-      catalog-type = "rest"
+      catalogType = "jdbc"
 
       # The catalog name used to identify this catalog instance.
-      catalog-name = "default"
+      catalogName = "default"
 
-      # The URI of the catalog endpoint (REST, Hive Metastore, JDBC, Nessie server, etc.)
-      catalog-uri = "http://localhost:8181"
+      # The URI of the catalog endpoint (REST URL, Hive Metastore URI, JDBC URL, etc.)
+      catalogUri = "jdbc:postgresql://localhost:5432/iceberg"
 
-      # The warehouse root location (e.g., S3 bucket path, HDFS path, local path)
-      warehouse = "s3://my-bucket/warehouse"
+      # The warehouse root location (e.g., local path, S3 bucket path, HDFS path)
+      warehouse = "/tmp/iceberg-warehouse"
 
       # Extra catalog-specific properties passed directly to CatalogUtil.buildIcebergCatalog()
-      catalog-properties {
-        # s3.endpoint = "http://localhost:9000"
-        # s3.path-style-access = "true"
+      catalogProperties {
+        jdbc.user     = "iceberg"
+        jdbc.password = "iceberg"
       }
 
       # Enable verbose debug logging for catalog operations (default: false)
-      debug-logging-enabled = false
+      debugLoggingEnabled = false
     }
   }
 }
@@ -52,14 +53,31 @@ jikkou {
 
 | Property | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `catalog-type` | String | **yes** | — | Iceberg catalog type: `rest`, `hive`, `jdbc`, `glue`, `nessie`, `hadoop` |
-| `catalog-name` | String | no | `default` | The catalog instance name |
-| `catalog-uri` | String | no | — | Catalog endpoint URI (REST API URL, Hive Metastore thrift URI, JDBC URL, Nessie server URL) |
-| `warehouse` | String | no | — | Warehouse root location (e.g., `s3://bucket/warehouse`) |
-| `catalog-properties` | Map | no | — | Additional catalog properties forwarded verbatim to the Iceberg `CatalogUtil` |
-| `debug-logging-enabled` | Boolean | no | `false` | Enable debug-level logging for catalog operations |
+| `catalogType` | String | **yes** | — | Iceberg catalog type: `rest`, `hive`, `jdbc`, `glue`, `nessie`, `hadoop` |
+| `catalogName` | String | no | `default` | The catalog instance name |
+| `catalogUri` | String | no | — | Catalog endpoint URI (REST API URL, Hive Metastore thrift URI, JDBC URL, Nessie server URL) |
+| `warehouse` | String | no | — | Warehouse root location (e.g., `s3://bucket/warehouse`, `/tmp/iceberg`) |
+| `catalogProperties` | Map | no | — | Additional catalog properties forwarded verbatim to the Iceberg `CatalogUtil` |
+| `debugLoggingEnabled` | Boolean | no | `false` | Enable debug-level logging for catalog operations |
 
 ### Catalog Types
+
+#### JDBC Catalog (PostgreSQL)
+
+Stores catalog metadata (namespaces, table specs) in a relational database.
+The PostgreSQL JDBC driver is bundled in the Jikkou CLI distribution.
+
+```hocon
+config = {
+  catalogType = "jdbc"
+  catalogUri  = "jdbc:postgresql://localhost:5432/iceberg"
+  warehouse   = "/tmp/iceberg-warehouse"
+  catalogProperties {
+    jdbc.user     = "iceberg"
+    jdbc.password = "iceberg"
+  }
+}
+```
 
 #### REST Catalog
 
@@ -67,10 +85,10 @@ Connects to any Iceberg REST Catalog API (e.g., Polaris, Gravitino, Unity Catalo
 
 ```hocon
 config = {
-  catalog-type = "rest"
-  catalog-uri  = "https://polaris.example.com/api/catalog"
-  warehouse    = "s3://my-bucket/warehouse"
-  catalog-properties {
+  catalogType = "rest"
+  catalogUri  = "https://polaris.example.com/api/catalog"
+  warehouse   = "s3://my-bucket/warehouse"
+  catalogProperties {
     rest.signing-name   = "execute-api"
     rest.signing-region = "us-east-1"
   }
@@ -79,13 +97,13 @@ config = {
 
 #### Hive Metastore
 
-Connects to an Apache Hive Metastore:
+Connects to an Apache Hive Metastore (requires `iceberg-hive-metastore` on the classpath):
 
 ```hocon
 config = {
-  catalog-type = "hive"
-  catalog-uri  = "thrift://hive-metastore:9083"
-  warehouse    = "hdfs://namenode:8020/user/hive/warehouse"
+  catalogType = "hive"
+  catalogUri  = "thrift://hive-metastore:9083"
+  warehouse   = "hdfs://namenode:8020/user/hive/warehouse"
 }
 ```
 
@@ -95,9 +113,9 @@ Connects to AWS Glue Data Catalog (requires `iceberg-aws` on the classpath):
 
 ```hocon
 config = {
-  catalog-type = "glue"
-  warehouse    = "s3://my-bucket/warehouse"
-  catalog-properties {
+  catalogType = "glue"
+  warehouse   = "s3://my-bucket/warehouse"
+  catalogProperties {
     glue.region = "us-east-1"
   }
 }
@@ -105,17 +123,19 @@ config = {
 
 #### Nessie
 
-Connects to a Project Nessie catalog (requires `iceberg-nessie` on the classpath):
+Nessie exposes a standard **Iceberg REST catalog** endpoint at `/iceberg`. Using
+`catalogType = "rest"` is recommended because it relies only on `iceberg-core`
+(always bundled in the Jikkou CLI). The `catalogType = "nessie"` variant requires
+the optional `iceberg-nessie` JAR on the classpath.
 
 ```hocon
+# Recommended: use Nessie's built-in Iceberg REST endpoint
 config = {
-  catalog-type = "nessie"
-  catalog-uri  = "http://nessie:19120/api/v1"
-  warehouse    = "s3://my-bucket/warehouse"
-  catalog-properties {
-    nessie.ref              = "main"
-    nessie.authentication.type = "BEARER"
-    nessie.authentication.token = "${?NESSIE_TOKEN}"
+  catalogType = "rest"
+  catalogUri  = "http://nessie:19120/iceberg"
+  warehouse   = "s3://my-bucket/warehouse"
+  catalogProperties {
+    prefix = "main"   # Nessie branch
   }
 }
 ```
@@ -144,10 +164,11 @@ reconciliation mode explicitly.
 jikkou {
   provider.iceberg {
     enabled = true
+    type = io.streamthoughts.jikkou.iceberg.IcebergExtensionProvider
     config = {
-      catalog-type = "rest"
-      catalog-uri  = "http://localhost:8181"
-      warehouse    = "s3://my-bucket/warehouse"
+      catalogType = "rest"
+      catalogUri  = "http://localhost:8181"
+      warehouse   = "s3://my-bucket/warehouse"
 
       # Reconciliation safety settings
       delete-orphans        = false

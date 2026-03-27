@@ -1,0 +1,44 @@
+---
+# Step 3 — Schema evolution: add two optional columns
+# Jikkou computes the diff and applies only the delta.
+# Existing data is unaffected — Iceberg tracks schema versions.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergTable"
+metadata:
+  name: "analytics.events.page_views"
+spec:
+  schema:
+    columns:
+      - name: "event_id"
+        type: "uuid"
+        required: true
+        doc: "Unique event identifier"
+      - name: "user_id"
+        type: "long"
+        required: true
+        doc: "User who triggered the event"
+      - name: "page_url"
+        type: "string"
+        required: true
+        doc: "URL of the viewed page"
+      - name: "event_time"
+        type: "timestamptz"
+        required: true
+        doc: "Event timestamp (UTC)"
+      # --- NEW columns below ---
+      - name: "duration_ms"
+        type: "long"
+        doc: "Time the user spent on the page (milliseconds)"
+      - name: "referrer"
+        type: "string"
+        doc: "HTTP Referer header value"
+  partitionFields:
+    - sourceColumn: "event_time"
+      transform: "day"
+  sortFields:
+    - column: "event_time"
+      direction: "asc"
+      nullOrder: "last"
+  properties:
+    write.format.default: "parquet"
+    write.parquet.compression-codec: "zstd"

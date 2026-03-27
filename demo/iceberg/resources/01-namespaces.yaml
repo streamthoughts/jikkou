@@ -1,0 +1,21 @@
+---
+# Step 1 — Create namespaces
+# Namespaces are the equivalent of databases/schemas in Iceberg.
+# Nested namespaces use dot notation: "analytics.events" lives inside "analytics".
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergNamespace"
+metadata:
+  name: "analytics"
+spec:
+  properties:
+    owner: "data-team"
+    environment: "demo"
+---
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergNamespace"
+metadata:
+  name: "analytics.events"
+spec:
+  properties:
+    owner: "data-team"
+    team: "platform"

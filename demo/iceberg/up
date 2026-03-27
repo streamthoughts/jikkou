@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR=$(dirname "$(readlink -f $0)")
+
+line() {
+  echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------\n"
+}
+
+banner() {
+    line
+    echo -e "       __   __   __  ___  __  ___   ______    __    __  "
+    echo -e "      |  | |  | |  |/  / |  |/  /  /  __  \  |  |  |  | "
+    echo -e "      |  | |  | |  '  /  |  '  /  |  |  |  | |  |  |  | "
+    echo -e ".--.  |  | |  | |    <   |    <   |  |  |  | |  |  |  | "
+    echo -e "|  \`--'  | |  | |  .  \  |  .  \  |  \`--'  | |  \`--'  | "
+    echo -e " \______/  |__| |__|\__\ |__|\__\  \______/   \______/  "
+    echo ""
+    echo " Powered by Apache Iceberg!"
+    line
+}
+
+banner
+
+echo -e "\n🔐 The Nessie Docker image is hosted on GitHub Container Registry (ghcr.io)."
+echo -e "   If the pull fails, authenticate first:\n"
+echo -e "\texport CR_PAT=<your-github-token>"
+echo -e "\techo \$CR_PAT | docker login ghcr.io -u USERNAME --password-stdin\n"
+
+echo -e "🐳 Starting Iceberg Docker Compose stack (PostgreSQL + Nessie)..."
+(cd "$BASEDIR"; docker compose down --remove-orphans 2>/dev/null || true)
+(cd "$BASEDIR"; docker compose up -d --wait)
+
+line
+
+if ! command -v jikkou &> /dev/null; then
+    echo "⚠  jikkou could not be found. For installation instructions: https://github.com/streamthoughts/jikkou"
+    exit 1
+else
+    echo -e "🚀 $(jikkou --version) is ready."
+fi
+
+echo -e "\n Use the below config to connect Jikkou to the local Iceberg catalogs:"
+echo -e "\t--config-file $BASEDIR/jikkou-iceberg.conf"
+echo -e "\n Or export it as default:"
+echo -e "\texport JIKKOU_CONFIG_FILE=$BASEDIR/jikkou-iceberg.conf"
+
+line
+
+echo -e " Providers:"
+echo -e "\t📦  iceberg-jdbc   (default)  — PostgreSQL JDBC catalog"
+echo -e "\t📦  iceberg-nessie            — Nessie REST catalog  (use --provider iceberg-nessie)"
+
+line
+
+echo -e " Services:"
+echo -e "\t🐘  PostgreSQL (JDBC catalog)       → localhost:5432  db=iceberg  user=iceberg"
+echo -e "\t🌿  Nessie    (REST catalog)        → http://localhost:19120"
+echo -e "\t📁  Warehouse (local filesystem)    → /tmp/iceberg-demo"
+
+line
+
+exit 0
