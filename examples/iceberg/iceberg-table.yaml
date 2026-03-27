@@ -1,0 +1,43 @@
+---
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergTable"
+metadata:
+  name: "analytics.events.page_views"
+spec:
+  schema:
+    columns:
+      - name: "event_id"
+        type: "uuid"
+        required: true
+        doc: "Unique event identifier"
+      - name: "user_id"
+        type: "long"
+        required: true
+        doc: "The user who triggered the event"
+      - name: "session_id"
+        type: "string"
+        doc: "Session identifier"
+      - name: "page_url"
+        type: "string"
+        required: true
+        doc: "URL of the viewed page"
+      - name: "event_time"
+        type: "timestamptz"
+        required: true
+        doc: "Timestamp when the event occurred (UTC)"
+      - name: "duration_ms"
+        type: "long"
+        doc: "Time spent on the page in milliseconds"
+      - name: "referrer"
+        type: "string"
+        doc: "HTTP referrer URL"
+  partitionFields:
+    - sourceColumn: "event_time"
+      transform: "day"
+  sortFields:
+    - column: "event_time"
+      direction: "asc"
+      nullOrder: "nulls_last"
+  properties:
+    write.format.default: "parquet"
+    write.parquet.compression-codec: "zstd"

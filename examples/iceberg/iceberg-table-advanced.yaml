@@ -1,0 +1,61 @@
+---
+# Advanced table example showing bucket partitioning, multiple sort fields,
+# and composite partition transforms.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergTable"
+metadata:
+  name: "analytics.events.orders"
+  annotations:
+    # Allow type promotions and other incompatible schema changes
+    iceberg.jikkou.io/allow-incompatible-changes: "false"
+spec:
+  schema:
+    columns:
+      - name: "order_id"
+        type: "long"
+        required: true
+        doc: "Unique order identifier"
+      - name: "customer_id"
+        type: "long"
+        required: true
+        doc: "Customer who placed the order"
+      - name: "order_date"
+        type: "date"
+        required: true
+        doc: "Date the order was placed"
+      - name: "status"
+        type: "string"
+        required: true
+        doc: "Order status: pending, confirmed, shipped, delivered, cancelled"
+      - name: "total_amount"
+        type: "decimal(18,2)"
+        required: true
+        doc: "Total order amount"
+      - name: "currency"
+        type: "string"
+        doc: "ISO 4217 currency code"
+      - name: "region"
+        type: "string"
+        doc: "Fulfillment region"
+      - name: "updated_at"
+        type: "timestamptz"
+        doc: "Last update timestamp"
+    identifierFields:
+      - "order_id"
+  partitionFields:
+    - sourceColumn: "order_date"
+      transform: "month"
+    - sourceColumn: "customer_id"
+      transform: "bucket[16]"
+  sortFields:
+    - column: "order_date"
+      direction: "desc"
+      nullOrder: "nulls_last"
+    - column: "customer_id"
+      direction: "asc"
+      nullOrder: "nulls_last"
+  properties:
+    write.format.default: "parquet"
+    write.parquet.compression-codec: "zstd"
+    write.metadata.delete-after-commit.enabled: "true"
+    write.metadata.previous-versions-max: "10"

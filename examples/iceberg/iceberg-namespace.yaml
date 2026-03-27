@@ -1,0 +1,18 @@
+---
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergNamespace"
+metadata:
+  name: "analytics"
+spec:
+  properties:
+    owner: "data-team"
+    environment: "production"
+---
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergNamespace"
+metadata:
+  name: "analytics.events"
+spec:
+  properties:
+    owner: "data-team"
+    team: "platform"

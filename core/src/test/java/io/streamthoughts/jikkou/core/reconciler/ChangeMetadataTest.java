@@ -16,4 +16,27 @@ class ChangeMetadataTest {
         Assertions.assertTrue(new ChangeMetadata().getError().isEmpty());
     }
 
+    @Test
+    void shouldIncludeRootCauseInErrorMessage() {
+        // Simulate ExceptionInInitializerError wrapping a real cause
+        RuntimeException root = new RuntimeException("HADOOP_HOME is unset");
+        ExceptionInInitializerError wrapper = new ExceptionInInitializerError(root);
+
+        ChangeMetadata metadata = ChangeMetadata.of(wrapper);
+
+        String message = metadata.getError().orElseThrow().message();
+        Assertions.assertTrue(message.contains("RuntimeException"), "Should mention root cause type: " + message);
+        Assertions.assertTrue(message.contains("HADOOP_HOME is unset"), "Should include root cause message: " + message);
+    }
+
+    @Test
+    void shouldHandleSimpleExceptionWithoutCause() {
+        RuntimeException error = new RuntimeException("Something went wrong");
+
+        ChangeMetadata metadata = ChangeMetadata.of(error);
+
+        String message = metadata.getError().orElseThrow().message();
+        Assertions.assertEquals("RuntimeException: Something went wrong", message);
+    }
+
 }

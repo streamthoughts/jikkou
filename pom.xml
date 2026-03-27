@@ -27,6 +27,7 @@
         <module>providers/jikkou-provider-kafka-connect</module>
         <module>providers/jikkou-provider-aws</module>
         <module>providers/jikkou-provider-confluent</module>
+        <module>providers/jikkou-provider-iceberg</module>
         <module>server/jikkou-api-client</module>
         <module>server/jikkou-api-server</module>
         <module>server/jikkou-api-data</module>
@@ -122,6 +123,7 @@
         <config.version>1.4.3</config.version>
         <annotations.version>26.0.2-1</annotations.version>
         <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
+        <jakarta.activation-api.version>2.1.3</jakarta.activation-api.version>
         <reactor-core.version>3.8.2</reactor-core.version>
         <cel.version>0.9.1</cel.version>
         <avro.version>1.12.1</avro.version>
@@ -141,10 +143,18 @@
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
         <mockito-core.version>5.21.0</mockito-core.version>
         <junit-jupiter.version>1.21.4</junit-jupiter.version>
+        <awssdk.version>2.31.66</awssdk.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${awssdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
@@ -259,6 +269,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jsonschema2pojo</groupId>

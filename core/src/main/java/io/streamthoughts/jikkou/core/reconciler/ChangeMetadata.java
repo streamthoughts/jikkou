@@ -19,8 +19,23 @@ public class ChangeMetadata {
     }
 
     public static ChangeMetadata of(final Throwable error) {
-        String message = String.format("%s: %s", error.getClass().getSimpleName(), error.getLocalizedMessage());
+        Throwable root = getRootCause(error);
+        String message = (root == error)
+                ? String.format("%s: %s", error.getClass().getSimpleName(), error.getLocalizedMessage())
+                : String.format("%s: %s (caused by %s: %s)",
+                        error.getClass().getSimpleName(),
+                        error.getLocalizedMessage(),
+                        root.getClass().getSimpleName(),
+                        root.getLocalizedMessage());
         return new ChangeMetadata(new ChangeError(message, null));
+    }
+
+    private static Throwable getRootCause(final Throwable error) {
+        Throwable cause = error;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 
     private final ChangeError error;
