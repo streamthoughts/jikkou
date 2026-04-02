@@ -1,6 +1,6 @@
 # Jikkou — Apache Iceberg Demo
 
-> Manage Apache Iceberg namespaces and tables as code with Jikkou,
+> Manage Apache Iceberg namespaces, tables, and views as code with Jikkou,
 > targeting multiple catalog backends from a single configuration.
 
 ---
@@ -214,7 +214,47 @@ Data files are kept unless `delete-purge` is enabled.
 
 ---
 
-### Step 9 — Inspect the JDBC catalog in PostgreSQL
+### Step 9 — Create a view
+
+```bash
+cat ./resources/06-view-create.yaml | yq          # inspect
+jikkou apply --files ./resources/06-view-create.yaml
+jikkou get icebergviews | yq                       # verify
+```
+
+The `daily_page_stats` view defines a Spark SQL query that aggregates daily page view
+counts from the `page_views` table. The schema is inferred by the engine — you only
+declare the SQL and the default namespace.
+
+---
+
+### Step 10 — Update a view (add dialect + properties)
+
+```bash
+jikkou diff  --files ./resources/07-view-update.yaml | yq   # preview
+jikkou apply --files ./resources/07-view-update.yaml         # apply
+jikkou get icebergviews --name analytics.events.daily_page_stats | yq
+```
+
+A Trino dialect query is added alongside the existing Spark query, and properties are
+updated. Jikkou creates a new view version — previous versions are retained in the
+catalog's version history.
+
+---
+
+### Step 11 — Delete a view
+
+```bash
+jikkou diff  --files ./resources/08-view-delete.yaml | yq    # preview
+jikkou apply --files ./resources/08-view-delete.yaml          # apply
+jikkou get icebergviews | yq                                  # verify
+```
+
+The `jikkou.io/delete: true` annotation drops the view from the catalog.
+
+---
+
+### Step 12 — Inspect the JDBC catalog in PostgreSQL
 
 ```bash
 # List Iceberg catalog tables
@@ -234,7 +274,7 @@ docker exec -it iceberg-postgres \
 
 ---
 
-### Step 10 — Inspect metadata files
+### Step 12b — Inspect metadata files
 
 ```bash
 find /tmp/iceberg-demo -name "*.json" | sort
@@ -248,7 +288,7 @@ cat $(find /tmp/iceberg-demo -name "*.json" | head -1) | jq .
 > The same resource files work against Nessie — just add
 > **`--provider iceberg-nessie`** to every command.
 
-### Step 11 — Create namespaces
+### Step 13 — Create namespaces
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/01-namespaces.yaml
@@ -257,7 +297,7 @@ jikkou get icebergnamespaces --provider iceberg-nessie | yq
 
 ---
 
-### Step 12 — Create a table
+### Step 14 — Create a table
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/02-table-initial.yaml
@@ -266,7 +306,7 @@ jikkou get icebergtables --provider iceberg-nessie | yq
 
 ---
 
-### Step 13 — Schema evolution
+### Step 15 — Schema evolution
 
 ```bash
 jikkou diff  --provider iceberg-nessie --files ./resources/03-table-evolved.yaml | yq
@@ -275,7 +315,7 @@ jikkou apply --provider iceberg-nessie --files ./resources/03-table-evolved.yaml
 
 ---
 
-### Step 14 — Safe column rename
+### Step 16 — Safe column rename
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/04-table-renamed.yaml
@@ -283,7 +323,7 @@ jikkou apply --provider iceberg-nessie --files ./resources/04-table-renamed.yaml
 
 ---
 
-### Step 15 — Delete a table
+### Step 17 — Delete a table
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/05-table-delete.yaml
@@ -292,7 +332,36 @@ jikkou get icebergtables --provider iceberg-nessie | yq
 
 ---
 
-### Step 16 — Explore the Nessie catalog
+### Step 18 — Create a view
+
+```bash
+jikkou apply --provider iceberg-nessie --files ./resources/06-view-create.yaml
+jikkou get icebergviews --provider iceberg-nessie | yq
+```
+
+---
+
+### Step 19 — Update a view (add dialect + properties)
+
+```bash
+jikkou diff  --provider iceberg-nessie --files ./resources/07-view-update.yaml | yq
+jikkou apply --provider iceberg-nessie --files ./resources/07-view-update.yaml
+jikkou get icebergviews --provider iceberg-nessie --name analytics.events.daily_page_stats | yq
+```
+
+---
+
+### Step 20 — Delete a view
+
+```bash
+jikkou diff  --provider iceberg-nessie --files ./resources/08-view-delete.yaml | yq
+jikkou apply --provider iceberg-nessie --files ./resources/08-view-delete.yaml
+jikkou get icebergviews --provider iceberg-nessie | yq
+```
+
+---
+
+### Step 21 — Explore the Nessie catalog
 
 Nessie provides a REST API with **Git-like** versioning — every schema change is a commit:
 
