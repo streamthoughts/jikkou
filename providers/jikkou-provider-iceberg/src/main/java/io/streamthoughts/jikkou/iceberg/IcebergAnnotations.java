@@ -16,6 +16,7 @@ public final class IcebergAnnotations {
     public static final String NAMESPACE_LOCATION = ICEBERG_JIKKOU_IO + "namespace-location";
     public static final String TABLE_LOCATION = ICEBERG_JIKKOU_IO + "table-location";
     public static final String ALLOW_INCOMPATIBLE_CHANGES = ICEBERG_JIKKOU_IO + "allow-incompatible-changes";
+    public static final String VIEW_LOCATION = ICEBERG_JIKKOU_IO + "view-location";
 
     private IcebergAnnotations() {}
 }

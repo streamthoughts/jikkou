@@ -24,6 +24,10 @@ import io.streamthoughts.jikkou.iceberg.table.IcebergTableCollector;
 import io.streamthoughts.jikkou.iceberg.table.IcebergTableController;
 import io.streamthoughts.jikkou.iceberg.table.models.V1IcebergTable;
 import io.streamthoughts.jikkou.iceberg.table.models.V1IcebergTableList;
+import io.streamthoughts.jikkou.iceberg.view.IcebergViewCollector;
+import io.streamthoughts.jikkou.iceberg.view.IcebergViewController;
+import io.streamthoughts.jikkou.iceberg.view.models.V1IcebergView;
+import io.streamthoughts.jikkou.iceberg.view.models.V1IcebergViewList;
 import io.streamthoughts.jikkou.spi.BaseExtensionProvider;
 import java.util.List;
 import java.util.Map;
@@ -129,10 +133,12 @@ public final class IcebergExtensionProvider extends BaseExtensionProvider {
         // Collectors
         registry.register(IcebergNamespaceCollector.class, IcebergNamespaceCollector::new);
         registry.register(IcebergTableCollector.class, IcebergTableCollector::new);
+        registry.register(IcebergViewCollector.class, IcebergViewCollector::new);
 
         // Controllers
         registry.register(IcebergNamespaceController.class, IcebergNamespaceController::new);
         registry.register(IcebergTableController.class, IcebergTableController::new);
+        registry.register(IcebergViewController.class, IcebergViewController::new);
 
         // Health indicators
         registry.register(IcebergCatalogHealthIndicator.class, IcebergCatalogHealthIndicator::new);
@@ -147,5 +153,8 @@ public final class IcebergExtensionProvider extends BaseExtensionProvider {
         registry.register(V1IcebergTable.class);
         registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(V1IcebergTable.class));
         registry.register(V1IcebergTableList.class);
+        registry.register(V1IcebergView.class);
+        registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(V1IcebergView.class));
+        registry.register(V1IcebergViewList.class);
     }
 }
