@@ -1,0 +1,22 @@
+---
+# Step 6 — Create a view
+# A view aggregating daily page view counts from the page_views table.
+# Views are SQL-based logical definitions — the schema is inferred by the engine.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergView"
+metadata:
+  name: "analytics.events.daily_page_stats"
+spec:
+  queries:
+    - sql: >-
+        SELECT
+            CAST(event_time AS DATE) AS view_date,
+            page_url,
+            COUNT(*) AS view_count,
+            COUNT(DISTINCT user_id) AS unique_users
+        FROM analytics.events.page_views
+        GROUP BY CAST(event_time AS DATE), page_url
+      dialect: "spark"
+  defaultNamespace: "analytics.events"
+  properties:
+    comment: "Daily page view statistics aggregated from raw events"

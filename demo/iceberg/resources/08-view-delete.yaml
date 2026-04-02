@@ -1,0 +1,14 @@
+---
+# Step 8 — Delete a view
+# The jikkou.io/delete annotation drops the view from the catalog.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergView"
+metadata:
+  name: "analytics.events.daily_page_stats"
+  annotations:
+    jikkou.io/delete: "true"
+spec:
+  queries:
+    - sql: "SELECT 1"
+      dialect: "spark"
+  defaultNamespace: "analytics.events"

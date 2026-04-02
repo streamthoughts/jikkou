@@ -1,0 +1,32 @@
+---
+# Step 7 — Update a view
+# Add a Trino dialect query and update properties.
+# Jikkou detects the query/property changes and applies a new view version.
+apiVersion: "iceberg.jikkou.io/v1beta1"
+kind: "IcebergView"
+metadata:
+  name: "analytics.events.daily_page_stats"
+spec:
+  queries:
+    - sql: >-
+        SELECT
+            CAST(event_time AS DATE) AS view_date,
+            page_url,
+            COUNT(*) AS view_count,
+            COUNT(DISTINCT user_id) AS unique_users
+        FROM analytics.events.page_views
+        GROUP BY CAST(event_time AS DATE), page_url
+      dialect: "spark"
+    - sql: >-
+        SELECT
+            CAST(event_time AS DATE) AS view_date,
+            page_url,
+            COUNT(*) AS view_count,
+            COUNT(DISTINCT user_id) AS unique_users
+        FROM analytics.events.page_views
+        GROUP BY CAST(event_time AS DATE), page_url
+      dialect: "trino"
+  defaultNamespace: "analytics.events"
+  properties:
+    comment: "Daily page view statistics — multi-engine support"
+    owner: "analytics-team"
