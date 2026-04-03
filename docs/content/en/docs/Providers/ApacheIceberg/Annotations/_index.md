@@ -42,3 +42,9 @@ collecting existing namespaces and does not need to be specified in resource fil
 Reserved annotation for the storage location of a table. Currently, the table location
 is stored in the `spec.location` field rather than as an annotation. This annotation key
 is defined for future use.
+
+#### `iceberg.jikkou.io/view-location`
+
+Read-only annotation populated by the view collector. Contains the storage location
+of a view as reported by the catalog. This annotation is set automatically when
+collecting existing views and does not need to be specified in resource files.
