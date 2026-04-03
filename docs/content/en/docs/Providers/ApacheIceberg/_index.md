@@ -3,7 +3,7 @@ title: "Apache Iceberg"
 linkTitle: "Apache Iceberg"
 weight: 55
 description: >
-  Learn how to use the Jikkou extension provider for Apache Iceberg — manage Iceberg namespaces and tables as code.
+  Learn how to use the Jikkou extension provider for Apache Iceberg — manage Iceberg namespaces, tables, and views as code.
 ---
 
 {{% pageinfo color="dark-pink" %}}

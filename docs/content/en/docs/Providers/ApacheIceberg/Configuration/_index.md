@@ -142,17 +142,27 @@ config = {
 
 ### Controller Settings
 
-The `IcebergTableController` exposes additional options to control reconciliation behaviour.
+The table and view controllers expose additional options to control reconciliation behaviour.
 These are set inside the provider `config` block.
 
-| Property | Type | Default | Applies to | Description |
-|---|---|---|---|---|
-| `delete-orphans` | Boolean | `false` | Tables only | Drop tables that exist in the catalog but are not defined in any resource |
-| `delete-orphan-columns` | Boolean | `false` | Tables only | Drop columns present in the live table but absent from the spec |
-| `delete-purge` | Boolean | `false` | Tables only | Purge underlying data files when dropping a table (irreversible) |
-| `tables.deletion.exclude` | List\<Pattern\> | `[]` | Tables only | Regex patterns — matching table names are never deleted |
+#### Table Controller
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `delete-orphans` | Boolean | `false` | Drop tables that exist in the catalog but are not defined in any resource |
+| `delete-orphan-columns` | Boolean | `false` | Drop columns present in the live table but absent from the spec |
+| `delete-purge` | Boolean | `false` | Purge underlying data files when dropping a table (irreversible) |
+| `tables.deletion.exclude` | List\<Pattern\> | `[]` | Regex patterns — matching table names are never deleted |
+
+#### View Controller
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `delete-orphans` | Boolean | `false` | Drop views that exist in the catalog but are not defined in any resource |
+| `views.deletion.exclude` | List\<Pattern\> | `[]` | Regex patterns — matching view names are never deleted |
 
 {{% alert title="Note" color="info" %}}
+The `delete-orphans` property applies independently to tables and views.
 The `IcebergNamespaceController` always uses `delete-orphans = false` to prevent accidental
 deletion of namespaces that may still contain tables. To delete a namespace, use the `DELETE`
 reconciliation mode explicitly.
@@ -170,13 +180,16 @@ jikkou {
       catalogUri  = "http://localhost:8181"
       warehouse   = "s3://my-bucket/warehouse"
 
-      # Reconciliation safety settings
+      # Table reconciliation safety settings
       delete-orphans        = false
       delete-orphan-columns = false
       delete-purge          = false
 
       # Never delete tables whose name starts with "audit_"
       tables.deletion.exclude = ["^audit_.*"]
+
+      # Never delete views whose name starts with "v_core_"
+      views.deletion.exclude = ["^v_core_.*"]
     }
   }
 }
