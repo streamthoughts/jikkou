@@ -25,8 +25,7 @@
     <properties>
         <packaging>jar</packaging>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <!-- Micronaut properties -->
-        <micronaut.version>4.10.10</micronaut.version>
+        <!-- Micronaut properties (version inherited from parent) -->
         <micronaut.core.version>4.10.17</micronaut.core.version>
         <micronaut-maven-plugin.version>4.11.6</micronaut-maven-plugin.version>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
