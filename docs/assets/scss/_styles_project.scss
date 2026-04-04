@@ -245,6 +245,23 @@ h1.hero-title {
     margin-bottom: 0;
 }
 
+.hero-rotating-wrapper {
+    display: inline-grid;
+}
+
+.hero-rotating-text {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    white-space: nowrap;
+
+    &.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .hero-gradient-text {
     background: linear-gradient(135deg, $purple-light, $cyan, $pink);
     background-size: 200% 200%;
@@ -252,6 +269,15 @@ h1.hero-title {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: gradientShift 6s ease-in-out infinite;
+
+    &--iceberg {
+        background: linear-gradient(135deg, #b2ebf2, #0097a7, #e0f7fa, #00838f);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 6s ease-in-out infinite;
+    }
 }
 
 @keyframes gradientShift {

@@ -143,6 +143,8 @@
         <mockito-core.version>5.21.0</mockito-core.version>
         <junit-jupiter.version>1.21.4</junit-jupiter.version>
         <awssdk.version>2.31.66</awssdk.version>
+        <!-- Micronaut (centralized - used by cli and server modules) -->
+        <micronaut.version>4.10.10</micronaut.version>
     </properties>
 
     <dependencyManagement>
