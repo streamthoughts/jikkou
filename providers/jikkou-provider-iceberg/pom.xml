@@ -22,7 +22,7 @@
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
         <iceberg.version>1.10.1</iceberg.version>
-        <hadoop.version>3.4.3</hadoop.version>
+        <hadoop.version>3.5.0</hadoop.version>
     </properties>
 
     <dependencies>
@@ -122,11 +122,17 @@
             <artifactId>sts</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Override transitive aircompressor (CVE-2025-67721) -->
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>aircompressor</artifactId>
+            <version>2.0.3</version>
+        </dependency>
         <!-- PostgreSQL JDBC driver for Iceberg JDBC catalog -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
+            <version>42.7.7</version>
             <scope>runtime</scope>
         </dependency>
         <!-- Lombok (annotation processing + compile) -->

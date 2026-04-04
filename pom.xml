@@ -117,7 +117,6 @@
         <kafka.version>3.9.1</kafka.version>
         <picocli.version>4.7.7</picocli.version>
         <jackson.version>2.18.6</jackson.version>
-        <jackson-annotations.version>2.18.6</jackson-annotations.version>
         <jinjava.version>2.8.3</jinjava.version>
         <lombok.version>1.18.42</lombok.version>
         <config.version>1.4.3</config.version>
@@ -128,7 +127,7 @@
         <cel.version>0.9.1</cel.version>
         <avro.version>1.12.1</avro.version>
         <lz4.version>1.8.1</lz4.version>
-        <netty.version>4.2.10.Final</netty.version>
+        <netty.version>4.2.11.Final</netty.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.31</logback.version>
@@ -167,8 +166,15 @@
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
-                <artifactId>netty-codec-http2</artifactId>
+                <artifactId>netty-bom</artifactId>
                 <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>3.8.6</version>
             </dependency>
             <dependency>
                 <groupId>org.graalvm.sdk</groupId>
@@ -201,34 +207,16 @@
                 <version>${protobuf-java.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
                 <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson.version}</version>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.validation</groupId>
