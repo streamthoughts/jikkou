@@ -12,7 +12,6 @@ on:
 env:
   JAVA_VERSION: '25'
   JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '25.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
 
 permissions:
@@ -57,6 +56,13 @@ jobs:
         with:
           distribution: ${{ env.JAVA_DISTRO }}
           java-version: ${{ env.JAVA_VERSION }}
+
+      - name: 'Cache Maven packages'
+        uses: actions/cache@v5
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
 
       - name: 'Build Native Image (Linux)'
         if: ${{ runner.os == 'Linux' && matrix.setup == 'graalvm' }}

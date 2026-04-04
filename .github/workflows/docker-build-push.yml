@@ -14,7 +14,6 @@ on:
 env:
   JAVA_VERSION: '25'
   JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '25.0.1'
   GRAAL_DISTRIBUTION: 'graalvm-community'
 
 permissions:
@@ -32,12 +31,19 @@ jobs:
       - name: 'Set up GraalVM'
         uses: graalvm/setup-graalvm@v1
         with:
-          #  version: ${{ env.GRAAL_VERSION }}
           java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.GRAAL_DISTRIBUTION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           components: 'native-image'
           native-image-job-reports: 'true'
           native-image-musl: 'true'
+
+      - name: 'Cache Maven packages'
+        uses: actions/cache@v5
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
 
       - name: 'Login to DockerHub'
         uses: docker/login-action@v4
@@ -103,6 +109,7 @@ jobs:
         with:
           distribution: ${{ env.JAVA_DISTRO }}
           java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
 
       - name: 'Login to DockerHub'
         uses: docker/login-action@v4
@@ -168,6 +175,7 @@ jobs:
         with:
           distribution: ${{ env.JAVA_DISTRO }}
           java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
 
       - name: 'Login to DockerHub'
         uses: docker/login-action@v4
