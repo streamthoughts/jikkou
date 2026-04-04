@@ -143,13 +143,6 @@
             <artifactId>jikkou-provider-iceberg</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- PostgreSQL JDBC driver for Iceberg JDBC catalog -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
-            <scope>runtime</scope>
-        </dependency>
         <!-- END dependencies for Jikkou Extension Providers -->
 
         <!-- START dependencies for Micronaut/Picocli -->
