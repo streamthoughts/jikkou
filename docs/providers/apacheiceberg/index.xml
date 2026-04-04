@@ -1,0 +1,293 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Apache Iceberg</title><link>https://www.jikkou.io/docs/providers/apacheiceberg/</link><description>Recent content in Apache Iceberg on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/apacheiceberg/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Configuration</title><link>https://www.jikkou.io/docs/providers/apacheiceberg/configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/apacheiceberg/configuration/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the configuration properties for the Apache Iceberg extension.&lt;/p>
+&lt;/div>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The Apache Iceberg extension connects to an Iceberg catalog. You configure it through the Jikkou
+client configuration property &lt;code>jikkou.provider.iceberg&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Example (JDBC catalog with PostgreSQL):&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+provider.iceberg {
+enabled = true
+type = io.streamthoughts.jikkou.iceberg.IcebergExtensionProvider
+config = {
+# Required — type of Iceberg catalog.
+# Accepted values: rest, hive, jdbc, glue, nessie, hadoop
+catalogType = &amp;#34;jdbc&amp;#34;
+# The catalog name used to identify this catalog instance.
+catalogName = &amp;#34;default&amp;#34;
+# The URI of the catalog endpoint (REST URL, Hive Metastore URI, JDBC URL, etc.)
+catalogUri = &amp;#34;jdbc:postgresql://localhost:5432/iceberg&amp;#34;
+# The warehouse root location (e.g., local path, S3 bucket path, HDFS path)
+warehouse = &amp;#34;/tmp/iceberg-warehouse&amp;#34;
+# Extra catalog-specific properties passed directly to CatalogUtil.buildIcebergCatalog()
+catalogProperties {
+jdbc.user = &amp;#34;iceberg&amp;#34;
+jdbc.password = &amp;#34;iceberg&amp;#34;
+}
+# Enable verbose debug logging for catalog operations (default: false)
+debugLoggingEnabled = false
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;h3 id="configuration-properties">Configuration Properties&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Property&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Required&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>catalogType&lt;/code>&lt;/td>
+&lt;td>String&lt;/td>
+&lt;td>&lt;strong>yes&lt;/strong>&lt;/td>
+&lt;td>—&lt;/td>
+&lt;td>Iceberg catalog type: &lt;code>rest&lt;/code>, &lt;code>hive&lt;/code>, &lt;code>jdbc&lt;/code>, &lt;code>glue&lt;/code>, &lt;code>nessie&lt;/code>, &lt;code>hadoop&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>catalogName&lt;/code>&lt;/td>
+&lt;td>String&lt;/td>
+&lt;td>no&lt;/td>
+&lt;td>&lt;code>default&lt;/code>&lt;/td>
+&lt;td>The catalog instance name&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>catalogUri&lt;/code>&lt;/td>
+&lt;td>String&lt;/td>
+&lt;td>no&lt;/td>
+&lt;td>—&lt;/td>
+&lt;td>Catalog endpoint URI (REST API URL, Hive Metastore thrift URI, JDBC URL, Nessie server URL)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>warehouse&lt;/code>&lt;/td>
+&lt;td>String&lt;/td>
+&lt;td>no&lt;/td>
+&lt;td>—&lt;/td>
+&lt;td>Warehouse root location (e.g., &lt;code>s3://bucket/warehouse&lt;/code>, &lt;code>/tmp/iceberg&lt;/code>)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>catalogProperties&lt;/code>&lt;/td>
+&lt;td>Map&lt;/td>
+&lt;td>no&lt;/td>
+&lt;td>—&lt;/td>
+&lt;td>Additional catalog properties forwarded verbatim to the Iceberg &lt;code>CatalogUtil&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>debugLoggingEnabled&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>no&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Enable debug-level logging for catalog operations&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="catalog-types">Catalog Types&lt;/h3>
+&lt;h4 id="jdbc-catalog-postgresql">JDBC Catalog (PostgreSQL)&lt;/h4>
+&lt;p>Stores catalog metadata (namespaces, table specs) in a relational database.
+The PostgreSQL JDBC driver is bundled in the Jikkou CLI distribution.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">config = {
+catalogType = &amp;#34;jdbc&amp;#34;
+catalogUri = &amp;#34;jdbc:postgresql://localhost:5432/iceberg&amp;#34;
+warehouse = &amp;#34;/tmp/iceberg-warehouse&amp;#34;
+catalogProperties {
+jdbc.user = &amp;#34;iceberg&amp;#34;
+jdbc.password = &amp;#34;iceberg&amp;#34;
+}
+}
+&lt;/code>&lt;/pre>&lt;h4 id="rest-catalog">REST Catalog&lt;/h4>
+&lt;p>Connects to any Iceberg REST Catalog API (e.g., Polaris, Gravitino, Unity Catalog):&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">config = {
+catalogType = &amp;#34;rest&amp;#34;
+catalogUri = &amp;#34;https://polaris.example.com/api/catalog&amp;#34;
+warehouse = &amp;#34;s3://my-bucket/warehouse&amp;#34;
+catalogProperties {
+rest.signing-name = &amp;#34;execute-api&amp;#34;
+rest.signing-region = &amp;#34;us-east-1&amp;#34;
+}
+}
+&lt;/code>&lt;/pre>&lt;h4 id="hive-metastore">Hive Metastore&lt;/h4>
+&lt;p>Connects to an Apache Hive Metastore (requires &lt;code>iceberg-hive-metastore&lt;/code> on the classpath):&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">config = {
+catalogType = &amp;#34;hive&amp;#34;
+catalogUri = &amp;#34;thrift://hive-metastore:9083&amp;#34;
+warehouse = &amp;#34;hdfs://namenode:8020/user/hive/warehouse&amp;#34;
+}
+&lt;/code>&lt;/pre>&lt;h4 id="aws-glue">AWS Glue&lt;/h4>
+&lt;p>Connects to AWS Glue Data Catalog (requires &lt;code>iceberg-aws&lt;/code> on the classpath):&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">config = {
+catalogType = &amp;#34;glue&amp;#34;
+warehouse = &amp;#34;s3://my-bucket/warehouse&amp;#34;
+catalogProperties {
+glue.region = &amp;#34;us-east-1&amp;#34;
+}
+}
+&lt;/code>&lt;/pre>&lt;h4 id="nessie">Nessie&lt;/h4>
+&lt;p>Nessie exposes a standard &lt;strong>Iceberg REST catalog&lt;/strong> endpoint at &lt;code>/iceberg&lt;/code>. Using
+&lt;code>catalogType = &amp;quot;rest&amp;quot;&lt;/code> is recommended because it relies only on &lt;code>iceberg-core&lt;/code>
+(always bundled in the Jikkou CLI). The &lt;code>catalogType = &amp;quot;nessie&amp;quot;&lt;/code> variant requires
+the optional &lt;code>iceberg-nessie&lt;/code> JAR on the classpath.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon"># Recommended: use Nessie&amp;#39;s built-in Iceberg REST endpoint
+config = {
+catalogType = &amp;#34;rest&amp;#34;
+catalogUri = &amp;#34;http://nessie:19120/iceberg&amp;#34;
+warehouse = &amp;#34;s3://my-bucket/warehouse&amp;#34;
+catalogProperties {
+prefix = &amp;#34;main&amp;#34; # Nessie branch
+}
+}
+&lt;/code>&lt;/pre>&lt;h3 id="controller-settings">Controller Settings&lt;/h3>
+&lt;p>The table and view controllers expose additional options to control reconciliation behaviour.
+These are set inside the provider &lt;code>config&lt;/code> block.&lt;/p>
+&lt;h4 id="table-controller">Table Controller&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Property&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>delete-orphans&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Drop tables that exist in the catalog but are not defined in any resource&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>delete-orphan-columns&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Drop columns present in the live table but absent from the spec&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>delete-purge&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Purge underlying data files when dropping a table (irreversible)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tables.deletion.exclude&lt;/code>&lt;/td>
+&lt;td>List&amp;lt;Pattern&amp;gt;&lt;/td>
+&lt;td>&lt;code>[]&lt;/code>&lt;/td>
+&lt;td>Regex patterns — matching table names are never deleted&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="view-controller">View Controller&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Property&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>delete-orphans&lt;/code>&lt;/td>
+&lt;td>Boolean&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Drop views that exist in the catalog but are not defined in any resource&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>views.deletion.exclude&lt;/code>&lt;/td>
+&lt;td>List&amp;lt;Pattern&amp;gt;&lt;/td>
+&lt;td>&lt;code>[]&lt;/code>&lt;/td>
+&lt;td>Regex patterns — matching view names are never deleted&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+The &lt;code>delete-orphans&lt;/code> property applies independently to tables and views.
+The &lt;code>IcebergNamespaceController&lt;/code> always uses &lt;code>delete-orphans = false&lt;/code> to prevent accidental
+deletion of namespaces that may still contain tables. To delete a namespace, use the &lt;code>DELETE&lt;/code>
+reconciliation mode explicitly.
+&lt;/div>
+&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+provider.iceberg {
+enabled = true
+type = io.streamthoughts.jikkou.iceberg.IcebergExtensionProvider
+config = {
+catalogType = &amp;#34;rest&amp;#34;
+catalogUri = &amp;#34;http://localhost:8181&amp;#34;
+warehouse = &amp;#34;s3://my-bucket/warehouse&amp;#34;
+# Table reconciliation safety settings
+delete-orphans = false
+delete-orphan-columns = false
+delete-purge = false
+# Never delete tables whose name starts with &amp;#34;audit_&amp;#34;
+tables.deletion.exclude = [&amp;#34;^audit_.*&amp;#34;]
+# Never delete views whose name starts with &amp;#34;v_core_&amp;#34;
+views.deletion.exclude = [&amp;#34;^v_core_.*&amp;#34;]
+}
+}
+}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Resources</title><link>https://www.jikkou.io/docs/providers/apacheiceberg/resources/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/apacheiceberg/resources/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find the list of resources supported by the extensions for Apache Iceberg.&lt;/p>
+&lt;/div>
+&lt;h2 id="iceberg-resources">Iceberg Resources&lt;/h2>
+&lt;p>The Apache Iceberg extension provides the following resource types:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Resource&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>IcebergNamespace&lt;/code>&lt;/td>
+&lt;td>Manage namespaces (databases) in an Iceberg catalog&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>IcebergTable&lt;/code>&lt;/td>
+&lt;td>Manage tables with schema evolution, partitioning, and sort order&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>IcebergView&lt;/code>&lt;/td>
+&lt;td>Manage SQL views backed by one or more dialect-specific queries&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Annotations</title><link>https://www.jikkou.io/docs/providers/apacheiceberg/annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/apacheiceberg/annotations/</guid><description>
+&lt;div class="pageinfo pageinfo-primary">
+&lt;p>Here, you will find information about the annotations provided by the Apache Iceberg extension for Jikkou.&lt;/p>
+&lt;/div>
+&lt;h3 id="list-of-built-in-annotations">List of built-in annotations&lt;/h3>
+&lt;h4 id="icebergjikkouioallow-incompatible-changes">&lt;code>iceberg.jikkou.io/allow-incompatible-changes&lt;/code>&lt;/h4>
+&lt;p>Controls whether incompatible schema changes are allowed when reconciling an &lt;code>IcebergTable&lt;/code>.&lt;/p>
+&lt;p>By default, Jikkou rejects type changes that cannot be safely promoted (for example, changing
+a column from &lt;code>string&lt;/code> to &lt;code>int&lt;/code>). Setting this annotation to &lt;code>&amp;quot;true&amp;quot;&lt;/code> on a specific table
+resource lifts that restriction for that resource only.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">annotations&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">iceberg.jikkou.io/allow-incompatible-changes&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;true&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Warning&lt;/h4>
+Incompatible schema changes may break existing readers. Only enable this annotation when you
+are certain all consumers of the table can handle the new schema.
+&lt;/div>
+&lt;h4 id="icebergjikkouionamespace-location">&lt;code>iceberg.jikkou.io/namespace-location&lt;/code>&lt;/h4>
+&lt;p>Read-only annotation populated by the namespace collector. Contains the storage location
+of a namespace as reported by the catalog. This annotation is set automatically when
+collecting existing namespaces and does not need to be specified in resource files.&lt;/p>
+&lt;h4 id="icebergjikkouiotable-location">&lt;code>iceberg.jikkou.io/table-location&lt;/code>&lt;/h4>
+&lt;p>Reserved annotation for the storage location of a table. Currently, the table location
+is stored in the &lt;code>spec.location&lt;/code> field rather than as an annotation. This annotation key
+is defined for future use.&lt;/p>
+&lt;h4 id="icebergjikkouioview-location">&lt;code>iceberg.jikkou.io/view-location&lt;/code>&lt;/h4>
+&lt;p>Read-only annotation populated by the view collector. Contains the storage location
+of a view as reported by the catalog. This annotation is set automatically when
+collecting existing views and does not need to be specified in resource files.&lt;/p></description></item></channel></rss>

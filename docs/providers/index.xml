@@ -22,6 +22,10 @@
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the &lt;a href="https://docs.aws.amazon.com">AWS&lt;/a> extensions (Jikkou v0.36).&lt;/p>
 &lt;/div>
+&lt;p>More information:&lt;/p></description></item><item><title>Docs: Apache Iceberg</title><link>https://www.jikkou.io/docs/providers/apacheiceberg/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/apacheiceberg/</guid><description>
+&lt;div class="pageinfo pageinfo-dark-pink">
+&lt;p>Here, you will find information to use the Apache Iceberg extensions.&lt;/p>
+&lt;/div>
 &lt;p>More information:&lt;/p></description></item><item><title>Docs: Confluent Cloud</title><link>https://www.jikkou.io/docs/providers/confluent-cloud/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/confluent-cloud/</guid><description>
 &lt;div class="pageinfo pageinfo-primary">
 &lt;p>Here, you will find information to use the &lt;a href="https://confluent.cloud/">Confluent Cloud&lt;/a> extensions.&lt;/p>
