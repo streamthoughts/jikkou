@@ -16,6 +16,7 @@
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
         <reactor-core.version>3.6.6</reactor-core.version>
+        <jacoco.check.minimum>0.50</jacoco.check.minimum>
     </properties>
 
     <dependencies>
@@ -23,6 +24,12 @@
             <groupId>io.streamthoughts</groupId>
             <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <version>0.21.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
