@@ -1,5 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Authentication</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/</link><description>Recent content in Authentication on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Basic Auth</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/basic_auth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/basic_auth/</guid><description>
-&lt;p>Jikkou API Server can be secured using a &lt;strong>Basic HTTP Authentication Scheme&lt;/strong>.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Authentication on Jikkou</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/</link><description>Recent content in Authentication on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/index.xml" rel="self" type="application/rss+xml"/><item><title>Basic Auth</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/basic_auth/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/basic_auth/</guid><description>&lt;p>Jikkou API Server can be secured using a &lt;strong>Basic HTTP Authentication Scheme&lt;/strong>.&lt;/p>
 &lt;p>&lt;a href="https://datatracker.ietf.org/doc/html/rfc7617">RFC7617&lt;/a> defines the &amp;ldquo;Basic&amp;rdquo; Hypertext Transfer Protocol (HTTP)
 authentication scheme, which transmits credentials as user-id/password pairs, encoded using Base64.&lt;/p>
 &lt;p>Basic Authentication should be used over a secured connection using HTTPS.&lt;/p>
@@ -11,39 +10,7 @@ authentication scheme, which transmits credentials as user-id/password pairs, en
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">security&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">enabled&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step2-configure-the-list-of-users">Step2: Configure the list of users&lt;/h3>
-&lt;p>The list of &lt;code>username/password&lt;/code> authorized to connect to the API server can be configured as follows:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="c"># ./etc/application.yaml&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">jikkou&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">security&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">basic-auth&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">username&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;admin&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">password&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;{noop}password&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For production environment, &lt;em>password&lt;/em> must not be configured in plaintext. &lt;em>Password&lt;/em> can be passed encoded
-in &lt;code>bcrypt&lt;/code>, &lt;code>scrypt&lt;/code>, &lt;code>argon2&lt;/code>, and &lt;code>sha256&lt;/code>.&lt;/p>
-&lt;h4 id="example">Example&lt;/h4>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">echo&lt;/span> -n password &lt;span class="p">|&lt;/span> sha256sum
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="c"># ./etc/application.yaml&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">jikkou&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">security&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">basic-auth&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">username&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;admin&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">password&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;{sha256}5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step3-validate-authentication">Step3: Validate authentication&lt;/h3>
-&lt;p>&lt;strong>Encode credentials&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">echo&lt;/span> -n &lt;span class="s2">&amp;#34;admin:password&amp;#34;&lt;/span> &lt;span class="p">|&lt;/span> base64
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">YWRtaW46cGFzc3dvcmQ&lt;/span>&lt;span class="o">=&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Send
-request&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">curl -IX GET http://localhost:28082/apis/kafka.jikkou.io/v1beta2/kafkabrokers &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>-H &lt;span class="s2">&amp;#34;Accept: application/json&amp;#34;&lt;/span> &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>-H &lt;span class="s2">&amp;#34;Authorization: Basic YWRtaW46cGFzc3dvcmQ&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">HTTP/1.1 &lt;span class="m">200&lt;/span> OK
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Content-Type: application/hal+json
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">content-length: &lt;span class="m">576&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: JWT</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/jwt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/jwt/</guid><description>
-&lt;p>Jikkou API Server can be secured using &lt;strong>JWT (JSON Web Token) Authentication&lt;/strong>.&lt;/p>
+&lt;p>The list of &lt;code>username/password&lt;/code> authorized to connect to the API server can be configured as follows:&lt;/p></description></item><item><title>JWT</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/jwt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/jwt/</guid><description>&lt;p>Jikkou API Server can be secured using &lt;strong>JWT (JSON Web Token) Authentication&lt;/strong>.&lt;/p>
 &lt;h2 id="configure-jwt">Configure JWT&lt;/h2>
 &lt;h3 id="step1-set-jwt-signature-secret">Step1: Set JWT signature secret&lt;/h3>
 &lt;p>Add the following configuration to your server configuration.&lt;/p>
@@ -64,15 +31,4 @@ request&lt;/strong>&lt;/p>
 &lt;li>&lt;strong>&amp;lt;2&amp;gt;&lt;/strong> Change this to your own secret and keep it safe (do not store this in your VCS).&lt;/li>
 &lt;/ul>
 &lt;h3 id="step2-generate-a-token">Step2: Generate a Token&lt;/h3>
-&lt;p>Generate a valid JSON Web Token on &lt;code>https://jwt.io/&lt;/code> using your secret.&lt;/p>
-&lt;p>Example with &lt;code>pleaseChangeThisSecretForANewOne&lt;/code> as signature secret.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">TOKEN&lt;/span>&lt;span class="o">=&lt;/span>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.6cD3MnZmX2xyEAWyh-GgGD11TX8SmvmHVLknuAIJ8yE
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="step3-validate-authentication">Step3: Validate authentication&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ curl -I -X GET http://localhost:28082/apis/kafka.jikkou.io/v1beta2/kafkabrokers &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>-H &lt;span class="s2">&amp;#34;Accept: application/json&amp;#34;&lt;/span> &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>-H &lt;span class="s2">&amp;#34;Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.6cD3MnZmX2xyEAWyh-GgGD11TX8SmvmHVLknuAIJ8yE&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">HTTP/1.1 &lt;span class="m">200&lt;/span> OK
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Content-Type: application/hal+json
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">content-length: &lt;span class="m">576&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+&lt;p>Generate a valid JSON Web Token on &lt;code>https://jwt.io/&lt;/code> using your secret.&lt;/p></description></item></channel></rss>

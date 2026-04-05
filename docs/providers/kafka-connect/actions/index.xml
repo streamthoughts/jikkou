@@ -1,8 +1,9 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Actions</title><link>https://www.jikkou.io/docs/providers/kafka-connect/actions/</link><description>Recent content in Actions on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/kafka-connect/actions/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaConnectRestartConnectors</title><link>https://www.jikkou.io/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</guid><description>
-&lt;div class="pageinfo pageinfo-info">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Actions on Jikkou</title><link>https://www.jikkou.io/docs/providers/kafka-connect/actions/</link><description>Recent content in Actions on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/kafka-connect/actions/index.xml" rel="self" type="application/rss+xml"/><item><title>KafkaConnectRestartConnectors</title><link>https://www.jikkou.io/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaConnectRestartConnectors&lt;/code> action allows a user to restart all or just the
 failed Connector and Task instances for one or multiple named connectors.&lt;/p>
+
 &lt;/div>
+
 &lt;h2 id="usage-cli">Usage (CLI)&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">Usage:
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
@@ -42,46 +43,4 @@ failed Connector and Task instances for one or multiple named connectors.&lt;/p>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="examples">Examples&lt;/h3>
 &lt;h3 id="restart-all-connectors-for-all-kafka-connect-clusters">Restart all connectors for all Kafka Connect clusters.&lt;/h3>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou action kafkaconnectrestartconnectors execute
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">---
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kind: &amp;#34;ApiActionResultSet&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">apiVersion: &amp;#34;core.jikkou.io/v1&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">metadata:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> labels: {}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> annotations: {}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">results:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">- status: &amp;#34;SUCCEEDED&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> data:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> apiVersion: &amp;#34;kafka.jikkou.io/v1beta1&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> kind: &amp;#34;KafkaConnector&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> metadata:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> name: &amp;#34;local-file-sink&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> labels:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> kafka.jikkou.io/connect-cluster: &amp;#34;my-connect-cluster&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> annotations: {}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> spec:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> connectorClass: &amp;#34;FileStreamSink&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> tasksMax: 1
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> config:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> file: &amp;#34;/tmp/test.sink.txt&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> topics: &amp;#34;connect-test&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> state: &amp;#34;RUNNING&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> status:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> connectorStatus:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> name: &amp;#34;local-file-sink&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> connector:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> state: &amp;#34;RUNNING&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> workerId: &amp;#34;connect:8083&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> tasks:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - id: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> state: &amp;#34;RUNNING&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> workerId: &amp;#34;connect:8083&amp;#34;
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="restart-all-connectors-with-a-failed-status-on-all-kafka-connect-clusters">Restart all connectors with a FAILED status on all Kafka Connect clusters.&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou action kafkaconnectrestartconnectors execute &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--only-failed
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="restart-specific-connector-and-tasks-for-on-kafka-connect-cluster">Restart specific connector and tasks for on Kafka Connect cluster&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou action kafkaconnectrestartconnectors execute &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--cluster-name my-connect-cluster
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">--connector-name local-file-sink &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--include-tasks
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item></channel></rss>

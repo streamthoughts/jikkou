@@ -1,8 +1,9 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – kafka</title><link>https://www.jikkou.io/tags/kafka/</link><description>Recent content in kafka on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/tags/kafka/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: KafkaConsumerGroupsResetOffsets</title><link>https://www.jikkou.io/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</guid><description>
-&lt;div class="pageinfo pageinfo-info">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka on Jikkou</title><link>https://www.jikkou.io/tags/kafka/</link><description>Recent content in Kafka on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/tags/kafka/index.xml" rel="self" type="application/rss+xml"/><item><title>KafkaConsumerGroupsResetOffsets</title><link>https://www.jikkou.io/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/actions/kafkaconsumergroupsresetoffsets/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaConsumerGroupsResetOffsets&lt;/code> action allows resetting offsets of consumer group.
 It supports one consumer group at the time, and group should be in EMPTY state.&lt;/p>
+
 &lt;/div>
+
 &lt;h2 id="usage-cli">Usage (CLI)&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">Usage:
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
@@ -55,52 +56,4 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--group my-group &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--topic &lt;span class="nb">test&lt;/span> &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--to-earliest
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">---
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kind: &amp;#34;ApiActionResultSet&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">apiVersion: &amp;#34;core.jikkou.io/v1&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">metadata:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> labels: {}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> annotations:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> configs.jikkou.io/to-earliest: &amp;#34;true&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> configs.jikkou.io/group: &amp;#34;my-group&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> configs.jikkou.io/dry-run: &amp;#34;false&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> configs.jikkou.io/topic:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - &amp;#34;test&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">results:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">- status: &amp;#34;SUCCEEDED&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> errors: []
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> data:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> apiVersion: &amp;#34;kafka.jikkou.io/v1beta1&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> kind: &amp;#34;KafkaConsumerGroup&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> metadata:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> name: &amp;#34;my-group&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> labels:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> kafka.jikkou.io/is-simple-consumer: false
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> annotations: {}
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> status:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> state: &amp;#34;EMPTY&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> members: []
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> offsets:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - topic: &amp;#34;test&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> partition: 1
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> offset: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - topic: &amp;#34;test&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> partition: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> offset: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - topic: &amp;#34;test&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> partition: 2
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> offset: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - topic: &amp;#34;--test&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> partition: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> offset: 0
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> coordinator:
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> id: &amp;#34;101&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> host: &amp;#34;localhost&amp;#34;
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> port: 9092
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="reset-all-consumer-groups-to-the-earliest-offsets">Reset All Consumer Groups to the earliest offsets&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou action kafkaconsumergroupresetoffsets execute &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--all &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--topic &lt;span class="nb">test&lt;/span> &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--to-earliest
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item></channel></rss>

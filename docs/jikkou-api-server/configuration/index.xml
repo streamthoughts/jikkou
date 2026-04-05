@@ -1,5 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Configurations</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/</link><description>Recent content in Configurations on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-api-server/configuration/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: API Server</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/server_configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/server_configuration/</guid><description>
-&lt;h2 id="running-server-on-a-specific-port">Running Server on a Specific Port&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Configurations on Jikkou</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/</link><description>Recent content in Configurations on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-api-server/configuration/index.xml" rel="self" type="application/rss+xml"/><item><title>API Server</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/server_configuration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/server_configuration/</guid><description>&lt;h2 id="running-server-on-a-specific-port">Running Server on a Specific Port&lt;/h2>
 &lt;p>By default, the server runs on port &lt;code>28082&lt;/code>. However, you can set the server to run on a specific port:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="c"># ./etc/application.yaml&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">micronaut&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
@@ -11,106 +10,39 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">port&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">80&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Port used to access Health endpoints&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="enabling-specific-extension-providers">Enabling Specific Extension Providers&lt;/h2>
 &lt;p>By default, the server is configured to run only with the &lt;code>core&lt;/code> and &lt;code>kafka&lt;/code> extension providers.
-However, you can enable (or disable) additional providers:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">jikkou&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># The providers&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">provider&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Core&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">core&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">enabled&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">io.streamthoughts.jikkou.core.CoreExtensionProvider&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Default configuration for Apache Kafka&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">kafka&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">enabled&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">io.streamthoughts.jikkou.kafka.KafkaExtensionProvider&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">client&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">bootstrap.servers&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">localhost:9092&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Default configuration for Schema Registry&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">schemaregistry&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">enabled&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">url&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">http://localhost:8081&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Default configuration for Kafka Connect&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">kafkaconnect&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">enabled&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">clusters&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">localhost&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">url&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">http://localhost:8083&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Authentication</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/authentication/</guid><description>
-&lt;h2 id="enable-security">Enable Security&lt;/h2>
-&lt;p>To enable secure access to the API Server:&lt;/p>
-&lt;h3 id="configuration-file">Configuration File&lt;/h3>
-&lt;p>Update the configuration file (i.e., &lt;code>application.yaml&lt;/code>) of the server with:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">micronaut&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">security&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">enabled&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="environment-variable">Environment Variable&lt;/h3>
-&lt;p>As an alternative, you can set the following environment variable &lt;code>MICRONAUT_SECUTIRY_ENABLED=true&lt;/code>.&lt;/p>
-&lt;div class="alert alert-info" role="alert">
-&lt;h4 class="alert-heading">Note&lt;/h4>
-For more information about how Micronaut binds environment variables and configuration property: &lt;a href="https://docs.micronaut.io/latest/guide/index.html#_property_value_binding)">https://docs.micronaut.io/latest/guide/index.html#_property_value_binding)&lt;/a>.
-&lt;/div>
-&lt;h2 id="unauthorized-access">Unauthorized Access&lt;/h2>
-&lt;p>When accessing a secured path, the server will return the following response if access is not authorized:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;message&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;Unauthorized&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;errors&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">[&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;status&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">401&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;error_code&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;authentication_user_unauthorized&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;message&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;Unauthorized&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: CLI Proxy Mode</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/cli_proxy_mode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/cli_proxy_mode/</guid><description>
-&lt;h2 id="configuration">Configuration&lt;/h2>
+However, you can enable (or disable) additional providers:&lt;/p></description></item><item><title>CLI Proxy Mode</title><link>https://www.jikkou.io/docs/jikkou-api-server/configuration/cli_proxy_mode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-api-server/configuration/cli_proxy_mode/</guid><description>&lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;h3 id="step-1-enable-proxy-mode">Step 1: Enable Proxy Mode&lt;/h3>
 &lt;p>To enable proxy mode so that the CLI communicates directly with your API Server, add the following parameters to your
 configuration:&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
-# Proxy Configuration
-proxy {
-# Specify whether proxy mode is enabled (default: false).
-enabled = true
-# URL of the API Server
-url = &amp;#34;http://localhost:28082&amp;#34;
-# Specifcy whether HTTP request debugging should be enabled (default: false)
-debugging = false
-# The connect timeout in millisecond (if not configured used ` default-timeout` ).
-connect-timeout = 10000
-# The read timeout in millisecond (if not configured used ` default-timeout` ).
-read-timeout = 10000
-# The write timeout in millisecond (if not configured used ` default-timeout` ).
-write-timeout = 10000
-# The default timeout (i.e., for read/connect) in millisecond (default: 10000)
-default-timeout = 10000
-# Security settings to authenticate to the API Server.
-security = {
-# For Token based Authentication.
-# access-token = &amp;#34;&amp;#34;
-# For Username/Password Basic-Authentication.
-# basic-auth = {
-# username = &amp;#34;&amp;#34;
-# password = &amp;#34;&amp;#34;
-# }
-}
-}
+ # Proxy Configuration
+ proxy {
+ # Specify whether proxy mode is enabled (default: false).
+ enabled = true
+ # URL of the API Server
+ url = &amp;#34;http://localhost:28082&amp;#34;
+ # Specifcy whether HTTP request debugging should be enabled (default: false)
+ debugging = false
+ # The connect timeout in millisecond (if not configured used ` default-timeout` ).
+ connect-timeout = 10000
+ # The read timeout in millisecond (if not configured used ` default-timeout` ).
+ read-timeout = 10000
+ # The write timeout in millisecond (if not configured used ` default-timeout` ).
+ write-timeout = 10000
+ # The default timeout (i.e., for read/connect) in millisecond (default: 10000)
+ default-timeout = 10000
+ # Security settings to authenticate to the API Server.
+ security = {
+ # For Token based Authentication.
+ # access-token = &amp;#34;&amp;#34;
+ # For Username/Password Basic-Authentication.
+ # basic-auth = {
+ # username = &amp;#34;&amp;#34;
+ # password = &amp;#34;&amp;#34;
+ # }
+ }
+ }
 }
 &lt;/code>&lt;/pre>&lt;h3 id="step-2-check-connection">Step 2: Check connection&lt;/h3>
 &lt;p>When enabling Proxy Mode, Jikkou CLI provides the additional command &lt;code>server-info&lt;/code>. You can use it to verify the
-connectivity with teh server.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ jikkou server-info -o JSON &lt;span class="p">|&lt;/span> jq
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;version&amp;#34;&lt;/span>: &lt;span class="s2">&amp;#34;0.31.0&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;build_time&amp;#34;&lt;/span>: &lt;span class="s2">&amp;#34;2023-11-15T10:35:22+0100&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;commit_id&amp;#34;&lt;/span>: &lt;span class="s2">&amp;#34;f3384d38e606fb32599c175895d0cbef28258540&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+connectivity with teh server.&lt;/p></description></item></channel></rss>

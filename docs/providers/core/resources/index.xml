@@ -1,5 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Resources</title><link>https://www.jikkou.io/docs/providers/core/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/core/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: ConfigMap</title><link>https://www.jikkou.io/docs/providers/core/resources/configmap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/resources/configmap/</guid><description>
-&lt;p>You can use a &lt;code>ConfigMap&lt;/code> to define reusable data in the form of key/value pairs that can then be referenced and used by
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Resources on Jikkou</title><link>https://www.jikkou.io/docs/providers/core/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/core/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>ConfigMap</title><link>https://www.jikkou.io/docs/providers/core/resources/configmap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/resources/configmap/</guid><description>&lt;p>You can use a &lt;code>ConfigMap&lt;/code> to define reusable data in the form of key/value pairs that can then be referenced and used by
 other resources.&lt;/p>
 &lt;h2 id="specification">Specification&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
@@ -8,21 +7,10 @@ other resources.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;&amp;lt;CONFIG-MAP-NAME&amp;gt;&amp;#39;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Name of the ConfigMap (required)&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Map of key-value pairs (required)&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">&amp;lt;KEY_1&amp;gt;&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;VALUE_1&amp;gt;&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">&amp;lt;KEY_1&amp;gt;&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;VALUE_1&amp;gt;&amp;#34;&lt;/span>&lt;span class="w"> 
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="example">Example&lt;/h2>
 &lt;p>For example, the below &lt;code>ConfigMap&lt;/code> show how to define default config properties namedc&lt;code>KafkaTopicConfig&lt;/code> that can then
-reference and used to define multiple &lt;a href="https://www.jikkou.io/docs/providers/kafka/resources/topics/">KafkaTopic&lt;/a>. resources.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;core.jikkou.io/v1beta2&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ConfigMap&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;KafkaTopicConfig&amp;#39;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">cleanup.policy&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;delete&amp;#39;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">min.insync.replicas&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">2&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">retention.ms&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">86400000&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># (1 day)&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;pre tabindex="0">&lt;code>&lt;/code>&lt;/pre></description></item><item><title>Docs: ValidatingResourcePolicy</title><link>https://www.jikkou.io/docs/providers/core/resources/validatingresourcepolicy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/resources/validatingresourcepolicy/</guid><description>
-&lt;p>The &lt;code>ValidatingResourcePolicy&lt;/code> resource is used to define &lt;strong>validation rules&lt;/strong> applied to resources or resource changes before they are applied by Jikkou.&lt;br>
+reference and used to define multiple &lt;a href="https://www.jikkou.io/docs/providers/kafka/resources/topics/">KafkaTopic&lt;/a>. resources.&lt;/p></description></item><item><title>ValidatingResourcePolicy</title><link>https://www.jikkou.io/docs/providers/core/resources/validatingresourcepolicy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/core/resources/validatingresourcepolicy/</guid><description>&lt;p>The &lt;code>ValidatingResourcePolicy&lt;/code> resource is used to define &lt;strong>validation rules&lt;/strong> applied to resources or resource changes before they are applied by Jikkou.&lt;br>
 It allows enforcing organizational policies, validating constraints, or filtering out undesired operations.&lt;/p>
 &lt;p>Each policy can select one or more resource kinds and define &lt;strong>rules&lt;/strong> expressed in &lt;a href="https://opensource.google/projects/cel">Google CEL (Common Expression Language)&lt;/a>.&lt;br>
 Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&lt;/strong> the invalid resources, depending on the configured &lt;code>failurePolicy&lt;/code>.&lt;/p>
@@ -53,233 +41,78 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
 &lt;h2 id="fields">Fields&lt;/h2>
 &lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Field&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Required&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>spec.failurePolicy&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>Defines the policy behavior when validation fails. Possible values:&lt;br/>• &lt;code>FAIL&lt;/code> → stop execution with an error.&lt;br/>• &lt;code>FILTER&lt;/code> → skip the invalid resource(s) but continue processing others.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.selector.matchingStrategy&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>No&lt;/td>
-&lt;td>Strategy for combining multiple selectors. Possible values:&lt;br/>• &lt;code>ALL&lt;/code> → resource must match &lt;strong>all&lt;/strong> conditions.&lt;br/>• &lt;code>ANY&lt;/code> → resource must match &lt;strong>at least one&lt;/strong> condition.&lt;br/>Default: &lt;code>ALL&lt;/code>.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.selector.matchResources&lt;/code>&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
-&lt;td>No&lt;/td>
-&lt;td>Selects resources by API version and kind.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.selector.matchLabels&lt;/code>&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
-&lt;td>No&lt;/td>
-&lt;td>Selects resources based on labels, using operators (&lt;code>In&lt;/code>, &lt;code>NotIn&lt;/code>, &lt;code>Exists&lt;/code>, &lt;code>DoesNotExist&lt;/code>).&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.selector.matchExpressions&lt;/code>&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
-&lt;td>No&lt;/td>
-&lt;td>Selects resources using CEL expressions for advanced filtering.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.rules&lt;/code>&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>A list of validation rules.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.rules[].name&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>A unique identifier for the rule.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.rules[].expression&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>A CEL expression evaluated against the resource. The rule fails when the expression evaluates to &lt;code>true&lt;/code>.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.rules[].message&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>No&lt;/td>
-&lt;td>Static error message returned when validation fails.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>spec.rules[].messageExpression&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>No&lt;/td>
-&lt;td>CEL expression returning a dynamic error message string.&lt;/td>
-&lt;/tr>
-&lt;/tbody>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Field&lt;/th>
+ &lt;th>Type&lt;/th>
+ &lt;th>Required&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>spec.failurePolicy&lt;/code>&lt;/td>
+ &lt;td>&lt;code>string&lt;/code>&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>Defines the policy behavior when validation fails. Possible values:&lt;br/>• &lt;code>FAIL&lt;/code> → stop execution with an error.&lt;br/>• &lt;code>FILTER&lt;/code> → skip the invalid resource(s) but continue processing others.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.selector.matchingStrategy&lt;/code>&lt;/td>
+ &lt;td>&lt;code>string&lt;/code>&lt;/td>
+ &lt;td>No&lt;/td>
+ &lt;td>Strategy for combining multiple selectors. Possible values:&lt;br/>• &lt;code>ALL&lt;/code> → resource must match &lt;strong>all&lt;/strong> conditions.&lt;br/>• &lt;code>ANY&lt;/code> → resource must match &lt;strong>at least one&lt;/strong> condition.&lt;br/>Default: &lt;code>ALL&lt;/code>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.selector.matchResources&lt;/code>&lt;/td>
+ &lt;td>&lt;code>list&lt;/code>&lt;/td>
+ &lt;td>No&lt;/td>
+ &lt;td>Selects resources by API version and kind.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.selector.matchLabels&lt;/code>&lt;/td>
+ &lt;td>&lt;code>list&lt;/code>&lt;/td>
+ &lt;td>No&lt;/td>
+ &lt;td>Selects resources based on labels, using operators (&lt;code>In&lt;/code>, &lt;code>NotIn&lt;/code>, &lt;code>Exists&lt;/code>, &lt;code>DoesNotExist&lt;/code>).&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.selector.matchExpressions&lt;/code>&lt;/td>
+ &lt;td>&lt;code>list&lt;/code>&lt;/td>
+ &lt;td>No&lt;/td>
+ &lt;td>Selects resources using CEL expressions for advanced filtering.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.rules&lt;/code>&lt;/td>
+ &lt;td>&lt;code>list&lt;/code>&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>A list of validation rules.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.rules[].name&lt;/code>&lt;/td>
+ &lt;td>&lt;code>string&lt;/code>&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>A unique identifier for the rule.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.rules[].expression&lt;/code>&lt;/td>
+ &lt;td>&lt;code>string&lt;/code>&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>A CEL expression evaluated against the resource. The rule fails when the expression evaluates to &lt;code>true&lt;/code>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.rules[].message&lt;/code>&lt;/td>
+ &lt;td>&lt;code>string&lt;/code>&lt;/td>
+ &lt;td>No&lt;/td>
+ &lt;td>Static error message returned when validation fails.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>spec.rules[].messageExpression&lt;/code>&lt;/td>
+ &lt;td>&lt;code>string&lt;/code>&lt;/td>
+ &lt;td>No&lt;/td>
+ &lt;td>CEL expression returning a dynamic error message string.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
 &lt;/table>
 &lt;hr>
 &lt;h2 id="resource-selection">Resource Selection&lt;/h2>
 &lt;p>Policies define which resources they apply to using a &lt;strong>selector&lt;/strong>.&lt;br>
-A selector can combine multiple strategies to target resources based on:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>Resource metadata&lt;/strong> (kind, apiVersion).&lt;/li>
-&lt;li>&lt;strong>Labels&lt;/strong> (with operators like &lt;code>In&lt;/code>, &lt;code>NotIn&lt;/code>, &lt;code>Exists&lt;/code>, &lt;code>DoesNotExist&lt;/code>).&lt;/li>
-&lt;li>&lt;strong>CEL expressions&lt;/strong> (arbitrary conditions on resource content).&lt;/li>
-&lt;/ul>
-&lt;h3 id="matching-strategy">Matching Strategy&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Strategy&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>ALL&lt;/code>&lt;/td>
-&lt;td>The resource must match &lt;strong>all&lt;/strong> specified selectors (&lt;code>matchResources&lt;/code>, &lt;code>matchLabels&lt;/code>, and &lt;code>matchExpressions&lt;/code>).&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>ANY&lt;/code>&lt;/td>
-&lt;td>The resource is selected if it matches &lt;strong>at least one&lt;/strong> of the specified selectors.&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>Default: &lt;code>ALL&lt;/code>&lt;/p>
-&lt;hr>
-&lt;h3 id="matchresources">&lt;code>matchResources&lt;/code>&lt;/h3>
-&lt;p>Selects resources by API version and/or kind.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">core.jikkou.io/v1&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopic&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
-&lt;li>&lt;code>apiVersion&lt;/code> → Optional. Restricts matching to a specific API group/version.&lt;/li>
-&lt;li>&lt;code>kind&lt;/code> → Required. Matches the resource kind (e.g. &lt;code>KafkaTopic&lt;/code>, &lt;code>KafkaTopicChange&lt;/code>).&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h3 id="matchlabels">&lt;code>matchLabels&lt;/code>&lt;/h3>
-&lt;p>Selects resources based on their &lt;strong>metadata labels&lt;/strong> using operators.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">matchLabels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">key&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">environment&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">operator&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">In&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">values&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;prod&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;staging&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">key&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">team&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">operator&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">NotIn&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">values&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;test&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">key&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">critical&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">operator&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Exists&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Supported operators:&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Operator&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>In&lt;/code>&lt;/td>
-&lt;td>Matches if the label value is in the list of values.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>NotIn&lt;/code>&lt;/td>
-&lt;td>Matches if the label value is &lt;strong>not&lt;/strong> in the list of values.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>Exists&lt;/code>&lt;/td>
-&lt;td>Matches if the label key is defined (value doesn’t matter).&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>DoesNotExist&lt;/code>&lt;/td>
-&lt;td>Matches if the label key is &lt;strong>not&lt;/strong> defined.&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;hr>
-&lt;h3 id="matchexpressions">&lt;code>matchExpressions&lt;/code>&lt;/h3>
-&lt;p>Selects resources using &lt;strong>CEL expressions&lt;/strong> for maximum flexibility.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">matchExpressions&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="s2">&amp;#34;resource.metadata.name.startsWith(&amp;#39;topic-&amp;#39;)&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="s2">&amp;#34;resource.spec.partitions &amp;gt; 10&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Examples:&lt;/p>
-&lt;ul>
-&lt;li>Match resources with names starting with &lt;code>topic-&lt;/code>.&lt;/li>
-&lt;li>Match topics with more than 10 partitions.&lt;/li>
-&lt;/ul>
-&lt;hr>
-&lt;h2 id="examples">Examples&lt;/h2>
-&lt;h3 id="example-1-filtering-delete-operations-on-kafkatopic-resources">Example 1: Filtering &lt;code>DELETE&lt;/code> operations on &lt;code>KafkaTopic&lt;/code> resources&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">core.jikkou.io/v1&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ValidatingResourcePolicy&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopicPolicy&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">failurePolicy&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FILTER&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopicChange&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">rules&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FilterDeleteOperation&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;size(resource.spec.changes) &amp;gt; 0 &amp;amp;&amp;amp; resource.spec.op == &amp;#39;DELETE&amp;#39;&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">messageExpression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;&amp;#39;Operation &amp;#39; + resource.spec.op + &amp;#39; on topics is not authorized&amp;#39;&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This policy prevents &lt;strong>delete operations&lt;/strong> on Kafka topics from being executed by filtering them out.&lt;/p>
-&lt;hr>
-&lt;h3 id="example-2-validating-partitions-count-for-kafkatopic">Example 2: Validating partitions count for &lt;code>KafkaTopic&lt;/code>&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">core.jikkou.io/v1&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ValidatingResourcePolicy&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopicPolicy&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">failurePolicy&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FAIL&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopic&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">rules&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">MaxTopicPartitions&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;resource.spec.partitions &amp;gt;= 50&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">messageExpression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;&amp;#39;Topic partition MUST be inferior to 50, but was: &amp;#39; + string(resource.spec.partitions)&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">MinTopicPartitions&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;resource.spec.partitions &amp;lt; 3&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">message&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;Topic must have at-least 3 partitions&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This policy enforces a &lt;strong>minimum of 3 partitions&lt;/strong> and a &lt;strong>maximum of 49 partitions&lt;/strong> for Kafka topics.&lt;/p>
-&lt;hr>
-&lt;h3 id="example-3-match-only-kafkatopic-in-prod-environment">Example 3: Match only KafkaTopic in &lt;code>prod&lt;/code> environment&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchingStrategy&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ALL&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopic&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchLabels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">key&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">environment&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">operator&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">In&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">values&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;prod&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
-&lt;h3 id="example-4-match-any-kafkatopic-or-resources-with-label-criticaltrue">Example 4: Match any KafkaTopic OR resources with label &lt;code>critical=true&lt;/code>&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchingStrategy&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ANY&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">KafkaTopic&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchLabels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">key&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">critical&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">operator&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">In&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">values&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;true&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
-&lt;h3 id="example-5-match-using-cel-expression">Example 5: Match using CEL expression&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchExpressions&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="s2">&amp;#34;resource.spec.replicationFactor &amp;lt; 3&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
-&lt;h2 id="use-cases">Use cases&lt;/h2>
-&lt;ul>
-&lt;li>Preventing destructive operations (e.g., deleting topics, removing configs).&lt;/li>
-&lt;li>Enforcing resource limits (e.g., partition count, replication factor).&lt;/li>
-&lt;li>Ensuring naming conventions or metadata compliance.&lt;/li>
-&lt;li>Dynamically generating error messages with contextual information.&lt;/li>
-&lt;/ul></description></item></channel></rss>
+A selector can combine multiple strategies to target resources based on:&lt;/p></description></item></channel></rss>

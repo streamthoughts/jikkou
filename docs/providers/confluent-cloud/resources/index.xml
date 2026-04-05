@@ -1,8 +1,9 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou – Resources</title><link>https://www.jikkou.io/docs/providers/confluent-cloud/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/confluent-cloud/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Role Bindings for Confluent Cloud</title><link>https://www.jikkou.io/docs/providers/confluent-cloud/resources/role-binding/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/confluent-cloud/resources/role-binding/</guid><description>
-&lt;div class="pageinfo pageinfo-info">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Resources on Jikkou</title><link>https://www.jikkou.io/docs/providers/confluent-cloud/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/providers/confluent-cloud/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Role Bindings for Confluent Cloud</title><link>https://www.jikkou.io/docs/providers/confluent-cloud/resources/role-binding/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/confluent-cloud/resources/role-binding/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>RoleBinding&lt;/code> resources are used to manage RBAC role bindings in Confluent Cloud. A
 &lt;code>RoleBinding&lt;/code> resource defines which role is granted to a principal for a specific scope (identified by a CRN pattern).&lt;/p>
+
 &lt;/div>
+
 &lt;h2 id="rolebinding">&lt;code>RoleBinding&lt;/code>&lt;/h2>
 &lt;h3 id="specification">Specification&lt;/h3>
 &lt;p>Here is the &lt;em>resource definition file&lt;/em> for defining a &lt;code>RoleBinding&lt;/code>.&lt;/p>
@@ -18,162 +19,74 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;&amp;gt; &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The Confluent Resource Name pattern (e.g., crn://confluent.cloud/...)&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="fields">Fields&lt;/h3>
 &lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Field&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Required&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>principal&lt;/code>&lt;/td>
-&lt;td>String&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>The principal. Pattern: &lt;code>User:&amp;lt;user-id&amp;gt;&lt;/code> or &lt;code>Group:&amp;lt;group-name&amp;gt;&lt;/code>.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>roleName&lt;/code>&lt;/td>
-&lt;td>String&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>The role to bind. See &lt;a href="https://docs.confluent.io/cloud/current/security/access-control/rbac/predefined-rbac-roles.html">Confluent Cloud RBAC roles&lt;/a>.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>crnPattern&lt;/code>&lt;/td>
-&lt;td>String&lt;/td>
-&lt;td>Yes&lt;/td>
-&lt;td>The Confluent Resource Name (CRN) pattern defining the scope of the binding.&lt;/td>
-&lt;/tr>
-&lt;/tbody>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Field&lt;/th>
+ &lt;th>Type&lt;/th>
+ &lt;th>Required&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>principal&lt;/code>&lt;/td>
+ &lt;td>String&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>The principal. Pattern: &lt;code>User:&amp;lt;user-id&amp;gt;&lt;/code> or &lt;code>Group:&amp;lt;group-name&amp;gt;&lt;/code>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>roleName&lt;/code>&lt;/td>
+ &lt;td>String&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>The role to bind. See &lt;a href="https://docs.confluent.io/cloud/current/security/access-control/rbac/predefined-rbac-roles.html">Confluent Cloud RBAC roles&lt;/a>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>crnPattern&lt;/code>&lt;/td>
+ &lt;td>String&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>The Confluent Resource Name (CRN) pattern defining the scope of the binding.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
 &lt;/table>
 &lt;h3 id="common-role-names">Common Role Names&lt;/h3>
 &lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Role&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>OrganizationAdmin&lt;/code>&lt;/td>
-&lt;td>Full access to the organization.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>EnvironmentAdmin&lt;/code>&lt;/td>
-&lt;td>Full access to an environment.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>CloudClusterAdmin&lt;/code>&lt;/td>
-&lt;td>Full access to a Kafka cluster.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>DeveloperManage&lt;/code>&lt;/td>
-&lt;td>Manage topics and schemas.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>DeveloperRead&lt;/code>&lt;/td>
-&lt;td>Read from topics and view schemas.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>DeveloperWrite&lt;/code>&lt;/td>
-&lt;td>Write to topics and manage schemas.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>ResourceOwner&lt;/code>&lt;/td>
-&lt;td>Full access to a specific resource.&lt;/td>
-&lt;/tr>
-&lt;/tbody>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Role&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>OrganizationAdmin&lt;/code>&lt;/td>
+ &lt;td>Full access to the organization.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>EnvironmentAdmin&lt;/code>&lt;/td>
+ &lt;td>Full access to an environment.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>CloudClusterAdmin&lt;/code>&lt;/td>
+ &lt;td>Full access to a Kafka cluster.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>DeveloperManage&lt;/code>&lt;/td>
+ &lt;td>Manage topics and schemas.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>DeveloperRead&lt;/code>&lt;/td>
+ &lt;td>Read from topics and view schemas.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>DeveloperWrite&lt;/code>&lt;/td>
+ &lt;td>Write to topics and manage schemas.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>ResourceOwner&lt;/code>&lt;/td>
+ &lt;td>Full access to a specific resource.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
 &lt;/table>
 &lt;h3 id="example">Example&lt;/h3>
 &lt;p>Here is a simple example that shows how to define a single role binding using
-the &lt;code>RoleBinding&lt;/code> resource type.&lt;/p>
-&lt;p>&lt;em>&lt;code>file: role-binding.yaml&lt;/code>&lt;/em>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;iam.confluent.cloud/v1&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;RoleBinding&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">labels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{&lt;span class="w"> &lt;/span>}&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">annotations&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{&lt;span class="w"> &lt;/span>}&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">principal&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;User:sa-abc123&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">roleName&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;CloudClusterAdmin&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;crn://confluent.cloud/organization=org-123/environment=env-456/cloud-cluster=lkc-789&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="usage">Usage&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List all role bindings&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get ccloud-rbs
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply role bindings from a file&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply --files ./role-binding.yaml
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Delete orphan role bindings not defined in the file&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply --files ./role-binding.yaml -o delete-orphans&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Dry-run to preview changes without applying&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou diff --files ./role-binding.yaml
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="metadata-labels">Metadata Labels&lt;/h3>
-&lt;p>When listing role bindings, Jikkou automatically enriches each resource with metadata labels
-to help identify principals:&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Label&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>confluent.cloud/principal-name&lt;/code>&lt;/td>
-&lt;td>The display name of the user or service account.&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>confluent.cloud/principal-email&lt;/code>&lt;/td>
-&lt;td>The email of the user (not set for service accounts).&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Example output:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;iam.confluent.cloud/v1&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;RoleBinding&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">labels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">confluent.cloud/principal-name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;Florian Hussonnois&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">confluent.cloud/principal-email&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;florian@example.com&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">annotations&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">confluent.cloud/role-binding-id&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;rb-NBl9kE&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">principal&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;User:u-rrnm2g9&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">roleName&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;OrganizationAdmin&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;crn://confluent.cloud/organization=d497af93-23f5-434a-a008-0547797be410&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="rolebindinglist">&lt;code>RoleBindingList&lt;/code>&lt;/h2>
-&lt;p>If you need to define multiple role bindings (e.g., using a template), it may be easier to use a &lt;code>RoleBindingList&lt;/code> resource.&lt;/p>
-&lt;h3 id="specification-1">Specification&lt;/h3>
-&lt;p>Here is the &lt;em>resource definition file&lt;/em> for defining a &lt;code>RoleBindingList&lt;/code>.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;iam.confluent.cloud/v1&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The api version (required)&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;RoleBindingList&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The resource kind (required)&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># (optional)&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">labels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{&lt;span class="w"> &lt;/span>}&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">annotations&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{&lt;span class="w"> &lt;/span>}&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">items&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># An array of RoleBinding&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="example-1">Example&lt;/h3>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;iam.confluent.cloud/v1&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;RoleBindingList&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">items&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">principal&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;User:sa-abc123&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">roleName&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;CloudClusterAdmin&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;crn://confluent.cloud/organization=org-123/environment=env-456/cloud-cluster=lkc-789&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">principal&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;User:sa-abc123&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">roleName&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;DeveloperRead&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;crn://confluent.cloud/organization=org-123/environment=env-456/cloud-cluster=lkc-789/kafka=lkc-789/topic=my-topic&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">principal&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;User:u-xyz789&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">roleName&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;OrganizationAdmin&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;crn://confluent.cloud/organization=org-123&amp;#34;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
-&lt;p>&lt;strong>Note:&lt;/strong> Role bindings are immutable in the Confluent Cloud API. If you need to change a role binding, delete the old one and create a new one. Jikkou only supports &lt;code>CREATE&lt;/code> and &lt;code>DELETE&lt;/code> operations (no &lt;code>UPDATE&lt;/code>).&lt;/p>
-&lt;/blockquote></description></item></channel></rss>
+the &lt;code>RoleBinding&lt;/code> resource type.&lt;/p></description></item></channel></rss>
