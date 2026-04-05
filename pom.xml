@@ -139,6 +139,8 @@
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
         <protobuf-java.version>4.33.5</protobuf-java.version>
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
+        <!-- JaCoCo coverage minimum (0.0 = off, 0.50 = 50%). Modules can override. -->
+        <jacoco.check.minimum>0.0</jacoco.check.minimum>
         <mockito-core.version>5.21.0</mockito-core.version>
         <junit-jupiter.version>1.21.4</junit-jupiter.version>
     </properties>
@@ -673,6 +675,29 @@
                             </fileSets>
                             <!-- report config -->
                             <dataFile>${project.basedir}/../target/jacoco.exec</dataFile>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.basedir}/../target/jacoco-unit.exec</dataFile>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.check.minimum}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
