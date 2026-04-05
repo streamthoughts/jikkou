@@ -22,6 +22,7 @@
 
     <properties>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
+        <jacoco.check.minimum>0.50</jacoco.check.minimum>
     </properties>
 
     <dependencies>
