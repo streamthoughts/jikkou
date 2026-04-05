@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.action.Action;
 import io.streamthoughts.jikkou.core.action.ExecutionResultSet;
 import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
@@ -599,33 +600,58 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     }
 
     private List<ChangeResult> applyPatchesAndGetResults(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context, List<ResourceChange> changes) {
-        ProviderSelectionContext providerContext = createProviderContext(context);
-        Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList.of(changes).groupBy(ResourceType::of);
-        return changesGroupByResourceType.entrySet().stream().flatMap(entry -> {
-            ResourceType type = entry.getKey();
-            Controller<HasMetadata> controller = getMatchingController(type, providerContext);
-            List<ResourceChange> items = entry.getValue();
-            LOG.info("Applying {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
-                items.size(),
-                type.group(),
-                type.apiVersion(),
-                type.kind(),
-                controller.getName(),
-                mode,
-                context.isDryRun()
-            );
-            Reconciler<HasMetadata> reconciler = new Reconciler<>(controller);
-            List<ChangeResult> results = reconciler.apply(items, mode, context);
-            LOG.info("Executed {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
-                results.size(),
-                type.group(),
-                type.apiVersion(),
-                type.kind(),
-                controller.getName(),
-                mode,
-                context.isDryRun()
-            );
-            return results.stream();
+        String defaultProvider = context.providerName();
+
+        // Group changes by effective provider (annotation overrides context)
+        Map<String, List<ResourceChange>> changesByProvider = changes.stream()
+                .collect(Collectors.groupingBy(change ->
+                        CoreAnnotations.findProviderAnnotation(change).orElse(defaultProvider != null ? defaultProvider : "")
+                ));
+
+        return changesByProvider.entrySet().stream().flatMap(providerEntry -> {
+            String effectiveProvider = providerEntry.getKey();
+            List<ResourceChange> providerChanges = providerEntry.getValue();
+
+            ReconciliationContext providerCtx = ReconciliationContext.builder()
+                    .dryRun(context.isDryRun())
+                    .selector(context.selector())
+                    .configuration(context.configuration())
+                    .labels(context.labels())
+                    .annotations(context.annotations())
+                    .providerName(effectiveProvider.isEmpty() ? null : effectiveProvider)
+                    .build();
+
+            ProviderSelectionContext providerSelectionCtx = createProviderContext(providerCtx);
+
+            Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList.of(providerChanges).groupBy(ResourceType::of);
+            return changesGroupByResourceType.entrySet().stream().flatMap(entry -> {
+                ResourceType type = entry.getKey();
+                Controller<HasMetadata> controller = getMatchingController(type, providerSelectionCtx);
+                List<ResourceChange> items = entry.getValue();
+                LOG.info("Applying {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}, provider: {}).",
+                    items.size(),
+                    type.group(),
+                    type.apiVersion(),
+                    type.kind(),
+                    controller.getName(),
+                    mode,
+                    context.isDryRun(),
+                    effectiveProvider
+                );
+                Reconciler<HasMetadata> reconciler = new Reconciler<>(controller);
+                List<ChangeResult> results = reconciler.apply(items, mode, providerCtx);
+                LOG.info("Executed {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}, provider: {}).",
+                    results.size(),
+                    type.group(),
+                    type.apiVersion(),
+                    type.kind(),
+                    controller.getName(),
+                    mode,
+                    context.isDryRun(),
+                    effectiveProvider
+                );
+                return results.stream();
+            });
         }).toList();
     }
 
@@ -765,31 +791,101 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ResourceList filtered = ResourceList.of(list);
 
         // Validate resources.
-        Map<ResourceType, List<HasMetadata>> resourcesByType = doValidate(filtered, context).get().groupByType();
+        List<HasMetadata> validatedItems = doValidate(filtered, context).get().getItems();
 
-        // Create provider context
-        ProviderSelectionContext providerContext = createProviderContext(context);
+        // Validate and resolve provider annotations
+        validateProviderAnnotations(validatedItems);
 
-        // Diff
-        List<ResourceChange> results = resourcesByType.entrySet()
+        // Group resources by effective provider name (annotation overrides context)
+        Map<String, List<HasMetadata>> resourcesByProvider = groupByProviderAnnotation(validatedItems, context);
+
+        // Diff per-provider group
+        List<ResourceChange> results = resourcesByProvider.entrySet()
             .stream()
-            .map(e -> {
-                final ResourceType type = e.getKey();
-                Controller<HasMetadata> controller = getMatchingController(type, providerContext);
-                List<HasMetadata> items = e.getValue();
-                LOG.info("Planning changes of {} resources for group={}, apiVersion={} and kind={} using controller: '{}'.",
-                    items.size(),
-                    type.group(),
-                    type.apiVersion(),
-                    type.kind(),
-                    controller.getName()
-                );
-                List<ResourceChange> changes = controller.plan(items, context);
-                return filter.filter(changes);
+            .flatMap(providerEntry -> {
+                String effectiveProviderName = providerEntry.getKey();
+                List<HasMetadata> providerResources = providerEntry.getValue();
+
+                // Create a provider-scoped context
+                ReconciliationContext providerContext = ReconciliationContext.builder()
+                        .dryRun(context.isDryRun())
+                        .selector(context.selector())
+                        .configuration(context.configuration())
+                        .labels(context.labels())
+                        .annotations(context.annotations())
+                        .providerName(effectiveProviderName)
+                        .build();
+
+                ProviderSelectionContext providerSelectionCtx = createProviderContext(providerContext);
+
+                Map<ResourceType, List<HasMetadata>> resourcesByType = ResourceList.of(providerResources).groupByType();
+
+                return resourcesByType.entrySet().stream()
+                    .map(e -> {
+                        final ResourceType type = e.getKey();
+                        Controller<HasMetadata> controller = getMatchingController(type, providerSelectionCtx);
+                        List<HasMetadata> items = e.getValue();
+                        LOG.info("Planning changes of {} resources for group={}, apiVersion={} and kind={} using controller: '{}' (provider: {}).",
+                            items.size(),
+                            type.group(),
+                            type.apiVersion(),
+                            type.kind(),
+                            controller.getName(),
+                            effectiveProviderName
+                        );
+                        List<ResourceChange> changes = controller.plan(items, providerContext);
+                        return filter.filter(changes);
+                    })
+                    .flatMap(Collection::stream);
             })
-            .flatMap(Collection::stream)
             .collect(Collectors.toList());
         return new ApiResourceChangeList(results);
+    }
+
+    /**
+     * Validates that all {@code jikkou.io/provider} annotations reference registered providers.
+     *
+     * @param resources the resources to validate.
+     * @throws JikkouRuntimeException if any annotation references a non-existent provider.
+     */
+    private void validateProviderAnnotations(@NotNull List<HasMetadata> resources) {
+        Set<String> registeredProviders = providerConfigurationRegistry.getAllProviderNames();
+        for (HasMetadata resource : resources) {
+            CoreAnnotations.findProviderAnnotation(resource).ifPresent(providerName -> {
+                if (!registeredProviders.contains(providerName)) {
+                    String resourceName = resource.optionalMetadata()
+                            .map(ObjectMeta::getName)
+                            .orElse("<unknown>");
+                    throw new JikkouRuntimeException(String.format(
+                            "Resource '%s' has annotation '%s' referencing non-existent provider '%s'. " +
+                            "Registered providers: %s",
+                            resourceName,
+                            CoreAnnotations.JIKKOU_IO_PROVIDER,
+                            providerName,
+                            registeredProviders
+                    ));
+                }
+            });
+        }
+    }
+
+    /**
+     * Groups resources by their effective provider name.
+     * Resources with a {@code jikkou.io/provider} annotation use the annotated provider.
+     * Resources without the annotation fall back to the invocation-level provider from the context.
+     *
+     * @param resources the resources to group.
+     * @param context   the reconciliation context providing the default provider.
+     * @return a map from effective provider name to list of resources.
+     */
+    @NotNull
+    private Map<String, List<HasMetadata>> groupByProviderAnnotation(
+            @NotNull List<HasMetadata> resources,
+            @NotNull ReconciliationContext context) {
+        String defaultProvider = context.providerName();
+        return resources.stream().collect(Collectors.groupingBy(resource ->
+                CoreAnnotations.findProviderAnnotation(resource).orElse(defaultProvider != null ? defaultProvider : "")
+        ));
     }
 
     /**

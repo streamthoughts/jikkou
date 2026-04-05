@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.core.models;
 
 import io.streamthoughts.jikkou.core.data.TypeConverter;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,6 +31,7 @@ public final class CoreAnnotations {
     public static final String JIKKOU_IO_TRANSFORM_PREFIX = "transform.jikkou.io";
     public static final String JIKKOU_IO_CONFIG_OVERRIDE = PREFIX + "config-override";
     public static final String JIKKOU_IO_CONFIG_REPLACE = PREFIX + "replace";
+    public static final String JIKKOU_IO_PROVIDER = PREFIX + "provider";
 
     private CoreAnnotations() {}
 
@@ -51,6 +53,18 @@ public final class CoreAnnotations {
 
     public static boolean isAnnotatedWithReplace(final HasMetadata resource) {
         return isAnnotatedWith(resource, CoreAnnotations.JIKKOU_IO_CONFIG_REPLACE);
+    }
+
+    /**
+     * Gets the value of the {@code jikkou.io/provider} annotation if present.
+     *
+     * @param resource the resource to check.
+     * @return an optional containing the provider name, or empty if not annotated.
+     */
+    public static Optional<String> findProviderAnnotation(@NotNull HasMetadata resource) {
+        return HasMetadata.getMetadataAnnotation(resource, JIKKOU_IO_PROVIDER)
+                .map(NamedValue::getValue)
+                .map(Object::toString);
     }
 
     @NotNull
