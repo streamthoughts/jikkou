@@ -44,7 +44,7 @@ jobs:
       - run: (cd ./docs; npm install)
 
       - name: Build
-        run: (cd ./docs; hugo --minify -v -s . -d ./public)
+        run: (cd ./docs; hugo build --minify -v -d ./public)
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
