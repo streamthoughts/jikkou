@@ -55,7 +55,7 @@ anchor = "smart"
 
 [languages]
 [languages.en]
-label = "English"
+languageName = "English"
 # Weight used for sorting.
 weight = 1
 [languages.en.params]
