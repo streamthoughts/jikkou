@@ -1,7 +1,7 @@
 ---
-title: "Resource as Code Framework for Apache Kafka"
+title: "Resource as Code Framework for Apache Kafka and Apache Iceberg"
 linkTitle: Jikkou
-description: "Jikkou is an open-source Resource as Code framework for Apache Kafka. Declare, automate, and provision Topics, ACLs, Schemas, Quotas, and Connectors from YAML files."
+description: "Jikkou is an open-source Resource as Code framework for Apache Kafka and Apache Iceberg. Declare, automate, and provision Topics, ACLs, Schemas, Quotas, Connectors, and Iceberg resources from YAML files."
 ---
 
 {{% blocks/cover image_anchor="top" height="max" color="white" %}}
@@ -12,7 +12,7 @@ description: "Jikkou is an open-source Resource as Code framework for Apache Kaf
                 <span class="hero-badge-dot"></span>
                 Open Source &middot; Apache License 2.0
             </div>
-            <h1 class="hero-title">Resource as Code<br/>for <span class="hero-gradient-text">Apache Kafka</span><span class="hero-reg">&reg;</span></h1>
+            <h1 class="hero-title">Resource as Code<br/>for <span class="hero-rotating-wrapper"><span class="hero-rotating-text active"><span class="hero-gradient-text">Apache Kafka</span><span class="hero-reg">&reg;</span></span><span class="hero-rotating-text"><span class="hero-gradient-text hero-gradient-text--iceberg">Apache Iceberg</span><span class="hero-reg">&reg;</span></span></span></h1>
             <p class="hero-subtitle">
                 Declare, automate, and provision Topics, ACLs, Schemas, Quotas, and Connectors for your entire Kafka platform — from simple YAML files.
             </p>
@@ -245,3 +245,16 @@ description: "Jikkou is an open-source Resource as Code framework for Apache Kaf
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    const texts = document.querySelectorAll('.hero-rotating-text');
+    if (texts.length < 2) return;
+    let current = 0;
+    setInterval(function() {
+        texts[current].classList.remove('active');
+        current = (current + 1) % texts.length;
+        texts[current].classList.add('active');
+    }, 5000);
+})();
+</script>

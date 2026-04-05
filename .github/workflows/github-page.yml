@@ -34,13 +34,13 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: '0.120.3'
+          hugo-version: '0.139.6'
           extended: true
 
       - name: Setup node
         uses: actions/setup-node@v6
         with:
-          node-version: "14.x"
+          node-version: "20.x"
       - run: (cd ./docs; npm install)
 
       - name: Build
