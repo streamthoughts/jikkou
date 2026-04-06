@@ -397,6 +397,10 @@
                                 <buildArg>--initialize-at-build-time=ch.qos.logback.classic.Logger</buildArg>
                                 <buildArg>--initialize-at-build-time=org.xml.sax.helpers.LocatorImpl</buildArg>
                                 <buildArg>--initialize-at-build-time=org.xml.sax.helpers.AttributesImpl</buildArg>
+                                <buildArg>-H:DeadlockWatchdogInterval=30</buildArg>
+                                <buildArg>-H:+DeadlockWatchdogExitOnTimeout</buildArg>
+                                <buildArg>-J-Xmx8G</buildArg>
+                                <buildArg>-J-Xms4G</buildArg>
                             </buildArgs>
                             <metadataRepository>
                                 <enabled>true</enabled>
