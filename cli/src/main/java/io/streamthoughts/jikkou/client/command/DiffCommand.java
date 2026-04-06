@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.client.command;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
@@ -75,6 +76,8 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
     LocalResourceRepository localResourceRepository;
     @Inject
     ResourceWriter writer;
+    @Inject
+    Configuration configuration;
 
     /**
      * {@inheritDoc}
@@ -112,14 +115,7 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
 
     @NotNull
     private ReconciliationContext getReconciliationContext() {
-        return ReconciliationContext
-            .builder()
-            .dryRun(true)
-            .configuration(configOptionsMixin.getConfiguration())
-            .selector(selectorOptions.getResourceSelector())
-            .labels(fileOptions.getLabels())
-            .annotations(fileOptions.getAnnotations())
-            .providerName(providerOptionMixin.getProvider())
-            .build();
+        return new ProviderResolver(configuration).buildReconciliationContext(
+                providerOptionMixin, configOptionsMixin, selectorOptions, fileOptions, true);
     }
 }

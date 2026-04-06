@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.selector.SelectorMatchingStrategy;
 import io.streamthoughts.jikkou.rest.data.ResourceListRequest;
 import io.streamthoughts.jikkou.rest.data.ResourceReconcileRequest;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -124,5 +125,47 @@ class ReconciliationContextAdapterTest {
         // Then
         Assertions.assertNotNull(context);
         Assertions.assertEquals("kafka-prod", context.providerName());
+    }
+
+    @Test
+    void shouldGetReconciliationContextWithMultipleProviders() {
+        // Given
+        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
+        ResourceReconcileRequest request = new ResourceReconcileRequest(
+            new ResourceReconcileRequest.Params(),
+            Collections.emptyList(),
+            null,
+            List.of("kafka-prod", "kafka-staging"),
+            true
+        );
+
+        // When
+        ReconciliationContext context = adapter.getReconciliationContext(request, false);
+
+        // Then
+        Assertions.assertNotNull(context);
+        Assertions.assertNull(context.providerName());
+        Assertions.assertEquals(List.of("kafka-prod", "kafka-staging"), context.providerNames());
+        Assertions.assertTrue(context.continueOnError());
+        Assertions.assertTrue(context.isMultiProvider());
+    }
+
+    @Test
+    void shouldGetReconciliationContextWithDefaultContinueOnError() {
+        // Given
+        ReconciliationContextAdapter adapter = new ReconciliationContextAdapter(new SelectorFactory());
+        ResourceReconcileRequest request = new ResourceReconcileRequest(
+            new ResourceReconcileRequest.Params(),
+            Collections.emptyList(),
+            null,
+            List.of("kafka-prod"),
+            null
+        );
+
+        // When
+        ReconciliationContext context = adapter.getReconciliationContext(request, false);
+
+        // Then
+        Assertions.assertFalse(context.continueOnError());
     }
 }
