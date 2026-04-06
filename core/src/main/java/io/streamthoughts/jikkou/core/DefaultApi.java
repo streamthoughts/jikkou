@@ -820,8 +820,15 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         ProviderSelectionContext providerContext = createProviderContext(context.providerName());
         Collector<T> collector = getMatchingCollector(type, providerContext);
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
+        String providerName = context.providerName();
         return collector.get(name, context.configuration())
-            .map(item -> addBuiltInAnnotations(item, timestamp))
+            .map(item -> {
+                // Tag with provider context for audit trail
+                if (providerName != null) {
+                    item.getMetadata().addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_PROVIDER, providerName);
+                }
+                return addBuiltInAnnotations(item, timestamp);
+            })
             .orElseThrow(() -> new ResourceNotFoundException(
                 String.format(
                     "Cannot found resource for group '%s', version '%s', kind '%s', and name '%s'.",
@@ -895,6 +902,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     private ApiResourceChangeList doDiff(@NotNull HasItems resources,
                                          @NotNull ResourceChangeFilter filter,
                                          @NotNull ReconciliationContext context) {
@@ -903,6 +911,30 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             .stream()
             .filter(Predicate.not(o -> o instanceof ResourceChange))
             .toList();
+
+        // Filter out resources that have a provider annotation not matching the current context
+        String providerName = context.providerName();
+        if (providerName != null) {
+            list = list.stream()
+                .filter(resource -> {
+                    if (!CoreAnnotations.matchesProvider(resource, providerName)) {
+                        LOG.debug("Skipping resource '{}' with provider annotation '{}' — does not match context provider '{}'.",
+                            resource.optionalMetadata().map(m -> m.getName()).orElse("unknown"),
+                            CoreAnnotations.getProvider(resource), providerName);
+                        return false;
+                    }
+                    return true;
+                })
+                .toList();
+        }
+
+        // Tag resources with provider annotation for audit trail
+        if (providerName != null) {
+            for (HasMetadata resource : list) {
+                resource.getMetadata().addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_PROVIDER, providerName);
+            }
+        }
+
         ResourceList filtered = ResourceList.of(list);
 
         // Validate resources.
@@ -952,6 +984,14 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
         final OffsetDateTime timestamp = OffsetDateTime.now(ZoneOffset.UTC);
 
         result = ResourceList.of((List<T>) addAllResourcesFromRepositories(result).getAllByType(type));
+
+        // Tag collected resources with provider context for audit trail
+        String providerName = context.providerName();
+        if (providerName != null) {
+            result.forEach(item -> {
+                item.getMetadata().addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_PROVIDER, providerName);
+            });
+        }
 
         List<T> items = result.getItems()
             .stream()

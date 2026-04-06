@@ -31,6 +31,15 @@ public final class CoreAnnotations {
     public static final String JIKKOU_IO_CONFIG_OVERRIDE = PREFIX + "config-override";
     public static final String JIKKOU_IO_CONFIG_REPLACE = PREFIX + "replace";
 
+    /**
+     * Annotation automatically injected on resources during reconciliation to track
+     * which provider instance the resource belongs to. Used for audit trail and
+     * cross-provider safety validation.
+     *
+     * @since 0.38.0
+     */
+    public static final String JIKKOU_IO_PROVIDER = PREFIX + "provider";
+
     private CoreAnnotations() {}
 
     public static boolean isAnnotatedWithNoReport(final HasMetadata resource) {
@@ -47,6 +56,35 @@ public final class CoreAnnotations {
 
     public static boolean isAnnotatedWithDelete(final HasMetadata resource) {
         return isAnnotatedWith(resource, CoreAnnotations.JIKKOU_IO_DELETE);
+    }
+
+    /**
+     * Gets the provider annotation value from a resource.
+     *
+     * @param resource the resource.
+     * @return the provider name, or null if not annotated.
+     * @since 0.38.0
+     */
+    public static String getProvider(@NotNull HasMetadata resource) {
+        return HasMetadata.getMetadataAnnotation(resource, JIKKOU_IO_PROVIDER)
+            .map(NamedValue::getValue)
+            .map(Object::toString)
+            .orElse(null);
+    }
+
+    /**
+     * Checks whether a resource is eligible for a given provider context.
+     * A resource matches if it has no provider annotation or if the annotation
+     * matches the given provider name.
+     *
+     * @param resource     the resource to check.
+     * @param providerName the expected provider name.
+     * @return {@code true} if the resource belongs to or is untagged for the provider.
+     * @since 0.38.0
+     */
+    public static boolean matchesProvider(@NotNull HasMetadata resource, @NotNull String providerName) {
+        String resourceProvider = getProvider(resource);
+        return resourceProvider == null || resourceProvider.equals(providerName);
     }
 
     public static boolean isAnnotatedWithReplace(final HasMetadata resource) {
