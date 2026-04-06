@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.action.Action;
 import io.streamthoughts.jikkou.core.action.ExecutionResultSet;
 import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.Configuration;
+import io.streamthoughts.jikkou.core.exceptions.JikkouRuntimeException;
 import io.streamthoughts.jikkou.core.exceptions.ResourceNotFoundException;
 import io.streamthoughts.jikkou.core.extension.Extension;
 import io.streamthoughts.jikkou.core.extension.ExtensionCategory;
@@ -511,6 +512,17 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList reconcile(@NotNull final HasItems resources,
                                          @NotNull final ReconciliationMode mode,
                                          @NotNull final ReconciliationContext context) {
+        if (context.isMultiProvider()) {
+            return doMultiProviderOperation(resources,
+                (res, ctx) -> {
+                    ResourceList<HasMetadata> all = addAllResourcesFromRepositories(res);
+                    List<ResourceChange> changes = doDiff(all, NOOP_RESOURCE_CHANGE_FILTER, ctx).getItems();
+                    List<ResourcePolicy> policies = getResourcePoliciesFrom(res);
+                    return doPatch(policies, changes, mode, ctx);
+                },
+                context, "reconcile");
+        }
+
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
@@ -531,6 +543,17 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiChangeResultList patch(@NotNull HasItems resources,
                                      @NotNull ReconciliationMode mode,
                                      @NotNull ReconciliationContext context) {
+        if (context.isMultiProvider()) {
+            return doMultiProviderOperation(resources,
+                (res, ctx) -> {
+                    ResourceList<HasMetadata> all = addAllResourcesFromRepositories(res);
+                    List<ResourceChange> changes = all.getAllByClass(ResourceChange.class);
+                    List<ResourcePolicy> policies = getResourcePoliciesFrom(res);
+                    return doPatch(policies, changes, mode, ctx);
+                },
+                context, "patch");
+        }
+
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
@@ -549,6 +572,18 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
      **/
     @Override
     public ApiChangeResultList replace(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
+        if (context.isMultiProvider()) {
+            return doMultiProviderOperation(resources,
+                (res, ctx) -> {
+                    ResourceList<HasMetadata> all = addAllResourcesFromRepositories(res);
+                    all.forEach(it -> it.getMetadata().addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_CONFIG_REPLACE, true));
+                    List<ResourceChange> changes = doDiff(all, NOOP_RESOURCE_CHANGE_FILTER, ctx).getItems();
+                    List<ResourcePolicy> policies = getResourcePoliciesFrom(res);
+                    return doPatch(policies, changes, ReconciliationMode.FULL, ctx);
+                },
+                context, "replace");
+        }
+
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
@@ -563,6 +598,64 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
 
         // Patch
         return doPatch(policies, changes, ReconciliationMode.FULL, context);
+    }
+
+    /**
+     * Generic multi-provider operation executor. Iterates over each provider,
+     * executing the given operation and aggregating results.
+     *
+     * @since 0.38.0
+     */
+    @NotNull
+    private ApiChangeResultList doMultiProviderOperation(
+            @NotNull HasItems resources,
+            @NotNull MultiProviderOperation operation,
+            @NotNull ReconciliationContext context,
+            @NotNull String operationName) {
+        List<ChangeResult> aggregatedResults = new LinkedList<>();
+        List<String> failedProviders = new LinkedList<>();
+
+        List<String> providerNames = context.providerNames();
+        for (int i = 0; i < providerNames.size(); i++) {
+            String providerName = providerNames.get(i);
+            LOG.info("Executing {} for provider '{}' ({} of {}).",
+                operationName, providerName, i + 1, providerNames.size()
+            );
+
+            ReconciliationContext singleContext = ReconciliationContext.builder()
+                .selector(context.selector())
+                .configuration(context.configuration())
+                .dryRun(context.isDryRun())
+                .labels(context.labels())
+                .annotations(context.annotations())
+                .providerName(providerName)
+                .build();
+
+            try {
+                ApiChangeResultList result = operation.execute(resources, singleContext);
+                aggregatedResults.addAll(result.results());
+            } catch (Exception e) {
+                LOG.error("{} failed for provider '{}': {}", operationName, providerName, e.getMessage(), e);
+                failedProviders.add(providerName);
+
+                if (!context.continueOnError()) {
+                    throw new JikkouRuntimeException(String.format(
+                        "%s failed for provider '%s'. Use --continue-on-error to continue with remaining providers. Cause: %s",
+                        operationName, providerName, e.getMessage()), e);
+                }
+            }
+        }
+
+        if (!failedProviders.isEmpty()) {
+            LOG.warn("{} completed with failures on providers: {}", operationName, failedProviders);
+        }
+
+        return new ApiChangeResultList(context.isDryRun(), new ObjectMeta(), aggregatedResults);
+    }
+
+    @FunctionalInterface
+    private interface MultiProviderOperation {
+        ApiChangeResultList execute(@NotNull HasItems resources, @NotNull ReconciliationContext context);
     }
 
     @NotNull
@@ -747,10 +840,58 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     public ApiResourceChangeList getDiff(@NotNull HasItems resources,
                                          @NotNull ResourceChangeFilter filter,
                                          @NotNull ReconciliationContext context) {
+        if (context.isMultiProvider()) {
+            return doMultiProviderDiff(resources, filter, context);
+        }
+
         // Load resources from repositories
         ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
 
         return doDiff(all, filter, context);
+    }
+
+    /**
+     * Executes diff across multiple providers, aggregating results.
+     *
+     * @since 0.38.0
+     */
+    @NotNull
+    private ApiResourceChangeList doMultiProviderDiff(@NotNull HasItems resources,
+                                                      @NotNull ResourceChangeFilter filter,
+                                                      @NotNull ReconciliationContext context) {
+        List<ResourceChange> aggregatedChanges = new LinkedList<>();
+
+        List<String> providerNames = context.providerNames();
+        for (int i = 0; i < providerNames.size(); i++) {
+            String providerName = providerNames.get(i);
+            LOG.info("Computing diff for provider '{}' ({} of {}).",
+                providerName, i + 1, providerNames.size()
+            );
+
+            ReconciliationContext singleContext = ReconciliationContext.builder()
+                .selector(context.selector())
+                .configuration(context.configuration())
+                .dryRun(context.isDryRun())
+                .labels(context.labels())
+                .annotations(context.annotations())
+                .providerName(providerName)
+                .build();
+
+            try {
+                ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+                ApiResourceChangeList result = doDiff(all, filter, singleContext);
+                aggregatedChanges.addAll(result.getItems());
+            } catch (Exception e) {
+                LOG.error("Diff failed for provider '{}': {}", providerName, e.getMessage(), e);
+                if (!context.continueOnError()) {
+                    throw new JikkouRuntimeException(String.format(
+                        "Diff failed for provider '%s'. Use --continue-on-error to continue with remaining providers. Cause: %s",
+                        providerName, e.getMessage()), e);
+                }
+            }
+        }
+
+        return new ApiResourceChangeList(aggregatedChanges);
     }
 
     @NotNull

@@ -47,6 +47,10 @@ public final class ResourceReconcileRequestFactory {
                         context.configuration().asMap(),
                         context.selector().getSelectorExpressions(),
                         context.selector().getSelectorMatchingStrategy()
-                ), resources, context.providerName());
+                ),
+                resources,
+                context.providerName(),
+                context.providerNames().isEmpty() ? null : context.providerNames(),
+                context.continueOnError() ? true : null);
     }
 }

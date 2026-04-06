@@ -12,12 +12,14 @@ import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
 import io.streamthoughts.jikkou.client.command.ExecOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
 import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
+import io.streamthoughts.jikkou.client.command.ProviderResolver;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import io.streamthoughts.jikkou.client.printer.Printers;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.HasItems;
@@ -48,7 +50,10 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
 
     @Inject
     LocalResourceRepository localResourceRepository;
-    
+
+    @Inject
+    Configuration configuration;
+
     /**
      * {@inheritDoc}
      */
@@ -69,14 +74,8 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
     }
 
     private @NotNull ReconciliationContext getReconciliationContext() {
-        return ReconciliationContext.builder()
-                .dryRun(isDryRun())
-                .configuration(configOptionsMixin.getConfiguration())
-                .selector(selectorOptions.getResourceSelector())
-                .labels(fileOptions.getLabels())
-                .annotations(fileOptions.getAnnotations())
-                .providerName(providerOptionMixin.getProvider())
-                .build();
+        return new ProviderResolver(configuration).buildReconciliationContext(
+                providerOptionMixin, configOptionsMixin, selectorOptions, fileOptions, isDryRun());
     }
 
     protected @NotNull HasItems getResources() {

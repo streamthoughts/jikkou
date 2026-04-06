@@ -43,6 +43,8 @@ public final class ReconciliationContextAdapter {
                 .annotations(NamedValueSet.setOf(params.annotations()))
                 .labels(NamedValueSet.setOf(params.labels()))
                 .providerName(request.provider())
+                .providerNames(request.providers())
+                .continueOnError(request.continueOnError())
                 .build();
     }
 

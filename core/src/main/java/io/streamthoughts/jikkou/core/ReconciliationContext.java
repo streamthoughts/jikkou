@@ -12,6 +12,7 @@ import io.streamthoughts.jikkou.core.models.NamedValue;
 import io.streamthoughts.jikkou.core.models.NamedValueSet;
 import io.streamthoughts.jikkou.core.selector.Selector;
 import io.streamthoughts.jikkou.core.selector.Selectors;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -66,6 +67,38 @@ public interface ReconciliationContext {
     String providerName();
 
     /**
+     * Returns the list of provider names for batch reconciliation operations.
+     * When non-empty, the reconciliation engine iterates over each provider independently.
+     *
+     * @return the list of provider names, or an empty list if not a batch operation.
+     * @since 0.38.0
+     */
+    default @NotNull List<String> providerNames() {
+        return List.of();
+    }
+
+    /**
+     * Checks whether the reconciliation should continue when an error occurs on one provider
+     * during batch operations. When false (default), the reconciliation fails fast on the first error.
+     *
+     * @return {@code true} if reconciliation should continue on error, {@code false} for fail-fast.
+     * @since 0.38.0
+     */
+    default boolean continueOnError() {
+        return false;
+    }
+
+    /**
+     * Checks whether this context targets multiple providers (batch operation).
+     *
+     * @return {@code true} if this is a multi-provider batch operation.
+     * @since 0.38.0
+     */
+    default boolean isMultiProvider() {
+        return !providerNames().isEmpty();
+    }
+
+    /**
      * Gets a new ReconciliationContext builder.
      *
      * @return a new {@link Builder} instance.
@@ -102,7 +135,9 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     internal.labels(),
                     internal.annotations(),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -119,7 +154,9 @@ public interface ReconciliationContext {
                     dryRun,
                     internal.labels(),
                     internal.annotations(),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -136,7 +173,9 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     internal.labels(),
                     internal.annotations(),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -153,7 +192,9 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     NamedValueSet.setOf(labels),
                     internal.annotations(),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -170,7 +211,9 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     NamedValueSet.setOf(internal.labels()).with(label),
                     internal.annotations(),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -186,7 +229,9 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     internal.labels(),
                     NamedValueSet.setOf(annotations),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -202,7 +247,9 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     internal.labels(),
                     NamedValueSet.setOf(internal.annotations()).with(annotation),
-                    internal.providerName()
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
             ));
         }
 
@@ -219,7 +266,49 @@ public interface ReconciliationContext {
                     internal.isDryRun(),
                     internal.labels(),
                     internal.annotations(),
-                    providerName
+                    providerName,
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given provider names for batch operations.
+         *
+         * @param providerNames the list of provider names
+         * @return a new {@link Builder}
+         * @since 0.38.0
+         */
+        public Builder providerNames(@NotNull List<String> providerNames) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    providerNames,
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given continueOnError flag.
+         *
+         * @param continueOnError whether to continue on error during batch operations
+         * @return a new {@link Builder}
+         * @since 0.38.0
+         */
+        public Builder continueOnError(boolean continueOnError) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    continueOnError
             ));
         }
 
@@ -237,17 +326,21 @@ public interface ReconciliationContext {
     /**
      * A default {@link ReconciliationContext} implementation.
      *
-     * @param selector      The selector to filter resources to be included in the reconciliation.
-     * @param configuration The config for computing resource changes.
-     * @param isDryRun      Specify if the reconciliation should be run in dry-run.
-     * @param providerName The selected provider name for this reconciliation operation.
+     * @param selector        The selector to filter resources to be included in the reconciliation.
+     * @param configuration   The config for computing resource changes.
+     * @param isDryRun        Specify if the reconciliation should be run in dry-run.
+     * @param providerName    The selected provider name for this reconciliation operation.
+     * @param providerNames   The list of provider names for batch operations.
+     * @param continueOnError Whether to continue on error during batch operations.
      */
     record Default(Selector selector,
                    Configuration configuration,
                    boolean isDryRun,
                    NamedValueSet labels,
                    NamedValueSet annotations,
-                   String providerName)
+                   String providerName,
+                   @NotNull List<String> providerNames,
+                   boolean continueOnError)
             implements ReconciliationContext {
 
         public static Default EMPTY = new Default(
@@ -256,7 +349,9 @@ public interface ReconciliationContext {
                 true,
                 NamedValueSet.emptySet(),
                 NamedValueSet.emptySet(),
-                null
+                null,
+                List.of(),
+                false
         );
     }
 }
