@@ -130,7 +130,7 @@
         <netty.version>4.2.11.Final</netty.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <logback.version>1.5.31</logback.version>
+        <logback.version>1.5.32</logback.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <!-- Build -->
         <graal-sdk.version>25.0.2</graal-sdk.version>
