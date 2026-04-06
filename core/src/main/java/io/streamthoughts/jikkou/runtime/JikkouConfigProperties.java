@@ -10,6 +10,7 @@ import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.runtime.configurator.ExtensionConfigEntry;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +39,28 @@ public final class JikkouConfigProperties {
             .toList()
         )
         .defaultValue(List.of());
+
+    @SuppressWarnings("unchecked")
+    public static final ConfigProperty<Map<String, List<String>>> PROVIDER_GROUPS_CONFIG = ConfigProperty
+        .ofConfig("provider-groups")
+        .description("Named groups of providers for batch operations. Maps group name to list of provider names.")
+        .map(config -> {
+            Map<String, Object> rawMap = config.asMap(false);
+            return rawMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> {
+                        Object value = entry.getValue();
+                        if (value instanceof List<?> list) {
+                            return list.stream()
+                                .map(Object::toString)
+                                .collect(Collectors.toList());
+                        }
+                        return List.of(value.toString());
+                    }
+                ));
+        })
+        .defaultValue(Map.of());
 
     public static final ConfigProperty<List<ExtensionConfigEntry>> VALIDATIONS_CONFIG = createExtensionConfig(
         "validations", "The list of custom validations to apply on resources.");

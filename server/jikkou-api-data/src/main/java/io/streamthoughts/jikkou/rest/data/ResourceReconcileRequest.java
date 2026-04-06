@@ -19,26 +19,32 @@ import javax.annotation.Nullable;
 /**
  * ResourceReconcileRequest.
  *
- * @param params    the query parameters.
- * @param resources the resource entities.
- * @param provider  the provider name to use for reconciliation.
+ * @param params          the query parameters.
+ * @param resources       the resource entities.
+ * @param provider        the provider name to use for reconciliation.
+ * @param providers       the list of provider names for batch operations (mutually exclusive with provider).
+ * @param continueOnError whether to continue on error during batch operations (default: false).
  */
 public record ResourceReconcileRequest(
         @Nullable @JsonProperty("params") Params params,
         @Nullable @JsonProperty("resources") List<? extends HasMetadata> resources,
-        @Nullable @JsonProperty("provider") String provider) {
+        @Nullable @JsonProperty("provider") String provider,
+        @Nullable @JsonProperty("providers") List<String> providers,
+        @Nullable @JsonProperty("continueOnError") Boolean continueOnError) {
 
     @ConstructorProperties({
             "params",
             "resources",
-            "provider"
+            "provider",
+            "providers",
+            "continueOnError"
     })
     public ResourceReconcileRequest {
     }
 
     // Empty constructor
     public ResourceReconcileRequest() {
-        this(null, null, null);
+        this(null, null, null, null, null);
     }
 
     /**
@@ -48,7 +54,20 @@ public record ResourceReconcileRequest(
      * @param resources the resource entities.
      */
     public ResourceReconcileRequest(@Nullable Params params, @Nullable List<? extends HasMetadata> resources) {
-        this(params, resources, null);
+        this(params, resources, null, null, null);
+    }
+
+    /**
+     * Creates a new {@link ResourceReconcileRequest} with single provider (backwards compatible).
+     *
+     * @param params    the query parameters.
+     * @param resources the resource entities.
+     * @param provider  the provider name.
+     */
+    public ResourceReconcileRequest(@Nullable Params params,
+                                    @Nullable List<? extends HasMetadata> resources,
+                                    @Nullable String provider) {
+        this(params, resources, provider, null, null);
     }
 
     @Override
@@ -59,6 +78,16 @@ public record ResourceReconcileRequest(
     @Override
     public List<? extends HasMetadata> resources() {
         return Optional.ofNullable(resources).orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<String> providers() {
+        return Optional.ofNullable(providers).orElse(Collections.emptyList());
+    }
+
+    @Override
+    public Boolean continueOnError() {
+        return Optional.ofNullable(continueOnError).orElse(false);
     }
 
     /**
