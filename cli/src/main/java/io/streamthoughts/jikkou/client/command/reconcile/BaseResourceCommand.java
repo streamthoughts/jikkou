@@ -12,18 +12,21 @@ import io.streamthoughts.jikkou.client.command.ConfigOptionsMixin;
 import io.streamthoughts.jikkou.client.command.ExecOptionsMixin;
 import io.streamthoughts.jikkou.client.command.FileOptionsMixin;
 import io.streamthoughts.jikkou.client.command.ProviderOptionMixin;
+import io.streamthoughts.jikkou.client.command.ProviderResolver;
 import io.streamthoughts.jikkou.client.command.SelectorOptionsMixin;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import io.streamthoughts.jikkou.client.printer.Printers;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
 import io.streamthoughts.jikkou.core.ReconciliationMode;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.models.ApiChangeResultList;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.repository.LocalResourceRepository;
 import jakarta.inject.Inject;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
@@ -48,7 +51,10 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
 
     @Inject
     LocalResourceRepository localResourceRepository;
-    
+
+    @Inject
+    Configuration configuration;
+
     /**
      * {@inheritDoc}
      */
@@ -69,6 +75,9 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
     }
 
     private @NotNull ReconciliationContext getReconciliationContext() {
+        ProviderResolver resolver = new ProviderResolver(configuration);
+        List<String> providerNames = resolver.resolveProviderNames(providerOptionMixin);
+
         return ReconciliationContext.builder()
                 .dryRun(isDryRun())
                 .configuration(configOptionsMixin.getConfiguration())
@@ -76,6 +85,8 @@ public abstract class BaseResourceCommand extends CLIBaseCommand implements Call
                 .labels(fileOptions.getLabels())
                 .annotations(fileOptions.getAnnotations())
                 .providerName(providerOptionMixin.getProvider())
+                .providerNames(providerNames)
+                .continueOnError(providerOptionMixin.isContinueOnError())
                 .build();
     }
 

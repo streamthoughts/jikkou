@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.client.command;
 import io.streamthoughts.jikkou.client.command.validate.ValidationErrorsWriter;
 import io.streamthoughts.jikkou.core.JikkouApi;
 import io.streamthoughts.jikkou.core.ReconciliationContext;
+import io.streamthoughts.jikkou.core.config.Configuration;
 import io.streamthoughts.jikkou.core.exceptions.ValidationException;
 import io.streamthoughts.jikkou.core.io.writer.ResourceWriter;
 import io.streamthoughts.jikkou.core.models.ApiResourceChangeList;
@@ -21,6 +22,7 @@ import jakarta.inject.Singleton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import org.jetbrains.annotations.NotNull;
@@ -75,6 +77,8 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
     LocalResourceRepository localResourceRepository;
     @Inject
     ResourceWriter writer;
+    @Inject
+    Configuration configuration;
 
     /**
      * {@inheritDoc}
@@ -112,6 +116,9 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
 
     @NotNull
     private ReconciliationContext getReconciliationContext() {
+        ProviderResolver resolver = new ProviderResolver(configuration);
+        List<String> providerNames = resolver.resolveProviderNames(providerOptionMixin);
+
         return ReconciliationContext
             .builder()
             .dryRun(true)
@@ -120,6 +127,8 @@ public class DiffCommand extends CLIBaseCommand implements Callable<Integer> {
             .labels(fileOptions.getLabels())
             .annotations(fileOptions.getAnnotations())
             .providerName(providerOptionMixin.getProvider())
+            .providerNames(providerNames)
+            .continueOnError(providerOptionMixin.isContinueOnError())
             .build();
     }
 }
