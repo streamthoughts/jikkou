@@ -11,6 +11,7 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
+import io.streamthoughts.jikkou.core.annotation.ReconciliationOrder;
 import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.SpecificResource;
@@ -35,6 +36,7 @@ import io.streamthoughts.jikkou.core.models.Verb;
 })
 @ApiVersion("kafka.jikkou.io/v1")
 @Kind("KafkaUser")
+@ReconciliationOrder(50)
 @JsonDeserialize(builder = V1KafkaUser.Builder.class)
 public class V1KafkaUser extends SpecificResource<V1KafkaUser, V1KafkaUserSpec> {
 

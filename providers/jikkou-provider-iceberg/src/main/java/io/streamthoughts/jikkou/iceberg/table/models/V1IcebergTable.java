@@ -13,6 +13,7 @@ import io.streamthoughts.jikkou.core.annotation.ApiVersion;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Kind;
 import io.streamthoughts.jikkou.core.annotation.Names;
+import io.streamthoughts.jikkou.core.annotation.ReconciliationOrder;
 import io.streamthoughts.jikkou.core.annotation.Reflectable;
 import io.streamthoughts.jikkou.core.annotation.Verbs;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
@@ -40,6 +41,7 @@ import lombok.extern.jackson.Jacksonized;
 @JsonPropertyOrder({"apiVersion", "kind", "metadata", "spec"})
 @ApiVersion("iceberg.jikkou.io/v1beta1")
 @Kind("IcebergTable")
+@ReconciliationOrder(200)
 @Jacksonized
 @Reflectable
 public class V1IcebergTable implements HasMetadata, HasSpec<V1IcebergTableSpec>, Resource {
