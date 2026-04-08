@@ -35,7 +35,7 @@ public class AbstractKafkaIntegrationTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKafkaIntegrationTest.class);
     private static final Network KAFKA_NETWORK = Network.newNetwork();
 
-    public static final String APACHE_KAFKA_VERSION = "3.8.0";
+    public static final String APACHE_KAFKA_VERSION = "4.1.1";
     public static final int DEFAULT_NUM_PARTITIONS = 1;
     public static final short DEFAULT_REPLICATION_FACTOR = (short) 1;
 
