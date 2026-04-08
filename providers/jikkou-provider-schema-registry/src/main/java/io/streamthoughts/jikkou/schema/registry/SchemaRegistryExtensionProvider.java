@@ -158,7 +158,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
      **/
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
-        registry.register(V1SchemaRegistrySubject.class);
+        registry.register(V1SchemaRegistrySubject.class).setReconciliationOrder(100);
         registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(V1SchemaRegistrySubject.class));
         registry.register(V1SchemaRegistrySubjectList.class);
     }

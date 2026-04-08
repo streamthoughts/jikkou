@@ -9,6 +9,7 @@ package io.streamthoughts.jikkou.kafka;
 import io.streamthoughts.jikkou.core.annotation.Provider;
 import io.streamthoughts.jikkou.core.config.ConfigProperty;
 import io.streamthoughts.jikkou.core.extension.ExtensionRegistry;
+import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.change.GenericResourceChange;
 import io.streamthoughts.jikkou.core.models.change.ResourceChange;
 import io.streamthoughts.jikkou.core.resource.ResourceRegistry;
@@ -198,18 +199,23 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
     public void registerResources(@NotNull ResourceRegistry registry) {
         Stream.of(
             V1KafkaBroker.class,
-            V1KafkaClientQuota.class,
-            V1KafkaTopic.class,
-            V1KafkaPrincipalAuthorization.class,
             V1KafkaPrincipalAuthorizationList.class,
-            V1KafkaPrincipalRole.class,
-            V1KafkaTableRecord.class,
-            V1KafkaConsumerGroup.class,
-            V1KafkaUser.class
+            V1KafkaPrincipalRole.class
         ).forEach(resource -> {
             registry.register(resource);
             registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(resource));
         });
+
+        // Register resources with reconciliation ordering.
+        // Lower values are reconciled first during creation, last during deletion.
+        // V1KafkaUser uses @ReconciliationOrder annotation (hand-written class).
+        registry.register(V1KafkaUser.class);
+        registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(V1KafkaUser.class));
+        registerWithOrder(registry, V1KafkaTopic.class, 100);
+        registerWithOrder(registry, V1KafkaClientQuota.class, 150);
+        registerWithOrder(registry, V1KafkaPrincipalAuthorization.class, 200);
+        registerWithOrder(registry, V1KafkaConsumerGroup.class, 250);
+        registerWithOrder(registry, V1KafkaTableRecord.class, 300);
 
         // register collections
         Stream.of(
@@ -217,5 +223,12 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
             V1KafkaClientQuotaList.class,
             V1KafkaTopicList.class
         ).forEach(registry::register);
+    }
+
+    private static void registerWithOrder(ResourceRegistry registry,
+                                          Class<? extends Resource> resource,
+                                          int order) {
+        registry.register(resource).setReconciliationOrder(order);
+        registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(resource));
     }
 }

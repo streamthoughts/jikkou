@@ -50,6 +50,7 @@ import io.streamthoughts.jikkou.core.models.CoreAnnotations;
 import io.streamthoughts.jikkou.core.models.HasItems;
 import io.streamthoughts.jikkou.core.models.HasMetadata;
 import io.streamthoughts.jikkou.core.models.HasMetadataAcceptable;
+import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.ObjectMeta;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
@@ -694,10 +695,31 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     private List<ChangeResult> applyPatchesAndGetResults(@NotNull ReconciliationMode mode, @NotNull ReconciliationContext context, List<ResourceChange> changes) {
         ProviderSelectionContext providerContext = createProviderContext(context);
         Map<ResourceType, List<ResourceChange>> changesGroupByResourceType = ResourceList.of(changes).groupBy(ResourceType::of);
-        return changesGroupByResourceType.entrySet().stream().flatMap(entry -> {
-            ResourceType type = entry.getKey();
+
+        boolean isDeleteOnly = changes.stream().allMatch(c -> Operation.DELETE.equals(c.getOp()));
+
+        // Sort resource types by reconciliation order (reverse for delete operations)
+        Comparator<ResourceType> orderComparator = Comparator
+                .comparingInt((ResourceType t) -> getReconciliationOrder(t))
+                .thenComparing(ResourceType::kind);
+        if (isDeleteOnly) {
+            orderComparator = orderComparator.reversed();
+        }
+
+        List<ResourceType> sortedTypes = changesGroupByResourceType.keySet().stream()
+                .sorted(orderComparator)
+                .toList();
+
+        if (sortedTypes.size() > 1) {
+            LOG.info("Reconciliation order ({}): {}",
+                isDeleteOnly ? "delete" : "create/update",
+                sortedTypes.stream().map(ResourceType::kind).toList()
+            );
+        }
+
+        return sortedTypes.stream().flatMap(type -> {
             Controller<HasMetadata> controller = getMatchingController(type, providerContext);
-            List<ResourceChange> items = entry.getValue();
+            List<ResourceChange> items = changesGroupByResourceType.get(type);
             LOG.info("Applying {} changes for group={}, apiVersion={} and kind={} using controller: '{}' (mode: {}, dryRun: {}).",
                 items.size(),
                 type.group(),
@@ -720,6 +742,12 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             );
             return results.stream();
         }).toList();
+    }
+
+    private int getReconciliationOrder(@NotNull ResourceType type) {
+        return resourceRegistry.findDescriptorByType(type)
+                .map(ResourceDescriptor::reconciliationOrder)
+                .orElse(HasPriority.NO_ORDER);
     }
 
     /**

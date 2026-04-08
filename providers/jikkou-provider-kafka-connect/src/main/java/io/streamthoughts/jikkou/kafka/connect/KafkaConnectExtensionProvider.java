@@ -85,7 +85,7 @@ public final class KafkaConnectExtensionProvider extends BaseExtensionProvider {
      **/
     @Override
     public void registerResources(@NotNull ResourceRegistry registry) {
-        registry.register(V1KafkaConnector.class);
+        registry.register(V1KafkaConnector.class).setReconciliationOrder(100);
         registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(V1KafkaConnector.class));
         registry.register(V1KafkaConnectorList.class);
     }

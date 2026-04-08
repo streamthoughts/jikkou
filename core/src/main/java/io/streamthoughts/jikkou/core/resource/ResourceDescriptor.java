@@ -7,6 +7,7 @@
 package io.streamthoughts.jikkou.core.resource;
 
 import io.streamthoughts.jikkou.core.models.HasMetadata;
+import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceList;
 import io.streamthoughts.jikkou.core.models.ResourceType;
@@ -38,6 +39,7 @@ public final class ResourceDescriptor {
     private Set<Verb> verbs;
     private boolean isEnabled = true;
     private boolean isTransient = false;
+    private int reconciliationOrder = HasPriority.NO_ORDER;
     private Class<? extends ExtensionProvider> provider;
 
     /**
@@ -274,6 +276,27 @@ public final class ResourceDescriptor {
      */
     public boolean isTransient() {
         return isTransient;
+    }
+
+    /**
+     * Gets the reconciliation order for this resource type.
+     * Lower values are reconciled first during creation.
+     *
+     * @return the reconciliation order value.
+     */
+    public int reconciliationOrder() {
+        return reconciliationOrder;
+    }
+
+    /**
+     * Sets the reconciliation order for this resource type.
+     *
+     * @param reconciliationOrder the order value.
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setReconciliationOrder(int reconciliationOrder) {
+        this.reconciliationOrder = reconciliationOrder;
+        return this;
     }
 
     /**

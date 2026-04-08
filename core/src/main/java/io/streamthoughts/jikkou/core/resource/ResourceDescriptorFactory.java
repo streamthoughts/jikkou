@@ -9,7 +9,9 @@ package io.streamthoughts.jikkou.core.resource;
 import io.streamthoughts.jikkou.common.utils.Strings;
 import io.streamthoughts.jikkou.core.annotation.Description;
 import io.streamthoughts.jikkou.core.annotation.Names;
+import io.streamthoughts.jikkou.core.annotation.ReconciliationOrder;
 import io.streamthoughts.jikkou.core.annotation.Verbs;
+import io.streamthoughts.jikkou.core.models.HasPriority;
 import io.streamthoughts.jikkou.core.models.Resource;
 import io.streamthoughts.jikkou.core.models.ResourceType;
 import io.streamthoughts.jikkou.core.models.Verb;
@@ -43,8 +45,9 @@ public final class ResourceDescriptorFactory {
 
         Names names = resource.getAnnotation(Names.class);
 
+        ResourceDescriptor descriptor;
         if (names != null) {
-            return new ResourceDescriptor(
+            descriptor = new ResourceDescriptor(
                     type,
                     description,
                     resource,
@@ -55,7 +58,7 @@ public final class ResourceDescriptorFactory {
                     Resource.isTransient(resource)
             );
         } else {
-            return new ResourceDescriptor(
+            descriptor = new ResourceDescriptor(
                     type,
                     description,
                     resource,
@@ -66,6 +69,14 @@ public final class ResourceDescriptorFactory {
                     Resource.isTransient(resource)
             );
         }
+        descriptor.setReconciliationOrder(extractReconciliationOrder(resource));
+        return descriptor;
+    }
+
+    private static int extractReconciliationOrder(@NotNull Class<? extends Resource> resource) {
+        return Optional.ofNullable(resource.getAnnotation(ReconciliationOrder.class))
+                .map(ReconciliationOrder::value)
+                .orElse(HasPriority.NO_ORDER);
     }
 
     @NotNull
