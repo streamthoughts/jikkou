@@ -26,7 +26,7 @@
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
  transformations: [
  {
- type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitions
+ type = io.jikkou.kafka.transform.KafkaTopicMaxNumPartitions
  priority = 100
  config = {
  maxNumPartitions = 50
@@ -62,7 +62,7 @@
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
  transformations: [
  {
- type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+ type = io.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
  priority = 100
  config = {
  maxRetentionMs = 2592000000 # 30 days
@@ -98,7 +98,7 @@
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
  transformations: [
  {
- type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
+ type = io.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
  priority = 100
  config = {
  minInSyncReplicas = 2
@@ -134,7 +134,7 @@
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
  transformations: [
  {
- type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation
+ type = io.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation
  priority = 100
  config = {
  minReplicationFactor = 3
@@ -170,7 +170,7 @@
 &lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
  transformations: [
  {
- type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+ type = io.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
  priority = 100
  config = {
  minRetentionMs = 604800000 # 7 days

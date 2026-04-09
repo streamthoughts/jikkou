@@ -10,7 +10,7 @@ other resource files needed.&lt;/p></description></item><item><title>Develop Cus
 
 &lt;h2 id="interface">Interface&lt;/h2>
 &lt;p>To create a custom &lt;code>validation&lt;/code>, you will need to implement the Java
-interface: &lt;code>io.streamthoughts.jikkou.core.validation.Validation&lt;/code>.&lt;/p>
+interface: &lt;code>io.jikkou.core.validation.Validation&lt;/code>.&lt;/p>
 &lt;p>This interface defines two methods, with a default implementation for each, to give you the option of validating either
 all resources accepted by validation at once, or each resource one by one.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">interface&lt;/span> &lt;span class="nc">Validation&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">extends&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">HasMetadata&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">extends&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Interceptor&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
@@ -43,7 +43,7 @@ all resources accepted by validation at once, or each resource one by one.&lt;/p
 
 &lt;h2 id="interface">Interface&lt;/h2>
 &lt;p>To create a custom &lt;code>action&lt;/code>, you will need to implement the Java
-interface: &lt;code>io.streamthoughts.jikkou.core.action.Action&lt;/code>.&lt;/p>
+interface: &lt;code>io.jikkou.core.action.Action&lt;/code>.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/**
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Interface for executing a one-shot action on a specific type of resources.
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> *
@@ -68,7 +68,7 @@ interface: &lt;code>io.streamthoughts.jikkou.core.action.Action&lt;/code>.&lt;/p
 
 &lt;h2 id="interface">Interface&lt;/h2>
 &lt;p>To create a custom &lt;code>transformation&lt;/code>, you will need to implement the Java
-interface: &lt;code>io.streamthoughts.jikkou.core.transformation.Transformation&lt;/code>.&lt;/p>
+interface: &lt;code>io.jikkou.core.transformation.Transformation&lt;/code>.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cm">/**
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * This interface is used to transform or filter resources.

@@ -49,10 +49,10 @@ This allows you to globally declare some configuration settings.
 &lt;p>(&lt;em>auto registered&lt;/em>)&lt;/p>
 &lt;h3 id="topicconfigkeysvalidation">&lt;code>TopicConfigKeysValidation&lt;/code>&lt;/h3>
 &lt;p>(&lt;em>auto registered&lt;/em>)&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicConfigKeysValidation
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.jikkou.kafka.validation.TopicConfigKeysValidation
 &lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicConfigKeysValidation&lt;/code> allows checking if the specified topic configs are all valid.&lt;/p>
 &lt;h3 id="topicminnumpartitions">&lt;code>TopicMinNumPartitions&lt;/code>&lt;/h3>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.jikkou.kafka.validation.TopicMinNumPartitionsValidation
 &lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicMinNumPartitions&lt;/code> allows checking if the specified number of partitions for a topic is not less than the minimum required.&lt;/p>
 &lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
 &lt;table>
@@ -74,17 +74,17 @@ This allows you to globally declare some configuration settings.
  &lt;/tbody>
 &lt;/table>
 &lt;h3 id="topicmaxnumpartitions">&lt;code>TopicMaxNumPartitions&lt;/code>&lt;/h3>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitions
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.jikkou.kafka.validation.TopicMaxNumPartitions
 &lt;/code>&lt;/pre>&lt;p>The &lt;code>TopicMaxNumPartitions&lt;/code> allows checking if the number of partitions for a topic is not greater than the maximum configured.&lt;/p></description></item><item><title>Validations</title><link>https://www.jikkou.io/docs/providers/schema-registry/validations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/schema-registry/validations/</guid><description>&lt;p>Jikkou ships with the following built-in &lt;em>validations&lt;/em>:&lt;/p>
 &lt;h2 id="subject">Subject&lt;/h2>
 &lt;h3 id="schemacompatibilityvalidation">&lt;code>SchemaCompatibilityValidation&lt;/code>&lt;/h3>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.jikkou.schema.registry.validation.SchemaCompatibilityValidation
 &lt;/code>&lt;/pre>&lt;p>The &lt;code>SchemaCompatibilityValidation&lt;/code> allows testing the compatibility of the schema with the latest
 version already registered in the Schema Registry using the provided compatibility-level.&lt;/p>
 &lt;h3 id="avroschemavalidation">&lt;code>AvroSchemaValidation&lt;/code>&lt;/h3>
 &lt;p>The &lt;code>AvroSchemaValidation&lt;/code> allows checking if the specified Avro schema matches some specific avro schema definition
 rules;&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">type = io.jikkou.schema.registry.validation.AvroSchemaValidation
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
 &lt;table>
  &lt;thead>
