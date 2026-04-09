@@ -1,7 +1,7 @@
 {
   "title": "ObjectMeta",
   "description": "Metadata attached to the resources.",
-  "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+  "existingJavaType": "io.jikkou.core.models.ObjectMeta",
   "type": "object",
   "properties": {
     "name": {

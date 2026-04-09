@@ -1,5 +1,5 @@
 <FindBugsFilter>
     <Match>
-        <Package name="~io.streamthoughts.*" />
+        <Package name="~io.jikkou.*" />
     </Match>
 </FindBugsFilter>

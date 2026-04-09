@@ -7,7 +7,7 @@
     "lombok-with": true,
     "all-args-constructor": false
   },
-  "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaClientQuotaEntity",
+  "existingJavaType": "io.jikkou.kafka.model.KafkaClientQuotaEntity",
   "properties": {
     "user": {
       "type": "string",

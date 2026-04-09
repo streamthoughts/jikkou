@@ -13,7 +13,7 @@ This section covers the core classes to develop action extensions.
 ## Interface
 
 To create a custom `action`, you will need to implement the Java
-interface: `io.streamthoughts.jikkou.core.action.Action`.
+interface: `io.jikkou.core.action.Action`.
 
 ```java
 /**

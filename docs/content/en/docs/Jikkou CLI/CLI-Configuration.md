@@ -69,7 +69,7 @@ jikkou {
   # Apache Kafka Provider
   provider.kafka {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     config = {
       # The default Kafka Client configuration
       client {
@@ -96,7 +96,7 @@ jikkou {
   # Schema Registry Provider
   provider.schemaregistry {
     enabled = true
-    type = io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+    type = io.jikkou.schema.registry.SchemaRegistryExtensionProvider
     config = {
       url = "http://localhost:8081"
       url = ${?JIKKOU_DEFAULT_SCHEMA_REGISTRY_URL}
@@ -110,7 +110,7 @@ jikkou {
   validations = [
     {
       name = "topicMustHaveValidName"
-      type = io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation
+      type = io.jikkou.kafka.validation.TopicNameRegexValidation
       priority = 100
       config = {
         topicNameRegex = "[a-zA-Z0-9\\._\\-]+"
@@ -119,7 +119,7 @@ jikkou {
     },
     {
       name = "topicMustHavePartitionsEqualsOrGreaterThanOne"
-      type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+      type = io.jikkou.kafka.validation.TopicMinNumPartitionsValidation
       priority = 100
       config = {
         topicMinNumPartitions = 1
@@ -128,7 +128,7 @@ jikkou {
     },
     {
       name = "topicMustHaveReplicasEqualsOrGreaterThanOne"
-      type = io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation
+      type = io.jikkou.kafka.validation.TopicMinReplicationFactorValidation
       priority = 100
       config = {
         topicMinReplicationFactor = 1
@@ -141,7 +141,7 @@ jikkou {
     # Uncomment following lines to enable default kafka reporter
     #    {
     #     name = "default"
-    #      type = io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+    #      type = io.jikkou.kafka.reporter.KafkaChangeReporter
     #      config = {
     #        event.source = "jikkou/cli"
     #        kafka = {

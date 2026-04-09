@@ -10,7 +10,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.streamthoughts</groupId>
+        <groupId>io.jikkou</groupId>
         <artifactId>jikkou-parent</artifactId>
         <version>0.38.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -42,7 +42,7 @@
         <!-- Native -->
         <imageName>jikkou</imageName>
         <native.maven.plugin.version>0.11.4</native.maven.plugin.version>
-        <exec.mainClass>io.streamthoughts.jikkou.client.Jikkou</exec.mainClass>
+        <exec.mainClass>io.jikkou.client.Jikkou</exec.mainClass>
     </properties>
 
     <dependencyManagement>
@@ -267,7 +267,7 @@
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
-                        <arg>-Amicronaut.processing.group=io.streamthoughts</arg>
+                        <arg>-Amicronaut.processing.group=io.jikkou</arg>
                         <arg>-Amicronaut.processing.module=jikkou-cli</arg>
                         <arg>-verbose</arg>
                     </compilerArgs>
@@ -321,7 +321,7 @@
                         <argument>--force</argument><!-- overwrite if exists -->
                         <argument>--completionScript</argument>
                         <argument>${project.basedir}/../jikkou_completion</argument>
-                        <argument>io.streamthoughts.jikkou.client.Jikkou</argument>
+                        <argument>io.jikkou.client.Jikkou</argument>
                     </arguments>
                 </configuration>
             </plugin>

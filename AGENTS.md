@@ -26,8 +26,8 @@ jikkou/
 ```
 
 **Main Entry Points**:
-- CLI: `io.streamthoughts.jikkou.client.Jikkou`
-- Server: `io.streamthoughts.jikkou.rest.JikkouApiServer`
+- CLI: `io.jikkou.client.Jikkou`
+- Server: `io.jikkou.rest.JikkouApiServer`
 
 ## Build, Test, and Lint Commands
 
@@ -100,7 +100,7 @@ import static picocli.CommandLine.Model.CommandSpec;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST;
 
 import io.micronaut.configuration.picocli.MicronautFactory;
-import io.streamthoughts.jikkou.client.banner.Banner;
+import io.jikkou.client.banner.Banner;
 import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -137,7 +137,7 @@ public interface ApiBuilder<A extends JikkouApi, B extends JikkouApi.ApiBuilder<
 - **Classes**: PascalCase (e.g., `JikkouApi`, `ResourceTemplateRenderer`)
 - **Methods/Variables**: camelCase (e.g., `getResourceTypes`, `extensionProvider`)
 - **Constants**: SCREAMING_SNAKE_CASE (e.g., `SECTION_KEY_COMMAND_LIST`)
-- **Packages**: lowercase with dots (e.g., `io.streamthoughts.jikkou.core`)
+- **Packages**: lowercase with dots (e.g., `io.jikkou.core`)
 - **Test Classes**: Suffix with `Test` (e.g., `JikkouApiTest`)
 - **Integration Tests**: Suffix with `IT` (e.g., `KafkaProviderIT`)
 

@@ -21,7 +21,7 @@ client configuration property `jikkou.provider.iceberg`.
 jikkou {
   provider.iceberg {
     enabled = true
-    type = io.streamthoughts.jikkou.iceberg.IcebergExtensionProvider
+    type = io.jikkou.iceberg.IcebergExtensionProvider
     config = {
       # Required — type of Iceberg catalog.
       # Accepted values: rest, hive, jdbc, glue, nessie, hadoop
@@ -174,7 +174,7 @@ reconciliation mode explicitly.
 jikkou {
   provider.iceberg {
     enabled = true
-    type = io.streamthoughts.jikkou.iceberg.IcebergExtensionProvider
+    type = io.jikkou.iceberg.IcebergExtensionProvider
     config = {
       catalogType = "rest"
       catalogUri  = "http://localhost:8181"

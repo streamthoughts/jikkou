@@ -1,0 +1,56 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.core.io.reader;
+
+
+import static io.jikkou.core.models.CoreAnnotations.JKKOU_IO_MANAGED_BY_LOCATION;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jikkou.core.models.HasMetadata;
+import io.jikkou.core.models.ObjectMeta;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.Objects;
+import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public abstract class AbstractResourceReader implements ResourceReader {
+
+    protected final URI location;
+    protected final Supplier<InputStream> resourceSupplier;
+    protected final ObjectMapper mapper;
+
+    /**
+     * Creates a new {@link InputStreamResourceReader} instance.
+     *
+     * @param location         the location {@link Path} of the template to read.
+     * @param resourceSupplier the {@link InputStream} from which to read resources.
+     * @param mapper           the {@link ObjectMapper} to be used for reading the resource.
+     */
+    protected AbstractResourceReader(@NotNull final Supplier<InputStream> resourceSupplier,
+                                     @Nullable final URI location,
+                                     @NotNull ObjectMapper mapper) {
+        this.resourceSupplier = Objects.requireNonNull(resourceSupplier, "'resourceSupplier' must not be null");
+        this.mapper = Objects.requireNonNull(mapper, "'mapper' must not be null");
+        this.location = location;
+    }
+
+    protected HasMetadata mayAddResourceAnnotationForLocation(@NotNull final HasMetadata resource) {
+        if (location == null) {
+            return resource;
+        }
+
+        ObjectMeta metadata = resource.optionalMetadata()
+                .map(ObjectMeta::toBuilder)
+                .orElseGet(ObjectMeta::builder)
+                .build();
+        metadata.addAnnotationIfAbsent(JKKOU_IO_MANAGED_BY_LOCATION, location.toString());
+        return resource.withMetadata(metadata);
+    }
+}

@@ -21,7 +21,7 @@ through the Jikkou client configuration property `jikkou.provider.schemaregistry
 jikkou {
   provider.schemaregistry {
     enabled = true
-    type = io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+    type = io.jikkou.schema.registry.SchemaRegistryExtensionProvider
     config = {
       # Comma-separated list of URLs for schema registry instances that can be used to register or look up schemas
       url = "http://localhost:8081"

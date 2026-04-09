@@ -1,0 +1,357 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.core;
+
+import io.jikkou.common.annotation.InterfaceStability;
+import io.jikkou.core.config.Configuration;
+import io.jikkou.core.models.NamedValue;
+import io.jikkou.core.models.NamedValueSet;
+import io.jikkou.core.selector.Selector;
+import io.jikkou.core.selector.Selectors;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Represents the context of a reconciliation operation.
+ *
+ * @see JikkouApi
+ */
+@InterfaceStability.Evolving
+public interface ReconciliationContext {
+
+    /**
+     * Returns the {@link Selector} used for restricting the
+     * resources that will be included in the current reconciliation operation.
+     *
+     * @return the {@link Selector}.
+     */
+    @NotNull Selector selector();
+
+    /**
+     * Returns the {@link Configuration} used for executing a specific resource reconciliation operation.
+     *
+     * @return the options to be used for computing resource changes.
+     */
+    @NotNull Configuration configuration();
+
+    /**
+     * Returns the 'labels' to be applied on the metadata of the resources to be reconciled.
+     *
+     * @return the labels.
+     */
+    @NotNull NamedValueSet labels();
+
+    /**
+     * Returns the 'annotations' to be applied on the metadata of the resources to be reconciled.
+     *
+     * @return the annotations.
+     */
+    @NotNull NamedValueSet annotations();
+
+    /**
+     * Checks whether this operation should be run in dry-run.
+     *
+     * @return {@code true} if the reconciliation operation should be run in dry-mode. Otherwise {@code false}.
+     */
+    boolean isDryRun();
+
+    /**
+     * Returns the selected provider name for this reconciliation operation.
+     *
+     * @return the provider name, or null if not specified.
+     */
+    String providerName();
+
+    /**
+     * Returns the list of provider names for batch reconciliation operations.
+     * When non-empty, the reconciliation engine iterates over each provider independently.
+     *
+     * @return the list of provider names, or an empty list if not a batch operation.
+     * @since 0.38.0
+     */
+    default @NotNull List<String> providerNames() {
+        return List.of();
+    }
+
+    /**
+     * Checks whether the reconciliation should continue when an error occurs on one provider
+     * during batch operations. When false (default), the reconciliation fails fast on the first error.
+     *
+     * @return {@code true} if reconciliation should continue on error, {@code false} for fail-fast.
+     * @since 0.38.0
+     */
+    default boolean continueOnError() {
+        return false;
+    }
+
+    /**
+     * Checks whether this context targets multiple providers (batch operation).
+     *
+     * @return {@code true} if this is a multi-provider batch operation.
+     * @since 0.38.0
+     */
+    default boolean isMultiProvider() {
+        return !providerNames().isEmpty();
+    }
+
+    /**
+     * Gets a new ReconciliationContext builder.
+     *
+     * @return a new {@link Builder} instance.
+     */
+    static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * An immutable class for building a new ReconciliationContext.
+     */
+    class Builder {
+
+        private final ReconciliationContext internal;
+
+        private Builder() {
+            this(Default.EMPTY);
+        }
+
+        private Builder(ReconciliationContext context) {
+            this.internal = context;
+        }
+
+        /**
+         * Returns a new builder with the given configuration.
+         *
+         * @param configuration the configuration
+         * @return a new {@link Builder}
+         */
+        public Builder configuration(Configuration configuration) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    configuration,
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given dryRun.
+         *
+         * @param dryRun the selectors
+         * @return a new {@link Builder}
+         */
+        public Builder dryRun(boolean dryRun) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    dryRun,
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given selector.
+         *
+         * @param selector The selector
+         * @return a new {@link Builder}
+         */
+        public Builder selector(Selector selector) {
+            return new Builder(new Default(
+                    selector,
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given labels.
+         *
+         * @param labels the labels
+         * @return a new {@link Builder}
+         */
+        public Builder labels(Iterable<NamedValue> labels) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    NamedValueSet.setOf(labels),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given single label.
+         *
+         * @param label the labels
+         * @return a new {@link Builder}
+         */
+        public Builder label(NamedValue label) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    NamedValueSet.setOf(internal.labels()).with(label),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Builds a new {@link ReconciliationContext} instance.
+         *
+         * @return {@link ReconciliationContext} instance.
+         */
+        public Builder annotations(Iterable<NamedValue> annotations) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    NamedValueSet.setOf(annotations),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Builds a new {@link ReconciliationContext} instance.
+         *
+         * @return {@link ReconciliationContext} instance.
+         */
+        public Builder annotation(NamedValue annotation) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    NamedValueSet.setOf(internal.annotations()).with(annotation),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given provider name.
+         *
+         * @param providerName the provider name
+         * @return a new {@link Builder}
+         */
+        public Builder providerName(String providerName) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    providerName,
+                    internal.providerNames(),
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given provider names for batch operations.
+         *
+         * @param providerNames the list of provider names
+         * @return a new {@link Builder}
+         * @since 0.38.0
+         */
+        public Builder providerNames(@NotNull List<String> providerNames) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    providerNames,
+                    internal.continueOnError()
+            ));
+        }
+
+        /**
+         * Returns a new builder with the given continueOnError flag.
+         *
+         * @param continueOnError whether to continue on error during batch operations
+         * @return a new {@link Builder}
+         * @since 0.38.0
+         */
+        public Builder continueOnError(boolean continueOnError) {
+            return new Builder(new Default(
+                    internal.selector(),
+                    internal.configuration(),
+                    internal.isDryRun(),
+                    internal.labels(),
+                    internal.annotations(),
+                    internal.providerName(),
+                    internal.providerNames(),
+                    continueOnError
+            ));
+        }
+
+        /**
+         * Builds a new {@link ReconciliationContext} instance.
+         *
+         * @return {@link ReconciliationContext} instance.
+         */
+        public ReconciliationContext build() {
+            return internal;
+        }
+
+    }
+
+    /**
+     * A default {@link ReconciliationContext} implementation.
+     *
+     * @param selector        The selector to filter resources to be included in the reconciliation.
+     * @param configuration   The config for computing resource changes.
+     * @param isDryRun        Specify if the reconciliation should be run in dry-run.
+     * @param providerName    The selected provider name for this reconciliation operation.
+     * @param providerNames   The list of provider names for batch operations.
+     * @param continueOnError Whether to continue on error during batch operations.
+     */
+    record Default(Selector selector,
+                   Configuration configuration,
+                   boolean isDryRun,
+                   NamedValueSet labels,
+                   NamedValueSet annotations,
+                   String providerName,
+                   @NotNull List<String> providerNames,
+                   boolean continueOnError)
+            implements ReconciliationContext {
+
+        public static Default EMPTY = new Default(
+                Selectors.NO_SELECTOR,
+                Configuration.empty(),
+                true,
+                NamedValueSet.emptySet(),
+                NamedValueSet.emptySet(),
+                null,
+                List.of(),
+                false
+        );
+    }
+}

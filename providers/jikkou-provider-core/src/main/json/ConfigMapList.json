@@ -3,7 +3,7 @@
   "description": "List of ConfigMap resources.",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.ResourceList<ConfigMap>"
+    "io.jikkou.core.models.ResourceList<ConfigMap>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -28,11 +28,11 @@
       "default": "ConfigMapList"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+      "existingJavaType": "io.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "template": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectTemplate",
+      "existingJavaType": "io.jikkou.core.models.ObjectTemplate",
       "type": "object"
     },
     "items": {

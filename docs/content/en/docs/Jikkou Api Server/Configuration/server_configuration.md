@@ -34,12 +34,12 @@ jikkou:
     # Core
     core:
       enabled: true
-      type: io.streamthoughts.jikkou.core.CoreExtensionProvider
+      type: io.jikkou.core.CoreExtensionProvider
       
     # Default configuration for Apache Kafka
     kafka:
       enabled: true
-      type: io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+      type: io.jikkou.kafka.KafkaExtensionProvider
       config:
         client:
           bootstrap.servers: localhost:9092
@@ -47,14 +47,14 @@ jikkou:
     # Default configuration for Schema Registry
     schemaregistry:
       enabled: true
-      type: io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+      type: io.jikkou.schema.registry.SchemaRegistryExtensionProvider
       config:
         url: http://localhost:8081
         
     # Default configuration for Kafka Connect
     kafkaconnect:
       enabled: true
-      type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
+      type: io.jikkou.kafka.connect.KafkaConnectExtensionProvider
       config:
         clusters:
           - name: localhost

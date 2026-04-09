@@ -1,0 +1,290 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.extension.aiven.reconciler;
+
+import io.jikkou.core.ReconciliationContext;
+import io.jikkou.core.ReconciliationMode;
+import io.jikkou.core.exceptions.ValidationException;
+import io.jikkou.core.models.CoreAnnotations;
+import io.jikkou.core.models.ObjectMeta;
+import io.jikkou.core.models.ResourceList;
+import io.jikkou.core.models.change.GenericResourceChange;
+import io.jikkou.core.models.change.ResourceChange;
+import io.jikkou.core.models.change.ResourceChangeSpec;
+import io.jikkou.core.models.change.StateChange;
+import io.jikkou.core.reconciler.ChangeResult;
+import io.jikkou.core.reconciler.Operation;
+import io.jikkou.extension.aiven.BaseExtensionProviderIT;
+import io.jikkou.extension.aiven.adapter.SchemaRegistryAclEntryAdapter;
+import io.jikkou.extension.aiven.api.data.Permission;
+import io.jikkou.extension.aiven.api.data.SchemaRegistryAclEntry;
+import io.jikkou.extension.aiven.models.V1SchemaRegistryAclEntry;
+import io.jikkou.extension.aiven.models.V1SchemaRegistryAclEntrySpec;
+import java.util.List;
+import okhttp3.mockwebserver.MockResponse;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("integration")
+public class AivenSchemaRegistryAclEntryControllerIT extends BaseExtensionProviderIT {
+
+    public static final String DEFAULT_AIVEN_ACL_ENTRIES = """
+         {
+           "acl": [
+             {
+               "id": "default-sr-admin-config",
+               "permission": "schema_registry_write",
+               "resource": "Config:",
+               "username": "avnadmin"
+             },
+             {
+               "id": "default-sr-admin-subject",
+               "permission": "schema_registry_write",
+               "resource": "Subject:*",
+               "username": "avnadmin"
+             }
+           ]
+         }
+        """;
+
+    @Test
+    void shouldCreateSchemaRegistryAclEntries() {
+        // Given
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody(DEFAULT_AIVEN_ACL_ENTRIES)
+        );
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                  "acl": [
+                    {
+                      "id": "default-sr-admin-config",
+                      "permission": "schema_registry_write",
+                      "resource": "Config:",
+                      "username": "avnadmin"
+                    },
+                    {
+                      "id": "default-sr-admin-subject",
+                      "permission": "schema_registry_write",
+                      "resource": "Subject:*",
+                      "username": "avnadmin"
+                    },
+                    {
+                      "id": "acl44c2e14d2da",
+                      "permission": "schema_registry_write",
+                      "resource": "Subject:*",
+                      "username": "TestUser"
+                    }
+                  ],
+                  "message": "added"
+                }
+                """
+            ));
+        V1SchemaRegistryAclEntry entry = V1SchemaRegistryAclEntry.builder()
+            .withSpec(V1SchemaRegistryAclEntrySpec.builder()
+                .withPermission(Permission.WRITE)
+                .withResource("Subject:*")
+                .withUsername("TestUser")
+                .build())
+            .build();
+
+        // When
+        List<ChangeResult> results = api
+            .reconcile(ResourceList.of(List.of(entry)), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build())
+            .results();
+
+        // Then
+        ChangeResult result = results.getFirst();
+        ResourceChange actual = result.change();
+        ResourceChange expected = GenericResourceChange
+            .builder(V1SchemaRegistryAclEntry.class)
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.CREATE)
+                .withChange(StateChange.create(
+                    "entry",
+                    new SchemaRegistryAclEntry(SchemaRegistryAclEntryAdapter.AivenPermissionMapper.map(Permission.WRITE), "Subject:*", "TestUser"))
+                )
+                .build()
+            )
+            .build();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldDeleteSchemaRegistryAclEntries() {
+        // Given
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                  "acl": [
+                    {
+                      "id": "default-sr-admin-config",
+                      "permission": "schema_registry_write",
+                      "resource": "Config:",
+                      "username": "avnadmin"
+                    },
+                    {
+                      "id": "default-sr-admin-subject",
+                      "permission": "schema_registry_write",
+                      "resource": "Subject:*",
+                      "username": "avnadmin"
+                    }
+                  ],
+                  "message": "deleted"
+                }
+                """
+            ));
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {"acl":[],"message":"deleted"}
+                """
+
+            ));
+        // When
+        V1SchemaRegistryAclEntry entry = V1SchemaRegistryAclEntry.builder()
+            .withMetadata(ObjectMeta.builder()
+                .withAnnotation(CoreAnnotations.JIKKOU_IO_DELETE, true)
+                .build())
+            .withSpec(V1SchemaRegistryAclEntrySpec.builder()
+                .withPermission(Permission.WRITE)
+                .withResource("Subject:*")
+                .withUsername("avnadmin")
+                .build())
+            .build();
+
+        // When
+        List<ChangeResult> results = api
+            .reconcile(ResourceList.of(List.of(entry)), ReconciliationMode.DELETE, ReconciliationContext.builder().dryRun(false).build())
+            .results();
+
+        // Then
+        ChangeResult result = results.getFirst();
+        ResourceChange actual = result.change();
+        ResourceChange expected = GenericResourceChange
+            .builder(V1SchemaRegistryAclEntry.class)
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.DELETE)
+                .withChange(StateChange.delete(
+                    "entry",
+                    new SchemaRegistryAclEntry(SchemaRegistryAclEntryAdapter.AivenPermissionMapper.map(Permission.WRITE), "Subject:*", "avnadmin"))
+                )
+                .build()
+            )
+            .build();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldGetChangeResultFailedWhenApiReturnError() {
+        // Given
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {"acl":[]}
+                """
+            ));
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(409)
+            .setBody("""
+                {
+                  "errors": [
+                    {
+                      "message": "Invalid input for resource: Config: or Subject:<subject_name> where subject_name must consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'",
+                      "status": 400
+                    }
+                  ],
+                  "message": "Invalid input for resource: Config: or Subject:<subject_name> where subject_name must consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'"
+                }
+                """
+            ));
+
+        V1SchemaRegistryAclEntry entry = V1SchemaRegistryAclEntry.builder()
+            .withSpec(V1SchemaRegistryAclEntrySpec.builder()
+                .withPermission(Permission.WRITE)
+                .withResource("Subject:*")
+                .withUsername("avnadmin")
+                .build())
+            .build();
+
+        // When
+        List<ChangeResult> results = api
+            .reconcile(ResourceList.of(List.of(entry)), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build())
+            .results();
+
+        ChangeResult result = results.getFirst();
+        ResourceChange actual = result.change();
+        ResourceChange expected = GenericResourceChange
+            .builder(V1SchemaRegistryAclEntry.class)
+            .withSpec(ResourceChangeSpec
+                .builder()
+                .withOperation(Operation.CREATE)
+                .withChange(StateChange.create(
+                    "entry",
+                    new SchemaRegistryAclEntry(SchemaRegistryAclEntryAdapter.AivenPermissionMapper.map(Permission.WRITE), "Subject:*", "avnadmin"))
+                )
+                .build()
+            )
+            .build();
+        Assertions.assertEquals(expected, actual);
+        Assertions.assertEquals(ChangeResult.Status.FAILED, result.status());
+    }
+
+    @Test
+    void shouldThrowExceptionForInvalidResource() {
+        // Given
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {"acl":[]}
+                """
+            ));
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(409)
+            .setBody("""
+                {
+                  "errors": [
+                    {
+                      "message": "Invalid input for resource: Config: or Subject:<subject_name> where subject_name must consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'",
+                      "status": 400
+                    }
+                  ],
+                  "message": "Invalid input for resource: Config: or Subject:<subject_name> where subject_name must consist of alpha-numeric characters, underscores, dashes, dots and glob characters '*' and '?'"
+                }
+                """
+            ));
+
+        V1SchemaRegistryAclEntry entry = V1SchemaRegistryAclEntry.builder()
+            .withSpec(V1SchemaRegistryAclEntrySpec.builder()
+                .withPermission(Permission.WRITE)
+                .withResource("Invalid:*")
+                .withUsername("avnadmin")
+                .build())
+            .build();
+
+        Assertions.assertThrows(ValidationException.class, () -> {
+            // When
+            api
+                .reconcile(ResourceList.of(List.of(entry)), ReconciliationMode.CREATE, ReconciliationContext.builder().dryRun(false).build())
+                .results();
+        });
+    }
+}

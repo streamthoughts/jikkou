@@ -53,24 +53,24 @@ jikkou:
   provider:
     core:
       enabled: true
-      type: io.streamthoughts.jikkou.core.CoreExtensionProvider
+      type: io.jikkou.core.CoreExtensionProvider
     # Default configuration for Apache Kafka
     kafka:
       enabled: true
-      type: io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+      type: io.jikkou.kafka.KafkaExtensionProvider
       config:
         client:
           bootstrap.servers: localhost:9092
     # Default configuration for Schema Registry
     schemaregistry:
       enabled: true
-      type: io.streamthoughts.jikkou.schema.registry.SchemaRegistryExtensionProvider
+      type: io.jikkou.schema.registry.SchemaRegistryExtensionProvider
       config:
         url: http://localhost:8081
     # Default configuration for Kafka Connect
     kafkaconnect:
       enabled: true
-      type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
+      type: io.jikkou.kafka.connect.KafkaConnectExtensionProvider
       config:
         clusters:
           - name: localhost
@@ -82,19 +82,19 @@ jikkou:
   # The default custom validations to apply on any resources.
   validations:
     - name: "topicMustHaveValidName"
-      type: io.streamthoughts.jikkou.kafka.validation.TopicNameRegexValidation
+      type: io.jikkou.kafka.validation.TopicNameRegexValidation
       priority: 100
       config:
         topicNameRegex: "[a-zA-Z0-9\\._\\-]+"
 
     - name: "topicMustHavePartitionsEqualsOrGreaterThanOne"
-      type: io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+      type: io.jikkou.kafka.validation.TopicMinNumPartitionsValidation
       priority: 100
       config:
         topicMinNumPartitions: 1
 
     - name: "topicMustHaveReplicasEqualsOrGreaterThanOne"
-      type: io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactorValidation
+      type: io.jikkou.kafka.validation.TopicMinReplicationFactorValidation
       priority: 100
       config:
         topicMinReplicationFactor: 1
@@ -103,7 +103,7 @@ jikkou:
 #  reporters:
 #    # Uncomment following lines to enable default kafka reporter
 #    - name: "default"
-#      type: io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+#      type: io.jikkou.kafka.reporter.KafkaChangeReporter
 #      config:
 #        event.source: "jikkou/cli"
 #        kafka:

@@ -10,7 +10,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.streamthoughts</groupId>
+        <groupId>io.jikkou</groupId>
         <artifactId>jikkou-parent</artifactId>
         <version>0.38.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
@@ -32,7 +32,7 @@
         <micronaut-serde-processor.version>2.16.1</micronaut-serde-processor.version>
         <micronaut-security.version>4.15.0</micronaut-security.version>
         <micronaut.runtime>netty</micronaut.runtime>
-        <exec.mainClass>io.streamthoughts.jikkou.rest.JikkouApiServer</exec.mainClass>
+        <exec.mainClass>io.jikkou.rest.JikkouApiServer</exec.mainClass>
         <!-- Additional -->
         <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
         <docker.image.name>streamthoughts/${project.artifactId}</docker.image.name>
@@ -42,7 +42,7 @@
     <dependencies>
         <!-- START dependencies for Jikkou -->
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -253,7 +253,7 @@
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
-                        <arg>-Amicronaut.processing.group=io.streamthoughts</arg>
+                        <arg>-Amicronaut.processing.group=io.jikkou</arg>
                         <arg>-Amicronaut.processing.module=jikkou-api-server</arg>
                         <arg>-verbose</arg>
                     </compilerArgs>

@@ -1,0 +1,215 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.extension.aiven.models;
+
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.jikkou.core.annotation.ApiVersion;
+import io.jikkou.core.annotation.Description;
+import io.jikkou.core.annotation.Kind;
+import io.jikkou.core.annotation.Names;
+import io.jikkou.core.annotation.Reflectable;
+import io.jikkou.core.annotation.Verbs;
+import io.jikkou.core.models.HasMetadata;
+import io.jikkou.core.models.HasSpec;
+import io.jikkou.core.models.ObjectMeta;
+import io.jikkou.core.models.Resource;
+import io.jikkou.core.models.Verb;
+import java.beans.ConstructorProperties;
+import javax.annotation.processing.Generated;
+import lombok.Builder;
+import lombok.With;
+import lombok.extern.jackson.Jacksonized;
+
+
+/**
+ * KafkaQuota
+ * <p>
+ * Manage Kafka quotas on Aiven for Apache Kafka.
+ * 
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
+@With
+@Description("Manage Kafka quotas on Aiven for Apache Kafka.")
+@JsonClassDescription("Manage Kafka quotas on Aiven for Apache Kafka.")
+@Names(singular = "avn-kafkaquota", plural = "avn-kafkaquotas", shortNames = {
+    "avnkq"
+})
+@Verbs({
+    Verb.APPLY,
+    Verb.CREATE,
+    Verb.DELETE,
+    Verb.LIST,
+    Verb.UPDATE
+})
+@JsonPropertyOrder({
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+})
+@ApiVersion("kafka.aiven.io/v1")
+@Kind("KafkaQuota")
+@Jacksonized
+@Reflectable
+@Generated("jsonschema2pojo")
+public class V1KafkaQuota implements HasMetadata, HasSpec<V1KafkaQuotaSpec> , Resource
+{
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("apiVersion")
+    @Builder.Default
+    private String apiVersion = "kafka.aiven.io/v1";
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("kind")
+    @Builder.Default
+    private String kind = "KafkaQuota";
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("metadata")
+    private ObjectMeta metadata;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("spec")
+    private io.jikkou.extension.aiven.models.V1KafkaQuotaSpec spec;
+
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public V1KafkaQuota() {
+    }
+
+    /**
+     * 
+     * @param metadata
+     * @param apiVersion
+     * @param kind
+     * @param spec
+     */
+    @ConstructorProperties({
+        "apiVersion",
+        "kind",
+        "metadata",
+        "spec"
+    })
+    public V1KafkaQuota(String apiVersion, String kind, ObjectMeta metadata, io.jikkou.extension.aiven.models.V1KafkaQuotaSpec spec) {
+        super();
+        this.apiVersion = apiVersion;
+        this.kind = kind;
+        this.metadata = metadata;
+        this.spec = spec;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("apiVersion")
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("kind")
+    public String getKind() {
+        return kind;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("metadata")
+    public ObjectMeta getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty("spec")
+    public io.jikkou.extension.aiven.models.V1KafkaQuotaSpec getSpec() {
+        return spec;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(V1KafkaQuota.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append("apiVersion");
+        sb.append('=');
+        sb.append(((this.apiVersion == null)?"<null>":this.apiVersion));
+        sb.append(',');
+        sb.append("kind");
+        sb.append('=');
+        sb.append(((this.kind == null)?"<null>":this.kind));
+        sb.append(',');
+        sb.append("metadata");
+        sb.append('=');
+        sb.append(((this.metadata == null)?"<null>":this.metadata));
+        sb.append(',');
+        sb.append("spec");
+        sb.append('=');
+        sb.append(((this.spec == null)?"<null>":this.spec));
+        sb.append(',');
+        if (sb.charAt((sb.length()- 1)) == ',') {
+            sb.setCharAt((sb.length()- 1), ']');
+        } else {
+            sb.append(']');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = ((result* 31)+((this.metadata == null)? 0 :this.metadata.hashCode()));
+        result = ((result* 31)+((this.apiVersion == null)? 0 :this.apiVersion.hashCode()));
+        result = ((result* 31)+((this.kind == null)? 0 :this.kind.hashCode()));
+        result = ((result* 31)+((this.spec == null)? 0 :this.spec.hashCode()));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if ((other instanceof V1KafkaQuota) == false) {
+            return false;
+        }
+        V1KafkaQuota rhs = ((V1KafkaQuota) other);
+        return (((((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata)))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))));
+    }
+
+}

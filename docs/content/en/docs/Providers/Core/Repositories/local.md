@@ -18,7 +18,7 @@ jikkou {
       # Name of your local repositories  
       name = "<string>"
       # The fully qualified class name (FQCN) of the repository
-      type = io.streamthoughts.jikkou.core.repository.LocalResourceRepository
+      type = io.jikkou.core.repository.LocalResourceRepository
       config {
         # Specify the locations containing the definitions for resources in a YAML file, a directory.
         files = []

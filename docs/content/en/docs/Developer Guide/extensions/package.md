@@ -19,7 +19,7 @@ An *extension package* is more commonly described as an **Extension Provider**.
 
 ### Dependencies
 
-Jikkou's sources are available on [Maven Central]( https://mvnrepository.com/artifact/io.streamthoughts/jikkou)
+Jikkou's sources are available on [Maven Central]( https://mvnrepository.com/artifact/io.jikkou/jikkou)
 
 To start developing custom extension for Jikkou, simply add the Core library to your project's dependencies.
 
@@ -28,7 +28,7 @@ To start developing custom extension for Jikkou, simply add the Core library to 
 ```xml
 
 <dependency>
-    <groupId>io.streamthoughts</groupId>
+    <groupId>io.jikkou</groupId>
     <artifactId>jikkou-core</artifactId>
     <version>${jikkou.version}</version>
 </dependency>
@@ -37,14 +37,14 @@ To start developing custom extension for Jikkou, simply add the Core library to 
 **For Gradle:**
 
 ```text
-implementation group: 'io.streamthoughts', name: 'jikkou-core', version: ${jikkou.version}
+implementation group: 'io.jikkou', name: 'jikkou-core', version: ${jikkou.version}
 ```
 
 ### Extension Discovery
 
 Jikkou uses the standard Java [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
 mechanism to discover and registers custom extensions and resources. For this, you will need to the implement
-the Service Provider Interface: `io.streamthoughts.jikkou.spi.ExtensionProvider`
+the Service Provider Interface: `io.jikkou.spi.ExtensionProvider`
 
 ```java
 /**
@@ -53,7 +53,7 @@ the Service Provider Interface: `io.streamthoughts.jikkou.spi.ExtensionProvider`
  * The implementations are discovered using the standard Java {@link java.util.ServiceLoader} mechanism.
  *
  * Hence, the fully qualified name of the extension classes that implement the {@link ExtensionProvider}
- * interface must be added to a {@code META-INF/services/io.streamthoughts.jikkou.spi.ExtensionProvider} file.
+ * interface must be added to a {@code META-INF/services/io.jikkou.spi.ExtensionProvider} file.
  * </pre>
  */
 public interface ExtensionProvider extends HasName, Configurable {
@@ -112,7 +112,7 @@ Simply create an *assembly descriptor*  in your project as follows:
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <unpack>false</unpack>
             <excludes>
-                <exclude>io.streamthoughts:jikkou-core</exclude>
+                <exclude>io.jikkou:jikkou-core</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

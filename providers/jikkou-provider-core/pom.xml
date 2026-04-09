@@ -10,7 +10,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.streamthoughts</groupId>
+        <groupId>io.jikkou</groupId>
         <artifactId>jikkou-parent</artifactId>
         <version>0.38.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
@@ -28,17 +28,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-processor</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-resource-generator</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -78,7 +78,7 @@
                             <version>${lombok.version}</version>
                         </path>
                         <path>
-                            <groupId>io.streamthoughts</groupId>
+                            <groupId>io.jikkou</groupId>
                             <artifactId>jikkou-processor</artifactId>
                             <version>${project.version}</version>
                         </path>
@@ -103,7 +103,7 @@
             <plugin>
                 <dependencies>
                     <dependency>
-                        <groupId>io.streamthoughts</groupId>
+                        <groupId>io.jikkou</groupId>
                         <artifactId>jikkou-resource-generator</artifactId>
                         <version>${project.version}</version>
                     </dependency>
@@ -113,7 +113,7 @@
                 <version>1.1.2</version>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/json</sourceDirectory>
-                    <targetPackage>io.streamthoughts.jikkou.core.models</targetPackage>
+                    <targetPackage>io.jikkou.core.models</targetPackage>
                     <generateBuilders>false</generateBuilders>
                     <addCompileSourceRoot>true</addCompileSourceRoot>
                     <outputDirectory>src/main/java</outputDirectory>
@@ -126,7 +126,7 @@
                     <includeAllPropertiesConstructor>true</includeAllPropertiesConstructor>
                     <includeConstructorPropertiesAnnotation>true</includeConstructorPropertiesAnnotation>
                     <includeConstructors>true</includeConstructors>
-                    <customAnnotator>io.streamthoughts.jikkou.generator.JikkouAnnotator</customAnnotator>
+                    <customAnnotator>io.jikkou.generator.JikkouAnnotator</customAnnotator>
                 </configuration>
                 <executions>
                     <execution>

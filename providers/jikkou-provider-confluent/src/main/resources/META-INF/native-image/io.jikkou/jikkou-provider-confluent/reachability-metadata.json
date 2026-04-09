@@ -1,0 +1,24 @@
+{
+  "reflection": [
+    {
+      "type": "io.jikkou.extension.confluent.api.ConfluentCloudApi",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.lang.AutoCloseable",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.io.Closeable",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "io.jikkou.extension.confluent.api.ConfluentCloudApi",
+          "org.jboss.resteasy.client.jaxrs.internal.proxy.ResteasyClientProxy"
+        ]
+      }
+    }
+  ]
+}

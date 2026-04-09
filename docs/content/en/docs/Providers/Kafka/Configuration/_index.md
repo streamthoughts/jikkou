@@ -21,7 +21,7 @@ kafka client through the Jikkou client configuration property `jikkou.provider.k
 jikkou {
   provider.kafka {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     config = {
       client {
         bootstrap.servers = "localhost:9092"
@@ -45,7 +45,7 @@ processing.
 jikkou {
   provider.kafka {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     config = {
       brokers {
         # If 'True' 

@@ -3,9 +3,9 @@
   "title": "KafkaTopicAclEntry",
   "description": "Manage Kafka topic ACLs on Aiven for Apache Kafka.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaTopicAclEntrySpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaTopicAclEntrySpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -44,7 +44,7 @@
       "default": "KafkaTopicAclEntry"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+      "existingJavaType": "io.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "spec": {
@@ -70,7 +70,7 @@
         "permission": {
           "type": "string",
           "description": "Kafka permission",
-          "existingJavaType": "io.streamthoughts.jikkou.extension.aiven.api.data.Permission"
+          "existingJavaType": "io.jikkou.extension.aiven.api.data.Permission"
         },
         "username": {
           "type": "string",

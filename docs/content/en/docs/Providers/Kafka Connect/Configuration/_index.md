@@ -22,7 +22,7 @@ through the Jikkou client configuration property: `jikkou.provider.kafkaconnect`
 jikkou {
   provider.kafkaconnect {
     enabled: true
-    type: io.streamthoughts.jikkou.kafka.connect.KafkaConnectExtensionProvider
+    type: io.jikkou.kafka.connect.KafkaConnectExtensionProvider
     # Array of Kafka Connect clusters configurations.
     clusters = [
       {
