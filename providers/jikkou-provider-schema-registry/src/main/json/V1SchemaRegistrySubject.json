@@ -3,9 +3,9 @@
   "title": "SchemaRegistrySubject",
   "description": "Manage subjects and schemas on a Schema Registry.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1SchemaRegistrySubjectSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1SchemaRegistrySubjectSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -40,7 +40,7 @@
       "default": "SchemaRegistrySubject"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+      "existingJavaType": "io.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "spec": {
@@ -61,12 +61,12 @@
         "compatibilityLevel": {
           "type": "string",
           "description": "The schema compatibility level for this subject.",
-          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.CompatibilityLevels"
+          "existingJavaType": "io.jikkou.schema.registry.model.CompatibilityLevels"
         },
         "mode": {
           "type": "string",
           "description": "The mode for this subject: IMPORT, READONLY, READWRITE.",
-          "existingJavaType": "io.streamthoughts.jikkou.schema.registry.model.Modes"
+          "existingJavaType": "io.jikkou.schema.registry.model.Modes"
         },
         "schemaRegistry": {
           "type": "object",
@@ -86,12 +86,12 @@
         "schemaType": {
           "type": "string",
           "description": "The schema format: AVRO, PROTOBUF, JSON.",
-          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaType"
+          "existingJavaType": "io.jikkou.core.data.SchemaType"
         },
         "schema": {
           "type": "object",
           "description": "The schema definition.",
-          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaHandle",
+          "existingJavaType": "io.jikkou.core.data.SchemaHandle",
           "properties": {
             "$ref": {
               "type": "string"
@@ -103,7 +103,7 @@
           "description": "Specifies the names of referenced schemas (Optional).",
           "items": {
             "type": "object",
-            "existingJavaType": "io.streamthoughts.jikkou.schema.registry.api.data.SubjectSchemaReference",
+            "existingJavaType": "io.jikkou.schema.registry.api.data.SubjectSchemaReference",
             "properties": {
               "name": {
                 "type": "string",

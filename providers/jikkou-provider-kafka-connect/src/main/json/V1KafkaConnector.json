@@ -3,9 +3,9 @@
   "title": "V1KafkaConnector",
   "description": "Manage connectors in a Kafka Connect cluster.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaConnectorSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaConnectorSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -109,7 +109,7 @@
           ],
           "default": "running",
           "description": "The state the connector should be in [running, stopped, paused]. Defaults to running.",
-          "existingJavaType": "io.streamthoughts.jikkou.kafka.connect.models.KafkaConnectorState"
+          "existingJavaType": "io.jikkou.kafka.connect.models.KafkaConnectorState"
         }
       }
     }

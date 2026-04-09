@@ -1,0 +1,189 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.aws.reconciler;
+
+import io.jikkou.aws.AwsExtensionProvider;
+import io.jikkou.aws.AwsGlueLabelsAndAnnotations;
+import io.jikkou.aws.model.Compatibility;
+import io.jikkou.aws.models.AwsGlueSchema;
+import io.jikkou.aws.models.AwsGlueSchemaSpec;
+import io.jikkou.common.utils.Pair;
+import io.jikkou.core.annotation.Description;
+import io.jikkou.core.annotation.SupportedResource;
+import io.jikkou.core.annotation.Title;
+import io.jikkou.core.config.ConfigProperty;
+import io.jikkou.core.config.Configuration;
+import io.jikkou.core.data.SchemaHandle;
+import io.jikkou.core.data.SchemaType;
+import io.jikkou.core.exceptions.ConfigException;
+import io.jikkou.core.exceptions.JikkouRuntimeException;
+import io.jikkou.core.extension.ContextualExtension;
+import io.jikkou.core.models.ObjectMeta;
+import io.jikkou.core.models.ResourceList;
+import io.jikkou.core.reconciler.Collector;
+import io.jikkou.core.selector.Selector;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.glue.GlueClient;
+import software.amazon.awssdk.services.glue.model.GetSchemaRequest;
+import software.amazon.awssdk.services.glue.model.GetSchemaResponse;
+import software.amazon.awssdk.services.glue.model.GetSchemaVersionRequest;
+import software.amazon.awssdk.services.glue.model.GetSchemaVersionResponse;
+import software.amazon.awssdk.services.glue.model.GlueException;
+import software.amazon.awssdk.services.glue.model.ListRegistriesRequest;
+import software.amazon.awssdk.services.glue.model.ListSchemasRequest;
+import software.amazon.awssdk.services.glue.model.ListSchemasResponse;
+import software.amazon.awssdk.services.glue.model.RegistryId;
+import software.amazon.awssdk.services.glue.model.RegistryListItem;
+import software.amazon.awssdk.services.glue.model.SchemaId;
+import software.amazon.awssdk.services.glue.model.SchemaListItem;
+import software.amazon.awssdk.services.glue.model.SchemaVersionNumber;
+
+@Title("Collect AWS Glue schemas")
+@Description("Collects schema resources from the AWS Glue Schema Registry.")
+@SupportedResource(type = AwsGlueSchema.class)
+public class AwsGlueSchemaCollector extends ContextualExtension implements Collector<AwsGlueSchema> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AwsGlueSchemaCollector.class);
+
+    public static final SchemaVersionNumber LATEST_VERSION_NUMBER = SchemaVersionNumber
+        .builder()
+        .latestVersion(true)
+        .build();
+
+    public interface Config {
+        ConfigProperty<String> REGISTRY_NAME = ConfigProperty
+            .ofString("registryName")
+            .displayName("Registry Name")
+            .description("Specifies the registry name.")
+            .required(false);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public Optional<AwsGlueSchema> get(@NotNull String name, @NotNull Configuration configuration) {
+
+        final String registryName = Config.REGISTRY_NAME.getOptional(configuration)
+            .orElseThrow(() -> new ConfigException(
+                "The '%s' configuration property is required for %s".formatted(
+                    Config.REGISTRY_NAME.key(),
+                    AwsGlueSchemaCollector.class.getSimpleName()
+                )
+            ));
+
+        final AwsExtensionProvider provider = extensionContext().provider();
+        try (GlueClient glueClient = provider.newGlueClient()) {
+            return Optional.ofNullable(fetchSchema(name, registryName, glueClient));
+        }
+    }
+
+    private AwsGlueSchema fetchSchema(@NotNull String schemaName,
+                                      @NotNull String registryName,
+                                      @NotNull GlueClient glueClient) {
+
+        // Get schema
+        GetSchemaResponse schema = glueClient.getSchema(GetSchemaRequest.builder()
+            .schemaId(SchemaId.builder()
+                .registryName(registryName)
+                .schemaName(schemaName)
+                .build())
+            .build());
+
+        // Get latest checkpoint version
+        GetSchemaVersionResponse schemaVersion = glueClient.getSchemaVersion(GetSchemaVersionRequest.builder()
+            .schemaId(SchemaId.builder()
+                .registryName(registryName)
+                .schemaName(schemaName)
+                .build())
+            .schemaVersionNumber(LATEST_VERSION_NUMBER).build()
+        );
+
+        return AwsGlueSchema.builder()
+            .withMetadata(ObjectMeta
+                .builder()
+                .withName(schemaName)
+                .withLabel(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_NAME, schema.registryName())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_CREATED_TIME, schema.createdTime())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_UPDATED_TIME, schema.updatedTime())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_REGISTRY_ARN, schema.registryArn())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_ARN, schema.schemaArn())
+                .withAnnotation(AwsGlueLabelsAndAnnotations.SCHEMA_SCHEMA_VERSION_ID, schemaVersion.schemaVersionId())
+                .build()
+            )
+            .withSpec(AwsGlueSchemaSpec
+                .builder()
+                .withCompatibility(Compatibility.valueOf(schema.compatibilityAsString()))
+                .withDataFormat(SchemaType.valueOf(schema.dataFormatAsString()))
+                .withSchemaDefinition(new SchemaHandle(schemaVersion.schemaDefinition()))
+                .withDescription(schema.description())
+                .build()
+            )
+            .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public ResourceList<AwsGlueSchema> listAll(@NotNull Configuration configuration, @NotNull Selector selector) {
+
+        Set<String> registryNames = AwsExtensionProvider.Config.GLUE_REGISTRIES
+            .getOptional(extensionContext().configuration())
+            .map(HashSet::new).orElse(new HashSet<>());
+
+        return listAll(registryNames, selector);
+    }
+
+    public ResourceList<AwsGlueSchema> listAll(Set<String> registryNames, @NotNull Selector selector) {
+        final AwsExtensionProvider provider = extensionContext().provider();
+        try (GlueClient glueClient = provider.newGlueClient()) {
+            if (registryNames.isEmpty()) {
+                // List registries
+                ListRegistriesRequest request = ListRegistriesRequest.builder().build();
+                registryNames = glueClient.listRegistries(request).registries()
+                    .stream()
+                    .map(RegistryListItem::registryName)
+                    .collect(Collectors.toSet());
+            }
+
+            List<Pair<String, String>> registryNameAndSchemaNames = registryNames.stream()
+                .flatMap(registryName -> {
+                    LOG.debug("Listing schema definitions from registry {}", registryName);
+                    // List schemas
+                    ListSchemasResponse list = glueClient.listSchemas(
+                        ListSchemasRequest.builder()
+                            .registryId(RegistryId.builder().registryName(registryName).build())
+                            .build()
+                    );
+
+                    List<SchemaListItem> schemas = list.schemas();
+                    LOG.debug("Found {} schema definitions from registry {} ", schemas.size(), registryName);
+                    return schemas.stream().map(it -> Pair.of(it.schemaName(), it.registryName()));
+                }).toList();
+            return listAll(glueClient, registryNameAndSchemaNames, selector);
+        } catch (GlueException e) {
+            throw new JikkouRuntimeException("Unable to list AWS Glue Schemas", e);
+        }
+    }
+
+    private ResourceList<AwsGlueSchema> listAll(GlueClient glueClient, List<Pair<String, String>> registryNameAndSchemaNames, @NotNull Selector selector) {
+        List<AwsGlueSchema> resources = new LinkedList<>();
+        for (Pair<String, String> item : registryNameAndSchemaNames) {
+            resources.add(fetchSchema(item._1(), item._2(), glueClient));
+        }
+        return ResourceList.of(resources);
+    }
+}

@@ -56,7 +56,7 @@ jikkou {
   reporters = [
     {
       name = "kafka-reporter"
-      type = io.streamthoughts.jikkou.kafka.reporter.KafkaChangeReporter
+      type = io.jikkou.kafka.reporter.KafkaChangeReporter
       config = {
         # The 'source' of the event that will be generated.
         event.source = "jikkou/cli"

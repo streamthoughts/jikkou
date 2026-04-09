@@ -21,7 +21,7 @@ Jikkou ships with the following built-in _validations_:
 (_auto registered_)
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicConfigKeysValidation
+type = io.jikkou.kafka.validation.TopicConfigKeysValidation
 ```
 
 The `TopicConfigKeysValidation` allows checking if the specified topic configs are all valid.
@@ -29,7 +29,7 @@ The `TopicConfigKeysValidation` allows checking if the specified topic configs a
 ### `TopicMinNumPartitions`
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicMinNumPartitionsValidation
+type = io.jikkou.kafka.validation.TopicMinNumPartitionsValidation
 ```
 
 The `TopicMinNumPartitions` allows checking if the specified number of partitions for a topic is not less than the minimum required.
@@ -44,7 +44,7 @@ The `TopicMinNumPartitions` allows checking if the specified number of partition
 ### `TopicMaxNumPartitions`
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicMaxNumPartitions
+type = io.jikkou.kafka.validation.TopicMaxNumPartitions
 ```
 
 The `TopicMaxNumPartitions` allows checking if the number of partitions for a topic is not greater than the maximum configured.
@@ -58,7 +58,7 @@ The `TopicMaxNumPartitions` allows checking if the number of partitions for a to
 ### `TopicMinReplicationFactor`
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicMinReplicationFactor
+type = io.jikkou.kafka.validation.TopicMinReplicationFactor
 ```
 
 The `TopicMinReplicationFactor` allows checking if the specified replication factor for a topic is not less than the minimum required.
@@ -72,7 +72,7 @@ The `TopicMinReplicationFactor` allows checking if the specified replication fac
 ### `TopicMaxReplicationFactor`
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicMaxReplicationFactor
+type = io.jikkou.kafka.validation.TopicMaxReplicationFactor
 ```
 
 The `TopicMaxReplicationFactor` allows checking if the specified replication factor for a topic is not greater than the maximum configured.
@@ -87,7 +87,7 @@ The `TopicMaxReplicationFactor` allows checking if the specified replication fac
 ### `TopicNamePrefix`
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicNamePrefix
+type = io.jikkou.kafka.validation.TopicNamePrefix
 ```
 
 The `TopicNamePrefix` allows checking if the specified name for a topic starts with one of the configured suffixes.
@@ -102,7 +102,7 @@ The `TopicNamePrefix` allows checking if the specified name for a topic starts w
 #### `TopicNameSuffix`
 
 ```hocon
-type = io.streamthoughts.jikkou.kafka.validation.TopicNameSuffix
+type = io.jikkou.kafka.validation.TopicNameSuffix
 ```
 
 The `TopicNameSuffix` allows checking  if the specified name for a topic ends with one of the configured suffixes.

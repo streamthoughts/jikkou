@@ -1,0 +1,391 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.core;
+
+import io.jikkou.common.utils.Pair;
+import io.jikkou.common.utils.Strings;
+import io.jikkou.core.config.Configuration;
+import io.jikkou.core.converter.Converter;
+import io.jikkou.core.converter.ConverterChain;
+import io.jikkou.core.exceptions.JikkouRuntimeException;
+import io.jikkou.core.extension.DefaultProviderConfigurationRegistry;
+import io.jikkou.core.extension.Extension;
+import io.jikkou.core.extension.ExtensionDescriptorModifier;
+import io.jikkou.core.extension.ExtensionFactory;
+import io.jikkou.core.extension.ExtensionProviderAwareRegistry;
+import io.jikkou.core.extension.ProviderConfigurationRegistry;
+import io.jikkou.core.extension.qualifier.Qualifiers;
+import io.jikkou.core.models.ApiGroup;
+import io.jikkou.core.models.ApiResourceList;
+import io.jikkou.core.models.HasItems;
+import io.jikkou.core.models.HasMetadata;
+import io.jikkou.core.models.Resource;
+import io.jikkou.core.models.ResourceList;
+import io.jikkou.core.models.ResourceType;
+import io.jikkou.core.reconciler.Collector;
+import io.jikkou.core.reconciler.Controller;
+import io.jikkou.core.reporter.ChangeReporter;
+import io.jikkou.core.reporter.CombineChangeReporter;
+import io.jikkou.core.repository.ResourceRepository;
+import io.jikkou.core.resource.DefaultResourceRegistry;
+import io.jikkou.core.resource.ResourceDescriptor;
+import io.jikkou.core.resource.ResourceDeserializer;
+import io.jikkou.core.resource.ResourceRegistry;
+import io.jikkou.core.transform.Transformation;
+import io.jikkou.core.transform.TransformationChain;
+import io.jikkou.core.validation.Validation;
+import io.jikkou.core.validation.ValidationChain;
+import io.jikkou.spi.ExtensionProvider;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * An abstract base implementation of the {@link JikkouApi}.
+ */
+public abstract class BaseApi implements JikkouApi {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseApi.class);
+
+    protected final ExtensionFactory extensionFactory;
+    protected final ProviderConfigurationRegistry providerConfigurationRegistry;
+
+    /**
+     * An abstract base implementation of the {@link BaseBuilder} object instance.
+     */
+    public static abstract class BaseBuilder<A extends JikkouApi, B extends BaseBuilder<A, B>> implements JikkouApi.ApiBuilder<A, B> {
+
+        protected final ExtensionFactory extensionFactory;
+        protected final ResourceRegistry resourceRegistry;
+        protected final ProviderConfigurationRegistry providerConfigurationRegistry;
+
+        /**
+         * Creates a new {@link ExtensionFactory} instance.
+         */
+        public BaseBuilder(@NotNull ExtensionFactory extensionFactory,
+                           @NotNull ResourceRegistry resourceRegistry) {
+            this(extensionFactory, resourceRegistry, new DefaultProviderConfigurationRegistry());
+        }
+
+        /**
+         * Creates a new {@link ExtensionFactory} instance with provider configuration registry.
+         */
+        public BaseBuilder(@NotNull ExtensionFactory extensionFactory,
+                           @NotNull ResourceRegistry resourceRegistry,
+                           @NotNull ProviderConfigurationRegistry providerConfigurationRegistry) {
+            this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory must not be null");
+            this.resourceRegistry = Objects.requireNonNull(resourceRegistry, "resourceRegistry must not be null");
+            this.providerConfigurationRegistry = Objects.requireNonNull(providerConfigurationRegistry, "providerConfigurationRegistry must not be null");
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        @SuppressWarnings("unchecked")
+        public B register(@NotNull ExtensionProvider provider,
+                          @NotNull Configuration configuration) {
+            return register(provider, configuration, new ExtensionDescriptorModifier[0]);
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        @SuppressWarnings("unchecked")
+        public B register(@NotNull ExtensionProvider provider,
+                          @NotNull Configuration configuration,
+                          @NotNull ExtensionDescriptorModifier... modifiers) {
+            final String name = provider.getName();
+
+            LOG.info("Loading extensions from provider '{}'", name);
+            provider.registerExtensions(new ExtensionProviderAwareRegistry(
+                extensionFactory,
+                provider.getClass(),
+                configuration,
+                providerConfigurationRegistry,
+                modifiers
+            ));
+
+            LOG.info("Loading resources from provider '{}'", name);
+            var registry = new DefaultResourceRegistry(false);
+            provider.registerResources(registry);
+
+            // Tag each resource descriptor with the provider that registered it
+            registry.allDescriptors().forEach(desc -> desc.setProvider(provider.getClass()));
+
+            // Register resource descriptors to the global registry
+            registry.allDescriptors().forEach(resourceRegistry::register);
+
+            // Register resource descriptors to the Resource Deserializer.
+            registry.allDescriptors()
+                .stream()
+                .filter(ResourceDescriptor::isEnabled)
+                .forEach(desc -> ResourceDeserializer.registerKind(
+                    desc.group() + "/" + desc.apiVersion(),
+                    desc.kind(),
+                    desc.resourceClass())
+                );
+            return (B) this;
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        public void registerProviderConfiguration(@NotNull String providerName,
+                                                  @NotNull String providerType,
+                                                  @NotNull Configuration configuration, boolean isDefault) {
+            this.providerConfigurationRegistry.registerProviderConfiguration(providerName, providerType, configuration, isDefault);
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T extends Extension> B register(@NotNull Class<T> type,
+                                                @NotNull Supplier<T> supplier) {
+            extensionFactory.register(type, supplier);
+            return (B) this;
+        }
+
+        /**
+         * {@inheritDoc}
+         **/
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T extends Extension> B register(@NotNull Class<T> type,
+                                                @NotNull Supplier<T> supplier,
+                                                @NotNull ExtensionDescriptorModifier... modifiers) {
+            extensionFactory.register(type, supplier, modifiers);
+            return (B) this;
+        }
+    }
+
+    /**
+     * Creates a new {@link BaseApi} instance.
+     *
+     * @param extensionFactory              The ExtensionFactory.
+     * @param providerConfigurationRegistry The ProviderConfigurationRegistry.
+     */
+    public BaseApi(@NotNull ExtensionFactory extensionFactory,
+                   @NotNull ProviderConfigurationRegistry providerConfigurationRegistry) {
+        this.extensionFactory = Objects.requireNonNull(extensionFactory, "extensionFactory cannot be null");
+        this.providerConfigurationRegistry = Objects.requireNonNull(providerConfigurationRegistry, "providerConfigurationRegistry cannot be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ApiResourceList> listApiResources() {
+        return listApiResources(listApiGroups().groups().stream());
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public List<ApiResourceList> listApiResources(@NotNull String group) {
+        Stream<ApiGroup> stream = listApiGroups()
+            .groups()
+            .stream()
+            .filter(api -> api.name().equalsIgnoreCase(group));
+        return listApiResources(stream);
+    }
+
+    private List<ApiResourceList> listApiResources(@NotNull Stream<ApiGroup> stream) {
+        return stream
+            .flatMap(api -> api.versions()
+                .stream()
+                .map(apiGroupVersion -> Pair.of(api.name(), apiGroupVersion.version()))
+            )
+            .map(groupVersion -> listApiResources(groupVersion._1(), groupVersion._2()))
+            .sorted(Comparator.comparing(ApiResourceList::groupVersion))
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public HasItems prepare(final @NotNull HasItems resources,
+                            final @NotNull ReconciliationContext context) {
+
+        // Load resources from repositories
+        ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
+
+        return doPrepare(all, context);
+    }
+
+    @NotNull
+    protected ResourceList<HasMetadata> doPrepare(@NotNull HasItems resources, @NotNull ReconciliationContext context) {
+        return Stream.of(resources)
+            .map(it -> convert(it, context))
+            .map(items -> transform(items, context))
+            .map(items -> select(items, context))
+            .findAny()
+            .get();
+    }
+
+    private ResourceList<HasMetadata> convert(final @NotNull HasItems resources, @NotNull ReconciliationContext context) {
+
+        ConverterChain converter = newConverterChain(createProviderContext(context));
+        List<HasMetadata> converted = resources.getItems()
+            .stream()
+            .map(resource -> {
+                try {
+                    return converter.apply(resource);
+                } catch (Exception e) {
+                    ResourceType type = ResourceType.of(resource);
+                    throw new JikkouRuntimeException(String.format(
+                        "Failed to apply converter '%s' on resource of  resource type: group=%s, version=%s and kind=%s. Cause: %s",
+                        converter.getName(),
+                        type.group(),
+                        type.apiVersion(),
+                        type.kind(),
+                        e.getLocalizedMessage()
+
+                    ));
+                }
+            })
+            .flatMap(Collection::stream)
+            .toList();
+
+        return ResourceList.of(converted);
+    }
+
+    private ResourceList<HasMetadata> transform(final @NotNull HasItems items,
+                                                final @NotNull ReconciliationContext context) {
+
+        TransformationChain transformationChain = newResourceTransformationChain(createProviderContext(context));
+
+        List<HasMetadata> transformed = new LinkedList<>();
+        for (Map.Entry<ResourceType, List<HasMetadata>> entry : items.groupByType().entrySet()) {
+            ResourceType type = entry.getKey();
+            try {
+                transformed.addAll(transformationChain.transformAll(entry.getValue(), items, context));
+            } catch (Exception e) {
+                throw new JikkouRuntimeException(String.format(
+                    "Failed to apply transformations on resources of type: group=%s, version=%s and kind=%s. Cause: %s",
+                    type.group(),
+                    type.apiVersion(),
+                    type.kind(),
+                    e.getLocalizedMessage()
+
+                ));
+            }
+        }
+        return ResourceList.of(transformed);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ResourceList<HasMetadata> select(final @NotNull HasItems resources,
+                                             final @NotNull ReconciliationContext context) {
+
+        List<? extends HasMetadata> filtered = resources.getItems().stream()
+            .filter(Predicate.not(resource -> Resource.isTransient(resource.getClass())))
+            .filter(context.selector()::apply)
+            .toList();
+        return ResourceList.of((List<HasMetadata>) filtered);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected ValidationChain newResourceValidationChain(ProviderSelectionContext context) {
+        return new ValidationChain((List) extensionFactory.getAllExtensions(Validation.class, Qualifiers.enabled(), context));
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected TransformationChain newResourceTransformationChain(ProviderSelectionContext context) {
+        return new TransformationChain((List) extensionFactory.getAllExtensions(Transformation.class, Qualifiers.enabled(), context));
+    }
+
+    protected CombineChangeReporter newCombineReporter(ProviderSelectionContext context) {
+        return new CombineChangeReporter(extensionFactory.getAllExtensions(ChangeReporter.class, Qualifiers.enabled(), context));
+    }
+
+    protected ConverterChain newConverterChain(ProviderSelectionContext context) {
+        return new ConverterChain(extensionFactory.getAllExtensions(Converter.class, Qualifiers.enabled(), context));
+    }
+
+    protected ResourceList<HasMetadata> addAllResourcesFromRepositories(HasItems resources) {
+        Stream<? extends HasMetadata> stream = extensionFactory
+            .getAllExtensions(ResourceRepository.class, Qualifiers.enabled())
+            .stream().flatMap(repository -> {
+                LOG.info("Loading resources from repository '{}'", repository.getName());
+                return repository.all().stream();
+            });
+        return ResourceList.of(Stream.concat(stream, resources.getItems().stream()).toList());
+    }
+
+    /**
+     * Creates a ProviderSelectionContext from a ReconciliationContext.
+     *
+     * @param context the reconciliation context.
+     * @return the provider selection context, or null if no provider name is specified.
+     */
+    protected ProviderSelectionContext createProviderContext(@NotNull ReconciliationContext context) {
+        return createProviderContext(context.providerName());
+    }
+
+    /**
+     * Creates a ProviderSelectionContext from a provider name.
+     *
+     * @param providerName the provider name.
+     * @return the provider selection context, or null if no provider name is specified.
+     */
+    protected ProviderSelectionContext createProviderContext(String providerName) {
+        return Strings.isNullOrEmpty(providerName) ? null : ProviderSelectionContext.of(providerName, providerConfigurationRegistry);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends HasMetadata> Collector<T> getMatchingCollector(@NotNull ResourceType resource,
+                                                                        ProviderSelectionContext providerContext) {
+        LOG.info("Looking for a collector accepting resource type: group={}, version={} and kind={}",
+            resource.group(),
+            resource.apiVersion(),
+            resource.kind()
+        );
+        return extensionFactory.
+            findExtension(Collector.class, Qualifiers.byQualifiers(Qualifiers.bySupportedResource(resource), Qualifiers.enabled()), providerContext)
+            .orElseThrow(() -> new JikkouRuntimeException(String.format(
+                "Cannot find collector for resource type: group='%s', apiVersion='%s' and kind='%s",
+                resource.group(),
+                resource.apiVersion(),
+                resource.kind()
+            )));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Controller<HasMetadata> getMatchingController(@NotNull ResourceType resource,
+                                                            ProviderSelectionContext providerContext) {
+        LOG.info("Looking for a controller accepting resource type: group={}, apiVersion={} and kind={}",
+            resource.group(),
+            resource.apiVersion(),
+            resource.kind()
+        );
+        return extensionFactory
+            .findExtension(Controller.class, Qualifiers.byQualifiers(Qualifiers.bySupportedResource(resource), Qualifiers.enabled()), providerContext)
+            .orElseThrow(() -> new JikkouRuntimeException(String.format(
+                "Cannot find controller for resource type: group='%s', apiVersion='%s' and kind='%s",
+                resource.group(),
+                resource.apiVersion(),
+                resource.kind()
+            )));
+    }
+
+}

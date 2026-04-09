@@ -13,7 +13,7 @@ This section covers the core classes to develop validation extensions.
 ## Interface
 
 To create a custom `validation`, you will need to implement the Java
-interface: `io.streamthoughts.jikkou.core.validation.Validation`.
+interface: `io.jikkou.core.validation.Validation`.
 
 This interface defines two methods, with a default implementation for each, to give you the option of validating either
 all resources accepted by validation at once, or each resource one by one.

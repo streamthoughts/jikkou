@@ -1,0 +1,107 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.iceberg.namespace.handlers;
+
+import io.jikkou.core.exceptions.JikkouRuntimeException;
+import io.jikkou.core.models.change.ResourceChange;
+import io.jikkou.core.models.change.StateChange;
+import io.jikkou.core.reconciler.ChangeMetadata;
+import io.jikkou.core.reconciler.ChangeResponse;
+import io.jikkou.core.reconciler.Operation;
+import io.jikkou.core.reconciler.TextDescription;
+import io.jikkou.core.reconciler.change.BaseChangeHandler;
+import io.jikkou.iceberg.internals.CatalogFactory;
+import io.jikkou.iceberg.namespace.NamespaceChangeDescription;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.Namespace;
+import org.apache.iceberg.catalog.SupportsNamespaces;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Change handler for creating Iceberg namespaces.
+ */
+public final class CreateNamespaceChangeHandler extends BaseChangeHandler {
+
+    private static final String PROPERTY_PREFIX = "property.";
+
+    private final CatalogFactory catalogFactory;
+
+    /**
+     * Creates a new {@link CreateNamespaceChangeHandler} instance.
+     *
+     * @param catalogFactory the catalog factory.
+     */
+    public CreateNamespaceChangeHandler(@NotNull final CatalogFactory catalogFactory) {
+        super(Operation.CREATE);
+        this.catalogFactory = catalogFactory;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TextDescription describe(@NotNull final ResourceChange change) {
+        return new NamespaceChangeDescription(change);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @NotNull
+    public List<ChangeResponse> handleChanges(@NotNull final List<ResourceChange> changes) {
+        // Sort by namespace depth (ascending) so parent namespaces are created before children.
+        List<ResourceChange> sorted = new ArrayList<>(changes);
+        sorted.sort(Comparator.comparingInt(c -> namespaceDepth(c.getMetadata().getName())));
+
+        // Chain futures sequentially to ensure parent namespaces exist before children are created.
+        List<ChangeResponse> responses = new ArrayList<>(sorted.size());
+        CompletableFuture<Void> previous = CompletableFuture.completedFuture(null);
+        for (ResourceChange change : sorted) {
+            CompletableFuture<ChangeMetadata> future = previous.thenApplyAsync(ignored -> {
+                Catalog catalog = catalogFactory.createCatalog();
+                if (!(catalog instanceof SupportsNamespaces ns)) {
+                    throw new JikkouRuntimeException(
+                        "Catalog '" + catalog.name() + "' does not support namespace operations.");
+                }
+                String name = change.getMetadata().getName();
+                Namespace namespace = Namespace.of(name.split("\\."));
+                Map<String, String> properties = extractProperties(change);
+                ns.createNamespace(namespace, properties);
+                return ChangeMetadata.empty();
+            });
+            responses.add(new ChangeResponse(change, future));
+            previous = future.thenApply(ignored -> null);
+        }
+        return responses;
+    }
+
+    private static int namespaceDepth(@NotNull final String name) {
+        int depth = 1;
+        for (int i = 0; i < name.length(); i++) {
+            if (name.charAt(i) == '.') depth++;
+        }
+        return depth;
+    }
+
+    @NotNull
+    private static Map<String, String> extractProperties(@NotNull final ResourceChange change) {
+        Map<String, String> properties = new HashMap<>();
+        for (StateChange sc : change.getSpec().getChanges()) {
+            if (sc.getName().startsWith(PROPERTY_PREFIX)) {
+                String key = sc.getName().substring(PROPERTY_PREFIX.length());
+                Object after = sc.getAfter();
+                if (after != null) {
+                    properties.put(key, String.valueOf(after));
+                }
+            }
+        }
+        return properties;
+    }
+}

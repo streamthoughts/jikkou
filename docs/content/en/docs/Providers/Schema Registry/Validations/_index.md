@@ -15,7 +15,7 @@ Jikkou ships with the following built-in _validations_:
 ### `SchemaCompatibilityValidation`
 
 ```hocon
-type = io.streamthoughts.jikkou.schema.registry.validation.SchemaCompatibilityValidation
+type = io.jikkou.schema.registry.validation.SchemaCompatibilityValidation
 ```
 
 The `SchemaCompatibilityValidation` allows testing the compatibility of the schema with the latest 
@@ -27,7 +27,7 @@ The `AvroSchemaValidation` allows checking if the specified Avro schema matches 
 rules;
 
 ```hocon
-type = io.streamthoughts.jikkou.schema.registry.validation.AvroSchemaValidation
+type = io.jikkou.schema.registry.validation.AvroSchemaValidation
 ```
 
 **Configuration**

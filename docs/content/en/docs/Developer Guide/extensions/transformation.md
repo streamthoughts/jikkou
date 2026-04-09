@@ -13,7 +13,7 @@ This section covers the core classes to develop transformation extensions.
 ## Interface
 
 To create a custom `transformation`, you will need to implement the Java
-interface: `io.streamthoughts.jikkou.core.transformation.Transformation`.
+interface: `io.jikkou.core.transformation.Transformation`.
 
 ```java
 

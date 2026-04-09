@@ -3,9 +3,9 @@
   "title": "V1KafkaTopic",
   "description": "Manage topics in a Kafka cluster.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaTopicSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaTopicSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -104,7 +104,7 @@
     "V1KafkaTopicSpec": {
       "type": "object",
       "javaInterfaces": [
-        "io.streamthoughts.jikkou.core.models.HasConfigRefs"
+        "io.jikkou.core.models.HasConfigRefs"
       ],
       "additionalProperties": {
         "lombok-builder": true,
@@ -125,7 +125,7 @@
           "default": -1
         },
         "configs": {
-          "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
+          "existingJavaType": "io.jikkou.core.models.Configs",
           "description": "The topic configuration properties.",
           "type": "object"
         },

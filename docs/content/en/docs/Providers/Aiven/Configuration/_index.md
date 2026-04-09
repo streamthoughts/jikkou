@@ -21,7 +21,7 @@ through the Jikkou client configuration property `jikkou.provider.aiven`.
 jikkou {
   provider.aiven {
     enabled = true
-    type = io.streamthoughts.jikkou.extension.aiven.AivenExtensionProvider
+    type = io.jikkou.extension.aiven.AivenExtensionProvider
     config = {
       # Aiven project name
       project = "http://localhost:8081"

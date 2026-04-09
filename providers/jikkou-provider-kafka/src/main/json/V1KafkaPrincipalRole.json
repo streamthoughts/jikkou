@@ -2,9 +2,9 @@
   "type": "object",
   "description": "Define reusable sets of Kafka ACL rules.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaPrincipalRoleSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaPrincipalRoleSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,

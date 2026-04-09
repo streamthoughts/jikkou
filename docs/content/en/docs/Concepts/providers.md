@@ -32,7 +32,7 @@ has a unique name and includes its type, an `enabled` flag, and a `config` block
 jikkou {
   provider.kafka {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     config = {
       client {
         bootstrap.servers = "localhost:9092"
@@ -63,7 +63,7 @@ Use `default = true` to mark one instance as the default for its provider type:
 jikkou {
   provider.kafka-prod {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     default = true
     config = {
       client.bootstrap.servers = "kafka-prod:9092"
@@ -71,7 +71,7 @@ jikkou {
   }
   provider.kafka-staging {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     config = {
       client.bootstrap.servers = "kafka-staging:9092"
     }

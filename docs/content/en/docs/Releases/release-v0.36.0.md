@@ -183,7 +183,7 @@ jikkou {
   repositories = [
     {
       name = "github-repository"
-      type = io.streamthoughts.jikkou.core.repository.GitHubResourceRepository
+      type = io.jikkou.core.repository.GitHubResourceRepository
       config {
         repository = "streamthoughts/jikkou"
         branch = "main"
@@ -254,7 +254,7 @@ jikkou {
 ```hocon
 provider.kafka {
   enabled = true
-  type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+  type = io.jikkou.kafka.KafkaExtensionProvider
   config = {
     client {
       bootstrap.servers = "localhost:9092"

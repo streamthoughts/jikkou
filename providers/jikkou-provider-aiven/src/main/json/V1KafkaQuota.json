@@ -3,9 +3,9 @@
   "title": "KafkaQuota",
   "description": "Manage Kafka quotas on Aiven for Apache Kafka.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaQuotaSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaQuotaSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -44,7 +44,7 @@
       "default": "KafkaQuota"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+      "existingJavaType": "io.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "spec": {

@@ -1,0 +1,142 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.kafka.reconciler;
+
+import static io.jikkou.core.ReconciliationMode.CREATE;
+import static io.jikkou.core.ReconciliationMode.DELETE;
+import static io.jikkou.core.ReconciliationMode.FULL;
+import static io.jikkou.core.ReconciliationMode.UPDATE;
+
+import io.jikkou.core.ReconciliationContext;
+import io.jikkou.core.annotation.SupportedResource;
+import io.jikkou.core.config.ConfigProperty;
+import io.jikkou.core.extension.ContextualExtension;
+import io.jikkou.core.extension.ExtensionContext;
+import io.jikkou.core.models.change.ResourceChange;
+import io.jikkou.core.reconciler.ChangeExecutor;
+import io.jikkou.core.reconciler.ChangeHandler;
+import io.jikkou.core.reconciler.ChangeResult;
+import io.jikkou.core.reconciler.Controller;
+import io.jikkou.core.reconciler.annotations.ControllerConfiguration;
+import io.jikkou.kafka.ApiVersions;
+import io.jikkou.kafka.KafkaExtensionProvider;
+import io.jikkou.kafka.change.acl.AclChangeComputer;
+import io.jikkou.kafka.change.acl.AclChangeHandler;
+import io.jikkou.kafka.change.acl.KafkaAclBindingBuilder;
+import io.jikkou.kafka.change.acl.KafkaPrincipalAuthorizationDescription;
+import io.jikkou.kafka.change.acl.builder.LiteralKafkaAclBindingBuilder;
+import io.jikkou.kafka.change.acl.builder.TopicMatchingAclRulesBuilder;
+import io.jikkou.kafka.internals.admin.AdminClientContext;
+import io.jikkou.kafka.internals.admin.AdminClientContextFactory;
+import io.jikkou.kafka.models.V1KafkaPrincipalAuthorization;
+import java.util.Collection;
+import java.util.List;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.jetbrains.annotations.NotNull;
+
+@SupportedResource(type = V1KafkaPrincipalAuthorization.class)
+@SupportedResource(apiVersion = ApiVersions.KAFKA_V1BETA2, kind = "KafkaPrincipalAuthorizationChange")
+@ControllerConfiguration(
+    supportedModes = {CREATE, DELETE, UPDATE, FULL}
+)
+public final class AdminClientKafkaAclController
+    extends ContextualExtension
+    implements Controller<V1KafkaPrincipalAuthorization> {
+
+    interface Config {
+        ConfigProperty<Boolean> DELETE_ORPHANS_OPTIONS = ConfigProperty
+            .ofBoolean("delete-orphans")
+            .displayName("Delete Orphan ACLs")
+            .description("Specify whether to delete ACLs that exist on the cluster but are not defined in the resource.")
+            .defaultValue(false);
+    }
+
+    private AdminClientContextFactory adminClientContextFactory;
+
+    /**
+     * Creates a new {@link AdminClientKafkaAclController} instance.
+     */
+    public AdminClientKafkaAclController() {
+        super();
+    }
+
+    /**
+     * Creates a new {@link AdminClientKafkaAclController} instance.
+     *
+     * @param AdminClientContextFactory the {@link AdminClientContextFactory} to use for acquiring a new {@link AdminClientContext}.
+     */
+    public AdminClientKafkaAclController(final @NotNull AdminClientContextFactory AdminClientContextFactory) {
+        this.adminClientContextFactory = AdminClientContextFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(@NotNull ExtensionContext context) {
+        super.init(context);
+        if (adminClientContextFactory == null) {
+            adminClientContextFactory = context.<KafkaExtensionProvider>provider().newAdminClientContextFactory();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ResourceChange> plan(@NotNull Collection<V1KafkaPrincipalAuthorization> resources,
+                                     @NotNull ReconciliationContext context) {
+
+        // Get the list of remote resources that are candidates for this reconciliation
+        List<V1KafkaPrincipalAuthorization> expectedStates = resources
+            .stream()
+            .filter(context.selector()::apply)
+            .toList();
+
+        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
+
+            final AdminClient adminClient = clientContext.getAdminClient();
+
+            // Get the actual state from the cluster.
+            AdminClientKafkaAclCollector collector = new AdminClientKafkaAclCollector(adminClientContextFactory);
+            collector.init(extensionContext().contextForExtension(AdminClientKafkaAclCollector.class));
+
+            List<V1KafkaPrincipalAuthorization> actualStates = collector.listAll(adminClient)
+                .stream()
+                .filter(context.selector()::apply)
+                .toList();
+
+            // Compute state changes
+            final KafkaAclBindingBuilder builder = KafkaAclBindingBuilder.combines(
+                new LiteralKafkaAclBindingBuilder(),
+                new TopicMatchingAclRulesBuilder(adminClient)
+            );
+
+            AclChangeComputer computer = new AclChangeComputer(
+                Config.DELETE_ORPHANS_OPTIONS.get(context.configuration()),
+                builder);
+
+            return computer.computeChanges(actualStates, expectedStates);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ChangeResult> execute(@NotNull ChangeExecutor executor,
+                                      @NotNull ReconciliationContext context) {
+        try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
+            final AdminClient adminClient = clientContext.getAdminClient();
+            List<ChangeHandler> handlers = List.of(
+                new AclChangeHandler(adminClient),
+                new ChangeHandler.None(KafkaPrincipalAuthorizationDescription::new)
+            );
+            return executor.applyChanges(handlers);
+        }
+    }
+}

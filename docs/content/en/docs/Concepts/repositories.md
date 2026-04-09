@@ -52,7 +52,7 @@ Jikkou ships with the following built-in `ResourceRepository` implementations:
 
 Loads resources from local files or directories.
 
-**Type**: `io.streamthoughts.jikkou.core.repository.LocalResourceRepository`
+**Type**: `io.jikkou.core.repository.LocalResourceRepository`
 
 **Example Configuration**
 
@@ -61,7 +61,7 @@ jikkou {
   repositories = [
     {
       name = "local"
-      type = io.streamthoughts.jikkou.core.repository.LocalResourceRepository
+      type = io.jikkou.core.repository.LocalResourceRepository
       config {
         files = [
           "./resources/",
@@ -79,7 +79,7 @@ See more: [LocalResourceRepository Configuration]({{% relref "../Providers/Core/
 
 Loads resources from a public or private GitHub repository.
 
-**Type**: `io.streamthoughts.jikkou.core.repository.GitHubResourceRepository`
+**Type**: `io.jikkou.core.repository.GitHubResourceRepository`
 
 **Example Configuration**
 
@@ -88,7 +88,7 @@ jikkou {
   repositories = [
     {
       name = "github-repository"
-      type = io.streamthoughts.jikkou.core.repository.GitHubResourceRepository
+      type = io.jikkou.core.repository.GitHubResourceRepository
       config {
         repository = "streamthoughts/jikkou"
         branch = "main"

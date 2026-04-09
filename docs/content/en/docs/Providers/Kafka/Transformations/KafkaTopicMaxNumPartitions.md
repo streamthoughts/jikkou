@@ -20,7 +20,7 @@ This transformation can be used to enforce a **maximum** value for the number of
 jikkou {
   transformations: [
     {
-      type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMaxNumPartitions
+      type = io.jikkou.kafka.transform.KafkaTopicMaxNumPartitions
       priority = 100
       config = {
         maxNumPartitions = 50

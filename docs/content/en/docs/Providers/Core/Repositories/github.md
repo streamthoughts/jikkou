@@ -18,7 +18,7 @@ jikkou {
       # Name of your local repositories  
       name = "<string>"
       # The fully qualified class name (FQCN) of the repository
-      type = io.streamthoughts.jikkou.core.repository.GithubResourceRepository
+      type = io.jikkou.core.repository.GithubResourceRepository
       config {
         # Specify the GitHub repository in the format 'owner/repo'
         repository = "<string>"

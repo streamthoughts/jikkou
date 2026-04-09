@@ -10,7 +10,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.streamthoughts</groupId>
+        <groupId>io.jikkou</groupId>
         <artifactId>jikkou-parent</artifactId>
         <version>0.38.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
@@ -28,12 +28,12 @@
     <dependencies>
         <!-- Jikkou core dependencies -->
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-processor</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -143,7 +143,7 @@
 
         <!-- Test dependencies -->
         <dependency>
-            <groupId>io.streamthoughts</groupId>
+            <groupId>io.jikkou</groupId>
             <artifactId>jikkou-provider-core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -181,7 +181,7 @@
                             <version>${lombok.version}</version>
                         </path>
                         <path>
-                            <groupId>io.streamthoughts</groupId>
+                            <groupId>io.jikkou</groupId>
                             <artifactId>jikkou-processor</artifactId>
                             <version>${project.version}</version>
                         </path>

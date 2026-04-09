@@ -1,0 +1,234 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.kafka;
+
+import io.jikkou.core.annotation.Provider;
+import io.jikkou.core.config.ConfigProperty;
+import io.jikkou.core.extension.ExtensionRegistry;
+import io.jikkou.core.models.Resource;
+import io.jikkou.core.models.change.GenericResourceChange;
+import io.jikkou.core.models.change.ResourceChange;
+import io.jikkou.core.resource.ResourceRegistry;
+import io.jikkou.kafka.action.KafkaConsumerGroupsResetOffsets;
+import io.jikkou.kafka.action.TruncateKafkaTopicRecords;
+import io.jikkou.kafka.collections.V1KafkaBrokerList;
+import io.jikkou.kafka.collections.V1KafkaClientQuotaList;
+import io.jikkou.kafka.collections.V1KafkaPrincipalAuthorizationList;
+import io.jikkou.kafka.collections.V1KafkaTopicList;
+import io.jikkou.kafka.health.KafkaBrokerHealthIndicator;
+import io.jikkou.kafka.internals.KafkaUtils;
+import io.jikkou.kafka.internals.admin.AdminClientContextFactory;
+import io.jikkou.kafka.internals.admin.AdminClientFactory;
+import io.jikkou.kafka.internals.admin.DefaultAdminClientFactory;
+import io.jikkou.kafka.internals.consumer.ConsumerFactory;
+import io.jikkou.kafka.internals.consumer.DefaultConsumerFactory;
+import io.jikkou.kafka.internals.producer.DefaultProducerFactory;
+import io.jikkou.kafka.internals.producer.ProducerFactory;
+import io.jikkou.kafka.model.user.V1KafkaUser;
+import io.jikkou.kafka.models.*;
+import io.jikkou.kafka.reconciler.*;
+import io.jikkou.kafka.reporter.KafkaChangeReporter;
+import io.jikkou.kafka.transform.*;
+import io.jikkou.kafka.validation.*;
+import io.jikkou.spi.BaseExtensionProvider;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serializer;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Extension provider for Apache Kafka.
+ */
+@Provider(
+    name = "kafka",
+    description = "Extension provider for Apache Kafka",
+    tags = {"Apache Kafka"}
+)
+public final class KafkaExtensionProvider extends BaseExtensionProvider {
+
+    /**
+     * The provider config.
+     */
+    public interface Config {
+        ConfigProperty<Map<String, Object>> CLIENT = ConfigProperty
+            .ofMap("client")
+            .displayName("Kafka Client")
+            .description("The kafka client configuration properties.")
+            .defaultValue(HashMap::new);
+
+        ConfigProperty<List<Pattern>> TOPIC_DELETE_EXCLUDE_PATTERNS = ConfigProperty
+            .ofList("topics.deletion.exclude")
+            .displayName("Topic Deletion Exclude Patterns")
+            .description("List of regex patterns for topic names to exclude from deletion.")
+            .map(l -> l.stream().map(Pattern::compile).toList())
+            .defaultValue(() -> List.of(
+                Pattern.compile("^_schemas$"),
+                Pattern.compile("^_connect-offsets$"),
+                Pattern.compile("^_connect-configs$"),
+                Pattern.compile("^_connect-status$"),
+                Pattern.compile("^__.*$"),
+                Pattern.compile(".*-changelog$")
+            ));
+
+        ConfigProperty<List<Pattern>> TOPICS_VALIDATION_IGNORE_CONFIG_KEYS = ConfigProperty
+            .ofList("topics.validation.ignoreConfigKeys")
+            .displayName("Topic Validation Ignore Config Keys")
+            .description("List of regex patterns for config keys to ignore during topic validation.")
+            .map(l -> l.stream().map(Pattern::compile).toList())
+            .defaultValue(() -> List.of(
+                Pattern.compile("^confluent.*")
+            ));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ConfigProperty<?>> configProperties() {
+        return List.of(Config.CLIENT, Config.TOPIC_DELETE_EXCLUDE_PATTERNS, Config.TOPICS_VALIDATION_IGNORE_CONFIG_KEYS);
+    }
+
+    public List<Pattern> topicDeleteExcludePatterns() {
+        return Config.TOPIC_DELETE_EXCLUDE_PATTERNS.get(configuration);
+    }
+
+    public List<Pattern> topicValidationIgnoreConfigKeys() {
+        return Config.TOPICS_VALIDATION_IGNORE_CONFIG_KEYS.get(configuration);
+    }
+
+    public AdminClientContextFactory newAdminClientContextFactory() {
+        return new AdminClientContextFactory(configuration, newAdminClientFactory());
+    }
+
+    public AdminClientFactory newAdminClientFactory() {
+        return new DefaultAdminClientFactory(
+            Config.CLIENT.map(KafkaUtils::getAdminClientConfigs).get(configuration)
+        );
+    }
+
+    public ConsumerFactory<byte[], byte[]> newConsumerFactory() {
+        return newConsumerFactory(new ByteArrayDeserializer(), new ByteArrayDeserializer());
+    }
+
+    public <K, V> ConsumerFactory<K, V> newConsumerFactory(final Deserializer<K> keyDeserializer,
+                                                           final Deserializer<V> valueDeserializer) {
+        return new DefaultConsumerFactory<>(
+            Config.CLIENT.map(KafkaUtils::getConsumerClientConfigs).get(configuration),
+            keyDeserializer,
+            valueDeserializer
+        );
+    }
+
+    public <K, V> ProducerFactory<K, V> newProducerFactory(final Serializer<K> keySerializer,
+                                                           final Serializer<V> valueSerializer) {
+        return new DefaultProducerFactory<>(
+            Config.CLIENT.map(KafkaUtils::getProducerClientConfigs).get(configuration),
+            keySerializer,
+            valueSerializer
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void registerExtensions(@NotNull ExtensionRegistry registry) {
+
+        // controllers
+        registry.register(KafkaBrokerHealthIndicator.class, KafkaBrokerHealthIndicator::new);
+        registry.register(AdminClientKafkaAclController.class, AdminClientKafkaAclController::new);
+        registry.register(AdminClientKafkaTopicController.class, AdminClientKafkaTopicController::new);
+        registry.register(AdminClientKafkaQuotaController.class, AdminClientKafkaQuotaController::new);
+        registry.register(AdminClientConsumerGroupController.class, AdminClientConsumerGroupController::new);
+        registry.register(AdminClientKafkaUserController.class, AdminClientKafkaUserController::new);
+
+        // collectors
+        registry.register(AdminClientKafkaBrokerCollector.class, AdminClientKafkaBrokerCollector::new);
+        registry.register(AdminClientKafkaQuotaCollector.class, AdminClientKafkaQuotaCollector::new);
+        registry.register(AdminClientKafkaTopicCollector.class, AdminClientKafkaTopicCollector::new);
+        registry.register(AdminClientKafkaAclCollector.class, AdminClientKafkaAclCollector::new);
+        registry.register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new);
+        registry.register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new);
+        registry.register(AdminClientConsumerGroupCollector.class, AdminClientConsumerGroupCollector::new);
+        registry.register(AdminClientKafkaUserCollector.class, AdminClientKafkaUserCollector::new);
+
+        // transformations
+        registry.register(KafkaPrincipalAuthorizationTransformation.class, KafkaPrincipalAuthorizationTransformation::new);
+        registry.register(KafkaTopicMaxRetentionMsTransformation.class, KafkaTopicMaxRetentionMsTransformation::new);
+        registry.register(KafkaTopicMaxReplicasTransformation.class, KafkaTopicMaxReplicasTransformation::new);
+        registry.register(KafkaTopicMaxNumPartitionsTransformation.class, KafkaTopicMaxNumPartitionsTransformation::new);
+        registry.register(KafkaTopicMinRetentionMsTransformation.class, KafkaTopicMinRetentionMsTransformation::new);
+        registry.register(KafkaTopicMinReplicasTransformation.class, KafkaTopicMinReplicasTransformation::new);
+        registry.register(KafkaTopicMinInSyncReplicasTransformation.class, KafkaTopicMinInSyncReplicasTransformation::new);
+
+        // validations
+        registry.register(ClientQuotaValidation.class, ClientQuotaValidation::new);
+        registry.register(NoDuplicatePrincipalRoleValidation.class, NoDuplicatePrincipalRoleValidation::new);
+        registry.register(NoDuplicateTopicsAllowedValidation.class, NoDuplicateTopicsAllowedValidation::new);
+        registry.register(NoDuplicatePrincipalAllowedValidation.class, NoDuplicatePrincipalAllowedValidation::new);
+        registry.register(TopicConfigKeysValidation.class, TopicConfigKeysValidation::new);
+        registry.register(TopicMinReplicationFactorValidation.class, TopicMinReplicationFactorValidation::new);
+        registry.register(TopicMaxReplicationFactorValidation.class, TopicMaxReplicationFactorValidation::new);
+        registry.register(TopicMinNumPartitionsValidation.class, TopicMinNumPartitionsValidation::new);
+        registry.register(TopicMaxNumPartitionsValidation.class, TopicMaxNumPartitionsValidation::new);
+        registry.register(TopicNameRegexValidation.class, TopicNameRegexValidation::new);
+        registry.register(TopicNamePrefixValidation.class, TopicNamePrefixValidation::new);
+        registry.register(TopicNameSuffixValidation.class, TopicNameSuffixValidation::new);
+
+        // reporters
+        registry.register(KafkaChangeReporter.class, KafkaChangeReporter::new);
+
+        // actions
+        registry.register(KafkaConsumerGroupsResetOffsets.class, KafkaConsumerGroupsResetOffsets::new);
+        registry.register(TruncateKafkaTopicRecords.class, TruncateKafkaTopicRecords::new);
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void registerResources(@NotNull ResourceRegistry registry) {
+        Stream.of(
+            V1KafkaBroker.class,
+            V1KafkaPrincipalAuthorizationList.class,
+            V1KafkaPrincipalRole.class
+        ).forEach(resource -> {
+            registry.register(resource);
+            registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(resource));
+        });
+
+        // Register resources with reconciliation ordering.
+        // Lower values are reconciled first during creation, last during deletion.
+        // V1KafkaUser uses @ReconciliationOrder annotation (hand-written class).
+        registry.register(V1KafkaUser.class);
+        registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(V1KafkaUser.class));
+        registerWithOrder(registry, V1KafkaTopic.class, 100);
+        registerWithOrder(registry, V1KafkaClientQuota.class, 150);
+        registerWithOrder(registry, V1KafkaPrincipalAuthorization.class, 200);
+        registerWithOrder(registry, V1KafkaConsumerGroup.class, 250);
+        registerWithOrder(registry, V1KafkaTableRecord.class, 300);
+
+        // register collections
+        Stream.of(
+            V1KafkaBrokerList.class,
+            V1KafkaClientQuotaList.class,
+            V1KafkaTopicList.class
+        ).forEach(registry::register);
+    }
+
+    private static void registerWithOrder(ResourceRegistry registry,
+                                          Class<? extends Resource> resource,
+                                          int order) {
+        registry.register(resource).setReconciliationOrder(order);
+        registry.register(GenericResourceChange.class, ResourceChange.getResourceTypeOf(resource));
+    }
+}

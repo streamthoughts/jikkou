@@ -1,0 +1,30 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.core.models;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.jikkou.core.annotation.Reflectable;
+import java.beans.ConstructorProperties;
+import java.util.Set;
+import javax.validation.constraints.NotNull;
+
+@JsonPropertyOrder({
+        "name",
+        "versions"
+})
+@Reflectable
+public record ApiGroup(@JsonProperty("name") @NotNull String name,
+                       @JsonProperty("versions") @NotNull Set<ApiGroupVersion> versions) {
+
+    @ConstructorProperties({
+            "name",
+            "versions"
+    })
+    public ApiGroup {
+    }
+}

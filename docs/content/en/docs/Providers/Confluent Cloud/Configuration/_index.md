@@ -21,7 +21,7 @@ through the Jikkou client configuration property `jikkou.provider.confluent-clou
 jikkou {
   provider.confluent-cloud {
     enabled = true
-    type = io.streamthoughts.jikkou.extension.confluent.ConfluentCloudExtensionProvider
+    type = io.jikkou.extension.confluent.ConfluentCloudExtensionProvider
     config = {
       # URL to the Confluent Cloud REST API (default: https://api.confluent.cloud)
       apiUrl = "https://api.confluent.cloud"

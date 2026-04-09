@@ -3,9 +3,9 @@
   "description": "Manage records in compacted Kafka topics.",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaTableRecordSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaTableRecordSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -77,7 +77,7 @@
           "description": "The record header.",
           "items": {
             "type": "object",
-            "existingJavaType": "io.streamthoughts.jikkou.kafka.model.KafkaRecordHeader",
+            "existingJavaType": "io.jikkou.kafka.model.KafkaRecordHeader",
             "required": [
               "name",
               "value"
@@ -106,7 +106,7 @@
     },
     "KafkaRecordValue": {
       "type": "object",
-      "existingJavaType": "io.streamthoughts.jikkou.kafka.model.DataValue",
+      "existingJavaType": "io.jikkou.kafka.model.DataValue",
       "properties": {
         "type": {
           "description": "The data type.",

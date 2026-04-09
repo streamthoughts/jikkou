@@ -3,9 +3,9 @@
   "title": "V1KafkaPrincipalAuthorization",
   "description": "Manage ACL authorizations for a Kafka principal.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaPrincipalAuthorizationSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaPrincipalAuthorizationSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,

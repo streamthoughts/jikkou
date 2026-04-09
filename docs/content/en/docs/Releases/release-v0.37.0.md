@@ -51,7 +51,7 @@ Jikkou 0.37.0 introduces **named provider instances**. Register as many Kafka (o
 jikkou {
   provider.kafka-prod {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     default = true
     config = {
       client { bootstrap.servers = "prod-kafka:9092" }
@@ -59,7 +59,7 @@ jikkou {
   }
   provider.kafka-staging {
     enabled = true
-    type = io.streamthoughts.jikkou.kafka.KafkaExtensionProvider
+    type = io.jikkou.kafka.KafkaExtensionProvider
     config = {
       client { bootstrap.servers = "staging-kafka:9092" }
     }
@@ -168,7 +168,7 @@ Enforce naming conventions on your Schema Registry subjects with a regex pattern
 ```yaml
 validations:
   - name: "subjectMustHaveValidName"
-    type: "io.streamthoughts.jikkou.schema.registry.validation.SubjectNameRegexValidation"
+    type: "io.jikkou.schema.registry.validation.SubjectNameRegexValidation"
     config:
       subjectNameRegex: "[a-zA-Z0-9\\._\\-]+"
 ```

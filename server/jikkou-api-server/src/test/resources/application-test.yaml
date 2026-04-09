@@ -24,5 +24,5 @@ endpoints:
 jikkou:
   providers:
     - name: kafka
-      type: "io.streamthoughts.jikkou.kafka.KafkaExtensionProvider"
+      type: "io.jikkou.kafka.KafkaExtensionProvider"
       enabled: true

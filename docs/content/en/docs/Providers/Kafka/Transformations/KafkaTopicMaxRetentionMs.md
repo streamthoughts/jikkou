@@ -20,7 +20,7 @@ This transformation can be used to enforce a **maximum** value for the **`retent
 jikkou {
   transformations: [
     {
-      type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+      type = io.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
       priority = 100
       config = {
         maxRetentionMs = 2592000000 # 30 days

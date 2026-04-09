@@ -20,7 +20,7 @@ This transformation can be used to enforce a **minimum** value for the **`min.in
 jikkou {
   transformations: [
     {
-      type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
+      type = io.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
       priority = 100
       config = {
         minInSyncReplicas = 2

@@ -3,9 +3,9 @@
   "title": "AwsGlueSchema",
   "description": "Manage schemas on AWS Glue Schema Registry.",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.Resource",
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<AwsGlueSchemaSpec>"
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<AwsGlueSchemaSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -37,7 +37,7 @@
       "default": "AwsGlueSchema"
     },
     "metadata": {
-      "existingJavaType": "io.streamthoughts.jikkou.core.models.ObjectMeta",
+      "existingJavaType": "io.jikkou.core.models.ObjectMeta",
       "type": "object"
     },
     "spec": {
@@ -58,17 +58,17 @@
         "compatibility": {
           "type": "string",
           "description": "The data format applies to all versions of a Glue schema.",
-          "existingJavaType": "io.streamthoughts.jikkou.aws.model.Compatibility"
+          "existingJavaType": "io.jikkou.aws.model.Compatibility"
         },
         "dataFormat": {
           "type": "string",
           "description": "The data format applies to all versions of the Glue schema: AVRO, PROTOBUF, JSON.",
-          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaType"
+          "existingJavaType": "io.jikkou.core.data.SchemaType"
         },
         "schemaDefinition": {
           "type": "object",
           "description": "The schema definition content.",
-          "existingJavaType": "io.streamthoughts.jikkou.core.data.SchemaHandle",
+          "existingJavaType": "io.jikkou.core.data.SchemaHandle",
           "properties": {
             "$ref": {
               "type": "string"

@@ -3,8 +3,8 @@
   "description": "Describe brokers in a Kafka cluster.",
   "type": "object",
   "javaInterfaces": [
-    "io.streamthoughts.jikkou.core.models.HasMetadata",
-    "io.streamthoughts.jikkou.core.models.HasSpec<V1KafkaBrokersSpec>"
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaBrokersSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -80,7 +80,7 @@
           "description": "The rack for this node (null if this node has no defined rack)."
         },
         "configs": {
-          "existingJavaType": "io.streamthoughts.jikkou.core.models.Configs",
+          "existingJavaType": "io.jikkou.core.models.Configs",
           "description": "The broker configuration properties.",
           "type": "object"
         }

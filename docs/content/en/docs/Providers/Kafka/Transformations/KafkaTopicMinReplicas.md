@@ -20,7 +20,7 @@ This transformation can be used to enforce a minimum value for the replication f
 jikkou {
   transformations: [
     {
-      type = io.streamthoughts.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation
+      type = io.jikkou.kafka.transform.KafkaTopicMinReplicasTransformation
       priority = 100
       config = {
         minReplicationFactor = 3

@@ -1,0 +1,31 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (c) The original authors
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
+package io.jikkou.core.template;
+
+import io.jikkou.core.config.Configurable;
+import java.net.URI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Responsible for rendering resource template.
+ */
+public interface ResourceTemplateRenderer extends Configurable {
+
+    /**
+     * Render the given resource template.
+     *
+     * @param template  the template to be rendered.
+     * @param location  the template location.
+     * @param bindings  the template bindings variables.
+     *
+     * @return          the resource rendered.
+     */
+    String render(@NotNull String template,
+                  @Nullable URI location,
+                  @NotNull TemplateBindings bindings);
+}

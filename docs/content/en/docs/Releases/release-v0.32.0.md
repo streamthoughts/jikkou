@@ -40,7 +40,7 @@ For this reason, Jikkou 0.32.0 brings the capability to easily configuration ext
 So how does it work? Well, let’s imagine you want to be able to load Text Files from the local filesystem using Jikkou.
 
 First, we need to create a new Java project and add the Jikkou Core library to your project’s dependencies (
-`io.streamthoughts:jikkou-core:0.32.0 dependency`).
+`io.jikkou:jikkou-core:0.32.0 dependency`).
 
 Then, you will need to create some POJO classes to represent your resource (e.g., V1File.class) and to implement the
 Collector interface :
@@ -129,7 +129,7 @@ public final class FileExtensionProvider implements ExtensionProvider {
 ```
 
 Then, the fully qualified name of the class must be added to the resource file
-META-INF/service/io.streamthoughts.jikkou.spi.ExtensionProvider.
+META-INF/service/io.jikkou.spi.ExtensionProvider.
 
 Finally, all you need to do is to package your project as a tarball or ZIP archive. The archive must contain a single
 top-level directory containing the extension JAR files, as well as any resource files or third-party libraries required
