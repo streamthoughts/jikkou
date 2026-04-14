@@ -73,7 +73,7 @@ public final class KafkaConnectApiFactory {
 
     @NotNull
     private static String getAuthorizationHeader(KafkaConnectClientConfig config) {
-        String basicAuthInfo = config.basicAuthUser() + ":" + config.basicAuthPassword();
+        String basicAuthInfo = config.basicAuthUser().get() + ":" + config.basicAuthPassword().get();
         return "Basic " + Encoding.BASE64.encode(basicAuthInfo.getBytes(StandardCharsets.UTF_8));
     }
 }
