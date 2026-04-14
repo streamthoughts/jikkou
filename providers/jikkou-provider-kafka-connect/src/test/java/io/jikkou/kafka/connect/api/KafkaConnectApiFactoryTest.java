@@ -64,6 +64,6 @@ class KafkaConnectApiFactoryTest {
                 .encodeToString("alice:secret".getBytes(StandardCharsets.UTF_8));
         // result should correspond to base64 encoded string "alice:secret" prefixed with "Basic"
         Assertions.assertEquals("Basic " + expectedCredentials, authorization,
-                "Authorization header must encode the actual credentials, not the Supplier toString()");
+                "Authorization header must contain the base64-encoded credentials");
     }
 }
