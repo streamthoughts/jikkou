@@ -200,38 +200,49 @@ public class RestClientBuilder {
     }
 
     public RestClientBuilder sslConfig(final SSLConfig sslConfig) {
-        TrustManager[] trustManagers;
-        try {
-            trustManagers = SSLUtils.createTrustManagers(
-                sslConfig.trustStoreLocation(),
-                sslConfig.trustStorePassword().toCharArray(),
-                sslConfig.trustStoreType(),
-                KeyManagerFactory.getDefaultAlgorithm());
-        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
-            LOG.error("Could not create trust managers for Client Certificate authentication.", e);
-            throw new JikkouRuntimeException(e);
-        }
+        boolean hasTrustStore = sslConfig.trustStoreLocation() != null;
+        boolean hasKeyStore = sslConfig.keyStoreLocation() != null;
 
-        KeyManager[] keyManagers;
-        try {
-            keyManagers = SSLUtils.createKeyManagers(
-                sslConfig.keyStoreLocation(),
-                sslConfig.keyStorePassword().toCharArray(),
-                sslConfig.keyStoreType(),
-                KeyManagerFactory.getDefaultAlgorithm());
-        } catch (CertificateException
-                 | NoSuchAlgorithmException
-                 | UnrecoverableKeyException
-                 | KeyStoreException
-                 | IOException e) {
-            LOG.error("Could not create key managers for Client Certificate authentication.", e);
-            throw new JikkouRuntimeException(e);
-        }
+        if (hasTrustStore || hasKeyStore) {
+            TrustManager[] trustManagers;
+            try {
+                trustManagers = SSLUtils.createTrustManagers(
+                    sslConfig.trustStoreLocation(),
+                    toCharArrayOrNull(sslConfig.trustStorePassword()),
+                    sslConfig.trustStoreType(),
+                    KeyManagerFactory.getDefaultAlgorithm());
+            } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
+                LOG.error("Could not create trust managers for Client Certificate authentication.", e);
+                throw new JikkouRuntimeException(e);
+            }
 
-        SSLContextFactory sslContextFactory = new SSLContextFactory();
-        clientBuilder.sslContext(sslContextFactory.getSSLContext(keyManagers, trustManagers));
+            KeyManager[] keyManagers = null;
+            if (hasKeyStore) {
+                try {
+                    keyManagers = SSLUtils.createKeyManagers(
+                        sslConfig.keyStoreLocation(),
+                        toCharArrayOrNull(sslConfig.keyStorePassword()),
+                        sslConfig.keyStoreType(),
+                        KeyManagerFactory.getDefaultAlgorithm());
+                } catch (CertificateException
+                         | NoSuchAlgorithmException
+                         | UnrecoverableKeyException
+                         | KeyStoreException
+                         | IOException e) {
+                    LOG.error("Could not create key managers for Client Certificate authentication.", e);
+                    throw new JikkouRuntimeException(e);
+                }
+            }
+
+            SSLContextFactory sslContextFactory = new SSLContextFactory();
+            clientBuilder.sslContext(sslContextFactory.getSSLContext(keyManagers, trustManagers));
+        }
 
         return sslConfig.ignoreHostnameVerification() ? sslIgnoreHostnameVerification() : this;
+    }
+
+    private static char[] toCharArrayOrNull(String value) {
+        return value != null ? value.toCharArray() : null;
     }
 
     /**

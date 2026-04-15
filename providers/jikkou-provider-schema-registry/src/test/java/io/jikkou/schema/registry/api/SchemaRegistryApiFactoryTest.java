@@ -10,14 +10,21 @@ import io.jikkou.core.config.Configuration;
 import io.jikkou.http.client.ssl.SSLConfig;
 import io.jikkou.schema.registry.mock.HttpPathBasedDispatcher;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyStore;
 import java.util.List;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
+import okhttp3.tls.HandshakeCertificates;
+import okhttp3.tls.HeldCertificate;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class SchemaRegistryApiFactoryTest {
 
@@ -149,6 +156,69 @@ class SchemaRegistryApiFactoryTest {
         try (SchemaRegistryApi api = SchemaRegistryApiFactory.create(config)) {
             // Then - should be a FailoverSchemaRegistryApi
             Assertions.assertInstanceOf(FailoverSchemaRegistryApi.class, api);
+        }
+    }
+
+    @Test
+    @DisplayName("Should apply sslTrustStoreLocation when authMethod is basicAuth (HTTPS)")
+    public void shouldApplyTrustStoreForBasicAuthOverHttps(@TempDir Path tempDir) throws Exception {
+        // Given - a self-signed cert + an HTTPS MockWebServer using that cert
+        HeldCertificate localhostCert = new HeldCertificate.Builder()
+                .addSubjectAlternativeName("localhost")
+                .addSubjectAlternativeName("127.0.0.1")
+                .build();
+        HandshakeCertificates serverCertificates = new HandshakeCertificates.Builder()
+                .heldCertificate(localhostCert)
+                .build();
+
+        MockWebServer httpsServer = new MockWebServer();
+        httpsServer.useHttps(serverCertificates.sslSocketFactory());
+        httpsServer.start();
+        try {
+            HttpPathBasedDispatcher dispatcher = HttpPathBasedDispatcher.builder()
+                    .forPath("/subjects", new MockResponse.Builder()
+                            .code(200)
+                            .addHeader("Content-Type", "application/vnd.schemaregistry.v1+json")
+                            .body("[\"subject-1\"]")
+                            .build())
+                    .build();
+            httpsServer.setDispatcher(dispatcher);
+
+            // Write the cert into a JKS truststore on disk
+            Path truststorePath = tempDir.resolve("truststore.jks");
+            char[] password = "changeit".toCharArray();
+            KeyStore truststore = KeyStore.getInstance("JKS");
+            truststore.load(null, password);
+            truststore.setCertificateEntry("schema-registry-ca", localhostCert.certificate());
+            try (OutputStream os = Files.newOutputStream(truststorePath)) {
+                truststore.store(os, password);
+            }
+
+            SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
+                    List.of(String.format("https://%s:%s", httpsServer.getHostName(), httpsServer.getPort())),
+                    "generic",
+                    AuthMethod.BASICAUTH,
+                    () -> "username",
+                    () -> "password",
+                    () -> SSLConfig.from(Configuration.from(java.util.Map.of(
+                            SSLConfig.SSL_TRUST_STORE_LOCATION.key(), truststorePath.toString(),
+                            SSLConfig.SSL_TRUST_STORE_PASSWORD.key(), "changeit",
+                            SSLConfig.SSL_TRUST_STORE_TYPE.key(), "JKS"
+                    ))),
+                    false
+            );
+
+            // When
+            List<String> subjects;
+            try (SchemaRegistryApi schemaRegistryApi = SchemaRegistryApiFactory.create(config)) {
+                subjects = schemaRegistryApi.listSubjects();
+            }
+
+            // Then - the configured truststore must be wired into the SSL context;
+            // without the fix this fails with PKIX path building failed.
+            Assertions.assertEquals(List.of("subject-1"), subjects);
+        } finally {
+            httpsServer.close();
         }
     }
 

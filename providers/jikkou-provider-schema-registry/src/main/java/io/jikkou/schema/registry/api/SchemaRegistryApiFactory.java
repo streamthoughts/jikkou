@@ -48,17 +48,17 @@ public final class SchemaRegistryApiFactory {
                 .baseUri(baseUri)
                 .enableClientDebugging(config.debugLoggingEnabled());
 
+        // Apply SSL config (truststore, keystore, hostname verification) regardless of
+        // auth method, so HTTPS endpoints with private CAs work for basicAuth/none too.
+        builder.sslConfig(config.sslConfig().get());
+
         builder = switch (config.authMethod()) {
             case BASICAUTH -> {
                 String buildAuthorizationHeader = getAuthorizationHeader(config);
                 builder.header("Authorization", buildAuthorizationHeader);
                 yield builder;
             }
-            case SSL -> {
-                builder.sslConfig(config.sslConfig().get());
-                yield builder;
-            }
-            case NONE -> builder;
+            case SSL, NONE -> builder;
 
             case INVALID -> throw new IllegalStateException("Unexpected value: " + config.authMethod());
         };
