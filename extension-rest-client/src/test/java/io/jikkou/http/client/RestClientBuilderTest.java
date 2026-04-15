@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jikkou.core.config.Configuration;
+import io.jikkou.http.client.ssl.SSLConfig;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
@@ -24,6 +26,9 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.security.KeyStore;
 import java.util.List;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -31,6 +36,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class RestClientBuilderTest {
 
@@ -268,6 +274,79 @@ class RestClientBuilderTest {
         // Then
         RecordedRequest request = server.takeRequest();
         assertEquals("/project/my-project/service/my-service/status", request.getPath());
+    }
+
+    @Test
+    void shouldAcceptEmptySslConfigWithoutThrowing() {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+        SSLConfig sslConfig = SSLConfig.from(Configuration.empty());
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .sslConfig(sslConfig)
+                .build(TestResource.class);
+        String response = resource.ping();
+
+        // Then
+        assertEquals("pong", response);
+    }
+
+    @Test
+    void shouldAcceptSslConfigWithOnlyHostnameVerificationDisabledWithoutThrowing() {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+        SSLConfig sslConfig = new SSLConfig(
+                null, null, "PKCS12", null,
+                null, null, "PKCS12",
+                true);
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .sslConfig(sslConfig)
+                .build(TestResource.class);
+        String response = resource.ping();
+
+        // Then
+        assertEquals("pong", response);
+    }
+
+    @Test
+    void shouldAcceptSslConfigWithOnlyTrustStoreWithoutThrowing(@TempDir java.nio.file.Path tempDir) throws Exception {
+        // Given
+        java.nio.file.Path truststorePath = tempDir.resolve("truststore.jks");
+        char[] password = "changeit".toCharArray();
+        KeyStore truststore = KeyStore.getInstance("JKS");
+        truststore.load(null, password);
+        try (OutputStream os = Files.newOutputStream(truststorePath)) {
+            truststore.store(os, password);
+        }
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+        SSLConfig sslConfig = new SSLConfig(
+                null, null, "PKCS12", null,
+                truststorePath.toString(), "changeit", "JKS",
+                false);
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .sslConfig(sslConfig)
+                .build(TestResource.class);
+        String response = resource.ping();
+
+        // Then
+        assertEquals("pong", response);
     }
 
     private <T> T newClient(Class<T> resourceInterface) {
