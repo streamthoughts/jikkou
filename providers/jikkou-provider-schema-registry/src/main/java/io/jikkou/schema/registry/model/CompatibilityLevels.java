@@ -7,15 +7,31 @@
 package io.jikkou.schema.registry.model;
 
 /**
- * Schema compatibility levels
+ * Schema compatibility levels, ordered by restrictiveness.
  */
 public enum CompatibilityLevels {
 
-    BACKWARD,
-    BACKWARD_TRANSITIVE,
-    FORWARD,
-    FORWARD_TRANSITIVE,
-    FULL,
-    FULL_TRANSITIVE,
-    NONE
+    BACKWARD(1),
+    BACKWARD_TRANSITIVE(2),
+    FORWARD(1),
+    FORWARD_TRANSITIVE(2),
+    FULL(3),
+    FULL_TRANSITIVE(4),
+    NONE(0);
+
+    private final int restrictiveness;
+
+    CompatibilityLevels(int restrictiveness) {
+        this.restrictiveness = restrictiveness;
+    }
+
+    /**
+     * Returns {@code true} if this level is more restrictive than the given level.
+     *
+     * @param other the level to compare against.
+     * @return {@code true} if this level is more restrictive.
+     */
+    public boolean isMoreRestrictiveThan(CompatibilityLevels other) {
+        return this.restrictiveness > other.restrictiveness;
+    }
 }
