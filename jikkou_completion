@@ -170,6 +170,8 @@ function _complete_jikkou() {
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} help" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} generate-completion" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get" ];    then _picocli_jikkou; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action" ];    then _picocli_jikkou; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-extensions list" ];    then _picocli_jikkou_apiextensions; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-extensions get" ];    then _picocli_jikkou_apiextensions; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} api-providers list" ];    then _picocli_jikkou_apiproviders; return $?; fi
@@ -183,6 +185,38 @@ function _complete_jikkou() {
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} config use-context" ];    then _picocli_jikkou_config; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health get" ];    then _picocli_jikkou_health; return $?; fi
   if [ "${COMP_LINE}" = "${COMP_WORDS[0]} health get-indicators" ];    then _picocli_jikkou_health; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aiven" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aws" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get confluent-cloud" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get iceberg" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafkaconnect" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get schemaregistry" ];    then _picocli_jikkou_get; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aiven kafka-acls" ];    then _picocli_jikkou_get_aiven; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aiven kafka-quotas" ];    then _picocli_jikkou_get_aiven; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aiven schemaregistry-acls" ];    then _picocli_jikkou_get_aiven; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aiven subjects" ];    then _picocli_jikkou_get_aiven; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aiven topics" ];    then _picocli_jikkou_get_aiven; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get aws glue-schemas" ];    then _picocli_jikkou_get_aws; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get confluent-cloud role-bindings" ];    then _picocli_jikkou_get_confluentcloud; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get iceberg namespaces" ];    then _picocli_jikkou_get_iceberg; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get iceberg tables" ];    then _picocli_jikkou_get_iceberg; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get iceberg views" ];    then _picocli_jikkou_get_iceberg; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka acls" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka brokers" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka client-quotas" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka consumer-groups" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka table-records" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka topics" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafka users" ];    then _picocli_jikkou_get_kafka; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get kafkaconnect connectors" ];    then _picocli_jikkou_get_kafkaconnect; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} get schemaregistry subjects" ];    then _picocli_jikkou_get_schemaregistry; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action SystemTime" ];    then _picocli_jikkou_action; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action KafkaConnectRestartConnectors" ];    then _picocli_jikkou_action; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action KafkaConsumerGroupsResetOffsets" ];    then _picocli_jikkou_action; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action SystemTime execute" ];    then _picocli_jikkou_action_SystemTime; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action KafkaConnectRestartConnectors execute" ];    then _picocli_jikkou_action_KafkaConnectRestartConnectors; return $?; fi
+  if [ "${COMP_LINE}" = "${COMP_WORDS[0]} action KafkaConsumerGroupsResetOffsets execute" ];    then _picocli_jikkou_action_KafkaConsumerGroupsResetOffsets; return $?; fi
 
   # Find the longest sequence of subcommands and call the bash function for that subcommand.
   local cmds0=(create)
@@ -201,33 +235,101 @@ function _complete_jikkou() {
   local cmds13=(health)
   local cmds14=(help)
   local cmds15=(generate-completion)
-  local cmds16=(api-extensions list)
-  local cmds17=(api-extensions get)
-  local cmds18=(api-providers list)
-  local cmds19=(api-providers get)
-  local cmds20=(api-resources list)
-  local cmds21=(api-resources schema)
-  local cmds22=(config view)
-  local cmds23=(config set-context)
-  local cmds24=(config get-contexts)
-  local cmds25=(config current-context)
-  local cmds26=(config use-context)
-  local cmds27=(health get)
-  local cmds28=(health get-indicators)
+  local cmds16=(get)
+  local cmds17=(action)
+  local cmds18=(api-extensions list)
+  local cmds19=(api-extensions get)
+  local cmds20=(api-providers list)
+  local cmds21=(api-providers get)
+  local cmds22=(api-resources list)
+  local cmds23=(api-resources schema)
+  local cmds24=(config view)
+  local cmds25=(config set-context)
+  local cmds26=(config get-contexts)
+  local cmds27=(config current-context)
+  local cmds28=(config use-context)
+  local cmds29=(health get)
+  local cmds30=(health get-indicators)
+  local cmds31=(get aiven)
+  local cmds32=(get aws)
+  local cmds33=(get confluent-cloud)
+  local cmds34=(get iceberg)
+  local cmds35=(get kafka)
+  local cmds36=(get kafkaconnect)
+  local cmds37=(get schemaregistry)
+  local cmds38=(get aiven kafka-acls)
+  local cmds39=(get aiven kafka-quotas)
+  local cmds40=(get aiven schemaregistry-acls)
+  local cmds41=(get aiven subjects)
+  local cmds42=(get aiven topics)
+  local cmds43=(get aws glue-schemas)
+  local cmds44=(get confluent-cloud role-bindings)
+  local cmds45=(get iceberg namespaces)
+  local cmds46=(get iceberg tables)
+  local cmds47=(get iceberg views)
+  local cmds48=(get kafka acls)
+  local cmds49=(get kafka brokers)
+  local cmds50=(get kafka client-quotas)
+  local cmds51=(get kafka consumer-groups)
+  local cmds52=(get kafka table-records)
+  local cmds53=(get kafka topics)
+  local cmds54=(get kafka users)
+  local cmds55=(get kafkaconnect connectors)
+  local cmds56=(get schemaregistry subjects)
+  local cmds57=(action SystemTime)
+  local cmds58=(action KafkaConnectRestartConnectors)
+  local cmds59=(action KafkaConsumerGroupsResetOffsets)
+  local cmds60=(action SystemTime execute)
+  local cmds61=(action KafkaConnectRestartConnectors execute)
+  local cmds62=(action KafkaConsumerGroupsResetOffsets execute)
 
-  if CompWordsContainsArray "${cmds28[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
-  if CompWordsContainsArray "${cmds27[@]}"; then _picocli_jikkou_health_get; return $?; fi
-  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
-  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
-  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
-  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
-  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_config_view; return $?; fi
-  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_apiresources_schema; return $?; fi
-  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_apiresources_list; return $?; fi
-  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_apiproviders_get; return $?; fi
-  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_apiproviders_list; return $?; fi
-  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_apiextensions_get; return $?; fi
-  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_apiextensions_list; return $?; fi
+  if CompWordsContainsArray "${cmds62[@]}"; then _picocli_jikkou_action_KafkaConsumerGroupsResetOffsets_execute; return $?; fi
+  if CompWordsContainsArray "${cmds61[@]}"; then _picocli_jikkou_action_KafkaConnectRestartConnectors_execute; return $?; fi
+  if CompWordsContainsArray "${cmds60[@]}"; then _picocli_jikkou_action_SystemTime_execute; return $?; fi
+  if CompWordsContainsArray "${cmds59[@]}"; then _picocli_jikkou_action_KafkaConsumerGroupsResetOffsets; return $?; fi
+  if CompWordsContainsArray "${cmds58[@]}"; then _picocli_jikkou_action_KafkaConnectRestartConnectors; return $?; fi
+  if CompWordsContainsArray "${cmds57[@]}"; then _picocli_jikkou_action_SystemTime; return $?; fi
+  if CompWordsContainsArray "${cmds56[@]}"; then _picocli_jikkou_get_schemaregistry_subjects; return $?; fi
+  if CompWordsContainsArray "${cmds55[@]}"; then _picocli_jikkou_get_kafkaconnect_connectors; return $?; fi
+  if CompWordsContainsArray "${cmds54[@]}"; then _picocli_jikkou_get_kafka_users; return $?; fi
+  if CompWordsContainsArray "${cmds53[@]}"; then _picocli_jikkou_get_kafka_topics; return $?; fi
+  if CompWordsContainsArray "${cmds52[@]}"; then _picocli_jikkou_get_kafka_tablerecords; return $?; fi
+  if CompWordsContainsArray "${cmds51[@]}"; then _picocli_jikkou_get_kafka_consumergroups; return $?; fi
+  if CompWordsContainsArray "${cmds50[@]}"; then _picocli_jikkou_get_kafka_clientquotas; return $?; fi
+  if CompWordsContainsArray "${cmds49[@]}"; then _picocli_jikkou_get_kafka_brokers; return $?; fi
+  if CompWordsContainsArray "${cmds48[@]}"; then _picocli_jikkou_get_kafka_acls; return $?; fi
+  if CompWordsContainsArray "${cmds47[@]}"; then _picocli_jikkou_get_iceberg_views; return $?; fi
+  if CompWordsContainsArray "${cmds46[@]}"; then _picocli_jikkou_get_iceberg_tables; return $?; fi
+  if CompWordsContainsArray "${cmds45[@]}"; then _picocli_jikkou_get_iceberg_namespaces; return $?; fi
+  if CompWordsContainsArray "${cmds44[@]}"; then _picocli_jikkou_get_confluentcloud_rolebindings; return $?; fi
+  if CompWordsContainsArray "${cmds43[@]}"; then _picocli_jikkou_get_aws_glueschemas; return $?; fi
+  if CompWordsContainsArray "${cmds42[@]}"; then _picocli_jikkou_get_aiven_topics; return $?; fi
+  if CompWordsContainsArray "${cmds41[@]}"; then _picocli_jikkou_get_aiven_subjects; return $?; fi
+  if CompWordsContainsArray "${cmds40[@]}"; then _picocli_jikkou_get_aiven_schemaregistryacls; return $?; fi
+  if CompWordsContainsArray "${cmds39[@]}"; then _picocli_jikkou_get_aiven_kafkaquotas; return $?; fi
+  if CompWordsContainsArray "${cmds38[@]}"; then _picocli_jikkou_get_aiven_kafkaacls; return $?; fi
+  if CompWordsContainsArray "${cmds37[@]}"; then _picocli_jikkou_get_schemaregistry; return $?; fi
+  if CompWordsContainsArray "${cmds36[@]}"; then _picocli_jikkou_get_kafkaconnect; return $?; fi
+  if CompWordsContainsArray "${cmds35[@]}"; then _picocli_jikkou_get_kafka; return $?; fi
+  if CompWordsContainsArray "${cmds34[@]}"; then _picocli_jikkou_get_iceberg; return $?; fi
+  if CompWordsContainsArray "${cmds33[@]}"; then _picocli_jikkou_get_confluentcloud; return $?; fi
+  if CompWordsContainsArray "${cmds32[@]}"; then _picocli_jikkou_get_aws; return $?; fi
+  if CompWordsContainsArray "${cmds31[@]}"; then _picocli_jikkou_get_aiven; return $?; fi
+  if CompWordsContainsArray "${cmds30[@]}"; then _picocli_jikkou_health_getindicators; return $?; fi
+  if CompWordsContainsArray "${cmds29[@]}"; then _picocli_jikkou_health_get; return $?; fi
+  if CompWordsContainsArray "${cmds28[@]}"; then _picocli_jikkou_config_usecontext; return $?; fi
+  if CompWordsContainsArray "${cmds27[@]}"; then _picocli_jikkou_config_currentcontext; return $?; fi
+  if CompWordsContainsArray "${cmds26[@]}"; then _picocli_jikkou_config_getcontexts; return $?; fi
+  if CompWordsContainsArray "${cmds25[@]}"; then _picocli_jikkou_config_setcontext; return $?; fi
+  if CompWordsContainsArray "${cmds24[@]}"; then _picocli_jikkou_config_view; return $?; fi
+  if CompWordsContainsArray "${cmds23[@]}"; then _picocli_jikkou_apiresources_schema; return $?; fi
+  if CompWordsContainsArray "${cmds22[@]}"; then _picocli_jikkou_apiresources_list; return $?; fi
+  if CompWordsContainsArray "${cmds21[@]}"; then _picocli_jikkou_apiproviders_get; return $?; fi
+  if CompWordsContainsArray "${cmds20[@]}"; then _picocli_jikkou_apiproviders_list; return $?; fi
+  if CompWordsContainsArray "${cmds19[@]}"; then _picocli_jikkou_apiextensions_get; return $?; fi
+  if CompWordsContainsArray "${cmds18[@]}"; then _picocli_jikkou_apiextensions_list; return $?; fi
+  if CompWordsContainsArray "${cmds17[@]}"; then _picocli_jikkou_action; return $?; fi
+  if CompWordsContainsArray "${cmds16[@]}"; then _picocli_jikkou_get; return $?; fi
   if CompWordsContainsArray "${cmds15[@]}"; then _picocli_jikkou_generatecompletion; return $?; fi
   if CompWordsContainsArray "${cmds14[@]}"; then _picocli_jikkou_help; return $?; fi
   if CompWordsContainsArray "${cmds13[@]}"; then _picocli_jikkou_health; return $?; fi
@@ -255,7 +357,7 @@ function _picocli_jikkou() {
   local curr_word=${COMP_WORDS[COMP_CWORD]}
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
-  local commands="create delete update apply patch replace api-extensions api-providers api-resources config diff prepare validate health help generate-completion"
+  local commands="create delete update apply patch replace api-extensions api-providers api-resources config diff prepare validate health help generate-completion get action"
   local flag_opts="'-h' '--help' '-V' '--version'"
   local arg_opts="'--logger-level'"
 
@@ -283,8 +385,8 @@ function _picocli_jikkou_create() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--pretty' '--dry-run' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider'"
+  local flag_opts="'--pretty' '--dry-run' '--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--provider-group'"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -332,6 +434,9 @@ function _picocli_jikkou_create() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -352,8 +457,8 @@ function _picocli_jikkou_delete() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--pretty' '--dry-run' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider'"
+  local flag_opts="'--pretty' '--dry-run' '--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--provider-group'"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -401,6 +506,9 @@ function _picocli_jikkou_delete() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -421,8 +529,8 @@ function _picocli_jikkou_update() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--pretty' '--dry-run' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider'"
+  local flag_opts="'--pretty' '--dry-run' '--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--provider-group'"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -470,6 +578,9 @@ function _picocli_jikkou_update() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -490,8 +601,8 @@ function _picocli_jikkou_apply() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--pretty' '--dry-run' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider'"
+  local flag_opts="'--pretty' '--dry-run' '--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--provider-group'"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -541,6 +652,9 @@ function _picocli_jikkou_apply() {
     '--provider')
       return
       ;;
+    '--provider-group')
+      return
+      ;;
   esac
 
   if [[ "${curr_word}" == -* ]]; then
@@ -559,8 +673,8 @@ function _picocli_jikkou_patch() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--pretty' '--dry-run' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--mode'"
+  local flag_opts="'--pretty' '--dry-run' '--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--provider-group' '--mode'"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local mode_option_args=("CREATE" "DELETE" "UPDATE" "FULL") # --mode values
@@ -611,6 +725,9 @@ function _picocli_jikkou_patch() {
     '--provider')
       return
       ;;
+    '--provider-group')
+      return
+      ;;
     '--mode')
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${mode_option_args[@]}" ) )
@@ -634,8 +751,8 @@ function _picocli_jikkou_replace() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--pretty' '--dry-run' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider'"
+  local flag_opts="'--pretty' '--dry-run' '--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--options' '--provider' '--provider-group'"
   local format_option_args=("TEXT" "COMPACT" "JSON" "YAML") # --output values
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
 
@@ -683,6 +800,9 @@ function _picocli_jikkou_replace() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -811,8 +931,8 @@ function _picocli_jikkou_diff() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--list' '-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider' '--filter-resource-op' '--filter-change-op'"
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider' '--provider-group' '--filter-resource-op' '--filter-change-op'"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
   local filterOutAllResourcesExcept_option_args=("NONE" "CREATE" "DELETE" "REPLACE" "UPDATE") # --filter-resource-op values
@@ -864,6 +984,9 @@ function _picocli_jikkou_diff() {
     '--provider')
       return
       ;;
+    '--provider-group')
+      return
+      ;;
     '--filter-resource-op')
       local IFS=$'\n'
       COMPREPLY=( $( compReplyArray "${filterOutAllResourcesExcept_option_args[@]}" ) )
@@ -892,8 +1015,8 @@ function _picocli_jikkou_prepare() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider'"
+  local flag_opts="'--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider' '--provider-group'"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
@@ -941,6 +1064,9 @@ function _picocli_jikkou_prepare() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -961,8 +1087,8 @@ function _picocli_jikkou_validate() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider'"
+  local flag_opts="'--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider' '--provider-group'"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values
 
@@ -1010,6 +1136,9 @@ function _picocli_jikkou_validate() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -1055,7 +1184,7 @@ function _picocli_jikkou_help() {
   # Get completion data
   local curr_word=${COMP_WORDS[COMP_CWORD]}
 
-  local commands="create delete update apply patch replace api-extensions api-providers api-resources config diff prepare validate health generate-completion"
+  local commands="create delete update apply patch replace api-extensions api-providers api-resources config diff prepare validate health generate-completion get action"
   local flag_opts="'-h' '--help'"
   local arg_opts=""
 
@@ -1076,6 +1205,60 @@ function _picocli_jikkou_generatecompletion() {
   local commands=""
   local flag_opts="'-h' '--help' '-V' '--version'"
   local arg_opts=""
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `get` subcommand.
+function _picocli_jikkou_get() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="aiven aws confluent-cloud iceberg kafka kafkaconnect schemaregistry"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `action` subcommand.
+function _picocli_jikkou_action() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="SystemTime KafkaConnectRestartConnectors KafkaConsumerGroupsResetOffsets"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
 
   if [[ "${curr_word}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
@@ -1465,8 +1648,8 @@ function _picocli_jikkou_health_get() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'-h' '--help' '-V' '--version'"
-  local arg_opts="'--logger-level' '--output' '-o' '--timeout-ms' '--provider'"
+  local flag_opts="'--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--timeout-ms' '--provider' '--provider-group'"
   local format_option_args=("JSON" "YAML") # --output values
 
   type compopt &>/dev/null && compopt +o default
@@ -1484,6 +1667,9 @@ function _picocli_jikkou_health_get() {
       return
       ;;
     '--provider')
+      return
+      ;;
+    '--provider-group')
       return
       ;;
   esac
@@ -1524,6 +1710,1377 @@ function _picocli_jikkou_health_getindicators() {
   fi
 }
 
+# Generates completions for the options and subcommands of the `aiven` subcommand.
+function _picocli_jikkou_get_aiven() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="kafka-acls kafka-quotas schemaregistry-acls subjects topics"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `aws` subcommand.
+function _picocli_jikkou_get_aws() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="glue-schemas"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `confluent-cloud` subcommand.
+function _picocli_jikkou_get_confluentcloud() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="role-bindings"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `iceberg` subcommand.
+function _picocli_jikkou_get_iceberg() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="namespaces tables views"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `kafka` subcommand.
+function _picocli_jikkou_get_kafka() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="acls brokers client-quotas consumer-groups table-records topics users"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `kafkaconnect` subcommand.
+function _picocli_jikkou_get_kafkaconnect() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="connectors"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `schemaregistry` subcommand.
+function _picocli_jikkou_get_schemaregistry() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="subjects"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `kafka-acls` subcommand.
+function _picocli_jikkou_get_aiven_kafkaacls() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `kafka-quotas` subcommand.
+function _picocli_jikkou_get_aiven_kafkaquotas() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `schemaregistry-acls` subcommand.
+function _picocli_jikkou_get_aiven_schemaregistryacls() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `subjects` subcommand.
+function _picocli_jikkou_get_aiven_subjects() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `topics` subcommand.
+function _picocli_jikkou_get_aiven_topics() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version' '--default-configs' '--dynamic-broker-configs' '--static-broker-configs'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `glue-schemas` subcommand.
+function _picocli_jikkou_get_aws_glueschemas() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `role-bindings` subcommand.
+function _picocli_jikkou_get_confluentcloud_rolebindings() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `namespaces` subcommand.
+function _picocli_jikkou_get_iceberg_namespaces() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `tables` subcommand.
+function _picocli_jikkou_get_iceberg_tables() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `views` subcommand.
+function _picocli_jikkou_get_iceberg_views() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `acls` subcommand.
+function _picocli_jikkou_get_kafka_acls() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `brokers` subcommand.
+function _picocli_jikkou_get_kafka_brokers() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version' '--default-configs' '--dynamic-broker-configs' '--static-broker-configs'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `client-quotas` subcommand.
+function _picocli_jikkou_get_kafka_clientquotas() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `consumer-groups` subcommand.
+function _picocli_jikkou_get_kafka_consumergroups() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version' '--offsets'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--in-states'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--in-states')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `table-records` subcommand.
+function _picocli_jikkou_get_kafka_tablerecords() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version' '--skip-message-on-error'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--topic-name' '--key-type' '--value-type'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--topic-name')
+      return
+      ;;
+    '--key-type')
+      return
+      ;;
+    '--value-type')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `topics` subcommand.
+function _picocli_jikkou_get_kafka_topics() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version' '--default-configs' '--dynamic-broker-configs' '--static-broker-configs' '--status'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `users` subcommand.
+function _picocli_jikkou_get_kafka_users() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `connectors` subcommand.
+function _picocli_jikkou_get_kafkaconnect_connectors() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `subjects` subcommand.
+function _picocli_jikkou_get_schemaregistry_subjects() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--selector' '-s' '--selector-match' '--output' '-o' '--provider' '--provider-group' '--name'"
+  local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--selector'|'-s')
+      return
+      ;;
+    '--selector-match')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${selectorMatchingStrategy_option_args[@]}" ) )
+      return $?
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--name')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `SystemTime` subcommand.
+function _picocli_jikkou_action_SystemTime() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="execute"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `KafkaConnectRestartConnectors` subcommand.
+function _picocli_jikkou_action_KafkaConnectRestartConnectors() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="execute"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `KafkaConsumerGroupsResetOffsets` subcommand.
+function _picocli_jikkou_action_KafkaConsumerGroupsResetOffsets() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands="execute"
+  local flag_opts="'-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level'"
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `execute` subcommand.
+function _picocli_jikkou_action_SystemTime_execute() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version'"
+  local arg_opts="'--logger-level' '--output' '-o' '--provider' '--provider-group'"
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `execute` subcommand.
+function _picocli_jikkou_action_KafkaConnectRestartConnectors_execute() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version' '--include-tasks' '--only-failed'"
+  local arg_opts="'--logger-level' '--output' '-o' '--provider' '--provider-group' '--connector-name' '--connect-cluster'"
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--connector-name')
+      return
+      ;;
+    '--connect-cluster')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
+# Generates completions for the options and subcommands of the `execute` subcommand.
+function _picocli_jikkou_action_KafkaConsumerGroupsResetOffsets_execute() {
+  # Get completion data
+  local curr_word=${COMP_WORDS[COMP_CWORD]}
+  local prev_word=${COMP_WORDS[COMP_CWORD-1]}
+
+  local commands=""
+  local flag_opts="'--provider-all' '--continue-on-error' '-h' '--help' '-V' '--version' '--to-earliest' '--to-latest' '--all' '--dry-run'"
+  local arg_opts="'--logger-level' '--output' '-o' '--provider' '--provider-group' '--to-datetime' '--to-offset' '--group' '--groups' '--topic' '--includes' '--excludes'"
+  local format_option_args=("JSON" "YAML") # --output values
+
+  type compopt &>/dev/null && compopt +o default
+
+  case ${prev_word} in
+    '--logger-level')
+      return
+      ;;
+    '--output'|'-o')
+      local IFS=$'\n'
+      COMPREPLY=( $( compReplyArray "${format_option_args[@]}" ) )
+      return $?
+      ;;
+    '--provider')
+      return
+      ;;
+    '--provider-group')
+      return
+      ;;
+    '--to-datetime')
+      return
+      ;;
+    '--to-offset')
+      return
+      ;;
+    '--group')
+      return
+      ;;
+    '--groups')
+      return
+      ;;
+    '--topic')
+      return
+      ;;
+    '--includes')
+      return
+      ;;
+    '--excludes')
+      return
+      ;;
+  esac
+
+  if [[ "${curr_word}" == -* ]]; then
+    COMPREPLY=( $(compgen -W "${flag_opts} ${arg_opts}" -- "${curr_word}") )
+  else
+    local positionals=""
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${commands// /$'\n'}${IFS}${positionals}" -- "${curr_word}") )
+  fi
+}
+
 # Define a completion specification (a compspec) for the
 # `jikkou`, `jikkou.sh`, and `jikkou.bash` commands.
 # Uses the bash `complete` builtin (see [6]) to specify that shell function
@@ -1532,3 +3089,4 @@ function _picocli_jikkou_health_getindicators() {
 # The `-o default` option means that if the function generated no matches, the
 # default Bash completions and the Readline default filename completions are performed.
 complete -F _complete_jikkou -o default jikkou jikkou.sh jikkou.bash
+
