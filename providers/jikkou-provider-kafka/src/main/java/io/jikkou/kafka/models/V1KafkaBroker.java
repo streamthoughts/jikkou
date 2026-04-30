@@ -40,7 +40,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Describe brokers in a Kafka cluster.")
 @JsonClassDescription("Describe brokers in a Kafka cluster.")
-@Names(singular = "kafkabroker", plural = "kafkabrokers", shortNames = {
+@Names(singular = "kafkabroker", plural = "kafkabrokers", local = "brokers", shortNames = {
     "kb"
 })
 @Verbs({

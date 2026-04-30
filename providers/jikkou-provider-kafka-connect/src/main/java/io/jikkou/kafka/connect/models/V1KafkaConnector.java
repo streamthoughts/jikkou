@@ -40,7 +40,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage connectors in a Kafka Connect cluster.")
 @JsonClassDescription("Manage connectors in a Kafka Connect cluster.")
-@Names(singular = "kafkaconnector", plural = "kafkaconnectors", shortNames = {
+@Names(singular = "kafkaconnector", plural = "kafkaconnectors", local = "connectors", shortNames = {
     "kc"
 })
 @Verbs({

@@ -14,7 +14,8 @@
     "spec": {
       "names": {
         "singular": "aws-glueschema",
-        "plural": "aws-glueschemas"
+        "plural": "aws-glueschemas",
+        "local": "glue-schemas"
       },
       "verbs": [
         "*"

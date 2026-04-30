@@ -39,7 +39,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage schemas on AWS Glue Schema Registry.")
 @JsonClassDescription("Manage schemas on AWS Glue Schema Registry.")
-@Names(singular = "aws-glueschema", plural = "aws-glueschemas")
+@Names(singular = "aws-glueschema", plural = "aws-glueschemas", local = "glue-schemas")
 @Verbs({
     Verb.LIST,
     Verb.CREATE,

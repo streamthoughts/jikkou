@@ -100,6 +100,23 @@ class ResourceDescriptorFactoryTest {
         Assertions.assertEquals(shortNames, descriptor.shortNames());
     }
 
+    @Test
+    void shouldReadLocalNameFromNamesAnnotation() {
+        // When
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(ResourceWithLocal.class), ResourceWithLocal.class);
+        // Then
+        Assertions.assertTrue(descriptor.localName().isPresent());
+        Assertions.assertEquals("topics", descriptor.localName().get());
+    }
+
+    @Test
+    void shouldTreatEmptyLocalNameAsAbsent() {
+        // When
+        ResourceDescriptor descriptor = factory.make(ResourceType.of(ResourceWithoutLocal.class), ResourceWithoutLocal.class);
+        // Then
+        Assertions.assertTrue(descriptor.localName().isEmpty());
+    }
+
     @ApiVersion("test.jikkou.io/v1beta2")
     @Kind("Test")
     @Description("Test description")
@@ -108,5 +125,15 @@ class ResourceDescriptorFactoryTest {
             singular = "test",
             shortNames = { "t" , "ts" }
     )
-    static abstract class TestResource implements HasMetadata {};
+    static abstract class TestResource implements HasMetadata {}
+
+    @ApiVersion("kafka.jikkou.io/v1beta2")
+    @Kind("KafkaTopic")
+    @Names(plural = "kafkatopics", singular = "kafkatopic", local = "topics")
+    static abstract class ResourceWithLocal implements HasMetadata {}
+
+    @ApiVersion("kafka.jikkou.io/v1beta2")
+    @Kind("KafkaAcl")
+    @Names(plural = "kafkaacls", singular = "kafkaacl")
+    static abstract class ResourceWithoutLocal implements HasMetadata {}
 }

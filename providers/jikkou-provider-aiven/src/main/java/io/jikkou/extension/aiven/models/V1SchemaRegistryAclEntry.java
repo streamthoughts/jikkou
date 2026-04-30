@@ -39,7 +39,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage Schema Registry ACLs on Aiven for Apache Kafka.")
 @JsonClassDescription("Manage Schema Registry ACLs on Aiven for Apache Kafka.")
-@Names(singular = "avn-schemaregistryacl", plural = "avn-schemaregistryacls", shortNames = {
+@Names(singular = "avn-schemaregistryacl", plural = "avn-schemaregistryacls", local = "schemaregistry-acls", shortNames = {
     "avnsra"
 })
 @Verbs({

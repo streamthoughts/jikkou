@@ -15,6 +15,7 @@
       "names": {
         "singular": "kafkaclientquota",
         "plural": "kafkaclientquotas",
+        "local": "client-quotas",
         "shortNames": [
           "kq"
         ]

@@ -15,6 +15,7 @@
       "names": {
         "singular": "ktable-record",
         "plural": "kafkatablerecord",
+        "local": "table-records",
         "shortNames": [
           "ktr"
         ]

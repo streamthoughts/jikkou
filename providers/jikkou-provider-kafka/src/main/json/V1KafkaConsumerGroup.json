@@ -14,6 +14,7 @@
       "names": {
         "singular": "kafkaconsumergroup",
         "plural": "kafkaconsumergroups",
+        "local": "consumer-groups",
         "shortNames": [
           "kcg"
         ]

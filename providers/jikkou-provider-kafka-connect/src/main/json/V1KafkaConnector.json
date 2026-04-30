@@ -15,6 +15,7 @@
       "names": {
         "singular": "kafkaconnector",
         "plural": "kafkaconnectors",
+        "local": "connectors",
         "shortNames": [
           "kc"
         ]

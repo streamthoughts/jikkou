@@ -35,6 +35,7 @@ public final class ResourceDescriptor {
     private final Class<? extends Resource> clazz;
     private String singularName;
     private String pluralName;
+    private String localName;
     private Set<String> shortNames;
     private Set<Verb> verbs;
     private boolean isEnabled = true;
@@ -141,6 +142,30 @@ public final class ResourceDescriptor {
      */
     public ResourceDescriptor setPluralName(final String pluralName) {
         this.pluralName = pluralName;
+        return this;
+    }
+
+    /**
+     * Gets the provider-local name of the described resource, if any.
+     * <p>
+     * The local name is the canonical subcommand under {@code jikkou get <provider>}
+     * (e.g. {@code topics} under {@code kafka}). When absent, CLI code should fall
+     * back to the plural name.
+     *
+     * @return the optional local name.
+     */
+    public Optional<String> localName() {
+        return Optional.ofNullable(this.localName);
+    }
+
+    /**
+     * Sets the provider-local name of the described resource.
+     *
+     * @param localName the local name.
+     * @return this object so methods can be chained together; never null
+     */
+    public ResourceDescriptor setLocalName(final String localName) {
+        this.localName = localName;
         return this;
     }
 

@@ -41,7 +41,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage topics in a Kafka cluster.")
 @JsonClassDescription("Manage topics in a Kafka cluster.")
-@Names(singular = "kafkatopic", plural = "kafkatopics", shortNames = {
+@Names(singular = "kafkatopic", plural = "kafkatopics", local = "topics", shortNames = {
     "kt"
 })
 @Verbs({

@@ -40,7 +40,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage consumer groups in a Kafka cluster.")
 @JsonClassDescription("Manage consumer groups in a Kafka cluster.")
-@Names(singular = "kafkaconsumergroup", plural = "kafkaconsumergroups", shortNames = {
+@Names(singular = "kafkaconsumergroup", plural = "kafkaconsumergroups", local = "consumer-groups", shortNames = {
     "kcg"
 })
 @Verbs({

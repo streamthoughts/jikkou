@@ -57,6 +57,16 @@ public class GetResourceCommand extends AbstractApiCommand {
      */
     private ResourceType type;
 
+    /**
+     * Deprecated invocation form (flat subcommand name, e.g. "topics"). {@code null} when invoked via the nested form.
+     */
+    private String deprecatedForm;
+
+    /**
+     * Suggested replacement for the deprecated invocation (e.g. "kafka topics").
+     */
+    private String deprecatedReplacement;
+
     // SERVICES
     @Inject
     JikkouApi api;
@@ -72,6 +82,13 @@ public class GetResourceCommand extends AbstractApiCommand {
      **/
     @Override
     public Integer call() throws Exception {
+        if (deprecatedForm != null) {
+            System.err.println(
+                "[DEPRECATED] 'jikkou get " + deprecatedForm +
+                "' is deprecated; use 'jikkou get " + deprecatedReplacement +
+                "' instead. The flat form will be removed in a future release."
+            );
+        }
         ResourceList<HasMetadata> resources;
         if (Strings.isNullOrEmpty(name)) {
             ListContext context = ListContext.builder()
@@ -113,6 +130,20 @@ public class GetResourceCommand extends AbstractApiCommand {
      */
     public void setType(ResourceType type) {
         this.type = type;
+    }
+
+    /**
+     * Tags this command instance as invoked via the deprecated flat form.
+     * <p>
+     * When set, {@link #call()} prints a one-line deprecation notice to {@code stderr}
+     * before executing the normal listing/get logic.
+     *
+     * @param oldSubcommand the flat subcommand name used, e.g. "topics".
+     * @param replacement   the suggested qualified form, e.g. "kafka topics".
+     */
+    public void setDeprecated(String oldSubcommand, String replacement) {
+        this.deprecatedForm = oldSubcommand;
+        this.deprecatedReplacement = replacement;
     }
 
 }

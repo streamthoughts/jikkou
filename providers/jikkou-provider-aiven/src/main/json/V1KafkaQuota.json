@@ -15,6 +15,7 @@
       "names": {
         "plural": "avn-kafkaquotas",
         "singular": "avn-kafkaquota",
+        "local": "kafka-quotas",
         "shortNames": [
           "avnkq"
         ]

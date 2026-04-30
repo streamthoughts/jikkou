@@ -41,7 +41,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage records in compacted Kafka topics.")
 @JsonClassDescription("Manage records in compacted Kafka topics.")
-@Names(singular = "ktable-record", plural = "kafkatablerecord", shortNames = {
+@Names(singular = "ktable-record", plural = "kafkatablerecord", local = "table-records", shortNames = {
     "ktr"
 })
 @Verbs({

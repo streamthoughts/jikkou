@@ -15,6 +15,7 @@
       "names": {
         "plural": "avn-kafkatopicacls",
         "singular": "avn-kafkatopicacl",
+        "local": "kafka-acls",
         "shortNames": [
           "avnkta"
         ]

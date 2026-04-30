@@ -15,6 +15,7 @@
       "names": {
         "singular": "schemaregistrysubject",
         "plural": "schemaregistrysubjects",
+        "local": "subjects",
         "shortNames": [
           "sr"
         ]

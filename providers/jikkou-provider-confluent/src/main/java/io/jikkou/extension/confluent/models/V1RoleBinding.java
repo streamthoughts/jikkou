@@ -32,7 +32,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage RBAC role bindings on Confluent Cloud.")
 @JsonClassDescription("Manage RBAC role bindings on Confluent Cloud.")
-@Names(singular = "ccloud-rb", plural = "ccloud-rbs", shortNames = {"ccrb"})
+@Names(singular = "ccloud-rb", plural = "ccloud-rbs", local = "role-bindings", shortNames = {"ccrb"})
 @Verbs({
     Verb.APPLY,
     Verb.CREATE,

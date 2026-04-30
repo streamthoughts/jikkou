@@ -23,7 +23,7 @@ import io.jikkou.core.models.Verb;
  * Manage user SCRAM credentials in a Kafka cluster.
  */
 @Description("Manage user SCRAM credentials in a Kafka cluster.")
-@Names(singular = "kafkauser", plural = "kafkausers", shortNames = {
+@Names(singular = "kafkauser", plural = "kafkausers", local = "users", shortNames = {
     "ku"
 })
 @Verbs({
