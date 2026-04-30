@@ -7,40 +7,58 @@ Display one or many specific resources.
 
 ## Synopsis
 
-Display one or many resources of a given type from the target platform. The `get` command uses dynamic subcommands
-based on the resource types available from your configured providers. Use `jikkou api-resources` to discover the
-available resource types.
+Display one or many resources of a given type from the target platform. The `get` command groups resources under
+their provider (e.g. `kafka`, `schemaregistry`, `aiven`), so invocations follow the form
+`jikkou get <provider> <kind>`. Use `jikkou api-providers list` to discover the available providers and
+`jikkou api-resources` to discover the available resource types.
 
-When a resource name is specified, it retrieves that specific resource. Otherwise, it lists all resources of the
-given type.
+When a resource name is specified via `--name`, it retrieves that specific resource. Otherwise, it lists all
+resources of the given type.
 
 ```bash
-jikkou get <resource-type> [name] [flags]
+jikkou get <provider> <resource-type> [flags]
 ```
+
+**Resource naming.** Under a provider, each resource is exposed by its provider-local name when one is declared
+(e.g. `topics` under `kafka`, `subjects` under `schemaregistry`). The full plural name (e.g. `kafkatopics`,
+`schemaregistrysubjects`) and any short names (e.g. `kt`, `sr`) remain valid aliases inside the provider scope.
+
+**Backward compatibility.** The flat form `jikkou get <resource-type>` is still supported but prints a deprecation
+notice on stderr and will be removed in a future release. Prefer the qualified form
+`jikkou get <provider> <resource-type>`.
 
 ## Examples
 
 ```bash
-# List all Kafka topics
-jikkou get kafkatopics
+# List all Kafka topics (canonical form)
+jikkou get kafka topics
+
+# Same, using the plural name as alias
+jikkou get kafka kafkatopics
+
+# Same, using the short name as alias
+jikkou get kafka kt
 
 # Get a specific Kafka topic by name
-jikkou get kafkatopics my-topic
+jikkou get kafka topics --name my-topic
 
 # List resources with a selector
-jikkou get kafkatopics -s 'metadata.name MATCHES (my-.*)'
+jikkou get kafka topics -s 'metadata.name MATCHES (my-.*)'
 
 # List resources with JSON output
-jikkou get kafkatopics -o JSON
+jikkou get kafka topics -o JSON
 
 # List resources as a ResourceListObject
-jikkou get kafkatopics --list
+jikkou get kafka topics --list
 
 # List resources with custom options
-jikkou get kafkatopics --options describe-default-configs=true
+jikkou get kafka topics --options describe-default-configs=true
 
-# List resources targeting a specific provider
-jikkou get kafkatopics --provider kafka-prod
+# List resources targeting a specific provider instance
+jikkou get kafka topics --provider kafka-prod
+
+# List schema registry subjects
+jikkou get schemaregistry subjects
 
 # Discover available resource types
 jikkou api-resources --verbs LIST,GET
