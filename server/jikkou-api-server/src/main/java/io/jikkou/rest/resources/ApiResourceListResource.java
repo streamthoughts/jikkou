@@ -60,7 +60,8 @@ public class ApiResourceListResource extends AbstractController {
                             resource.description(),
                             resource.verbs(),
                             resource.verbsOptions(),
-                            metadata
+                            metadata,
+                            resource.localName()
                     );
                 })
                 .toList();

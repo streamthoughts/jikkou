@@ -57,6 +57,9 @@ public final class ResourceDescriptorFactory {
                     extractVerbs(resource),
                     Resource.isTransient(resource)
             );
+            if (!Strings.isNullOrEmpty(names.local())) {
+                descriptor.setLocalName(names.local());
+            }
         } else {
             descriptor = new ResourceDescriptor(
                     type,

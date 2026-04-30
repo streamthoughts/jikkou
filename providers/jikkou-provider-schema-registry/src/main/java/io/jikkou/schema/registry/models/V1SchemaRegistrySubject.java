@@ -39,7 +39,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage subjects and schemas on a Schema Registry.")
 @JsonClassDescription("Manage subjects and schemas on a Schema Registry.")
-@Names(singular = "schemaregistrysubject", plural = "schemaregistrysubjects", shortNames = {
+@Names(singular = "schemaregistrysubject", plural = "schemaregistrysubjects", local = "subjects", shortNames = {
     "sr"
 })
 @Verbs({

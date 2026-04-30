@@ -15,6 +15,7 @@
       "names": {
         "singular": "kafkatopic",
         "plural": "kafkatopics",
+        "local": "topics",
         "shortNames": [
           "kt"
         ]

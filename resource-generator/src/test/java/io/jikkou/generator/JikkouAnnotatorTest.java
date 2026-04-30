@@ -274,6 +274,28 @@ class JikkouAnnotatorTest {
     }
 
     @Test
+    void shouldPropagateLocalNameFromSpecNamesToNamesAnnotation() throws Exception {
+        JDefinedClass clazz = codeModel._class("com.example.TestClass");
+
+        ObjectNode schema = MAPPER.createObjectNode();
+        ObjectNode additionalProperties = MAPPER.createObjectNode();
+        additionalProperties.put("lombok-getter", true);
+
+        ObjectNode spec = MAPPER.createObjectNode();
+        ObjectNode names = MAPPER.createObjectNode();
+        names.put("singular", "topic");
+        names.put("plural", "topics");
+        names.put("local", "topics");
+        spec.set("names", names);
+        additionalProperties.set("spec", spec);
+        schema.set("additionalProperties", additionalProperties);
+
+        annotator.propertyInclusion(clazz, schema);
+
+        assertTrue(hasAnnotation(clazz.annotations(), "io.jikkou.core.annotation.Names"));
+    }
+
+    @Test
     void shouldAddVerbsAnnotationFromSpec() throws Exception {
         JDefinedClass clazz = codeModel._class("com.example.TestClass");
 

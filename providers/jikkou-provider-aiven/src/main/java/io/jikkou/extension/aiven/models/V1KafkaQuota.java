@@ -39,7 +39,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage Kafka quotas on Aiven for Apache Kafka.")
 @JsonClassDescription("Manage Kafka quotas on Aiven for Apache Kafka.")
-@Names(singular = "avn-kafkaquota", plural = "avn-kafkaquotas", shortNames = {
+@Names(singular = "avn-kafkaquota", plural = "avn-kafkaquotas", local = "kafka-quotas", shortNames = {
     "avnkq"
 })
 @Verbs({

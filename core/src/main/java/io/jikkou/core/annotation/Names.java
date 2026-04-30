@@ -34,4 +34,11 @@ public @interface Names {
      * @return short names to be used as an alias on the CLI and for display.
      */
     String[] shortNames() default {};
+
+    /**
+     * @return provider-local name used as the canonical subcommand
+     *         under the {@code jikkou get <provider>} tree (e.g. {@code "topics"}
+     *         under {@code kafka}). When empty, the plural name is used as-is.
+     */
+    String local() default "";
 }

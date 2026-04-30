@@ -15,6 +15,7 @@
       "names": {
         "plural": "avn-schemaregistryacls",
         "singular": "avn-schemaregistryacl",
+        "local": "schemaregistry-acls",
         "shortNames": [
           "avnsra"
         ]

@@ -15,6 +15,7 @@
       "names": {
         "singular": "kafkaprincipalauthorization",
         "plural": "kafkaprincipalauthorizations",
+        "local": "acls",
         "shortNames": [
           "ka"
         ]

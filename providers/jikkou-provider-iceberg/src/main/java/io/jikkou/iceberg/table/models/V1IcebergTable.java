@@ -36,7 +36,7 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 @EqualsAndHashCode
 @Description("Manage tables in an Apache Iceberg catalog.")
-@Names(singular = "icebergtable", plural = "icebergtables", shortNames = {"itb"})
+@Names(singular = "icebergtable", plural = "icebergtables", local = "tables", shortNames = {"itb"})
 @Verbs({Verb.LIST, Verb.CREATE, Verb.UPDATE, Verb.DELETE, Verb.GET, Verb.APPLY})
 @JsonPropertyOrder({"apiVersion", "kind", "metadata", "spec"})
 @ApiVersion("iceberg.jikkou.io/v1beta1")

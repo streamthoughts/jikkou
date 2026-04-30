@@ -196,7 +196,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                     descriptor.shortNames(),
                     descriptor.description(),
                     descriptor.orderedVerbs()
-                );
+                ).withLocalName(descriptor.localName().orElse(null));
 
                 if (resource.isVerbSupported(Verb.LIST) || resource.isVerbSupported(Verb.GET)) {
                     Optional<ExtensionDescriptor<Collector>> optional = extensionFactory

@@ -41,7 +41,7 @@ import lombok.extern.jackson.Jacksonized;
 @With
 @Description("Manage ACL authorizations for a Kafka principal.")
 @JsonClassDescription("Manage ACL authorizations for a Kafka principal.")
-@Names(singular = "kafkaprincipalauthorization", plural = "kafkaprincipalauthorizations", shortNames = {
+@Names(singular = "kafkaprincipalauthorization", plural = "kafkaprincipalauthorizations", local = "acls", shortNames = {
     "ka"
 })
 @Verbs({

@@ -50,6 +50,7 @@ public class JikkouAnnotator extends AbstractAnnotator {
     private static final String DEFAULT_JSON_SCHEMA_FIELD = "default";
     public static final String SPEC_NAMES_SINGULAR = "singular";
     public static final String SPEC_NAMES_PLURAL = "plural";
+    public static final String SPEC_NAMES_LOCAL = "local";
     public static final String SPEC_NAMES = "names";
     public static final String SPEC_SHORT_NAMES = "shortNames";
     public static final String SPEC_VERBS = "verbs";
@@ -156,6 +157,9 @@ public class JikkouAnnotator extends AbstractAnnotator {
                 }
                 if (names.has(SPEC_NAMES_PLURAL)) {
                     annotate.param(SPEC_NAMES_PLURAL, names.get(SPEC_NAMES_PLURAL).textValue());
+                }
+                if (names.has(SPEC_NAMES_LOCAL)) {
+                    annotate.param(SPEC_NAMES_LOCAL, names.get(SPEC_NAMES_LOCAL).textValue());
                 }
                 JsonNode shortNamesNode = names.get(SPEC_SHORT_NAMES);
                 if (shortNamesNode != null && shortNamesNode.isArray()) {

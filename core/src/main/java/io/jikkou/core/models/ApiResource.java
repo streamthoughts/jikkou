@@ -28,10 +28,12 @@ import java.util.Set;
  * @param shortNames    the short names of the resource.
  * @param description   the description of the resource.
  * @param verbs         the verbs supported by the resource.
+ * @param localName     the provider-local name of the resource (nullable).
  * @param metadata      the resource metadata.
  */
 @JsonPropertyOrder( {
         "name",
+        "localName",
         "kind",
         "singularName",
         "shortNames",
@@ -48,7 +50,8 @@ public record ApiResource (
         @JsonProperty("description") String description,
         @JsonProperty("verbs") Set<String> verbs,
         @JsonProperty("verbsOptions") List<ApiResourceVerbOptionList> verbsOptions,
-        @JsonProperty("metadata") Map<String, Object> metadata) {
+        @JsonProperty("metadata") Map<String, Object> metadata,
+        @JsonProperty("localName") String localName) {
 
     @ConstructorProperties({
             "name",
@@ -58,7 +61,8 @@ public record ApiResource (
             "description",
             "verbs",
             "verbsOptions",
-            "metadata"})
+            "metadata",
+            "localName"})
     public ApiResource {
     }
 
@@ -69,7 +73,7 @@ public record ApiResource (
             Set<String> shortNames,
             String description,
             Set<String> verbs) {
-        this(name, kind, singularName, shortNames, description, verbs, null, Collections.emptyMap());
+        this(name, kind, singularName, shortNames, description, verbs, null, Collections.emptyMap(), null);
     }
 
     public ApiResource(
@@ -80,7 +84,19 @@ public record ApiResource (
             String description,
             Set<String> verbs,
             List<ApiResourceVerbOptionList> verbsOptions) {
-        this(name, kind, singularName, shortNames, description, verbs, verbsOptions, Collections.emptyMap());
+        this(name, kind, singularName, shortNames, description, verbs, verbsOptions, Collections.emptyMap(), null);
+    }
+
+    public ApiResource(
+            String name,
+            String kind,
+            String singularName,
+            Set<String> shortNames,
+            String description,
+            Set<String> verbs,
+            List<ApiResourceVerbOptionList> verbsOptions,
+            Map<String, Object> metadata) {
+        this(name, kind, singularName, shortNames, description, verbs, verbsOptions, metadata, null);
     }
 
     public ApiResource withApiResourceVerbOptionList(final ApiResourceVerbOptionList list) {
@@ -95,7 +111,11 @@ public record ApiResource (
                 .map(ArrayList::new)
                 .orElse(new ArrayList<>());
         options.add(list);
-        return new ApiResource(name, kind, singularName, shortNames, description, verbs, options);
+        return new ApiResource(name, kind, singularName, shortNames, description, verbs, options, metadata, localName);
+    }
+
+    public ApiResource withLocalName(final String localName) {
+        return new ApiResource(name, kind, singularName, shortNames, description, verbs, verbsOptions, metadata, localName);
     }
 
     /**
