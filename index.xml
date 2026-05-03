@@ -2479,82 +2479,12 @@ definitions. This command does not actually perform the reconciliation actions.&
 &lt;li>&lt;a href="../jikkou-prepare">jikkou prepare&lt;/a> - Prepare resources for validation&lt;/li>
 &lt;/ul></description></item><item><title>jikkou get</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-get/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-get/</guid><description>&lt;p>Display one or many specific resources.&lt;/p>
 &lt;h2 id="synopsis">Synopsis&lt;/h2>
-&lt;p>Display one or many resources of a given type from the target platform. The &lt;code>get&lt;/code> command uses dynamic subcommands
-based on the resource types available from your configured providers. Use &lt;code>jikkou api-resources&lt;/code> to discover the
-available resource types.&lt;/p>
-&lt;p>When a resource name is specified, it retrieves that specific resource. Otherwise, it lists all resources of the
-given type.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou get &amp;lt;resource-type&amp;gt; &lt;span class="o">[&lt;/span>name&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>flags&lt;span class="o">]&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="examples">Examples&lt;/h2>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List all Kafka topics&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Get a specific Kafka topic by name&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics my-topic
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List resources with a selector&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics -s &lt;span class="s1">&amp;#39;metadata.name MATCHES (my-.*)&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List resources with JSON output&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics -o JSON
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List resources as a ResourceListObject&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics --list
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List resources with custom options&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics --options describe-default-configs&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># List resources targeting a specific provider&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou get kafkatopics --provider kafka-prod
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Discover available resource types&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou api-resources --verbs LIST,GET
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
-&lt;table>
- &lt;thead>
- &lt;tr>
- &lt;th>Flag&lt;/th>
- &lt;th>Short&lt;/th>
- &lt;th>Default&lt;/th>
- &lt;th>Description&lt;/th>
- &lt;/tr>
- &lt;/thead>
- &lt;tbody>
- &lt;tr>
- &lt;td>&lt;code>--selector&lt;/code>&lt;/td>
- &lt;td>&lt;code>-s&lt;/code>&lt;/td>
- &lt;td>&lt;/td>
- &lt;td>Selector expression for including or excluding resources&lt;/td>
- &lt;/tr>
- &lt;tr>
- &lt;td>&lt;code>--selector-match&lt;/code>&lt;/td>
- &lt;td>&lt;/td>
- &lt;td>&lt;code>ALL&lt;/code>&lt;/td>
- &lt;td>Selector matching strategy. Valid values: ALL, ANY, NONE&lt;/td>
- &lt;/tr>
- &lt;tr>
- &lt;td>&lt;code>--output&lt;/code>&lt;/td>
- &lt;td>&lt;code>-o&lt;/code>&lt;/td>
- &lt;td>&lt;code>YAML&lt;/code>&lt;/td>
- &lt;td>Output format. Valid values: JSON, YAML&lt;/td>
- &lt;/tr>
- &lt;tr>
- &lt;td>&lt;code>--list&lt;/code>&lt;/td>
- &lt;td>&lt;/td>
- &lt;td>&lt;code>false&lt;/code>&lt;/td>
- &lt;td>Output resources as a ResourceListObject&lt;/td>
- &lt;/tr>
- &lt;tr>
- &lt;td>&lt;code>--provider&lt;/code>&lt;/td>
- &lt;td>&lt;/td>
- &lt;td>&lt;/td>
- &lt;td>Select a specific provider instance&lt;/td>
- &lt;/tr>
- &lt;/tbody>
-&lt;/table>
-&lt;p>Additional options may be available depending on the resource type. These are dynamically registered based on the
-provider&amp;rsquo;s &lt;code>ApiOptionSpec&lt;/code> definitions. Use &lt;code>jikkou api-extensions get &amp;lt;extension-name&amp;gt;&lt;/code> to view options for a
-specific resource collector.&lt;/p></description></item><item><title>jikkou health</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-health/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-health/</guid><description>&lt;p>Print or describe health indicators.&lt;/p>
+&lt;p>Display one or many resources of a given type from the target platform. The &lt;code>get&lt;/code> command groups resources under
+their provider (e.g. &lt;code>kafka&lt;/code>, &lt;code>schemaregistry&lt;/code>, &lt;code>aiven&lt;/code>), so invocations follow the form
+&lt;code>jikkou get &amp;lt;provider&amp;gt; &amp;lt;kind&amp;gt;&lt;/code>. Use &lt;code>jikkou api-providers list&lt;/code> to discover the available providers and
+&lt;code>jikkou api-resources&lt;/code> to discover the available resource types.&lt;/p>
+&lt;p>When a resource name is specified via &lt;code>--name&lt;/code>, it retrieves that specific resource. Otherwise, it lists all
+resources of the given type.&lt;/p></description></item><item><title>jikkou health</title><link>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-health/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/commands/jikkou-health/</guid><description>&lt;p>Print or describe health indicators.&lt;/p>
 &lt;h2 id="synopsis">Synopsis&lt;/h2>
 &lt;p>The &lt;code>health&lt;/code> command provides information about the health of target environments. It has two subcommands:&lt;/p>
 &lt;ul>
