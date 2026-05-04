@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        os: [ ubuntu-latest, macos-latest-xlarge, windows-latest ]
         setup: [ graalvm ]
         include:
           - os: ubuntu-latest
