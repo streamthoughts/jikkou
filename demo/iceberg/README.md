@@ -141,7 +141,7 @@ details:
 ```bash
 cat ./resources/01-namespaces.yaml | yq          # inspect the definition
 jikkou apply --files ./resources/01-namespaces.yaml
-jikkou get icebergnamespaces | yq                 # verify
+jikkou get iceberg namespaces | yq                 # verify
 ```
 
 Run `apply` a second time — Jikkou detects no drift and makes **zero changes**.
@@ -153,7 +153,7 @@ Run `apply` a second time — Jikkou detects no drift and makes **zero changes**
 ```bash
 cat ./resources/02-table-initial.yaml | yq        # inspect
 jikkou apply --files ./resources/02-table-initial.yaml
-jikkou get icebergtables --name analytics.events.page_views | yq
+jikkou get iceberg tables --name analytics.events.page_views | yq
 ```
 
 The `page_views` table ships with:
@@ -169,7 +169,7 @@ The `page_views` table ships with:
 ```bash
 jikkou diff  --files ./resources/03-table-evolved.yaml | yq   # preview
 jikkou apply --files ./resources/03-table-evolved.yaml         # apply
-jikkou get icebergtables --name analytics.events.page_views | yq
+jikkou get iceberg tables --name analytics.events.page_views | yq
 ```
 
 Two new **optional** columns (`duration_ms`, `referrer`) appear as `ADD` operations.
@@ -206,7 +206,7 @@ No changes — live state already matches the desired state.
 ```bash
 jikkou diff  --files ./resources/05-table-delete.yaml | yq    # preview
 jikkou apply --files ./resources/05-table-delete.yaml          # apply
-jikkou get icebergtables | yq                                  # verify
+jikkou get iceberg tables | yq                                  # verify
 ```
 
 The `jikkou.io/delete: true` annotation drops the table from the catalog.
@@ -219,7 +219,7 @@ Data files are kept unless `delete-purge` is enabled.
 ```bash
 cat ./resources/06-view-create.yaml | yq          # inspect
 jikkou apply --files ./resources/06-view-create.yaml
-jikkou get icebergviews | yq                       # verify
+jikkou get iceberg views | yq                       # verify
 ```
 
 The `daily_page_stats` view defines a Spark SQL query that aggregates daily page view
@@ -233,7 +233,7 @@ declare the SQL and the default namespace.
 ```bash
 jikkou diff  --files ./resources/07-view-update.yaml | yq   # preview
 jikkou apply --files ./resources/07-view-update.yaml         # apply
-jikkou get icebergviews --name analytics.events.daily_page_stats | yq
+jikkou get iceberg views --name analytics.events.daily_page_stats | yq
 ```
 
 A Trino dialect query is added alongside the existing Spark query, and properties are
@@ -247,7 +247,7 @@ catalog's version history.
 ```bash
 jikkou diff  --files ./resources/08-view-delete.yaml | yq    # preview
 jikkou apply --files ./resources/08-view-delete.yaml          # apply
-jikkou get icebergviews | yq                                  # verify
+jikkou get iceberg views | yq                                  # verify
 ```
 
 The `jikkou.io/delete: true` annotation drops the view from the catalog.
@@ -292,7 +292,7 @@ cat $(find /tmp/iceberg-demo -name "*.json" | head -1) | jq .
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/01-namespaces.yaml
-jikkou get icebergnamespaces --provider iceberg-nessie | yq
+jikkou get iceberg namespaces --provider iceberg-nessie | yq
 ```
 
 ---
@@ -301,7 +301,7 @@ jikkou get icebergnamespaces --provider iceberg-nessie | yq
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/02-table-initial.yaml
-jikkou get icebergtables --provider iceberg-nessie | yq
+jikkou get iceberg tables --provider iceberg-nessie | yq
 ```
 
 ---
@@ -327,7 +327,7 @@ jikkou apply --provider iceberg-nessie --files ./resources/04-table-renamed.yaml
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/05-table-delete.yaml
-jikkou get icebergtables --provider iceberg-nessie | yq
+jikkou get iceberg tables --provider iceberg-nessie | yq
 ```
 
 ---
@@ -336,7 +336,7 @@ jikkou get icebergtables --provider iceberg-nessie | yq
 
 ```bash
 jikkou apply --provider iceberg-nessie --files ./resources/06-view-create.yaml
-jikkou get icebergviews --provider iceberg-nessie | yq
+jikkou get iceberg views --provider iceberg-nessie | yq
 ```
 
 ---
@@ -346,7 +346,7 @@ jikkou get icebergviews --provider iceberg-nessie | yq
 ```bash
 jikkou diff  --provider iceberg-nessie --files ./resources/07-view-update.yaml | yq
 jikkou apply --provider iceberg-nessie --files ./resources/07-view-update.yaml
-jikkou get icebergviews --provider iceberg-nessie --name analytics.events.daily_page_stats | yq
+jikkou get iceberg views --provider iceberg-nessie --name analytics.events.daily_page_stats | yq
 ```
 
 ---
@@ -356,7 +356,7 @@ jikkou get icebergviews --provider iceberg-nessie --name analytics.events.daily_
 ```bash
 jikkou diff  --provider iceberg-nessie --files ./resources/08-view-delete.yaml | yq
 jikkou apply --provider iceberg-nessie --files ./resources/08-view-delete.yaml
-jikkou get icebergviews --provider iceberg-nessie | yq
+jikkou get iceberg views --provider iceberg-nessie | yq
 ```
 
 ---
@@ -370,7 +370,7 @@ Nessie provides a REST API with **Git-like** versioning — every schema change 
 curl -s http://localhost:19120/api/v2/trees/main/entries | jq .
 
 # View the commit log
-curl -s http://localhost:19120/api/v2/trees/main/log | jq .
+curl -s http://localhost:19120/api/v2/trees/main/history | jq .
 ```
 
 ---
