@@ -47,6 +47,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Netty BOM must be imported BEFORE Micronaut so its 4.2.11 pins win
+                 (Maven first-declaration-wins). Micronaut platform 4.10.10 otherwise
+                 pulls in netty-codec-http* 4.2.9 (CVE-2026-33870, CVE-2026-33871). -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Micronaut -->
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
