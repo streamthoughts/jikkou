@@ -13,7 +13,7 @@
     <parent>
         <groupId>io.jikkou</groupId>
         <artifactId>jikkou-parent</artifactId>
-        <version>0.38.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
