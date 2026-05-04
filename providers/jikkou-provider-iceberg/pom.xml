@@ -84,6 +84,13 @@
                     <groupId>ch.qos.reload4j</groupId>
                     <artifactId>reload4j</artifactId>
                 </exclusion>
+                <!-- Jikkou uses Iceberg as a client only; Hadoop's embedded HTTP server
+                     (HttpServer2) is never started. Excluding Jetty removes CVE-2026-2332
+                     (jetty 9.4.58); 9.4.60 is not published to Maven Central. -->
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
