@@ -1,4 +1,28 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Resource as Code Framework for Apache Kafka and Apache Iceberg on Jikkou</title><link>https://www.jikkou.io/</link><description>Recent content in Resource as Code Framework for Apache Kafka and Apache Iceberg on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Release v0.37.0</title><link>https://www.jikkou.io/docs/releases/release-v0.37.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v0.37.0/</guid><description>&lt;h2 id="-introducing-jikkou-0370">🚀 Introducing Jikkou 0.37.0&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Resource as Code Framework for Apache Kafka and Apache Iceberg on Jikkou</title><link>https://www.jikkou.io/</link><description>Recent content in Resource as Code Framework for Apache Kafka and Apache Iceberg on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Migrating to Jikkou 1.0</title><link>https://www.jikkou.io/docs/migration/migrate-to-1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/migration/migrate-to-1.0/</guid><description>&lt;p>Jikkou 1.0.0 is a major release. The good news: the project&amp;rsquo;s first real breaking change — the move from &lt;code>io.streamthoughts.jikkou.*&lt;/code> to &lt;code>io.jikkou.*&lt;/code> — ships with a runtime deprecation shim, so most existing setups will run unchanged with warnings while you migrate at your own pace.&lt;/p>
+&lt;p>This guide walks through the upgrade end to end.&lt;/p>
+&lt;h2 id="before-you-upgrade">Before You Upgrade&lt;/h2>
+&lt;p>A short checklist before you start:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Pin your current version.&lt;/strong> Make sure your CI and any automation reference &lt;code>0.37.3&lt;/code> (or whichever 0.37.x you run today) explicitly, not &lt;code>latest&lt;/code>, so you can roll back fast.&lt;/li>
+&lt;li>&lt;strong>Back up your configurations.&lt;/strong> Commit any uncommitted Jikkou configuration and resource files. The migration is mechanical, but a clean baseline makes review easier.&lt;/li>
+&lt;li>&lt;strong>Plan a window.&lt;/strong> The shim means you don&amp;rsquo;t &lt;em>need&lt;/em> downtime, but if you operate Jikkou as a service (&lt;code>jikkou-api-server&lt;/code>), the upgrade is a normal rolling deploy.&lt;/li>
+&lt;li>&lt;strong>Read the &lt;a href="https://www.jikkou.io/docs/releases/release-v1.0.0/">v1.0.0 release notes&lt;/a>.&lt;/strong> This guide is focused on &lt;em>change recipes&lt;/em>; the release notes explain the &lt;em>why&lt;/em>.&lt;/li>
+&lt;/ol>
+&lt;h2 id="1-update-maven--gradle-coordinates">1. Update Maven / Gradle Coordinates&lt;/h2>
+&lt;p>The Maven group changed from &lt;code>io.streamthoughts&lt;/code> to &lt;code>io.jikkou&lt;/code>. Artifact names are unchanged.&lt;/p></description></item><item><title>Release v1.0.0</title><link>https://www.jikkou.io/docs/releases/release-v1.0.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v1.0.0/</guid><description>&lt;h2 id="-introducing-jikkou-100">🎉 Introducing Jikkou 1.0.0&lt;/h2>
+&lt;p>We&amp;rsquo;re pleased to announce &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v1.0.0">Jikkou 1.0.0&lt;/a> — our first major release.&lt;/p>
+&lt;p>1.0.0 is a maturity milestone: we&amp;rsquo;ve canonicalised the package layout, tightened the public API contract, and shipped three substantial new capabilities. Highlights:&lt;/p>
+&lt;ul>
+&lt;li>🧊 &lt;strong>Apache Iceberg provider&lt;/strong> — declarative tables, namespaces, and views with schema evolution.&lt;/li>
+&lt;li>🌐 &lt;strong>Multi-provider orchestration&lt;/strong> — provider groups, &lt;code>--provider-all&lt;/code>, &lt;code>--continue-on-error&lt;/code>.&lt;/li>
+&lt;li>🔐 &lt;strong>Confluent Cloud RBAC&lt;/strong> — manage role bindings as code.&lt;/li>
+&lt;li>🧭 &lt;strong>Resource dependency ordering&lt;/strong> — explicit dependencies honoured during reconciliation.&lt;/li>
+&lt;li>📦 &lt;strong>Coordinate &amp;amp; package rename&lt;/strong> — &lt;code>io.streamthoughts.jikkou&lt;/code> → &lt;code>io.jikkou&lt;/code> (with a deprecation shim).&lt;/li>
+&lt;li>🛠 &lt;strong>CLI &amp;amp; API ergonomics&lt;/strong> — JSON Schema export, &lt;code>-o/--output&lt;/code> on list commands, &lt;code>api-providers&lt;/code> group.&lt;/li>
+&lt;/ul>
+&lt;p>To install, see the &lt;a href="https://www.jikkou.io/docs/install/">installation guide&lt;/a>.
+For the full changelog, see the &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v1.0.0">GitHub release page&lt;/a>.
+For step-by-step upgrade instructions, see &lt;a href="https://www.jikkou.io/docs/migration/migrate-to-1.0/">Migrating to Jikkou 1.0&lt;/a>.&lt;/p></description></item><item><title>Release v0.37.0</title><link>https://www.jikkou.io/docs/releases/release-v0.37.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v0.37.0/</guid><description>&lt;h2 id="-introducing-jikkou-0370">🚀 Introducing Jikkou 0.37.0&lt;/h2>
 &lt;p>We&amp;rsquo;re pleased to announce &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.37.0">Jikkou 0.37.0&lt;/a>.&lt;/p>
 &lt;p>This release tackles real pain points reported by the community — from managing multiple Kafka environments in a single config, to fixing broken Schema Registry workflows. Here&amp;rsquo;s the overview:&lt;/p>
 &lt;ul>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Migration on Jikkou</title><link>https://www.jikkou.io/docs/migration/</link><description>Recent content in Migration on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/migration/index.xml" rel="self" type="application/rss+xml"/><item><title>Migrating to Jikkou 1.0</title><link>https://www.jikkou.io/docs/migration/migrate-to-1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/migration/migrate-to-1.0/</guid><description>&lt;p>Jikkou 1.0.0 is a major release. The good news: the project&amp;rsquo;s first real breaking change — the move from &lt;code>io.streamthoughts.jikkou.*&lt;/code> to &lt;code>io.jikkou.*&lt;/code> — ships with a runtime deprecation shim, so most existing setups will run unchanged with warnings while you migrate at your own pace.&lt;/p>
+&lt;p>This guide walks through the upgrade end to end.&lt;/p>
+&lt;h2 id="before-you-upgrade">Before You Upgrade&lt;/h2>
+&lt;p>A short checklist before you start:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Pin your current version.&lt;/strong> Make sure your CI and any automation reference &lt;code>0.37.3&lt;/code> (or whichever 0.37.x you run today) explicitly, not &lt;code>latest&lt;/code>, so you can roll back fast.&lt;/li>
+&lt;li>&lt;strong>Back up your configurations.&lt;/strong> Commit any uncommitted Jikkou configuration and resource files. The migration is mechanical, but a clean baseline makes review easier.&lt;/li>
+&lt;li>&lt;strong>Plan a window.&lt;/strong> The shim means you don&amp;rsquo;t &lt;em>need&lt;/em> downtime, but if you operate Jikkou as a service (&lt;code>jikkou-api-server&lt;/code>), the upgrade is a normal rolling deploy.&lt;/li>
+&lt;li>&lt;strong>Read the &lt;a href="https://www.jikkou.io/docs/releases/release-v1.0.0/">v1.0.0 release notes&lt;/a>.&lt;/strong> This guide is focused on &lt;em>change recipes&lt;/em>; the release notes explain the &lt;em>why&lt;/em>.&lt;/li>
+&lt;/ol>
+&lt;h2 id="1-update-maven--gradle-coordinates">1. Update Maven / Gradle Coordinates&lt;/h2>
+&lt;p>The Maven group changed from &lt;code>io.streamthoughts&lt;/code> to &lt;code>io.jikkou&lt;/code>. Artifact names are unchanged.&lt;/p></description></item></channel></rss>
