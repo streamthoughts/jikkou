@@ -738,6 +738,8 @@
                             <publishingServerId>sonatype-central</publishingServerId>
                             <autoPublish>true</autoPublish>
                             <waitUntil>published</waitUntil>
+                            <waitMaxTime>7200</waitMaxTime>
+                            <waitPollingInterval>30</waitPollingInterval>
                         </configuration>
                     </plugin>
                     <plugin>
