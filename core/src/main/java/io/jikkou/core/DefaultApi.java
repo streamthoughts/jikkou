@@ -262,7 +262,7 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @Override
     public ApiHealthIndicatorList getApiHealthIndicators() {
         List<ApiHealthIndicator> indicators = extensionFactory
-            .findAllDescriptorsByClass(HealthIndicator.class)
+            .findAllDescriptorsByClass(HealthIndicator.class, Qualifiers.enabled())
             .stream()
             .map(descriptor -> new ApiHealthIndicator(descriptor.name(), descriptor.description()))
             .toList();
