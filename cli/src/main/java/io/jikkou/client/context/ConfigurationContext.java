@@ -11,6 +11,8 @@ import io.jikkou.core.exceptions.JikkouRuntimeException;
 import io.jikkou.core.io.Jackson;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -76,7 +78,18 @@ public final class ConfigurationContext {
     }
 
     public boolean isExists() {
-        return configFile.exists();
+        if (!configFile.exists()) {
+            return false;
+        }
+        try {
+            // Treat an empty or whitespace-only file as if it did not exist,
+            // so the CLI can fall back to the default context instead of failing.
+            return Files.size(configFile.toPath()) > 0
+                    && !Files.readString(configFile.toPath(), StandardCharsets.UTF_8).isBlank();
+        } catch (IOException e) {
+            // File is present but unreadable here; defer error surfacing to tryReadConfiguration().
+            return true;
+        }
     }
 
     public Map<String, Context> getContexts() {
