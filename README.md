@@ -47,7 +47,8 @@ Stop writing scripts. Stop clicking through UIs. Define your desired state, and 
 | **Stateless** | No database needed — Jikkou uses your Kafka platform as the source of truth |
 | **Safe** | Built-in dry-run mode, validations, and reconciliation engine prevent accidents |
 | **Extensible** | Plugin-based architecture with providers, validators, transformations, and templates |
-| **Multi-Platform** | Works with Apache Kafka, Confluent Cloud, Aiven, Amazon MSK, Redpanda, and more |
+| **Multi-Cluster** | Apply changes across a fleet of clusters in one command with provider groups |
+| **Multi-Platform** | Works with Apache Kafka, Confluent Cloud, Aiven, Amazon MSK, Redpanda, Apache Iceberg, and more |
 
 ## Quick Start
 
@@ -94,14 +95,14 @@ ok: 0, created: 1, altered: 0, deleted: 0, failed: 0
 
 ## Supported Resources
 
-| Apache Kafka | Schema Registry | Kafka Connect | Cloud Providers |
-|:---:|:---:|:---:|:---:|
-| Topics & Configs | Avro Schemas | Connectors | Aiven (ACLs, Quotas) |
-| ACLs | JSON Schemas | | Confluent Cloud (RBAC) |
-| Quotas | Protobuf Schemas | | AWS Glue Schemas |
-| Consumer Groups | | | |
-| Brokers & Users | | | |
-| KTable Records | | | |
+| Apache Kafka | Schema Registry | Kafka Connect | Apache Iceberg | Cloud Providers |
+|:---:|:---:|:---:|:---:|:---:|
+| Topics & Configs | Avro Schemas | Connectors | Tables | Aiven (ACLs, Quotas) |
+| ACLs | JSON Schemas | | Views | Confluent Cloud (RBAC) |
+| Quotas | Protobuf Schemas | | Namespaces | AWS Glue Schemas |
+| Consumer Groups | | | | |
+| Brokers & Users | | | | |
+| KTable Records | | | | |
 
 ## How It Works
 
