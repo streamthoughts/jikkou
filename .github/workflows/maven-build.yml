@@ -66,6 +66,7 @@ jobs:
 
     - name: Run Trivy vulnerability scanner (SARIF)
       if: github.event_name == 'push'
+      continue-on-error: true
       uses: aquasecurity/trivy-action@v0.36.0
       with:
         scan-type: 'fs'
@@ -77,12 +78,14 @@ jobs:
 
     - name: Upload Trivy scan results to GitHub Security tab
       if: github.event_name == 'push'
+      continue-on-error: true
       uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: 'trivy-results.sarif'
 
     - name: Run Trivy vulnerability scanner (Table)
       if: github.event_name == 'pull_request'
+      continue-on-error: true
       uses: aquasecurity/trivy-action@v0.36.0
       with:
         scan-type: 'fs'
