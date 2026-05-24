@@ -11,11 +11,13 @@ import static io.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToTimestamp.fro
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.jikkou.common.utils.AsyncUtils;
 import io.jikkou.common.utils.Pair;
 import io.jikkou.core.action.*;
 import io.jikkou.core.annotation.*;
 import io.jikkou.core.config.ConfigProperty;
 import io.jikkou.core.config.Configuration;
+import io.jikkou.core.exceptions.JikkouRuntimeException;
 import io.jikkou.core.extension.ContextualExtension;
 import io.jikkou.core.extension.ExtensionContext;
 import io.jikkou.core.models.BaseHasMetadata;
@@ -102,44 +104,50 @@ public class TruncateKafkaTopicRecords extends ContextualExtension implements Ac
             final Long timestamp = fromISODateTime(dateTime).timestamp();
 
 
-            List<ExecutionResult<V1TruncatedKafkaTopicRecords>> results = Flux.fromIterable(topics)
-                .flatMap(topic -> Mono.fromFuture(service.listOffsets(List.of(topic), OffsetSpec.forTimestamp(timestamp)))
-                    .flatMap(offsetsByTopicPartition -> {
-                        Map<TopicPartition, RecordsToDelete> recordsToDelete = offsetsByTopicPartition.entrySet()
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    it -> RecordsToDelete.beforeOffset(it.getValue().offset())
-                                )
-                            );
+            List<ExecutionResult<V1TruncatedKafkaTopicRecords>> results = AsyncUtils.getValueOrThrowException(
+                Flux.fromIterable(topics)
+                    .flatMap(topic -> Mono.fromFuture(service.listOffsets(List.of(topic), OffsetSpec.forTimestamp(timestamp)))
+                        .flatMap(offsetsByTopicPartition -> {
+                            Map<TopicPartition, RecordsToDelete> recordsToDelete = offsetsByTopicPartition.entrySet()
+                                .stream()
+                                .collect(Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        it -> RecordsToDelete.beforeOffset(it.getValue().offset())
+                                    )
+                                );
 
-                        LOG.info("Deleting record for topic '{}' from partition: {}", topic, recordsToDelete);
-                        Map<TopicPartition, KafkaFuture<DeletedRecords>> lowWatermarks = client.deleteRecords(recordsToDelete).lowWatermarks();
-                        return Flux
-                            .fromStream(lowWatermarks.entrySet().stream().map(Pair::of))
-                            .flatMap(pair ->
-                                Mono.fromFuture(pair._2().toCompletionStage().toCompletableFuture())
-                                    .map(deleted -> new TopicPartitionLowWatermark(pair._1().partition(), deleted.lowWatermark()))
+                            LOG.info("Deleting record for topic '{}' from partition: {}", topic, recordsToDelete);
+                            Map<TopicPartition, KafkaFuture<DeletedRecords>> lowWatermarks = client.deleteRecords(recordsToDelete).lowWatermarks();
+                            return Flux
+                                .fromStream(lowWatermarks.entrySet().stream().map(Pair::of))
+                                .flatMap(pair ->
+                                    Mono.fromFuture(pair._2().toCompletionStage().toCompletableFuture())
+                                        .map(deleted -> new TopicPartitionLowWatermark(pair._1().partition(), deleted.lowWatermark()))
+                                )
+                                .collectSortedList(Comparator.comparingInt(TopicPartitionLowWatermark::partition))
+                                .map(topicPartitionLowWatermarks ->
+                                    ExecutionResult.<V1TruncatedKafkaTopicRecords>newBuilder()
+                                        .status(ExecutionStatus.SUCCEEDED)
+                                        .data(new V1TruncatedKafkaTopicRecords(new TruncatedKafkaTopicRecordsResult(topic, topicPartitionLowWatermarks)))
+                                        .build()
+                                );
+                        })
+                        .onErrorResume(ex ->
+                            Mono.just(ExecutionResult.<V1TruncatedKafkaTopicRecords>newBuilder()
+                                .status(ExecutionStatus.FAILED)
+                                .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
+                                .data(new V1TruncatedKafkaTopicRecords(new TruncatedKafkaTopicRecordsResult(topic, null)))
+                                .build()
                             )
-                            .collectSortedList(Comparator.comparingInt(TopicPartitionLowWatermark::partition))
-                            .map(topicPartitionLowWatermarks ->
-                                ExecutionResult.<V1TruncatedKafkaTopicRecords>newBuilder()
-                                    .status(ExecutionStatus.SUCCEEDED)
-                                    .data(new V1TruncatedKafkaTopicRecords(new TruncatedKafkaTopicRecordsResult(topic, topicPartitionLowWatermarks)))
-                                    .build()
-                            );
-                    })
-                    .onErrorResume(ex ->
-                        Mono.just(ExecutionResult.<V1TruncatedKafkaTopicRecords>newBuilder()
-                            .status(ExecutionStatus.FAILED)
-                            .errors(List.of(new ExecutionError(ex.getLocalizedMessage())))
-                            .data(new V1TruncatedKafkaTopicRecords(new TruncatedKafkaTopicRecordsResult(topic, null)))
-                            .build()
                         )
                     )
-                )
-                .collectList()
-                .block();
+                    .collectList()
+                    .toFuture(),
+                cause -> cause instanceof JikkouRuntimeException jre
+                    ? jre
+                    : new JikkouRuntimeException(String.format(
+                        "Failed to truncate Kafka topic records. Cause %s: %s.",
+                        cause.getClass().getSimpleName(), cause.getLocalizedMessage()), cause));
 
             return ExecutionResultSet.<V1TruncatedKafkaTopicRecords>newBuilder()
                 .results(results)
