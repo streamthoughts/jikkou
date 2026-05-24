@@ -11,17 +11,31 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.jikkou.core.exceptions.JikkouRuntimeException;
 import io.jikkou.kafka.collections.V1KafkaConsumerGroupList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
+import java.util.Set;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DescribeConsumerGroupsResult;
+import org.apache.kafka.clients.admin.DescribeTopicsResult;
+import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import reactor.core.publisher.Mono;
 
 class KafkaAdminServiceTest {
@@ -126,5 +140,103 @@ class KafkaAdminServiceTest {
 
         // Then
         assertEquals(sync.getItems(), async.getItems());
+    }
+
+    @Test
+    void shouldExpandBareTopicsViaDescribeTopics() throws Exception {
+        AdminClient admin = mock(AdminClient.class);
+        DescribeTopicsResult result = mock(DescribeTopicsResult.class);
+
+        Node node = new Node(0, "localhost", 9092);
+        TopicDescription description = new TopicDescription(
+            "my-topic",
+            false,
+            List.of(
+                new TopicPartitionInfo(0, node, List.of(node), List.of(node)),
+                new TopicPartitionInfo(1, node, List.of(node), List.of(node))
+            )
+        );
+        Map<String, TopicDescription> byName = Map.of("my-topic", description);
+        when(result.allTopicNames()).thenReturn(KafkaFuture.completedFuture(byName));
+        when(admin.describeTopics(anyCollection())).thenReturn(result);
+
+        KafkaAdminService service = new KafkaAdminService(admin);
+
+        List<TopicPartition> resolved = service.resolveTopicPartitions(
+            List.of(new TopicPartitionSelector("my-topic", OptionalInt.empty()))
+        ).get();
+
+        assertEquals(
+            Set.of(new TopicPartition("my-topic", 0), new TopicPartition("my-topic", 1)),
+            Set.copyOf(resolved)
+        );
+        verify(admin, times(1)).describeTopics(anyCollection());
+    }
+
+    @Test
+    void shouldUseSpecificPartitionsDirectlyWithoutDescribingTopics() throws Exception {
+        AdminClient admin = mock(AdminClient.class);
+        KafkaAdminService service = new KafkaAdminService(admin);
+
+        List<TopicPartition> resolved = service.resolveTopicPartitions(
+            List.of(
+                new TopicPartitionSelector("other-topic", OptionalInt.of(5)),
+                new TopicPartitionSelector("other-topic", OptionalInt.of(7))
+            )
+        ).get();
+
+        assertEquals(
+            Set.of(new TopicPartition("other-topic", 5), new TopicPartition("other-topic", 7)),
+            Set.copyOf(resolved)
+        );
+        verify(admin, never()).describeTopics(anyCollection());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldUnionBareAndSpecificEntriesAndDedupe() throws Exception {
+        AdminClient admin = mock(AdminClient.class);
+        DescribeTopicsResult result = mock(DescribeTopicsResult.class);
+
+        Node node = new Node(0, "localhost", 9092);
+        TopicDescription bareDescription = new TopicDescription(
+            "bare-topic",
+            false,
+            List.of(
+                new TopicPartitionInfo(0, node, List.of(node), List.of(node)),
+                new TopicPartitionInfo(1, node, List.of(node), List.of(node))
+            )
+        );
+        when(result.allTopicNames()).thenReturn(
+            KafkaFuture.completedFuture(Map.of("bare-topic", bareDescription))
+        );
+        when(admin.describeTopics(anyCollection())).thenReturn(result);
+
+        KafkaAdminService service = new KafkaAdminService(admin);
+
+        // bare-topic expands to (bare-topic, 0), (bare-topic, 1)
+        // typed entry adds (bare-topic, 1) — already present, must dedupe to one
+        // typed entry adds (other-topic, 3)
+        List<TopicPartition> resolved = service.resolveTopicPartitions(
+            List.of(
+                new TopicPartitionSelector("bare-topic", OptionalInt.empty()),
+                new TopicPartitionSelector("bare-topic", OptionalInt.of(1)),
+                new TopicPartitionSelector("other-topic", OptionalInt.of(3))
+            )
+        ).get();
+
+        assertEquals(
+            Set.of(
+                new TopicPartition("bare-topic", 0),
+                new TopicPartition("bare-topic", 1),
+                new TopicPartition("other-topic", 3)
+            ),
+            Set.copyOf(resolved)
+        );
+
+        // exactly one describeTopics call, only for the bare topic
+        ArgumentCaptor<Collection<String>> captor = ArgumentCaptor.forClass(Collection.class);
+        verify(admin, times(1)).describeTopics(captor.capture());
+        assertEquals(List.of("bare-topic"), List.copyOf(captor.getValue()));
     }
 }
