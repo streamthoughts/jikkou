@@ -87,9 +87,9 @@ jobs:
     permissions:
       contents: read
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        os: [ ubuntu-latest, macOS-latest, windows-2022 ]
         setup: [ graalvm ]
         include:
           - os: ubuntu-latest

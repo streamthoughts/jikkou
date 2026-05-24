@@ -22,9 +22,9 @@ jobs:
     if: github.repository == 'streamthoughts/jikkou'
     name: 'Build with ${{ matrix.setup }} on ${{ matrix.os }}'
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        os: [ ubuntu-latest, macOS-latest, windows-2022 ]
         setup: [ graalvm ]
         include:
           - os: ubuntu-latest
