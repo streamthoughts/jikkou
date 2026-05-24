@@ -77,8 +77,9 @@ public final class KafkaAdminService {
                 resetConsumerGroupOffsets(groupId, topics, OffsetSpec.forTimestamp(spec.timestamp()), dryRun);
             // TO_OFFSETS
             case ToOffset spec -> {
-                // Get the partitions for the given topics.
-                CompletableFuture<List<TopicPartition>> future = listTopicPartitions(topics);
+                // Resolve the topic selectors to the target partitions.
+                CompletableFuture<List<TopicPartition>> future =
+                    resolveTopicPartitions(parseSelectors(topics));
                 Map<TopicPartition, OffsetAndMetadata> offsets = AsyncUtils.getValueOrThrowException(future, JikkouRuntimeException::new)
                     .stream()
                     .collect(Collectors.toMap(Function.identity(), unused -> new OffsetAndMetadata(spec.offset())));
@@ -166,16 +167,15 @@ public final class KafkaAdminService {
 
     public CompletableFuture<Map<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo>> listOffsets(@NotNull final List<String> topics,
                                                                                                        @NotNull final OffsetSpec offsetSpec) {
-        // Get the partitions for the given topics.
-        CompletableFuture<List<TopicPartition>> future = listTopicPartitions(topics);
+        // Resolve the topic selectors to the target partitions.
+        CompletableFuture<List<TopicPartition>> future = resolveTopicPartitions(parseSelectors(topics));
 
-        // Gets EARLIEST offsets for each topic partitions.
+        // Gets offsets for each resolved topic-partition.
         return future.thenCompose(partitions -> {
             var partitionOffsets = partitions.stream()
                 .collect(Collectors.toMap(Function.identity(), it -> offsetSpec));
             return client.listOffsets(partitionOffsets).all().toCompletionStage();
         });
-
     }
 
     public CompletableFuture<List<TopicPartition>> listTopicPartitions(@NotNull final List<String> topics) {
@@ -190,6 +190,40 @@ public final class KafkaAdminService {
                 ).toList()
             )
             .toCompletableFuture();
+    }
+
+    /**
+     * Resolves a list of {@link TopicPartitionSelector} to concrete {@link TopicPartition}s.
+     * Bare selectors (no partition) are expanded via a single {@code describeTopics} call;
+     * fully-qualified selectors are used directly without an admin round-trip. Duplicates
+     * are removed, preserving first-seen order for deterministic logging.
+     */
+    CompletableFuture<List<TopicPartition>> resolveTopicPartitions(@NotNull List<TopicPartitionSelector> selectors) {
+        List<String> bareTopics = selectors.stream()
+            .filter(TopicPartitionSelector::isAllPartitions)
+            .map(TopicPartitionSelector::topic)
+            .distinct()
+            .toList();
+
+        List<TopicPartition> explicit = selectors.stream()
+            .filter(s -> !s.isAllPartitions())
+            .map(s -> new TopicPartition(s.topic(), s.partition().getAsInt()))
+            .toList();
+
+        CompletableFuture<List<TopicPartition>> expanded = bareTopics.isEmpty()
+            ? CompletableFuture.completedFuture(List.of())
+            : listTopicPartitions(bareTopics);
+
+        return expanded.thenApply(expandedPartitions -> {
+            // LinkedHashSet preserves insertion order and removes duplicates.
+            LinkedHashSet<TopicPartition> union = new LinkedHashSet<>(expandedPartitions);
+            union.addAll(explicit);
+            return List.copyOf(union);
+        });
+    }
+
+    private static List<TopicPartitionSelector> parseSelectors(@NotNull List<String> rawTopics) {
+        return rawTopics.stream().map(TopicPartitionSelector::parse).toList();
     }
 
     /**
