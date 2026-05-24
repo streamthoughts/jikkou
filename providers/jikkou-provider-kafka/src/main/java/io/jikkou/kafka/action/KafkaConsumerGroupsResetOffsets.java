@@ -73,7 +73,7 @@ public final class KafkaConsumerGroupsResetOffsets extends ContextualExtension i
 
         ConfigProperty<List<String>> TOPIC = ConfigProperty.ofList("topic")
             .displayName("Topic")
-            .description("The topic whose partitions must be included in the reset-offset action.");
+            .description("Topics to include in the reset-offset action. Each entry can be either 'topic' (all partitions) or 'topic:partition' (a specific partition).");
 
         ConfigProperty<List<String>> INCLUDES = ConfigProperty
             .ofList("includes")
