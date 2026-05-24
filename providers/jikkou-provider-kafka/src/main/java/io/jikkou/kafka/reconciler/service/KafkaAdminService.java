@@ -21,7 +21,6 @@ import io.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToOffset;
 import io.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToTimestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.*;
@@ -34,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 /**
  * Service to manage Kafka resources
@@ -210,6 +208,10 @@ public final class KafkaAdminService {
 
     /**
      * Lists all consumer groups for the specified states.
+     * <p>
+     * This method blocks the calling thread until the Kafka AdminClient completes.
+     * Callers running on a non-blocking thread (e.g. a Netty event loop or a Reactor
+     * scheduler) must offload, or use {@link #listConsumerGroupsAsync(List, boolean)}.
      *
      * @param groups          The consumer groups.
      * @param describeOffsets Specify whether offsets should be described.
@@ -218,66 +220,64 @@ public final class KafkaAdminService {
     @NotNull
     public V1KafkaConsumerGroupList listConsumerGroups(@NotNull List<String> groups,
                                                        boolean describeOffsets) {
+        return AsyncUtils.getValueOrThrowException(
+            listConsumerGroupsAsync(groups, describeOffsets).toFuture(),
+            cause -> cause instanceof JikkouRuntimeException jre
+                ? jre
+                : new JikkouRuntimeException(String.format(
+                    "Failed to describe consumer groups. Cause %s: %s.",
+                    cause.getClass().getSimpleName(), cause.getLocalizedMessage()), cause));
+    }
 
-        // List Consumer Group Offsets
-        final ListConsumerGroupOffsetsResult groupOffsetsResult;
-        if (describeOffsets) {
-            groupOffsetsResult = client.listConsumerGroupOffsets(groups.stream().collect(Collectors.toMap(
-                Function.identity(),
-                it -> new ListConsumerGroupOffsetsSpec()
-            )));
-        } else {
-            groupOffsetsResult = null;
-        }
+    /**
+     * Non-blocking variant of {@link #listConsumerGroups(List, boolean)}.
+     * <p>
+     * The returned {@link Mono} does not block any thread internally; the entire
+     * pipeline is driven by the Kafka AdminClient's I/O callbacks. Safe to consume
+     * from reactive contexts.
+     *
+     * @param groups          The consumer groups.
+     * @param describeOffsets Specify whether offsets should be described.
+     * @return A {@link Mono} that completes with the {@link V1KafkaConsumerGroupList}.
+     */
+    @NotNull
+    public Mono<V1KafkaConsumerGroupList> listConsumerGroupsAsync(@NotNull List<String> groups,
+                                                                  boolean describeOffsets) {
+        return Mono.defer(() -> {
+            final ListConsumerGroupOffsetsResult groupOffsetsResult = describeOffsets
+                ? client.listConsumerGroupOffsets(groups.stream().collect(Collectors.toMap(
+                    Function.identity(),
+                    it -> new ListConsumerGroupOffsetsSpec())))
+                : null;
 
-        // Describe Consumer Groups
-        try {
-            List<V1KafkaConsumerGroup> items = Flux
-                .fromStream(client
-                    .describeConsumerGroups(groups)
+            return Flux.fromStream(client.describeConsumerGroups(groups)
                     .describedGroups()
                     .values()
                     .stream()
-                    .map(consumerGroupDescriptionKafkaFuture -> Futures
-                        .toCompletableFuture(consumerGroupDescriptionKafkaFuture)
-                        .thenApply(this::mapToResource)
-                    )
-                )
-                .publishOn(Schedulers.boundedElastic())
+                    .map(future -> Futures.toCompletableFuture(future).thenApply(this::mapToResource)))
                 .flatMap(Mono::fromFuture)
                 .flatMap(group -> {
-                    String groupName = group.getMetadata().getName();
-                    if (groupOffsetsResult != null) {
-                        return Mono
-                            .fromFuture(Futures.toCompletableFuture(groupOffsetsResult.partitionsToOffsetAndMetadata(groupName)))
-                            .flatMap(partitions -> mapToResources(partitions).collectList()
-                                .map(offsets -> group.withStatus(group.getStatus().withOffsets(offsets))));
+                    if (groupOffsetsResult == null) {
+                        return Mono.just(group);
                     }
-                    return Mono.just(group);
+                    String groupName = group.getMetadata().getName();
+                    return Mono.fromFuture(Futures.toCompletableFuture(
+                            groupOffsetsResult.partitionsToOffsetAndMetadata(groupName)))
+                        .flatMap(partitions -> mapToResources(partitions).collectList()
+                            .map(offsets -> group.withStatus(group.getStatus().withOffsets(offsets))));
                 })
                 .collectList()
-                .toFuture()
-                .get();
-
-            return new V1KafkaConsumerGroupList.Builder().withItems(items).build();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            LOG.error("Failed to describe consumer groups.", e);
-            throw new JikkouRuntimeException(String.format(
-                "Failed to describe consumer groups. Cause %s: %s.", e.getClass().getSimpleName(), e.getLocalizedMessage())
-            );
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause() != null ? e.getCause() : e;
-            LOG.error("Failed to describe consumer groups.", cause);
-            throw new JikkouRuntimeException(String.format(
-                "Failed to describe consumer groups. Cause %s: %s.", cause.getClass().getSimpleName(), cause.getLocalizedMessage())
-            );
-        } catch (Exception e) {
-            LOG.error("Failed to describe consumer groups.", e);
-            throw new JikkouRuntimeException(String.format(
-                "Failed to describe consumer groups. Cause %s: %s.", e.getClass().getSimpleName(), e.getLocalizedMessage())
-            );
-        }
+                .map(items -> new V1KafkaConsumerGroupList.Builder().withItems(items).build());
+        })
+            .onErrorMap(e -> {
+                LOG.error("Failed to describe consumer groups.", e);
+                if (e instanceof JikkouRuntimeException) {
+                    return e;
+                }
+                return new JikkouRuntimeException(String.format(
+                    "Failed to describe consumer groups. Cause %s: %s.",
+                    e.getClass().getSimpleName(), e.getLocalizedMessage()), e);
+            });
     }
 
     @NotNull

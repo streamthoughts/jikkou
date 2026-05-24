@@ -25,6 +25,8 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.http.hateoas.Resource;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.annotation.security.PermitAll;
@@ -41,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Controller("/api/v1/healths")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@ExecuteOn(TaskExecutors.BLOCKING)
 public class ApiHealthIndicatorListResource extends AbstractController {
 
     public static final String STATUS_LINK_KEY = "status";
