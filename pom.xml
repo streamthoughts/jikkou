@@ -127,7 +127,8 @@
         <cel.version>0.9.1</cel.version>
         <avro.version>1.12.1</avro.version>
         <lz4.version>1.8.1</lz4.version>
-        <netty.version>4.2.11.Final</netty.version>
+        <netty.version>4.2.13.Final</netty.version>
+        <bouncycastle.version>1.84</bouncycastle.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.32</logback.version>
@@ -146,7 +147,7 @@
         <junit-jupiter.version>1.21.4</junit-jupiter.version>
         <awssdk.version>2.31.66</awssdk.version>
         <!-- Micronaut (centralized - used by cli and server modules) -->
-        <micronaut.version>4.10.10</micronaut.version>
+        <micronaut.version>4.10.14</micronaut.version>
     </properties>
 
     <dependencyManagement>
@@ -174,6 +175,12 @@
                 <version>${netty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Override transitive bcprov-jdk18on from hadoop-common (CVE-2026-5598) -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
