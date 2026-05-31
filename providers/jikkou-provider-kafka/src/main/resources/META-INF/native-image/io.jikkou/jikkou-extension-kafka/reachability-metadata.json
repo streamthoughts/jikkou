@@ -309,6 +309,24 @@
       ]
     },
     {
+      "type": "org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginCallbackHandler",
       "methods": [
         {
