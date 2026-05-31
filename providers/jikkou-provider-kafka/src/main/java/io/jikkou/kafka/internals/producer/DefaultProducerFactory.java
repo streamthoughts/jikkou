@@ -30,6 +30,7 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.errors.ProducerFencedException;
+import org.apache.kafka.common.metrics.KafkaMetric;
 import org.apache.kafka.common.serialization.Serializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -196,22 +197,28 @@ public final class DefaultProducerFactory<K, V> implements ProducerFactory<K, V>
         }
 
         /**
-         * @see KafkaProducer#sendOffsetsToTransaction(Map, String)
-         **/
-        @Deprecated
-        @Override
-        public void sendOffsetsToTransaction(Map<TopicPartition, OffsetAndMetadata> offsets,
-                                             String consumerGroupId) throws ProducerFencedException {
-            delegate.getResourceHandle().sendOffsetsToTransaction(offsets, consumerGroupId);
-        }
-
-        /**
          * @see KafkaProducer#sendOffsetsToTransaction(Map, ConsumerGroupMetadata)
          **/
         @Override
         public void sendOffsetsToTransaction(Map<TopicPartition, OffsetAndMetadata> offsets,
                                              ConsumerGroupMetadata groupMetadata) throws ProducerFencedException {
             delegate.getResourceHandle().sendOffsetsToTransaction(offsets, groupMetadata);
+        }
+
+        /**
+         * @see KafkaProducer#registerMetricForSubscription(KafkaMetric)
+         **/
+        @Override
+        public void registerMetricForSubscription(KafkaMetric metric) {
+            delegate.getResourceHandle().registerMetricForSubscription(metric);
+        }
+
+        /**
+         * @see KafkaProducer#unregisterMetricFromSubscription(KafkaMetric)
+         **/
+        @Override
+        public void unregisterMetricFromSubscription(KafkaMetric metric) {
+            delegate.getResourceHandle().unregisterMetricFromSubscription(metric);
         }
 
         /**
