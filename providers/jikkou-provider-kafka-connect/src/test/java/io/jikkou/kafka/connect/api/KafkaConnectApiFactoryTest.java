@@ -7,6 +7,7 @@
 package io.jikkou.kafka.connect.api;
 
 import io.jikkou.core.config.Configuration;
+import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -50,6 +51,7 @@ class KafkaConnectApiFactoryTest {
                 () -> "alice",
                 () -> "secret",
                 () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
                 false
         );
 

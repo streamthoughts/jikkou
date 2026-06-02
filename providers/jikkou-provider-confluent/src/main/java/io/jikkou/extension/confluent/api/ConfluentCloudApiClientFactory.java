@@ -41,6 +41,7 @@ public class ConfluentCloudApiClientFactory {
             .baseUri(baseUri);
 
         builder.header("Authorization", "Basic " + credentials);
+        builder.proxyConfig(config.proxyConfig());
         return new ConfluentCloudApiClient(
             builder.build(ConfluentCloudApi.class),
             config.crnPattern()

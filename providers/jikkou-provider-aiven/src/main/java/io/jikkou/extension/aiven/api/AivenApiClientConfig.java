@@ -6,11 +6,14 @@
  */
 package io.jikkou.extension.aiven.api;
 
+import io.jikkou.http.client.proxy.ProxyConfig;
+
 public record AivenApiClientConfig(
     String apiUrl,
     String tokenAuth,
     String project,
     String service,
+    ProxyConfig proxyConfig,
     boolean debugLoggingEnabled
 ) {
 }
