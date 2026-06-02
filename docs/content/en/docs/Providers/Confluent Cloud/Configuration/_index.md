@@ -31,6 +31,14 @@ jikkou {
       apiSecret = ${CONFLUENT_CLOUD_API_SECRET}
       # CRN pattern used to scope role binding list operations
       crnPattern = ${CONFLUENT_CLOUD_CRN_PATTERN}
+      # HTTP proxy URL, e.g. 'http://proxy.example.com:3128' (optional)
+      proxyUrl = "http://proxy.example.com:3128"
+      # Username for proxy Basic authentication (optional)
+      proxyUsername = null
+      # Password for proxy Basic authentication (optional)
+      proxyPassword = null
+      # Comma-separated hosts that bypass the proxy (optional)
+      nonProxyHosts = "localhost,127.0.0.1"
       # Enable debug logging (default: false)
       debugLoggingEnabled = false
     }
@@ -46,7 +54,16 @@ jikkou {
 | `apiKey`             | String  | Yes      |                                | Cloud API Key. Must be a **Cloud API Key**, not a Cluster API Key. |
 | `apiSecret`          | String  | Yes      |                                | Cloud API Secret.                                                |
 | `crnPattern`         | String  | Yes      |                                | CRN pattern to scope role binding list operations.               |
+| `proxyUrl`           | String  | No       |                                | HTTP proxy URL, e.g. `http://proxy.example.com:3128`. When empty, JVM proxy system properties are used. |
+| `proxyUsername`      | String  | No       |                                | Username for proxy Basic authentication.                         |
+| `proxyPassword`      | String  | No       |                                | Password for proxy Basic authentication.                         |
+| `nonProxyHosts`      | String  | No       |                                | Comma-separated hosts that bypass the proxy, e.g. `localhost,*.internal`. |
 | `debugLoggingEnabled`| Boolean | No       | `false`                        | Enable debug logging for REST API calls.                         |
+
+> If `proxyUrl` is not set, Jikkou honors the standard JVM proxy system properties
+> (`-Dhttps.proxyHost`, `-Dhttp.proxyHost`, `-Dhttp.proxyUser`, `-Dhttp.proxyPassword`,
+> `-Dhttp.nonProxyHosts`), which can be supplied via `JAVA_TOOL_OPTIONS`. The OS-level
+> `http_proxy` / `https_proxy` environment variables are **not** read by the JVM and have no effect.
 
 ### Creating a Cloud API Key
 

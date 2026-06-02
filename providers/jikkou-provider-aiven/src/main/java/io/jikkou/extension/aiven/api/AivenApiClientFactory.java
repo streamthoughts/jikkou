@@ -34,6 +34,7 @@ public class AivenApiClientFactory {
                 .baseUri(baseUri);
 
         builder.header("Authorization", "Bearer " + config.tokenAuth());
+        builder.proxyConfig(config.proxyConfig());
         return new AivenApiClient(
                 builder.build(AivenApi.class),
                 config.project(),

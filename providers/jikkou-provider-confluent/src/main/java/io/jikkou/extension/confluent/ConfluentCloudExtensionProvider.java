@@ -18,6 +18,7 @@ import io.jikkou.extension.confluent.collections.V1RoleBindingList;
 import io.jikkou.extension.confluent.models.V1RoleBinding;
 import io.jikkou.extension.confluent.reconciler.ConfluentCloudRoleBindingCollector;
 import io.jikkou.extension.confluent.reconciler.ConfluentCloudRoleBindingController;
+import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.spi.BaseExtensionProvider;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +71,7 @@ public final class ConfluentCloudExtensionProvider extends BaseExtensionProvider
             Config.API_KEY.get(configuration),
             Config.API_SECRET.get(configuration),
             Config.CRN_PATTERN.get(configuration),
+            ProxyConfig.from(configuration),
             Config.DEBUG_LOGGING_ENABLED.get(configuration)
         );
     }
@@ -84,6 +86,10 @@ public final class ConfluentCloudExtensionProvider extends BaseExtensionProvider
             Config.API_KEY,
             Config.API_SECRET,
             Config.CRN_PATTERN,
+            ProxyConfig.PROXY_URL,
+            ProxyConfig.PROXY_USERNAME,
+            ProxyConfig.PROXY_PASSWORD,
+            ProxyConfig.NON_PROXY_HOSTS,
             Config.DEBUG_LOGGING_ENABLED
         );
     }

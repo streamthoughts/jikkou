@@ -9,6 +9,7 @@ package io.jikkou.kafka.connect.api;
 import io.jikkou.common.utils.Enums;
 import io.jikkou.core.config.ConfigProperty;
 import io.jikkou.core.config.Configuration;
+import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import java.util.function.Supplier;
 
@@ -19,6 +20,7 @@ public record KafkaConnectClientConfig(
     Supplier<String> basicAuthUser,
     Supplier<String> basicAuthPassword,
     Supplier<SSLConfig> sslConfig,
+    Supplier<ProxyConfig> proxyConfig,
     Boolean debugLoggingEnabled
 ) {
 
@@ -62,6 +64,7 @@ public record KafkaConnectClientConfig(
             () -> KAFKA_CONNECT_BASIC_AUTH_USERNAME.get(configuration),
             () -> KAFKA_CONNECT_BASIC_AUTH_PASSWORD.get(configuration),
             () -> SSLConfig.from(configuration),
+            () -> ProxyConfig.from(configuration),
             KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration)
         );
     }

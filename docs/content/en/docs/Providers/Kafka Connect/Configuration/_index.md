@@ -57,9 +57,39 @@ jikkou {
           sslTrustStorePassword = "password"
           # Specifies whether to ignore the hostname verification.
           sslIgnoreHostnameVerification = true
+
+          # HTTP proxy: route requests to the Kafka Connect REST API through a forward proxy.
+          # Proxy URL, e.g. 'http://proxy.example.com:3128'. When empty, JVM proxy system properties are used.
+          proxyUrl = "http://proxy.example.com:3128"
+          # Username for proxy Basic authentication (optional).
+          proxyUsername = null
+          # Password for proxy Basic authentication (optional).
+          proxyPassword = null
+          # Comma-separated hosts that bypass the proxy, e.g. 'localhost,127.0.0.1,*.internal'.
+          nonProxyHosts = "localhost,127.0.0.1"
         }
       ]
     }
   }
 }
 ```
+
+## HTTP proxy
+
+Jikkou can reach the Kafka Connect REST API through an HTTP/HTTPS forward proxy.
+
+| Property         | Description                                                                                        |
+|------------------|----------------------------------------------------------------------------------------------------|
+| `proxyUrl`       | Proxy URL, e.g. `http://proxy.example.com:3128`. When empty, JVM proxy system properties are used.  |
+| `proxyUsername`  | Username for proxy Basic authentication (optional).                                                |
+| `proxyPassword`  | Password for proxy Basic authentication (optional).                                                |
+| `nonProxyHosts`  | Comma-separated hosts that bypass the proxy, e.g. `localhost,127.0.0.1,*.internal`.                |
+
+If `proxyUrl` is not set, Jikkou honors the standard JVM proxy system properties
+(`-Dhttps.proxyHost`, `-Dhttp.proxyHost`, `-Dhttp.proxyUser`, `-Dhttp.proxyPassword`,
+`-Dhttp.nonProxyHosts`), which can be supplied via `JAVA_TOOL_OPTIONS`.
+
+{{% alert title="Note" color="info" %}}
+The OS-level `http_proxy` / `https_proxy` environment variables are **not** read by the JVM
+and have no effect. Use `proxyUrl` or the JVM system properties above.
+{{% /alert %}}

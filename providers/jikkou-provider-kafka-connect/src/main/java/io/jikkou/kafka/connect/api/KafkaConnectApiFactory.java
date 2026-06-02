@@ -57,6 +57,7 @@ public final class KafkaConnectApiFactory {
         // Apply SSL config (truststore, keystore, hostname verification) regardless of
         // auth method, so HTTPS endpoints with private CAs work for basicAuth/none too.
         builder.sslConfig(config.sslConfig().get());
+        builder.proxyConfig(config.proxyConfig().get());
 
         builder = switch (config.authMethod()) {
             case BASICAUTH -> {

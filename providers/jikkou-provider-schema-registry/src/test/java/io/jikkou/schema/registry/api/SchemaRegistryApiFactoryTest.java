@@ -7,6 +7,7 @@
 package io.jikkou.schema.registry.api;
 
 import io.jikkou.core.config.Configuration;
+import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import io.jikkou.schema.registry.mock.HttpPathBasedDispatcher;
 import java.io.IOException;
@@ -55,6 +56,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> "username",
                 () -> "password",
                 () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
                 false
         );
 
@@ -101,6 +103,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> null,
                 () -> null,
                 () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
                 false
         );
 
@@ -128,6 +131,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> null,
                 () -> null,
                 () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
                 false
         );
 
@@ -149,6 +153,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> null,
                 () -> null,
                 () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
                 false
         );
 
@@ -205,6 +210,7 @@ class SchemaRegistryApiFactoryTest {
                             SSLConfig.SSL_TRUST_STORE_PASSWORD.key(), "changeit",
                             SSLConfig.SSL_TRUST_STORE_TYPE.key(), "JKS"
                     ))),
+                    () -> ProxyConfig.from(Configuration.empty()),
                     false
             );
 

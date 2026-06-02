@@ -6,6 +6,8 @@
  */
 package io.jikkou.extension.confluent.api;
 
+import io.jikkou.http.client.proxy.ProxyConfig;
+
 /**
  * Configuration for the Confluent Cloud API client.
  *
@@ -13,6 +15,7 @@ package io.jikkou.extension.confluent.api;
  * @param apiKey               Cloud API key (used as HTTP Basic username).
  * @param apiSecret            Cloud API secret (used as HTTP Basic password).
  * @param crnPattern           CRN pattern used to scope role binding list operations.
+ * @param proxyConfig          HTTP proxy configuration.
  * @param debugLoggingEnabled  Whether to enable debug logging.
  */
 public record ConfluentCloudApiClientConfig(
@@ -20,6 +23,7 @@ public record ConfluentCloudApiClientConfig(
     String apiKey,
     String apiSecret,
     String crnPattern,
+    ProxyConfig proxyConfig,
     boolean debugLoggingEnabled
 ) {
 }

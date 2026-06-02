@@ -15,6 +15,7 @@ import io.jikkou.core.extension.ExtensionRegistry;
 import io.jikkou.core.models.change.GenericResourceChange;
 import io.jikkou.core.models.change.ResourceChange;
 import io.jikkou.core.resource.ResourceRegistry;
+import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import io.jikkou.schema.registry.api.AuthMethod;
 import io.jikkou.schema.registry.api.SchemaRegistryClientConfig;
@@ -117,6 +118,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
             () -> Config.SCHEMA_REGISTRY_BASIC_AUTH_USER.get(configuration),
             () -> Config.SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD.get(configuration),
             () -> SSLConfig.from(configuration),
+            () -> ProxyConfig.from(configuration),
             Config.SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED.get(configuration)
         );
     }

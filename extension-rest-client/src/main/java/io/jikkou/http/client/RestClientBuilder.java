@@ -9,6 +9,7 @@ package io.jikkou.http.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jikkou.core.exceptions.JikkouRuntimeException;
 import io.jikkou.core.io.Jackson;
+import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import io.jikkou.http.client.ssl.SSLContextFactory;
 import io.jikkou.http.client.ssl.SSLUtils;
@@ -28,6 +29,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +38,24 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.protocol.HttpContext;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +76,11 @@ public class RestClientBuilder {
     private boolean enableClientDebugging = false;
     private final ResteasyClientBuilder clientBuilder;
     private ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
+    private SSLContext sslContext;
+    private boolean ignoreHostnameVerification;
+    private Duration connectTimeout;
+    private Duration readTimeout;
+    private ProxyConfig proxyConfig;
 
     /**
      * Creates a new {@link RestClientBuilder} instance.
@@ -128,6 +149,7 @@ public class RestClientBuilder {
     }
 
     public RestClientBuilder sslIgnoreHostnameVerification() {
+        this.ignoreHostnameVerification = true;
         clientBuilder.hostnameVerifier(NO_HOST_NAME_VERIFIER);
         return this;
     }
@@ -138,6 +160,7 @@ public class RestClientBuilder {
      * @return {@code this}.
      */
     public RestClientBuilder writeTimeout(Duration writeTimeout) {
+        this.connectTimeout = writeTimeout;
         clientBuilder.connectTimeout(writeTimeout.toMillis(), TimeUnit.MILLISECONDS);
         return this;
     }
@@ -149,6 +172,7 @@ public class RestClientBuilder {
      * @return {@code this}.
      */
     public RestClientBuilder readTimeout(Duration readTimeout) {
+        this.readTimeout = readTimeout;
         clientBuilder.readTimeout(readTimeout.toMillis(), TimeUnit.MILLISECONDS);
         return this;
     }
@@ -235,10 +259,26 @@ public class RestClientBuilder {
             }
 
             SSLContextFactory sslContextFactory = new SSLContextFactory();
-            clientBuilder.sslContext(sslContextFactory.getSSLContext(keyManagers, trustManagers));
+            this.sslContext = sslContextFactory.getSSLContext(keyManagers, trustManagers);
+            clientBuilder.sslContext(this.sslContext);
         }
 
-        return sslConfig.ignoreHostnameVerification() ? sslIgnoreHostnameVerification() : this;
+        if (sslConfig.ignoreHostnameVerification()) {
+            return sslIgnoreHostnameVerification();
+        }
+        return this;
+    }
+
+    /**
+     * Sets the proxy configuration. When the proxy URL is set, requests are routed
+     * through it; otherwise standard JVM proxy system properties are honored as a fallback.
+     *
+     * @param proxyConfig the proxy configuration.
+     * @return {@code this}.
+     */
+    public RestClientBuilder proxyConfig(final ProxyConfig proxyConfig) {
+        this.proxyConfig = proxyConfig;
+        return this;
     }
 
     private static char[] toCharArrayOrNull(String value) {
@@ -269,11 +309,82 @@ public class RestClientBuilder {
             clientBuilder.register(new LoggingRequestFilter());
         }
 
+        // Install a custom Apache engine only when a proxy must be used, so that the
+        // default path is completely unchanged for users without any proxy.
+        if (shouldUseProxyEngine()) {
+            clientBuilder.httpEngine(buildProxyEngine());
+        }
+
         Client client = clientBuilder.build();
         ResteasyWebTarget target = (ResteasyWebTarget) client.target(baseUri);
         target.property("org.jboss.resteasy.follow.redirects", followRedirects);
 
         return target.proxy(resourceInterface);
+    }
+
+    private boolean shouldUseProxyEngine() {
+        boolean explicit = proxyConfig != null && proxyConfig.hasExplicitProxy();
+        return explicit || hasProxySystemProperties();
+    }
+
+    private static boolean hasProxySystemProperties() {
+        return isNotBlank(System.getProperty("http.proxyHost"))
+            || isNotBlank(System.getProperty("https.proxyHost"));
+    }
+
+    private static boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
+    private ApacheHttpClient43Engine buildProxyEngine() {
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+        if (proxyConfig != null && proxyConfig.hasExplicitProxy()) {
+            URI proxyUri = URI.create(proxyConfig.proxyUrl());
+            String scheme = proxyUri.getScheme() != null ? proxyUri.getScheme() : "http";
+            int port = proxyUri.getPort() != -1
+                ? proxyUri.getPort()
+                : ("https".equalsIgnoreCase(scheme) ? 443 : 80);
+            HttpHost proxyHost = new HttpHost(proxyUri.getHost(), port, scheme);
+
+            List<String> nonProxyHosts = NonProxyHostsRoutePlanner.parse(proxyConfig.nonProxyHosts());
+            httpClientBuilder.setRoutePlanner(new NonProxyHostsRoutePlanner(proxyHost, nonProxyHosts));
+
+            if (proxyConfig.hasCredentials()) {
+                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(
+                    new AuthScope(proxyHost.getHostName(), proxyHost.getPort()),
+                    new UsernamePasswordCredentials(proxyConfig.proxyUsername(), proxyConfig.proxyPassword()));
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
+            LOG.info("Routing REST client traffic through proxy: {}://{}:{}",
+                scheme, proxyHost.getHostName(), proxyHost.getPort());
+        } else {
+            // Fallback: honor -Dhttp.proxyHost / -Dhttps.proxyHost / http.proxyUser etc.
+            httpClientBuilder.useSystemProperties();
+            LOG.info("Routing REST client traffic using JVM proxy system properties");
+        }
+
+        if (sslContext != null) {
+            httpClientBuilder.setSSLContext(sslContext);
+        }
+        if (ignoreHostnameVerification) {
+            httpClientBuilder.setSSLHostnameVerifier(NO_HOST_NAME_VERIFIER);
+        }
+
+        RequestConfig.Builder requestConfig = RequestConfig.custom();
+        if (connectTimeout != null) {
+            requestConfig.setConnectTimeout((int) connectTimeout.toMillis());
+        }
+        if (readTimeout != null) {
+            requestConfig.setSocketTimeout((int) readTimeout.toMillis());
+        }
+        httpClientBuilder.setDefaultRequestConfig(requestConfig.build());
+
+        CloseableHttpClient httpClient = httpClientBuilder.build();
+        ApacheHttpClient43Engine engine = new ApacheHttpClient43Engine(httpClient);
+        engine.setFollowRedirects(followRedirects);
+        return engine;
     }
 
     /**
@@ -330,6 +441,58 @@ public class RestClientBuilder {
         @Override
         public boolean verify(final String hostname, final SSLSession sslSession) {
             return true;
+        }
+    }
+
+    /**
+     * A route planner that sends traffic through the given proxy except for hosts
+     * matching one of the configured {@code nonProxyHosts} patterns (JVM-style,
+     * supporting leading/trailing '*' wildcards).
+     */
+    static final class NonProxyHostsRoutePlanner extends DefaultProxyRoutePlanner {
+
+        private final List<String> nonProxyHosts;
+
+        NonProxyHostsRoutePlanner(final HttpHost proxy, final List<String> nonProxyHosts) {
+            super(proxy);
+            this.nonProxyHosts = nonProxyHosts;
+        }
+
+        @Override
+        protected HttpHost determineProxy(final HttpHost target,
+                                          final HttpRequest request,
+                                          final HttpContext context) throws HttpException {
+            final String host = target.getHostName();
+            for (String pattern : nonProxyHosts) {
+                if (matches(host, pattern)) {
+                    return null; // bypass proxy, connect directly
+                }
+            }
+            return super.determineProxy(target, request, context);
+        }
+
+        static boolean matches(final String host, final String rawPattern) {
+            final String pattern = rawPattern.trim();
+            if (pattern.isEmpty()) {
+                return false;
+            }
+            if (pattern.startsWith("*")) {
+                return host.toLowerCase().endsWith(pattern.substring(1).toLowerCase());
+            }
+            if (pattern.endsWith("*")) {
+                return host.toLowerCase().startsWith(pattern.substring(0, pattern.length() - 1).toLowerCase());
+            }
+            return host.equalsIgnoreCase(pattern);
+        }
+
+        static List<String> parse(final String nonProxyHosts) {
+            if (nonProxyHosts == null || nonProxyHosts.isBlank()) {
+                return List.of();
+            }
+            return Arrays.stream(nonProxyHosts.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
         }
     }
 }
