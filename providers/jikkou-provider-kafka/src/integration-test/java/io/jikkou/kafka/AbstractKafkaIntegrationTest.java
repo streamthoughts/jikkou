@@ -40,8 +40,11 @@ public class AbstractKafkaIntegrationTest {
     public static final short DEFAULT_REPLICATION_FACTOR = (short) 1;
 
     @Container
+    // Uses the JVM-based 'apache/kafka' image rather than the experimental 'apache/kafka-native'
+    // one: the native image intermittently segfaults at startup (GraalVM getpwuid crash in the
+    // jvmstat perf-data thread), which made CI flaky after the upgrade to 4.3.0.
     final KafkaContainer kafka = new KafkaContainer(
-            DockerImageName.parse("apache/kafka-native").withTag(APACHE_KAFKA_VERSION))
+            DockerImageName.parse("apache/kafka").withTag(APACHE_KAFKA_VERSION))
             .withNetwork(KAFKA_NETWORK)
             .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
             .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
