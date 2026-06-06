@@ -318,7 +318,26 @@ manage SCRAM Users for Apache Kafka.&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">authentications&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;enum&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># or &lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">password&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt; &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># leave empty to generate secure password&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>See below for details about all these fields.&lt;/p></description></item><item><title>Kafka Authorizations</title><link>https://www.jikkou.io/docs/providers/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/acls/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>See below for details about all these fields.&lt;/p></description></item><item><title>Kafka Share Groups</title><link>https://www.jikkou.io/docs/providers/kafka/resources/share_groups/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/share_groups/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>This section describes the resource definition format for &lt;code>KafkaShareGroup&lt;/code> entities, which can be used to
+manage the share groups (Queues, &lt;a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka">KIP-932&lt;/a>)
+of a specific Kafka cluster.&lt;/p>
+
+&lt;/div>
+
+
+
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Broker requirement&lt;/h4>
+
+ Share groups require a Kafka &lt;strong>4.x&lt;/strong> cluster with share groups enabled on the brokers
+(&lt;code>group.share.enable=true&lt;/code> and the &lt;code>share.version&lt;/code> feature). On older clusters the share group
+operations are not available.
+
+&lt;/div>
+
+&lt;h2 id="listing-kafkasharegroup">Listing &lt;code>KafkaShareGroup&lt;/code>&lt;/h2>
+&lt;p>You can retrieve the state of Kafka Share Groups using the &lt;code>jikkou get kafkasharegroups&lt;/code> (or &lt;code>jikkou get ksg&lt;/code>) command.&lt;/p></description></item><item><title>Kafka Authorizations</title><link>https://www.jikkou.io/docs/providers/kafka/resources/acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/acls/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>KafkaPrincipalAuthorization resources are used to define Access Control Lists (ACLs) for principals authenticated
 to your Kafka Cluster.&lt;/p>
 

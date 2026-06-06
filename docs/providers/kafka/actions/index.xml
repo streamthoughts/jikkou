@@ -56,4 +56,77 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--group my-group &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--topic &lt;span class="nb">test&lt;/span> &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--to-earliest
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item><item><title>KafkaShareGroupsResetOffsets</title><link>https://www.jikkou.io/docs/providers/kafka/actions/kafkasharegroupsresetoffsets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/actions/kafkasharegroupsresetoffsets/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>This section describes the &lt;code>KafkaShareGroupsResetOffsets&lt;/code> action, used to reset the
+Share-Partition Start Offset (SPSO) of one or more Kafka share groups.&lt;/p>
+
+&lt;/div>
+
+
+
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Broker requirement&lt;/h4>
+
+ Requires a Kafka &lt;strong>4.x&lt;/strong> cluster with share groups enabled (&lt;code>group.share.enable=true&lt;/code>).
+
+&lt;/div>
+
+&lt;h2 id="usage">Usage&lt;/h2>
+&lt;p>You must choose one of the following reset specifications: &lt;code>to-earliest&lt;/code>, &lt;code>to-latest&lt;/code>, &lt;code>to-offset&lt;/code>,
+or &lt;code>delete-offsets&lt;/code>.&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Option&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>--group&lt;/code>&lt;/td>
+ &lt;td>The share group to act on.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--groups&lt;/code>&lt;/td>
+ &lt;td>The share groups to act on.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--all&lt;/code>&lt;/td>
+ &lt;td>Act on all share groups.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--topic&lt;/code>&lt;/td>
+ &lt;td>Topics to include. Each entry is &lt;code>topic&lt;/code> (all partitions) or &lt;code>topic:partition&lt;/code>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--to-earliest&lt;/code>&lt;/td>
+ &lt;td>Reset offsets to the earliest offset.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--to-latest&lt;/code>&lt;/td>
+ &lt;td>Reset offsets to the latest offset.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--to-offset&lt;/code>&lt;/td>
+ &lt;td>Reset offsets to a specific offset.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--delete-offsets&lt;/code>&lt;/td>
+ &lt;td>Delete the share-partition offsets for the given topics.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--includes&lt;/code>&lt;/td>
+ &lt;td>Patterns of share groups to include.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--excludes&lt;/code>&lt;/td>
+ &lt;td>Patterns of share groups to exclude.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+ &lt;td>Only show results without executing changes.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>Reset a single share group to the earliest offset for a topic:&lt;/p></description></item></channel></rss>

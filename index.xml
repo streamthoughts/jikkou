@@ -953,7 +953,26 @@ This allows you to globally declare some configuration settings.
 &lt;/div>
 
 &lt;h3 id="built-in-implementations">Built-in implementations&lt;/h3>
-&lt;p>Jikkou packs with some built-in &lt;code>ChangeReporter&lt;/code> implementations:&lt;/p></description></item><item><title>Jikkou Actions</title><link>https://www.jikkou.io/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/actions/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>Jikkou packs with some built-in &lt;code>ChangeReporter&lt;/code> implementations:&lt;/p></description></item><item><title>Kafka Share Groups</title><link>https://www.jikkou.io/docs/providers/kafka/resources/share_groups/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/resources/share_groups/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>This section describes the resource definition format for &lt;code>KafkaShareGroup&lt;/code> entities, which can be used to
+manage the share groups (Queues, &lt;a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-932%3A+Queues+for+Kafka">KIP-932&lt;/a>)
+of a specific Kafka cluster.&lt;/p>
+
+&lt;/div>
+
+
+
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Broker requirement&lt;/h4>
+
+ Share groups require a Kafka &lt;strong>4.x&lt;/strong> cluster with share groups enabled on the brokers
+(&lt;code>group.share.enable=true&lt;/code> and the &lt;code>share.version&lt;/code> feature). On older clusters the share group
+operations are not available.
+
+&lt;/div>
+
+&lt;h2 id="listing-kafkasharegroup">Listing &lt;code>KafkaShareGroup&lt;/code>&lt;/h2>
+&lt;p>You can retrieve the state of Kafka Share Groups using the &lt;code>jikkou get kafkasharegroups&lt;/code> (or &lt;code>jikkou get ksg&lt;/code>) command.&lt;/p></description></item><item><title>Jikkou Actions</title><link>https://www.jikkou.io/docs/concepts/actions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/actions/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>&lt;em>Actions&lt;/em>&lt;/strong> allow a user to execute a specific and one-shot operation on resources.&lt;/p>
 
 &lt;/div>
@@ -1102,7 +1121,80 @@ It supports one consumer group at the time, and group should be in EMPTY state.&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--group my-group &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--topic &lt;span class="nb">test&lt;/span> &lt;span class="se">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span>--to-earliest
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item><item><title>Quotas for Aiven Apache Kafka®</title><link>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item><item><title>KafkaShareGroupsResetOffsets</title><link>https://www.jikkou.io/docs/providers/kafka/actions/kafkasharegroupsresetoffsets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/kafka/actions/kafkasharegroupsresetoffsets/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>This section describes the &lt;code>KafkaShareGroupsResetOffsets&lt;/code> action, used to reset the
+Share-Partition Start Offset (SPSO) of one or more Kafka share groups.&lt;/p>
+
+&lt;/div>
+
+
+
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Broker requirement&lt;/h4>
+
+ Requires a Kafka &lt;strong>4.x&lt;/strong> cluster with share groups enabled (&lt;code>group.share.enable=true&lt;/code>).
+
+&lt;/div>
+
+&lt;h2 id="usage">Usage&lt;/h2>
+&lt;p>You must choose one of the following reset specifications: &lt;code>to-earliest&lt;/code>, &lt;code>to-latest&lt;/code>, &lt;code>to-offset&lt;/code>,
+or &lt;code>delete-offsets&lt;/code>.&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Option&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>--group&lt;/code>&lt;/td>
+ &lt;td>The share group to act on.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--groups&lt;/code>&lt;/td>
+ &lt;td>The share groups to act on.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--all&lt;/code>&lt;/td>
+ &lt;td>Act on all share groups.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--topic&lt;/code>&lt;/td>
+ &lt;td>Topics to include. Each entry is &lt;code>topic&lt;/code> (all partitions) or &lt;code>topic:partition&lt;/code>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--to-earliest&lt;/code>&lt;/td>
+ &lt;td>Reset offsets to the earliest offset.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--to-latest&lt;/code>&lt;/td>
+ &lt;td>Reset offsets to the latest offset.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--to-offset&lt;/code>&lt;/td>
+ &lt;td>Reset offsets to a specific offset.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--delete-offsets&lt;/code>&lt;/td>
+ &lt;td>Delete the share-partition offsets for the given topics.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--includes&lt;/code>&lt;/td>
+ &lt;td>Patterns of share groups to include.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--excludes&lt;/code>&lt;/td>
+ &lt;td>Patterns of share groups to exclude.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--dry-run&lt;/code>&lt;/td>
+ &lt;td>Only show results without executing changes.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>Reset a single share group to the earliest offset for a topic:&lt;/p></description></item><item><title>Quotas for Aiven Apache Kafka®</title><link>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/providers/aiven/resources/kafka-quota/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>The &lt;code>KafkaQuota&lt;/code> resources are used to manage the Quotas in Aiven for Apache Kafka® service.
 For more details, see &lt;a href="https://docs.aiven.io/docs/products/kafka/concepts/kafka-quotas">https://docs.aiven.io/docs/products/kafka/concepts/kafka-quotas&lt;/a>&lt;/p>
 
