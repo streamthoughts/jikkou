@@ -45,7 +45,10 @@ e2e/
 │   ├── schema-avro.yaml         # AVRO schema (v1)
 │   ├── schema-avro-v2.yaml      # AVRO schema (v2, adds field)
 │   ├── kafka-connector.yaml     # FileStreamSink connector
-│   └── kafka-connector-update.yaml # Updated connector config
+│   ├── kafka-connector-update.yaml # Updated connector config
+│   ├── kafka-share-group.yaml          # Share group (Queue) with dynamic configs
+│   ├── kafka-share-group-update.yaml   # Updated share group configs
+│   └── kafka-consumer-group-configs.yaml # Consumer group with dynamic configs
 └── README.md
 ```
 
@@ -113,11 +116,14 @@ Tests run sequentially in the order listed, so place tests that depend on prior 
 
 The Docker Compose file starts three services with health checks:
 
-| Service         | Image                                   | Port | Purpose              |
-|-----------------|-----------------------------------------|------|----------------------|
-| Kafka (KRaft)   | `confluentinc/cp-kafka:7.5.0`           | 9092 | Topics, ACLs, Quotas |
-| Schema Registry | `confluentinc/cp-schema-registry:7.5.0` | 8081 | AVRO/JSON schemas    |
-| Kafka Connect   | `confluentinc/cp-kafka-connect:7.5.0`   | 8083 | Connectors           |
+| Service         | Image                                   | Port | Purpose                            |
+|-----------------|-----------------------------------------|------|------------------------------------|
+| Kafka (KRaft)   | `confluentinc/cp-kafka:8.2.0`           | 9092 | Topics, ACLs, Quotas, Share Groups |
+| Schema Registry | `confluentinc/cp-schema-registry:8.2.0` | 8081 | AVRO/JSON schemas                  |
+| Kafka Connect   | `confluentinc/cp-kafka-connect:8.2.0`   | 8083 | Connectors                         |
+
+The Kafka broker runs Apache Kafka 4.x (Confluent 8.2.0) with **share groups enabled**
+(`group.share.enable=true`), required by the `KafkaShareGroup` and group-config tests.
 
 The test script waits up to 180 seconds for all services to report healthy before running tests.
 

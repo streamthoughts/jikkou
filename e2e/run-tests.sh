@@ -487,6 +487,39 @@ EOF
   assert_output_not_contains "e2e-client" || return 1
 }
 
+# ── Kafka Share Groups & Group Configs (Kafka 4.x) ──────────────────────────
+# Requires a Kafka 4.x broker with share groups enabled (group.share.enable=true).
+
+test_kafka_share_group_configs_apply() {
+  run_jikkou_capture apply --files "${E2E_RESOURCES}/kafka-share-group.yaml"
+  assert_exit_code 0 || return 1
+
+  # The new resource type must be queryable.
+  run_jikkou_capture get kafkasharegroups
+  assert_exit_code 0 || return 1
+
+  # Re-applying is idempotent (no error, configs already in desired state).
+  run_jikkou_capture apply --files "${E2E_RESOURCES}/kafka-share-group.yaml"
+  assert_exit_code 0 || return 1
+}
+
+test_kafka_share_group_configs_update() {
+  run_jikkou_capture apply --files "${E2E_RESOURCES}/kafka-share-group-update.yaml"
+  assert_exit_code 0 || return 1
+
+  # A diff against the updated desired state must report no pending change.
+  run_jikkou_capture diff --files "${E2E_RESOURCES}/kafka-share-group-update.yaml"
+  assert_exit_code 0 || return 1
+}
+
+test_kafka_consumer_group_configs_apply() {
+  run_jikkou_capture apply --files "${E2E_RESOURCES}/kafka-consumer-group-configs.yaml"
+  assert_exit_code 0 || return 1
+
+  run_jikkou_capture get kafkaconsumergroups
+  assert_exit_code 0 || return 1
+}
+
 # ── Schema Registry (full CRUD) ─────────────────────────────────────────────
 
 test_schema_registry_create() {
@@ -721,6 +754,11 @@ main() {
   run_test "Kafka Quotas: read"             test_kafka_quotas_read
   run_test "Kafka Quotas: update"           test_kafka_quotas_update
   run_test "Kafka Quotas: delete"           test_kafka_quotas_delete
+
+  # ── Kafka Share Groups & Group Configs (Kafka 4.x) ──
+  run_test "Kafka Share Group: apply configs"    test_kafka_share_group_configs_apply
+  run_test "Kafka Share Group: update configs"   test_kafka_share_group_configs_update
+  run_test "Kafka Consumer Group: apply configs" test_kafka_consumer_group_configs_apply
 
   # ── Schema Registry CRUD ──
   run_test "Schema Registry: create"        test_schema_registry_create

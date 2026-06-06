@@ -4,7 +4,7 @@
  *
  * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.jikkou.kafka.change.consumer;
+package io.jikkou.kafka.change.share;
 
 import io.jikkou.core.models.Configs;
 import io.jikkou.core.models.change.GenericResourceChange;
@@ -16,63 +16,51 @@ import io.jikkou.core.reconciler.change.ChangeComputerBuilder;
 import io.jikkou.core.reconciler.change.ResourceChangeComputer;
 import io.jikkou.core.reconciler.change.ResourceChangeFactory;
 import io.jikkou.kafka.change.group.GroupConfigs;
-import io.jikkou.kafka.models.V1KafkaConsumerGroup;
-import io.jikkou.kafka.models.V1KafkaConsumerGroupSpec;
+import io.jikkou.kafka.models.V1KafkaShareGroup;
+import io.jikkou.kafka.models.V1KafkaShareGroupSpec;
 import java.util.List;
 import java.util.Optional;
 
-public final class ConsumerGroupChangeComputer extends ResourceChangeComputer<String, V1KafkaConsumerGroup> {
+public final class ShareGroupChangeComputer extends ResourceChangeComputer<String, V1KafkaShareGroup> {
 
-    /**
-     * Creates a new {@link ConsumerGroupChangeComputer} instance with config-deletion disabled.
-     */
-    public ConsumerGroupChangeComputer() {
-        this(false);
-    }
-
-    /**
-     * Creates a new {@link ConsumerGroupChangeComputer} instance.
-     *
-     * @param isConfigDeletionEnabled {@code true} to delete orphaned config entries.
-     */
-    public ConsumerGroupChangeComputer(boolean isConfigDeletionEnabled) {
+    public ShareGroupChangeComputer(boolean isConfigDeletionEnabled) {
         super(ChangeComputerBuilder.KeyMapper.byName(),
-            new ConsumerGroupChangeFactory(isConfigDeletionEnabled),
+            new ShareGroupChangeFactory(isConfigDeletionEnabled),
             false);
     }
 
-    public static class ConsumerGroupChangeFactory extends ResourceChangeFactory<String, V1KafkaConsumerGroup> {
+    public static final class ShareGroupChangeFactory extends ResourceChangeFactory<String, V1KafkaShareGroup> {
 
         private final boolean isConfigDeletionEnabled;
 
-        public ConsumerGroupChangeFactory(boolean isConfigDeletionEnabled) {
+        public ShareGroupChangeFactory(boolean isConfigDeletionEnabled) {
             this.isConfigDeletionEnabled = isConfigDeletionEnabled;
         }
 
         @Override
-        public ResourceChange createChangeForCreate(String key, V1KafkaConsumerGroup after) {
+        public ResourceChange createChangeForCreate(String key, V1KafkaShareGroup after) {
             return build(after, Operation.CREATE, GroupConfigs.getConfigChanges(null, configs(after), false));
         }
 
         @Override
-        public ResourceChange createChangeForDelete(String key, V1KafkaConsumerGroup before) {
+        public ResourceChange createChangeForDelete(String key, V1KafkaShareGroup before) {
             return build(before, Operation.DELETE, List.of());
         }
 
         @Override
-        public ResourceChange createChangeForUpdate(String key, V1KafkaConsumerGroup before, V1KafkaConsumerGroup after) {
+        public ResourceChange createChangeForUpdate(String key, V1KafkaShareGroup before, V1KafkaShareGroup after) {
             List<StateChange> configChanges =
                 GroupConfigs.getConfigChanges(configs(before), configs(after), isConfigDeletionEnabled);
             boolean changed = configChanges.stream().anyMatch(c -> c.getOp() != Operation.NONE);
             return build(after, changed ? Operation.UPDATE : Operation.NONE, configChanges);
         }
 
-        private static Configs configs(V1KafkaConsumerGroup group) {
-            return Optional.ofNullable(group.getSpec()).map(V1KafkaConsumerGroupSpec::getConfigs).orElse(null);
+        private static Configs configs(V1KafkaShareGroup group) {
+            return Optional.ofNullable(group.getSpec()).map(V1KafkaShareGroupSpec::getConfigs).orElse(null);
         }
 
-        private static ResourceChange build(V1KafkaConsumerGroup resource, Operation op, List<StateChange> changes) {
-            return GenericResourceChange.builder(V1KafkaConsumerGroup.class)
+        private static ResourceChange build(V1KafkaShareGroup resource, Operation op, List<StateChange> changes) {
+            return GenericResourceChange.builder(V1KafkaShareGroup.class)
                 .withMetadata(resource.getMetadata())
                 .withSpec(ResourceChangeSpec.builder().withOperation(op).withChanges(changes).build())
                 .build();
