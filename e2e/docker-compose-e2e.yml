@@ -8,7 +8,7 @@
 # Minimal setup: Kafka (KRaft), Schema Registry, Kafka Connect.
 services:
   kafka:
-    image: "confluentinc/cp-kafka:7.5.0"
+    image: "confluentinc/cp-kafka:8.2.0"
     ports:
       - "9092:9092"
     container_name: e2e-kafka
@@ -27,6 +27,11 @@ services:
       KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
       KAFKA_SUPER_USERS: 'User:anonymous'
+      # Enable share groups / Queues (KIP-932) for e2e coverage of KafkaShareGroup.
+      KAFKA_GROUP_COORDINATOR_REBALANCE_PROTOCOLS: 'classic,consumer,share'
+      KAFKA_GROUP_SHARE_ENABLE: 'true'
+      KAFKA_SHARE_COORDINATOR_STATE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SHARE_COORDINATOR_STATE_TOPIC_MIN_ISR: 1
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
       interval: 10s
@@ -36,7 +41,7 @@ services:
       - e2e-network
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.5.0
+    image: confluentinc/cp-schema-registry:8.2.0
     hostname: schema-registry
     container_name: e2e-schema-registry
     ports:
@@ -57,7 +62,7 @@ services:
       - e2e-network
 
   connect:
-    image: confluentinc/cp-kafka-connect:7.5.0
+    image: confluentinc/cp-kafka-connect:8.2.0
     container_name: e2e-connect
     depends_on:
       kafka:

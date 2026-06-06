@@ -1,0 +1,162 @@
+{
+  "type": "object",
+  "title": "V1KafkaShareGroup",
+  "description": "Manage share groups (queues) in a Kafka cluster.",
+  "javaInterfaces": [
+    "io.jikkou.core.models.Resource",
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaShareGroupSpec>"
+  ],
+  "additionalProperties": {
+    "lombok-builder": true,
+    "lombok-with": true,
+    "all-args-constructor": false,
+    "spec": {
+      "names": {
+        "singular": "kafkasharegroup",
+        "plural": "kafkasharegroups",
+        "local": "share-groups",
+        "shortNames": [
+          "ksg"
+        ]
+      },
+      "verbs": [
+        "list",
+        "create",
+        "update",
+        "apply",
+        "delete"
+      ]
+    }
+  },
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "default": "kafka.jikkou.io/v1"
+    },
+    "kind": {
+      "type": "string",
+      "default": "KafkaShareGroup"
+    },
+    "metadata": {
+      "$ref": "./Metadata.json"
+    },
+    "template": {
+      "$ref": "./Template.json"
+    },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaShareGroupSpec"
+    },
+    "status": {
+      "$ref": "#/$defs/V1KafkaShareGroupStatus"
+    }
+  },
+  "$defs": {
+    "V1KafkaShareGroupSpec": {
+      "title": "V1KafkaShareGroupSpec",
+      "type": "object",
+      "javaInterfaces": [
+        "io.jikkou.core.models.HasConfigRefs"
+      ],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "configs": {
+          "existingJavaType": "io.jikkou.core.models.Configs",
+          "description": "The share group dynamic configuration properties.",
+          "type": "object"
+        },
+        "configMapRefs": {
+          "type": "array",
+          "description": "The list of ConfigMap names from which to resolve share group configuration.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "V1KafkaShareGroupStatus": {
+      "title": "V1KafkaShareGroupStatus",
+      "type": "object",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "The share group state."
+        },
+        "members": {
+          "type": "array",
+          "description": "List of share group members.",
+          "items": {
+            "$ref": "#/$defs/V1KafkaShareGroupMember"
+          }
+        },
+        "offsets": {
+          "type": "array",
+          "description": "List of share-partition start offsets.",
+          "items": {
+            "type": "object",
+            "$ref": "./V1KafkaConsumerGroup.json#/$defs/V1KafkaConsumerOffset"
+          }
+        },
+        "coordinator": {
+          "type": "object",
+          "description": "The broker node responsible for coordinating this group.",
+          "$ref": "./V1KafkaConsumerGroup.json#/$defs/V1KafkaNode"
+        }
+      }
+    },
+    "V1KafkaShareGroupMember": {
+      "title": "V1KafkaShareGroupMember",
+      "type": "object",
+      "description": "Detailed description of a single share group member.",
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "all-args-constructor": false
+      },
+      "required": [
+        "memberId"
+      ],
+      "properties": {
+        "memberId": {
+          "type": "string",
+          "description": "The member ID."
+        },
+        "clientId": {
+          "type": "string",
+          "description": "The client ID."
+        },
+        "host": {
+          "type": "string",
+          "description": "The member host."
+        },
+        "rackId": {
+          "type": "string",
+          "description": "The rack ID of the member."
+        },
+        "assignments": {
+          "description": "List of topic-partitions assigned to the member.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -31,18 +31,18 @@ import lombok.extern.jackson.Jacksonized;
 
 
 /**
- * V1KafkaConsumerGroup
+ * V1KafkaShareGroup
  * <p>
- * Manage consumer groups in a Kafka cluster.
+ * Manage share groups (queues) in a Kafka cluster.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(builderMethodName = "builder", toBuilder = true, setterPrefix = "with")
 @With
-@Description("Manage consumer groups in a Kafka cluster.")
-@JsonClassDescription("Manage consumer groups in a Kafka cluster.")
-@Names(singular = "kafkaconsumergroup", plural = "kafkaconsumergroups", local = "consumer-groups", shortNames = {
-    "kcg"
+@Description("Manage share groups (queues) in a Kafka cluster.")
+@JsonClassDescription("Manage share groups (queues) in a Kafka cluster.")
+@Names(singular = "kafkasharegroup", plural = "kafkasharegroups", local = "share-groups", shortNames = {
+    "ksg"
 })
 @Verbs({
     Verb.LIST,
@@ -60,11 +60,11 @@ import lombok.extern.jackson.Jacksonized;
     "status"
 })
 @ApiVersion("kafka.jikkou.io/v1")
-@Kind("KafkaConsumerGroup")
+@Kind("KafkaShareGroup")
 @Jacksonized
 @Reflectable
 @Generated("jsonschema2pojo")
-public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsumerGroupSpec> , Resource
+public class V1KafkaShareGroup implements HasMetadata, HasSpec<V1KafkaShareGroupSpec> , Resource
 {
 
     /**
@@ -82,7 +82,7 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
      */
     @JsonProperty("kind")
     @Builder.Default
-    private String kind = "KafkaConsumerGroup";
+    private String kind = "KafkaShareGroup";
     /**
      * ObjectMeta
      * <p>
@@ -103,28 +103,27 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
     @JsonPropertyDescription("Data values to be passed to the template engine.")
     private ObjectTemplate template;
     /**
-     * V1KafkaConsumerGroupSpec
+     * V1KafkaShareGroupSpec
      * <p>
      * 
      * 
      */
     @JsonProperty("spec")
-    private io.jikkou.kafka.models.V1KafkaConsumerGroupSpec spec;
+    private io.jikkou.kafka.models.V1KafkaShareGroupSpec spec;
     /**
-     * V1KafkaConsumerGroupStatus
+     * V1KafkaShareGroupStatus
      * <p>
      * 
-     * (Required)
      * 
      */
     @JsonProperty("status")
-    private V1KafkaConsumerGroupStatus status;
+    private V1KafkaShareGroupStatus status;
 
     /**
      * No args constructor for use in serialization
      * 
      */
-    public V1KafkaConsumerGroup() {
+    public V1KafkaShareGroup() {
     }
 
     /**
@@ -144,7 +143,7 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
         "spec",
         "status"
     })
-    public V1KafkaConsumerGroup(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.jikkou.kafka.models.V1KafkaConsumerGroupSpec spec, V1KafkaConsumerGroupStatus status) {
+    public V1KafkaShareGroup(String apiVersion, String kind, ObjectMeta metadata, ObjectTemplate template, io.jikkou.kafka.models.V1KafkaShareGroupSpec spec, V1KafkaShareGroupStatus status) {
         super();
         this.apiVersion = apiVersion;
         this.kind = kind;
@@ -198,32 +197,31 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
     }
 
     /**
-     * V1KafkaConsumerGroupSpec
+     * V1KafkaShareGroupSpec
      * <p>
      * 
      * 
      */
     @JsonProperty("spec")
-    public io.jikkou.kafka.models.V1KafkaConsumerGroupSpec getSpec() {
+    public io.jikkou.kafka.models.V1KafkaShareGroupSpec getSpec() {
         return spec;
     }
 
     /**
-     * V1KafkaConsumerGroupStatus
+     * V1KafkaShareGroupStatus
      * <p>
      * 
-     * (Required)
      * 
      */
     @JsonProperty("status")
-    public V1KafkaConsumerGroupStatus getStatus() {
+    public V1KafkaShareGroupStatus getStatus() {
         return status;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(V1KafkaConsumerGroup.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(V1KafkaShareGroup.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("apiVersion");
         sb.append('=');
         sb.append(((this.apiVersion == null)?"<null>":this.apiVersion));
@@ -273,10 +271,10 @@ public class V1KafkaConsumerGroup implements HasMetadata, HasSpec<V1KafkaConsume
         if (other == this) {
             return true;
         }
-        if ((other instanceof V1KafkaConsumerGroup) == false) {
+        if ((other instanceof V1KafkaShareGroup) == false) {
             return false;
         }
-        V1KafkaConsumerGroup rhs = ((V1KafkaConsumerGroup) other);
+        V1KafkaShareGroup rhs = ((V1KafkaShareGroup) other);
         return (((((((this.template == rhs.template)||((this.template!= null)&&this.template.equals(rhs.template)))&&((this.metadata == rhs.metadata)||((this.metadata!= null)&&this.metadata.equals(rhs.metadata))))&&((this.apiVersion == rhs.apiVersion)||((this.apiVersion!= null)&&this.apiVersion.equals(rhs.apiVersion))))&&((this.kind == rhs.kind)||((this.kind!= null)&&this.kind.equals(rhs.kind))))&&((this.spec == rhs.spec)||((this.spec!= null)&&this.spec.equals(rhs.spec))))&&((this.status == rhs.status)||((this.status!= null)&&this.status.equals(rhs.status))));
     }
 

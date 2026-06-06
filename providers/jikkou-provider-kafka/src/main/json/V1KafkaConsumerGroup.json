@@ -4,7 +4,8 @@
   "description": "Manage consumer groups in a Kafka cluster.",
   "javaInterfaces": [
     "io.jikkou.core.models.Resource",
-    "io.jikkou.core.models.HasMetadata"
+    "io.jikkou.core.models.HasMetadata",
+    "io.jikkou.core.models.HasSpec<V1KafkaConsumerGroupSpec>"
   ],
   "additionalProperties": {
     "lombok-builder": true,
@@ -20,7 +21,11 @@
         ]
       },
       "verbs": [
-        "list"
+        "list",
+        "create",
+        "update",
+        "apply",
+        "delete"
       ]
     }
   },
@@ -45,11 +50,42 @@
     "template": {
       "$ref": "./Template.json"
     },
+    "spec": {
+      "$ref": "#/$defs/V1KafkaConsumerGroupSpec"
+    },
     "status": {
       "$ref": "#/$defs/V1KafkaConsumerGroupStatus"
     }
   },
   "$defs": {
+    "V1KafkaConsumerGroupSpec": {
+      "title": "V1KafkaConsumerGroupSpec",
+      "type": "object",
+      "javaInterfaces": [
+        "io.jikkou.core.models.HasConfigRefs"
+      ],
+      "additionalProperties": {
+        "lombok-builder": true,
+        "lombok-with": true,
+        "lombok-setter": true,
+        "all-args-constructor": false
+      },
+      "properties": {
+        "configs": {
+          "existingJavaType": "io.jikkou.core.models.Configs",
+          "description": "The consumer group dynamic configuration properties.",
+          "type": "object"
+        },
+        "configMapRefs": {
+          "type": "array",
+          "description": "The list of ConfigMap names from which to resolve consumer group configuration.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
     "V1KafkaConsumerGroupStatus": {
       "title": "V1KafkaConsumerGroupStatus",
       "type": "object",

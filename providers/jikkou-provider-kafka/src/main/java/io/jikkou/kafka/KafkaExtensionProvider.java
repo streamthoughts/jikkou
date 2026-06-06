@@ -14,6 +14,7 @@ import io.jikkou.core.models.change.GenericResourceChange;
 import io.jikkou.core.models.change.ResourceChange;
 import io.jikkou.core.resource.ResourceRegistry;
 import io.jikkou.kafka.action.KafkaConsumerGroupsResetOffsets;
+import io.jikkou.kafka.action.KafkaShareGroupsResetOffsets;
 import io.jikkou.kafka.action.TruncateKafkaTopicRecords;
 import io.jikkou.kafka.collections.V1KafkaBrokerList;
 import io.jikkou.kafka.collections.V1KafkaClientQuotaList;
@@ -149,6 +150,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
         registry.register(AdminClientKafkaTopicController.class, AdminClientKafkaTopicController::new);
         registry.register(AdminClientKafkaQuotaController.class, AdminClientKafkaQuotaController::new);
         registry.register(AdminClientConsumerGroupController.class, AdminClientConsumerGroupController::new);
+        registry.register(AdminClientShareGroupController.class, AdminClientShareGroupController::new);
         registry.register(AdminClientKafkaUserController.class, AdminClientKafkaUserController::new);
 
         // collectors
@@ -159,6 +161,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
         registry.register(AdminClientKafkaTableCollector.class, AdminClientKafkaTableCollector::new);
         registry.register(AdminClientKafkaTableController.class, AdminClientKafkaTableController::new);
         registry.register(AdminClientConsumerGroupCollector.class, AdminClientConsumerGroupCollector::new);
+        registry.register(AdminClientShareGroupCollector.class, AdminClientShareGroupCollector::new);
         registry.register(AdminClientKafkaUserCollector.class, AdminClientKafkaUserCollector::new);
 
         // transformations
@@ -189,6 +192,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
 
         // actions
         registry.register(KafkaConsumerGroupsResetOffsets.class, KafkaConsumerGroupsResetOffsets::new);
+        registry.register(KafkaShareGroupsResetOffsets.class, KafkaShareGroupsResetOffsets::new);
         registry.register(TruncateKafkaTopicRecords.class, TruncateKafkaTopicRecords::new);
     }
 
@@ -215,6 +219,7 @@ public final class KafkaExtensionProvider extends BaseExtensionProvider {
         registerWithOrder(registry, V1KafkaClientQuota.class, 150);
         registerWithOrder(registry, V1KafkaPrincipalAuthorization.class, 200);
         registerWithOrder(registry, V1KafkaConsumerGroup.class, 250);
+        registerWithOrder(registry, V1KafkaShareGroup.class, 250);
         registerWithOrder(registry, V1KafkaTableRecord.class, 300);
 
         // register collections

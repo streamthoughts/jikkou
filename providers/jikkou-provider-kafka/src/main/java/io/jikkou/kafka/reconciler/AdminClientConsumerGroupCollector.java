@@ -14,15 +14,19 @@ import io.jikkou.core.config.Configuration;
 import io.jikkou.core.data.TypeConverter;
 import io.jikkou.core.extension.ContextualExtension;
 import io.jikkou.core.extension.ExtensionContext;
+import io.jikkou.core.models.Configs;
 import io.jikkou.core.models.ResourceList;
 import io.jikkou.core.reconciler.Collector;
 import io.jikkou.core.selector.Selector;
 import io.jikkou.kafka.KafkaExtensionProvider;
+import io.jikkou.kafka.collections.V1KafkaConsumerGroupList;
 import io.jikkou.kafka.internals.admin.AdminClientContext;
 import io.jikkou.kafka.internals.admin.AdminClientContextFactory;
 import io.jikkou.kafka.models.V1KafkaConsumerGroup;
+import io.jikkou.kafka.models.V1KafkaConsumerGroupSpec;
 import io.jikkou.kafka.reconciler.service.KafkaAdminService;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.kafka.common.ConsumerGroupState;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +95,20 @@ public final class AdminClientConsumerGroupCollector extends ContextualExtension
                                                       @NotNull Selector selector) {
         try (AdminClientContext clientContext = adminClientContextFactory.createAdminClientContext()) {
             KafkaAdminService service = new KafkaAdminService(clientContext.getAdminClient());
-            return service.listConsumerGroups(Config.IN_STATES.get(configuration), Config.OFFSETS.get(configuration));
+            V1KafkaConsumerGroupList groups = service.listConsumerGroups(
+                Config.IN_STATES.get(configuration), Config.OFFSETS.get(configuration));
+
+            List<String> ids = groups.getItems().stream()
+                .map(g -> g.getMetadata().getName())
+                .toList();
+            Map<String, Configs> configsByGroup = service.describeGroupConfigs(ids);
+
+            List<V1KafkaConsumerGroup> items = groups.getItems().stream()
+                .map(g -> g.withSpec(V1KafkaConsumerGroupSpec.builder()
+                    .withConfigs(configsByGroup.getOrDefault(g.getMetadata().getName(), Configs.empty()))
+                    .build()))
+                .toList();
+            return new V1KafkaConsumerGroupList.Builder().withItems(items).build();
         }
     }
 

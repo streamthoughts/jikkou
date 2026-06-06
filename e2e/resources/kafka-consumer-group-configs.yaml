@@ -1,0 +1,8 @@
+---
+apiVersion: "kafka.jikkou.io/v1"
+kind: "KafkaConsumerGroup"
+metadata:
+  name: 'e2e-consumer-group'
+spec:
+  configs:
+    consumer.session.timeout.ms: 50000

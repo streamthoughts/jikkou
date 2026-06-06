@@ -1,0 +1,9 @@
+---
+apiVersion: "kafka.jikkou.io/v1"
+kind: "KafkaShareGroup"
+metadata:
+  name: 'e2e-share-queue'
+spec:
+  configs:
+    share.auto.offset.reset: 'latest'
+    share.record.lock.duration.ms: 45000

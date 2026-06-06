@@ -11,8 +11,11 @@ import static io.jikkou.kafka.KafkaLabelAndAnnotations.JIKKOU_IO_KAFKA_IS_SIMPLE
 import io.jikkou.common.utils.AsyncUtils;
 import io.jikkou.common.utils.Strings;
 import io.jikkou.core.exceptions.JikkouRuntimeException;
+import io.jikkou.core.models.ConfigValue;
+import io.jikkou.core.models.Configs;
 import io.jikkou.core.models.ObjectMeta;
 import io.jikkou.kafka.collections.V1KafkaConsumerGroupList;
+import io.jikkou.kafka.collections.V1KafkaShareGroupList;
 import io.jikkou.kafka.internals.Futures;
 import io.jikkou.kafka.models.*;
 import io.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToEarliest;
@@ -21,13 +24,17 @@ import io.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToOffset;
 import io.jikkou.kafka.reconciler.service.KafkaOffsetSpec.ToTimestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.ConsumerGroupState;
+import org.apache.kafka.common.GroupState;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -398,5 +405,225 @@ public final class KafkaAdminService {
                     }
                 ).toList())
             .flatMapMany(Flux::fromIterable);
+    }
+
+    /**
+     * Lists share groups for the specified states.
+     *
+     * @param inStates        Set of GroupState to filter; empty means all.
+     * @param describeOffsets Specify whether SPSO offsets should be described.
+     * @return The {@link V1KafkaShareGroupList}.
+     */
+    @NotNull
+    public V1KafkaShareGroupList listShareGroups(@NotNull Set<GroupState> inStates,
+                                                 boolean describeOffsets) {
+        ListGroupsOptions options = ListGroupsOptions.forShareGroups();
+        if (!inStates.isEmpty()) {
+            options = options.inGroupStates(inStates);
+        }
+        final List<String> groupIds = AsyncUtils.getValueOrThrowException(
+                Futures.toCompletableFuture(client.listGroups(options).all()),
+                e -> new JikkouRuntimeException(String.format(
+                    "Failed to list share groups. Cause %s: %s.",
+                    e.getClass().getSimpleName(), e.getLocalizedMessage())))
+            .stream()
+            .map(GroupListing::groupId)
+            .toList();
+        return listShareGroups(groupIds, describeOffsets);
+    }
+
+    /**
+     * Lists the specified share groups.
+     *
+     * @param groups          The share group ids.
+     * @param describeOffsets Specify whether SPSO offsets should be described.
+     * @return The {@link V1KafkaShareGroupList}.
+     */
+    @NotNull
+    public V1KafkaShareGroupList listShareGroups(@NotNull List<String> groups,
+                                                 boolean describeOffsets) {
+        if (groups.isEmpty()) {
+            return new V1KafkaShareGroupList.Builder().withItems(List.of()).build();
+        }
+        Map<String, ShareGroupDescription> described = AsyncUtils.getValueOrThrowException(
+                Futures.toCompletableFuture(client.describeShareGroups(groups).all()),
+                e -> new JikkouRuntimeException(String.format(
+                    "Failed to describe share groups. Cause %s: %s.",
+                    e.getClass().getSimpleName(), e.getLocalizedMessage())));
+
+        Map<String, Configs> configsByGroup = describeGroupConfigs(groups);
+
+        List<V1KafkaShareGroup> items = described.values().stream()
+            .map(this::mapToResource)
+            .map(group -> {
+                Configs configs = configsByGroup.getOrDefault(group.getMetadata().getName(), Configs.empty());
+                return group.withSpec(V1KafkaShareGroupSpec.builder().withConfigs(configs).build());
+            })
+            .map(group -> describeOffsets ? withShareGroupOffsets(group) : group)
+            .toList();
+        return new V1KafkaShareGroupList.Builder().withItems(items).build();
+    }
+
+    private V1KafkaShareGroup withShareGroupOffsets(@NotNull V1KafkaShareGroup group) {
+        String groupId = group.getMetadata().getName();
+        ListShareGroupOffsetsSpec spec = new ListShareGroupOffsetsSpec();
+        Map<TopicPartition, SharePartitionOffsetInfo> offsets = AsyncUtils.getValueOrThrowException(
+            Futures.toCompletableFuture(
+                client.listShareGroupOffsets(Map.of(groupId, spec)).partitionsToOffsetInfo(groupId)),
+            e -> new JikkouRuntimeException(String.format(
+                "Failed to list share group offsets for '%s'. Cause %s: %s.",
+                groupId, e.getClass().getSimpleName(), e.getLocalizedMessage())));
+        List<V1KafkaConsumerOffset> mapped = offsets.entrySet().stream()
+            .map(e -> new V1KafkaConsumerOffset(
+                e.getKey().topic(), e.getKey().partition(),
+                e.getValue().startOffset(), e.getValue().lag().orElse(-1L)))
+            .toList();
+        return group.withStatus(group.getStatus().withOffsets(mapped));
+    }
+
+    /**
+     * Maps a {@link ShareGroupDescription} to a {@link V1KafkaShareGroup} (status only).
+     *
+     * @param description the share group description.
+     * @return the {@link V1KafkaShareGroup}.
+     */
+    public V1KafkaShareGroup mapToResource(@NotNull ShareGroupDescription description) {
+        List<V1KafkaShareGroupMember> members = description.members().stream()
+            .map(this::mapToShareMember)
+            .toList();
+
+        V1KafkaShareGroupStatus status = V1KafkaShareGroupStatus.builder()
+            .withState(description.groupState().name())
+            .withCoordinator(V1KafkaNode.builder()
+                .withId(description.coordinator().idString())
+                .withHost(description.coordinator().host())
+                .withPort(description.coordinator().port())
+                .withRack(description.coordinator().rack())
+                .build())
+            .withMembers(members)
+            .build();
+
+        return V1KafkaShareGroup.builder()
+            .withMetadata(ObjectMeta.builder().withName(description.groupId()).build())
+            .withStatus(status)
+            .build();
+    }
+
+    private V1KafkaShareGroupMember mapToShareMember(@NotNull ShareMemberDescription member) {
+        List<String> assignments = member.assignment().topicPartitions().stream()
+            .map(TopicPartition::toString)
+            .toList();
+        return V1KafkaShareGroupMember.builder()
+            .withMemberId(member.consumerId())
+            .withClientId(member.clientId())
+            .withHost(member.host())
+            .withRackId(member.rackId().orElse(null))
+            .withAssignments(assignments)
+            .build();
+    }
+
+    /**
+     * Reads the user-set dynamic configs for the given group ids (GROUP resource type),
+     * filtered to {@code DYNAMIC_GROUP_CONFIG} so broker defaults are not treated as drift.
+     *
+     * @param groupIds the group ids.
+     * @return a map of group id to its dynamic {@link Configs}.
+     */
+    @NotNull
+    public Map<String, Configs> describeGroupConfigs(@NotNull List<String> groupIds) {
+        if (groupIds.isEmpty()) {
+            return Map.of();
+        }
+        List<ConfigResource> resources = groupIds.stream()
+            .map(id -> new ConfigResource(ConfigResource.Type.GROUP, id))
+            .toList();
+
+        // Resolve each resource individually so that a group with no dynamic config (which some
+        // brokers surface as GroupIdNotFoundException) is treated as having empty configs rather
+        // than failing the whole describe.
+        Map<ConfigResource, KafkaFuture<Config>> futures = client.describeConfigs(resources).values();
+        Map<String, Configs> result = new HashMap<>();
+        for (Map.Entry<ConfigResource, KafkaFuture<Config>> entry : futures.entrySet()) {
+            String groupId = entry.getKey().name();
+            try {
+                Config config = entry.getValue().get();
+                Set<ConfigValue> values = config.entries().stream()
+                    .filter(e -> e.source() == ConfigEntry.ConfigSource.DYNAMIC_GROUP_CONFIG)
+                    .map(e -> new ConfigValue(e.name(), e.value()))
+                    .collect(Collectors.toSet());
+                result.put(groupId, new Configs(values));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new JikkouRuntimeException(String.format(
+                    "Interrupted while describing configs for group '%s'.", groupId), e);
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof GroupIdNotFoundException) {
+                    result.put(groupId, Configs.empty());
+                } else {
+                    throw new JikkouRuntimeException(String.format(
+                        "Failed to describe configs for group '%s'. Cause %s: %s.",
+                        groupId, e.getCause().getClass().getSimpleName(), e.getCause().getLocalizedMessage()),
+                        e.getCause());
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Resets share-group offsets (SPSO) for the specified group and topics.
+     *
+     * @param groupId    The share group id.
+     * @param topics     The topics (each "topic" or "topic:partition").
+     * @param offsetSpec The offset specification (ToEarliest, ToLatest, ToOffset, ToTimestamp), or {@code null} to delete offsets.
+     * @param dryRun     Whether to run in dry-run.
+     * @return The refreshed {@link V1KafkaShareGroup}.
+     */
+    public V1KafkaShareGroup resetShareGroupOffsets(@NotNull String groupId,
+                                                    @NotNull List<String> topics,
+                                                    KafkaOffsetSpec offsetSpec,
+                                                    boolean dryRun) {
+        if (Strings.isNullOrEmpty(groupId)) {
+            throw new IllegalArgumentException("groupId cannot be null");
+        }
+
+        // delete offsets when no spec provided
+        if (offsetSpec == null) {
+            if (!dryRun) {
+                Set<String> topicNames = topics.stream()
+                    .map(TopicPartitionSelector::parse)
+                    .map(TopicPartitionSelector::topic)
+                    .collect(Collectors.toSet());
+                AsyncUtils.getValueOrThrowException(
+                    Futures.toCompletableFuture(client.deleteShareGroupOffsets(groupId, topicNames).all()),
+                    JikkouRuntimeException::new);
+            }
+            return listShareGroups(List.of(groupId), true).first();
+        }
+
+        Map<TopicPartition, Long> offsets;
+        if (offsetSpec instanceof ToOffset to) {
+            offsets = AsyncUtils.getValueOrThrowException(
+                    resolveTopicPartitions(parseSelectors(topics)), JikkouRuntimeException::new)
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), tp -> to.offset()));
+        } else {
+            OffsetSpec spec = switch (offsetSpec) {
+                case ToEarliest ignored -> OffsetSpec.earliest();
+                case ToLatest ignored -> OffsetSpec.latest();
+                case ToTimestamp t -> OffsetSpec.forTimestamp(t.timestamp());
+                default -> throw new IllegalArgumentException("Unsupported offset specification: " + offsetSpec);
+            };
+            offsets = AsyncUtils.getValueOrThrowException(listOffsets(topics, spec), JikkouRuntimeException::new)
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().offset()));
+        }
+
+        if (!dryRun) {
+            AsyncUtils.getValueOrThrowException(
+                Futures.toCompletableFuture(client.alterShareGroupOffsets(groupId, offsets).all()),
+                JikkouRuntimeException::new);
+        }
+        return listShareGroups(List.of(groupId), true).first();
     }
 }
