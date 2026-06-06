@@ -96,3 +96,22 @@ status:
     host: "localhost"
     port: 9092
 ```
+
+## Managing consumer group configuration
+
+Since Kafka 4.x, consumer groups support dynamic group-level configuration. You can manage these
+declaratively through the `spec.configs` map, which is reconciled against the Kafka `GROUP`
+configuration resource (drift detection + incremental alter), just like topic configs.
+
+```yaml
+apiVersion: "kafka.jikkou.io/v1"
+kind: "KafkaConsumerGroup"
+metadata:
+  name: "my-group"
+spec:
+  configs:
+    consumer.session.timeout.ms: 50000
+```
+
+By default, group configs present on the cluster but absent from the resource are removed
+(`config-delete-orphans=true`). Set it to `false` to leave externally-managed configs untouched.
