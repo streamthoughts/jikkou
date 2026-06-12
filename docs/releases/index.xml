@@ -11,7 +11,7 @@
 &lt;/ul>
 &lt;p>To install, see the &lt;a href="https://www.jikkou.io/docs/install/">installation guide&lt;/a>.
 For the full changelog, see the &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v1.0.0">GitHub release page&lt;/a>.
-For step-by-step upgrade instructions, see &lt;a href="https://www.jikkou.io/docs/migration/migrate-to-1.0/">Migrating to Jikkou 1.0&lt;/a>.&lt;/p></description></item><item><title>Release v0.37.0</title><link>https://www.jikkou.io/docs/releases/release-v0.37.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v0.37.0/</guid><description>&lt;h2 id="-introducing-jikkou-0370">🚀 Introducing Jikkou 0.37.0&lt;/h2>
+For step-by-step upgrade instructions, see &lt;a href="https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/">Migrating to Jikkou 1.0&lt;/a>.&lt;/p></description></item><item><title>Release v0.37.0</title><link>https://www.jikkou.io/docs/releases/release-v0.37.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v0.37.0/</guid><description>&lt;h2 id="-introducing-jikkou-0370">🚀 Introducing Jikkou 0.37.0&lt;/h2>
 &lt;p>We&amp;rsquo;re pleased to announce &lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v0.37.0">Jikkou 0.37.0&lt;/a>.&lt;/p>
 &lt;p>This release tackles real pain points reported by the community — from managing multiple Kafka environments in a single config, to fixing broken Schema Registry workflows. Here&amp;rsquo;s the overview:&lt;/p>
 &lt;ul>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Resources on Jikkou</title><link>https://www.jikkou.io/docs/reference/providers/confluent-cloud/resources/</link><description>Recent content in Resources on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/reference/providers/confluent-cloud/resources/index.xml" rel="self" type="application/rss+xml"/><item><title>Role Bindings for Confluent Cloud</title><link>https://www.jikkou.io/docs/reference/providers/confluent-cloud/resources/role-binding/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/providers/confluent-cloud/resources/role-binding/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>The &lt;code>RoleBinding&lt;/code> resources are used to manage RBAC role bindings in Confluent Cloud. A
+&lt;code>RoleBinding&lt;/code> resource defines which role is granted to a principal for a specific scope (identified by a CRN pattern).&lt;/p>
+
+&lt;/div>
+
+&lt;h2 id="rolebinding">&lt;code>RoleBinding&lt;/code>&lt;/h2>
+&lt;h3 id="specification">Specification&lt;/h3>
+&lt;p>Here is the &lt;em>resource definition file&lt;/em> for defining a &lt;code>RoleBinding&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;iam.confluent.cloud/v1&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The api version (required)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;RoleBinding&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The resource kind (required)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">labels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{&lt;span class="w"> &lt;/span>}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">annotations&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{&lt;span class="w"> &lt;/span>}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">principal&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;&amp;gt; &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The principal (e.g., User:sa-abc123 or User:u-xyz789)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">roleName&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;&amp;gt; &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The role name (e.g., CloudClusterAdmin, DeveloperRead)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">crnPattern&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;&amp;gt; &lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># The Confluent Resource Name pattern (e.g., crn://confluent.cloud/...)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="fields">Fields&lt;/h3>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Field&lt;/th>
+ &lt;th>Type&lt;/th>
+ &lt;th>Required&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>principal&lt;/code>&lt;/td>
+ &lt;td>String&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>The principal. Pattern: &lt;code>User:&amp;lt;user-id&amp;gt;&lt;/code> or &lt;code>Group:&amp;lt;group-name&amp;gt;&lt;/code>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>roleName&lt;/code>&lt;/td>
+ &lt;td>String&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>The role to bind. See &lt;a href="https://docs.confluent.io/cloud/current/security/access-control/rbac/predefined-rbac-roles.html">Confluent Cloud RBAC roles&lt;/a>.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>crnPattern&lt;/code>&lt;/td>
+ &lt;td>String&lt;/td>
+ &lt;td>Yes&lt;/td>
+ &lt;td>The Confluent Resource Name (CRN) pattern defining the scope of the binding.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h3 id="common-role-names">Common Role Names&lt;/h3>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Role&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>OrganizationAdmin&lt;/code>&lt;/td>
+ &lt;td>Full access to the organization.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>EnvironmentAdmin&lt;/code>&lt;/td>
+ &lt;td>Full access to an environment.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>CloudClusterAdmin&lt;/code>&lt;/td>
+ &lt;td>Full access to a Kafka cluster.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>DeveloperManage&lt;/code>&lt;/td>
+ &lt;td>Manage topics and schemas.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>DeveloperRead&lt;/code>&lt;/td>
+ &lt;td>Read from topics and view schemas.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>DeveloperWrite&lt;/code>&lt;/td>
+ &lt;td>Write to topics and manage schemas.&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>ResourceOwner&lt;/code>&lt;/td>
+ &lt;td>Full access to a specific resource.&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h3 id="example">Example&lt;/h3>
+&lt;p>Here is a simple example that shows how to define a single role binding using
+the &lt;code>RoleBinding&lt;/code> resource type.&lt;/p></description></item></channel></rss>

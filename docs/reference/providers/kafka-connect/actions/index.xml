@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Actions on Jikkou</title><link>https://www.jikkou.io/docs/reference/providers/kafka-connect/actions/</link><description>Recent content in Actions on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/reference/providers/kafka-connect/actions/index.xml" rel="self" type="application/rss+xml"/><item><title>KafkaConnectRestartConnectors</title><link>https://www.jikkou.io/docs/reference/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/providers/kafka-connect/actions/kafkaconnectrestartconnectors/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>The &lt;code>KafkaConnectRestartConnectors&lt;/code> action allows a user to restart all or just the
+failed Connector and Task instances for one or multiple named connectors.&lt;/p>
+
+&lt;/div>
+
+&lt;h2 id="usage-cli">Usage (CLI)&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">Usage:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Execute the action.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou action KafkaConnectRestartConnectors execute &lt;span class="o">[&lt;/span>-hV&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>--include-tasks&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>--only-failed&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>--connect-cluster&lt;span class="o">=&lt;/span>PARAM&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>--logger-level&lt;span class="o">=&lt;/span>&amp;lt;level&amp;gt;&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>-o&lt;span class="o">=&lt;/span>&amp;lt;format&amp;gt;&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>--connector-name&lt;span class="o">=&lt;/span>PARAM&lt;span class="o">]&lt;/span>...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">DESCRIPTION:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The KafkaConnectRestartConnectors action a user to restart all or just the
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">failed Connector and Task instances &lt;span class="k">for&lt;/span> one or multiple named connectors.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">OPTIONS:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> --connect-cluster&lt;span class="o">=&lt;/span>PARAM
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> The name of the connect cluster.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> --connector-name&lt;span class="o">=&lt;/span>PARAM
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> The connector&lt;span class="err">&amp;#39;&lt;/span>s name.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> -h, --help Show this &lt;span class="nb">help&lt;/span> message and exit.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> --include-tasks Specifies whether to restart the connector instance
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> and task instances &lt;span class="o">(&lt;/span>&lt;span class="nv">includeTasks&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>&lt;span class="o">)&lt;/span> or just the
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> connector instance &lt;span class="o">(&lt;/span>&lt;span class="nv">includeTasks&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">false&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> --logger-level&lt;span class="o">=&lt;/span>&amp;lt;level&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Specify the log level verbosity to be used &lt;span class="k">while&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> running a command.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Valid level values are: TRACE, DEBUG, INFO, WARN,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ERROR.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> For example, &lt;span class="sb">`&lt;/span>--logger-level&lt;span class="o">=&lt;/span>INFO&lt;span class="sb">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> -o, --output&lt;span class="o">=&lt;/span>&amp;lt;format&amp;gt; Prints the output in the specified format. Allowed
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> values: JSON, YAML &lt;span class="o">(&lt;/span>default YAML&lt;span class="o">)&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> --only-failed Specifies whether to restart just the instances with
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> a FAILED status &lt;span class="o">(&lt;/span>&lt;span class="nv">onlyFailed&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>&lt;span class="o">)&lt;/span> or all instances
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">(&lt;/span>&lt;span class="nv">onlyFailed&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="nb">false&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> -V, --version Print version information and exit.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="examples">Examples&lt;/h3>
+&lt;h3 id="restart-all-connectors-for-all-kafka-connect-clusters">Restart all connectors for all Kafka Connect clusters.&lt;/h3>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou action kafkaconnectrestartconnectors execute
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>(output)&lt;/strong>&lt;/p></description></item></channel></rss>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Automating on Jikkou</title><link>https://www.jikkou.io/docs/jikkou-cli/automating/</link><description>Recent content in Automating on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/jikkou-cli/automating/index.xml" rel="self" type="application/rss+xml"/><item><title>Automate Jikkou with GitHub Actions</title><link>https://www.jikkou.io/docs/jikkou-cli/automating/githubactions/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/jikkou-cli/automating/githubactions/</guid><description>&lt;h2 id="setup-jikkou">Setup Jikkou&lt;/h2>
-&lt;p>The &lt;a href="https://github.com/streamthoughts/setup-jikkou">&lt;code>streamthoughts/setup-jikkou&lt;/code>&lt;/a> action is a JavaScript action that
-sets up Jikkou in your &lt;strong>GitHub Actions&lt;/strong> workflow by:&lt;/p>
-&lt;ul>
-&lt;li>Downloading a specific version of &lt;strong>Jikkou CLI&lt;/strong> and adding it to the &lt;code>PATH&lt;/code>.&lt;/li>
-&lt;li>Configuring &lt;strong>JIKKOU CLI&lt;/strong> with a custom configuration file.&lt;/li>
-&lt;/ul>
-&lt;p>After you&amp;rsquo;ve used the action, subsequent steps in the same job can run arbitrary Jikkou commands using the GitHub
-Actions run syntax. This allows most Jikkou commands to work exactly like they do on your local command line.&lt;/p></description></item></channel></rss>
