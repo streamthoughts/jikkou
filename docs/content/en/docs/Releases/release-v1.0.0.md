@@ -20,7 +20,7 @@ We're pleased to announce [Jikkou 1.0.0](https://github.com/streamthoughts/jikko
 
 To install, see the [installation guide](https://www.jikkou.io/docs/install/).
 For the full changelog, see the [GitHub release page](https://github.com/streamthoughts/jikkou/releases/tag/v1.0.0).
-For step-by-step upgrade instructions, see [Migrating to Jikkou 1.0]({{< relref "/docs/Migration/migrate-to-1.0.md" >}}).
+For step-by-step upgrade instructions, see [Migrating to Jikkou 1.0]({{< relref "migrate-to-1.0.md" >}}).
 
 ---
 
@@ -176,7 +176,7 @@ Jikkou builds a dependency graph from the manifest and processes resources in to
 
 Upgrading from 0.37.x is straightforward thanks to the deprecation shim — most setups will run 1.0.0 unchanged with deprecation warnings, then clean up at their own pace.
 
-See the dedicated [Migrating to Jikkou 1.0]({{< relref "/docs/Migration/migrate-to-1.0.md" >}}) guide for:
+See the dedicated [Migrating to Jikkou 1.0]({{< relref "migrate-to-1.0.md" >}}) guide for:
 
 - Maven / Gradle coordinate updates
 - An import-rename recipe for custom extensions

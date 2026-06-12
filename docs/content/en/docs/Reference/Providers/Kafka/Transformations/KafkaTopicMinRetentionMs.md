@@ -1,0 +1,33 @@
+---
+title: "KafkaTopicMinRetentionMs"
+linkTitle: "KafkaTopicMinRetentionMs"
+description: "Enforce a minimum retention.ms value for Kafka topics using this Jikkou transformation."
+aliases:
+  - /docs/providers/kafka/transformations/kafkatopicminretentionms/
+---
+
+{{% pageinfo color="info" %}}
+This transformation can be used to enforce a **minimum** value for the **`retention.ms`** property of kafka topics.
+{{% /pageinfo %}}
+
+## Configuration
+
+| Name             | Type | Description                                                 | Default |
+|------------------|------|-------------------------------------------------------------|---------|
+| `minRetentionMs` | Int  | Minimum value of `retention.ms` to be used for Kafka Topics |         |
+
+## Example
+
+```hocon
+jikkou {
+  transformations: [
+    {
+      type = io.jikkou.kafka.transform.KafkaTopicMinRetentionMsTransformation
+      priority = 100
+      config = {
+        minRetentionMs = 604800000 # 7 days
+      }
+    }
+  ]
+}
+```

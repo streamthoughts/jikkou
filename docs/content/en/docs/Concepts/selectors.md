@@ -181,7 +181,7 @@ jikkou get kafkatopics \
 
 ## SEE ALSO
 
-- [jikkou get]({{% relref "../Jikkou CLI/Commands/jikkou-get" %}}) - Display resources with selectors
-- [jikkou apply]({{% relref "../Jikkou CLI/Commands/jikkou-apply" %}}) - Apply resources with selectors
-- [jikkou diff]({{% relref "../Jikkou CLI/Commands/jikkou-diff" %}}) - Diff resources with selectors
+- [jikkou get]({{% relref "jikkou-get.md" %}}) - Display resources with selectors
+- [jikkou apply]({{% relref "jikkou-apply.md" %}}) - Apply resources with selectors
+- [jikkou diff]({{% relref "jikkou-diff.md" %}}) - Diff resources with selectors
 - [Labels and annotations]({{% relref "./labels-and-annotations" %}}) - Using labels for resource organization

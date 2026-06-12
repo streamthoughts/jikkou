@@ -1,0 +1,33 @@
+---
+title: "KafkaTopicMinInSyncReplicas"
+linkTitle: "KafkaTopicMinInSyncReplicas"
+description: "Enforce a minimum min.insync.replicas value for Kafka topics using this Jikkou transformation."
+aliases:
+  - /docs/providers/kafka/transformations/kafkatopicmininsyncreplicas/
+---
+
+{{% pageinfo color="info" %}}
+This transformation can be used to enforce a **minimum** value for the **`min.insync.replicas`** property of kafka topics.
+{{% /pageinfo %}}
+
+## Configuration
+
+| Name                | Type | Description                                                        | Default |
+|---------------------|------|--------------------------------------------------------------------|---------|
+| `minInSyncReplicas` | Int  | Minimum value of `min.insync.replicas` to be used for Kafka Topics |         |
+
+## Example
+
+```hocon
+jikkou {
+  transformations: [
+    {
+      type = io.jikkou.kafka.transform.KafkaTopicMinInSyncReplicasTransformation
+      priority = 100
+      config = {
+        minInSyncReplicas = 2
+      }
+    }
+  ]
+}
+```

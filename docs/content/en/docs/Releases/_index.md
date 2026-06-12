@@ -2,10 +2,11 @@
 title: "Releases"
 linkTitle: "Releases"
 description: "View all Jikkou releases, changelog, and version history."
-weight: 0
+weight: 8
 menu:
   main:
-    weight: 15
+    name: "Releases"
+    weight: 16
 ---
 
 

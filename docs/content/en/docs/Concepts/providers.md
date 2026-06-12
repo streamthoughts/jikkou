@@ -118,12 +118,12 @@ Jikkou ships with the following built-in extension providers:
 
 | Provider                                                         | Description                                                     |
 |------------------------------------------------------------------|-----------------------------------------------------------------|
-| [Apache Kafka]({{< ref "/docs/providers/kafka" >}})              | Manage Kafka Topics, ACLs, Quotas, and Consumer Groups          |
-| [Schema Registry]({{< ref "/docs/providers/schema registry" >}}) | Manage Schema Registry subjects and schemas                     |
-| [Kafka Connect]({{< ref "/docs/providers/kafka connect" >}})     | Manage Kafka Connect connectors                                 |
-| [Aiven]({{< ref "/docs/providers/aiven" >}})                     | Manage Aiven-specific resources (ACLs, Quotas, Schema Registry) |
-| [AWS]({{< ref "/docs/providers/aws" >}})                         | Manage AWS Glue Schema Registry resources                       |
-| [Core]({{< ref "/docs/providers/core" >}})                       | Core resource types (e.g., ConfigMap)                           |
+| [Apache Kafka]({{< ref "/docs/reference/providers/kafka" >}})              | Manage Kafka Topics, ACLs, Quotas, and Consumer Groups          |
+| [Schema Registry]({{< ref "/docs/reference/providers/schema registry" >}}) | Manage Schema Registry subjects and schemas                     |
+| [Kafka Connect]({{< ref "/docs/reference/providers/kafka connect" >}})     | Manage Kafka Connect connectors                                 |
+| [Aiven]({{< ref "/docs/reference/providers/aiven" >}})                     | Manage Aiven-specific resources (ACLs, Quotas, Schema Registry) |
+| [AWS]({{< ref "/docs/reference/providers/aws" >}})                         | Manage AWS Glue Schema Registry resources                       |
+| [Core]({{< ref "/docs/reference/providers/core" >}})                       | Core resource types (e.g., ConfigMap)                           |
 
 ## Discovering Providers
 
@@ -144,4 +144,4 @@ jikkou api-resources
 
 - [Controllers]({{% relref "./controller" %}}) - Extensions that reconcile resources
 - [Collectors]({{% relref "./collector" %}}) - Extensions that collect resource state
-- [Configuration]({{% relref "../Jikkou CLI/CLI-Configuration" %}}) - How to configure providers via contexts
+- [Configuration]({{% relref "CLI-Configuration.md" %}}) - How to configure providers via contexts

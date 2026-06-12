@@ -73,7 +73,7 @@ jikkou {
 }
 ```
 
-See more: [LocalResourceRepository Configuration]({{% relref "../Providers/Core/Repositories/local" %}})
+See more: [LocalResourceRepository Configuration]({{% relref "../Reference/Providers/Core/Repositories/local" %}})
 
 ### GitHubResourceRepository
 
@@ -104,4 +104,4 @@ jikkou {
 }
 ```
 
-See more: [GitHubResourceRepository Configuration]({{% relref "../Providers/Core/Repositories/github" %}})
+See more: [GitHubResourceRepository Configuration]({{% relref "../Reference/Providers/Core/Repositories/github" %}})

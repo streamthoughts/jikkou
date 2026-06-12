@@ -127,16 +127,6 @@ offlineSearch = true
 # Enable syntax highlighting and copy buttons on code blocks with Prism
 prism_syntax_highlighting = false
 
-[[menu.main]]
-name = "GitHub"
-weight = 50
-url = "https://github.com/streamthoughts/jikkou"
-pre = "<i class='fa-brands fa-github'></i>"
-[[menu.main]]
-name = "Slack"
-weight = 50
-url = "https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA"
-pre = "<i class='fa-brands fa-slack'></i>"
 
 # User interface configuration
 [params.ui]

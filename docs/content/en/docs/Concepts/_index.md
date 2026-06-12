@@ -4,6 +4,10 @@ linkTitle: "Concepts"
 weight: 5
 description: >
   Learn the core concepts behind Jikkou — resources, reconciliation, transformations, validations, providers, and more.
+menu:
+  main:
+    name: "Concepts"
+    weight: 14
 ---
 
 {{% pageinfo %}}

@@ -3,9 +3,6 @@ title: "Overview"
 linkTitle: "Overview"
 description: "What is Jikkou ?"
 weight: 1
-menu:
-  main:
-    weight: 10
 ui.breadcrumb_disable: false
 ---
 
