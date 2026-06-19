@@ -30,7 +30,7 @@ jobs:
       security-events: write
     steps:
     - name: 'Checkout code'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: 'Set up JDK'
       uses: actions/setup-java@v5
@@ -148,7 +148,7 @@ jobs:
     timeout-minutes: 60
     steps:
     - name: 'Checkout code'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: 'Set up GraalVM'
       uses: graalvm/setup-graalvm@v1
