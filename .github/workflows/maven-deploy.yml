@@ -21,7 +21,7 @@ jobs:
       contents: read
     steps:
       - name: 'Checkout GitHub repository'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           clean: true
 
