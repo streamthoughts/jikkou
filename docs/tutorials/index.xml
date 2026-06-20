@@ -13,4 +13,26 @@ with Jikkou.&lt;/p>
 &lt;/ul>
 &lt;h2 id="start-your-local-apache-kafka-cluster">Start your local Apache Kafka Cluster&lt;/h2>
 &lt;p>You must have access to an Apache Kafka cluster for using Jikkou.
-Most of the time, the latest version of Jikkou is always built for working with the most recent version of Apache Kafka.&lt;/p></description></item></channel></rss>
+Most of the time, the latest version of Jikkou is always built for working with the most recent version of Apache Kafka.&lt;/p></description></item><item><title>Preview Changes and Detect Drift</title><link>https://www.jikkou.io/docs/tutorials/preview-and-drift/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/tutorials/preview-and-drift/</guid><description>&lt;p>In this tutorial you&amp;rsquo;ll learn the mental model at the heart of Jikkou: &lt;strong>reconciliation&lt;/strong>. You declare
+the &lt;em>desired state&lt;/em> of your resources, and Jikkou compares it with the &lt;em>actual state&lt;/em> on your cluster and
+computes the changes needed to make them match.&lt;/p>
+&lt;p>By the end you&amp;rsquo;ll know how to preview changes, apply them safely, and detect when a cluster has &lt;em>drifted&lt;/em>
+away from your declared configuration.&lt;/p>
+&lt;h2 id="prerequisites">Prerequisites&lt;/h2>
+&lt;ul>
+&lt;li>You have completed the &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a> tutorial.&lt;/li>
+&lt;li>You have a running Kafka cluster and a configured Jikkou context.&lt;/li>
+&lt;/ul>
+&lt;h2 id="step-1--declare-a-topic">Step 1 — Declare a topic&lt;/h2>
+&lt;p>Create a resource file describing a single topic:&lt;/p></description></item><item><title>Generate Topics with Templates</title><link>https://www.jikkou.io/docs/tutorials/templating-topics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/tutorials/templating-topics/</guid><description>&lt;p>Declaring resources one by one gets tedious when you manage dozens of similar topics across teams or
+regions. In this tutorial you&amp;rsquo;ll learn Jikkou&amp;rsquo;s &lt;strong>templating&lt;/strong> by generating a list of topics from a
+compact data file — a single template plus a few values produces many resources.&lt;/p>
+&lt;p>By the end you&amp;rsquo;ll understand the &lt;code>values&lt;/code> variable, values files, and how to preview rendered output
+before applying it.&lt;/p>
+&lt;h2 id="prerequisites">Prerequisites&lt;/h2>
+&lt;ul>
+&lt;li>You have completed the &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a> tutorial.&lt;/li>
+&lt;li>You have a running Kafka cluster and a configured Jikkou context.&lt;/li>
+&lt;/ul>
+&lt;h2 id="step-1--define-your-values">Step 1 — Define your values&lt;/h2>
+&lt;p>Templating separates &lt;em>data&lt;/em> from &lt;em>structure&lt;/em>. Put the data in a values file:&lt;/p></description></item></channel></rss>

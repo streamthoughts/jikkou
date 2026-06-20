@@ -1,11 +1,101 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>How-to Guides on Jikkou</title><link>https://www.jikkou.io/docs/how-to-guides/</link><description>Recent content in How-to Guides on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/how-to-guides/index.xml" rel="self" type="application/rss+xml"/><item><title>Install Jikkou API Server</title><link>https://www.jikkou.io/docs/how-to-guides/run-the-api-server/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/run-the-api-server/</guid><description>&lt;h2 id="releases">Releases&lt;/h2>
-&lt;p>The latest stable release of Jikkou API Server is available:&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>How-to Guides on Jikkou</title><link>https://www.jikkou.io/docs/how-to-guides/</link><description>Recent content in How-to Guides on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/how-to-guides/index.xml" rel="self" type="application/rss+xml"/><item><title>Manage Kafka ACLs</title><link>https://www.jikkou.io/docs/how-to-guides/manage-kafka-acls/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/manage-kafka-acls/</guid><description>&lt;p>This guide shows how to manage Kafka Access Control Lists (ACLs) as code with Jikkou. For the full
+resource specification, see the &lt;a href="https://www.jikkou.io/docs/reference/providers/kafka/resources/acls/">Kafka Authorizations reference&lt;/a>.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
 &lt;ul>
-&lt;li>As a Java binary distribution (.zip) from &lt;a href="https://github.com/streamthoughts/jikkou/releases">GitHub Releases&lt;/a>&lt;/li>
-&lt;li>As a docker image available from &lt;a href="https://hub.docker.com/r/streamthoughts/jikkou-api-server">Docker Hub&lt;/a>.&lt;/li>
+&lt;li>A running Apache Kafka cluster with an authorizer enabled (e.g. &lt;code>StandardAuthorizer&lt;/code> or &lt;code>AclAuthorizer&lt;/code>).&lt;/li>
+&lt;li>A configured Jikkou context pointing at your cluster — see &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
+&lt;li>A principal with permission to manage ACLs.&lt;/li>
 &lt;/ul>
-&lt;h3 id="standalone-installation">Standalone Installation&lt;/h3>
-&lt;p>Follow these few steps to download the latest stable versions and get started.&lt;/p>
-&lt;h4 id="prerequisites">Prerequisites&lt;/h4>
-&lt;p>To be able to run Jikkou API Server, the only requirement is to have a working Java 21 installation.
-You can check the correct installation of Java by issuing the following command:&lt;/p></description></item></channel></rss>
+&lt;h2 id="1-describe-the-acls-you-want">1. Describe the ACLs you want&lt;/h2>
+&lt;p>Create a file describing the desired authorizations for each principal.&lt;/p></description></item><item><title>Manage Schema Registry Subjects</title><link>https://www.jikkou.io/docs/how-to-guides/manage-schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/manage-schemas/</guid><description>&lt;p>This guide shows how to manage Schema Registry subjects with Jikkou. For the full resource
+specification, see the &lt;a href="https://www.jikkou.io/docs/reference/providers/schema-registry/resources/subject/">Schema Registry Subjects reference&lt;/a>.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>A reachable Schema Registry (Confluent, Karapace, Apicurio, …).&lt;/li>
+&lt;li>A Jikkou context configured with the &lt;code>schemaregistry&lt;/code> provider — see the
+&lt;a href="https://www.jikkou.io/docs/reference/providers/schema-registry/configuration/">Schema Registry provider configuration&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-describe-a-subject">1. Describe a subject&lt;/h2>
+&lt;p>Keep your schema in its own file and reference it from the resource with &lt;code>$ref&lt;/code>.&lt;/p>
+&lt;p>&lt;em>&lt;code>file: subject-user.yaml&lt;/code>&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;schemaregistry.jikkou.io/v1beta2&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;SchemaRegistrySubject&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;User&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">annotations&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">schemaregistry.jikkou.io/normalize-schema&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">compatibilityLevel&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;FULL_TRANSITIVE&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">schemaType&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;AVRO&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">schema&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">$ref&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">./user-schema.avsc&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;em>&lt;code>file: user-schema.avsc&lt;/code>&lt;/em>&lt;/p></description></item><item><title>Manage Kafka Connect Connectors</title><link>https://www.jikkou.io/docs/how-to-guides/manage-connectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/manage-connectors/</guid><description>&lt;p>This guide shows how to manage Kafka Connect connectors with Jikkou. For the full resource
+specification, see the &lt;a href="https://www.jikkou.io/docs/reference/providers/kafka-connect/resources/connector/">KafkaConnector reference&lt;/a>.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>One or more reachable Kafka Connect clusters.&lt;/li>
+&lt;li>Each cluster declared under the &lt;code>kafkaConnect.clusters[]&lt;/code> setting in your Jikkou configuration —
+see the &lt;a href="https://www.jikkou.io/docs/reference/providers/kafka-connect/configuration/">Kafka Connect provider configuration&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-describe-a-connector">1. Describe a connector&lt;/h2>
+&lt;p>The &lt;code>kafka.jikkou.io/connect-cluster&lt;/code> label selects which configured cluster the connector is created in.&lt;/p>
+&lt;p>&lt;em>&lt;code>file: kafka-connector-filestream-sink.yaml&lt;/code>&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;kafka.jikkou.io/v1beta1&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;KafkaConnector&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;local-file-sink&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">labels&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">kafka.jikkou.io/connect-cluster&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;my-connect-cluster&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">connectorClass&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;FileStreamSink&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">tasksMax&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">file&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;/tmp/test.sink.txt&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">topics&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;connect-test&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">state&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;running&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="2-preview-and-apply">2. Preview and apply&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou apply --files ./kafka-connector-filestream-sink.yaml --dry-run &lt;span class="c1"># review&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply --files ./kafka-connector-filestream-sink.yaml &lt;span class="c1"># apply&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="3-control-the-connector-lifecycle">3. Control the connector lifecycle&lt;/h2>
+&lt;p>Set &lt;code>spec.state&lt;/code> and re-apply to change the runtime state of a connector:&lt;/p></description></item><item><title>Manage Apache Iceberg Tables</title><link>https://www.jikkou.io/docs/how-to-guides/manage-iceberg-tables/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/manage-iceberg-tables/</guid><description>&lt;p>This guide shows how to manage Apache Iceberg namespaces and tables with Jikkou, including safe schema
+evolution. For the full resource specification, see the
+&lt;a href="https://www.jikkou.io/docs/reference/providers/apacheiceberg/resources/iceberg-table/">Iceberg Table reference&lt;/a>.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>Access to an Iceberg catalog (REST, Hive, JDBC, Glue, …) and its backing storage.&lt;/li>
+&lt;li>A Jikkou context configured with the Iceberg provider — see the
+&lt;a href="https://www.jikkou.io/docs/reference/providers/apacheiceberg/configuration/">Apache Iceberg provider configuration&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-create-a-namespace">1. Create a namespace&lt;/h2>
+&lt;p>&lt;em>&lt;code>file: iceberg-namespace.yaml&lt;/code>&lt;/em>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nn">---&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">apiVersion&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;iceberg.jikkou.io/v1beta1&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">kind&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;IcebergNamespace&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;analytics.events&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou apply --files ./iceberg-namespace.yaml --dry-run &lt;span class="c1"># review&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply --files ./iceberg-namespace.yaml &lt;span class="c1"># apply&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="2-create-a-table">2. Create a table&lt;/h2>
+&lt;p>&lt;em>&lt;code>file: iceberg-page-views.yaml&lt;/code>&lt;/em>&lt;/p></description></item><item><title>Back Up and Restore Configuration</title><link>https://www.jikkou.io/docs/how-to-guides/backup-and-restore/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/backup-and-restore/</guid><description>&lt;p>Because Jikkou is stateless and uses your platform as the source of truth, you can export the live state
+of any managed resource to YAML. Those files can be version-controlled, used as a backup, or applied to
+another cluster to replicate its configuration.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>A Jikkou context configured for the source cluster — see &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-export-resources-to-a-file">1. Export resources to a file&lt;/h2>
+&lt;p>Use &lt;code>jikkou get &amp;lt;kind&amp;gt;&lt;/code> with YAML output and redirect it to a file:&lt;/p></description></item><item><title>Enforce Governance Policies</title><link>https://www.jikkou.io/docs/how-to-guides/enforce-policies/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/enforce-policies/</guid><description>&lt;p>A &lt;code>ValidatingResourcePolicy&lt;/code> is a declarative, reusable way to enforce governance rules across &lt;em>any&lt;/em>
+resource using &lt;a href="https://cel.dev/">Google CEL&lt;/a> expressions. Use it to block destructive operations,
+enforce limits (partitions, replication factor), or require naming and metadata conventions.&lt;/p>
+&lt;p>For the full specification, see the
+&lt;a href="https://www.jikkou.io/docs/reference/providers/core/resources/validatingresourcepolicy/">ValidatingResourcePolicy reference&lt;/a>.
+For the broader picture, see &lt;a href="https://www.jikkou.io/docs/concepts/validations/">Validations&lt;/a>.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>A Jikkou context configured for your platform — see &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-write-a-policy">1. Write a policy&lt;/h2>
+&lt;p>A policy selects the resources it applies to and defines rules. Each rule&amp;rsquo;s &lt;code>expression&lt;/code> fails when it
+evaluates to &lt;code>true&lt;/code>. The &lt;code>failurePolicy&lt;/code> decides what happens on failure:&lt;/p></description></item></channel></rss>
