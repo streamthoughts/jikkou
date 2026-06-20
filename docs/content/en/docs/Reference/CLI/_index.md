@@ -9,7 +9,7 @@ aliases:
 ---
 
 {{% pageinfo %}}
-**Hands-on:** Try the Jikkou [Get Started tutorials]({{% relref "get_started.md" %}}).
+**Hands-on:** Try the Jikkou [Getting Started tutorial]({{% relref "/docs/Tutorials/get_started.md" %}}).
 {{% /pageinfo %}}
 
 The Jikkou CLI (`jikkou`) is the primary interface for managing infrastructure resources. This reference covers:

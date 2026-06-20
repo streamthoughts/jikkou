@@ -1,13 +1,17 @@
 ---
-title: "Developer Guide"
-linkTitle: "Developer Guide"
+title: "Building from Source"
+linkTitle: "Building from Source"
 weight: 10
 description: >
-    How to set up your environment for developing on Jikkou.
+    How to set up your environment to build and test Jikkou itself.
 ---
 
+{{% pageinfo %}}
+This guide is for contributors who want to build and test the Jikkou project itself. If you are looking to develop your own Jikkou extensions or use the Java API, see the [Developer Guide]({{% relref "/docs/Developer Guide" %}}) instead.
+{{% /pageinfo %}}
+
 ## Prerequisites
-* Jdk 17 (see https://sdkman.io/ for installing java locally)
+* Java 25 (see https://sdkman.io/ for installing java locally)
 * Git
 * [Docker](https://docs.docker.com/get-docker/) and [Docker-Compose](https://docs.docker.com/compose/install/)
 * Your favorite IDE

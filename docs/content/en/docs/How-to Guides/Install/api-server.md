@@ -3,7 +3,7 @@ title: "Install Jikkou API Server"
 linkTitle: "Install API Server"
 weight: 2
 description: >
-  This guide shows how to install Jikkou API Server.
+  This guide shows how to install the Jikkou API Server.
 aliases:
   - /docs/jikkou-api-server/install/
 ---
@@ -21,7 +21,7 @@ Follow these few steps to download the latest stable versions and get started.
 
 #### Prerequisites
 
-To be able to run Jikkou API Server, the only requirement is to have a working Java 21 installation. 
+To be able to run Jikkou API Server, the only requirement is to have a working Java 25 installation.
 You can check the correct installation of Java by issuing the following command:
 
 ```bash
@@ -30,7 +30,7 @@ java -version
 
 #### Step 1: Download
 
-Download the latest Java binary distribution from the [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (e.g. `jikkou-api-server-0.36.0.zip`)
+Download the latest Java binary distribution from the [GitHub Releases](https://github.com/streamthoughts/jikkou/releases) (e.g. `jikkou-api-server-$LATEST_VERSION.zip`)
 
 Unpack the download distribution and move the unpacked directory to a desired destination
 
@@ -47,14 +47,14 @@ Launch the application with:
 ./bin/jikkou-api-server.sh
 ```
 
-#### Step 3: Test the API Server 
+#### Step 3: Test the API Server
 
 ```bash
 $ curl -sX GET http://localhost:28082 -H "Accept: application/json" | jq
 
 {
-  "version": "0.31.0",
-  "build_time": "2023-11-14T18:07:38+0000",
+  "version": "0.37.0",
+  "build_time": "2025-08-26T00:00:00+0000",
   "commit_id": "dae1be11c092256f36c18c8f1d90f16b0c951716",
   "_links": {
     "self": {
@@ -100,3 +100,8 @@ However, they offer the opportunity to test the cutting edge features.
 ```bash
 $ docker run -it streamthoughts/jikkou-api-server:main
 ```
+
+## Next Steps
+
+* Configure the server — see the [API Server reference]({{% relref "/docs/Reference/API Server" %}}).
+* Point the CLI at the server using [proxy mode]({{% relref "/docs/Reference/API Server/Configuration/cli_proxy_mode.md" %}}).
