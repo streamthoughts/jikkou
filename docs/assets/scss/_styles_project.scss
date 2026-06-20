@@ -1077,7 +1077,7 @@ p > a, li > a {
 
 .td-sidebar-nav__section-title a {
     color: #1e293b !important;
-    font-weight: 600;
+    font-weight: 300;
     letter-spacing: -0.01em;
     &:hover {
         color: $purple !important;
@@ -1086,13 +1086,20 @@ p > a, li > a {
 
 // Left sidebar styling
 .td-sidebar-nav {
+    // Consistent menu weights: every entry is light regardless of whether it is
+    // a section (folder with _index.md) or a leaf page. Only the active item is
+    // emphasized. Overrides Docsy's __section / __page / tree-root weighting.
     .td-sidebar-link {
         color: #475569;
         font-size: 0.9375rem;
         letter-spacing: -0.01em;
         line-height: 1.5;
+        font-weight: 300;
         &:hover {
             color: $purple;
+        }
+        &.tree-root {
+            font-weight: 300;
         }
         &.active {
             color: $purple !important;

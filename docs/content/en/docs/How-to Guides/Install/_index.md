@@ -9,7 +9,7 @@ aliases:
 ---
 
 {{% pageinfo %}}
-Jikkou can be installed either from source, or from releases.
+This guide covers installing the **Jikkou CLI**, either from source or from releases. To install the REST server, see [Install API Server]({{% relref "api-server.md" %}}).
 {{% /pageinfo %}}
 
 ## From SDKMan! (recommended)
