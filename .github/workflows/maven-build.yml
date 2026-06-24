@@ -41,7 +41,7 @@ jobs:
         cache: maven
 
     - name: Cache SonarCloud packages
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
@@ -158,7 +158,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 'Cache Maven packages'
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
