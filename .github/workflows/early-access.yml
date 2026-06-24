@@ -58,7 +58,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: 'Cache Maven packages'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
